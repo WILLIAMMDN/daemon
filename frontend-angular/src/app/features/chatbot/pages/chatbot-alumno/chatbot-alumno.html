@@ -1,0 +1,5 @@
+<section class="top"><div><p>Asistente local con Ollama</p><h1>{{ bot()?.nombre_bot || 'Mi bot educativo' }}</h1></div><div><a routerLink="/alumno/crear-bot">Configurar bot</a><button (click)="limpiar()">Limpiar chat</button></div></section>
+@if (!bot()) { <div class="notice">Configura primero el nombre, personalidad y conocimiento de tu bot.</div> }
+<section class="chat">@for (mensaje of mensajes(); track $index) { <article [class.user]="mensaje.role === 'user'"><strong>{{ mensaje.role === 'user' ? 'Tu' : bot()?.nombre_bot || 'Bot' }}</strong><p>{{ mensaje.content }}</p></article> } @if (enviando()) { <article><strong>Bot</strong><p>Pensando con Gemma...</p></article> }</section>
+@if (error()) { <p class="error">{{ error() }}</p> }
+<form (ngSubmit)="enviar()"><textarea name="texto" [(ngModel)]="texto" placeholder="Escribe tu pregunta..." rows="3"></textarea><button [disabled]="!bot() || enviando()">Enviar</button></form>

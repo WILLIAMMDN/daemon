@@ -1,0 +1,162 @@
+/* css/gestionar_tienda.css */
+:root {
+    --glass-bg: rgba(30, 30, 35, 0.85); /* Más opaco para mejor lectura */
+    --glass-border: rgba(255, 255, 255, 0.2);
+    --neon-gold: #ffd700;
+    --neon-blue: #00f3ff;
+    --text-main: #ffffff;
+    --text-muted: #cccccc; /* Gris mucho más claro */
+}
+
+body {
+    background-color: #050505;
+    background-image: radial-gradient(circle at 50% 10%, #1a1a2e 0%, #000000 70%);
+    font-family: 'Outfit', sans-serif;
+    color: var(--text-main);
+}
+
+/* Títulos y Header */
+.page-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding-bottom: 20px;
+    margin-bottom: 40px;
+}
+
+.text-gradient-gold {
+    background: linear-gradient(45deg, #ffd700, #ffaa00);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 800;
+}
+
+/* Tarjetas de Cristal (Glassmorphism) MEJORADO */
+.glass-card {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    backdrop-filter: blur(12px);
+    transition: transform 0.3s ease, border-color 0.3s ease;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+.glass-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--neon-blue);
+    box-shadow: 0 10px 30px rgba(0, 243, 255, 0.15);
+}
+
+/* Textos más legibles */
+.text-muted { color: var(--text-muted) !important; }
+.text-white-50 { color: rgba(255, 255, 255, 0.7) !important; }
+
+/* Tarjetas de Pedidos */
+.order-card {
+    border-left: 4px solid var(--neon-gold);
+    margin-bottom: 10px;
+}
+
+.btn-check-order {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--neon-gold);
+    color: var(--neon-gold);
+    background: rgba(0,0,0,0.3);
+    transition: all 0.2s;
+    font-size: 1.2rem;
+}
+
+.btn-check-order:hover {
+    background: var(--neon-gold);
+    color: #000;
+}
+
+/* Inventario de Premios */
+.prize-img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 10px;
+    background: #222;
+    border: 1px solid #444;
+}
+
+.badge-stock {
+    background: #000;
+    border: 1px solid #555;
+    color: #fff;
+    font-family: monospace;
+    font-size: 0.9rem;
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-weight: bold;
+}
+
+/* Inputs y Formularios MEJORADOS */
+.form-control-dark {
+    background: #2a2a35; /* Fondo más claro */
+    border: 1px solid #555;
+    color: #fff !important; /* Texto blanco forzado */
+    font-size: 1rem;
+    padding: 10px;
+}
+
+.form-control-dark:focus {
+    background: #333340;
+    border-color: var(--neon-gold);
+    color: #fff;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+}
+
+.form-control-dark::placeholder {
+    color: #aaa;
+}
+
+/* Botones de Acción */
+.btn-action {
+    width: 35px;
+    height: 35px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    border: none;
+    cursor: pointer;
+}
+.btn-edit { background: rgba(255, 255, 255, 0.1); color: #fff; }
+.btn-edit:hover { background: var(--neon-blue); color: #000; }
+
+.btn-delete { background: rgba(255, 0, 0, 0.1); color: #ff5555; }
+.btn-delete:hover { background: #ff5555; color: #fff; }
+
+/* Botón Principal */
+.btn-reward {
+    background: var(--neon-gold);
+    color: #000;
+    font-weight: 800;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 50px;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+    transition: all 0.3s;
+}
+
+.btn-reward:hover {
+    background: #fff;
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.5);
+    transform: scale(1.05);
+}
+
+/* Modal Estilizado */
+.modal-content-glass {
+    background: #15151a;
+    border: 1px solid #444;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
+}
+.modal-header { border-bottom: 1px solid #333; }
+.btn-close-white { filter: invert(1); }

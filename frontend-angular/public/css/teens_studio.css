@@ -1,0 +1,166 @@
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@400;700;900&display=swap');
+
+/* --- 1. MUNDO ANIMADO (CIELO Y PASTO) --- */
+body {
+    margin: 0; padding: 0;
+    background: #4facfe;
+    background: linear-gradient(to bottom, #4facfe 0%, #00f2fe 100%);
+    font-family: 'Nunito', sans-serif;
+    overflow-x: hidden;
+    min-height: 100vh;
+    position: relative;
+}
+
+/* NUBES FLOTANTES */
+.sky-layer {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    z-index: -2; pointer-events: none;
+}
+
+.cloud {
+    position: absolute; background: rgba(255,255,255,0.8);
+    border-radius: 50px;
+    animation: moveCloud linear infinite;
+}
+.cloud::after, .cloud::before {
+    content: ''; position: absolute; background: inherit; border-radius: 50%;
+}
+.cloud::after { width: 40px; height: 40px; top: -20px; left: 15px; }
+.cloud::before { width: 50px; height: 50px; top: -30px; right: 15px; }
+
+.c1 { width: 120px; height: 40px; top: 15%; left: -150px; animation-duration: 35s; }
+.c2 { width: 180px; height: 60px; top: 30%; left: -200px; animation-duration: 55s; animation-delay: 2s; opacity: 0.7; }
+.c3 { width: 100px; height: 35px; top: 60%; left: -150px; animation-duration: 25s; animation-delay: 10s; opacity: 0.6; }
+
+@keyframes moveCloud { from { transform: translateX(-300px); } to { transform: translateX(120vw); } }
+
+/* PASTO EN MOVIMIENTO (Efecto Loop) */
+.grass-layer {
+    position: fixed; bottom: 0; left: 0; width: 100%; height: 60px;
+    background: #2ecc71;
+    border-top: 10px solid #27ae60;
+    z-index: -1;
+}
+/* Decoración de hierba (triángulos css) */
+.grass-layer::before {
+    content: ''; position: absolute; top: -15px; left: 0; right: 0; height: 15px;
+    background: 
+        linear-gradient(45deg, transparent 50%, #2ecc71 50%),
+        linear-gradient(-45deg, transparent 50%, #2ecc71 50%);
+    background-size: 20px 20px;
+    animation: waveGrass 2s ease-in-out infinite alternate;
+}
+
+@keyframes waveGrass { from { transform: skewX(0deg); } to { transform: skewX(2deg); } }
+
+/* --- 2. CONTENEDOR PRINCIPAL --- */
+.main-content {
+    margin-left: 260px; padding: 40px; position: relative; z-index: 2;
+    padding-bottom: 100px; /* Espacio para el pasto */
+}
+@media(max-width: 768px) { .main-content { margin-left: 0; padding: 20px; } }
+
+/* --- 3. TARJETAS DE ISLA (NIVELES) --- */
+.island-card {
+    background: white;
+    border-radius: 25px;
+    /* IMPORTANTE: position relative para que el candado funcione */
+    position: relative; 
+    overflow: hidden;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 10px 0 rgba(0,0,0,0.1);
+    border: 4px solid white;
+    height: 100%;
+    display: flex; flex-direction: column;
+}
+
+.island-card:hover { transform: translateY(-10px) scale(1.02); z-index: 5; }
+
+/* Headers de colores */
+.island-header { padding: 20px; text-align: center; color: white; position: relative; }
+.bg-lvl-1 { background: #FF7675; }
+.bg-lvl-2 { background: #FAB1A0; }
+.bg-lvl-3 { background: #74B9FF; }
+.bg-lvl-4 { background: #55EFC4; }
+
+.island-icon {
+    font-size: 3rem; background: rgba(255,255,255,0.3);
+    width: 70px; height: 70px; line-height: 70px;
+    border-radius: 50%; margin: 0 auto 10px;
+    backdrop-filter: blur(5px);
+}
+
+.island-body { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
+
+/* Lista de Tareas */
+.task-list { list-style: none; padding: 0; margin-bottom: 20px; text-align: left; }
+.task-item {
+    font-size: 0.85rem; color: #636e72; padding: 8px 0;
+    border-bottom: 1px dashed #eee; display: flex; align-items: center; gap: 10px;
+}
+.task-item i { color: #00b894; font-size: 1.1rem; }
+
+/* BOTONES 3D */
+.btn-candy {
+    display: block; width: 100%; padding: 12px; margin-top: auto;
+    border-radius: 15px; border: none;
+    color: white; font-family: 'Fredoka', sans-serif; font-size: 1.1rem;
+    text-transform: uppercase; text-align: center; text-decoration: none;
+    cursor: pointer; transition: 0.1s; position: relative;
+}
+
+.btn-play { background: #00b894; box-shadow: 0 5px 0 #00896f; }
+.btn-play:hover { transform: translateY(2px); box-shadow: 0 3px 0 #00896f; }
+.btn-play:active { transform: translateY(5px); box-shadow: none; }
+
+.btn-train { background: #e17055; box-shadow: 0 5px 0 #d35400; }
+.btn-train:hover { transform: translateY(2px); box-shadow: 0 3px 0 #d35400; }
+
+/* --- EL CANDADO (BLOQUEO) --- */
+.lock-overlay {
+    position: absolute; 
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(255, 255, 255, 0.85); /* Fondo semitransparente */
+    backdrop-filter: blur(4px); /* Efecto borroso */
+    z-index: 10; /* Encima de todo */
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    border-radius: 20px;
+}
+.lock-icon { font-size: 4rem; color: #b2bec3; margin-bottom: 10px; animation: shake 2s infinite; }
+
+@keyframes shake {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-10deg); }
+    75% { transform: rotate(10deg); }
+}
+
+/* --- ESTILOS TABLET (CREAR BOT) --- */
+.tablet-container {
+    background: white; border-radius: 30px; 
+    border: 8px solid white;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    display: flex; overflow: hidden; height: 80vh;
+}
+.config-sidebar { width: 350px; background: #f1f2f6; padding: 25px; overflow-y: auto; border-right: 2px solid #e1e1e1; }
+.chat-stage { flex-grow: 1; background: #fff; display: flex; flex-direction: column; }
+
+/* Inputs Tablet */
+.input-candy {
+    width: 100%; padding: 12px; border-radius: 12px;
+    border: 3px solid #dfe6e9; background: white;
+    font-family: 'Nunito', sans-serif; font-weight: 700; color: #2d3436;
+    margin-bottom: 15px; outline: none;
+}
+.input-candy:focus { border-color: #74B9FF; }
+
+.btn-save {
+    width: 100%; padding: 12px; background: #6C5CE7; color: white;
+    border: none; border-radius: 12px; font-weight: bold;
+    box-shadow: 0 4px 0 #4834d4; transition: 0.1s;
+}
+.btn-save:active { transform: translateY(4px); box-shadow: none; }
+
+/* Chat Bubbles */
+.bubble { padding: 12px 18px; border-radius: 18px; margin-bottom: 10px; max-width: 80%; font-size: 0.95rem; }
+.bubble-ai { background: #f1f2f6; color: #333; border-bottom-left-radius: 2px; }
+.bubble-user { background: #00cec9; color: white; margin-left: auto; border-bottom-right-radius: 2px; }

@@ -1,0 +1,300 @@
+/* css/certificado_master.css */
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Great+Vibes&family=Herr+Von+Muellerhoff&family=Montserrat:wght@400;600;800&family=Playfair+Display:wght@700&display=swap');
+
+body {
+    background: #111;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+}
+
+/* =========================================
+   1. DEFINICIÓN DE TEMAS (COLORES)
+   ========================================= */
+.theme-kids {
+    --color-borde: #1a4d2e; /* Verde Institucional */
+    --color-acento: #d4af37; /* Dorado */
+    --color-nombre: #b8860b; /* Dorado Oscuro Vibrante */
+    --color-texto: #333;
+    --bg-texture: url('https://www.transparenttextures.com/patterns/cream-paper.png');
+}
+
+.theme-teens {
+    --color-borde: #002366; /* Azul Navy */
+    --color-acento: #00a8e8; /* Cian Tech */
+    --color-nombre: #003366; /* Azul Profundo */
+    --color-texto: #2c3e50;
+    --bg-texture: url('https://www.transparenttextures.com/patterns/cubes.png'); /* Textura más geométrica */
+}
+
+/* =========================================
+   2. EL LIENZO MAESTRO (A4 Landscape)
+   ========================================= */
+.certificado-canvas {
+    width: 1123px;
+    height: 794px;
+    background-color: #fff;
+    position: relative;
+    box-shadow: 0 0 60px rgba(0,0,0,0.8);
+    overflow: hidden;
+    color: var(--color-texto);
+    /* Fondo compuesto: Textura + Degradado suave */
+    background-image: 
+        radial-gradient(circle at center, rgba(255,255,255,0.8) 0%, rgba(240,240,240,0.8) 100%),
+        var(--bg-texture);
+}
+
+/* =========================================
+   3. MARCOS Y ORNAMENTOS (Fijos)
+   ========================================= */
+.marco-principal {
+    position: absolute;
+    top: 20px; left: 20px; right: 20px; bottom: 20px;
+    border: 3px double var(--color-borde);
+    z-index: 1;
+}
+
+.marco-interno {
+    position: absolute;
+    top: 35px; left: 35px; right: 35px; bottom: 35px;
+    border: 1px solid var(--color-acento);
+    z-index: 1;
+}
+
+/* Esquinas Ornamentales */
+.corner {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    border: 3px solid var(--color-acento);
+    z-index: 2;
+    transition: all 0.3s;
+}
+.c-tl { top: 30px; left: 30px; border-right: none; border-bottom: none; }
+.c-tr { top: 30px; right: 30px; border-left: none; border-bottom: none; }
+.c-bl { bottom: 30px; left: 30px; border-right: none; border-top: none; }
+.c-br { bottom: 30px; right: 30px; border-left: none; border-top: none; }
+
+/* =========================================
+   4. CONTENIDO (Flexible para que no se rompa)
+   ========================================= */
+.contenido-flex {
+    position: relative;
+    z-index: 10;
+    height: 100%;
+    padding: 60px 80px; /* Margen interno seguro */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Distribuye espacio automáticamente */
+    align-items: center;
+    text-align: center;
+}
+
+/* Header */
+.header-logos { margin-bottom: 5px; }
+.logo-muni { height: 75px; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1)); }
+
+.entidad-titulo {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #555;
+    text-transform: uppercase;
+    margin-top: 10px;
+}
+
+.titulo-honor {
+    font-family: 'Cinzel', serif;
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: var(--color-borde);
+    margin: 5px 0;
+    letter-spacing: 4px;
+    text-shadow: 1px 1px 0 rgba(255,255,255,0.5);
+}
+
+.texto-otorga {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 3px;
+    color: #777;
+    margin-bottom: 5px;
+}
+
+/* NOMBRE (El protagonista) */
+.nombre-alumno {
+    font-family: 'Great Vibes', cursive;
+    font-size: 5.8rem;
+    color: var(--color-nombre);
+    line-height: 1;
+    padding: 0 20px;
+    text-shadow: 2px 2px 0px rgba(255,255,255,1), 3px 3px 5px rgba(0,0,0,0.15);
+    margin: 5px 0;
+}
+
+/* Cuerpo del certificado */
+.cuerpo-texto {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.15rem;
+    color: #444;
+    width: 85%;
+    line-height: 1.5;
+}
+
+.curso-highlight {
+    font-family: 'Playfair Display', serif; /* Fuente elegante pero legible */
+    font-weight: 800;
+    font-size: 1.6rem;
+    color: var(--color-borde);
+    text-transform: uppercase;
+    display: block;
+    margin-top: 8px;
+    margin-bottom: 15px;
+}
+
+/* Habilidades (Píldoras elegantes) */
+.skills-container {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.skill-tag {
+    border: 1px solid var(--color-acento);
+    color: var(--color-borde);
+    padding: 6px 18px;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    background: rgba(255,255,255,0.7);
+}
+
+.fecha-emision {
+    font-size: 0.9rem;
+    color: #666;
+    margin-top: 5px;
+}
+
+/* FOOTER (Firmas) */
+.footer-firmas {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-top: 10px;
+}
+
+.caja-firma {
+    width: 260px;
+    text-align: center;
+    position: relative;
+}
+
+.firma-realista {
+    font-family: 'Herr Von Muellerhoff', cursive;
+    font-size: 2.8rem;
+    color: #000055; /* Tinta azul */
+    display: block;
+    margin-bottom: -15px;
+    transform: rotate(-3deg);
+}
+
+.linea-firma {
+    border-top: 1px solid #333;
+    margin-bottom: 5px;
+}
+
+.cargo-firma {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+/* Sello Dorado Central */
+.sello-central {
+    position: absolute;
+    bottom: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 130px;
+    opacity: 0.9;
+    mix-blend-mode: multiply;
+}
+
+.qr-code {
+    position: absolute;
+    bottom: 25px;
+    right: 25px; /* Fuera del marco interno pero dentro del externo */
+    width: 70px;
+    opacity: 0.8;
+}
+
+/* Botón flotante */
+.btn-print {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    padding: 15px 35px;
+    border-radius: 50px;
+    border: none;
+    background: #d4af37;
+    color: #000;
+    font-weight: 800;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+    cursor: pointer;
+    z-index: 999;
+}
+
+/* --- AGREGA ESTO AL FINAL O DONDE QUIERAS --- */
+
+/* Estilo para el logo de fondo (Marca de agua) */
+.marca-agua-fondo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 550px; /* Tamaño grande */
+    opacity: 0.1; /* Muy sutil (5% de opacidad) */
+    z-index: 0;
+    pointer-events: none; /* Para que no estorbe */
+    filter: grayscale(100%); /* Opcional: Para que sea gris y no choque con colores */
+}
+
+/* --- BUSCA LA CLASE .nombre-alumno Y REEMPLÁZALA CON ESTO --- */
+
+/* --- SOLO ACTUALIZA ESTA PARTE EN TU CSS --- */
+
+/* AJUSTE FINAL: POSICIÓN Y TAMAÑO DEL QR */
+#qr-code {
+    position: absolute;
+    bottom: 670px;       /* Alineado con la altura de las firmas */
+    right: 45px;        /* En la zona vacía del margen derecho */
+    width: 80px;        /* Tamaño visual pequeño y discreto */
+    height: 80px;
+    z-index: 99;        /* Encima de todo */
+    background-color: #fff;
+    border: 2px solid #fff; /* Borde blanco para separarlo del fondo */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    /* Centrado interno */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* ESTO ES LO MÁS IMPORTANTE: */
+/* Obliga a la imagen gigante del QR a encogerse al tamaño del cuadrito (80px) */
+#qr-code img, #qr-code canvas {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain;
+    display: block;
+}

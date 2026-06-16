@@ -1,0 +1,172 @@
+/* css/perfil.css */
+
+/* --- LAYOUT GENERAL --- */
+.main-wrapper {
+    padding: 30px;
+    min-height: 100vh;
+}
+
+/* --- TARJETA DE PERFIL (IZQUIERDA) --- */
+.profile-card {
+    background: #12121a; /* Fondo oscuro sólido para contraste */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    padding: 40px 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+/* --- EL AVATAR Y LA INSIGNIA (CORREGIDO) --- */
+.avatar-wrapper {
+    position: relative;
+    width: 160px;
+    height: 160px;
+    margin: 0 auto 20px auto; /* Centrado */
+}
+
+.avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 4px solid #1a1a2e;
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.05);
+    background: #000;
+}
+
+/* La Insignia "Satélite" (No tapa la cara) */
+.badge-satellite {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 65px;
+    height: 65px;
+    z-index: 10;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    cursor: pointer;
+}
+
+.badge-satellite:hover {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.badge-satellite img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* Botón diminuto para quitar insignia */
+.btn-unequip {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 20px;
+    height: 20px;
+    background: #ff4757;
+    color: white;
+    border-radius: 50%;
+    font-size: 10px;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s;
+    text-decoration: none;
+}
+.badge-satellite:hover .btn-unequip { opacity: 1; }
+
+/* --- BARRA DE CINTAS (RIBBON BAR) --- */
+.ribbon-bar {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin: 15px 0;
+    padding: 8px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 12px;
+    min-height: 40px;
+}
+
+.mini-ribbon {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    opacity: 0.8;
+    transition: all 0.2s;
+    filter: grayscale(0.5);
+}
+.mini-ribbon:hover {
+    opacity: 1;
+    transform: scale(1.2);
+    filter: grayscale(0);
+    z-index: 5;
+}
+
+/* --- PESTAÑAS (TABS) DERECHA --- */
+.nav-pills .nav-link {
+    background: rgba(255,255,255,0.05);
+    color: #888;
+    border: 1px solid rgba(255,255,255,0.1);
+    margin-right: 10px;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.nav-pills .nav-link.active {
+    background: var(--neon-gold, #ffd700);
+    color: #000;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 215, 0, 0.2);
+}
+
+.nav-pills .nav-link i { margin-right: 8px; }
+
+/* --- ITEMS GRID --- */
+.item-card {
+    background: #1a1a25;
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+    transition: transform 0.2s;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.item-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(255,255,255,0.2);
+}
+
+.item-img {
+    height: 80px;
+    width: 100%;
+    object-fit: contain;
+    margin-bottom: 15px;
+    filter: drop-shadow(0 5px 5px rgba(0,0,0,0.3));
+}
+
+.equipada-border {
+    border: 2px solid #ffd700 !important;
+    background: rgba(255, 215, 0, 0.05);
+}
+
+/* Inputs personalizados */
+.form-dark {
+    background: rgba(0,0,0,0.2);
+    border: 1px solid #333;
+    color: #fff;
+    font-size: 0.85rem;
+}
+.form-dark:focus {
+    background: #000;
+    border-color: var(--neon-gold, #ffd700);
+    color: #fff;
+    box-shadow: none;
+}

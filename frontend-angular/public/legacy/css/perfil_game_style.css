@@ -1,0 +1,366 @@
+/* css/perfil_game_style.css */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=Fredoka:wght@400;700;900&family=Rajdhani:wght@600;700&display=swap');
+
+:root {
+    --sidebar-width: 280px;
+    --glass-bg: rgba(15, 23, 42, 0.85); /* Fondo oscuro premium */
+    --glass-border: 1px solid rgba(255, 255, 255, 0.1);
+    --neon-cyan: #00f3ff;
+    --neon-gold: #ffd700;
+    --neon-purple: #bc13fe;
+}
+
+body {
+    overflow-x: hidden;
+    color: white;
+    font-family: 'Outfit', sans-serif;
+    min-height: 100vh;
+    background: #000;
+}
+
+/* ==========================================================================
+   FONDO Y AMBIENTE (El estilo que te gusta)
+   ========================================================================== */
+.game-background {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -3;
+    background-size: cover; background-position: center;
+    transition: all 0.5s ease;
+}
+
+/* Malla de Puntos / Grid Tecnológico (Overlay) */
+.grid-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2;
+    background-image: 
+        radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
+        linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+    background-size: 20px 20px, 100px 100px, 100px 100px;
+    background-position: 0 0, 0 0, 0 0;
+    pointer-events: none;
+}
+
+/* Partículas Flotantes */
+.particles {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iMiIgaGVpZ2h0PSIyIiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjAuNSIvPjwvc3ZnPg==');
+    animation: particlesMove 120s linear infinite; opacity: 0.5; pointer-events: none;
+}
+@keyframes particlesMove { from { background-position: 0 0; } to { background-position: -1000px 500px; } }
+
+/* ==========================================================================
+   LAYOUT
+   ========================================================================== */
+.main-wrapper {
+    margin-left: var(--sidebar-width);
+    padding: 0; height: 100vh;
+    position: relative; overflow: hidden;
+    display: flex; align-items: center; justify-content: space-between;
+}
+@media (max-width: 991px) { .main-wrapper { margin-left: 0; flex-direction: column; overflow-y: auto; height: auto; padding-bottom: 80px; } }
+
+/* ==========================================================================
+   SECCIÓN DERECHA: PERSONAJE ANIMADO (HÉROE)
+   ========================================================================== */
+.hero-stage {
+    position: absolute; right: -5%; bottom: 0; height: 95%; width: 55%;
+    z-index: 0; pointer-events: none;
+    display: flex; align-items: flex-end; justify-content: center;
+}
+.hero-char-img {
+    height: 100%; width: auto; object-fit: contain;
+    filter: drop-shadow(0 0 40px rgba(0,0,0,0.6));
+    /* Animación de "Respiración" para darle vida */
+    animation: heroBreathe 5s ease-in-out infinite;
+}
+@keyframes heroBreathe { 0%, 100% { transform: scale(1) translateY(0); } 50% { transform: scale(1.02) translateY(-10px); } }
+
+/* Botón Flotante para cambiar Héroe */
+.hero-edit-btn {
+    position: absolute; bottom: 30px; right: 30px; z-index: 20; pointer-events: auto;
+    background: rgba(0,0,0,0.7); border: 1px solid rgba(255,255,255,0.3);
+    color: white; width: 50px; height: 50px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    backdrop-filter: blur(5px); cursor: pointer; transition: 0.3s;
+}
+.hero-edit-btn:hover { background: white; color: black; transform: scale(1.1); box-shadow: 0 0 20px rgba(255,255,255,0.5); }
+
+/* ==========================================================================
+   SECCIÓN IZQUIERDA: HUD DE JUGADOR
+   ========================================================================== */
+.player-hud {
+    width: 50%; height: 100%;
+    padding: 40px;
+    /* Degradado oscuro para que se lea el texto */
+    background: linear-gradient(90deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.7) 70%, transparent 100%);
+    display: flex; flex-direction: column; justify-content: center;
+    position: relative; z-index: 10;
+}
+@media (max-width: 991px) { .player-hud { width: 100%; background: rgba(0,0,0,0.9); min-height: 100vh; padding: 20px; } }
+
+/* --- A. CABECERA DE PERFIL --- */
+.profile-header {
+    display: flex; align-items: center; gap: 25px; margin-bottom: 25px;
+    position: relative;
+}
+
+/* Contenedor del Avatar y Medalla */
+.avatar-complex {
+    position: relative; width: 130px; height: 130px; flex-shrink: 0;
+}
+.real-avatar-img {
+    width: 100%; height: 100%; border-radius: 50%;
+    object-fit: cover; 
+    border: 3px solid rgba(255,255,255,0.8);
+    box-shadow: 0 0 25px var(--accent-glow);
+}
+/* Medalla Satélite (No tapa la cara) */
+.avatar-satellite {
+    position: absolute; 
+    bottom: -5px; right: -15px; /* Posición: Esquina inferior derecha */
+    width: 55px; height: 55px;
+    z-index: 5;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
+    animation: satelliteFloat 3s ease-in-out infinite;
+}
+@keyframes satelliteFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+
+/* Textos de Perfil */
+.profile-info { flex-grow: 1; }
+.profile-info h1 {
+    font-size: 2.5rem; font-weight: 900; line-height: 1; margin: 0;
+    text-transform: uppercase; letter-spacing: -0.5px;
+    background: linear-gradient(to bottom, #fff, #ccc); 
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 2px 0 rgba(0,0,0,0.5));
+}
+.status-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 0.9rem;
+    color: var(--neon-cyan); text-transform: uppercase; letter-spacing: 1px;
+    margin-bottom: 5px;
+}
+.status-dot { width: 8px; height: 8px; background: #00ff00; border-radius: 50%; box-shadow: 0 0 5px #00ff00; }
+
+/* Barra de Experiencia (Debajo del nombre) */
+.xp-container {
+    width: 100%; max-width: 300px; height: 6px;
+    background: rgba(255,255,255,0.1); border-radius: 3px;
+    margin-top: 10px; overflow: hidden; position: relative;
+}
+.xp-bar {
+    height: 100%; background: var(--accent-color);
+    box-shadow: 0 0 10px var(--accent-color);
+}
+
+/* --- B. MONEDA "W" POTENTE --- */
+.currency-display {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: linear-gradient(90deg, rgba(255, 215, 0, 0.1), transparent);
+    border-left: 4px solid var(--neon-gold);
+    padding: 5px 15px; margin-top: 15px; border-radius: 0 10px 10px 0;
+}
+.w-coin-icon {
+    width: 35px; height: 35px;
+    background: radial-gradient(circle, #ffd700, #b8860b);
+    border: 2px solid #fff; border-radius: 50%;
+    color: #000; font-weight: 900; display: flex; align-items: center; justify-content: center;
+    font-family: 'Rajdhani', sans-serif; font-size: 1.2rem;
+    box-shadow: 0 0 10px var(--neon-gold);
+}
+.w-amount { font-size: 1.5rem; font-weight: 800; color: var(--neon-gold); font-family: 'Rajdhani', sans-serif; }
+
+/* Botones Mini (Foto, Fondo) */
+.mini-actions { display: flex; gap: 10px; margin-top: 15px; }
+.btn-mini {
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2);
+    color: rgba(255,255,255,0.7); font-size: 0.7rem; padding: 5px 10px;
+    border-radius: 4px; cursor: pointer; transition: 0.2s; text-transform: uppercase;
+}
+.btn-mini:hover { background: white; color: black; }
+
+
+/* --- C. PANEL DE CONTENIDO (GLASSMORPHISM) --- */
+.glass-panel {
+    background: var(--glass-bg);
+    border: var(--glass-border);
+    border-radius: 12px;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    display: flex; flex-direction: column;
+    height: 55vh; /* Altura controlada */
+    margin-top: 20px;
+}
+
+/* Tabs */
+.glass-tabs { display: flex; background: rgba(0,0,0,0.3); border-bottom: 1px solid rgba(255,255,255,0.05); }
+.tab-btn {
+    flex: 1; padding: 15px; background: transparent; border: none;
+    color: rgba(255,255,255,0.5); font-weight: 700; font-family: 'Rajdhani', sans-serif;
+    letter-spacing: 1px; transition: 0.3s; cursor: pointer; text-transform: uppercase;
+}
+.tab-btn:hover, .tab-btn.active { color: white; background: rgba(255,255,255,0.05); }
+.tab-btn.active { border-bottom: 3px solid var(--accent-color); }
+
+/* Contenido Scrollable */
+.tab-content { padding: 20px; overflow-y: auto; flex-grow: 1; }
+.tab-content::-webkit-scrollbar { width: 5px; }
+.tab-content::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
+
+/* Items Grid */
+.grid-box { display: grid; grid-template-columns: repeat(auto-fill, minmax(85px, 1fr)); gap: 10px; }
+.item-slot {
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px; padding: 10px; text-align: center; transition: 0.2s;
+}
+.item-slot:hover { border-color: var(--accent-color); background: rgba(255,255,255,0.1); }
+.item-slot img { width: 45px; height: 45px; object-fit: contain; margin-bottom: 5px; }
+
+/* TEMAS */
+.theme-teens { --accent-color: #00f3ff; --accent-glow: rgba(0, 243, 255, 0.5); }
+.theme-kids { --accent-color: #ffd700; --accent-glow: rgba(255, 215, 0, 0.5); }
+
+/* Ajustes Kids */
+.theme-kids .profile-info h1 { font-family: 'Fredoka', sans-serif; -webkit-text-stroke: 2px black; color: #ffd700; -webkit-text-fill-color: #ffd700; }
+.theme-kids .glass-panel { border: 4px solid #000; background: #fff; color: #000; }
+.theme-kids .tab-btn { color: #555; } .theme-kids .tab-btn.active { color: #000; border-bottom-color: #000; }
+.theme-kids .item-slot { border: 2px solid #ddd; background: #fff; }
+
+/* Agrega esto a tu CSS existente */
+
+/* Botón destacado para HÉROE */
+.btn-highlight {
+    background: rgba(var(--neon-cyan), 0.2); 
+    border-color: var(--neon-cyan);
+    color: var(--neon-cyan);
+    font-weight: 800;
+}
+.btn-highlight:hover {
+    background: var(--neon-cyan);
+    color: black;
+    box-shadow: 0 0 15px var(--neon-cyan);
+}
+/* === ESTILOS PARA LA CUADRÍCULA DE MEDALLAS === */
+
+.badges-grid {
+    display: grid;
+    /* Crea columnas automáticas de mínimo 80px */
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 15px;
+    padding: 10px 0;
+}
+
+.badge-square {
+    aspect-ratio: 1 / 1; /* Cuadrado perfecto */
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.badge-square:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: var(--neon-gold);
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.badge-square.border-warning {
+    border-color: var(--neon-gold) !important;
+    background: rgba(255, 215, 0, 0.1);
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+}
+
+.badge-square img {
+    width: 60%;
+    height: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+/* --- ESTILOS PARA MEDALLAS EN EL ENCABEZADO (HEADER) --- */
+
+.header-badges-container {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px; /* Espacio entre medallas */
+    margin-left: 15px; /* Separación de las monedas */
+    vertical-align: middle;
+    
+    /* Fondo sutil estilo cápsula */
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 5px 15px;
+    border-radius: 30px;
+    backdrop-filter: blur(5px);
+}
+
+.header-badge-mini {
+    width: 32px; 
+    height: 32px;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8)); /* Sombra fuerte para resaltar */
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    cursor: pointer;
+}
+
+.header-badge-mini:hover {
+    transform: scale(1.4) rotate(10deg); /* Efecto pop al pasar el mouse */
+    z-index: 10;
+}
+/* =========================================
+   ESTILOS DEL MODAL (VENTANA DE DETALLES)
+   ========================================= */
+
+/* El contenedor principal de la ventana */
+.modal-game-content {
+    background: rgba(15, 23, 42, 0.95) !important; /* Fondo oscuro profundo */
+    backdrop-filter: blur(15px);        /* Efecto borroso potente */
+    border: 2px solid var(--accent-color); /* Borde neón (Dorado/Cian según el tema) */
+    color: white;                       /* Texto blanco */
+    text-align: center;
+    box-shadow: 0 0 50px rgba(0,0,0,0.8); /* Sombra negra intensa */
+    border-radius: 20px;
+}
+
+/* La línea separadora del título */
+.modal-header {
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+/* El título "DETALLES DE INSIGNIA" */
+.modal-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent-color);
+    text-shadow: 0 0 10px rgba(255,255,255,0.3);
+}
+
+/* La imagen de la medalla en grande */
+#modalBadgeImg {
+    width: 150px;
+    height: 150px;
+    object-fit: contain;
+    margin-bottom: 20px;
+    /* Efecto de resplandor alrededor de la medalla */
+    filter: drop-shadow(0 0 20px var(--accent-color)); 
+    animation: floatModal 4s ease-in-out infinite; /* Flota suavemente */
+}
+
+/* Animación de flotación para la medalla */
+@keyframes floatModal {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+/* Botón de cerrar (X) */
+.btn-close-white {
+    filter: invert(1) grayscale(100%) brightness(200%);
+    opacity: 0.8;
+}
+.btn-close-white:hover { opacity: 1; transform: scale(1.1); }

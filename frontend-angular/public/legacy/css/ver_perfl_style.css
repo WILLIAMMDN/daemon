@@ -1,0 +1,263 @@
+/* css/ver_perfil_style.css */
+/* === IMPORTACIONES DE FUENTES GAMER === */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=Rajdhani:wght@600;700&display=swap');
+
+:root {
+    --sidebar-width: 280px; /* Ancho estándar del sidebar */
+    --glass-bg: rgba(15, 23, 42, 0.90);
+    --glass-border: 1px solid rgba(255, 255, 255, 0.15);
+    --neon-cyan: #00f3ff;
+    --neon-gold: #ffd700;
+    --neon-purple: #bc13fe;
+    --spectator-red: #ff0055;
+}
+
+body {
+    overflow-x: hidden;
+    color: white;
+    font-family: 'Outfit', sans-serif;
+    min-height: 100vh;
+    background: #000;
+}
+
+/* ==========================================================================
+   1. CORRECCIÓN DE LAYOUT (EL PROBLEMA DE "PEGADO A LA IZQUIERDA")
+   ========================================================================== */
+.main-wrapper {
+    /* Esto asegura que el contenido empiece DESPUÉS del sidebar */
+    margin-left: var(--sidebar-width); 
+    width: calc(100% - var(--sidebar-width));
+    min-height: 100vh;
+    position: relative; 
+    overflow-x: hidden;
+    display: flex; 
+    align-items: center; 
+    justify-content: flex-start; /* Alineado al inicio, no separado */
+}
+
+/* Ajuste Responsivo */
+@media (max-width: 991px) { 
+    .main-wrapper { margin-left: 0; width: 100%; flex-direction: column; } 
+}
+
+/* El Contenedor de Información (HUD) */
+.player-hud {
+    width: 60%; /* Ancho controlado */
+    min-height: 80vh;
+    /* AQUÍ ESTÁ LA MAGIA: PADDING GENEROSO PARA QUE RESPIRE */
+    padding: 50px 50px 50px 80px; 
+    background: linear-gradient(90deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.8) 60%, transparent 100%);
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center;
+    position: relative; 
+    z-index: 10;
+    border-right: 1px solid rgba(255,255,255,0.05); /* Línea sutil de separación */
+}
+
+/* ==========================================================================
+   2. AMBIENTE VISUAL (FONDOS Y EFECTOS)
+   ========================================================================== */
+.game-background {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -3;
+    background-size: cover; background-position: center;
+    transition: all 0.5s ease;
+}
+
+.grid-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2;
+    background-image: radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px);
+    background-size: 30px 30px;
+}
+
+.particles {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iMiIgaGVpZ2h0PSIyIiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjAuNSIvPjwvc3ZnPg==');
+    animation: particlesMove 120s linear infinite; opacity: 0.6;
+}
+@keyframes particlesMove { from { background-position: 0 0; } to { background-position: -1000px 500px; } }
+
+/* ==========================================================================
+   3. HÉROE GIGANTE (VISUALIZACIÓN)
+   ========================================================================== */
+.hero-stage {
+    position: fixed; /* Fijo para que no se mueva al scrollear */
+    right: -5%; bottom: 0; height: 95vh; width: 50vw;
+    z-index: 0; pointer-events: none;
+    display: flex; align-items: flex-end; justify-content: center;
+}
+.hero-char-img {
+    height: 100%; width: auto; object-fit: contain;
+    filter: drop-shadow(0 0 50px rgba(0,0,0,0.8));
+    animation: heroFloat 6s ease-in-out infinite;
+}
+@keyframes heroFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+
+/* ==========================================================================
+   4. ELEMENTOS DEL PERFIL (HEADER)
+   ========================================================================== */
+.profile-header { display: flex; align-items: center; gap: 30px; margin-bottom: 30px; }
+
+.avatar-complex { position: relative; width: 140px; height: 140px; flex-shrink: 0; }
+.real-avatar-img {
+    width: 100%; height: 100%; border-radius: 50%; object-fit: cover; 
+    border: 4px solid rgba(255,255,255,0.9);
+    box-shadow: 0 0 30px var(--accent-glow);
+}
+.avatar-satellite {
+    position: absolute; bottom: -5px; right: -15px; width: 60px; height: 60px; z-index: 5;
+    filter: drop-shadow(0 5px 10px rgba(0,0,0,0.7));
+    animation: rotateMedal 10s linear infinite;
+}
+@keyframes rotateMedal { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+.profile-info h1 {
+    font-size: 3rem; font-weight: 900; line-height: 1; margin: 0;
+    text-transform: uppercase; letter-spacing: -1px;
+    background: linear-gradient(to bottom, #ffffff, #aaaaaa); 
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 5px 15px rgba(0,0,0,0.5));
+}
+
+.status-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: 'Rajdhani', sans-serif; font-weight: 800; font-size: 1rem;
+    color: var(--neon-cyan); text-transform: uppercase; letter-spacing: 2px;
+    margin-bottom: 5px;
+}
+.status-dot { width: 10px; height: 10px; background: #00ff00; border-radius: 50%; box-shadow: 0 0 10px #00ff00; }
+
+.xp-container {
+    width: 100%; max-width: 350px; height: 8px;
+    background: rgba(255,255,255,0.15); border-radius: 4px; margin-top: 15px;
+    overflow: hidden;
+}
+.xp-bar { height: 100%; background: var(--accent-color); box-shadow: 0 0 15px var(--accent-color); }
+
+.currency-display {
+    display: inline-flex; align-items: center; gap: 12px;
+    background: linear-gradient(90deg, rgba(255, 215, 0, 0.15), transparent);
+    border-left: 5px solid var(--neon-gold);
+    padding: 8px 20px; margin-top: 20px; border-radius: 0 15px 15px 0;
+}
+.w-coin-icon {
+    width: 40px; height: 40px; background: radial-gradient(circle, #ffd700, #b8860b);
+    border: 2px solid #fff; border-radius: 50%; color: #000; font-weight: 900;
+    display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+}
+.w-amount { font-size: 1.8rem; font-weight: 800; color: var(--neon-gold); font-family: 'Rajdhani', sans-serif; }
+
+/* Medallas Header */
+.header-badges-container {
+    display: inline-flex; align-items: center; gap: 10px; margin-left: 20px; vertical-align: middle;
+    background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 8px 20px; border-radius: 40px; backdrop-filter: blur(10px);
+}
+.header-badge-mini {
+    width: 35px; height: 35px; object-fit: contain; cursor: help;
+    filter: drop-shadow(0 2px 5px rgba(0,0,0,0.8)); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.header-badge-mini:hover { transform: scale(1.5) rotate(15deg); z-index: 10; }
+
+/* ==========================================================================
+   5. PANELES DE VIDRIO (GLASSMORPHISM AVANZADO)
+   ========================================================================== */
+.glass-panel {
+    background: var(--glass-bg); border: 2px solid rgba(255,255,255,0.1);
+    border-top: 1px solid rgba(255,255,255,0.3);
+    border-radius: 20px; backdrop-filter: blur(30px);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+    display: flex; flex-direction: column; height: 500px; margin-top: 30px;
+    position: relative; overflow: visible;
+}
+
+.glass-tabs { 
+    display: flex; background: rgba(0,0,0,0.4); 
+    border-bottom: 1px solid rgba(255,255,255,0.1); 
+    border-radius: 20px 20px 0 0;
+}
+.tab-btn {
+    flex: 1; padding: 20px; background: transparent; border: none;
+    color: rgba(255,255,255,0.4); font-weight: 800; font-family: 'Rajdhani', sans-serif; font-size: 1.1rem;
+    letter-spacing: 2px; transition: 0.4s; cursor: pointer; text-transform: uppercase;
+}
+.tab-btn:hover { color: white; background: rgba(255,255,255,0.05); }
+.tab-btn.active { color: var(--accent-color); border-bottom: 4px solid var(--accent-color); background: linear-gradient(to top, rgba(255,255,255,0.05), transparent); }
+
+.tab-content { padding: 30px; overflow-y: auto; flex-grow: 1; }
+
+/* Grillas Potentes */
+.grid-box, .badges-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 20px;
+}
+.item-slot, .badge-square {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 15px; padding: 15px; text-align: center; transition: 0.4s;
+    aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center; position: relative;
+}
+.item-slot img, .badge-square img { width: 70%; height: auto; object-fit: contain; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.5)); }
+.badge-square:hover { transform: translateY(-10px) scale(1.05); border-color: var(--neon-gold); background: rgba(255,255,255,0.1); box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+.badge-square.border-warning { border-color: var(--neon-gold) !important; background: rgba(255, 215, 0, 0.05); box-shadow: 0 0 15px rgba(255, 215, 0, 0.1); }
+
+/* Temas de Color */
+.theme-teens { --accent-color: #00f3ff; --accent-glow: rgba(0, 243, 255, 0.6); }
+.theme-kids { --accent-color: #ffd700; --accent-glow: rgba(255, 215, 0, 0.6); }
+
+/* ==========================================================================
+   6. MODO ESPECTADOR (DETALLES DEL SISTEMA)
+   ========================================================================== */
+.spectator-badge {
+    position: absolute; top: -18px; right: 30px;
+    background: rgba(20, 0, 10, 0.9);
+    border: 2px solid var(--spectator-red);
+    color: var(--spectator-red);
+    padding: 8px 20px; border-radius: 30px;
+    font-family: 'Rajdhani', sans-serif; font-weight: 900; font-size: 0.9rem;
+    letter-spacing: 3px; text-transform: uppercase;
+    box-shadow: 0 0 25px rgba(255, 0, 85, 0.4);
+    z-index: 100;
+    animation: pulseRed 2s infinite;
+}
+@keyframes pulseRed {
+    0% { box-shadow: 0 0 0 0 rgba(255, 0, 85, 0.6); }
+    70% { box-shadow: 0 0 0 15px rgba(255, 0, 85, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 0, 85, 0); }
+}
+
+.bio-readonly-box {
+    background: rgba(0, 0, 0, 0.5);
+    border-left: 4px solid var(--accent-color);
+    padding: 25px; border-radius: 0 15px 15px 0;
+    font-family: 'Outfit', sans-serif; font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.95);
+    line-height: 1.7; font-style: italic;
+    box-shadow: inset 0 0 30px rgba(0,0,0,0.5);
+}
+
+.btn-system-back {
+    display: inline-flex; align-items: center; gap: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white; padding: 12px 30px;
+    font-family: 'Rajdhani', sans-serif; font-weight: 800; font-size: 1rem;
+    text-transform: uppercase; letter-spacing: 3px;
+    text-decoration: none; border-radius: 8px;
+    transition: 0.4s; backdrop-filter: blur(5px);
+}
+.btn-system-back:hover {
+    background: var(--accent-color); color: black;
+    box-shadow: 0 0 30px var(--accent-glow); transform: translateX(-8px);
+}
+
+/* Modal Potenciado */
+.modal-game-content {
+    background: rgba(10, 15, 30, 0.98); border: 2px solid var(--accent-color);
+    color: white; text-align: center; border-radius: 25px;
+    box-shadow: 0 0 100px rgba(0,0,0,0.9);
+}
+.modal-header { border-bottom: 1px solid rgba(255,255,255,0.1); }
+.modal-title { font-family: 'Rajdhani', sans-serif; color: var(--accent-color); text-transform: uppercase; font-size: 1.5rem; letter-spacing: 2px; }
+#modalBadgeImg { width: 180px; filter: drop-shadow(0 0 30px var(--accent-color)); margin: 20px auto; animation: floatBadge 3s ease-in-out infinite; }
+@keyframes floatBadge { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+.btn-close-white { filter: invert(1); opacity: 0.7; }
+.btn-close-white:hover { opacity: 1; transform: rotate(90deg); }

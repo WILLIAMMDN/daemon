@@ -1,0 +1,21 @@
+# Dependencias
+frontend-angular/node_modules/
+backend-laravel/vendor/
+
+# Angular
+frontend-angular/.angular/
+frontend-angular/dist/
+
+# Laravel
+backend-laravel/.env
+backend-laravel/storage/logs/*.log
+backend-laravel/bootstrap/cache/*.php
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Archivos pesados o temporales
+*.zip
+*.rar
+*.7z

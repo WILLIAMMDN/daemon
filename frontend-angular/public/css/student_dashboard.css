@@ -1,0 +1,399 @@
+/* --- FUENTES FUTURISTAS --- */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&family=Rajdhani:wght@500;700&display=swap');
+
+:root {
+    --bg-dark: #0d1117;
+    --card-bg: #161b22;
+    --text-primary: #ffffff;
+    --text-secondary: #8b949e;
+    --sidebar-width: 260px; /* Ancho fijo de la barra */
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+    font-family: 'Outfit', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* === SIDEBAR (LO QUE FALTABA) === */
+.student-sidebar {
+    position: fixed; /* Fija a la izquierda */
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: var(--sidebar-width);
+    background: rgba(22, 27, 34, 0.95); /* Fondo oscuro casi sólido */
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem 1rem;
+    transition: transform 0.3s ease;
+}
+
+.logo-area {
+    display: flex; align-items: center; gap: 10px; padding: 0 10px 20px 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 20px;
+}
+.logo-area img { width: 40px; filter: drop-shadow(0 0 5px rgba(255,255,255,0.3)); }
+.brand-text { font-family: 'Rajdhani', sans-serif; font-weight: 700; line-height: 1; color: white; font-size: 1.2rem; }
+.brand-text span { color: var(--accent); font-size: 0.8rem; letter-spacing: 2px; }
+
+/* Enlaces del Menú */
+.nav-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 15px; margin-bottom: 5px;
+    color: var(--text-secondary);
+    text-decoration: none; border-radius: 10px;
+    font-weight: 500; transition: all 0.2s;
+    border: 1px solid transparent;
+}
+.nav-item:hover { background: rgba(255,255,255,0.05); color: white; }
+.nav-item.active {
+    background: linear-gradient(90deg, rgba(255,255,255,0.05) 0%, transparent 100%);
+    color: var(--accent);
+    border-left: 3px solid var(--accent);
+}
+.nav-item i { font-size: 1.2rem; }
+
+/* === CONTENEDOR PRINCIPAL === */
+.main-wrapper {
+    margin-left: var(--sidebar-width); /* Empuja el contenido para no tapar la barra */
+    padding: 2rem;
+    transition: margin 0.3s;
+}
+
+/* === TEMA TEENS (Cyberpunk) === */
+.theme-teens {
+    --accent: #00f2ff;
+    --accent-glow: rgba(0, 242, 255, 0.4);
+    background-image: radial-gradient(circle at 90% 10%, rgba(0, 242, 255, 0.08) 0%, transparent 40%);
+}
+.theme-teens .student-sidebar { border-right-color: rgba(0, 242, 255, 0.1); }
+.theme-teens .nav-item.active { text-shadow: 0 0 10px var(--accent-glow); }
+.theme-teens .id-avatar { border-radius: 12px; }
+
+/* === TEMA KIDS (Space) === */
+.theme-kids {
+    --accent: #ff9f1c;
+    --accent-glow: rgba(255, 159, 28, 0.4);
+    background-image: radial-gradient(circle at 10% 10%, rgba(255, 159, 28, 0.1) 0%, transparent 40%);
+}
+.theme-kids .student-sidebar { border-right-color: rgba(255, 159, 28, 0.2); }
+.theme-kids .id-avatar { border-radius: 50%; }
+
+.text-accent { color: var(--accent) !important; }
+
+/* === HUD (ESTADÍSTICAS) === */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.stat-card {
+    background: rgba(22, 27, 34, 0.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 1.5rem;
+    display: flex; align-items: center; gap: 1rem;
+    transition: transform 0.3s;
+}
+.stat-card:hover { transform: translateY(-5px); border-color: var(--accent); }
+
+.icon-box {
+    width: 50px; height: 50px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem; color: var(--accent);
+}
+.stat-value { font-size: 2rem; font-weight: 800; line-height: 1; font-family: 'Rajdhani', sans-serif; }
+.stat-label { font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
+
+/* Wallet Card */
+.wallet-card {
+    background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.2) 100%);
+    border-left: 4px solid var(--accent);
+    justify-content: space-between;
+}
+.wallet-amount { font-size: 2.5rem; font-weight: 900; color: #FFD700; text-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
+.wallet-icon { font-size: 3rem; opacity: 0.2; color: #FFD700; }
+
+/* === TARJETAS DE ACCIÓN === */
+.section-title { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-secondary); margin-bottom: 1.5rem; font-weight: 800; opacity: 0.8; }
+
+.action-card {
+    display: block; background: var(--card-bg); border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 20px; padding: 1.8rem; position: relative; overflow: hidden;
+    text-decoration: none; color: white; transition: all 0.3s ease; height: 100%;
+}
+.action-card:hover { border-color: var(--accent); box-shadow: 0 0 20px var(--accent-glow); transform: translateY(-5px); }
+.card-bg-icon {
+    position: absolute; top: -15px; right: -15px; font-size: 7rem; opacity: 0.03;
+    transition: 0.4s; transform: rotate(15deg);
+}
+.action-card:hover .card-bg-icon { opacity: 0.15; transform: rotate(0deg) scale(1.1); color: var(--accent); }
+.action-card h3, .action-card p, .link-arrow { position: relative; z-index: 2; }
+.action-card h3 { font-weight: 800; margin-bottom: 0.3rem; font-size: 1.5rem; }
+.action-card p { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem; }
+.link-arrow { font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); display: flex; align-items: center; gap: 8px; }
+
+/* === ID WIDGET === */
+.id-card-wrapper {
+    background: linear-gradient(180deg, #1f2937 0%, #0d1117 100%);
+    border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; overflow: hidden;
+    position: relative; height: 100%;
+}
+.id-card-header { background: rgba(0,0,0,0.4); padding: 12px; text-align: center; font-size: 0.7rem; letter-spacing: 3px; font-weight: 900; color: var(--text-secondary); border-bottom: 1px solid rgba(255,255,255,0.05); }
+.avatar-container { width: 100px; height: 100px; margin: 0 auto; position: relative; }
+.id-avatar { width: 100%; height: 100%; object-fit: cover; border: 3px solid var(--card-bg); outline: 2px solid var(--accent); background: #000; }
+.status-dot { width: 15px; height: 15px; background: #2ea043; border-radius: 50%; position: absolute; bottom: 0; right: 0; border: 3px solid var(--card-bg); box-shadow: 0 0 10px #2ea043; }
+
+/* === RESPONSIVO === */
+@media (max-width: 992px) {
+    .main-wrapper { margin-left: 0; padding: 1.5rem 1rem 6rem 1rem; } /* Más padding abajo para móvil */
+    .student-sidebar {
+        transform: translateX(-100%); /* Ocultar sidebar en móvil por defecto */
+        width: 100%;
+    }
+    .wallet-card { grid-column: span 2; }
+}
+@media (max-width: 768px) {
+    .stats-grid { grid-template-columns: 1fr; }
+    .wallet-card { grid-column: span 1; }
+}
+/* === ESTILO GLOBAL DE LA MONEDA (TOKEN W) === */
+
+/* 1. La Moneda en sí (El círculo con la W) */
+.w-coin {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 45px;             /* Tamaño estándar */
+    height: 45px;
+    background: radial-gradient(circle at 30% 30%, #4a4a4a 0%, #000000 100%); /* Fondo Negro 3D */
+    border: 3px solid #FFD700; /* Anillo Dorado */
+    border-radius: 50%;
+    color: #ffffff;          /* La letra W es blanca */
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 900;
+    font-size: 1.5rem;
+    box-shadow: 
+        0 0 15px rgba(255, 215, 0, 0.6), /* Resplandor externo */
+        inset 0 0 10px rgba(0,0,0,0.8);  /* Sombra interna */
+    text-shadow: 0 2px 2px rgba(0,0,0,0.8);
+    position: relative;
+    z-index: 5;
+    flex-shrink: 0; /* Evita que se aplaste */
+}
+
+/* 2. Contenedor "Cápsula" (Opcional, para cuando muestras Precio + Moneda juntos) */
+.price-pill {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50px;
+    padding: 5px 20px 5px 5px; /* Padding derecho extra para el número */
+    gap: 10px;
+}
+
+/* AJUSTE PARA LA TARJETA DEL WALLET EN EL DASHBOARD */
+.wallet-card .wallet-amount {
+    color: #ffffff; /* Ahora el número es blanco, la moneda da el color */
+    font-size: 3rem;
+    text-shadow: none;
+    line-height: 1;
+}
+.wallet-card {
+    /* Quitamos el borde izquierdo anterior para que se vea más limpio con la nueva moneda */
+    border-left: none; 
+    border-top: 4px solid #FFD700; /* Borde arriba dorado */
+}
+/* === ESTILOS DEL PERFIL PRO === */
+
+/* Tarjeta de Identidad Grande */
+.profile-card-large {
+    background: linear-gradient(180deg, rgba(22, 27, 34, 0.9) 0%, rgba(13, 17, 23, 0.95) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 3rem 1.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Efecto de brillo en el borde según el tema */
+.theme-teens .profile-card-large { box-shadow: 0 0 30px rgba(0, 242, 255, 0.05); border-color: rgba(0, 242, 255, 0.2); }
+.theme-kids .profile-card-large { box-shadow: 0 0 30px rgba(255, 159, 28, 0.05); border-color: rgba(255, 159, 28, 0.2); }
+
+.profile-avatar-large {
+    width: 150px; height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid var(--card-bg);
+    outline: 3px solid var(--accent);
+    margin-bottom: 1.5rem;
+    box-shadow: 0 0 20px var(--accent-glow);
+}
+
+/* Inputs del Formulario (Estilo Dark) */
+.form-label-custom {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.form-control-dark {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    padding: 12px 15px;
+    border-radius: 12px;
+    transition: all 0.3s;
+}
+.form-control-dark:focus {
+    background: rgba(0, 0, 0, 0.5);
+    border-color: var(--accent);
+    box-shadow: 0 0 10px var(--accent-glow);
+    color: white;
+    outline: none;
+}
+
+/* Botón de Guardar */
+.btn-save-pro {
+    background: var(--accent);
+    color: #000; /* Texto negro para contraste */
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 15px;
+    border-radius: 12px;
+    border: none;
+    width: 100%;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.btn-save-pro:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 20px var(--accent-glow);
+    color: #000;
+}
+/* === ESTILOS DEL RANKING / PODIO === */
+
+.ranking-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+/* Contenedor del Podio */
+.podium-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end; /* Alineados al piso */
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+    padding-top: 2rem;
+}
+
+/* Tarjetas del Podio */
+.rank-card {
+    background: rgba(22, 27, 34, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 1.5rem;
+    text-align: center;
+    position: relative;
+    width: 100%;
+    max-width: 220px;
+    transition: transform 0.3s;
+    backdrop-filter: blur(10px);
+}
+
+/* Posición 1 (EL REY) */
+.rank-1 {
+    order: 2; /* Va en el centro visualmente */
+    border-color: #FFD700;
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.2);
+    transform: scale(1.1); /* Más grande */
+    z-index: 10;
+}
+.rank-1 .rank-badge { background: #FFD700; color: #000; }
+
+/* Posición 2 */
+.rank-2 {
+    order: 1; /* Izquierda */
+    border-color: #C0C0C0;
+    box-shadow: 0 0 20px rgba(192, 192, 192, 0.1);
+}
+.rank-2 .rank-badge { background: #C0C0C0; color: #000; }
+
+/* Posición 3 */
+.rank-3 {
+    order: 3; /* Derecha */
+    border-color: #CD7F32;
+    box-shadow: 0 0 20px rgba(205, 127, 50, 0.1);
+}
+.rank-3 .rank-badge { background: #CD7F32; color: #000; }
+
+/* Elementos internos del Podio */
+.rank-avatar {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 1rem;
+    border: 3px solid rgba(255,255,255,0.1);
+}
+.rank-1 .rank-avatar { width: 100px; height: 100px; border-color: #FFD700; }
+
+.rank-badge {
+    position: absolute; top: -15px; left: 50%; transform: translateX(-50%);
+    width: 35px; height: 35px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900; font-family: 'Rajdhani', sans-serif;
+    border: 3px solid var(--bg-dark);
+}
+
+/* Lista del resto (4to lugar para abajo) */
+.rank-list-item {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 10px 20px;
+    margin-bottom: 10px;
+    display: flex; align-items: center; justify-content: space-between;
+    transition: 0.2s;
+}
+.rank-list-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateX(5px);
+}
+.rank-list-item.is-me { /* Resaltar mi propia fila */
+    border-color: var(--accent);
+    background: rgba(var(--accent), 0.1);
+}
+
+.rank-position {
+    font-size: 1.2rem; font-weight: 900; opacity: 0.5; width: 40px;
+    font-family: 'Rajdhani', sans-serif;
+}
+
+/* Responsivo para móviles (Podio vertical) */
+@media (max-width: 768px) {
+    .podium-container { flex-direction: column; align-items: center; gap: 2rem; }
+    .rank-1 { order: 1; transform: scale(1); }
+    .rank-2 { order: 2; }
+    .rank-3 { order: 3; }
+    .rank-card { width: 100%; max-width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 1rem; text-align: left; }
+    .rank-avatar { width: 50px; height: 50px; margin-bottom: 0; margin-right: 15px; }
+    .rank-badge { position: static; transform: none; margin-right: 10px; }
+    /* Ajuste para que se vea bien en fila en móvil */
+    .rank-card > div:first-child { display: flex; align-items: center; }
+}

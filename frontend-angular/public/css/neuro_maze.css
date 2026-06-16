@@ -1,0 +1,99 @@
+body { background: #0d1117; color: #c9d1d9; font-family: 'Share Tech Mono', monospace; }
+
+/* Contenedor del Canvas */
+.canvas-container {
+    border: 2px solid #30363d;
+    border-radius: 10px;
+    box-shadow: 0 0 30px rgba(0,0,0,0.5);
+    background: #000;
+    display: inline-block;
+    overflow: hidden;
+    margin: 0 auto;
+}
+
+/* Panel Lateral */
+.control-panel {
+    background: #161b22;
+    border-left: 1px solid #30363d;
+    height: 100vh;
+    padding: 20px;
+    position: fixed;
+    right: 0;
+    top: 0;
+    width: 320px;
+    overflow-y: auto;
+    z-index: 1000;
+}
+
+/* Botones y Herramientas */
+.btn-tool {
+    width: 100%; text-align: left; margin-bottom: 8px;
+    background: #21262d; border: 1px solid #30363d; color: #8b949e;
+    padding: 12px; transition: 0.2s;
+}
+.btn-tool:hover, .btn-tool.active {
+    background: #1f6feb; color: #fff; border-color: #1f6feb;
+    box-shadow: 0 0 10px rgba(31, 111, 235, 0.4);
+}
+
+/* Sliders y Inputs */
+.slider-group { margin-bottom: 20px; background: #0d1117; padding: 15px; border-radius: 8px; border: 1px solid #30363d; }
+.slider-label { display: flex; justify-content: space-between; font-size: 0.8rem; color: #8b949e; margin-bottom: 5px; }
+input[type=range] { width: 100%; accent-color: #1f6feb; }
+
+/* Stats */
+.stat-box {
+    background: #0d1117; padding: 10px; border-radius: 5px; margin-bottom: 10px; border: 1px solid #30363d;
+    text-align: center;
+}
+.stat-val { font-size: 1.5rem; color: #fff; font-weight: bold; }
+.stat-lbl { font-size: 0.7rem; color: #8b949e; text-transform: uppercase; }
+
+/* Selector de Niveles */
+.level-select {
+    background: #0d1117; border: 1px solid #30363d; color: #fff;
+    padding: 10px; width: 100%; margin-bottom: 20px; border-radius: 5px;
+}
+/* --- AGREGAR AL FINAL DE neuro_maze.css --- */
+
+/* Botón Dorado (Premiar) */
+.btn-gold {
+    background: linear-gradient(135deg, #FFD700 0%, #DAA520 100%);
+    border: 1px solid #B8860B;
+    color: #000;
+    text-shadow: 0px 0px 2px rgba(255,255,255,0.5);
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-gold:hover {
+    background: linear-gradient(135deg, #FFE066 0%, #B8860B 100%);
+    box-shadow: 0 6px 20px rgba(255, 215, 0, 0.6);
+    transform: translateY(-2px);
+    color: #000;
+}
+
+.btn-gold:active { transform: scale(0.96); box-shadow: none; }
+
+/* Botón Rojo Neón (Castigar) */
+.btn-red-glow {
+    background: linear-gradient(135deg, #FF416C 0%, #FF4B2B 100%);
+    border: 1px solid #FF0000;
+    color: white;
+    box-shadow: 0 4px 15px rgba(255, 0, 0, 0.3);
+    transition: all 0.2s ease;
+}
+
+.btn-red-glow:hover {
+    background: linear-gradient(135deg, #ff6b81 0%, #ff0000 100%);
+    box-shadow: 0 6px 25px rgba(255, 0, 0, 0.7);
+    transform: translateY(-2px);
+    color: white;
+}
+
+.btn-red-glow:active { transform: scale(0.96); box-shadow: none; }
+
+/* Icono de Teletransporte */
+.btn-tool i.bi-cursor-fill { color: #00d2ff; }

@@ -1,0 +1,102 @@
+/* css/gm_style.css - SKIN GAME MASTER (SOBRE ESTRUCTURA BASE) */
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700;800&display=swap');
+
+:root {
+    --gm-gold: #FFD700;       /* Oro Puro */
+    --gm-gold-dark: #B8860B;  /* Oro Oscuro */
+    --gm-glow: 0 0 25px rgba(255, 215, 0, 0.6);
+}
+
+/* --- 1. FONDO Y AMBIENTE --- */
+/* Un filtro oscuro para que resalte lo dorado */
+.theme-gm .game-background {
+    filter: brightness(0.4) grayscale(20%); 
+}
+
+/* --- 2. EL PERSONAJE (HÉROE) --- */
+/* Aura de poder detrás del personaje */
+.theme-gm .hero-char-img {
+    filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.4)) brightness(1.1);
+    transform: scale(1.05); /* Un poco más grande para imponer */
+}
+
+/* --- 3. AVATAR Y CABECERA --- */
+/* Borde dorado brillante para la foto */
+.theme-gm .real-avatar-img {
+    border: 4px solid var(--gm-gold) !important;
+    box-shadow: var(--gm-glow) !important;
+}
+
+/* Badge de estado (El que dice "EN LINEA") */
+.theme-gm .status-badge {
+    background: linear-gradient(90deg, var(--gm-gold), #FFF, var(--gm-gold)) !important;
+    color: black !important;
+    font-weight: 900 !important;
+    border: none !important;
+    box-shadow: 0 0 15px var(--gm-gold);
+    animation: shineBadge 3s infinite linear;
+    background-size: 200% auto !important;
+}
+@keyframes shineBadge { to { background-position: 200% center; } }
+
+/* Nombre del GM */
+.theme-gm h1 {
+    font-family: 'Rajdhani', sans-serif !important;
+    font-weight: 800 !important;
+    text-transform: uppercase;
+    background: linear-gradient(to bottom, #fff 0%, var(--gm-gold) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 2px 0px rgba(0,0,0,0.8));
+    font-size: 3.5rem !important;
+}
+
+/* --- 4. BARRA DE XP Y TOKENS --- */
+/* Barra de XP Dorada y llena */
+.theme-gm .xp-bar {
+    background: linear-gradient(90deg, var(--gm-gold), #fff, var(--gm-gold)) !important;
+    width: 100% !important; /* Siempre llena */
+    box-shadow: 0 0 15px var(--gm-gold) !important;
+}
+
+/* Icono de Monedas */
+.theme-gm .w-coin-icon {
+    background: var(--gm-gold) !important;
+    color: black !important;
+    box-shadow: 0 0 10px var(--gm-gold);
+}
+.theme-gm .w-amount {
+    color: var(--gm-gold) !important;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+/* --- 5. PANELES Y TABS --- */
+/* Bordes dorados sutiles en las cajas */
+.theme-gm .glass-panel {
+    border: 1px solid rgba(255, 215, 0, 0.3) !important;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.8) !important;
+}
+
+/* Tabs activos */
+.theme-gm .tab-btn.active {
+    border-bottom: 3px solid var(--gm-gold) !important;
+    color: var(--gm-gold) !important;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+/* --- 6. MEDALLAS --- */
+/* Cuadros de medallas dorados */
+.theme-gm .badge-square {
+    border: 1px solid rgba(255, 215, 0, 0.3) !important;
+    background: rgba(255, 215, 0, 0.05) !important;
+}
+.theme-gm .badge-square:hover {
+    border-color: var(--gm-gold) !important;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.3) !important;
+    transform: translateY(-5px);
+}
+
+/* --- 7. SCROLLBAR DORADO PARA LA BIO --- */
+.bio-scroll::-webkit-scrollbar { width: 6px; }
+.bio-scroll::-webkit-scrollbar-thumb { background: var(--gm-gold); border-radius: 3px; }
+.bio-scroll::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); }

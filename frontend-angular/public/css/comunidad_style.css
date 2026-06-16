@@ -1,0 +1,158 @@
+/* css/comunidad_style.css */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;800;900&family=Rajdhani:wght@600;700&display=swap');
+
+:root {
+    --card-bg: rgba(20, 25, 35, 0.85);
+    --neon-cyan: #00f3ff;
+    --neon-gold: #ffd700;
+    --neon-purple: #bc13fe;
+    --neon-pink: #ff0055;
+}
+
+body {
+    background-color: #05070a;
+    font-family: 'Outfit', sans-serif;
+    overflow-x: hidden;
+}
+
+/* =========================================
+   FONDO ANIMADO (Igual que en Perfil)
+   ========================================= */
+.game-background {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -3;
+    background-size: cover; background-position: center; filter: brightness(0.4);
+}
+.grid-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2;
+    background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px; pointer-events: none;
+}
+
+.main-wrapper {
+    margin-left: 280px; /* Ajuste para sidebar */
+    padding: 40px;
+    min-height: 100vh;
+}
+@media (max-width: 991px) { .main-wrapper { margin-left: 0; padding: 20px; } }
+
+/* =========================================
+   PODIO DE LÍDERES (TOP 3)
+   ========================================= */
+.podium-container {
+    display: flex; justify-content: center; align-items: flex-end; gap: 20px;
+    margin-bottom: 60px; padding-top: 20px;
+}
+
+.podium-card {
+    background: linear-gradient(to bottom, rgba(255,255,255,0.1), rgba(0,0,0,0.8));
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 20px; padding: 20px; text-align: center;
+    position: relative; backdrop-filter: blur(10px);
+    transition: 0.4s; width: 220px;
+}
+
+/* Alturas del Podio */
+.rank-1 { height: 320px; border-color: #ffd700; box-shadow: 0 0 30px rgba(255, 215, 0, 0.2); z-index: 2; transform: scale(1.1); }
+.rank-2 { height: 280px; border-color: #c0c0c0; box-shadow: 0 0 20px rgba(192, 192, 192, 0.2); }
+.rank-3 { height: 260px; border-color: #cd7f32; box-shadow: 0 0 20px rgba(205, 127, 50, 0.2); }
+
+.crown-icon {
+    font-size: 2rem; position: absolute; top: -30px; left: 50%; transform: translateX(-50%);
+    filter: drop-shadow(0 0 10px gold); animation: floatCrown 3s ease-in-out infinite;
+}
+@keyframes floatCrown { 0%,100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(-10px); } }
+
+.podium-avatar {
+    width: 90px; height: 90px; border-radius: 50%; object-fit: cover;
+    border: 4px solid white; box-shadow: 0 0 15px rgba(0,0,0,0.5); margin-bottom: 15px;
+}
+.rank-1 .podium-avatar { border-color: #ffd700; width: 110px; height: 110px; }
+
+/* =========================================
+   FILTROS Y BUSCADOR
+   ========================================= */
+.filter-bar {
+    background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 50px; padding: 10px; display: inline-flex; gap: 10px;
+    backdrop-filter: blur(10px); margin-bottom: 30px;
+}
+.filter-btn {
+    background: transparent; border: none; color: #888; font-weight: 700;
+    padding: 8px 20px; border-radius: 30px; cursor: pointer; transition: 0.3s;
+    font-family: 'Rajdhani', sans-serif; text-transform: uppercase; letter-spacing: 1px;
+}
+.filter-btn:hover { color: white; background: rgba(255,255,255,0.1); }
+.filter-btn.active { background: var(--neon-cyan); color: black; box-shadow: 0 0 15px var(--neon-cyan); }
+
+/* Input Buscador */
+.glow-input {
+    background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.2);
+    color: white; border-radius: 30px; padding: 10px 20px; width: 300px;
+    transition: 0.3s;
+}
+.glow-input:focus {
+    border-color: var(--neon-cyan); box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
+    outline: none;
+}
+
+/* =========================================
+   GRID DE AGENTES (TARJETAS)
+   ========================================= */
+.agent-card {
+    background: var(--card-bg);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 20px; padding: 25px;
+    text-align: center; position: relative; overflow: hidden;
+    transition: all 0.4s ease;
+    display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+    height: 100%;
+}
+
+.agent-card:hover {
+    transform: translateY(-10px);
+    background: rgba(30, 35, 45, 0.95);
+    border-color: rgba(255,255,255,0.2);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+}
+
+/* Bordes de Color según Nivel */
+.border-teens { border-bottom: 4px solid var(--neon-cyan); }
+.border-kids { border-bottom: 4px solid var(--neon-gold); }
+
+/* Avatar */
+.card-avatar-box {
+    position: relative; width: 90px; height: 90px; margin-bottom: 15px;
+}
+.card-avatar {
+    width: 100%; height: 100%; border-radius: 50%; object-fit: cover;
+    border: 3px solid rgba(255,255,255,0.1); transition: 0.3s;
+}
+.agent-card:hover .card-avatar { border-color: white; box-shadow: 0 0 15px rgba(255,255,255,0.3); }
+
+/* Info */
+.agent-name { font-weight: 800; font-size: 1.1rem; color: white; margin-bottom: 2px; }
+.agent-user { font-family: 'Rajdhani', sans-serif; color: #888; font-size: 0.9rem; margin-bottom: 15px; }
+
+/* Stats Mini */
+.mini-stats {
+    display: flex; gap: 15px; margin-bottom: 20px; width: 100%; justify-content: center;
+    background: rgba(0,0,0,0.3); padding: 8px; border-radius: 10px;
+}
+.stat-item { font-size: 0.8rem; color: #aaa; font-weight: 700; }
+.stat-item i { margin-right: 5px; }
+
+/* Botón Visitar */
+.btn-visit {
+    width: 100%; background: rgba(255,255,255,0.05); color: white;
+    border: 1px solid rgba(255,255,255,0.1); padding: 10px;
+    border-radius: 10px; font-weight: 800; font-family: 'Rajdhani', sans-serif;
+    text-transform: uppercase; letter-spacing: 1px; transition: 0.3s;
+    text-decoration: none; display: block;
+}
+.btn-visit:hover {
+    background: var(--neon-cyan); color: black; border-color: var(--neon-cyan);
+    box-shadow: 0 0 15px var(--neon-cyan);
+}
+/* Variación para Kids */
+.kids-card .btn-visit:hover { background: var(--neon-gold); border-color: var(--neon-gold); box-shadow: 0 0 15px var(--neon-gold); }

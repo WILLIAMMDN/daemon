@@ -1,0 +1,18 @@
+<section class="heading"><div><p class="eyebrow">YachayIA conectado</p><h1>{{ config.titulo }}</h1><p>{{ config.descripcion }}</p></div>@if (config.endpoint) { <button class="refresh" (click)="cargar()">Actualizar</button> }</section>
+@if (config.aviso) { <div class="notice">{{ config.aviso }}</div> }
+@if (config.accion) {
+  <form class="action" (ngSubmit)="ejecutar()"><h2>{{ config.accion.etiqueta }}</h2><div class="fields">
+    @for (campo of config.accion.campos; track campo.nombre) {
+      <label><span>{{ campo.etiqueta }}</span>
+        @if (campo.tipo === 'textarea' || campo.tipo === 'json') { <textarea [name]="campo.nombre" [(ngModel)]="formulario[campo.nombre]" rows="4"></textarea> }
+        @else if (campo.tipo === 'select') { <select [name]="campo.nombre" [(ngModel)]="formulario[campo.nombre]">@for (opcion of campo.opciones; track opcion) { <option [value]="opcion">{{ opcion }}</option> }</select> }
+        @else if (campo.tipo === 'boolean') { <input [name]="campo.nombre" [(ngModel)]="formulario[campo.nombre]" type="checkbox"> }
+        @else { <input [name]="campo.nombre" [(ngModel)]="formulario[campo.nombre]" [type]="campo.tipo === 'number' ? 'number' : 'text'"> }
+      </label>
+    }
+  </div><button type="submit">Ejecutar</button>@if (mensaje()) { <span class="success">{{ mensaje() }}</span> }</form>
+}
+@if (error()) { <div class="error">{{ error() }}</div> }
+@if (cargando()) { <div class="loading">Consultando el backend...</div> }
+@else if (lista().length) { <div class="grid">@for (item of lista(); track $index) { <article>@for (par of pares(item); track par[0]) { <div class="row"><strong>{{ par[0] }}</strong>@if (esImagen(par[0], par[1])) { <span class="asset"><img [src]="rutaAsset(par[1])" [alt]="par[0]" loading="lazy" (error)="$any($event.target).classList.add('broken')"><a [href]="rutaAsset(par[1])" target="_blank">{{ par[1] }}</a></span> } @else { <span>{{ par[1] }}</span> }</div> } @for (detalle of complejos(item); track detalle[0]) { <details><summary>{{ detalle[0] }}</summary><pre>{{ detalle[1] | json }}</pre></details> }</article> }</div> }
+@else if (config.endpoint && !error()) { <div class="empty">Todavia no hay registros para mostrar.</div> }

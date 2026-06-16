@@ -1,0 +1,442 @@
+/* css/editor_comic.css */
+:root {
+    --bg-dark: #1e1e1e;       /* Fondo principal estilo VS Code */
+    --bg-panel: #252526;      /* Fondo paneles laterales */
+    --accent: #007fd4;        /* Azul vibrante para acentos */
+    --text-main: #cccccc;     /* Texto principal para fondo oscuro */
+    --border: #3e3e42;        /* Color de bordes sutiles */
+}
+
+body { 
+    background-color: var(--bg-dark); 
+    color: var(--text-main); 
+    margin: 0; overflow: hidden; 
+    font-family: 'Inter', sans-serif; 
+}
+
+.app-container { display: flex; height: 100vh; width: 100vw; }
+
+/* --- SIDEBAR IZQUIERDA (Navegación) --- */
+.mini-sidebar { 
+    width: 50px; background: #333; 
+    display: flex; flex-direction: column; align-items: center; 
+    padding-top: 15px; border-right: 1px solid #000; z-index: 200; 
+    box-shadow: 5px 0 10px rgba(0,0,0,0.2); /* Sombra añadida */
+}
+.mini-btn { color: #888; font-size: 1.2rem; margin-bottom: 20px; transition: 0.2s; text-decoration: none;}
+.mini-btn:hover { color: #fff; transform: scale(1.1); }
+
+/* --- CANVAS CENTRAL (Área de trabajo) --- */
+.canvas-area { 
+    flex-grow: 1; 
+    /* Patrón de fondo mejorado: Puntos más sutiles */
+    background-image: radial-gradient(#383838 1px, transparent 1px); 
+    background-size: 25px 25px; background-color: #1e1e1e; 
+    overflow-y: auto; display: flex; flex-direction: column; align-items: center; 
+    padding: 40px 20px 300px 20px; /* Extra padding abajo para scroll */
+}
+
+/* --- HOJA DE PAPEL (El Cómic) --- */
+.comic-sheet { 
+    background-color: #ffffff; 
+    /* --- 🔥 CAMBIO CRÍTICO AQUÍ: Forzamos texto negro dentro de la hoja --- */
+    color: #000000; 
+    width: 95%; max-width: 1200px; 
+    padding: 50px; /* Un poco más de margen interno */
+    /* Sombra más realista, como si flotara */
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 5px 15px rgba(0,0,0,0.2);
+    min-height: 1000px; margin-bottom: 50px; position: relative; 
+    border-radius: 2px; /* Ligero redondeo en las esquinas del papel */
+}
+
+.comic-title-input { 
+    font-family: 'Bangers'; font-size: 3.5rem; /* Un poco más grande */
+    text-transform: uppercase; text-align: center; 
+    border: none; width: 100%; outline: none; margin-bottom: 40px; 
+    background: transparent; 
+    color: #000000; /* Negro puro */
+    text-shadow: 2px 2px 0px rgba(0,0,0,0.1); /* Sombra sutil al texto */
+}
+.comic-title-input:hover { border-bottom: 2px dashed #aaa; }
+.comic-title-input::placeholder { color: #ccc; } /* Placeholder gris */
+
+/* --- GRILLA DE PANELES --- */
+.comic-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px; /* Más espacio entre viñetas */ }
+.panel-wrapper { position: relative; }
+
+.panel-label { 
+    display: block; font-weight: 800; font-size: 0.8rem; 
+    /* --- 🔥 CAMBIO AQUÍ: Color más oscuro para las etiquetas --- */
+    color: #444; 
+    text-transform: uppercase; margin-bottom: 6px; letter-spacing: 1px;
+}
+
+.panel-container { 
+    background: #f8f9fa; /* Fondo gris muy claro si no hay imagen */
+    border: 3px solid #000; aspect-ratio: 16/9; 
+    position: relative; overflow: hidden; transition: 0.2s; 
+    /* Sombra interna para profundidad */
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.05);
+}
+.panel-container.dragover { background: #e3f2fd; border-color: var(--accent); }
+.panel-bg { width: 100%; height: 100%; object-fit: cover; position: absolute; top:0; left:0; pointer-events: none; }
+
+
+/* =========================================
+   SISTEMA DE CAPAS (Globos y Personajes)
+========================================= */
+
+/* --- WRAPPERS (Contenedores arrastrables) --- */
+.bubble-wrapper, .character-wrapper { 
+    position: absolute; min-width: 50px; min-height: 40px; 
+    cursor: grab; display: flex; justify-content: center; align-items: center; 
+}
+
+/* Selección: Borde azul animado */
+.bubble-wrapper.selected::after, .character-wrapper.selected::after { 
+    content: ''; position: absolute; top: -5px; left: -5px; right: -5px; bottom: -5px; 
+    border: 2px dashed var(--accent); pointer-events: none; 
+    animation: dashBorder 0.5s linear infinite;
+}
+@keyframes dashBorder { to { border-image-slice: 1; } } /* Animación simple */
+
+/* --- GLOBOS (Capas internas) --- */
+.bubble-shape { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; box-sizing: border-box; }
+
+.bubble-text { 
+    position: relative; z-index: 1; 
+    width: 100%; height: 100%; 
+    background: transparent; border: none; outline: none; resize: none; 
+    text-align: center; 
+    font-family: 'Comic Neue', cursive; font-weight: bold; 
+    padding: 15px; pointer-events: none; overflow: hidden; line-height: 1.1; 
+    display: flex; align-items: center; justify-content: center;
+    /* 🔥 ESTO YA ESTABA BIEN, LO MANTENEMOS: Color negro forzado */
+    color: #000000 !important; 
+}
+.bubble-wrapper.editing .bubble-text { pointer-events: auto; cursor: text; }
+
+/* --- ESTILOS ESPECÍFICOS DE GLOBOS --- */
+/* Normal */
+.style-normal .bubble-shape { background: #fff; border: 2px solid #000; border-radius: 25px; box-shadow: 3px 3px 0 rgba(0,0,0,0.15); }
+.style-normal .bubble-tail { position: absolute; bottom: -14px; left: 20%; width: 20px; height: 20px; background: #fff; border-bottom: 2px solid #000; border-right: 2px solid #000; transform: skewX(30deg) rotate(45deg); z-index: 0; }
+
+/* Pensar */
+.style-thought .bubble-shape { background: #f0f8ff; border: 3px solid #4285f4; border-radius: 50%; }
+.style-thought .bubble-tail { position: absolute; bottom: -20px; left: 15%; width: 12px; height: 12px; background: #f0f8ff; border: 3px solid #4285f4; border-radius: 50%; }
+.style-thought .bubble-tail::after { content: ''; position: absolute; bottom: -14px; left: -10px; width: 7px; height: 7px; background: #4285f4; border-radius: 50%; }
+
+/* Susurro */
+.style-whisper .bubble-shape { background: #fafafa; border: 2px dashed #999; border-radius: 20px; }
+.style-whisper .bubble-text { color: #666 !important; font-style: italic; font-size: 90%; } /* Gris forzado */
+.style-whisper .bubble-tail { position: absolute; bottom: -8px; left: 20%; width: 15px; height: 15px; background: #fafafa; border-bottom: 2px dashed #999; border-right: 2px dashed #999; transform: rotate(45deg); }
+
+/* Grito (Explosión) */
+.style-shout .bubble-shape { background: #fff200; border: 3px solid #000; clip-path: polygon(0% 15%, 15% 15%, 0% 0%, 25% 10%, 40% 0%, 50% 10%, 65% 0%, 75% 10%, 100% 0%, 85% 15%, 100% 15%, 90% 30%, 100% 50%, 90% 70%, 100% 85%, 85% 85%, 100% 100%, 75% 90%, 65% 100%, 50% 90%, 35% 100%, 25% 90%, 0% 100%, 15% 85%, 0% 85%, 10% 70%, 0% 50%, 10% 30%); }
+.style-shout::before { content: ''; position: absolute; top: -4px; left: -4px; right: -4px; bottom: -4px; background: #000; z-index: -1; clip-path: polygon(0% 15%, 15% 15%, 0% 0%, 25% 10%, 40% 0%, 50% 10%, 65% 0%, 75% 10%, 100% 0%, 85% 15%, 100% 15%, 90% 30%, 100% 50%, 90% 70%, 100% 85%, 85% 85%, 100% 100%, 75% 90%, 65% 100%, 50% 90%, 35% 100%, 25% 90%, 0% 100%, 15% 85%, 0% 85%, 10% 70%, 0% 50%, 10% 30%); }
+.style-shout .bubble-text { font-family: 'Bangers'; text-transform: uppercase; font-size: 1.3em; color: #d32f2f !important; /* Rojo forzado */ }
+
+/* Narrador */
+.style-box .bubble-shape { background: #fff9c4; border: 2px solid #000; border-radius: 0; box-shadow: 4px 4px 0 #000; }
+.style-box .bubble-text { font-family: 'Courier New', monospace; font-weight: bold; color: #000 !important; }
+
+/* --- PERSONAJES --- */
+.character-img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.2)); /* Sombra sutil al personaje */ }
+.character-wrapper:not(.is-png) .character-img { mix-blend-mode: multiply; filter: none; } /* Sin sombra si usamos multiply */
+
+
+/* =========================================
+   BARRA LATERAL DERECHA (Herramientas)
+========================================= */
+.tools-sidebar { 
+    width: 320px; min-width: 320px; /* Un poco más ancha */
+    background: var(--bg-panel); border-left: 1px solid #000; 
+    display: flex; flex-direction: column; color: #fff; 
+    box-shadow: -5px 0 25px rgba(0,0,0,0.5);
+}
+
+.tool-header { 
+    padding: 18px; background: #2d2d2d; 
+    font-size: 0.85rem; font-weight: 800; 
+    border-bottom: 1px solid var(--border); color: #ccc; 
+    text-transform: uppercase; letter-spacing: 1.2px;
+    display: flex; align-items: center;
+}
+
+.tool-btn-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 15px; /* Grid de 3 columnas */ }
+.tool-btn { 
+    background: linear-gradient(to bottom, #3a3a3a, #333); /* Degradado sutil */
+    border: 1px solid #444; border-radius: 8px; 
+    padding: 12px 5px; text-align: center; cursor: grab; transition: all 0.2s;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+.tool-btn:hover { background: #444; border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 5px 10px rgba(0,0,0,0.3); color: #fff; }
+.tool-btn i { font-size: 1.4rem; color: var(--accent); margin-bottom: 5px; display: block; }
+.tool-btn span { font-size: 0.7rem; font-weight: 600; }
+
+/* Manijas de redimensionado mejoradas */
+.resizer { 
+    width: 14px; height: 14px; 
+    background: var(--accent); border: 2px solid #fff; 
+    border-radius: 50%; position: absolute; z-index: 1002; 
+    display: none; box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+.bubble-wrapper.selected .resizer, .character-wrapper.selected .resizer { display: block; }
+.br { bottom: -7px; right: -7px; cursor: nwse-resize; }
+.bl { bottom: -7px; left: -7px; cursor: nesw-resize; }
+.tr { top: -7px; right: -7px; cursor: nesw-resize; }
+.tl { top: -7px; left: -7px; cursor: nwse-resize; }
+
+/* Galería */
+.asset-item { 
+    width: 100%; height: 80px; object-fit: cover; 
+    border: 2px solid transparent; border-radius: 6px; cursor: grab; transition: 0.2s; 
+    background: #333;
+}
+.asset-item:hover { border-color: var(--accent); opacity: 1; transform: scale(1.05); }
+/* --- ESTILOS DE GALERÍA MEJORADA --- */
+
+/* Contenedor con scroll personalizado */
+.gallery-scroll {
+    padding: 15px;
+    flex-grow: 1;
+    overflow-y: auto;
+    /* Scrollbar fina y oscura */
+    scrollbar-width: thin;
+    scrollbar-color: #444 #252526;
+}
+.gallery-scroll::-webkit-scrollbar { width: 6px; }
+.gallery-scroll::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
+
+/* 1. INTERRUPTOR (SWITCH) FONDO vs PERSONAJE */
+.mode-switch {
+    display: flex;
+    background: #111;
+    border-radius: 8px;
+    padding: 4px;
+    margin-bottom: 15px;
+    border: 1px solid #333;
+}
+.mode-option {
+    flex: 1;
+    text-align: center;
+    padding: 8px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #666;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+}
+/* Cuando el radio button está marcado, el label cambia */
+input[type="radio"]:checked + .mode-option {
+    background: var(--accent); /* Azul */
+    color: white;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+}
+/* Ocultar los inputs reales */
+.mode-input { display: none; }
+
+
+/* 2. ZONA DE SUBIDA (DROPZONE) */
+.upload-zone {
+    border: 2px dashed #444;
+    background: #2d2d2d;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-bottom: 15px;
+}
+.upload-zone:hover {
+    border-color: var(--accent);
+    background: #333;
+    transform: translateY(-2px);
+}
+.upload-zone i {
+    font-size: 2rem;
+    color: #666;
+    display: block;
+    margin-bottom: 5px;
+    transition: 0.2s;
+}
+.upload-zone:hover i { color: var(--accent); }
+.upload-zone p {
+    font-size: 0.75rem;
+    color: #aaa;
+    font-weight: 600;
+    margin: 0;
+    text-transform: uppercase;
+}
+
+/* 3. GRID DE ASSETS */
+.asset-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+/* Asegurar que la sidebar ocupe el 100% vertical */
+.tools-sidebar {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Evita doble scroll */
+}
+
+/* Esta clase es la clave: hace que la galería ocupe todo el espacio libre */
+.gallery-scroll {
+    padding: 15px;
+    flex: 1; /* Ocupa el espacio restante */
+    overflow-y: auto; /* Scroll interno solo aquí */
+    min-height: 0; /* Truco de flexbox para que el scroll funcione */
+}
+
+/* Ajuste visual del grid */
+.asset-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    padding-bottom: 20px;
+}
+/* --- ESTADO BLOQUEADO --- */
+.bubble-wrapper.locked::after, 
+.character-wrapper.locked::after {
+    border-color: #dc3545 !important; /* Rojo */
+    animation: none !important; /* Sin movimiento */
+}
+
+/* Icono de candado flotante */
+.bubble-wrapper.locked::before, 
+.character-wrapper.locked::before {
+    content: '\F47B'; /* Código del icono bi-lock-fill de Bootstrap Icons */
+    font-family: 'bootstrap-icons';
+    position: absolute;
+    top: -12px; right: -12px;
+    background: #dc3545;
+    color: white;
+    font-size: 10px;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    display: flex; justify-content: center; align-items: center;
+    z-index: 2000;
+}
+
+/* Ocultar manijas de resize si está bloqueado */
+.bubble-wrapper.locked .resizer, 
+.character-wrapper.locked .resizer {
+    display: none !important;
+}
+/* --- CORRECCIÓN VISUAL PARA IMÁGENES (GEMINI FRIENDLY) --- */
+
+/* 1. Fondo de los Paneles (Viñetas) */
+.panel-bg { 
+    width: 100%; 
+    height: 100%; 
+    object-fit: cover;        /* CLAVE: Recorta para llenar sin estirar */
+    object-position: center;  /* CLAVE: Centra la imagen (lo mejor de Gemini suele estar al centro) */
+    position: absolute; 
+    top: 0; 
+    left: 0; 
+    pointer-events: none; 
+}
+
+/* 2. Miniaturas en la Galería (Sidebar) */
+.asset-item { 
+    width: 100%; 
+    height: 70px; 
+    object-fit: cover;        /* Que las miniaturas se vean bonitas y llenas */
+    border: 1px solid #444; 
+    border-radius: 4px;
+    cursor: grab; 
+    transition: 0.2s; 
+    background-color: #000;   /* Fondo negro por si la imagen es transparente */
+}
+
+.asset-item:hover { 
+    border-color: var(--accent); 
+    opacity: 0.9; 
+    transform: scale(1.05); 
+}
+/* --- ESTILOS DE GESTIÓN DE GALERÍA --- */
+
+/* Contenedor relativo para posicionar el botón de borrar */
+.asset-wrapper {
+    position: relative;
+    transition: transform 0.2s;
+}
+.asset-wrapper:hover {
+    transform: scale(1.02);
+    z-index: 10;
+}
+
+/* Ajuste a la imagen para que llene el wrapper */
+.asset-item {
+    width: 100%;
+    height: 80px; /* Altura fija para uniformidad */
+    object-fit: cover;
+    border: 1px solid #444;
+    border-radius: 6px;
+    background-color: #000;
+}
+
+/* El botón de borrar (X) */
+.asset-delete-btn {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 24px;
+    height: 24px;
+    background-color: #dc3545; /* Rojo peligro */
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 12px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+    opacity: 0; /* Oculto por defecto */
+    transition: opacity 0.2s, transform 0.2s;
+    border: 2px solid #252526; /* Borde oscuro para separar del fondo */
+}
+
+/* Mostrar botón al pasar el mouse sobre la imagen */
+.asset-wrapper:hover .asset-delete-btn {
+    opacity: 1;
+}
+
+.asset-delete-btn:hover {
+    background-color: #bd2130; /* Rojo más oscuro */
+    transform: scale(1.1);
+}
+/* BOTÓN PARA LIMPIAR FONDO DE VIÑETA */
+.btn-clear-bg {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 25px;
+    height: 25px;
+    background-color: rgba(220, 53, 69, 0.9); /* Rojo semitransparente */
+    color: white;
+    border-radius: 4px;
+    display: none; /* Oculto por defecto */
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 90; /* Por encima del fondo pero debajo de globos */
+    font-size: 12px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    transition: 0.2s;
+}
+
+.btn-clear-bg:hover {
+    background-color: #dc3545;
+    transform: scale(1.1);
+}
+
+/* Mostrar botón cuando el mouse está sobre el panel */
+.panel-container:hover .btn-clear-bg {
+    display: flex;
+}

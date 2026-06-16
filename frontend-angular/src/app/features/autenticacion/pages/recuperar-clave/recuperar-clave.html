@@ -1,0 +1,19 @@
+<main class="auth-shell">
+  <section class="auth-card">
+    <a class="brand" routerLink="/">YachayIA</a>
+    <h1>Recuperar acceso</h1>
+    <p>Ingresa tu usuario o correo. Si la cuenta existe, se registrara una solicitud segura de recuperacion.</p>
+
+    <form (ngSubmit)="solicitar()">
+      <label>Usuario<input name="usuario" [(ngModel)]="datos.usuario"></label>
+      <label>Correo<input name="email" [(ngModel)]="datos.email" type="email"></label>
+
+      @if (mensaje()) { <p class="success">{{ mensaje() }}</p> }
+      @if (error()) { <p class="error">{{ error() }}</p> }
+
+      <button [disabled]="enviando()">{{ enviando() ? 'Enviando...' : 'Solicitar recuperacion' }}</button>
+    </form>
+
+    <a class="back" routerLink="/login">Volver al inicio de sesion</a>
+  </section>
+</main>

@@ -1,0 +1,420 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&display=swap');
+
+/* --- REGLAS BASE --- */
+* { box-sizing: border-box; }
+img, svg { max-width: 100%; height: auto; display: block; }
+
+:root {
+    --bg-dark: #090c10;
+    --panel-bg: #161b22;
+    --panel-hover: #1f2630;
+    --gold: #FFD700;
+    --blue-neon: #58a6ff;
+    --green-neon: #2ea043;
+    --red-neon: #da3633;
+    --border-subtle: rgba(240, 246, 252, 0.1);
+    --sidebar-width: 260px;
+    --text-main: #c9d1d9;
+    --text-header: #ffffff;
+}
+
+body {
+    background-color: var(--bg-dark);
+    /* Patrón de grilla tecnológico sutil */
+    background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    font-family: 'Outfit', sans-serif;
+    color: var(--text-main);
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* --- SIDEBAR (MANTENEMOS TU ESTRUCTURA) --- */
+.sidebar-glass {
+    position: fixed; top: 0; left: 0; width: var(--sidebar-width); height: 100vh;
+    background: #0d1117; /* GitHub Dark Dimmed style */
+    border-right: 1px solid var(--border-subtle);
+    display: flex; flex-direction: column; padding: 30px 20px;
+    z-index: 1000;
+}
+
+.nav-link-uripa {
+    color: var(--text-main); padding: 14px 18px; border-radius: 8px;
+    margin-bottom: 6px; text-decoration: none; display: flex; align-items: center;
+    gap: 15px; font-weight: 600; font-size: 0.9rem; transition: all 0.2s ease;
+}
+.nav-link-uripa:hover, .nav-link-uripa.active {
+    background: rgba(56, 139, 253, 0.15); 
+    color: #58a6ff;
+    border-left: 3px solid #58a6ff;
+}
+
+/* --- CONTENIDO PRINCIPAL --- */
+.main-content {
+    margin-left: var(--sidebar-width);
+    padding: 40px 60px;
+    width: calc(100% - var(--sidebar-width));
+}
+
+/* --- 1. HEADER HUD --- */
+.hud-title { font-size: 2.5rem; font-weight: 900; color: var(--text-header); letter-spacing: -1px; }
+.hud-title span { background: linear-gradient(to right, #ffd700, #ffaa00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.hud-subtitle { font-family: monospace; color: #8b949e; margin-top: 5px; }
+
+/* --- 2. KPI STATS (Clean Look) --- */
+.kpi-container {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 40px;
+}
+.kpi-box {
+    background: var(--panel-bg); border: 1px solid var(--border-subtle);
+    border-radius: 12px; padding: 25px; position: relative;
+    transition: 0.3s;
+}
+.kpi-box:hover { border-color: #58a6ff; transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+
+.kpi-value { font-size: 2.2rem; font-weight: 800; color: var(--text-header); line-height: 1; margin-bottom: 5px; }
+.kpi-label { font-size: 0.8rem; text-transform: uppercase; font-weight: 700; color: #8b949e; letter-spacing: 1px; }
+.kpi-icon {
+    position: absolute; right: 20px; top: 25px; font-size: 1.5rem; opacity: 0.2;
+}
+
+/* --- 3. BARRA DE HERRAMIENTAS (Search + Sort) --- */
+.toolbar {
+    display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 20px;
+}
+.search-group {
+    position: relative; flex-grow: 1;
+}
+.search-input {
+    width: 100%; background: #0d1117; border: 1px solid var(--border-subtle);
+    padding: 15px 20px 15px 50px; border-radius: 8px; color: white;
+    font-family: 'Outfit', sans-serif; font-size: 1rem; transition: 0.3s;
+}
+.search-input:focus { outline: none; border-color: var(--blue-neon); box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.1); }
+.search-icon { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: #8b949e; }
+
+.sort-btn {
+    background: var(--panel-bg); border: 1px solid var(--border-subtle); color: var(--text-main);
+    padding: 15px 25px; border-radius: 8px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 10px;
+    transition: 0.2s; white-space: nowrap;
+}
+.sort-btn:hover { background: var(--panel-hover); color: white; border-color: white; }
+
+/* --- 4. LISTA DE AGENTES (THE ROSTER) --- */
+.roster-list { display: flex; flex-direction: column; gap: 10px; }
+
+.roster-item {
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--panel-bg); border: 1px solid var(--border-subtle);
+    border-radius: 10px; padding: 15px 25px;
+    transition: all 0.2s ease;
+    animation: slideIn 0.3s ease forwards;
+    opacity: 0;
+}
+.roster-item:hover {
+    background: var(--panel-hover);
+    border-color: #58a6ff;
+    transform: scale(1.005);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+
+/* Columna Izquierda: Avatar + Info */
+.roster-left { display: flex; align-items: center; gap: 20px; flex: 1; }
+
+.avatar-box {
+    width: 50px; height: 50px; position: relative; flex-shrink: 0;
+}
+.avatar-img {
+    width: 100%; height: 100%; object-fit: cover; border-radius: 10px;
+    border: 2px solid rgba(255,255,255,0.1);
+}
+.status-dot {
+    width: 12px; height: 12px; background: var(--green-neon); border-radius: 50%;
+    position: absolute; bottom: -2px; right: -2px; border: 2px solid var(--panel-bg);
+}
+
+.roster-info h5 { margin: 0; color: white; font-weight: 700; font-size: 1.1rem; }
+.roster-info small { color: #8b949e; font-family: monospace; }
+
+/* Etiquetas de Nivel */
+.tag {
+    font-size: 0.7rem; font-weight: 800; padding: 3px 8px; border-radius: 4px;
+    text-transform: uppercase; letter-spacing: 0.5px; margin-left: 10px; vertical-align: middle;
+}
+.tag-teens { background: rgba(88, 166, 255, 0.15); color: #58a6ff; border: 1px solid rgba(88, 166, 255, 0.3); }
+.tag-kids { background: rgba(255, 215, 0, 0.15); color: #ffd700; border: 1px solid rgba(255, 215, 0, 0.3); }
+
+/* Columna Derecha: Tokens + Acciones */
+.roster-right { display: flex; align-items: center; gap: 30px; }
+
+.token-stat { text-align: right; }
+.token-val { display: block; font-weight: 800; color: var(--gold); font-size: 1.1rem; }
+.token-lbl { font-size: 0.7rem; color: #8b949e; text-transform: uppercase; }
+
+.btn-action {
+    width: 40px; height: 40px; border-radius: 8px;
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+    color: white; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: 0.2s;
+}
+.btn-action:hover { background: var(--gold); color: black; box-shadow: 0 0 15px rgba(255, 215, 0, 0.4); }
+
+/* --- MODAL OSCURO --- */
+.modal-content-dark {
+    background: #161b22; border: 1px solid var(--border-subtle); border-radius: 16px;
+}
+.modal-header, .modal-footer { border-color: var(--border-subtle); }
+.input-dark {
+    background: #0d1117; border: 1px solid var(--border-subtle); color: white;
+    font-size: 2rem; font-weight: 800; text-align: center; width: 100%; border-radius: 8px;
+}
+
+/* ANIMACIONES */
+@keyframes slideIn {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+/* --- SISTEMA DE RANGOS (Agregar al final de css/dashboard.css) --- */
+
+.badge-rank {
+    font-size: 0.65rem;
+    padding: 3px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    font-weight: 800;
+    letter-spacing: 1px;
+    margin-left: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    vertical-align: middle;
+}
+
+/* Rango 1: NOVATO (Gris - Básico) */
+.rank-novato {
+    background: rgba(255, 255, 255, 0.05);
+    color: #8b949e;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Rango 2: AGENTE (Azul Neón - Profesional) */
+.rank-agente {
+    background: rgba(0, 243, 255, 0.1);
+    color: #00f3ff;
+    border: 1px solid rgba(0, 243, 255, 0.3);
+    box-shadow: 0 0 5px rgba(0, 243, 255, 0.1);
+}
+
+/* Rango 3: VETERANO (Morado - Élite) */
+.rank-veterano {
+    background: rgba(188, 19, 254, 0.1);
+    color: #d0b3f5;
+    border: 1px solid rgba(188, 19, 254, 0.4);
+    box-shadow: 0 0 8px rgba(188, 19, 254, 0.2);
+}
+
+/* Rango 4: LEYENDA (Dorado - Dios) */
+.rank-leyenda {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 170, 0, 0.15));
+    color: #ffd700;
+    border: 1px solid #ffd700;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+    animation: pulseGold 2s infinite;
+}
+
+@keyframes pulseGold {
+    0% { box-shadow: 0 0 5px rgba(255, 215, 0, 0.3); }
+    50% { box-shadow: 0 0 15px rgba(255, 215, 0, 0.6); }
+    100% { box-shadow: 0 0 5px rgba(255, 215, 0, 0.3); }
+}
+/* --- ESTILOS GESTOR DE INSIGNIAS (POTENCIA MÁXIMA) --- */
+
+/* Contenedor de Estadísticas */
+.stats-bar {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;
+    margin-bottom: 30px;
+}
+.stat-card {
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 15px; padding: 20px; display: flex; align-items: center; gap: 15px;
+    backdrop-filter: blur(10px); transition: 0.3s;
+}
+.stat-card:hover { transform: translateY(-5px); border-color: #ffd700; background: rgba(255, 215, 0, 0.05); }
+.stat-icon {
+    width: 50px; height: 50px; background: rgba(0,0,0,0.3); border-radius: 12px;
+    display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: #ffd700;
+}
+
+/* Tarjeta de Insignia */
+.insignia-card {
+    background: rgba(13, 17, 23, 0.8); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px; padding: 20px; position: relative; overflow: hidden;
+    transition: all 0.4s ease; height: 100%; display: flex; flex-direction: column; align-items: center;
+}
+.insignia-card::before {
+    content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 5px;
+    background: linear-gradient(90deg, #ffd700, #ff6b6b); opacity: 0; transition: 0.3s;
+}
+.insignia-card:hover {
+    transform: translateY(-10px); box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    border-color: rgba(255, 215, 0, 0.3);
+}
+.insignia-card:hover::before { opacity: 1; }
+
+/* Imagen de Insignia */
+.insignia-img-wrapper {
+    width: 100px; height: 100px; margin-bottom: 15px; position: relative;
+    transition: 0.3s;
+}
+.insignia-card:hover .insignia-img-wrapper { transform: scale(1.1) rotate(5deg); }
+.insignia-img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 0 15px rgba(255,215,0,0.2)); }
+
+/* Badge de Conteo */
+.count-badge {
+    position: absolute; top: 15px; right: 15px;
+    background: rgba(255,255,255,0.1); padding: 5px 10px; border-radius: 20px;
+    font-size: 0.75rem; font-weight: bold; color: #aaa; border: 1px solid rgba(255,255,255,0.1);
+}
+.insignia-card:hover .count-badge { background: #ffd700; color: #000; border-color: #ffd700; }
+
+/* Botones de Acción */
+.card-actions {
+    display: flex; gap: 10px; width: 100%; margin-top: auto; padding-top: 15px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+}
+.btn-action-card {
+    flex: 1; border: none; background: transparent; color: #8b949e;
+    font-size: 1.1rem; transition: 0.2s; border-radius: 8px; padding: 5px;
+}
+.btn-action-card:hover { background: rgba(255,255,255,0.1); color: white; }
+.btn-delete:hover { background: rgba(255, 50, 50, 0.2); color: #ff6b6b; }
+
+/* Modal Avanzado */
+.modal-content-dark { background: #0d1117; border: 1px solid rgba(255,255,255,0.1); color: white; }
+.student-list-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); transition: 0.2s;
+}
+.student-list-item:hover { background: rgba(255,255,255,0.03); }
+.btn-revoke {
+    padding: 2px 10px; font-size: 0.7rem; border-radius: 15px;
+    background: rgba(255,0,0,0.1); color: #ff6b6b; border: 1px solid #ff6b6b;
+}
+.btn-revoke:hover { background: #ff6b6b; color: white; }
+/* =============================================================
+   GESTOR DE INSIGNIAS: NIVEL DIOS (ESTILOS)
+   ============================================================= */
+
+/* 1. BARRA DE ESTADÍSTICAS */
+.stats-bar {
+    display: grid; 
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
+    gap: 20px;
+    margin-bottom: 30px;
+}
+.stat-card {
+    background: rgba(23, 27, 33, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-left: 4px solid #ffd700;
+    border-radius: 15px;
+    padding: 20px;
+    display: flex; align-items: center; gap: 20px;
+    backdrop-filter: blur(10px);
+    transition: transform 0.3s ease;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+.stat-card:hover { transform: translateY(-5px); border-color: #ffd700; }
+.stat-icon {
+    width: 60px; height: 60px;
+    background: rgba(255, 215, 0, 0.1);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.8rem; color: #ffd700;
+}
+
+/* 2. TARJETA DE INSIGNIA (ITEM LEGENDARIO) */
+.insignia-card {
+    background: linear-gradient(145deg, rgba(20, 25, 35, 0.95) 0%, rgba(10, 12, 16, 0.95) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    height: 100%;
+    display: flex; flex-direction: column; align-items: center;
+}
+
+/* Efecto de escaneo al pasar el mouse */
+.insignia-card::after {
+    content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+    background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.05), transparent);
+    transform: rotate(45deg); transition: 0.5s; opacity: 0; pointer-events: none;
+}
+.insignia-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+    border-color: rgba(255, 215, 0, 0.5);
+}
+.insignia-card:hover::after { opacity: 1; transform: rotate(45deg) translateY(200px); }
+
+/* Imagen Flotante */
+.insignia-img-wrapper {
+    width: 110px; height: 110px;
+    margin-bottom: 20px;
+    position: relative;
+    transition: 0.5s;
+    filter: drop-shadow(0 0 15px rgba(0,0,0,0.5));
+}
+.insignia-card:hover .insignia-img-wrapper { transform: scale(1.15) rotate(5deg); filter: drop-shadow(0 0 25px rgba(255,215,0,0.4)); }
+.insignia-img { width: 100%; height: 100%; object-fit: contain; }
+
+/* Contador de Posesión */
+.count-badge {
+    position: absolute; top: 15px; right: 15px;
+    background: rgba(255,255,255,0.05);
+    padding: 5px 12px; border-radius: 20px;
+    font-size: 0.75rem; font-weight: 800; color: #888;
+    border: 1px solid rgba(255,255,255,0.1);
+    transition: 0.3s;
+}
+.insignia-card:hover .count-badge { background: #ffd700; color: #000; border-color: #ffd700; box-shadow: 0 0 15px #ffd700; }
+
+/* Título y Texto */
+.badge-name {
+    font-family: 'Outfit', sans-serif; text-transform: uppercase; letter-spacing: 1px;
+    background: linear-gradient(to right, #fff, #aaa); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+
+/* 3. BOTONES DE ACCIÓN (PANEL INFERIOR) */
+.card-actions {
+    display: flex; gap: 8px; width: 100%; margin-top: auto; padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+}
+.btn-action-card {
+    flex: 1; border: none; background: rgba(255,255,255,0.05); color: #8b949e;
+    font-size: 1.1rem; transition: 0.3s; border-radius: 10px; padding: 8px;
+    cursor: pointer;
+}
+.btn-action-card:hover { transform: translateY(-3px); color: white; }
+
+.btn-manage:hover { background: rgba(0, 243, 255, 0.2); color: #00f3ff; box-shadow: 0 0 15px rgba(0, 243, 255, 0.2); }
+.btn-edit:hover { background: rgba(255, 215, 0, 0.2); color: #ffd700; box-shadow: 0 0 15px rgba(255, 215, 0, 0.2); }
+.btn-delete:hover { background: rgba(255, 50, 80, 0.2); color: #ff3250; box-shadow: 0 0 15px rgba(255, 50, 80, 0.2); }
+
+/* 4. MODALES OSCUROS */
+.modal-content-dark {
+    background: #0d1117; border: 1px solid rgba(255,255,255,0.2);
+    color: white; border-radius: 20px; box-shadow: 0 0 50px rgba(0,0,0,0.8);
+}
+.list-group-item-dark-custom {
+    background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);
+    color: white; margin-bottom: 5px; border-radius: 8px !important;
+}
+.btn-revoke {
+    padding: 2px 10px; font-size: 0.7rem; border-radius: 15px; font-weight: 800;
+    background: rgba(255, 50, 80, 0.1); color: #ff3250; border: 1px solid #ff3250; transition: 0.3s;
+}
+.btn-revoke:hover { background: #ff3250; color: white; box-shadow: 0 0 10px #ff3250; }

@@ -1,0 +1,14 @@
+Usuario alumno:
+usuario: jose123
+contraseña: 1234
+
+Usuario docente:
+usuario: william1013
+contraseña: M_edina9735
+
+Modelo Ollama usado:
+gemma2:9b
+
+Observaciones:
+- Módulos operativos: Todos los módulos funcionan actualmente al 100%.
+- El módulo más importante a conservar primero es la gestión de bots de alumnos y su conexión con el modelo Gemma2:9b. pero necesito que me entregues todo ya construido y con todos los módulos funcionando

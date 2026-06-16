@@ -1,0 +1,16 @@
+
+<IfModule mod_mime.c>
+    # Permitir archivos JSON y BIN (Pesos del modelo)
+    AddType application/json .json
+    AddType application/octet-stream .bin
+</IfModule>
+
+<IfModule mod_headers.c>
+    # Permitir acceso desde cualquier origen (Evita errores CORS locales)
+    Header set Access-Control-Allow-Origin "*"
+</IfModule>
+
+# Desactivar cache para que no guarde errores viejos
+<IfModule mod_expires.c>
+    ExpiresActive Off
+</IfModule>

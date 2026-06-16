@@ -1,0 +1,139 @@
+/* =========================================
+   ESTILOS DE EVALUACIÓN - MODO PRO
+   ========================================= */
+
+/* 1. Layout Principal */
+body {
+    background-color: #0d1117; /* Fondo base oscuro */
+    color: #c9d1d9;
+    font-family: 'Outfit', sans-serif;
+}
+
+/* El Wrapper empuja el contenido para respetar el Sidebar de 260px */
+.main-content-wrapper {
+    margin-left: 260px;
+    padding: 2rem 3rem;
+    min-height: 100vh;
+    background-image: radial-gradient(circle at top right, rgba(33, 38, 45, 0.5) 0%, transparent 40%);
+}
+
+/* 2. Tarjetas de Examen (High Performance UI) */
+.exam-card {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 12px;
+    transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
+    overflow: hidden;
+}
+
+.exam-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.4);
+    border-color: #58a6ff; /* Azul GitHub/Tech al hover */
+}
+
+/* Header de la tarjeta */
+.exam-card-header {
+    background: rgba(255, 255, 255, 0.02);
+    border-bottom: 1px solid #30363d;
+    padding: 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+/* Cuerpo de la tarjeta */
+.exam-card-body {
+    padding: 1.25rem;
+}
+
+/* Badges Personalizados */
+.badge-nivel {
+    font-size: 0.7rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 800;
+    padding: 0.35em 0.8em;
+}
+
+/* 3. Botones y Acciones */
+.btn-action-primary {
+    background: #238636; /* Verde GitHub */
+    color: white;
+    border: 1px solid rgba(255,255,255,0.1);
+    font-weight: 600;
+    transition: all 0.2s;
+}
+.btn-action-primary:hover {
+    background: #2ea043;
+    color: white;
+    transform: scale(1.02);
+}
+
+.btn-manage {
+    background: #1f6feb; /* Azul Pro */
+    color: white;
+    border: none;
+    font-weight: 700;
+    width: 100%;
+    text-align: left;
+    padding: 10px 15px;
+    border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background 0.2s;
+}
+.btn-manage:hover {
+    background: #388bfd;
+    color: white;
+}
+
+/* 4. Modales Profesionales */
+.modal-content-pro {
+    background-color: #0d1117;
+    border: 1px solid #30363d;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+    color: #e6edf3;
+}
+
+.modal-header-pro {
+    border-bottom: 1px solid #21262d;
+    padding: 1.5rem;
+}
+
+.form-control-pro {
+    background-color: #010409;
+    border: 1px solid #30363d;
+    color: #e6edf3;
+    padding: 0.75rem;
+    border-radius: 6px;
+}
+.form-control-pro:focus {
+    background-color: #010409;
+    border-color: #58a6ff;
+    color: white;
+    box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.2);
+}
+
+/* 5. Lista de Preguntas dentro del Modal */
+.question-item {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    padding: 10px 15px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background 0.2s;
+}
+.question-item:hover {
+    background: #21262d;
+    border-color: #8b949e;
+}
+
+/* Utilitarios */
+.text-accent { color: #58a6ff; }
+.text-warning-soft { color: #d29922; }

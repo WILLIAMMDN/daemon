@@ -1,0 +1,820 @@
+/* VARIABLES GLOBALES */
+:root {
+    --gemini-blue: #4285f4; --gemini-purple: #9b72cb; --gemini-dark: #05070a;
+    --glass: rgba(10, 12, 16, 0.92); --glass-border: rgba(255, 255, 255, 0.15);
+    --gold: #ffd700; --silver: #c0c0c0; --bronze: #cd7f32;
+}
+
+body { background-color: var(--gemini-dark); color: #ffffff; font-family: 'Outfit', sans-serif; margin: 0; overflow-x: hidden; scroll-behavior: smooth; }
+
+/* FONDOS */
+.hero-background { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background: linear-gradient(rgba(5, 7, 10, 0.7), rgba(5, 7, 10, 0.98)), url('../img/fondo_uripa.jpg'); background-size: cover; background-position: center; }
+.aurora-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle at 15% 20%, rgba(66, 133, 244, 0.25) 0%, transparent 50%), radial-gradient(circle at 85% 80%, rgba(155, 114, 203, 0.15) 0%, transparent 40%); filter: blur(100px); opacity: 0.7; }
+
+/* NAVEGACIÓN */
+.navbar-uripa { position: fixed; top: 0; left: 0; width: 100%; z-index: 1001; background: var(--glass); backdrop-filter: blur(25px); border-bottom: 1px solid var(--glass-border); height: 80px; display: flex; align-items: center; }
+.sidebar-navigation { position: fixed; top: 80px; left: 0; width: 100px; height: calc(100vh - 80px); background: var(--glass); backdrop-filter: blur(25px); border-right: 1px solid var(--glass-border); padding-top: 40px; z-index: 1000; display: flex; flex-direction: column; align-items: center; gap: 35px; }
+.sidebar-link { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: #888; transition: 0.4s; font-size: 0.75rem; font-weight: 600; }
+.sidebar-link i { font-size: 1.8rem; margin-bottom: 8px; color: #fff; }
+.sidebar-link:hover, .sidebar-link.active { color: var(--gemini-blue); }
+
+.main-container { margin-left: 100px; padding-top: 80px; }
+
+/* MÓDULOS */
+.module-card { background: rgba(255, 255, 255, 0.04); border: 1px solid var(--glass-border); border-radius: 28px; padding: 30px; transition: 0.5s; backdrop-filter: blur(20px); height: 100%; }
+.module-card:hover { border-color: var(--gemini-blue); transform: translateY(-12px); box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
+.module-card h5 { color: var(--gemini-blue); font-weight: 800; font-size: 1.1rem; margin-bottom: 18px; border-left: 4px solid var(--gemini-blue); padding-left: 15px; text-transform: uppercase; }
+.module-card ul { list-style: none; padding: 0; font-size: 0.88rem; color: #ced4da; line-height: 1.8; }
+.module-card li::before { content: "✦"; color: var(--gemini-purple); margin-right: 10px; }
+
+/* RANKING */
+.podium-card { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border); border-radius: 24px; padding: 30px; text-align: center; }
+.highlight-gold { border: 1px solid var(--gold); box-shadow: 0 0 30px rgba(255, 215, 0, 0.15); transform: scale(1.05); }
+.table-ranking { width: 100%; background: var(--glass); border-radius: 20px; border: 1px solid var(--glass-border); overflow: hidden; margin-top: 30px; }
+.table-ranking td { padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.w-coin { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; background: var(--gold); border-radius: 50%; color: #000; font-weight: 900; font-size: 14px; margin-right: 10px; }
+
+/* EQUIPO */
+.team-card { background: #0a0f1a; border: 2px solid var(--gemini-blue); border-radius: 35px; padding: 45px 35px; text-align: center; height: 100%; transition: 0.4s; }
+.team-photo { width: 130px; height: 130px; border-radius: 50%; border: 4px solid var(--gemini-blue); margin-bottom: 25px; object-fit: cover; }
+.team-name { color: #ffffff; font-weight: 800; font-size: 1.6rem; }
+
+/* FOOTER PROFESIONAL: BARRA SÓLIDA */
+.main-footer {
+    background: #05070a !important; /* Negro sólido absoluto */
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    width: 100%;
+    margin: 0 !important;
+    padding: 0;
+    border-radius: 0 !important; /* Elimina redondez definitivamente */
+    position: relative;
+    z-index: 20;
+}
+
+.footer-column-title { color: #ffffff; font-weight: 800; font-size: 1rem; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 1.5px; }
+.footer-links a { color: var(--gemini-blue) !important; text-decoration: none; font-size: 0.9rem; transition: 0.3s ease; display: inline-block; margin-bottom: 10px; }
+.footer-links a:hover { color: #ffffff !important; transform: translateX(5px); }
+.cert-verify-block { background: rgba(255, 255, 255, 0.03); padding: 25px; border-radius: 15px; border: 1px solid rgba(255, 255, 255, 0.08); }
+
+@media (max-width: 768px) { .sidebar-navigation { display: none; } .main-container { margin-left: 0; } }
+
+/* PESTAÑAS DE LIGAS (KIDS VS TEENS) */
+.league-tabs {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 50px;
+    padding: 5px;
+    display: inline-flex;
+    position: relative;
+    border: 1px solid var(--glass-border);
+}
+
+.nav-pills .nav-link {
+    color: #888;
+    font-weight: 800;
+    border-radius: 40px;
+    padding: 10px 30px;
+    transition: 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.nav-pills .nav-link.active {
+    background: var(--gemini-blue);
+    color: white;
+    box-shadow: 0 0 15px rgba(66, 133, 244, 0.4);
+}
+
+.nav-pills .nav-link:hover:not(.active) {
+    color: white;
+    background: rgba(255,255,255,0.1);
+}
+/* =========================================
+   ESTILOS DE LA SECCIÓN DE PREMIOS (PROMO)
+   ========================================= */
+
+/* Efecto de luz de fondo */
+.glow-spot {
+    position: absolute;
+    top: 20%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(255, 215, 0, 0.15) 0%, transparent 70%);
+    z-index: 0;
+    filter: blur(80px);
+}
+
+/* 1. Banner Principal */
+/* BANNER DE PROMOCIÓN (REGALO DE TOKENS) */
+.promo-banner {
+    /* AQUÍ ESTÁ EL CAMBIO: Imagen de fondo con capa oscura */
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), /* Capa oscura al 70% */
+                url('../img/fondo_banner_tokens.jpg'); /* Tu imagen de fondo */
+    
+    background-size: cover;      /* La imagen cubre todo el cuadro */
+    background-position: center; /* La imagen se centra */
+    background-repeat: no-repeat;
+    
+    /* El resto de estilos se mantienen para la forma y bordes */
+    border: 1px solid rgba(255, 215, 0, 0.3); /* Borde dorado sutil */
+    border-radius: 30px;
+    padding: 60px 40px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    text-align: center;
+}
+
+
+.badge-promo {
+    background: #ff5252;
+    color: white;
+    font-weight: 800;
+    padding: 8px 20px;
+    border-radius: 50px;
+    display: inline-block;
+    margin-bottom: 20px;
+    box-shadow: 0 0 20px rgba(255, 82, 82, 0.6);
+    animation: bounce 2s infinite;
+}
+
+/* Botón de acción pulsante */
+.btn-cta-gold {
+    background: linear-gradient(45deg, #ffd700, #ffca28);
+    color: #000;
+    font-weight: 900;
+    padding: 15px 40px;
+    border-radius: 50px;
+    border: none;
+    font-size: 1.1rem;
+    transition: 0.3s;
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.4);
+    animation: pulse-gold 2s infinite; /* Animación de latido */
+}
+
+.btn-cta-gold:hover {
+    transform: scale(1.05);
+    background: #fff;
+    color: #000;
+    box-shadow: 0 0 50px rgba(255, 255, 255, 0.6);
+}
+
+/* 2. Tarjetas de Premios */
+.prize-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 25px;
+    padding: 40px 20px;
+    text-align: center;
+    transition: 0.4s;
+    position: relative;
+    height: 100%;
+}
+
+.prize-card:hover {
+    transform: translateY(-10px);
+    border-color: var(--gemini-blue);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.prize-card.highlight {
+    border: 1px solid var(--gold);
+    background: linear-gradient(180deg, rgba(255, 215, 0, 0.05), rgba(0,0,0,0));
+}
+
+.prize-icon {
+    font-size: 3rem;
+    color: var(--gemini-blue);
+    margin-bottom: 20px;
+    text-shadow: 0 0 20px rgba(66, 133, 244, 0.5);
+}
+
+.prize-card.highlight .prize-icon {
+    color: var(--gold);
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+}
+
+.token-price {
+    background: rgba(0, 0, 0, 0.5);
+    padding: 8px 20px;
+    border-radius: 20px;
+    display: inline-block;
+    margin-top: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* 3. Lista de Misiones */
+.missions-box {
+    background: rgba(10, 12, 16, 0.8);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.mission-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    color: #ccc;
+}
+
+.mission-item:last-child { border-bottom: none; }
+
+/* Animaciones */
+@keyframes pulse-gold {
+    0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7); }
+    70% { box-shadow: 0 0 0 20px rgba(255, 215, 0, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+/* =========================================
+   CORRECCIÓN FINAL: IMÁGENES DE PRODUCTOS PERFECTAS
+   ========================================= */
+
+.prize-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 25px;
+    padding: 20px;
+    text-align: center;
+    transition: 0.4s;
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* El Marco de la Foto */
+.prize-img-container {
+    width: 100%;
+    height: 220px; /* Un poco más alto para que el producto respire */
+    overflow: hidden;
+    border-radius: 15px;
+    margin-bottom: 15px;
+    border: 1px solid rgba(255,255,255,0.05);
+    
+    /* Fondo oscuro suave para que resalte el producto */
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.3) 100%);
+    
+    display: flex;
+    align-items: center; /* Centra verticalmente */
+    justify-content: center; /* Centra horizontalmente */
+}
+
+/* La Foto del Producto */
+.prize-img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;  /* Deja que el ancho sea natural */
+    height: auto; /* Deja que el alto sea natural */
+    
+    /* MAGIA: Esto asegura que se vea TODO el producto sin recortes */
+    object-fit: contain; 
+    
+    padding: 15px; /* Espacio para que no toque los bordes del marco */
+    transition: transform 0.5s ease;
+    filter: drop-shadow(0 10px 10px rgba(0,0,0,0.5)); /* Sombra 3D al objeto */
+}
+
+/* Efecto Flotante al pasar el mouse */
+.prize-card:hover .prize-img {
+    transform: scale(1.1) translateY(-5px);
+}
+
+.prize-card.highlight {
+    border: 1px solid var(--gold);
+    background: linear-gradient(180deg, rgba(255, 215, 0, 0.05), rgba(0,0,0,0));
+}
+
+.token-price {
+    background: rgba(0, 0, 0, 0.6);
+    padding: 8px 15px;
+    border-radius: 50px;
+    display: inline-block;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    margin-top: auto;
+}
+/* =========================================
+   NUEVOS BOTONES DE NIVEL (HERO)
+   ========================================= */
+
+/* Contenedor para que estén uno al lado del otro */
+.hero-buttons-container {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 30px;
+    flex-wrap: wrap; /* Para que en celular bajen si no caben */
+}
+
+/* BOTÓN KIDS: Divertido, redondo y colorido */
+.btn-kids-hero {
+    background: linear-gradient(45deg, #00b4d8, #0077b6);
+    border: none;
+    color: white;
+    padding: 15px 40px;
+    border-radius: 50px; /* Muy redondo */
+    font-weight: 800;
+    font-size: 1.1rem;
+    box-shadow: 0 5px 15px rgba(0, 180, 216, 0.4);
+    transition: 0.3s;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+}
+
+.btn-kids-hero:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 180, 216, 0.6);
+    color: white;
+    background: linear-gradient(45deg, #0077b6, #00b4d8);
+}
+
+/* BOTÓN TEENS: Hacker, serio, bordes sutiles */
+.btn-teens-hero {
+    background: rgba(13, 17, 23, 0.8);
+    border: 1px solid var(--gemini-blue);
+    color: var(--gemini-blue);
+    padding: 15px 40px;
+    border-radius: 8px; /* Borde más recto */
+    font-weight: 600;
+    font-size: 1.1rem;
+    font-family: 'JetBrains Mono', monospace; /* Fuente de código */
+    transition: 0.3s;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    backdrop-filter: blur(5px);
+}
+
+.btn-teens-hero:hover {
+    background: var(--gemini-blue);
+    color: #000; /* Letras negras al pasar el mouse */
+    box-shadow: 0 0 20px rgba(66, 133, 244, 0.5);
+}
+
+/* BOTÓN DOCENTE (NAVBAR): Visible y destacado */
+.btn-docente-nav {
+    background: rgba(255, 215, 0, 0.1);
+    border: 1px solid #ffd700;
+    color: #ffd700;
+    font-weight: 700;
+    padding: 8px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: 0.3s;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+}
+
+.btn-docente-nav:hover {
+    background: #ffd700;
+    color: #000;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+}
+/* BOTONES DEL NAVBAR (ARRIBA A LA DERECHA) */
+
+/* --- BOTONES NEÓN UNIFICADOS (DOCENTE, KIDS, TEENS) --- */
+
+/* Base común para que todos tengan el mismo tamaño y forma */
+.btn-neon-base {
+    font-weight: 900;
+    border: 2px solid #fff;     /* Borde blanco sólido igual al docente */
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    padding: 8px 20px;
+    transition: 0.3s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 1. DOCENTE (Amarillo - Ya lo tienes, solo aseguramos consistencia) */
+.btn-docente-neon {
+    background-color: #ffd700;
+    color: #000;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+}
+.btn-docente-neon:hover {
+    background-color: #fff;
+    color: #000;
+    box-shadow: 0 0 25px rgba(255, 215, 0, 0.9);
+    transform: scale(1.05);
+}
+
+/* 2. REGISTRO KIDS (Cyan Eléctrico) */
+.btn-kids-neon {
+    background-color: #00bceb; /* Azul tipo "Cisco" o "Cartoon" */
+    color: #fff;
+    box-shadow: 0 0 15px rgba(0, 188, 235, 0.6);
+}
+.btn-kids-neon:hover {
+    background-color: #fff; /* Al pasar el mouse se vuelve blanco */
+    color: #00bceb;         /* Letras azules */
+    box-shadow: 0 0 25px rgba(0, 188, 235, 0.9);
+    transform: scale(1.05);
+}
+
+/* 3. REGISTRO TEENS (Morado Tech) */
+.btn-teens-neon {
+    background-color: #7209b7; /* Morado intenso */
+    color: #fff;
+    box-shadow: 0 0 15px rgba(114, 9, 183, 0.6);
+}
+.btn-teens-neon:hover {
+    background-color: #fff; /* Al pasar el mouse se vuelve blanco */
+    color: #7209b7;         /* Letras moradas */
+    box-shadow: 0 0 25px rgba(114, 9, 183, 0.9);
+    transform: scale(1.05);
+}
+/* --- TÍTULO HÉROE (URIPA DIGITAL) --- */
+
+.hero-title-container {
+    /* Ajuste para que se vea bien en móviles y PC */
+    font-size: clamp(3.8rem, 11vw, 7rem); 
+    font-weight: 900; /* Extra grueso */
+    letter-spacing: -3px; /* Letras más juntas para estilo moderno */
+    line-height: 1.1;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+}
+
+/* Estilo para "URIPA" (Blanco Puro + Sombra Suave) */
+.text-uripa {
+    color: #ffffff;
+    text-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /* Sombra para separarlo del fondo */
+    position: relative;
+    z-index: 1;
+}
+
+/* Estilo para "DIGITAL" (El protagonista) */
+.text-digital {
+    /* Degradado Futurista: De Azul Google a Morado Ciberpunk */
+    background: linear-gradient(135deg, #4285f4 0%, #00d2ff 50%, #9b72cb 100%);
+    
+    /* Esto recorta el fondo con la forma del texto */
+    -webkit-background-clip: text;
+    background-clip: text;
+    
+    /* Hace el texto transparente para ver el degradado */
+    -webkit-text-fill-color: transparent; 
+    color: transparent;
+    
+    /* Sombra de luz (Glow) que coincide con el color */
+    filter: drop-shadow(0 0 20px rgba(66, 133, 244, 0.4));
+    
+    position: relative;
+    z-index: 1;
+}
+
+/* Subtítulo mejorado para lectura */
+.hero-subtitle {
+    font-size: clamp(1.1rem, 3vw, 1.5rem);
+    font-weight: 600;
+    color: #e0e6ed; /* Blanco grisáceo para no cansar la vista */
+    text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+    max-width: 800px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+/* --- RANKING "URIPA ELITE" (DISEÑO OSCURO PREMIUM) --- */
+
+/* 1. FONDO DE CRISTAL OSCURO (INTEGRACIÓN) */
+.ranking-section-bg {
+    /* Degradado oscuro que deja ver la catedral de fondo pero oscurecida */
+    background: linear-gradient(180deg, rgba(8, 12, 20, 0.9) 0%, rgba(8, 12, 20, 0.7) 100%);
+    backdrop-filter: blur(12px); /* Efecto vidrio ahumado */
+    border-radius: 30px;
+    padding: 60px 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 40px 80px rgba(0,0,0,0.6);
+    max-width: 1000px;
+    margin: 0 auto;
+    position: relative;
+    overflow: hidden;
+}
+
+/* 2. IDENTIDAD: LA FRANJA URIPA (Detalle clave) */
+/* Una línea sutil con los colores del escudo (Verde, Amarillo, Cobre) */
+.uripa-strip {
+    height: 4px;
+    width: 150px;
+    margin: 20px auto 40px auto;
+    background: linear-gradient(to right, #2ecc71, #f1c40f, #d35400);
+    border-radius: 2px;
+    box-shadow: 0 0 10px rgba(241, 196, 15, 0.5);
+}
+
+/* 3. TARJETAS "MONOLITO" (EN LUGAR DE CAJAS BLANCAS) */
+.podium-card {
+    /* Fondo oscuro semitransparente */
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 20px;
+    padding: 30px 20px;
+    text-align: center;
+    position: relative;
+    transition: 0.4s ease;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    /* Borde brillante solo abajo para efecto "luz de suelo" */
+    border-bottom: 4px solid transparent; 
+}
+
+.podium-card:hover {
+    transform: translateY(-10px);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+/* AVATAR CON ANILLO DE ENERGÍA */
+.avatar-rank-container {
+    position: relative;
+    width: 90px;
+    height: 90px;
+    margin: 0 auto 20px auto;
+}
+
+.avatar-rank {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid rgba(255,255,255,0.1);
+    position: relative;
+    z-index: 2;
+}
+
+/* EFECTOS DE COLOR POR RANGO */
+
+/* 🥇 ORO (INTI) */
+.card-gold {
+    background: linear-gradient(180deg, rgba(255, 215, 0, 0.05) 0%, rgba(255, 215, 0, 0.0) 100%);
+    border-color: rgba(255, 215, 0, 0.3);
+    border-bottom-color: #ffd700; /* Borde inferior brillante */
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.1);
+    transform: scale(1.05); /* Ligeramente más grande */
+    z-index: 10;
+}
+.card-gold .rank-pos { color: #ffd700; text-shadow: 0 0 10px rgba(255,215,0,0.5); }
+.card-gold .avatar-rank { border-color: #ffd700; box-shadow: 0 0 20px rgba(255, 215, 0, 0.4); }
+
+/* 🥈 PLATA (KILLA) */
+.card-silver {
+    border-bottom-color: #e0e0e0;
+    margin-top: 30px; /* Escalón visual */
+}
+.card-silver .rank-pos { color: #e0e0e0; }
+.card-silver .avatar-rank { border-color: #e0e0e0; }
+
+/* 🥉 BRONCE (ANTA) */
+.card-bronze {
+    border-bottom-color: #e67e22; /* Color cobre */
+    margin-top: 30px; /* Escalón visual */
+}
+.card-bronze .rank-pos { color: #e67e22; }
+.card-bronze .avatar-rank { border-color: #e67e22; }
+
+
+/* TEXTOS */
+.rank-pos { font-size: 1.5rem; font-weight: 900; margin-bottom: 10px; display: block; }
+.rank-name { color: #fff; font-weight: 700; font-size: 1.1rem; margin-bottom: 5px; }
+.rank-tokens { 
+    font-size: 0.85rem; 
+    color: rgba(255,255,255,0.7); 
+    background: rgba(0,0,0,0.3); 
+    padding: 5px 15px; 
+    border-radius: 50px; 
+    display: inline-block;
+}
+
+/* TABLA INFERIOR TECH */
+.table-ranking { width: 100%; margin-top: 40px; border-collapse: separate; border-spacing: 0 5px; }
+.table-ranking tr { 
+    background: rgba(255,255,255,0.03); 
+    transition: 0.3s;
+}
+.table-ranking tr:hover { background: rgba(255,255,255,0.1); transform: scale(1.01); }
+.table-ranking td { padding: 15px; color: white; border: none; vertical-align: middle; }
+.table-ranking td:first-child { border-top-left-radius: 10px; border-bottom-left-radius: 10px; }
+.table-ranking td:last-child { border-top-right-radius: 10px; border-bottom-right-radius: 10px; }
+/* --- ESTILO DE LA MONEDA TOKENS-IA --- */
+
+/* El contenedor del precio (Píldora) */
+.token-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px; /* Espacio entre el logo W y el número */
+    padding: 6px 15px;
+    border-radius: 50px;
+    background: rgba(0,0,0,0.4); /* Fondo oscuro para contraste */
+    border: 1px solid rgba(255,255,255,0.1);
+    font-weight: 800;
+    font-size: 0.9rem;
+    color: #fff;
+    transition: 0.3s;
+}
+
+/* El Icono "W" pequeño (Tu logo como moneda) */
+.w-coin-icon {
+    width: 20px; 
+    height: 20px;
+    filter: drop-shadow(0 0 5px rgba(66, 133, 244, 0.8)); /* Brillo azulado */
+}
+
+/* Colores específicos para el podio */
+.card-gold .token-badge { 
+    background: rgba(255, 215, 0, 0.15); 
+    border-color: #ffd700; 
+    color: #ffd700; 
+}
+.card-gold .w-coin-icon { filter: drop-shadow(0 0 8px #ffd700); } /* La moneda brilla dorada en el puesto #1 */
+
+.card-silver .token-badge { border-color: #e0e0e0; color: #e0e0e0; }
+.card-bronze .token-badge { border-color: #e67e22; color: #ffab73; }
+
+/* En la tabla de abajo, el texto TokensIA resalta en cyan */
+.text-token-cyan {
+    color: #00d2ff;
+    text-shadow: 0 0 10px rgba(0, 210, 255, 0.4);
+}
+/* --- MONEDA OFICIAL "TOKEN-IA" (DISEÑO ÚNICO) --- */
+
+/* --- CORRECCIÓN DE LA MONEDA --- */
+
+.uripa-coin {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    /* Fondo metálico oscuro */
+    background: radial-gradient(circle at 30% 30%, #4a4a4a, #1a1a1a);
+    /* Borde dorado siempre */
+    border: 2px solid #FFD700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+    flex-shrink: 0; /* Evita que se aplaste */
+}
+
+/* ESTO ARREGLA EL PROBLEMA: Forzamos la W a ser blanca */
+.uripa-coin svg {
+    width: 16px;
+    height: 16px;
+    display: block;
+}
+
+.uripa-coin svg path {
+    fill: #ffffff !important; /* ¡BLANCO PURO IMPORTANTE! */
+    filter: drop-shadow(0 0 2px rgba(255, 215, 0, 0.8)); /* Resplandor dorado */
+}
+
+/* El brillo del metal ("Reflejo") */
+.uripa-coin::after {
+    content: '';
+    position: absolute;
+    top: 2px; left: 5px;
+    width: 10px; height: 5px;
+    border-radius: 50%;
+    background: rgba(255, 215, 0, 0.4); /* Reflejo dorado */
+    filter: blur(1px);
+}
+
+/* El Logo W dentro de la moneda */
+.uripa-coin svg {
+    width: 16px;
+    height: 16px;
+    /* Le damos un brillo dorado sutil a la W también */
+    filter: drop-shadow(0 0 2px rgba(255, 215, 0, 0.3));
+}
+
+/* IMPORTANTE: ESTO ASEGURA QUE LA MONEDA NO CAMBIE DE COLOR */
+/* Aunque la tarjeta sea de plata o bronce, la moneda se mantiene ORO */
+.card-silver .uripa-coin,
+.card-bronze .uripa-coin,
+.table-ranking .uripa-coin {
+    border-color: #FFD700 !important;
+    background: radial-gradient(circle at 30% 30%, #3a3a3a, #1a1a1a) !important;
+}
+
+/* ETIQUETA DE PRECIO (La píldora donde va la moneda) */
+.token-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 12px;
+    border-radius: 50px;
+    background: rgba(0, 0, 0, 0.6); /* Fondo negro semitransparente */
+    border: 1px solid rgba(255, 215, 0, 0.3); /* Borde dorado sutil */
+    color: #FFD700; /* Texto dorado */
+    font-weight: 800;
+    font-size: 0.9rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+/* --- ESTILOS PARA LOGIN Y REGISTRO (AUTH) --- */
+
+.auth-body {
+    background: url('../img/fondo_uripa.jpg') no-repeat center center fixed; /* Usa tu mejor foto de fondo */
+    background-size: cover;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Outfit', sans-serif;
+}
+
+/* La tarjeta de cristal */
+.auth-card {
+    background: rgba(13, 17, 23, 0.75); /* Oscuro transparente */
+    backdrop-filter: blur(15px); /* Efecto borroso */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 25px;
+    padding: 40px;
+    width: 100%;
+    max-width: 450px;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Línea de color superior (Identidad) */
+.auth-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #4285f4, #9b72cb); /* Colores Uripa Digital */
+}
+
+/* Inputs modernos */
+.form-floating input {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    border-radius: 12px;
+}
+.form-floating input:focus {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: #4285f4;
+    color: white;
+    box-shadow: 0 0 10px rgba(66, 133, 244, 0.3);
+}
+.form-floating label { color: rgba(255, 255, 255, 0.6); }
+
+/* Títulos */
+.auth-title { font-weight: 800; color: white; letter-spacing: -1px; }
+.auth-subtitle { color: rgba(255,255,255,0.6); font-size: 0.9rem; margin-bottom: 30px; }
+
+/* Botón de acción principal */
+.btn-auth {
+    background: linear-gradient(135deg, #4285f4 0%, #9b72cb 100%);
+    border: none;
+    color: white;
+    font-weight: 700;
+    padding: 12px;
+    border-radius: 50px;
+    transition: 0.3s;
+    width: 100%;
+    margin-top: 20px;
+}
+.btn-auth:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(66, 133, 244, 0.4);
+}
+/* --- MENÚ DESPLEGABLE "ENTRAR" --- */
+
+.dropdown-menu-dark-custom {
+    background: rgba(15, 23, 42, 0.95); /* Fondo oscuro casi sólido */
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 15px;
+    padding: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    min-width: 200px;
+    margin-top: 15px !important; /* Separación del botón */
+}
+
+/* Opción Alumno (Azul) */
+.item-alumno:hover {
+    background: rgba(66, 133, 244, 0.15);
+    color: #4285f4 !important;
+    transform: translateX(5px);
+}
+
+/* Opción Docente (Dorado) */
+.item-docente:hover {
+    background: rgba(255, 215, 0, 0.15);
+    color: #ffd700 !important;
+    transform: translateX(5px);
+}
+
+/* Transiciones suaves */
+.dropdown-item {
+    transition: all 0.2s ease;
+    border-radius: 8px;
+    font-weight: 600;
+    margin-bottom: 2px;
+}

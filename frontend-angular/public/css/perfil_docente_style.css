@@ -1,0 +1,133 @@
+/* css/perfil_docente_style.css - DASHBOARD DE MANDO SUPREMO */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&family=Rajdhani:wght@600;700&display=swap');
+
+:root {
+    --admin-gold: #FFD700;
+    --admin-dark: #0b0e14;
+    --admin-panel: #161b22;
+    --admin-border: rgba(255, 255, 255, 0.1);
+    --admin-hover: rgba(255, 215, 0, 0.1);
+}
+
+body {
+    background-color: var(--admin-dark);
+    font-family: 'Outfit', sans-serif;
+    color: #c9d1d9;
+    overflow-x: hidden;
+}
+
+/* --- HEADER --- */
+.admin-header h1 {
+    font-family: 'Rajdhani', sans-serif; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 1px; color: white;
+}
+
+/* --- PANELES --- */
+.control-card {
+    background: var(--admin-panel);
+    border: 1px solid var(--admin-border);
+    border-radius: 16px; padding: 25px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    height: 100%; transition: 0.3s;
+    position: relative; overflow: hidden;
+}
+.control-card:hover { border-color: rgba(255, 255, 255, 0.2); }
+
+.card-title-gm {
+    font-family: 'Rajdhani'; font-weight: 700; text-transform: uppercase;
+    color: var(--admin-gold); display: flex; align-items: center; gap: 10px;
+    margin-bottom: 20px; border-bottom: 1px solid var(--admin-border); padding-bottom: 10px;
+}
+
+/* --- PREVISUALIZACIÓN EN TIEMPO REAL --- */
+.live-preview-box {
+    width: 100%; aspect-ratio: 16/9;
+    background-color: #000;
+    border-radius: 12px; border: 2px solid var(--admin-gold);
+    position: relative; overflow: hidden;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.15);
+}
+.preview-bg {
+    width: 100%; height: 100%; object-fit: cover;
+    filter: brightness(0.5); transition: 0.3s;
+}
+.preview-hero {
+    position: absolute; bottom: 0; right: 10%;
+    height: 90%; width: auto; object-fit: contain;
+    filter: drop-shadow(0 0 10px rgba(255,215,0,0.5));
+    transition: 0.3s;
+}
+.preview-overlay {
+    position: absolute; bottom: 10px; left: 15px;
+    font-family: 'Rajdhani'; color: white; text-shadow: 0 2px 4px black;
+}
+
+/* --- INPUTS --- */
+.input-gm {
+    background: #05070a; border: 1px solid var(--admin-border);
+    color: white; padding: 12px; border-radius: 8px; width: 100%;
+    font-size: 0.95rem; transition: 0.2s;
+}
+.input-gm:focus { outline: none; border-color: var(--admin-gold); box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.1); }
+.label-gm {
+    font-size: 0.75rem; text-transform: uppercase; font-weight: 700;
+    color: #8b949e; margin-bottom: 6px; display: block;
+}
+
+/* --- SELECTORES DE ASSETS (GRID) --- */
+.assets-scroll-container {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 10px;
+    max-height: 220px; overflow-y: auto; padding-right: 5px;
+    margin-bottom: 15px;
+}
+.asset-item {
+    border: 2px solid var(--admin-border); border-radius: 8px;
+    cursor: pointer; position: relative; overflow: hidden;
+    aspect-ratio: 1/1; background: #000; transition: 0.2s;
+}
+.asset-item:hover { transform: scale(1.05); border-color: white; }
+.asset-item img { width: 100%; height: 100%; object-fit: cover; }
+.asset-item.hero-type img { object-fit: contain; padding: 5px; }
+
+/* Selección Activa */
+.asset-radio:checked + .asset-item {
+    border-color: var(--admin-gold);
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+.asset-radio:checked + .asset-item::after {
+    content: '✔'; position: absolute; top: 0; right: 0;
+    background: var(--admin-gold); color: black;
+    font-size: 0.7rem; padding: 2px 5px;
+    border-bottom-left-radius: 5px; font-weight: bold;
+}
+
+/* --- BOTÓN DE SUBIDA (UPLOAD) --- */
+.btn-upload-custom {
+    background: rgba(255,255,255,0.05); border: 1px dashed rgba(255,255,255,0.3);
+    color: #8b949e; border-radius: 8px; padding: 10px;
+    text-align: center; cursor: pointer; transition: 0.2s; font-size: 0.8rem;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;
+}
+.btn-upload-custom:hover { background: rgba(255, 215, 0, 0.05); border-color: var(--admin-gold); color: var(--admin-gold); }
+
+/* --- ARMERÍA (BADGES) --- */
+.badge-select-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 8px; }
+.badge-option {
+    background: rgba(255,255,255,0.03); border: 1px solid var(--admin-border);
+    border-radius: 8px; padding: 8px; text-align: center; cursor: pointer;
+    transition: 0.2s; opacity: 0.5;
+}
+.badge-chk:checked + .badge-option {
+    opacity: 1; border-color: var(--admin-gold); background: rgba(255, 215, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+/* --- BOTÓN GUARDAR --- */
+.btn-save-master {
+    background: linear-gradient(135deg, var(--admin-gold), #ff9900);
+    border: none; color: black; font-weight: 800; font-family: 'Rajdhani';
+    text-transform: uppercase; letter-spacing: 2px;
+    padding: 15px; width: 100%; border-radius: 10px; font-size: 1.1rem;
+    transition: 0.3s; margin-top: 20px;
+}
+.btn-save-master:hover { box-shadow: 0 0 20px rgba(255, 215, 0, 0.4); transform: translateY(-2px); }

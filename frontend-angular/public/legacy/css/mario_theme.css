@@ -1,0 +1,363 @@
+/* css/mario_theme.css */
+
+/* --- 1. FUENTES DIVERTIDAS (Google Fonts) --- */
+@import url('https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Fredoka:wght@400;600;700&display=swap');
+
+:root {
+    --mario-red: #ff3333;
+    --mario-sky: #6b8cff;
+    --coin-yellow: #ffcc00;
+    --coin-shadow: #d4a000;
+    --pipe-green: #00aa00;
+    --pipe-light: #55ff55;
+    --brick-brown: #c25e00;
+    --text-dark: #333333;
+    --paper-cream: #fff9e6;
+}
+
+/* --- 2. FONDO Y ESCENARIO --- */
+body {
+    background-color: var(--mario-sky);
+    /* Patrón sutil de cielo */
+    background-image: 
+        radial-gradient(rgba(255,255,255,0.2) 15%, transparent 16%),
+        radial-gradient(rgba(255,255,255,0.2) 15%, transparent 16%);
+    background-size: 60px 60px;
+    background-position: 0 0, 30px 30px;
+    font-family: 'Fredoka', sans-serif;
+    color: var(--text-dark);
+    overflow-x: hidden;
+    min-height: 100vh;
+    padding-bottom: 60px; /* Espacio para el suelo */
+}
+
+/* Nubes Decorativas Animadas */
+body::before {
+    content: '';
+    position: fixed;
+    top: 10%; left: -200px;
+    width: 120px; height: 50px;
+    background: rgba(255,255,255,0.6);
+    border-radius: 50px;
+    box-shadow: 
+        60px -20px 0 10px rgba(255,255,255,0.6), 
+        120px 10px 0 5px rgba(255,255,255,0.6);
+    animation: moveClouds 25s linear infinite;
+    z-index: -1;
+    opacity: 0.8;
+}
+
+/* Segunda capa de nubes */
+body::after {
+    content: '';
+    position: fixed;
+    top: 40%; left: -300px;
+    width: 90px; height: 40px;
+    background: rgba(255,255,255,0.4);
+    border-radius: 50px;
+    box-shadow: 
+        50px -15px 0 8px rgba(255,255,255,0.4), 
+        90px 5px 0 4px rgba(255,255,255,0.4);
+    animation: moveClouds 35s linear infinite reverse; /* Se mueven al revés */
+    z-index: -1;
+}
+
+@keyframes moveClouds {
+    0% { transform: translateX(-200px); }
+    100% { transform: translateX(120vw); }
+}
+
+/* --- 3. ENCABEZADO TIPO LOGO --- */
+.hero-header {
+    text-align: center;
+    padding: 50px 0 30px 0;
+    position: relative;
+    z-index: 2;
+}
+
+.mario-title {
+    font-family: 'Luckiest Guy', cursive;
+    font-size: 5rem;
+    color: white;
+    letter-spacing: 3px;
+    /* Borde negro grueso para efecto cartoon */
+    -webkit-text-stroke: 2.5px black; 
+    text-shadow: 5px 5px 0px black;
+    transform: rotate(-3deg);
+    display: inline-block;
+    transition: 0.3s;
+}
+
+.mario-title:hover {
+    transform: rotate(3deg) scale(1.05);
+}
+
+.mario-subtitle {
+    display: block;
+    font-family: 'Luckiest Guy', cursive;
+    color: var(--coin-yellow);
+    font-size: 2.2rem;
+    text-shadow: 3px 3px 0 #000;
+    -webkit-text-stroke: 1.5px black;
+    margin-top: 10px;
+}
+
+/* --- 4. CONTENEDOR DEL MAPA --- */
+.game-map {
+    max-width: 850px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
+    padding: 20px;
+    position: relative;
+    z-index: 2;
+}
+
+/* --- 5. TARJETAS TEMÁTICAS (CARDS) --- */
+.mario-card {
+    border-radius: 25px;
+    border: 4px solid black;
+    background: white;
+    box-shadow: 10px 10px 0px rgba(0,0,0,0.3); /* Sombra dura */
+    overflow: hidden;
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+}
+
+.mario-card:hover {
+    transform: translateY(-8px) scale(1.01);
+    box-shadow: 15px 15px 0px rgba(0,0,0,0.2);
+}
+
+/* Cabecera de la Tarjeta */
+.card-header {
+    padding: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 4px solid black;
+    color: white;
+}
+
+.level-icon { font-size: 3rem; filter: drop-shadow(3px 3px 0 black); }
+.level-number { 
+    font-family: 'Luckiest Guy', cursive; 
+    font-size: 3.5rem; 
+    -webkit-text-stroke: 2px black;
+    text-shadow: 4px 4px 0 black;
+}
+
+.level-info { flex-grow: 1; padding: 0 20px; }
+.level-title { 
+    font-family: 'Luckiest Guy', cursive; 
+    font-size: 2.5rem; 
+    margin: 0; 
+    line-height: 1;
+    -webkit-text-stroke: 1.5px black;
+    text-shadow: 3px 3px 0 black;
+}
+.level-tag {
+    background: black;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    display: inline-block;
+    margin-top: 5px;
+    box-shadow: 2px 2px 0 rgba(255,255,255,0.3);
+}
+
+/* --- ESTILOS ESPECÍFICOS POR NIVEL --- */
+
+/* NIVEL 1: BLOQUE ? (Amarillo) */
+.style-question .card-header {
+    background: var(--coin-yellow);
+    /* Patrón de puntos decorativos */
+    background-image: radial-gradient(#e5ac00 15%, transparent 16%);
+    background-size: 20px 20px;
+}
+
+/* NIVEL 2: LADRILLO (Marrón) */
+.style-brick .card-header {
+    background: var(--brick-brown);
+    /* Patrón de ladrillos CSS puro */
+    background-image: 
+        linear-gradient(335deg, rgba(0,0,0,0.1) 23px, transparent 23px),
+        linear-gradient(155deg, rgba(0,0,0,0.1) 23px, transparent 23px),
+        linear-gradient(335deg, rgba(0,0,0,0.1) 23px, transparent 23px),
+        linear-gradient(155deg, rgba(0,0,0,0.1) 23px, transparent 23px);
+    background-size: 58px 58px;
+}
+
+/* NIVEL 3: TUBERÍA (Verde) */
+.style-pipe .card-header {
+    background: linear-gradient(90deg, var(--pipe-green) 15%, var(--pipe-light) 30%, var(--pipe-green) 60%);
+}
+
+/* --- 6. CUERPO Y TEXTO --- */
+.card-body {
+    padding: 30px;
+    background: #fff;
+}
+
+.card-desc {
+    font-size: 1.25rem;
+    color: #444;
+    margin-bottom: 25px;
+    line-height: 1.5;
+    font-weight: 600;
+}
+
+/* --- 7. CAJA DE PROMPT (ESTILO NOTA DE PAPEL - NO MATRIX) --- */
+.prompt-box {
+    background: var(--paper-cream);
+    color: #2c3e50;
+    font-family: 'Fredoka', sans-serif;
+    font-size: 1.15rem;
+    line-height: 1.6;
+    padding: 25px;
+    border-radius: 15px;
+    border: 4px solid black;
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.05); /* Sombra interna suave */
+    position: relative;
+    cursor: pointer;
+    transition: 0.2s;
+    margin-bottom: 10px;
+    text-align: left;
+}
+
+.prompt-box:hover {
+    background: #fff;
+    transform: scale(1.01);
+}
+
+/* Decoración: Chincheta o Cinta arriba */
+.prompt-box::before {
+    content: '';
+    position: absolute;
+    top: -12px; left: 50%;
+    transform: translateX(-50%);
+    width: 80px; height: 24px;
+    background: rgba(220, 220, 220, 0.5); /* Cinta adhesiva */
+    border: 1px solid rgba(0,0,0,0.1);
+    transform: translateX(-50%) rotate(-1deg);
+}
+
+/* Etiqueta "COPIAR" roja */
+.prompt-box::after {
+    content: 'TOCAR PARA COPIAR 📋';
+    position: absolute; bottom: -18px; right: 20px;
+    background: var(--mario-red);
+    color: white;
+    font-family: 'Luckiest Guy', cursive;
+    padding: 8px 15px;
+    border-radius: 30px;
+    border: 3px solid black;
+    font-size: 0.9rem;
+    box-shadow: 3px 3px 0 black;
+    transform: rotate(-2deg);
+    transition: 0.2s;
+}
+
+.prompt-box:hover::after {
+    transform: rotate(0deg) scale(1.1);
+}
+
+/* Variables resaltadas en el texto */
+.highlight-var {
+    color: #0077b3; /* Azul brillante */
+    font-weight: 800;
+    background: rgba(0, 119, 179, 0.1);
+    padding: 0 5px;
+    border-radius: 5px;
+    border-bottom: 2px solid #0077b3;
+}
+
+/* --- 8. BOTONES DE ACCIÓN (ESTILO PASTILLA) --- */
+.btn-mario {
+    display: block;
+    width: 100%;
+    background: var(--mario-red);
+    color: white !important;
+    text-align: center;
+    padding: 16px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-family: 'Luckiest Guy', cursive;
+    font-size: 1.6rem;
+    border: 3px solid black;
+    box-shadow: 0 6px 0 black; /* Sombra sólida negra */
+    margin-top: 35px;
+    transition: 0.1s;
+    text-transform: uppercase;
+    text-shadow: 2px 2px 0 black;
+    position: relative;
+    top: 0;
+}
+
+/* Brillo en el botón */
+.btn-mario::before {
+    content: '';
+    position: absolute;
+    top: 5px; left: 20px; right: 20px;
+    height: 15px;
+    background: rgba(255,255,255,0.3);
+    border-radius: 20px;
+}
+
+.btn-mario:active {
+    box-shadow: 0 0 0 black;
+    top: 6px;
+}
+.btn-mario:hover { transform: translateY(-2px); }
+
+/* Variantes de color */
+.btn-blue { background: #0077b3; }
+.btn-green { background: #00aa00; }
+
+/* --- 9. ESTADO BLOQUEADO --- */
+.locked {
+    filter: grayscale(1);
+    opacity: 0.7;
+    pointer-events: none;
+}
+.locked::after {
+    content: '🔒';
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 6rem;
+    z-index: 10;
+    filter: drop-shadow(0 0 15px white);
+}
+
+/* --- 10. SUELO ANIMADO (SCROLLING GROUND) --- */
+.floor-decoration {
+    position: fixed; 
+    bottom: 0; left: 0; width: 100%; height: 50px;
+    background: var(--brick-brown);
+    border-top: 4px solid black;
+    /* Patrón de suelo clásico */
+    background-image: 
+        linear-gradient(45deg, #d36e18 25%, transparent 25%, transparent 75%, #d36e18 75%, #d36e18), 
+        linear-gradient(45deg, #d36e18 25%, transparent 25%, transparent 75%, #d36e18 75%, #d36e18);
+    background-size: 40px 40px;
+    background-position: 0 0, 20px 20px;
+    z-index: 999;
+    /* Animación de caminar */
+    animation: moveFloor 2s linear infinite;
+}
+
+@keyframes moveFloor {
+    0% { background-position: 0 0, 20px 20px; }
+    100% { background-position: 40px 0, 60px 20px; }
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .card-header { flex-direction: column; text-align: center; gap: 10px; }
+    .mario-title { font-size: 3.5rem; }
+    .game-map { padding: 10px; }
+}

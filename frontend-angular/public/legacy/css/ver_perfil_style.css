@@ -1,0 +1,245 @@
+/* css/ver_perfil_style.css */
+/* IMPORTAMOS LAS FUENTES "GAMER" */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=Fredoka:wght@400;700;900&family=Rajdhani:wght@600;700&display=swap');
+
+/* === VARIABLES DE POTENCIA (COLORES NEÓN) === */
+:root {
+    --sidebar-width: 280px;
+    --glass-bg: rgba(15, 23, 42, 0.85);
+    --glass-border: 1px solid rgba(255, 255, 255, 0.1);
+    --neon-cyan: #00f3ff;
+    --neon-gold: #ffd700;
+    --neon-purple: #bc13fe;
+    --spectator-red: #ff0055; /* Nuevo color para modo espectador */
+}
+
+body {
+    overflow-x: hidden;
+    color: white;
+    font-family: 'Outfit', sans-serif;
+    min-height: 100vh;
+    background: #000;
+}
+
+/* ==========================================================================
+   1. AMBIENTE Y FONDO (COPIADO DE TU PERFIL PARA MANTENER CALIDAD)
+   ========================================================================== */
+.game-background {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -3;
+    background-size: cover; background-position: center;
+    transition: all 0.5s ease;
+}
+
+.grid-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2;
+    background-image: 
+        radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
+        linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px);
+    background-size: 20px 20px, 100px 100px;
+}
+
+.particles {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iMiIgaGVpZ2h0PSIyIiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjAuNSIvPjwvc3ZnPg==');
+    animation: particlesMove 120s linear infinite; opacity: 0.5; pointer-events: none;
+}
+@keyframes particlesMove { from { background-position: 0 0; } to { background-position: -1000px 500px; } }
+
+/* ==========================================================================
+   2. ESTRUCTURA Y HUD
+   ========================================================================== */
+.main-wrapper {
+    margin-left: var(--sidebar-width);
+    padding: 0; height: 100vh;
+    position: relative; overflow: hidden;
+    display: flex; align-items: center; justify-content: space-between;
+}
+@media (max-width: 991px) { .main-wrapper { margin-left: 0; flex-direction: column; overflow-y: auto; height: auto; } }
+
+.player-hud {
+    width: 50%; height: 100%; padding: 40px;
+    background: linear-gradient(90deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.7) 70%, transparent 100%);
+    display: flex; flex-direction: column; justify-content: center;
+    position: relative; z-index: 10;
+}
+
+/* ==========================================================================
+   3. HÉROE (VISUALIZACIÓN)
+   ========================================================================== */
+.hero-stage {
+    position: absolute; right: -5%; bottom: 0; height: 95%; width: 55%;
+    z-index: 0; pointer-events: none;
+    display: flex; align-items: flex-end; justify-content: center;
+}
+.hero-char-img {
+    height: 100%; width: auto; object-fit: contain;
+    filter: drop-shadow(0 0 40px rgba(0,0,0,0.6));
+    animation: heroBreathe 5s ease-in-out infinite;
+}
+@keyframes heroBreathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02) translateY(-10px); } }
+
+/* ==========================================================================
+   4. DETALLES DEL PERFIL (HEADER)
+   ========================================================================== */
+.profile-header { display: flex; align-items: center; gap: 25px; margin-bottom: 25px; }
+
+.avatar-complex { position: relative; width: 130px; height: 130px; flex-shrink: 0; }
+.real-avatar-img {
+    width: 100%; height: 100%; border-radius: 50%; object-fit: cover; 
+    border: 3px solid rgba(255,255,255,0.8);
+    box-shadow: 0 0 25px var(--accent-glow);
+}
+.avatar-satellite {
+    position: absolute; bottom: -5px; right: -15px; width: 55px; height: 55px; z-index: 5;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
+    animation: satelliteFloat 3s ease-in-out infinite;
+}
+@keyframes satelliteFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+
+.profile-info h1 {
+    font-size: 2.5rem; font-weight: 900; line-height: 1; margin: 0;
+    text-transform: uppercase; letter-spacing: -0.5px;
+    background: linear-gradient(to bottom, #fff, #ccc); 
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+
+.status-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 0.9rem;
+    color: var(--neon-cyan); text-transform: uppercase; letter-spacing: 1px;
+}
+.status-dot { width: 8px; height: 8px; background: #00ff00; border-radius: 50%; box-shadow: 0 0 5px #00ff00; }
+
+.xp-container {
+    width: 100%; max-width: 300px; height: 6px;
+    background: rgba(255,255,255,0.1); border-radius: 3px; margin-top: 10px;
+}
+.xp-bar { height: 100%; background: var(--accent-color); box-shadow: 0 0 10px var(--accent-color); }
+
+.currency-display {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: linear-gradient(90deg, rgba(255, 215, 0, 0.1), transparent);
+    border-left: 4px solid var(--neon-gold);
+    padding: 5px 15px; margin-top: 15px; border-radius: 0 10px 10px 0;
+}
+.w-coin-icon {
+    width: 35px; height: 35px; background: radial-gradient(circle, #ffd700, #b8860b);
+    border: 2px solid #fff; border-radius: 50%; color: #000; font-weight: 900;
+    display: flex; align-items: center; justify-content: center;
+}
+.w-amount { font-size: 1.5rem; font-weight: 800; color: var(--neon-gold); font-family: 'Rajdhani', sans-serif; }
+
+/* Medallas Header */
+.header-badges-container {
+    display: inline-flex; align-items: center; gap: 8px; margin-left: 15px; vertical-align: middle;
+    background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 5px 15px; border-radius: 30px; backdrop-filter: blur(5px);
+}
+.header-badge-mini {
+    width: 32px; height: 32px; object-fit: contain; cursor: pointer;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8)); transition: transform 0.2s;
+}
+.header-badge-mini:hover { transform: scale(1.4) rotate(10deg); z-index: 10; }
+
+/* ==========================================================================
+   5. PANELES DE VIDRIO (GLASSMORPHISM)
+   ========================================================================== */
+.glass-panel {
+    background: var(--glass-bg); border: var(--glass-border);
+    border-radius: 12px; backdrop-filter: blur(20px);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    display: flex; flex-direction: column; height: 55vh; margin-top: 20px;
+    position: relative; /* Importante para el badge de espectador */
+}
+
+.glass-tabs { display: flex; background: rgba(0,0,0,0.3); border-bottom: 1px solid rgba(255,255,255,0.05); }
+.tab-btn {
+    flex: 1; padding: 15px; background: transparent; border: none;
+    color: rgba(255,255,255,0.5); font-weight: 700; font-family: 'Rajdhani', sans-serif;
+    letter-spacing: 1px; transition: 0.3s; cursor: pointer; text-transform: uppercase;
+}
+.tab-btn:hover, .tab-btn.active { color: white; background: rgba(255,255,255,0.05); }
+.tab-btn.active { border-bottom: 3px solid var(--accent-color); }
+
+.tab-content { padding: 20px; overflow-y: auto; flex-grow: 1; }
+
+/* Grillas */
+.grid-box, .badges-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(85px, 1fr)); gap: 15px;
+}
+.item-slot, .badge-square {
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px; padding: 10px; text-align: center; transition: 0.3s;
+    aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center; position: relative;
+}
+.item-slot img, .badge-square img { width: 60%; height: auto; object-fit: contain; }
+.badge-square:hover { transform: translateY(-5px); border-color: var(--neon-gold); background: rgba(255,255,255,0.15); }
+.badge-square.border-warning { border-color: var(--neon-gold) !important; background: rgba(255, 215, 0, 0.1); }
+
+/* Temas */
+.theme-teens { --accent-color: #00f3ff; --accent-glow: rgba(0, 243, 255, 0.5); }
+.theme-kids { --accent-color: #ffd700; --accent-glow: rgba(255, 215, 0, 0.5); }
+
+/* ==========================================================================
+   6. ESTILOS EXCLUSIVOS: MODO ESPECTADOR (LO NUEVO)
+   ========================================================================== */
+
+/* Etiqueta flotante parpadeante */
+.spectator-badge {
+    position: absolute; top: -15px; right: 20px;
+    background: rgba(255, 0, 85, 0.2);
+    border: 1px solid var(--spectator-red);
+    color: var(--spectator-red);
+    padding: 5px 15px; border-radius: 20px;
+    font-family: 'Rajdhani', sans-serif; font-weight: 800; font-size: 0.8rem;
+    letter-spacing: 2px; text-transform: uppercase;
+    box-shadow: 0 0 15px rgba(255, 0, 85, 0.3);
+    backdrop-filter: blur(5px);
+    z-index: 100;
+    animation: pulseRed 2s infinite;
+}
+@keyframes pulseRed {
+    0% { box-shadow: 0 0 0 0 rgba(255, 0, 85, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(255, 0, 85, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 0, 85, 0); }
+}
+
+/* Caja de Biografía Solo Lectura */
+.bio-readonly-box {
+    background: rgba(0, 0, 0, 0.6);
+    border-left: 3px solid var(--accent-color);
+    padding: 20px;
+    border-radius: 0 10px 10px 0;
+    font-family: 'Outfit', sans-serif;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.6;
+    font-style: italic;
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+}
+
+/* Botón Volver Sistema */
+.btn-system-back {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white; padding: 10px 25px;
+    font-family: 'Rajdhani', sans-serif; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 2px;
+    text-decoration: none; border-radius: 5px;
+    transition: 0.3s;
+    backdrop-filter: blur(5px);
+}
+.btn-system-back:hover {
+    background: var(--accent-color); color: black;
+    box-shadow: 0 0 20px var(--accent-glow); transform: translateX(-5px);
+}
+
+/* Estilos Modal */
+.modal-game-content {
+    background: rgba(15, 23, 42, 0.95); border: 2px solid var(--accent-color);
+    color: white; text-align: center; border-radius: 20px;
+}
+.modal-header { border-bottom: 1px solid rgba(255,255,255,0.1); }
+.modal-title { font-family: 'Rajdhani', sans-serif; color: var(--accent-color); text-transform: uppercase; }
+#modalBadgeImg { width: 150px; filter: drop-shadow(0 0 20px var(--accent-color)); animation: satelliteFloat 4s infinite; }
+.btn-close-white { filter: invert(1); }

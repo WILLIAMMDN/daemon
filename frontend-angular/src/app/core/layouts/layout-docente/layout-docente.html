@@ -1,0 +1,4 @@
+<div class="portal">
+  <aside><a class="brand" routerLink="/docente">YachayIA</a><p class="role">Portal docente</p><nav>@for (enlace of enlaces; track enlace[1]) { <a [routerLink]="enlace[1]" routerLinkActive="active" [routerLinkActiveOptions]="{exact: enlace[1] === '/docente'}">{{ enlace[0] }}</a> }</nav></aside>
+  <section class="workspace"><header><div><strong>{{ sesion.usuario()?.nombre_completo }}</strong><small>Administracion academica</small></div><button (click)="salir()">Cerrar sesion</button></header><main><router-outlet /></main></section>
+</div>

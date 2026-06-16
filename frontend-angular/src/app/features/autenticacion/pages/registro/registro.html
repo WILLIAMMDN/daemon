@@ -1,0 +1,12 @@
+<main class="auth-shell"><section class="auth-card">
+  <a class="brand" routerLink="/">YachayIA</a><h1>Crea tu cuenta</h1>
+  <form (ngSubmit)="registrar()">
+    <label>Nombre completo<input name="nombre" [(ngModel)]="datos.nombre_completo" required></label>
+    <label>Correo<input name="email" [(ngModel)]="datos.email" type="email"></label>
+    <label>Usuario<input name="usuario" [(ngModel)]="datos.usuario" required></label>
+    <label>Contrasena<input name="password" [(ngModel)]="datos.password" type="password" required></label>
+    <label>Nivel<select name="nivel" [(ngModel)]="datos.nivel"><option>KIDS</option><option>TEENS</option><option>PRO</option></select></label>
+    @if (error()) { <p class="error">{{ error() }}</p> }
+    <button [disabled]="enviando()">{{ enviando() ? 'Creando...' : 'Crear cuenta' }}</button>
+  </form><a class="back" routerLink="/login">Ya tengo una cuenta</a>
+</section></main>

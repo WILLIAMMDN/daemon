@@ -1,0 +1,250 @@
+/* === css/arcade_style.css === */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&family=Rajdhani:wght@600;700&display=swap');
+
+:root {
+    --bg-dark: #050505;
+    --neon-blue: #00f3ff;
+    --neon-gold: #ffd700;
+    --neon-red: #ff0055;
+    --neon-green: #00ff9d;
+    --glass: rgba(20, 20, 25, 0.95);
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: white;
+    font-family: 'Outfit', sans-serif;
+    height: 100vh;
+    overflow: hidden;
+    margin: 0;
+}
+
+/* === LAYOUT (Garantiza que todo sea visible) === */
+.layout-container {
+    display: flex;
+    height: 100vh;
+}
+
+/* 1. COLUMNA IZQUIERDA (Escenario) */
+.stage-section {
+    flex: 1; /* Ocupa el espacio restante */
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    background: radial-gradient(circle at center, #1a1a25 0%, #000 100%);
+}
+
+/* Barra Superior de Control */
+.top-bar {
+    padding: 15px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(0,0,0,0.6);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    z-index: 10;
+}
+
+/* Escenario Central */
+.stage-display {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+.big-avatar {
+    width: 200px; height: 200px; border-radius: 50%;
+    border: 6px solid white;
+    box-shadow: 0 0 50px rgba(255,255,255,0.15);
+    margin-bottom: 20px;
+    object-fit: cover;
+}
+.stage-name { font-family: 'Rajdhani', sans-serif; font-size: 3.5rem; font-weight: 800; line-height: 1; margin: 0; text-transform: uppercase; }
+.stage-status { font-size: 1.2rem; color: #888; margin-bottom: 2rem; font-weight: 700; letter-spacing: 2px; }
+
+/* Barra de Botones Inferior (FIJA Y VISIBLE) */
+.controls-dock {
+    padding: 20px;
+    background: rgba(10, 10, 15, 0.9);
+    border-top: 1px solid var(--neon-blue);
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+/* Botones de Acción */
+.btn-arcade {
+    border: none; padding: 0 30px; height: 50px; border-radius: 8px;
+    font-weight: 800; font-family: 'Rajdhani', sans-serif; font-size: 1.1rem;
+    text-transform: uppercase; letter-spacing: 1px; cursor: pointer;
+    display: flex; align-items: center; gap: 10px; transition: 0.2s;
+    color: white; text-decoration: none;
+}
+.btn-open { background: var(--neon-green); color: black; box-shadow: 0 0 15px rgba(0, 255, 157, 0.2); }
+.btn-open:hover { transform: translateY(-3px); box-shadow: 0 0 25px rgba(0, 255, 157, 0.5); }
+
+.btn-close-vote { background: rgba(255, 0, 85, 0.15); color: var(--neon-red); border: 1px solid var(--neon-red); }
+.btn-close-vote:hover { background: var(--neon-red); color: white; }
+
+.btn-reward { 
+    background: var(--neon-gold); color: black; 
+    height: 60px; padding: 0 50px; font-size: 1.4rem; /* Más grande */
+    box-shadow: 0 0 25px rgba(255, 215, 0, 0.3);
+}
+.btn-reward:hover { transform: translateY(-5px); box-shadow: 0 0 40px rgba(255, 215, 0, 0.6); background: #ffe033; }
+
+
+/* 2. COLUMNA DERECHA (Lista y Chat) */
+.sidebar-right {
+    width: 320px;
+    background: #0d0d10;
+    border-left: 1px solid rgba(255,255,255,0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Lista de Alumnos */
+.student-section { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.section-header {
+    padding: 15px; background: rgba(255,255,255,0.03);
+    text-align: center; font-weight: 700; font-size: 0.8rem; color: #666; letter-spacing: 1px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.student-list-container { flex: 1; overflow-y: auto; padding: 10px; }
+
+.student-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px; margin-bottom: 5px; border-radius: 6px;
+    cursor: pointer; border: 1px solid transparent; transition: 0.2s;
+}
+.student-item:hover { background: rgba(255,255,255,0.05); }
+.student-item.active {
+    background: linear-gradient(90deg, rgba(0, 243, 255, 0.15), transparent);
+    border-left: 3px solid var(--neon-blue);
+}
+.student-item.completed { opacity: 0.5; }
+.check-ok { color: var(--neon-green); margin-left: auto; display: none; }
+.student-item.completed .check-ok { display: block; }
+
+/* Chat */
+.chat-section { height: 35%; display: flex; flex-direction: column; border-top: 1px solid rgba(255,255,255,0.1); }
+.chat-header {
+    padding: 10px 15px; display: flex; justify-content: space-between; align-items: center;
+    background: rgba(0,0,0,0.2);
+}
+.btn-limpiar { font-size: 0.7rem; color: var(--neon-red); background: none; border: 1px solid var(--neon-red); padding: 2px 8px; border-radius: 4px; cursor: pointer; }
+.btn-limpiar:hover { background: var(--neon-red); color: white; }
+
+.chat-box { flex: 1; overflow-y: auto; padding: 15px; font-size: 0.9rem; display: flex; flex-direction: column; gap: 8px; }
+.chat-msg { background: rgba(255,255,255,0.05); padding: 6px 10px; border-radius: 4px; border-left: 2px solid #444; }
+.chat-author { color: var(--neon-blue); font-weight: bold; font-size: 0.8rem; margin-right: 5px; }
+
+/* Modal Tokens */
+.swal2-popup.dark-modal { background: #111 !important; border: 1px solid #333 !important; }
+.token-input-field { background: transparent; border: none; color: #FFD700; font-size: 3rem; font-weight: 900; text-align: center; width: 100%; outline: none; }
+.chip-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
+.chip-btn { background: rgba(255,255,255,0.05); color: white; border: 1px solid #333; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+.chip-btn:hover { border-color: #FFD700; color: #FFD700; }
+/* ... (estilos anteriores) ... */
+
+/* === PANEL DE RANKING FLOTANTE === */
+.ranking-panel {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 280px;
+    background: rgba(0, 0, 0, 0.85);
+    border: 1px solid var(--neon-gold);
+    border-radius: 12px;
+    padding: 15px;
+    z-index: 100;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.1);
+    backdrop-filter: blur(10px);
+}
+.ranking-header {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 800;
+    color: var(--neon-gold);
+    text-transform: uppercase;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding-bottom: 8px;
+    margin-bottom: 10px;
+    display: flex; justify-content: space-between; align-items: center;
+}
+.rank-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.rank-pos {
+    font-weight: 900; font-size: 1.2rem; width: 25px; text-align: center;
+    color: #666;
+}
+.rank-item:nth-child(1) .rank-pos { color: #ffd700; text-shadow: 0 0 10px #ffd700; } /* Oro */
+.rank-item:nth-child(2) .rank-pos { color: #c0c0c0; } /* Plata */
+.rank-item:nth-child(3) .rank-pos { color: #cd7f32; } /* Bronce */
+
+.rank-avatar { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; }
+.rank-name { flex: 1; font-size: 0.85rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rank-score { font-family: 'Rajdhani'; font-weight: 800; color: var(--neon-green); }
+
+/* === PODIO FINAL (Overlay) === */
+.podium-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.95);
+    z-index: 2000;
+    display: none; /* Oculto por defecto */
+    flex-direction: column;
+    justify-content: center; align-items: center;
+    backdrop-filter: blur(15px);
+}
+.podium-title {
+    font-family: 'Rajdhani', sans-serif; font-size: 4rem; font-weight: 900;
+    color: var(--neon-gold); text-transform: uppercase;
+    text-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+    margin-bottom: 50px;
+    animation: bounceInDown 1s;
+}
+.podium-stage {
+    display: flex; align-items: flex-end; gap: 20px;
+}
+.podium-place {
+    display: flex; flex-direction: column; align-items: center;
+    text-align: center;
+    animation: fadeInUp 1s;
+}
+/* Alturas del podio */
+.place-1 { order: 2; height: 350px; }
+.place-2 { order: 1; height: 280px; }
+.place-3 { order: 3; height: 220px; }
+
+.podium-avatar {
+    width: 100px; height: 100px; border-radius: 50%; object-fit: cover;
+    border: 4px solid white; margin-bottom: 15px;
+    box-shadow: 0 0 20px rgba(255,255,255,0.2);
+}
+.place-1 .podium-avatar { width: 140px; height: 140px; border-color: #ffd700; box-shadow: 0 0 40px #ffd700; }
+.place-2 .podium-avatar { border-color: #c0c0c0; }
+.place-3 .podium-avatar { border-color: #cd7f32; }
+
+.podium-bar {
+    width: 120px; flex: 1;
+    background: linear-gradient(to top, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 10px 10px 0 0;
+    display: flex; flex-direction: column; justify-content: flex-end; padding-bottom: 20px;
+}
+.place-1 .podium-bar { background: linear-gradient(to top, rgba(255, 215, 0, 0.2), rgba(255, 215, 0, 0.05)); border-color: #ffd700; }
+
+.winner-name { font-weight: 800; font-size: 1.2rem; margin-bottom: 5px; }
+.winner-score { font-family: 'Rajdhani'; font-size: 2rem; font-weight: 900; }
+
+.btn-close-podium {
+    margin-top: 50px;
+    background: transparent; border: 2px solid white; color: white;
+    padding: 10px 30px; border-radius: 50px; font-weight: bold;
+    cursor: pointer; transition: 0.2s;
+}
+.btn-close-podium:hover { background: white; color: black; }
