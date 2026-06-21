@@ -1,15 +1,36 @@
-<section class="module-shell">
-  <header>
-    <span class="module-status">Preparado</span>
-    <h1>Crear cuento</h1>
-    <p>Base para construir historias por escenas usando textos, posiciones e imagenes del motor de comic heredado.</p>
-  </header>
-  <article class="module-card">
-    <h2>Integracion esperada</h2>
-    <ul>
-      <li>Endpoint de guardado: <code>/cuentos</code>.</li>
-      <li>Motor disponible: <code>/js/comic_engine.js</code>.</li>
-      <li>Archivos PHP heredados movidos a <code>legado/includes</code>, no expuestos al navegador.</li>
-    </ul>
-  </article>
-</section>
+@if (cargando()) {
+  <section class="state">Cargando cuento...</section>
+} @else {
+  <section class="page">
+    <header class="page-header">
+      <div>
+        <p class="kicker">Cuento</p>
+        <h1>Mi historia</h1>
+        <p>Guarda o actualiza tu cuento personal.</p>
+      </div>
+      <a class="ghost-btn" routerLink="/alumno/cuentos">Galeria</a>
+    </header>
+
+    <form class="panel" (ngSubmit)="guardar()">
+      <label class="field">
+        Titulo
+        <input name="titulo" [(ngModel)]="cuento['titulo']" required>
+      </label>
+
+      <div class="form-grid">
+        @for (numero of [1, 2, 3, 4, 5, 6]; track numero) {
+          <label>
+            Escena {{ numero }}
+            <textarea [name]="'data_' + numero" [(ngModel)]="cuento['data_' + numero]" rows="5"></textarea>
+          </label>
+        }
+      </div>
+
+      <div class="actions">
+        <button type="submit" [disabled]="guardando() || !cuento['titulo'].trim()">Guardar cuento</button>
+      </div>
+      @if (mensaje()) { <p class="success">{{ mensaje() }}</p> }
+      @if (error()) { <p class="error">{{ error() }}</p> }
+    </form>
+  </section>
+}

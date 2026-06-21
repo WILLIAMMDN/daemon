@@ -1,1 +1,32 @@
-<app-pagina-api />
+<section class="page">
+  <header class="page-header">
+    <div>
+      <p class="kicker">Comunidad</p>
+      <h1>Participantes de DAEMON</h1>
+      <p>Estudiantes y docentes registrados en la plataforma.</p>
+    </div>
+    <button type="button" (click)="cargar()">Actualizar</button>
+  </header>
+
+  @if (cargando()) {
+    <p class="state">Cargando comunidad...</p>
+  } @else if (error()) {
+    <p class="error">{{ error() }}</p>
+  } @else if (miembros().length) {
+    <div class="card-list">
+      @for (persona of miembros(); track persona.id) {
+        <article class="data-card">
+          @if (persona.avatar) {
+            <img class="image-thumb" [src]="asset(persona.avatar)" [alt]="persona.nombre_completo">
+          }
+          <span class="badge">{{ persona.rol }}</span>
+          <h2>{{ persona.nombre_completo }}</h2>
+          <p>{{ persona.usuario }} - {{ persona.nivel || 'Sin nivel' }}</p>
+          <p><strong>{{ persona.tokens }}</strong> tokens</p>
+        </article>
+      }
+    </div>
+  } @else {
+    <p class="empty">No hay participantes para mostrar.</p>
+  }
+</section>

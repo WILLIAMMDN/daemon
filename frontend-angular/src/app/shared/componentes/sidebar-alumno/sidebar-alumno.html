@@ -1,4 +1,6 @@
 <nav class="module-card">
   <strong>Menu estudiante</strong>
-  <p>Base para sidebar reutilizable del portal alumno.</p>
+  @for (enlace of enlaces; track enlace[1]) {
+    <a [routerLink]="enlace[1]" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: enlace[1] === '/alumno' }">{{ enlace[0] }}</a>
+  }
 </nav>

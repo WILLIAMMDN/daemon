@@ -1,15 +1,34 @@
-<section class="module-shell">
-  <header>
-    <span class="module-status">Preparado</span>
-    <h1>Lista de misiones</h1>
-    <p>Base para listar desafios por nivel, estado y evidencia requerida.</p>
+<section class="page">
+  <header class="page-header">
+    <div>
+      <p class="kicker">Misiones</p>
+      <h1>Retos del aula</h1>
+      <p>Misiones activas y entregas asociadas a tu cuenta.</p>
+    </div>
+    <button type="button" (click)="cargar()">Actualizar</button>
   </header>
-  <article class="module-card">
-    <h2>Integracion esperada</h2>
-    <ul>
-      <li>Endpoint principal: <code>/misiones</code>.</li>
-      <li>Filtros por nivel requerido y estado.</li>
-      <li>Acceso a detalle y entrega de evidencia por mision.</li>
-    </ul>
-  </article>
+
+  @if (cargando()) {
+    <p class="state">Cargando misiones...</p>
+  } @else if (error()) {
+    <p class="error">{{ error() }}</p>
+  } @else if (misiones().length) {
+    <div class="card-list">
+      @for (mision of misiones(); track mision.id) {
+        <article class="data-card">
+          <span class="badge" [class.warn]="mision.entrega?.estado === 'pendiente'">{{ mision.entrega?.estado || mision.estado }}</span>
+          <h2>{{ mision.titulo }}</h2>
+          <p>{{ mision.descripcion || 'Sin descripcion registrada.' }}</p>
+          <p><strong>Recompensa:</strong> {{ mision.recompensa }} tokens</p>
+          <p><strong>Evidencia:</strong> {{ mision.tipo_evidencia }}</p>
+          <div class="actions">
+            <a class="btn" [routerLink]="['/alumno/misiones', mision.id]">Detalle</a>
+            <a class="ghost-btn" [routerLink]="['/alumno/misiones', mision.id, 'entregar']">Entregar</a>
+          </div>
+        </article>
+      }
+    </div>
+  } @else {
+    <p class="empty">No hay misiones disponibles.</p>
+  }
 </section>

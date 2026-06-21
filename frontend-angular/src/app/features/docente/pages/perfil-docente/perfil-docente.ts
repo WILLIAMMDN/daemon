@@ -1,9 +1,13 @@
 import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { Sesion } from '../../../../core/servicios/sesion';
 
 @Component({
   selector: 'app-perfil-docente',
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './perfil-docente.html',
   styleUrl: './perfil-docente.scss',
 })
-export class PerfilDocente {}
+export class PerfilDocente {
+  constructor(public sesion: Sesion) {}
+}

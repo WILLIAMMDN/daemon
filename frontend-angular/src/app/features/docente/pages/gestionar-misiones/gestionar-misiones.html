@@ -1,1 +1,88 @@
-<app-pagina-api />
+<section class="page">
+  <header class="page-header">
+    <div>
+      <p class="kicker">Docente</p>
+      <h1>Gestionar misiones</h1>
+      <p>Crea desafios y revisa su disponibilidad.</p>
+    </div>
+    <button type="button" (click)="cargar()">Actualizar</button>
+  </header>
+
+  @if (mensaje()) { <p class="success">{{ mensaje() }}</p> }
+  @if (error()) { <p class="error">{{ error() }}</p> }
+
+  <form class="panel" (ngSubmit)="crear()">
+    <h2>Nueva mision</h2>
+    <div class="form-grid">
+      <label>
+        Titulo
+        <input name="titulo" [(ngModel)]="nueva.titulo" required>
+      </label>
+      <label>
+        Recompensa
+        <input name="recompensa" type="number" min="0" [(ngModel)]="nueva.recompensa" required>
+      </label>
+      <label>
+        Evidencia
+        <select name="tipo_evidencia" [(ngModel)]="nueva.tipo_evidencia">
+          <option value="texto">texto</option>
+          <option value="archivo">archivo</option>
+          <option value="imagen">imagen</option>
+          <option value="video">video</option>
+        </select>
+      </label>
+      <label>
+        Nivel
+        <select name="nivel_requerido" [(ngModel)]="nueva.nivel_requerido">
+          <option value="TODOS">TODOS</option>
+          <option value="KIDS">KIDS</option>
+          <option value="TEENS">TEENS</option>
+          <option value="PRO">PRO</option>
+        </select>
+      </label>
+      <label>
+        Estado
+        <select name="estado" [(ngModel)]="nueva.estado">
+          <option value="activo">activo</option>
+          <option value="inactivo">inactivo</option>
+        </select>
+      </label>
+      <label class="field-wide">
+        Descripcion
+        <textarea name="descripcion" [(ngModel)]="nueva.descripcion" rows="4"></textarea>
+      </label>
+    </div>
+    <button type="submit" [disabled]="guardando() || !nueva.titulo.trim()">Crear mision</button>
+  </form>
+
+  @if (cargando()) {
+    <p class="state">Cargando misiones...</p>
+  } @else if (misiones().length) {
+    <section class="panel table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Mision</th>
+            <th>Nivel</th>
+            <th>Recompensa</th>
+            <th>Estado</th>
+            <th>Evidencia</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (mision of misiones(); track mision.id) {
+            <tr>
+              <td>{{ mision.titulo }}</td>
+              <td><span class="badge">{{ mision.nivel_requerido }}</span></td>
+              <td>{{ mision.recompensa }}</td>
+              <td>{{ mision.estado }}</td>
+              <td>{{ mision.tipo_evidencia }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </section>
+  } @else {
+    <p class="empty">No hay misiones creadas.</p>
+  }
+</section>

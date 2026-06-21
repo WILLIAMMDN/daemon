@@ -1,1 +1,76 @@
-<app-pagina-api />
+@if (cargando()) {
+  <section class="state">Cargando perfil...</section>
+} @else if (error()) {
+  <section class="error">
+    <p>{{ error() }}</p>
+    <button type="button" (click)="cargar()">Reintentar</button>
+  </section>
+} @else if (perfil(); as datos) {
+  <section class="page">
+    <header class="page-header">
+      <div>
+        <p class="kicker">Mi perfil</p>
+        <h1>{{ datos.usuario.nombre_completo }}</h1>
+        <p>{{ datos.usuario.usuario }} - Nivel {{ datos.usuario.nivel }} - {{ datos.usuario.rango || 'Rango en progreso' }}</p>
+      </div>
+      <a class="btn" routerLink="/alumno/perfil/editar">Editar perfil</a>
+    </header>
+
+    <section class="stats">
+      <article class="stat">
+        <span>Tokens</span>
+        <strong>{{ datos.usuario.tokens }}</strong>
+      </article>
+      <article class="stat">
+        <span>Insignias</span>
+        <strong>{{ datos.insignias.length }}</strong>
+      </article>
+      <article class="stat">
+        <span>Premios entregados</span>
+        <strong>{{ datos.mochila.length }}</strong>
+      </article>
+    </section>
+
+    <section class="split">
+      <article class="panel">
+        <h2>Datos personales</h2>
+        @if (datos.usuario.avatar) {
+          <img class="image-thumb" [src]="asset(datos.usuario.avatar)" alt="Avatar">
+        }
+        <p><strong>Correo:</strong> {{ datos.usuario.email || 'Sin correo registrado' }}</p>
+        <p><strong>Biografia:</strong> {{ datos.usuario.biografia || 'Sin biografia registrada' }}</p>
+      </article>
+
+      <article class="panel">
+        <h2>Mochila digital</h2>
+        @if (datos.mochila.length) {
+          @for (premio of datos.mochila; track premio.id) {
+            <div class="data-card">
+              <strong>{{ premio.nombre }}</strong>
+              <span class="muted">{{ premio.descripcion || 'Premio entregado' }}</span>
+            </div>
+          }
+        } @else {
+          <p class="empty">Todavia no tienes premios entregados.</p>
+        }
+      </article>
+    </section>
+
+    <section class="panel">
+      <h2>Insignias ganadas</h2>
+      @if (datos.insignias.length) {
+        <div class="card-list">
+          @for (insignia of datos.insignias; track insignia.id) {
+            <article class="data-card">
+              <strong>{{ insignia.nombre }}</strong>
+              <span class="muted">{{ insignia.descripcion }}</span>
+              <small>{{ insignia.fecha }}</small>
+            </article>
+          }
+        </div>
+      } @else {
+        <p class="empty">Todavia no tienes insignias registradas.</p>
+      }
+    </section>
+  </section>
+}

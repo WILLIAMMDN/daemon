@@ -1,1 +1,120 @@
-<app-pagina-api />
+<section class="page">
+  <header class="page-header">
+    <div>
+      <p class="kicker">Docente</p>
+      <h1>Gestionar tienda</h1>
+      <p>Premios, existencias y canjes.</p>
+    </div>
+    <button type="button" (click)="cargar()">Actualizar</button>
+  </header>
+
+  @if (mensaje()) { <p class="success">{{ mensaje() }}</p> }
+  @if (error()) { <p class="error">{{ error() }}</p> }
+
+  <form class="panel" (ngSubmit)="crear()">
+    <h2>Nuevo premio</h2>
+    <div class="form-grid">
+      <label>
+        Nombre
+        <input name="nombre" [(ngModel)]="nuevo.nombre" required>
+      </label>
+      <label>
+        Precio
+        <input name="precio" type="number" min="0" [(ngModel)]="nuevo.precio" required>
+      </label>
+      <label>
+        Stock
+        <input name="stock" type="number" min="0" [(ngModel)]="nuevo.stock" required>
+      </label>
+      <label>
+        Categoria
+        <select name="categoria" [(ngModel)]="nuevo.categoria">
+          <option value="GENERAL">GENERAL</option>
+          <option value="KIDS">KIDS</option>
+          <option value="TEENS">TEENS</option>
+          <option value="PRO">PRO</option>
+        </select>
+      </label>
+      <label>
+        Entrega
+        <select name="tipo_entrega" [(ngModel)]="nuevo.tipo_entrega">
+          <option value="fisico">fisico</option>
+          <option value="digital">digital</option>
+        </select>
+      </label>
+      <label>
+        Imagen
+        <input name="imagen" [(ngModel)]="nuevo.imagen">
+      </label>
+      <label class="field-wide">
+        Descripcion
+        <textarea name="descripcion" rows="3" [(ngModel)]="nuevo.descripcion"></textarea>
+      </label>
+    </div>
+    <button type="submit" [disabled]="guardando() || !nuevo.nombre.trim()">Crear premio</button>
+  </form>
+
+  @if (cargando()) {
+    <p class="state">Cargando tienda...</p>
+  } @else {
+    <section class="split">
+      <article class="panel table-wrap">
+        <h2>Premios</h2>
+        @if (premios().length) {
+          <table>
+            <thead>
+              <tr>
+                <th>Premio</th>
+                <th>Categoria</th>
+                <th>Precio</th>
+                <th>Stock</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (premio of premios(); track premio.id) {
+                <tr>
+                  <td>{{ premio.nombre }}</td>
+                  <td><span class="badge">{{ premio.categoria }}</span></td>
+                  <td>{{ premio.precio }}</td>
+                  <td>{{ premio.stock }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        } @else {
+          <p class="empty">No hay premios registrados.</p>
+        }
+      </article>
+
+      <article class="panel table-wrap">
+        <h2>Canjes</h2>
+        @if (canjes().length) {
+          <table>
+            <thead>
+              <tr>
+                <th>Alumno</th>
+                <th>Premio</th>
+                <th>Estado</th>
+                <th>Accion</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (canje of canjes(); track canje.id) {
+                <tr>
+                  <td>{{ canje.alumno }}</td>
+                  <td>{{ canje.premio }}</td>
+                  <td><span class="badge" [class.warn]="canje.estado === 'pendiente'">{{ canje.estado }}</span></td>
+                  <td>
+                    <button type="button" (click)="entregar(canje.id)" [disabled]="guardando() || canje.estado === 'entregado'">Entregar</button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        } @else {
+          <p class="empty">No hay canjes registrados.</p>
+        }
+      </article>
+    </section>
+  }
+</section>

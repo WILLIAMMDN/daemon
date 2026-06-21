@@ -1,1 +1,62 @@
-<app-pagina-api />
+<section class="page">
+  <header class="page-header">
+    <div>
+      <p class="kicker">Competencia</p>
+      <h1>Votacion en vivo</h1>
+      <p>Estado de la ronda y voto del estudiante.</p>
+    </div>
+    <button type="button" (click)="cargar()">Actualizar</button>
+  </header>
+
+  @if (mensaje()) { <p class="success">{{ mensaje() }}</p> }
+  @if (error()) { <p class="error">{{ error() }}</p> }
+
+  @if (cargando()) {
+    <p class="state">Cargando competencia...</p>
+  } @else if (estado(); as data) {
+    <section class="stats">
+      <article class="stat">
+        <span>Estado</span>
+        <strong>{{ data.ronda.estado }}</strong>
+      </article>
+      <article class="stat">
+        <span>Promedio</span>
+        <strong>{{ data.promedio || data.ronda.promedio_alumnos || 0 }}</strong>
+      </article>
+      <article class="stat">
+        <span>Duracion</span>
+        <strong>{{ data.ronda.duracion || 0 }}</strong>
+      </article>
+    </section>
+
+    <section class="split">
+      <article class="panel">
+        <h2>Candidato</h2>
+        @if (data.candidato) {
+          <p><strong>{{ data.candidato.nombre_completo }}</strong></p>
+          <p>{{ data.candidato.usuario }} - {{ data.candidato.nivel }}</p>
+        } @else {
+          <p class="empty">No hay alumno en tarima.</p>
+        }
+      </article>
+
+      <form class="panel" (ngSubmit)="enviar()">
+        <h2>Mi voto</h2>
+        @if (data.mi_voto) {
+          <p class="notice">Ya registraste {{ data.mi_voto.puntuacion }}/10.</p>
+        }
+        <div class="form-grid">
+          <label>
+            Puntuacion
+            <input name="puntuacion" type="number" min="1" max="10" [(ngModel)]="voto.puntuacion" required>
+          </label>
+          <label class="field-wide">
+            Comentario
+            <textarea name="comentario" rows="3" maxlength="200" [(ngModel)]="voto.comentario"></textarea>
+          </label>
+        </div>
+        <button type="submit" [disabled]="enviando() || data.ronda.estado !== 'votacion' || !data.candidato">Enviar voto</button>
+      </form>
+    </section>
+  }
+</section>

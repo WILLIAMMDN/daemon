@@ -1,1 +1,47 @@
-<app-pagina-api />
+@if (cargando()) {
+  <section class="state">Cargando certificado...</section>
+} @else if (error()) {
+  <section class="error">{{ error() }}</section>
+} @else if (datos(); as certificado) {
+  <section class="page">
+    <header class="page-header">
+      <div>
+        <p class="kicker">Certificado</p>
+        <h1>{{ certificado.usuario.nombre_completo }}</h1>
+        <p>Emitido: {{ certificado.emitido_en }}</p>
+      </div>
+      <a class="btn" routerLink="/alumno/certificado/imprimir">Imprimir carnet</a>
+    </header>
+
+    <section class="stats">
+      <article class="stat">
+        <span>Nivel</span>
+        <strong>{{ certificado.usuario.nivel }}</strong>
+      </article>
+      <article class="stat">
+        <span>Tokens</span>
+        <strong>{{ certificado.usuario.tokens }}</strong>
+      </article>
+      <article class="stat">
+        <span>Insignias</span>
+        <strong>{{ certificado.insignias.length }}</strong>
+      </article>
+    </section>
+
+    <section class="panel">
+      <h2>Insignias certificadas</h2>
+      @if (certificado.insignias.length) {
+        <div class="card-list">
+          @for (insignia of certificado.insignias; track insignia.id) {
+            <article class="data-card">
+              <strong>{{ insignia.nombre }}</strong>
+              <span class="muted">{{ insignia.descripcion }}</span>
+            </article>
+          }
+        </div>
+      } @else {
+        <p class="empty">Todavia no hay insignias para certificar.</p>
+      }
+    </section>
+  </section>
+}

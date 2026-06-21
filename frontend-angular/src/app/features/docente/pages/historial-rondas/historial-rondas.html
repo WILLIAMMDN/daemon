@@ -1,1 +1,41 @@
-<app-pagina-api />
+<section class="page">
+  <header class="page-header">
+    <div>
+      <p class="kicker">Docente</p>
+      <h1>Historial de rondas</h1>
+      <p>Ganadores y promedios de competencias cerradas.</p>
+    </div>
+    <button type="button" (click)="cargar()">Actualizar</button>
+  </header>
+
+  @if (cargando()) {
+    <p class="state">Cargando rondas...</p>
+  } @else if (error()) {
+    <p class="error">{{ error() }}</p>
+  } @else if (rondas().length) {
+    <section class="panel table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Nivel</th>
+            <th>Ganador</th>
+            <th>Promedio</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (ronda of rondas(); track ronda.id) {
+            <tr>
+              <td>{{ ronda.fecha }}</td>
+              <td><span class="badge">{{ ronda.nivel }}</span></td>
+              <td>{{ ronda.ganador_nombre }}</td>
+              <td><strong>{{ ronda.ganador_promedio }}</strong></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </section>
+  } @else {
+    <p class="empty">No hay rondas cerradas.</p>
+  }
+</section>

@@ -1,10 +1,34 @@
-import { Component } from '@angular/core';
-import { PaginaApi } from '../../../../shared/componentes/pagina-api/pagina-api';
+import { Component, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { CertificadoService } from '../../services/certificado';
 
 @Component({
   selector: 'app-certificado',
-  imports: [PaginaApi],
+  imports: [RouterLink],
   templateUrl: './certificado.html',
   styleUrl: './certificado.scss',
 })
-export class Certificado {}
+export class Certificado {
+  datos = signal<any | null>(null);
+  cargando = signal(true);
+  error = signal('');
+
+  constructor(private certificado: CertificadoService) {
+    this.cargar();
+  }
+
+  cargar(): void {
+    this.cargando.set(true);
+    this.error.set('');
+    this.certificado.actual().subscribe({
+      next: (datos) => {
+        this.datos.set(datos);
+        this.cargando.set(false);
+      },
+      error: (e) => {
+        this.error.set(e.error?.message ?? 'No se pudo cargar el certificado.');
+        this.cargando.set(false);
+      },
+    });
+  }
+}

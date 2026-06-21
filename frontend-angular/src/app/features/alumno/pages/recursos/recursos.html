@@ -1,16 +1,19 @@
-<section class="module-shell">
-  <header>
-    <span class="module-status">Preparado</span>
-    <h1>Recursos del estudiante</h1>
-    <p>Espacio para materiales de clase, documentos, audios y galerias migradas desde el proyecto original.</p>
+<section class="page">
+  <header class="page-header">
+    <div>
+      <p class="kicker">Recursos</p>
+      <h1>Accesos de aprendizaje</h1>
+      <p>Herramientas activas de tu cuenta.</p>
+    </div>
   </header>
-  <article class="module-card">
-    <h2>Carpetas disponibles</h2>
-    <ul>
-      <li><a href="/docs" target="_blank">Documentos</a></li>
-      <li><a href="/audio" target="_blank">Audio</a></li>
-      <li><a href="/galeria" target="_blank">Galeria</a></li>
-      <li><a href="/uploads" target="_blank">Uploads heredados</a></li>
-    </ul>
-  </article>
+
+  <div class="card-list">
+    @for (recurso of recursos; track recurso.ruta) {
+      <article class="data-card">
+        <h2>{{ recurso.titulo }}</h2>
+        <p>{{ recurso.detalle }}</p>
+        <a class="btn" [routerLink]="recurso.ruta">Abrir</a>
+      </article>
+    }
+  </div>
 </section>

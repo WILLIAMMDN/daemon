@@ -1,1 +1,48 @@
-<app-pagina-api />
+<section class="page">
+  <header class="page-header">
+    <div>
+      <p class="kicker">Evaluaciones</p>
+      <h1>Examenes activos</h1>
+      <p>Responde las evaluaciones disponibles para tu nivel.</p>
+    </div>
+    <button type="button" (click)="cargar()">Actualizar</button>
+  </header>
+
+  @if (mensaje()) { <p class="success">{{ mensaje() }}</p> }
+  @if (error()) { <p class="error">{{ error() }}</p> }
+
+  @if (cargando()) {
+    <p class="state">Cargando evaluaciones...</p>
+  } @else if (examenes().length) {
+    @for (examen of examenes(); track examen.id) {
+      <form class="panel" (ngSubmit)="responder(examen)">
+        <h2>{{ examen.titulo }}</h2>
+        <p><span class="badge">{{ examen.nivel }}</span> {{ examen.estado }}</p>
+        @if (examen.preguntas?.length) {
+          <div class="grid">
+            @for (pregunta of examen.preguntas; track pregunta.id) {
+              <label class="field">
+                {{ pregunta.enunciado }}
+                @if (pregunta.opciones?.length) {
+                  <select [name]="'p_' + pregunta.id" [(ngModel)]="respuestas[pregunta.id]" required>
+                    <option value="">Selecciona</option>
+                    @for (opcion of pregunta.opciones; track opcion) {
+                      <option [value]="opcion">{{ opcion }}</option>
+                    }
+                  </select>
+                } @else {
+                  <input [name]="'p_' + pregunta.id" [(ngModel)]="respuestas[pregunta.id]" required>
+                }
+              </label>
+            }
+          </div>
+          <button type="submit" [disabled]="enviando() === examen.id">Enviar respuestas</button>
+        } @else {
+          <p class="empty">Esta evaluacion no tiene preguntas registradas.</p>
+        }
+      </form>
+    }
+  } @else {
+    <p class="empty">No hay evaluaciones activas para tu nivel.</p>
+  }
+</section>

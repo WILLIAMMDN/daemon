@@ -1,15 +1,18 @@
-<section class="module-shell">
-  <header>
-    <span class="module-status">Preparado</span>
-    <h1>Defensa IA</h1>
-    <p>Base para el laboratorio de clasificacion, defensa y experimentos de modelos locales.</p>
+<section class="page">
+  <header class="page-header">
+    <div>
+      <p class="kicker">Defensa IA</p>
+      <h1>Motor de defensa</h1>
+      <p>Assets heredados listos para conectar a una vista interactiva.</p>
+    </div>
   </header>
-  <article class="module-card">
-    <h2>Integracion esperada</h2>
-    <ul>
-      <li>Modelo heredado disponible en <code>/js/models/model.json</code>.</li>
-      <li>Librerias migradas: <code>/js/ml5.min.js</code> y <code>/js/p5.min.js</code>.</li>
-      <li>Preparado para envolver canvas/modelos dentro de Angular.</li>
-    </ul>
-  </article>
+
+  <div class="card-list">
+    @for (archivo of archivos; track archivo.ruta) {
+      <article class="data-card">
+        <h2>{{ archivo.nombre }}</h2>
+        <a class="btn" [href]="archivo.ruta" target="_blank">Abrir archivo</a>
+      </article>
+    }
+  </div>
 </section>

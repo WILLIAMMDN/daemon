@@ -1,1 +1,107 @@
-<app-pagina-api />
+<section class="page">
+  <header class="page-header">
+    <div>
+      <p class="kicker">Docente</p>
+      <h1>Evaluaciones</h1>
+      <p>Examenes, estados y banco de preguntas.</p>
+    </div>
+    <button type="button" (click)="cargar()">Actualizar</button>
+  </header>
+
+  @if (mensaje()) { <p class="success">{{ mensaje() }}</p> }
+  @if (error()) { <p class="error">{{ error() }}</p> }
+
+  <section class="split">
+    <form class="panel" (ngSubmit)="crear()">
+      <h2>Nueva evaluacion</h2>
+      <div class="form-grid">
+        <label>
+          Titulo
+          <input name="titulo" [(ngModel)]="nueva.titulo" required>
+        </label>
+        <label>
+          Nivel
+          <select name="nivel" [(ngModel)]="nueva.nivel">
+            <option value="KIDS">KIDS</option>
+            <option value="TEENS">TEENS</option>
+            <option value="PRO">PRO</option>
+          </select>
+        </label>
+        <label>
+          Estado
+          <select name="estado" [(ngModel)]="nueva.estado">
+            <option value="borrador">borrador</option>
+            <option value="activo">activo</option>
+            <option value="finalizado">finalizado</option>
+          </select>
+        </label>
+      </div>
+      <button type="submit" [disabled]="guardando() || !nueva.titulo.trim()">Crear</button>
+    </form>
+
+    <form class="panel" (ngSubmit)="agregarPregunta()">
+      <h2>Agregar pregunta</h2>
+      <div class="form-grid">
+        <label>
+          Evaluacion
+          <select name="examen_id" [(ngModel)]="pregunta.examen_id" required>
+            <option [ngValue]="null">Selecciona</option>
+            @for (examen of evaluaciones(); track examen.id) {
+              <option [ngValue]="examen.id">{{ examen.titulo }}</option>
+            }
+          </select>
+        </label>
+        <label>
+          Tipo
+          <select name="tipo" [(ngModel)]="pregunta.tipo">
+            <option value="opcion_multiple">opcion_multiple</option>
+            <option value="verdadero_falso">verdadero_falso</option>
+            <option value="texto">texto</option>
+          </select>
+        </label>
+        <label class="field-wide">
+          Enunciado
+          <textarea name="enunciado" [(ngModel)]="pregunta.enunciado" rows="3" required></textarea>
+        </label>
+        <label>
+          Opciones separadas por coma
+          <input name="opciones" [(ngModel)]="pregunta.opciones">
+        </label>
+        <label>
+          Respuesta correcta
+          <input name="respuesta_correcta" [(ngModel)]="pregunta.respuesta_correcta" required>
+        </label>
+      </div>
+      <button type="submit" [disabled]="guardando() || !pregunta.examen_id || !pregunta.enunciado.trim()">Guardar pregunta</button>
+    </form>
+  </section>
+
+  @if (cargando()) {
+    <p class="state">Cargando evaluaciones...</p>
+  } @else if (evaluaciones().length) {
+    <section class="panel table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Evaluacion</th>
+            <th>Nivel</th>
+            <th>Estado</th>
+            <th>Preguntas</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (examen of evaluaciones(); track examen.id) {
+            <tr>
+              <td>{{ examen.titulo }}</td>
+              <td><span class="badge">{{ examen.nivel }}</span></td>
+              <td>{{ examen.estado }}</td>
+              <td>{{ examen.preguntas?.length || 0 }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </section>
+  } @else {
+    <p class="empty">No hay evaluaciones registradas.</p>
+  }
+</section>

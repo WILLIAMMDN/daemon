@@ -1,1 +1,72 @@
-<app-pagina-api />
+<section class="page">
+  <header class="page-header">
+    <div>
+      <p class="kicker">Docente</p>
+      <h1>Entregas de misiones</h1>
+      <p>Evidencias enviadas por estudiantes.</p>
+    </div>
+    <button type="button" (click)="cargar()">Actualizar</button>
+  </header>
+
+  @if (mensaje()) { <p class="success">{{ mensaje() }}</p> }
+  @if (error()) { <p class="error">{{ error() }}</p> }
+
+  <form class="panel" (ngSubmit)="revisar()">
+    <h2>Revision</h2>
+    <div class="form-grid">
+      <label>
+        ID entrega
+        <input name="id" type="number" [(ngModel)]="revision.id" required>
+      </label>
+      <label>
+        Estado
+        <select name="estado" [(ngModel)]="revision.estado">
+          <option value="aprobado">aprobado</option>
+          <option value="rechazado">rechazado</option>
+        </select>
+      </label>
+      <label>
+        Tokens
+        <input name="calificacion" type="number" min="0" [(ngModel)]="revision.calificacion">
+      </label>
+      <label class="field-wide">
+        Comentario
+        <textarea name="comentario_docente" rows="3" [(ngModel)]="revision.comentario_docente"></textarea>
+      </label>
+    </div>
+    <button type="submit" [disabled]="guardando() || !revision.id">Guardar revision</button>
+  </form>
+
+  @if (cargando()) {
+    <p class="state">Cargando entregas...</p>
+  } @else if (entregas().length) {
+    <section class="panel table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Alumno</th>
+            <th>Mision</th>
+            <th>Estado</th>
+            <th>Evidencia</th>
+            <th>Accion</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (entrega of entregas(); track entrega.id) {
+            <tr>
+              <td>{{ entrega.id }}</td>
+              <td>{{ entrega.alumno }}<br><small>{{ entrega.nivel }}</small></td>
+              <td>{{ entrega.mision }}</td>
+              <td><span class="badge" [class.warn]="entrega.estado === 'pendiente'">{{ entrega.estado }}</span></td>
+              <td class="content">{{ entrega.archivo_url }}</td>
+              <td><button type="button" (click)="seleccionar(entrega)">Revisar</button></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </section>
+  } @else {
+    <p class="empty">No hay entregas registradas.</p>
+  }
+</section>

@@ -1,15 +1,52 @@
-<section class="module-shell">
-  <header>
-    <span class="module-status">Protegido</span>
-    <h1>Registro de docente</h1>
-    <p>La creacion de docentes ya no debe ser publica. Este modulo queda reservado para flujo administrativo.</p>
+<section class="page">
+  <header class="page-header">
+    <div>
+      <p class="kicker">Administracion</p>
+      <h1>Crear usuario interno</h1>
+      <p>Alta de docentes o administradores desde una sesion admin.</p>
+    </div>
   </header>
-  <article class="module-card">
-    <h2>Regla de seguridad</h2>
-    <ul>
-      <li>Endpoint interno: <code>/auth/usuarios</code>.</li>
-      <li>Solo usuarios con rol <code>admin</code> pueden crear docentes o administradores.</li>
-      <li>Google Login puede integrarse despues sin reabrir registro publico de roles.</li>
-    </ul>
-  </article>
+
+  <form class="panel" (ngSubmit)="crear()">
+    <div class="form-grid">
+      <label>
+        Nombre completo
+        <input name="nombre_completo" [(ngModel)]="datos.nombre_completo" required>
+      </label>
+      <label>
+        Correo
+        <input name="email" type="email" [(ngModel)]="datos.email">
+      </label>
+      <label>
+        Usuario
+        <input name="usuario" [(ngModel)]="datos.usuario" required>
+      </label>
+      <label>
+        Rol
+        <select name="rol" [(ngModel)]="datos.rol">
+          <option value="docente">docente</option>
+          <option value="admin">admin</option>
+        </select>
+      </label>
+      <label>
+        Nivel
+        <select name="nivel" [(ngModel)]="datos.nivel">
+          <option value="KIDS">KIDS</option>
+          <option value="TEENS">TEENS</option>
+          <option value="PRO">PRO</option>
+        </select>
+      </label>
+      <label>
+        Clave
+        <input name="password" type="password" [(ngModel)]="datos.password" required>
+      </label>
+      <label>
+        Confirmar clave
+        <input name="password_confirmation" type="password" [(ngModel)]="datos.password_confirmation" required>
+      </label>
+    </div>
+    <button type="submit" [disabled]="guardando()">Crear usuario</button>
+    @if (mensaje()) { <p class="success">{{ mensaje() }}</p> }
+    @if (error()) { <p class="error">{{ error() }}</p> }
+  </form>
 </section>

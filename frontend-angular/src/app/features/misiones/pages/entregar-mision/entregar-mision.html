@@ -1,15 +1,37 @@
-<section class="module-shell">
-  <header>
-    <span class="module-status">Preparado</span>
-    <h1>Entregar mision</h1>
-    <p>Base para enviar texto o archivo como evidencia de una mision.</p>
-  </header>
-  <article class="module-card">
-    <h2>Integracion esperada</h2>
-    <ul>
-      <li>Endpoint de entrega: <code>/misiones/:id/entregar</code>.</li>
-      <li>Archivos permitidos controlados desde backend.</li>
-      <li>Estado inicial esperado: <code>pendiente</code>.</li>
-    </ul>
-  </article>
-</section>
+@if (cargando()) {
+  <section class="state">Cargando mision...</section>
+} @else if (detalle(); as datos) {
+  <section class="page">
+    <header class="page-header">
+      <div>
+        <p class="kicker">Entrega</p>
+        <h1>{{ datos.mision.titulo }}</h1>
+        <p>{{ datos.mision.descripcion || 'Sin descripcion registrada.' }}</p>
+      </div>
+      <a class="ghost-btn" [routerLink]="['/alumno/misiones', id]">Ver detalle</a>
+    </header>
+
+    <form class="panel" (ngSubmit)="entregar()">
+      <label class="field">
+        Evidencia
+        <textarea name="texto" [(ngModel)]="texto" rows="8" required></textarea>
+      </label>
+      <div class="actions">
+        <button type="submit" [disabled]="enviando() || !texto.trim()">Registrar entrega</button>
+        <button type="button" (click)="texto = ''">Limpiar</button>
+      </div>
+      @if (mensaje()) { <p class="success">{{ mensaje() }}</p> }
+      @if (error()) { <p class="error">{{ error() }}</p> }
+    </form>
+
+    @if (datos.entrega) {
+      <article class="panel">
+        <h2>Entrega actual</h2>
+        <p><span class="badge" [class.warn]="datos.entrega.estado === 'pendiente'">{{ datos.entrega.estado }}</span></p>
+        <p class="content">{{ datos.entrega.archivo_url }}</p>
+      </article>
+    }
+  </section>
+} @else if (error()) {
+  <section class="error">{{ error() }}</section>
+}

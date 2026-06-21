@@ -1,1 +1,43 @@
-<app-pagina-api />
+<section class="page">
+  <header class="page-header">
+    <div>
+      <p class="kicker">Docente</p>
+      <h1>Historial de tokens</h1>
+      <p>Auditoria de movimientos de economia escolar.</p>
+    </div>
+    <button type="button" (click)="cargar()">Actualizar</button>
+  </header>
+
+  @if (cargando()) {
+    <p class="state">Cargando historial...</p>
+  } @else if (error()) {
+    <p class="error">{{ error() }}</p>
+  } @else if (movimientos().length) {
+    <section class="panel table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Alumno</th>
+            <th>Docente</th>
+            <th>Cantidad</th>
+            <th>Motivo</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (movimiento of movimientos(); track movimiento.id) {
+            <tr>
+              <td>{{ movimiento.fecha }}</td>
+              <td>{{ movimiento.alumno }}</td>
+              <td>{{ movimiento.docente }}</td>
+              <td><strong>{{ movimiento.cantidad }}</strong></td>
+              <td>{{ movimiento.motivo }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </section>
+  } @else {
+    <p class="empty">No hay movimientos registrados.</p>
+  }
+</section>

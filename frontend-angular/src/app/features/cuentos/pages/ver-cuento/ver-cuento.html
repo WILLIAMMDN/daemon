@@ -1,15 +1,29 @@
-<section class="module-shell">
-  <header>
-    <span class="module-status">Preparado</span>
-    <h1>Ver cuento</h1>
-    <p>Vista base para mostrar una historia guardada, sus escenas y recursos visuales.</p>
-  </header>
-  <article class="module-card">
-    <h2>Integracion esperada</h2>
-    <ul>
-      <li>Endpoint de lectura: <code>/cuentos/:id</code>.</li>
-      <li>Render de escenas del cuento desde los campos <code>data_1</code> a <code>data_6</code>.</li>
-      <li>Preparado para visor tipo galeria o comic.</li>
-    </ul>
-  </article>
-</section>
+@if (cargando()) {
+  <section class="state">Cargando cuento...</section>
+} @else if (error()) {
+  <section class="error">{{ error() }}</section>
+} @else if (datos(); as datosCuento) {
+  <section class="page">
+    <header class="page-header">
+      <div>
+        <p class="kicker">Lectura</p>
+        <h1>{{ datosCuento.cuento.titulo }}</h1>
+        <p>{{ datosCuento.autor?.nombre_completo || 'Autor registrado' }}</p>
+      </div>
+      <a class="ghost-btn" routerLink="/alumno/cuentos">Galeria</a>
+    </header>
+
+    @if (escenas(datosCuento.cuento).length) {
+      <section class="grid">
+        @for (escena of escenas(datosCuento.cuento); track $index) {
+          <article class="panel">
+            <p class="kicker">Escena {{ $index + 1 }}</p>
+            <p class="content">{{ escena }}</p>
+          </article>
+        }
+      </section>
+    } @else {
+      <p class="empty">Este cuento no tiene escenas registradas.</p>
+    }
+  </section>
+}

@@ -11,7 +11,7 @@
       <div>
         <p class="eyebrow">Portal estudiante</p>
         <h1>Hola, {{ datos.usuario.nombre_completo }}</h1>
-        <p>Nivel {{ datos.usuario.nivel }} · {{ datos.usuario.rango || 'Rango en progreso' }}</p>
+        <p>Nivel {{ datos.usuario.nivel }} - {{ datos.usuario.rango || 'Rango en progreso' }}</p>
       </div>
       <aside class="saldo">
         <span>Tokens</span>

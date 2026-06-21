@@ -1,15 +1,24 @@
-<section class="module-shell">
-  <header>
-    <span class="module-status">Preparado</span>
-    <h1>Imprimir carnet</h1>
-    <p>Base para vista imprimible del carnet del estudiante y certificados asociados.</p>
-  </header>
-  <article class="module-card">
-    <h2>Pendiente visual</h2>
-    <ul>
-      <li>Maquetar carnet en formato imprimible.</li>
-      <li>Conectar datos desde <code>/certificados</code>.</li>
-      <li>Integrar QR o codigo verificable si se requiere.</li>
-    </ul>
-  </article>
-</section>
+@if (cargando()) {
+  <section class="state">Cargando carnet...</section>
+} @else if (error()) {
+  <section class="error">{{ error() }}</section>
+} @else if (datos(); as carnet) {
+  <section class="page">
+    <header class="page-header">
+      <div>
+        <p class="kicker">Carnet</p>
+        <h1>DAEMON</h1>
+        <p>{{ carnet.emitido_en }}</p>
+      </div>
+      <button type="button" (click)="imprimir()">Imprimir</button>
+    </header>
+
+    <article class="panel">
+      <h2>{{ carnet.usuario.nombre_completo }}</h2>
+      <p><strong>Usuario:</strong> {{ carnet.usuario.usuario }}</p>
+      <p><strong>Nivel:</strong> {{ carnet.usuario.nivel }}</p>
+      <p><strong>Tokens:</strong> {{ carnet.usuario.tokens }}</p>
+      <p><strong>Insignias:</strong> {{ carnet.insignias.length }}</p>
+    </article>
+  </section>
+}

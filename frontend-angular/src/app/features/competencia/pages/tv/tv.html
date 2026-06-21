@@ -1,15 +1,41 @@
-<section class="module-shell">
-  <header>
-    <span class="module-status">Preparado</span>
-    <h1>TV de competencia</h1>
-    <p>Pantalla base para proyectar rondas, candidato en tarima, promedio y estado de votacion.</p>
+<section class="page">
+  <header class="page-header">
+    <div>
+      <p class="kicker">Competencia TV</p>
+      <h1>Ronda en vivo</h1>
+      <p>Vista de proyeccion para el aula.</p>
+    </div>
+    <button type="button" (click)="cargar()">Actualizar</button>
   </header>
-  <article class="module-card">
-    <h2>Integracion esperada</h2>
-    <ul>
-      <li>Endpoint de estado: <code>/competencia/estado</code>.</li>
-      <li>Endpoint de chat: <code>/competencia/chat</code>.</li>
-      <li>Modo visual a pantalla completa para aula o proyector.</li>
-    </ul>
-  </article>
+
+  @if (error()) { <p class="error">{{ error() }}</p> }
+
+  @if (estado(); as data) {
+    <section class="stats">
+      <article class="stat">
+        <span>Estado</span>
+        <strong>{{ data.ronda.estado }}</strong>
+      </article>
+      <article class="stat">
+        <span>Promedio</span>
+        <strong>{{ data.promedio || data.ronda.promedio_alumnos || 0 }}</strong>
+      </article>
+      <article class="stat">
+        <span>Fin</span>
+        <strong>{{ data.ronda.fin_votacion || '-' }}</strong>
+      </article>
+    </section>
+
+    <article class="panel">
+      <p class="kicker">Alumno en tarima</p>
+      @if (data.candidato) {
+        <h2>{{ data.candidato.nombre_completo }}</h2>
+        <p>{{ data.candidato.usuario }} - {{ data.candidato.nivel }} - {{ data.candidato.tokens }} tokens</p>
+      } @else {
+        <p class="empty">Esperando candidato.</p>
+      }
+    </article>
+  } @else {
+    <p class="state">Cargando ronda...</p>
+  }
 </section>

@@ -1,1 +1,68 @@
-<app-pagina-api />
+<section class="page">
+  <header class="page-header">
+    <div>
+      <p class="kicker">Docente</p>
+      <h1>Alumnos y tokens</h1>
+      <p>Listado de estudiantes y ajustes de economia escolar.</p>
+    </div>
+    <button type="button" (click)="cargar()">Actualizar</button>
+  </header>
+
+  @if (mensaje()) { <p class="success">{{ mensaje() }}</p> }
+  @if (error()) { <p class="error">{{ error() }}</p> }
+
+  <form class="panel" (ngSubmit)="asignarTokens()">
+    <h2>Ajustar tokens</h2>
+    <div class="form-grid">
+      <label>
+        Alumno
+        <select name="id_alumno" [(ngModel)]="ajuste.id_alumno" required>
+          <option [ngValue]="null">Selecciona</option>
+          @for (alumno of alumnos(); track alumno.id) {
+            <option [ngValue]="alumno.id">{{ alumno.nombre_completo }}</option>
+          }
+        </select>
+      </label>
+      <label>
+        Cantidad
+        <input name="cantidad" type="number" [(ngModel)]="ajuste.cantidad" required>
+      </label>
+      <label>
+        Motivo
+        <input name="motivo" [(ngModel)]="ajuste.motivo">
+      </label>
+    </div>
+    <button type="submit" [disabled]="guardando() || !ajuste.id_alumno">Aplicar</button>
+  </form>
+
+  @if (cargando()) {
+    <p class="state">Cargando alumnos...</p>
+  } @else if (alumnos().length) {
+    <section class="panel table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Alumno</th>
+            <th>Usuario</th>
+            <th>Nivel</th>
+            <th>Rango</th>
+            <th>Tokens</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (alumno of alumnos(); track alumno.id) {
+            <tr>
+              <td>{{ alumno.nombre_completo }}</td>
+              <td>{{ alumno.usuario }}</td>
+              <td><span class="badge">{{ alumno.nivel }}</span></td>
+              <td>{{ alumno.rango || '-' }}</td>
+              <td><strong>{{ alumno.tokens }}</strong></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </section>
+  } @else {
+    <p class="empty">No hay alumnos registrados.</p>
+  }
+</section>

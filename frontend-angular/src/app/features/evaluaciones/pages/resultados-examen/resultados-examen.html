@@ -1,1 +1,41 @@
-<app-pagina-api />
+<section class="page">
+  <header class="page-header">
+    <div>
+      <p class="kicker">Resultados</p>
+      <h1>Mis evaluaciones enviadas</h1>
+      <p>Puntajes registrados en tu historial.</p>
+    </div>
+    <button type="button" (click)="cargar()">Actualizar</button>
+  </header>
+
+  @if (cargando()) {
+    <p class="state">Cargando resultados...</p>
+  } @else if (error()) {
+    <p class="error">{{ error() }}</p>
+  } @else if (resultados().length) {
+    <section class="panel table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Evaluacion</th>
+            <th>Puntaje</th>
+            <th>Nivel</th>
+            <th>Fecha</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (resultado of resultados(); track resultado.id) {
+            <tr>
+              <td>{{ resultado.titulo }}</td>
+              <td><strong>{{ resultado.puntaje }}</strong></td>
+              <td><span class="badge">{{ resultado.nivel }}</span></td>
+              <td>{{ resultado.fecha_envio }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </section>
+  } @else {
+    <p class="empty">Todavia no tienes resultados registrados.</p>
+  }
+</section>

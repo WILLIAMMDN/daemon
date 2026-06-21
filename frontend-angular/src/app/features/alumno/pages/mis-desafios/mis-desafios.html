@@ -1,1 +1,42 @@
-<app-pagina-api />
+<section class="page">
+  <header class="page-header">
+    <div>
+      <p class="kicker">Mis desafios</p>
+      <h1>Misiones disponibles</h1>
+      <p>Retos activos para tu nivel y estado de tus entregas.</p>
+    </div>
+    <button type="button" (click)="cargar()">Actualizar</button>
+  </header>
+
+  @if (cargando()) {
+    <p class="state">Cargando misiones...</p>
+  } @else if (error()) {
+    <p class="error">{{ error() }}</p>
+  } @else if (misiones().length) {
+    <div class="card-list">
+      @for (mision of misiones(); track mision.id) {
+        <article class="data-card">
+          <span class="badge" [class.warn]="mision.entrega?.estado === 'pendiente'">{{ mision.entrega?.estado || mision.estado }}</span>
+          <h2>{{ mision.titulo }}</h2>
+          <p>{{ mision.descripcion || 'Sin descripcion registrada.' }}</p>
+          <div class="stats">
+            <div class="stat">
+              <span>Recompensa</span>
+              <strong>{{ mision.recompensa }}</strong>
+            </div>
+            <div class="stat">
+              <span>Nivel</span>
+              <strong>{{ mision.nivel_requerido }}</strong>
+            </div>
+          </div>
+          <div class="actions">
+            <a class="btn" [routerLink]="['/alumno/misiones', mision.id]">Ver detalle</a>
+            <a class="ghost-btn" [routerLink]="['/alumno/misiones', mision.id, 'entregar']">Entregar</a>
+          </div>
+        </article>
+      }
+    </div>
+  } @else {
+    <p class="empty">No hay misiones activas para tu nivel.</p>
+  }
+</section>

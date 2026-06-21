@@ -7,6 +7,8 @@ import { Api } from '../../../core/servicios/api';
 export class Chatbot {
   constructor(private api: Api) {}
   bot() { return this.api.get('/chatbot/bot'); }
-    mensajes() { return this.api.get('/chatbot/mensajes'); }
-    enviar(content: string) { return this.api.post('/chatbot/mensajes', { content }); }
+  mensajes() { return this.api.get('/chatbot/mensajes'); }
+  enviar(content: string) { return this.api.post('/chatbot/mensajes', { content }); }
+  cerebro() { return this.api.get('/chatbot/cerebro'); }
+  guardarCerebro(matriz_neural: unknown) { return this.api.post('/chatbot/cerebro', { matriz_neural }); }
 }

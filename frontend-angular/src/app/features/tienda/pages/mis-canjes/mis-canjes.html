@@ -1,1 +1,46 @@
-<app-pagina-api />
+<section class="page">
+  <header class="page-header">
+    <div>
+      <p class="kicker">Canjes</p>
+      <h1>Historial de premios</h1>
+      <p>Premios solicitados y entregas registradas.</p>
+    </div>
+    <button type="button" (click)="cargar()">Actualizar</button>
+  </header>
+
+  @if (cargando()) {
+    <p class="state">Cargando canjes...</p>
+  } @else if (error()) {
+    <p class="error">{{ error() }}</p>
+  } @else if (canjes().length) {
+    <section class="panel table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Premio</th>
+            <th>Estado</th>
+            <th>Entrega</th>
+            <th>Fecha</th>
+            <th>Codigo</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (canje of canjes(); track canje.id) {
+            <tr>
+              <td>
+                <strong>{{ canje.nombre }}</strong>
+                <p class="muted">{{ canje.descripcion }}</p>
+              </td>
+              <td><span class="badge" [class.warn]="canje.estado === 'pendiente'">{{ canje.estado }}</span></td>
+              <td>{{ canje.tipo_entrega }}</td>
+              <td>{{ canje.fecha }}</td>
+              <td>{{ canje.dato_publico || canje.dato_privado || '-' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </section>
+  } @else {
+    <p class="empty">Todavia no tienes canjes registrados.</p>
+  }
+</section>

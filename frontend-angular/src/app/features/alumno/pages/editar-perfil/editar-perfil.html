@@ -1,15 +1,43 @@
-<section class="module-shell">
-  <header>
-    <span class="module-status">Preparado</span>
-    <h1>Editar perfil</h1>
-    <p>Base para actualizar datos personales, avatar, fondo y presentacion del estudiante.</p>
-  </header>
-  <article class="module-card">
-    <h2>Integracion esperada</h2>
-    <ul>
-      <li>Endpoint principal: <code>/alumno/perfil</code>.</li>
-      <li>Soporte para imagenes de avatar, fondo y heroe.</li>
-      <li>El cambio de clave queda separado en <code>/auth/cambiar-clave</code>.</li>
-    </ul>
-  </article>
-</section>
+@if (cargando()) {
+  <section class="state">Cargando datos...</section>
+} @else {
+  <section class="page">
+    <header class="page-header">
+      <div>
+        <p class="kicker">Perfil</p>
+        <h1>Editar mis datos</h1>
+        <p>Actualiza la informacion que aparece en tu cuenta de DAEMON.</p>
+      </div>
+      <a class="ghost-btn" routerLink="/alumno/perfil">Volver</a>
+    </header>
+
+    <form class="panel" (ngSubmit)="guardar()">
+      <div class="form-grid">
+        <label>
+          Nombre completo
+          <input name="nombre_completo" [(ngModel)]="formulario.nombre_completo" required>
+        </label>
+        <label>
+          Correo
+          <input name="email" [(ngModel)]="formulario.email" type="email">
+        </label>
+        <label>
+          Genero
+          <input name="genero" [(ngModel)]="formulario.genero">
+        </label>
+        <label class="field-wide">
+          Biografia
+          <textarea name="biografia" [(ngModel)]="formulario.biografia" rows="5"></textarea>
+        </label>
+      </div>
+
+      <div class="actions">
+        <button type="submit" [disabled]="guardando()">Guardar cambios</button>
+        <button type="button" (click)="cargar()">Restaurar</button>
+      </div>
+
+      @if (mensaje()) { <p class="success">{{ mensaje() }}</p> }
+      @if (error()) { <p class="error">{{ error() }}</p> }
+    </form>
+  </section>
+}

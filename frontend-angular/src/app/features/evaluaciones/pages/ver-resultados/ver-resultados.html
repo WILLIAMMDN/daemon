@@ -1,15 +1,43 @@
-<section class="module-shell">
-  <header>
-    <span class="module-status">Preparado</span>
-    <h1>Ver resultados</h1>
-    <p>Base para revisar resultados por evaluacion, estudiante, nivel y puntaje.</p>
+<section class="page">
+  <header class="page-header">
+    <div>
+      <p class="kicker">Docente</p>
+      <h1>Resultados de evaluaciones</h1>
+      <p>Respuestas enviadas por estudiantes.</p>
+    </div>
+    <button type="button" (click)="cargar()">Actualizar</button>
   </header>
-  <article class="module-card">
-    <h2>Integracion esperada</h2>
-    <ul>
-      <li>Endpoint principal: <code>/evaluaciones/resultados</code>.</li>
-      <li>Filtros por evaluacion, alumno y nivel.</li>
-      <li>Exportacion futura a PDF o Excel si lo necesitas.</li>
-    </ul>
-  </article>
+
+  @if (cargando()) {
+    <p class="state">Cargando resultados...</p>
+  } @else if (error()) {
+    <p class="error">{{ error() }}</p>
+  } @else if (resultados().length) {
+    <section class="panel table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Alumno</th>
+            <th>Evaluacion</th>
+            <th>Puntaje</th>
+            <th>Nivel</th>
+            <th>Fecha</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (resultado of resultados(); track resultado.id) {
+            <tr>
+              <td>{{ resultado.alumno }}</td>
+              <td>{{ resultado.titulo }}</td>
+              <td><strong>{{ resultado.puntaje }}</strong></td>
+              <td><span class="badge">{{ resultado.nivel }}</span></td>
+              <td>{{ resultado.fecha_envio }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </section>
+  } @else {
+    <p class="empty">Todavia no hay respuestas registradas.</p>
+  }
 </section>

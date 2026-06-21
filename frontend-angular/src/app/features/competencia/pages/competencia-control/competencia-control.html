@@ -1,1 +1,78 @@
-<app-pagina-api />
+<section class="page">
+  <header class="page-header">
+    <div>
+      <p class="kicker">Docente</p>
+      <h1>Control de competencia</h1>
+      <p>Selecciona candidato, abre votacion, cierra ronda o entrega premio.</p>
+    </div>
+    <button type="button" (click)="cargar()">Actualizar</button>
+  </header>
+
+  @if (mensaje()) { <p class="success">{{ mensaje() }}</p> }
+  @if (error()) { <p class="error">{{ error() }}</p> }
+
+  @if (cargando()) {
+    <p class="state">Cargando competencia...</p>
+  } @else if (estado(); as data) {
+    <section class="stats">
+      <article class="stat">
+        <span>Estado</span>
+        <strong>{{ data.ronda.estado }}</strong>
+      </article>
+      <article class="stat">
+        <span>Candidato</span>
+        <strong>{{ data.candidato?.id || '-' }}</strong>
+      </article>
+      <article class="stat">
+        <span>Promedio</span>
+        <strong>{{ data.promedio || data.ronda.promedio_alumnos || 0 }}</strong>
+      </article>
+    </section>
+
+    <section class="split">
+      <article class="panel">
+        <h2>Alumno en tarima</h2>
+        @if (data.candidato) {
+          <p><strong>{{ data.candidato.nombre_completo }}</strong></p>
+          <p>{{ data.candidato.usuario }} - {{ data.candidato.nivel }}</p>
+        } @else {
+          <p class="empty">Ningun alumno seleccionado.</p>
+        }
+      </article>
+
+      <form class="panel" (ngSubmit)="ejecutar()">
+        <h2>Accion de ronda</h2>
+        <div class="form-grid">
+          <label>
+            Accion
+            <select name="accion" [(ngModel)]="control.accion">
+              <option value="candidato">candidato</option>
+              <option value="iniciar">iniciar</option>
+              <option value="cerrar">cerrar</option>
+              <option value="premiar">premiar</option>
+              <option value="reiniciar">reiniciar</option>
+            </select>
+          </label>
+          <label>
+            Alumno
+            <select name="id_alumno" [(ngModel)]="control.id_alumno">
+              <option [ngValue]="null">Sin alumno</option>
+              @for (alumno of alumnos(); track alumno.id) {
+                <option [ngValue]="alumno.id">{{ alumno.nombre_completo }}</option>
+              }
+            </select>
+          </label>
+          <label>
+            Duracion
+            <input name="duracion" type="number" min="10" max="600" [(ngModel)]="control.duracion">
+          </label>
+          <label>
+            Premio
+            <input name="puntos" type="number" min="0" [(ngModel)]="control.puntos">
+          </label>
+        </div>
+        <button type="submit" [disabled]="guardando()">Ejecutar</button>
+      </form>
+    </section>
+  }
+</section>

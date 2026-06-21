@@ -19,6 +19,10 @@ export class Autenticacion {
       .pipe(tap((respuesta) => this.sesion.guardar(respuesta.token, respuesta.usuario)));
   }
 
+  crearUsuario(datos: Record<string, unknown>) {
+    return this.api.post('/auth/usuarios', datos);
+  }
+
   solicitarRecuperacion(datos: { usuario?: string; email?: string }) {
     return this.api.post<{ message: string }>('/auth/recuperar', datos);
   }

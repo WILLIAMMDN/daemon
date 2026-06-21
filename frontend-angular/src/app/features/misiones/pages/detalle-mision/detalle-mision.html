@@ -1,15 +1,54 @@
-<section class="module-shell">
-  <header>
-    <span class="module-status">Preparado</span>
-    <h1>Detalle de mision</h1>
-    <p>Base para mostrar instrucciones, recompensa, estado de entrega y comentarios del docente.</p>
-  </header>
-  <article class="module-card">
-    <h2>Integracion esperada</h2>
-    <ul>
-      <li>Endpoint de detalle: <code>/misiones/:id</code>.</li>
-      <li>Mostrar evidencia enviada y estado de revision.</li>
-      <li>Acceso a entrega o reentrega segun reglas del aula.</li>
-    </ul>
-  </article>
-</section>
+@if (cargando()) {
+  <section class="state">Cargando mision...</section>
+} @else if (error()) {
+  <section class="error">{{ error() }}</section>
+} @else if (detalle(); as datos) {
+  <section class="page">
+    <header class="page-header">
+      <div>
+        <p class="kicker">Detalle de mision</p>
+        <h1>{{ datos.mision.titulo }}</h1>
+        <p>{{ datos.mision.descripcion || 'Sin descripcion registrada.' }}</p>
+      </div>
+      <a class="ghost-btn" routerLink="/alumno/misiones">Volver</a>
+    </header>
+
+    <section class="stats">
+      <article class="stat">
+        <span>Recompensa</span>
+        <strong>{{ datos.mision.recompensa }}</strong>
+      </article>
+      <article class="stat">
+        <span>Nivel</span>
+        <strong>{{ datos.mision.nivel_requerido }}</strong>
+      </article>
+      <article class="stat">
+        <span>Evidencia</span>
+        <strong>{{ datos.mision.tipo_evidencia }}</strong>
+      </article>
+    </section>
+
+    <section class="split">
+      <article class="panel">
+        <h2>Estado de entrega</h2>
+        @if (datos.entrega) {
+          <p><span class="badge" [class.warn]="datos.entrega.estado === 'pendiente'">{{ datos.entrega.estado }}</span></p>
+          <p class="content">{{ datos.entrega.archivo_url }}</p>
+          @if (datos.entrega.comentario_docente) {
+            <p><strong>Comentario:</strong> {{ datos.entrega.comentario_docente }}</p>
+          }
+        } @else {
+          <p class="empty">Todavia no registraste entrega para esta mision.</p>
+        }
+      </article>
+
+      <article class="panel">
+        <h2>Acciones</h2>
+        <div class="actions">
+          <a class="btn" [routerLink]="['/alumno/misiones', datos.mision.id, 'entregar']">Entregar evidencia</a>
+          <a class="ghost-btn" routerLink="/alumno/desafios">Ver desafios</a>
+        </div>
+      </article>
+    </section>
+  </section>
+}

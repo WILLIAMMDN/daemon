@@ -1,1 +1,43 @@
-<app-pagina-api />
+<section class="page">
+  <header class="page-header">
+    <div>
+      <p class="kicker">Ranking</p>
+      <h1>Clasificacion general</h1>
+      <p>Ordenado por tokens acumulados.</p>
+    </div>
+    <button type="button" (click)="cargar()">Actualizar</button>
+  </header>
+
+  @if (cargando()) {
+    <p class="state">Cargando ranking...</p>
+  } @else if (error()) {
+    <p class="error">{{ error() }}</p>
+  } @else if (alumnos().length) {
+    <section class="panel table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Estudiante</th>
+            <th>Nivel</th>
+            <th>Rango</th>
+            <th>Tokens</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (alumno of alumnos(); track alumno.id; let i = $index) {
+            <tr>
+              <td><strong>{{ i + 1 }}</strong></td>
+              <td>{{ alumno.nombre_completo }}</td>
+              <td><span class="badge">{{ alumno.nivel }}</span></td>
+              <td>{{ alumno.rango || '-' }}</td>
+              <td><strong>{{ alumno.tokens }}</strong></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </section>
+  } @else {
+    <p class="empty">Todavia no hay estudiantes en el ranking.</p>
+  }
+</section>

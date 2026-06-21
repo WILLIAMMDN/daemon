@@ -1,1 +1,35 @@
-<app-pagina-api />
+<section class="page">
+  <header class="page-header">
+    <div>
+      <p class="kicker">Cuentos</p>
+      <h1>Galeria de historias</h1>
+      <p>Historias creadas por estudiantes de DAEMON.</p>
+    </div>
+    <div class="actions">
+      <button type="button" (click)="cargar()">Actualizar</button>
+      <a class="btn" routerLink="/alumno/cuentos/crear">Crear cuento</a>
+    </div>
+  </header>
+
+  @if (cargando()) {
+    <p class="state">Cargando cuentos...</p>
+  } @else if (error()) {
+    <p class="error">{{ error() }}</p>
+  } @else if (cuentos().length) {
+    <div class="card-list">
+      @for (cuento of cuentos(); track cuento.id) {
+        <article class="data-card">
+          @if (portada(cuento)) {
+            <img class="image-thumb" [src]="portada(cuento)" [alt]="cuento.titulo">
+          }
+          <h2>{{ cuento.titulo }}</h2>
+          <p>{{ cuento.autor || 'Autor registrado' }}</p>
+          <small>{{ cuento.fecha_creacion }}</small>
+          <a class="btn" [routerLink]="['/alumno/cuentos', cuento.id]">Leer</a>
+        </article>
+      }
+    </div>
+  } @else {
+    <p class="empty">Todavia no hay cuentos publicados.</p>
+  }
+</section>

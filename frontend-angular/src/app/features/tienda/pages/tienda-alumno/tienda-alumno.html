@@ -1,1 +1,39 @@
-<app-pagina-api />
+<section class="page">
+  <header class="page-header">
+    <div>
+      <p class="kicker">Tienda</p>
+      <h1>Premios disponibles</h1>
+      <p>Saldo actual: <strong>{{ saldo() }}</strong> tokens.</p>
+    </div>
+    <div class="actions">
+      <button type="button" (click)="cargar()">Actualizar</button>
+      <a class="ghost-btn" routerLink="/alumno/canjes">Mis canjes</a>
+    </div>
+  </header>
+
+  @if (mensaje()) { <p class="success">{{ mensaje() }}</p> }
+  @if (error()) { <p class="error">{{ error() }}</p> }
+
+  @if (cargando()) {
+    <p class="state">Cargando premios...</p>
+  } @else if (premios().length) {
+    <div class="card-list">
+      @for (premio of premios(); track premio.id) {
+        <article class="data-card">
+          @if (premio.imagen) {
+            <img class="image-thumb" [src]="asset(premio.imagen)" [alt]="premio.nombre">
+          }
+          <span class="badge">{{ premio.categoria }}</span>
+          <h2>{{ premio.nombre }}</h2>
+          <p>{{ premio.descripcion || 'Sin descripcion registrada.' }}</p>
+          <p><strong>{{ premio.precio }}</strong> tokens - Stock {{ premio.stock }}</p>
+          <button type="button" (click)="canjear(premio.id)" [disabled]="procesando() === premio.id || saldo() < premio.precio || premio.stock < 1">
+            Canjear
+          </button>
+        </article>
+      }
+    </div>
+  } @else {
+    <p class="empty">No hay premios disponibles para tu nivel.</p>
+  }
+</section>

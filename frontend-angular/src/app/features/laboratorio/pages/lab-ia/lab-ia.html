@@ -1,1 +1,33 @@
-<app-pagina-api />
+<section class="page">
+  <header class="page-header">
+    <div>
+      <p class="kicker">Laboratorio IA</p>
+      <h1>Cerebro del bot</h1>
+      <p>Matriz neural guardada para el entrenamiento del estudiante.</p>
+    </div>
+    <div class="actions">
+      <button type="button" (click)="cargar()">Actualizar</button>
+      <a class="ghost-btn" routerLink="/alumno/laboratorio/entrenamiento-mascota">Entrenamiento</a>
+    </div>
+  </header>
+
+  @if (mensaje()) { <p class="success">{{ mensaje() }}</p> }
+  @if (error()) { <p class="error">{{ error() }}</p> }
+
+  @if (cargando()) {
+    <p class="state">Cargando cerebro...</p>
+  } @else {
+    <section class="split">
+      <form class="panel" (ngSubmit)="guardar()">
+        <h2>Matriz neural</h2>
+        <textarea name="matriz" [(ngModel)]="matrizTexto" rows="16"></textarea>
+        <button type="submit" [disabled]="guardando()">Guardar matriz</button>
+      </form>
+
+      <article class="panel">
+        <h2>Estado actual</h2>
+        <pre>{{ cerebro() | json }}</pre>
+      </article>
+    </section>
+  }
+</section>

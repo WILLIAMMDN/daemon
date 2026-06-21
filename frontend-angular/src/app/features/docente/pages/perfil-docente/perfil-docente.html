@@ -1,15 +1,21 @@
-<section class="module-shell">
-  <header>
-    <span class="module-status">Preparado</span>
-    <h1>Perfil docente</h1>
-    <p>Base para datos del docente, configuracion de aula y accesos administrativos.</p>
+<section class="page">
+  <header class="page-header">
+    <div>
+      <p class="kicker">Perfil docente</p>
+      <h1>{{ sesion.usuario()?.nombre_completo || 'Docente' }}</h1>
+      <p>{{ sesion.usuario()?.usuario }} - {{ sesion.usuario()?.rol }}</p>
+    </div>
+    <a class="btn" routerLink="/docente/alumnos">Gestionar alumnos</a>
   </header>
-  <article class="module-card">
-    <h2>Integracion esperada</h2>
-    <ul>
-      <li>Datos actuales desde <code>/auth/yo</code>.</li>
-      <li>Creacion de usuarios internos solo para administradores.</li>
-      <li>Cambio de clave por endpoint autenticado.</li>
-    </ul>
-  </article>
+
+  <section class="stats">
+    <article class="stat">
+      <span>Nivel</span>
+      <strong>{{ sesion.usuario()?.nivel || '-' }}</strong>
+    </article>
+    <article class="stat">
+      <span>Tokens</span>
+      <strong>{{ sesion.usuario()?.tokens || 0 }}</strong>
+    </article>
+  </section>
 </section>

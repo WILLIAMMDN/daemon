@@ -1,9 +1,34 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { Mision } from '../../services/mision';
 
 @Component({
   selector: 'app-lista-misiones',
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './lista-misiones.html',
   styleUrl: './lista-misiones.scss',
 })
-export class ListaMisiones {}
+export class ListaMisiones {
+  misiones = signal<any[]>([]);
+  cargando = signal(true);
+  error = signal('');
+
+  constructor(private mision: Mision) {
+    this.cargar();
+  }
+
+  cargar(): void {
+    this.cargando.set(true);
+    this.error.set('');
+    this.mision.listar().subscribe({
+      next: (misiones) => {
+        this.misiones.set(misiones as any[]);
+        this.cargando.set(false);
+      },
+      error: (e) => {
+        this.error.set(e.error?.message ?? 'No se pudieron cargar las misiones.');
+        this.cargando.set(false);
+      },
+    });
+  }
+}
