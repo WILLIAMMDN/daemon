@@ -1,6 +1,6 @@
-# YachayIA Rural - migracion Angular + Laravel
+# DAEMON - plataforma academica Angular + Laravel
 
-Esta entrega separa la aplicacion PHP original en:
+Esta entrega separa la aplicacion PHP original en una plataforma academica DAEMON:
 
 - `frontend-angular/`: interfaz Angular 21 por modulos, layouts, guardias, interceptor y servicios.
 - `backend-laravel/`: API REST Laravel 12 con Sanctum, controladores, modelos y almacenamiento.

@@ -15,7 +15,7 @@ use App\Http\Controllers\Api\V1\TiendaController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function (): void {
-    Route::get('/salud', fn () => ['ok' => true, 'app' => 'YachayIA API']);
+    Route::get('/salud', fn () => ['ok' => true, 'app' => 'DAEMON API']);
     Route::post('/auth/login', [AutenticacionController::class, 'login'])->middleware('throttle:10,1');
     Route::post('/auth/registro', [AutenticacionController::class, 'registro'])->middleware('throttle:5,1');
     Route::post('/auth/recuperar', [AutenticacionController::class, 'recuperar'])->middleware('throttle:5,1');

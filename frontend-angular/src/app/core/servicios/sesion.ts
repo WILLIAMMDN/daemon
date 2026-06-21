@@ -14,8 +14,8 @@ export interface UsuarioSesion {
   providedIn: 'root',
 })
 export class Sesion {
-  private readonly claveToken = 'yachayia_token';
-  private readonly claveUsuario = 'yachayia_usuario';
+  private readonly claveToken = 'daemon_token';
+  private readonly claveUsuario = 'daemon_usuario';
   readonly token = signal<string | null>(localStorage.getItem(this.claveToken));
   readonly usuario = signal<UsuarioSesion | null>(this.leerUsuario());
   readonly autenticado = computed(() => Boolean(this.token() && this.usuario()));

@@ -1,1 +1,57 @@
-<app-pagina-api />
+@if (cargando()) {
+  <section class="estado">Cargando tu panel...</section>
+} @else if (error()) {
+  <section class="estado error">
+    <p>{{ error() }}</p>
+    <button type="button" (click)="cargar()">Reintentar</button>
+  </section>
+} @else if (panel(); as datos) {
+  <section class="dashboard">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">Portal estudiante</p>
+        <h1>Hola, {{ datos.usuario.nombre_completo }}</h1>
+        <p>Nivel {{ datos.usuario.nivel }} · {{ datos.usuario.rango || 'Rango en progreso' }}</p>
+      </div>
+      <aside class="saldo">
+        <span>Tokens</span>
+        <strong>{{ datos.usuario.tokens }}</strong>
+        <small>Puesto #{{ datos.posicion }} en tu nivel</small>
+      </aside>
+    </header>
+
+    <section class="metricas">
+      <article>
+        <span>Misiones activas</span>
+        <strong>{{ datos.misiones_pendientes }}</strong>
+        <a routerLink="/alumno/misiones">Ver misiones</a>
+      </article>
+      <article>
+        <span>Insignias ganadas</span>
+        <strong>{{ datos.insignias }}</strong>
+        <a routerLink="/alumno/perfil">Mi perfil</a>
+      </article>
+      <article>
+        <span>Canjes pendientes</span>
+        <strong>{{ datos.canjes_pendientes }}</strong>
+        <a routerLink="/alumno/canjes">Mis canjes</a>
+      </article>
+    </section>
+
+    <section class="acciones">
+      <a routerLink="/alumno/chatbot">Abrir mi bot</a>
+      <a routerLink="/alumno/evaluaciones">Evaluaciones</a>
+      <a routerLink="/alumno/tienda">Tienda</a>
+      <a routerLink="/alumno/ranking">Ranking</a>
+    </section>
+
+    <article class="ruta">
+      <div>
+        <p class="eyebrow">Siguiente paso</p>
+        <h2>Completa una mision y sube evidencia</h2>
+        <p>Las misiones, evaluaciones y votos alimentan tus tokens, insignias y posicion en DAEMON.</p>
+      </div>
+      <a routerLink="/alumno/desafios">Ir a desafios</a>
+    </article>
+  </section>
+}

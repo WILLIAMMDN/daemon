@@ -1,4 +1,4 @@
-<section class="heading"><div><p class="eyebrow">YachayIA conectado</p><h1>{{ config.titulo }}</h1><p>{{ config.descripcion }}</p></div>@if (config.endpoint) { <button class="refresh" (click)="cargar()">Actualizar</button> }</section>
+<section class="heading"><div><p class="eyebrow">DAEMON conectado</p><h1>{{ config.titulo }}</h1><p>{{ config.descripcion }}</p></div>@if (config.endpoint) { <button class="refresh" (click)="cargar()">Actualizar</button> }</section>
 @if (config.aviso) { <div class="notice">{{ config.aviso }}</div> }
 @if (config.accion) {
   <form class="action" (ngSubmit)="ejecutar()"><h2>{{ config.accion.etiqueta }}</h2><div class="fields">

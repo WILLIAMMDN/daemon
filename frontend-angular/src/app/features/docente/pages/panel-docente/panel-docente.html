@@ -1,1 +1,74 @@
-<app-pagina-api />
+@if (cargando()) {
+  <section class="estado">Cargando panel docente...</section>
+} @else if (error()) {
+  <section class="estado error">
+    <p>{{ error() }}</p>
+    <button type="button" (click)="cargar()">Reintentar</button>
+  </section>
+} @else if (panel(); as datos) {
+  <section class="dashboard">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">Portal docente</p>
+        <h1>Control del aula DAEMON</h1>
+        <p>Monitorea actividad, economia escolar, entregas y estudiantes con mejor avance.</p>
+      </div>
+      <a routerLink="/docente/alumnos">Gestionar alumnos</a>
+    </header>
+
+    <section class="metricas">
+      <article>
+        <span>Alumnos</span>
+        <strong>{{ datos.alumnos }}</strong>
+      </article>
+      <article>
+        <span>Tokens en circulacion</span>
+        <strong>{{ datos.tokens_circulacion }}</strong>
+      </article>
+      <article>
+        <span>Entregas pendientes</span>
+        <strong>{{ datos.entregas_pendientes }}</strong>
+      </article>
+      <article>
+        <span>Canjes pendientes</span>
+        <strong>{{ datos.canjes_pendientes }}</strong>
+      </article>
+    </section>
+
+    <section class="contenido">
+      <article class="ranking">
+        <div class="section-title">
+          <p class="eyebrow">Ranking actual</p>
+          <h2>Top estudiantes</h2>
+        </div>
+        @if (datos.ranking.length) {
+          <ol>
+            @for (alumno of datos.ranking; track alumno.id; let i = $index) {
+              <li>
+                <span>{{ i + 1 }}</span>
+                <div>
+                  <strong>{{ alumno.nombre_completo }}</strong>
+                  <small>{{ alumno.nivel }} · {{ alumno.rango || alumno.usuario }}</small>
+                </div>
+                <b>{{ alumno.tokens }}</b>
+              </li>
+            }
+          </ol>
+        } @else {
+          <p class="vacio">Aun no hay estudiantes en el ranking.</p>
+        }
+      </article>
+
+      <article class="acciones">
+        <div class="section-title">
+          <p class="eyebrow">Gestion rapida</p>
+          <h2>Acciones de clase</h2>
+        </div>
+        <a routerLink="/docente/misiones">Crear misiones</a>
+        <a routerLink="/docente/entregas">Revisar entregas</a>
+        <a routerLink="/docente/evaluaciones">Evaluaciones</a>
+        <a routerLink="/docente/tienda">Tienda y premios</a>
+      </article>
+    </section>
+  </section>
+}

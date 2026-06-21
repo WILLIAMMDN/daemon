@@ -1,4 +1,4 @@
 <div class="portal">
-  <aside><a class="brand" routerLink="/alumno">YachayIA</a><p class="role">Portal estudiante</p><nav>@for (enlace of enlaces; track enlace[1]) { <a [routerLink]="enlace[1]" routerLinkActive="active" [routerLinkActiveOptions]="{exact: enlace[1] === '/alumno'}">{{ enlace[0] }}</a> }</nav></aside>
+  <aside><a class="brand" routerLink="/alumno">DAEMON</a><p class="role">Portal estudiante</p><nav>@for (enlace of enlaces; track enlace[1]) { <a [routerLink]="enlace[1]" routerLinkActive="active" [routerLinkActiveOptions]="{exact: enlace[1] === '/alumno'}">{{ enlace[0] }}</a> }</nav></aside>
   <section class="workspace"><header><div><strong>{{ sesion.usuario()?.nombre_completo }}</strong><small>{{ sesion.usuario()?.nivel }} · {{ sesion.usuario()?.tokens }} tokens</small></div><button (click)="salir()">Cerrar sesion</button></header><main><router-outlet /></main></section>
 </div>
