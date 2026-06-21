@@ -1,15 +1,28 @@
 # DAEMON
 
-DAEMON es una plataforma academica para aula rural construida con Angular y Laravel. El proyecto migra la aplicacion PHP original a una arquitectura separada entre frontend, API REST, base de datos y recursos legados.
+DAEMON es una plataforma academica para gestionar una academia con estudiantes, docentes, actividades, recompensas e inteligencia artificial local. Su objetivo es centralizar el aprendizaje en un entorno digital donde el alumno pueda avanzar por misiones, usar un asistente IA, ganar tokens, canjear premios, rendir evaluaciones y participar en dinamicas de aula.
+
+## Que permite hacer
+
+- Registrar alumnos y docentes.
+- Iniciar sesion con roles separados.
+- Gestionar paneles para estudiante y docente.
+- Crear y revisar misiones con evidencias.
+- Administrar tokens, insignias, tienda y canjes.
+- Crear evaluaciones y revisar resultados.
+- Usar un chatbot educativo conectado a Ollama.
+- Trabajar con cuentos, ranking, certificados y competencia en vivo.
+- Conservar recursos interactivos para laboratorio, juegos y aprendizaje con IA.
 
 ## Estado actual
 
 - Frontend Angular con rutas para alumno, docente y paginas publicas.
-- Backend Laravel 12 con API versionada en `api/v1`.
+- Backend Laravel con API REST versionada en `api/v1`.
 - Autenticacion con Laravel Sanctum.
-- Paneles principales de alumno y docente ya adaptados a la marca DAEMON.
-- Integracion preparada para IA local con Ollama.
-- Recursos originales conservados para juegos, laboratorio y contenido legado.
+- Panel principal de alumno con resumen de tokens, misiones, insignias y canjes.
+- Panel docente con metricas de aula, economia escolar, pendientes y ranking.
+- Integracion preparada para IA local mediante Ollama.
+- Base de datos conectada a los modulos principales de la plataforma.
 
 ## Tecnologias
 
@@ -20,13 +33,13 @@ DAEMON es una plataforma academica para aula rural construida con Angular y Lara
 - Laravel Sanctum
 - Ollama con `gemma2:9b`
 
-## Estructura
+## Estructura del proyecto
 
 ```text
-backend-laravel/              API REST Laravel, modelos, servicios y pruebas
-frontend-angular/             Aplicacion Angular
-database/iaparateens_db.sql   Esquema y datos originales importados por migracion
-legado/                       Aplicacion PHP original conservada como referencia
+backend-laravel/              API REST, autenticacion, modelos, servicios y pruebas
+frontend-angular/             Aplicacion web Angular para alumnos y docentes
+database/iaparateens_db.sql   Base inicial del proyecto
+legado/                       Referencia historica del sistema anterior
 scripts/iniciar.ps1           Arranque local de backend y frontend
 docs/                         Documentacion del proyecto
 ```
@@ -133,7 +146,7 @@ OLLAMA_MODEL=gemma2:9b
 - Alumno: `jose123` / `1234`
 - Docente: `william1013` / `M_edina9735`
 
-## Modulos conectados
+## Modulos de DAEMON
 
 - Autenticacion y recuperacion de clave
 - Panel de alumno
@@ -145,7 +158,7 @@ OLLAMA_MODEL=gemma2:9b
 - Tienda y canjes
 - Evaluaciones y resultados
 - Chatbot con Ollama
-- Cerebro de aprendizaje por refuerzo
+- Laboratorio IA
 - Competencia en vivo
 - Cuentos
 - Ranking
@@ -180,7 +193,6 @@ git status --short --branch
 
 - No subas `backend-laravel/.env`.
 - No publiques bases de datos reales con informacion sensible de estudiantes.
-- La base SQL original se conserva solo como respaldo/importacion inicial.
 - Antes de despliegue publico, revisa credenciales, CORS, `APP_DEBUG=false` y configuracion de almacenamiento.
 
 ## Roadmap inmediato
