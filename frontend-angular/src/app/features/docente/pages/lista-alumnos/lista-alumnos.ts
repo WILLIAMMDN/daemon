@@ -23,13 +23,30 @@ export class ListaAlumnos {
   cargar(): void {
     this.cargando.set(true);
     this.error.set('');
+    
     this.docente.alumnos().subscribe({
-      next: (alumnos) => {
-        this.alumnos.set(alumnos as any[]);
+      next: (respuesta: any) => {
+        // --- VALIDACIÓN DEFENSIVA DE LA RESPUESTA ---
+        if (Array.isArray(respuesta)) {
+          // Caso 1: La API devuelve el array directo [...]
+          this.alumnos.set(respuesta);
+        } else if (respuesta && Array.isArray(respuesta.data)) {
+          // Caso 2: Venía envuelto en un objeto común de API { data: [...] }
+          this.alumnos.set(respuesta.data);
+        } else if (respuesta && Array.isArray(respuesta.alumnos)) {
+          // Caso 3: Venía envuelto en { alumnos: [...] }
+          this.alumnos.set(respuesta.alumnos);
+        } else {
+          // Caso extremo: No es un array ni contiene propiedades conocidas
+          this.alumnos.set([]);
+          this.error.set('El servidor no devolvió un formato de lista válido.');
+        }
+        
         this.cargando.set(false);
       },
       error: (e) => {
         this.error.set(e.error?.message ?? 'No se pudieron cargar los alumnos.');
+        this.alumnos.set([]); // Evita que se quede el estado anterior si falla
         this.cargando.set(false);
       },
     });

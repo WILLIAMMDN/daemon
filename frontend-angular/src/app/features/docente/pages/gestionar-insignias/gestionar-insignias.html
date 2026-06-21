@@ -3,41 +3,51 @@
     <div>
       <p class="kicker">Docente</p>
       <h1>Insignias</h1>
-      <p>Catalogo y asignacion de reconocimientos.</p>
+      <p>Catálogo y asignación de reconocimientos para los estudiantes.</p>
     </div>
-    <button type="button" (click)="cargar()">Actualizar</button>
+    <!-- Mejora: El botón muestra estado y se deshabilita si ya está cargando -->
+    <button type="button" class="btn-primary" (click)="cargar()" [disabled]="cargando()">
+      @if (cargando()) { Actualizando... } @else { Actualizar }
+    </button>
   </header>
 
-  @if (mensaje()) { <p class="success">{{ mensaje() }}</p> }
-  @if (error()) { <p class="error">{{ error() }}</p> }
+  <!-- Mejora: Contenedores de alerta más semánticos -->
+  @if (mensaje()) { <div class="alert success-alert">{{ mensaje() }}</div> }
+  @if (error()) { <div class="alert error-alert">{{ error() }}</div> }
 
   <section class="split">
+    <!-- FORMULARIO: CREAR INSIGNIA -->
     <form class="panel" (ngSubmit)="crear()">
       <h2>Nueva insignia</h2>
       <div class="form-grid">
         <label>
           Nombre
-          <input name="nombre" [(ngModel)]="nueva.nombre" required>
+          <input name="nombre" [(ngModel)]="nueva.nombre" required placeholder="Ej. Cerebro de Oro">
         </label>
         <label>
-          Imagen
-          <input name="imagen" [(ngModel)]="nueva.imagen" required>
+          Ruta de la Imagen
+          <input name="imagen" [(ngModel)]="nueva.imagen" required placeholder="ej: img/insignias/icono.png">
         </label>
         <label class="field-wide">
-          Descripcion
-          <textarea name="descripcion" [(ngModel)]="nueva.descripcion" rows="3"></textarea>
+          Descripción
+          <textarea name="descripcion" [(ngModel)]="nueva.descripcion" rows="3" placeholder="¿Por qué se otorga este reconocimiento?"></textarea>
         </label>
       </div>
-      <button type="submit" [disabled]="guardando() || !nueva.nombre.trim() || !nueva.imagen.trim()">Crear insignia</button>
+      <!-- Mejora: Texto dinámico en el botón al guardar -->
+      <button type="submit" [disabled]="guardando() || !nueva.nombre.trim() || !nueva.imagen.trim()">
+        @if (guardando()) { Creando... } @else { Crear insignia }
+      </button>
     </form>
 
-    <form class="panel" (ngSubmit)="asignar()">
+    <!-- FORMULARIO: ASIGNAR INSIGNIA -->
+    <form class="panel highlight-panel" (ngSubmit)="asignar()">
       <h2>Asignar a alumno</h2>
       <div class="form-grid">
         <label>
           Alumno
           <select name="id_alumno" [(ngModel)]="asignacion.id_alumno" required>
-            <option [ngValue]="null">Selecciona</option>
+            <!-- Mejora: Opción por defecto deshabilitada para forzar selección -->
+            <option [ngValue]="null" disabled selected>Selecciona un alumno...</option>
             @for (alumno of alumnos(); track alumno.id) {
               <option [ngValue]="alumno.id">{{ alumno.nombre_completo }}</option>
             }
@@ -46,30 +56,48 @@
         <label>
           Insignia
           <select name="id_insignia" [(ngModel)]="asignacion.id_insignia" required>
-            <option [ngValue]="null">Selecciona</option>
+            <option [ngValue]="null" disabled selected>Selecciona una insignia...</option>
             @for (insignia of insignias(); track insignia.id) {
               <option [ngValue]="insignia.id">{{ insignia.nombre }}</option>
             }
           </select>
         </label>
       </div>
-      <button type="submit" [disabled]="guardando() || !asignacion.id_alumno || !asignacion.id_insignia">Asignar</button>
+      <button type="submit" [disabled]="guardando() || !asignacion.id_alumno || !asignacion.id_insignia">
+        @if (guardando()) { Asignando... } @else { Asignar }
+      </button>
     </form>
   </section>
 
-  @if (cargando()) {
-    <p class="state">Cargando insignias...</p>
-  } @else if (insignias().length) {
-    <div class="card-list">
-      @for (insignia of insignias(); track insignia.id) {
-        <article class="data-card">
-          <h2>{{ insignia.nombre }}</h2>
-          <p>{{ insignia.descripcion || 'Sin descripcion registrada.' }}</p>
-          <small>{{ insignia.imagen }}</small>
-        </article>
-      }
-    </div>
-  } @else {
-    <p class="empty">No hay insignias registradas.</p>
-  }
+  <!-- CATÁLOGO DE INSIGNIAS -->
+  <section class="catalog-section">
+    @if (cargando()) {
+      <div class="state loading-state">
+        <p>Cargando catálogo de insignias...</p>
+      </div>
+    } @else if (insignias().length) {
+      <div class="card-list">
+        @for (insignia of insignias(); track insignia.id) {
+          <article class="data-card insignia-card">
+            
+            <!-- SOLUCIÓN DE LA IMAGEN AQUÍ -->
+            <figure class="insignia-figure">
+              <!-- Si las imágenes están en tu servidor local IP, cambia [src] por algo como: [src]="'http://192.168.1.179/' + insignia.imagen" -->
+              <img [src]="insignia.imagen" [alt]="'Insignia ' + insignia.nombre" class="insignia-img">
+            </figure>
+            
+            <div class="insignia-content">
+              <h3>{{ insignia.nombre }}</h3>
+              <p class="insignia-desc">{{ insignia.descripcion || 'Sin descripción registrada.' }}</p>
+            </div>
+
+          </article>
+        }
+      </div>
+    } @else {
+      <div class="empty state">
+        <p>No hay insignias registradas todavía. ¡Crea el primer reconocimiento!</p>
+      </div>
+    }
+  </section>
 </section>

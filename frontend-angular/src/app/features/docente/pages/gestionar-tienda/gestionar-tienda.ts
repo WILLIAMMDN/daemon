@@ -1,10 +1,10 @@
 import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Tienda } from '../../../tienda/services/tienda';
-
+import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-gestionar-tienda',
-  imports: [FormsModule],
+  imports: [FormsModule, CommonModule],
   templateUrl: './gestionar-tienda.html',
   styleUrl: './gestionar-tienda.scss',
 })

@@ -1,1 +1,9 @@
-:host{display:block;min-height:100vh;background:#0b1226;color:#eef4ff}main{max-width:1180px;margin:auto;padding:0 2rem}nav{height:86px;display:flex;align-items:center;justify-content:space-between}nav strong{font-size:1.6rem;color:#6ee7c8}nav div,.actions{display:flex;gap:.8rem}a{padding:.75rem 1rem;border:1px solid #ffffff35;border-radius:11px;color:white;text-decoration:none;font-weight:800}.primary{background:#6ee7c8;color:#081329;border-color:#6ee7c8}.hero{padding:9vh 0 7vh;max-width:930px}.eyebrow{color:#7dd3fc;text-transform:uppercase;letter-spacing:.15em;font-weight:800;font-size:.75rem}.hero h1{font-size:clamp(2.8rem,7vw,5.8rem);line-height:.98;margin:1rem 0}.lead{font-size:1.18rem;line-height:1.7;color:#bdc9e5;max-width:780px}.actions{margin-top:2rem}.features{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;padding:2rem 0 5rem}.features article{padding:1.4rem;border:1px solid #ffffff1f;border-radius:18px;background:#131e3a}.features b{font-size:1.1rem;color:#fbbf70}.features p{color:#bdc9e5;line-height:1.6}@media(max-width:760px){main{padding:0 1rem}.features{grid-template-columns:1fr}.hero h1{font-size:2.7rem}}
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Nunito:wght@400;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Tipografías base de Daemon */
+.font-caveat { font-family: 'Caveat', cursive; }
+.font-nunito { font-family: 'Nunito', sans-serif; }
