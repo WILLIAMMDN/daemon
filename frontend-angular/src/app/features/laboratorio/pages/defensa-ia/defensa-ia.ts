@@ -1,15 +1,22 @@
 import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-defensa-ia',
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './defensa-ia.html',
   styleUrl: './defensa-ia.scss',
 })
 export class DefensaIa {
-  archivos = [
-    { nombre: 'logica_ia.js', ruta: '/legacy/js/logica_ia.js' },
-    { nombre: 'estilo_defense.css', ruta: '/legacy/css/estilo_defense.css' },
-    { nombre: 'ml5.min.js', ruta: '/legacy/js/ml5.min.js' },
+  readonly archivos = [
+    { nombre: 'logica_ia.js', tipo: 'Logica principal', ruta: '/legacy/js/logica_ia.js' },
+    { nombre: 'estilo_defense.css', tipo: 'Estilos heredados', ruta: '/legacy/css/estilo_defense.css' },
+    { nombre: 'ml5.min.js', tipo: 'Modelo local', ruta: '/legacy/js/ml5.min.js' },
+  ];
+
+  readonly enlaces = [
+    { etiqueta: 'Cerebro del bot', ruta: '/alumno/laboratorio' },
+    { etiqueta: 'Entrenamiento', ruta: '/alumno/laboratorio/entrenamiento-mascota' },
+    { etiqueta: 'Neuro Maze', ruta: '/alumno/laboratorio/neuro-maze' },
   ];
 }

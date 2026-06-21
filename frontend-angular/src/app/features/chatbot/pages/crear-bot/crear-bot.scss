@@ -1,1 +1,42 @@
-.card{max-width:760px;background:white;padding:1.5rem;border:1px solid #dce4f1;border-radius:18px}.eyebrow{color:#147d71;text-transform:uppercase;font-weight:800;font-size:.72rem;letter-spacing:.12em}form,label{display:grid;gap:.45rem}form{gap:1rem}label{font-weight:800}input,textarea{padding:.8rem;border:1px solid #cbd5e4;border-radius:10px;font:inherit}button,a{display:inline-block;padding:.75rem 1rem;border:0;border-radius:10px;background:#172b53;color:white;text-decoration:none;font-weight:800;margin-right:.5rem}.ok{color:#047857}.error{color:#be123c}
+.bot-config {
+  max-width: 1180px;
+}
+
+.bot-form {
+  align-content: start;
+}
+
+.bot-form h2,
+.guide h2,
+.guide p {
+  margin: 0;
+}
+
+.bot-form textarea {
+  resize: vertical;
+}
+
+.guide {
+  align-content: start;
+  display: grid;
+  gap: 1rem;
+}
+
+.guide p,
+.guide small {
+  color: #61708d;
+}
+
+.guide div {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  display: grid;
+  gap: .35rem;
+  padding: .9rem;
+}
+
+.guide strong {
+  color: #17203a;
+  overflow-wrap: anywhere;
+}

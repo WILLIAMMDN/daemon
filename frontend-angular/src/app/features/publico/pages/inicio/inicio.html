@@ -1,162 +1,154 @@
 <div class="min-h-screen bg-white font-nunito text-[#15326b] selection:bg-[#15326b] selection:text-white relative flex flex-col">
-  
   <app-header></app-header>
 
   <div class="flex-grow">
-    
-    <!-- 1. Cambiamos el fondo del section a un tono más oscuro (#e1e7ed) -->
-<section class="w-full bg-[#15326b] relative overflow-hidden flex flex-col md:flex-row shadow-2xl">
-  
-  <!-- ==========================================
-       LADO IZQUIERDO: Reducido al 30% para dejarle
-       casi toda la pantalla a la imagen.
-       ========================================== -->
-  <div class="w-full md:w-[35%] lg:w-[1%] px-6 py-16 md:py-24 lg:pl-12 flex flex-col justify-center z-20">
-    
-    <h1 class="text-5xl lg:text-6xl font-black text-white tracking-tighter mb-6 leading-none whitespace-nowrap">
-      MI DAEMON
-    </h1>
-    
-    <p class="text-xl md:text-2xl text-[#FFC600] font-medium leading-relaxed max-w-xs mb-10 italic border-l-4 border-[#FFC600] pl-6">
-      Todo lo que necesitas saber<br>para iniciar tus clases aquí.
-    </p>
+    <section class="w-full bg-[#15326b] relative overflow-hidden flex flex-col md:flex-row shadow-2xl">
+      <div class="w-full md:w-1/3 lg:w-1/4 px-6 py-14 sm:py-16 md:py-24 lg:pl-10 xl:pl-16 flex flex-col justify-center z-30 relative shrink-0 min-h-[330px] md:min-h-0">
+        <app-floating-shape shape="cross" color="text-[#63b3ed]/30" size="w-7 h-7 md:w-10 md:h-10" customClass="top-8 left-6 md:top-10 md:left-8 rotate-12" animation="animate-float-slow"></app-floating-shape>
+        <app-floating-shape shape="sun" color="text-[#f6e05e]/20" size="w-10 h-10 md:w-16 md:h-16" customClass="top-8 right-8 md:top-16 md:-right-6" animation="animate-spin-slow"></app-floating-shape>
+        <app-floating-shape shape="triangle" color="text-[#f687b3]/30" size="w-6 h-6 md:w-8 md:h-8" customClass="bottom-12 left-8 md:bottom-28 md:left-12 -rotate-12" animation="animate-float-fast"></app-floating-shape>
+        <app-floating-shape shape="airplane" color="text-[#ed8936]/40" size="w-9 h-9 md:w-14 md:h-14" customClass="hidden sm:block bottom-12 right-8 md:bottom-12 md:-right-8 rotate-12" animation="animate-float-diagonal"></app-floating-shape>
+        <app-floating-shape shape="dots" color="text-white/10" size="w-14 h-14 md:w-20 md:h-20" customClass="bottom-4 right-6 md:-bottom-4 md:left-1/3 md:right-auto" animation="animate-pulse"></app-floating-shape>
 
-    <div>
-      <a href="#informacion" class="inline-flex items-center gap-3 px-8 py-4 bg-[#FFC600] text-[#15326b] font-extrabold uppercase rounded-full shadow-[0_4px_14px_0_rgba(255,198,0,0.3)] hover:scale-105 transition-transform duration-300 whitespace-nowrap">
-        Quiero Empezar
-        <svg class="w-5 h-5 font-bold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-        </svg>
-      </a>
-    </div>
-    
-  </div>
+        <h1 class="text-4xl lg:text-5xl xl:text-6xl font-black text-white tracking-tighter mb-6 leading-none relative z-50">
+          MI DAEMON
+        </h1>
 
-  <!-- ==========================================
-       LADO DERECHO: Expandido al 70% de la pantalla.
-       ========================================== -->
-  <div class="w-full md:w-[65%] lg:w-[80%] relative min-h-[400px] md:min-h-[500px]">
-    
-    <!-- 
-      CURVA MÁS PLANA: 
-      Al usar w-24 y -left-12, la curva sigue siendo un óvalo perfecto 
-      pero invade la mitad de espacio que antes.
-    -->
-    <div class="hidden md:block absolute -left-12 -top-12 -bottom-12 w-24 bg-[#15326b] rounded-[100%] z-20"></div>
+        <p class="text-lg md:text-xl text-[#FFC600] font-medium leading-relaxed mb-10 italic border-l-4 border-[#FFC600] pl-5 relative z-50">
+          Todo lo que necesitas saber<br>para iniciar tus clases aquí.
+        </p>
 
-    <img 
-      src="/img/banners/zoe-banner.png" 
-      alt="Estudiantes en clases" 
-      class="absolute inset-0 w-full h-full object-cover object-center"
-    >
-  </div>
+        <div class="relative z-50">
+          <a href="#informacion" class="inline-flex items-center gap-3 px-6 py-3.5 bg-[#FFC600] text-[#15326b] font-extrabold uppercase rounded-full shadow-[0_4px_14px_0_rgba(255,198,0,0.3)] hover:scale-105 transition-transform duration-300 whitespace-nowrap">
+            Quiero Empezar
+            <svg class="w-5 h-5 font-bold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+            </svg>
+          </a>
+        </div>
+      </div>
 
-</section>
+      <div class="w-full md:w-2/3 lg:w-3/4 relative min-h-[260px] sm:min-h-[360px] md:min-h-[500px] lg:min-h-[650px] xl:min-h-[620px] bg-[#15326b] overflow-hidden">
+        <div class="hidden md:block absolute -left-6 -top-12 -bottom-12 w-12 bg-[#15326b] rounded-[100%] z-10"></div>
+        <img
+          src="/img/banners/zoe-banner.png"
+          alt="Estudiantes en clases"
+          class="absolute inset-0 w-full h-full object-contain md:object-cover object-center md:object-left"
+        >
+      </div>
+    </section>
 
-
-    <main class="max-w-5xl mx-auto px-6 py-16 md:py-24 relative">
+    <main id="informacion" class="max-w-5xl mx-auto px-6 py-16 md:py-24 relative">
       <div class="hidden md:flex absolute inset-y-0 left-1/2 transform -translate-x-1/2 items-center py-24">
         <div class="h-full w-px bg-gray-300"></div>
         <div class="absolute bg-white px-2 py-1 text-gray-400 font-bold text-sm">O</div>
       </div>
+
       <div class="grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-8 text-center">
         <div class="flex flex-col items-center px-4">
-          <p class="text-[#15326b] font-bold text-lg mb-8 leading-relaxed">
+          <p class="text-[#15326b] font-bold text-base sm:text-lg mb-8 leading-relaxed max-w-sm mx-auto">
             Accede a tus recursos académicos aquí <br>
-            <span class="font-semibold text-base">(consulta tus tokens, misiones, notas y más).</span>
+            <span class="font-semibold text-sm sm:text-base">(consulta tus tokens, misiones, notas y más).</span>
           </p>
+
           <a routerLink="/login" class="bg-orange-600 text-white w-full max-w-sm rounded-full py-3.5 font-bold text-sm hover:bg-orange-700 transition-colors shadow-md uppercase">
             Ingresa al Portal del Estudiante
           </a>
-          <a href="#" class="text-[#198754] font-bold text-sm mt-5 hover:underline decoration-2 underline-offset-4">
+
+          <a routerLink="/recuperar-clave" class="text-[#198754] font-bold text-sm mt-5 hover:underline decoration-2 underline-offset-4">
             Olvidaste tu contraseña
           </a>
+
           <div class="mt-8 bg-[#f4f7f9] rounded-xl p-5 flex items-center gap-4 w-full max-w-sm text-left">
             <div class="w-8 h-8 rounded-full border border-gray-400 flex items-center justify-center shrink-0 text-gray-500 font-bold">!</div>
             <p class="text-xs text-[#15326b] leading-tight">
               Usa tu correo institucional para acceder. <br>
-              <span class="font-semibold text-gray-600">Ejemplo: <span class="text-[#0d6efd]">medina@daemon.edu.pe</span></span>
+              <span class="font-semibold text-gray-600">Ejemplo: <span class="text-[#0d6efd]">medina&#64;daemon.edu.pe</span></span>
             </p>
           </div>
         </div>
+
         <div class="flex flex-col items-center px-4">
-          <p class="text-[#15326b] font-bold text-lg mb-8 leading-relaxed">
+          <p class="text-[#15326b] font-bold text-base sm:text-lg mb-8 leading-relaxed max-w-sm mx-auto">
             Si eres <strong>alumno nuevo</strong>, crea tu <br>
             cuenta aquí para comenzar tu aventura académica.
           </p>
+
           <a routerLink="/registro" class="bg-white text-[#198754] border border-[#198754] w-full max-w-sm rounded-full py-3 font-bold text-sm hover:bg-gray-50 transition-colors uppercase">
             Crea tu cuenta de estudiante
           </a>
-          <a href="#" class="m-10 text-[#198754] font-bold text-sm mt-5 hover:underline decoration-2 underline-offset-4">
+
+          <a href="/img/Temario_Oficial_Uripa.pdf" target="_blank" class="text-[#198754] font-bold text-sm mt-5 hover:underline decoration-2 underline-offset-4">
             Descarga el tutorial
           </a>
-          <fa-icon [icon]="iconoAvion" class="text-[70px] text-sky-500 animate-bounce"></fa-icon>
+
+          <fa-icon [icon]="iconoAvion" class="mt-8 text-[64px] md:text-[70px] text-sky-500 animate-bounce"></fa-icon>
         </div>
       </div>
     </main>
 
-    <section class="w-full bg-white py-16 md:py-24 border-t border-gray-100">
+    <section id="novedades" class="w-full bg-white py-16 md:py-24 border-t border-gray-100">
       <div class="max-w-7xl mx-auto px-6">
-        <div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">
           <div>
             <h2 class="text-3xl md:text-4xl font-black text-[#15326b] tracking-tight mb-2">Descubre nuestras novedades</h2>
             <p class="text-gray-500 font-medium text-lg">Mantente al día con los últimos eventos y talleres.</p>
           </div>
-          <a href="#" class="text-[#198754] font-bold text-sm hover:underline decoration-2 underline-offset-4 whitespace-nowrap">Ver todas las noticias &rarr;</a>
+          <a href="#novedades" class="text-[#198754] font-bold text-sm hover:underline decoration-2 underline-offset-4 whitespace-nowrap">Ver todas las noticias &rarr;</a>
         </div>
-        
+
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
           <article class="bg-white rounded-2xl shadow-lg shadow-gray-200/50 border border-gray-100 overflow-hidden flex flex-col group hover:-translate-y-1.5 transition-all duration-300">
             <div class="h-48 relative overflow-hidden bg-gray-200">
-              <img src="/img/noticias/ia-gemma.jpg" alt="IA" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <img src="/img/premio_gemini1.jpg" alt="IA" class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500">
               <div class="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-black text-[#15326b] tracking-wide">PLATAFORMA</div>
             </div>
             <div class="p-6 flex flex-col flex-grow">
               <p class="text-gray-400 text-xs font-bold mb-3 uppercase tracking-wider">Hace 2 días</p>
               <h3 class="text-xl font-black text-[#15326b] mb-3 leading-tight group-hover:text-[#198754] transition-colors">Nuevas misiones de IA habilitadas</h3>
               <p class="text-gray-600 text-sm mb-6 flex-grow">Los cadetes ya pueden interactuar con los modelos locales para resolver nuevos retos.</p>
-              <a href="#" class="text-[#198754] font-bold text-sm uppercase tracking-wide flex items-center gap-2 group-hover:gap-3 transition-all">Leer artículo <span>&rarr;</span></a>
+              <a href="#novedades" class="text-[#198754] font-bold text-sm uppercase tracking-wide flex items-center gap-2 group-hover:gap-3 transition-all">Leer artículo <span>&rarr;</span></a>
             </div>
           </article>
+
           <article class="bg-white rounded-2xl shadow-lg shadow-gray-200/50 border border-gray-100 overflow-hidden flex flex-col group hover:-translate-y-1.5 transition-all duration-300">
             <div class="h-48 relative overflow-hidden bg-gray-200">
-              <img src="/img/noticias/robotica-esp32.jpg" alt="Robótica" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <img src="/img/fondo_arcade.jpg" alt="Robótica" class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500">
               <div class="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-black text-[#15326b] tracking-wide">ACADÉMICO</div>
             </div>
             <div class="p-6 flex flex-col flex-grow">
               <p class="text-gray-400 text-xs font-bold mb-3 uppercase tracking-wider">15 de Junio, 2026</p>
               <h3 class="text-xl font-black text-[#15326b] mb-3 leading-tight group-hover:text-[#198754] transition-colors">Preparación para feria de ciencias</h3>
               <p class="text-gray-600 text-sm mb-6 flex-grow">Conoce los requisitos para participar armando circuitos con Arduino y ESP32.</p>
-              <a href="#" class="text-[#198754] font-bold text-sm uppercase tracking-wide flex items-center gap-2 group-hover:gap-3 transition-all">Leer artículo <span>&rarr;</span></a>
+              <a href="#novedades" class="text-[#198754] font-bold text-sm uppercase tracking-wide flex items-center gap-2 group-hover:gap-3 transition-all">Leer artículo <span>&rarr;</span></a>
             </div>
           </article>
+
           <article class="bg-white rounded-2xl shadow-lg shadow-gray-200/50 border border-gray-100 overflow-hidden flex flex-col group hover:-translate-y-1.5 transition-all duration-300">
             <div class="h-48 relative overflow-hidden bg-gray-200">
-              <img src="/img/noticias/tienda-tokens.jpg" alt="Tokens" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <img src="/img/fondo_banner_tokens.jpg" alt="Tokens" class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500">
               <div class="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-black text-[#15326b] tracking-wide">ECONOMÍA</div>
             </div>
             <div class="p-6 flex flex-col flex-grow">
               <p class="text-gray-400 text-xs font-bold mb-3 uppercase tracking-wider">08 de Junio, 2026</p>
               <h3 class="text-xl font-black text-[#15326b] mb-3 leading-tight group-hover:text-[#198754] transition-colors">Actualización en la Tienda Daemon</h3>
               <p class="text-gray-600 text-sm mb-6 flex-grow">Nuevos premios disponibles. Acumula tokens y canjéalos desde tu portal.</p>
-              <a href="#" class="text-[#198754] font-bold text-sm uppercase tracking-wide flex items-center gap-2 group-hover:gap-3 transition-all">Leer artículo <span>&rarr;</span></a>
+              <a href="#novedades" class="text-[#198754] font-bold text-sm uppercase tracking-wide flex items-center gap-2 group-hover:gap-3 transition-all">Leer artículo <span>&rarr;</span></a>
             </div>
           </article>
         </div>
       </div>
     </section>
-
   </div>
 
   <app-footer></app-footer>
 
-  <div class="fixed bottom-8 right-8 flex flex-col gap-4 z-50">
-    <a href="https://wa.me/930893675" target="_blank" class="w-14 h-14 bg-[#25D366] rounded-full flex items-center justify-center shadow-xl hover:scale-110 transition-transform duration-300">
-      <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824z"/></svg>
+  <div class="fixed bottom-4 right-4 md:bottom-8 md:right-8 flex flex-col gap-3 md:gap-4 z-50">
+    <a href="https://wa.me/930893675" target="_blank" class="w-12 h-12 md:w-14 md:h-14 bg-[#25D366] rounded-full flex items-center justify-center shadow-xl hover:scale-110 transition-transform duration-300">
+      <svg class="w-7 h-7 md:w-8 md:h-8 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824z"/></svg>
     </a>
-    <a href="#" class="w-14 h-14 bg-[#0082b4] rounded-full flex items-center justify-center shadow-xl hover:scale-110 transition-transform duration-300">
-      <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/></svg>
+    <a routerLink="/registro" class="w-12 h-12 md:w-14 md:h-14 bg-[#0082b4] rounded-full flex items-center justify-center shadow-xl hover:scale-110 transition-transform duration-300">
+      <svg class="w-6 h-6 md:w-7 md:h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/></svg>
     </a>
   </div>
-
 </div>

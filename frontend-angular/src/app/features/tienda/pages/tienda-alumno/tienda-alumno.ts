@@ -43,7 +43,7 @@ export class TiendaAlumno {
     this.tienda.canjear(id).subscribe({
       next: (respuesta: any) => {
         this.saldo.set(respuesta.saldo ?? this.saldo());
-        this.mensaje.set(respuesta.codigo ? `Canje realizado. Codigo: ${respuesta.codigo}` : 'Canje registrado.');
+        this.mensaje.set(respuesta.codigo ? `Canje realizado. Código: ${respuesta.codigo}` : 'Canje registrado.');
         this.procesando.set(null);
         this.cargar();
       },

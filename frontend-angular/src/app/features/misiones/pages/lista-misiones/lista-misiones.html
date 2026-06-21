@@ -1,4 +1,4 @@
-<section class="page">
+﻿<section class="page">
   <header class="page-header">
     <div>
       <p class="kicker">Misiones</p>
@@ -18,7 +18,7 @@
         <article class="data-card">
           <span class="badge" [class.warn]="mision.entrega?.estado === 'pendiente'">{{ mision.entrega?.estado || mision.estado }}</span>
           <h2>{{ mision.titulo }}</h2>
-          <p>{{ mision.descripcion || 'Sin descripcion registrada.' }}</p>
+          <p>{{ mision.descripcion || 'Sin descripción registrada.' }}</p>
           <p><strong>Recompensa:</strong> {{ mision.recompensa }} tokens</p>
           <p><strong>Evidencia:</strong> {{ mision.tipo_evidencia }}</p>
           <div class="actions">

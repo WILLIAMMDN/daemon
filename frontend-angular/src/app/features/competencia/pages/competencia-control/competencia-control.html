@@ -1,9 +1,9 @@
-<section class="page">
+﻿<section class="page">
   <header class="page-header">
     <div>
       <p class="kicker">Docente</p>
       <h1>Control de competencia</h1>
-      <p>Selecciona candidato, abre votacion, cierra ronda o entrega premio.</p>
+      <p>Selecciona candidato, abre votación, cierra ronda o entrega premio.</p>
     </div>
     <button type="button" (click)="cargar()">Actualizar</button>
   </header>
@@ -36,15 +36,15 @@
           <p><strong>{{ data.candidato.nombre_completo }}</strong></p>
           <p>{{ data.candidato.usuario }} - {{ data.candidato.nivel }}</p>
         } @else {
-          <p class="empty">Ningun alumno seleccionado.</p>
+          <p class="empty">Ningún alumno seleccionado.</p>
         }
       </article>
 
       <form class="panel" (ngSubmit)="ejecutar()">
-        <h2>Accion de ronda</h2>
+        <h2>Acción de ronda</h2>
         <div class="form-grid">
           <label>
-            Accion
+            Acción
             <select name="accion" [(ngModel)]="control.accion">
               <option value="candidato">candidato</option>
               <option value="iniciar">iniciar</option>
@@ -63,7 +63,7 @@
             </select>
           </label>
           <label>
-            Duracion
+            Duración
             <input name="duracion" type="number" min="10" max="600" [(ngModel)]="control.duracion">
           </label>
           <label>

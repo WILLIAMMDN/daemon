@@ -7,5 +7,11 @@ import { Api } from '../../../core/servicios/api';
 export class CertificadoService {
   constructor(private api: Api) {}
 
-  actual() { return this.api.get('/certificados'); }
+  actual() {
+    return this.api.get('/certificados');
+  }
+
+  porUsuario(usuarioId: number | string) {
+    return this.api.get(`/certificados/${usuarioId}`);
+  }
 }

@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+﻿import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Evaluacion } from '../../services/evaluacion';
 
@@ -46,7 +46,7 @@ export class ExamenLive {
         this.enviando.set(null);
       },
       error: (e) => {
-        this.error.set(e.error?.message ?? 'No se pudo enviar la evaluacion.');
+        this.error.set(e.error?.message ?? 'No se pudo enviar la evaluación.');
         this.enviando.set(null);
       },
     });

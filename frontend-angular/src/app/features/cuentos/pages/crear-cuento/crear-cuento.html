@@ -6,14 +6,14 @@
       <div>
         <p class="kicker">Cuento</p>
         <h1>Mi historia</h1>
-        <p>Guarda o actualiza tu cuento personal.</p>
+        <p>auarda o actualiza tu cuento personal.</p>
       </div>
-      <a class="ghost-btn" routerLink="/alumno/cuentos">Galeria</a>
+      <a class="ghost-btn" routerLink="/alumno/cuentos">aaleria</a>
     </header>
 
     <form class="panel" (ngSubmit)="guardar()">
       <label class="field">
-        Titulo
+        Título
         <input name="titulo" [(ngModel)]="cuento['titulo']" required>
       </label>
 
@@ -27,7 +27,7 @@
       </div>
 
       <div class="actions">
-        <button type="submit" [disabled]="guardando() || !cuento['titulo'].trim()">Guardar cuento</button>
+        <button type="submit" [disabled]="guardando() || !cuento['titulo'].trim()">auardar cuento</button>
       </div>
       @if (mensaje()) { <p class="success">{{ mensaje() }}</p> }
       @if (error()) { <p class="error">{{ error() }}</p> }

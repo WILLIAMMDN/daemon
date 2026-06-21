@@ -1,9 +1,9 @@
-<section class="page">
+﻿<section class="page">
   <header class="page-header">
     <div>
       <p class="kicker">Docente</p>
       <h1>Alumnos y tokens</h1>
-      <p>Listado de estudiantes y ajustes de economia escolar.</p>
+      <p>Listado de estudiantes y ajustes de economía escolar.</p>
     </div>
     <button type="button" (click)="cargar()">Actualizar</button>
   </header>
@@ -47,6 +47,7 @@
             <th>Nivel</th>
             <th>Rango</th>
             <th>Tokens</th>
+            <th>Carnet</th>
           </tr>
         </thead>
         <tbody>
@@ -57,6 +58,7 @@
               <td><span class="badge">{{ alumno.nivel }}</span></td>
               <td>{{ alumno.rango || '-' }}</td>
               <td><strong>{{ alumno.tokens }}</strong></td>
+              <td><a class="ghost-btn compact" [routerLink]="['/docente/carnets', alumno.id]">Abrir</a></td>
             </tr>
           }
         </tbody>

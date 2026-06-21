@@ -26,7 +26,7 @@ export class GaleriaProyectos {
         this.cargando.set(false);
       },
       error: (e) => {
-        this.error.set(e.error?.message ?? 'No se pudo cargar la galeria.');
+        this.error.set(e.error?.message ?? 'No se pudo cargar la galería.');
         this.cargando.set(false);
       },
     });

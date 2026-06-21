@@ -1,9 +1,9 @@
-<section class="page">
+﻿<section class="page">
   <header class="page-header">
     <div>
       <p class="kicker">Docente</p>
       <h1>Evaluaciones</h1>
-      <p>Examenes, estados y banco de preguntas.</p>
+      <p>Exámenes, estados y banco de preguntas.</p>
     </div>
     <button type="button" (click)="cargar()">Actualizar</button>
   </header>
@@ -13,10 +13,10 @@
 
   <section class="split">
     <form class="panel" (ngSubmit)="crear()">
-      <h2>Nueva evaluacion</h2>
+      <h2>Nueva evaluación</h2>
       <div class="form-grid">
         <label>
-          Titulo
+          Título
           <input name="titulo" [(ngModel)]="nueva.titulo" required>
         </label>
         <label>
@@ -43,7 +43,7 @@
       <h2>Agregar pregunta</h2>
       <div class="form-grid">
         <label>
-          Evaluacion
+          Evaluación
           <select name="examen_id" [(ngModel)]="pregunta.examen_id" required>
             <option [ngValue]="null">Selecciona</option>
             @for (examen of evaluaciones(); track examen.id) {
@@ -83,7 +83,7 @@
       <table>
         <thead>
           <tr>
-            <th>Evaluacion</th>
+            <th>Evaluación</th>
             <th>Nivel</th>
             <th>Estado</th>
             <th>Preguntas</th>

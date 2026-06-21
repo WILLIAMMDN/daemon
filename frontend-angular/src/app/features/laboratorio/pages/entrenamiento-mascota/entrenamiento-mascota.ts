@@ -8,9 +8,24 @@ import { RouterLink } from '@angular/router';
   styleUrl: './entrenamiento-mascota.scss',
 })
 export class EntrenamientoMascota {
-  motores = [
-    { titulo: 'Cerebro guardado', ruta: '/alumno/laboratorio' },
-    { titulo: 'Neuro Maze', ruta: '/alumno/laboratorio/neuro-maze' },
-    { titulo: 'Defensa IA', ruta: '/alumno/laboratorio/defensa-ia' },
+  readonly motores = [
+    {
+      titulo: 'Cerebro guardado',
+      detalle: 'Matriz neural conectada al backend del chatbot.',
+      estado: 'Conectado',
+      ruta: '/alumno/laboratorio',
+    },
+    {
+      titulo: 'Neuro Maze',
+      detalle: 'Motor heredado del laberinto y agente de aprendizaje.',
+      estado: 'Motor heredado',
+      ruta: '/alumno/laboratorio/neuro-maze',
+    },
+    {
+      titulo: 'Defensa IA',
+      detalle: 'Assets heredados para visión/modelo local.',
+      estado: 'Motor heredado',
+      ruta: '/alumno/laboratorio/defensa-ia',
+    },
   ];
 }

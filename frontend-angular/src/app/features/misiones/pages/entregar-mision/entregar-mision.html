@@ -1,12 +1,12 @@
-@if (cargando()) {
-  <section class="state">Cargando mision...</section>
+﻿@if (cargando()) {
+  <section class="state">Cargando misión...</section>
 } @else if (detalle(); as datos) {
   <section class="page">
     <header class="page-header">
       <div>
         <p class="kicker">Entrega</p>
         <h1>{{ datos.mision.titulo }}</h1>
-        <p>{{ datos.mision.descripcion || 'Sin descripcion registrada.' }}</p>
+        <p>{{ datos.mision.descripcion || 'Sin descripción registrada.' }}</p>
       </div>
       <a class="ghost-btn" [routerLink]="['/alumno/misiones', id]">Ver detalle</a>
     </header>

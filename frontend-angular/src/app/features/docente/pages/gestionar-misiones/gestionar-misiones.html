@@ -1,9 +1,9 @@
-<section class="page">
+﻿<section class="page">
   <header class="page-header">
     <div>
       <p class="kicker">Docente</p>
       <h1>Gestionar misiones</h1>
-      <p>Crea desafios y revisa su disponibilidad.</p>
+      <p>Crea desafíos y revisa su disponibilidad.</p>
     </div>
     <button type="button" (click)="cargar()">Actualizar</button>
   </header>
@@ -12,10 +12,10 @@
   @if (error()) { <p class="error">{{ error() }}</p> }
 
   <form class="panel" (ngSubmit)="crear()">
-    <h2>Nueva mision</h2>
+    <h2>Nueva misión</h2>
     <div class="form-grid">
       <label>
-        Titulo
+        Título
         <input name="titulo" [(ngModel)]="nueva.titulo" required>
       </label>
       <label>
@@ -48,11 +48,11 @@
         </select>
       </label>
       <label class="field-wide">
-        Descripcion
+        Descripción
         <textarea name="descripcion" [(ngModel)]="nueva.descripcion" rows="4"></textarea>
       </label>
     </div>
-    <button type="submit" [disabled]="guardando() || !nueva.titulo.trim()">Crear mision</button>
+    <button type="submit" [disabled]="guardando() || !nueva.titulo.trim()">Crear misión</button>
   </form>
 
   @if (cargando()) {
@@ -62,7 +62,7 @@
       <table>
         <thead>
           <tr>
-            <th>Mision</th>
+            <th>Misión</th>
             <th>Nivel</th>
             <th>Recompensa</th>
             <th>Estado</th>

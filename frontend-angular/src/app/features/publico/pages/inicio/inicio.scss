@@ -1,9 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Nunito:wght@400;600;700;800;900&display=swap');
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+.font-caveat {
+  font-family: 'Caveat', cursive;
+}
 
-/* Tipografías base de Daemon */
-.font-caveat { font-family: 'Caveat', cursive; }
-.font-nunito { font-family: 'Nunito', sans-serif; }
+.font-nunito {
+  font-family: 'Nunito', sans-serif;
+}

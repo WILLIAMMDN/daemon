@@ -1,0 +1,94 @@
+:host {
+  display: contents;
+}
+
+.shape-shell {
+  transform-origin: center;
+}
+
+.shape-motion {
+  --shape-x: 0;
+  --shape-y: -18px;
+  transform-origin: center;
+  will-change: transform, opacity;
+}
+
+.shape-motion--float-slow {
+  --shape-y: -22px;
+  animation: shape-float 7s ease-in-out infinite;
+}
+
+.shape-motion--float-fast {
+  --shape-y: -14px;
+  animation: shape-float 4.5s ease-in-out infinite;
+}
+
+.shape-motion--float-diagonal {
+  --shape-x: 18px;
+  --shape-y: -18px;
+  animation: shape-diagonal 6s ease-in-out infinite;
+}
+
+.shape-motion--spin-slow {
+  animation: shape-spin 22s linear infinite;
+}
+
+.shape-motion--pulse {
+  animation: shape-pulse 2.8s ease-in-out infinite;
+}
+
+@keyframes shape-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, var(--shape-y), 0);
+  }
+}
+
+@keyframes shape-diagonal {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(var(--shape-x), var(--shape-y), 0);
+  }
+}
+
+@keyframes shape-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes shape-pulse {
+  0%,
+  100% {
+    opacity: .45;
+    transform: scale(1);
+  }
+  50% {
+    opacity: .9;
+    transform: scale(1.08);
+  }
+}
+
+@media (max-width: 767px) {
+  .shape-motion--float-slow,
+  .shape-motion--float-fast {
+    --shape-y: -9px;
+  }
+
+  .shape-motion--float-diagonal {
+    --shape-x: 8px;
+    --shape-y: -8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shape-motion {
+    animation: none;
+  }
+}

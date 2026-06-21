@@ -1,4 +1,4 @@
-<main class="auth-shell">
+﻿<main class="auth-shell">
   <section class="auth-card">
     <a class="brand" routerLink="/">DAEMON</a>
     <p class="eyebrow">Aula rural con inteligencia artificial</p>
@@ -6,7 +6,7 @@
     <p class="intro">Ingresa con tu usuario de estudiante o docente.</p>
     <form (ngSubmit)="entrar()">
       <label>Usuario<input name="usuario" [(ngModel)]="usuario" required autocomplete="username"></label>
-      <label>Contrasena<input name="password" [(ngModel)]="password" required type="password" autocomplete="current-password"></label>
+      <label>Contraseña<input name="password" [(ngModel)]="password" required type="password" autocomplete="current-password"></label>
       @if (error()) { <p class="error">{{ error() }}</p> }
       <button type="submit" [disabled]="enviando()">{{ enviando() ? 'Ingresando...' : 'Ingresar' }}</button>
     </form>

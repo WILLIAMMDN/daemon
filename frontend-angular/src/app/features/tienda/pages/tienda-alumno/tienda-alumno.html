@@ -1,4 +1,4 @@
-<section class="page">
+﻿<section class="page">
   <header class="page-header">
     <div>
       <p class="kicker">Tienda</p>
@@ -25,7 +25,7 @@
           }
           <span class="badge">{{ premio.categoria }}</span>
           <h2>{{ premio.nombre }}</h2>
-          <p>{{ premio.descripcion || 'Sin descripcion registrada.' }}</p>
+          <p>{{ premio.descripcion || 'Sin descripción registrada.' }}</p>
           <p><strong>{{ premio.precio }}</strong> tokens - Stock {{ premio.stock }}</p>
           <button type="button" (click)="canjear(premio.id)" [disabled]="procesando() === premio.id || saldo() < premio.precio || premio.stock < 1">
             Canjear

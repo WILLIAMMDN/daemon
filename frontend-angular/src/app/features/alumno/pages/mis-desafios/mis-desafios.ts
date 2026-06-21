@@ -26,7 +26,7 @@ export class MisDesafios {
         this.cargando.set(false);
       },
       error: (e) => {
-        this.error.set(e.error?.message ?? 'No se pudieron cargar los desafios.');
+        this.error.set(e.error?.message ?? 'No se pudieron cargar los desafíos.');
         this.cargando.set(false);
       },
     });

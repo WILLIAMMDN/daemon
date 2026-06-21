@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+﻿import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Mision } from '../../services/mision';
@@ -32,7 +32,7 @@ export class EntregarMision {
         this.cargando.set(false);
       },
       error: (e) => {
-        this.error.set(e.error?.message ?? 'No se pudo cargar la mision.');
+        this.error.set(e.error?.message ?? 'No se pudo cargar la misión.');
         this.cargando.set(false);
       },
     });

@@ -1,4 +1,4 @@
-@if (cargando()) {
+﻿@if (cargando()) {
   <section class="state">Cargando datos...</section>
 } @else {
   <section class="page">
@@ -6,7 +6,7 @@
       <div>
         <p class="kicker">Perfil</p>
         <h1>Editar mis datos</h1>
-        <p>Actualiza la informacion que aparece en tu cuenta de DAEMON.</p>
+        <p>Actualiza la información que aparece en tu cuenta de DAEMON.</p>
       </div>
       <a class="ghost-btn" routerLink="/alumno/perfil">Volver</a>
     </header>
@@ -26,7 +26,7 @@
           <input name="genero" [(ngModel)]="formulario.genero">
         </label>
         <label class="field-wide">
-          Biografia
+          Biografía
           <textarea name="biografia" [(ngModel)]="formulario.biografia" rows="5"></textarea>
         </label>
       </div>

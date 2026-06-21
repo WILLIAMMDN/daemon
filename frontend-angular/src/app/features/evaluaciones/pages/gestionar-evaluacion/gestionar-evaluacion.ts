@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+﻿import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Evaluacion } from '../../services/evaluacion';
 
@@ -43,12 +43,12 @@ export class GestionarEvaluacion {
     this.evaluacion.crear(this.nueva).subscribe({
       next: () => {
         this.nueva = { titulo: '', nivel: 'TEENS', estado: 'borrador' };
-        this.mensaje.set('Evaluacion creada.');
+        this.mensaje.set('Evaluación creada.');
         this.guardando.set(false);
         this.cargar();
       },
       error: (e) => {
-        this.error.set(e.error?.message ?? 'No se pudo crear la evaluacion.');
+        this.error.set(e.error?.message ?? 'No se pudo crear la evaluación.');
         this.guardando.set(false);
       },
     });

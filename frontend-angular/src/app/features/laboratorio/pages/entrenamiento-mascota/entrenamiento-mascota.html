@@ -1,18 +1,23 @@
-<section class="page">
+<section class="page training-page">
   <header class="page-header">
     <div>
       <p class="kicker">Entrenamiento</p>
-      <h1>Mascota IA</h1>
-      <p>Accesos conectados al cerebro y motores de aprendizaje.</p>
+      <h1>Mascota Ib</h1>
+      <p>Índice del laboratorio para revisar cerebro, laberinto y defensa.</p>
+    </div>
+    <div class="actions">
+      <a class="ghost-btn" routerLink="/alumno/laboratorio">Cerebro Ib</a>
     </div>
   </header>
 
-  <div class="card-list">
+  <section class="card-list">
     @for (motor of motores; track motor.ruta) {
-      <article class="data-card">
+      <article class="data-card motor-card">
+        <span class="badge" [class.warn]="motor.estado !== 'Conectado'">{{ motor.estado }}</span>
         <h2>{{ motor.titulo }}</h2>
-        <a class="btn" [routerLink]="motor.ruta">Abrir</a>
+        <p>{{ motor.detalle }}</p>
+        <a class="btn" [routerLink]="motor.ruta">Abrir módulo</a>
       </article>
     }
-  </div>
+  </section>
 </section>

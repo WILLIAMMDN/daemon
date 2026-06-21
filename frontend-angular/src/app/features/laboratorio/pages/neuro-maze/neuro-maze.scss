@@ -1,0 +1,44 @@
+.lab-module {
+  max-width: 1180px;
+}
+
+.status-panel {
+  align-content: start;
+}
+
+.status-panel h2,
+.status-panel p {
+  margin: 0;
+}
+
+.status-panel p {
+  color: #61708d;
+}
+
+.asset-list {
+  display: grid;
+  gap: .75rem;
+}
+
+.asset-list a {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  display: grid;
+  gap: .25rem;
+  padding: .85rem;
+  text-decoration: none;
+}
+
+.asset-list span {
+  color: #61708d;
+  font-size: .75rem;
+  font-weight: 850;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+
+.asset-list strong {
+  color: #17203a;
+  overflow-wrap: anywhere;
+}

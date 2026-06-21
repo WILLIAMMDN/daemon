@@ -1,4 +1,4 @@
-<section class="page">
+﻿<section class="page">
   <header class="page-header">
     <div>
       <p class="kicker">Docente</p>
@@ -12,7 +12,7 @@
   @if (error()) { <p class="error">{{ error() }}</p> }
 
   <form class="panel" (ngSubmit)="revisar()">
-    <h2>Revision</h2>
+    <h2>Revisión</h2>
     <div class="form-grid">
       <label>
         ID entrega
@@ -34,7 +34,7 @@
         <textarea name="comentario_docente" rows="3" [(ngModel)]="revision.comentario_docente"></textarea>
       </label>
     </div>
-    <button type="submit" [disabled]="guardando() || !revision.id">Guardar revision</button>
+    <button type="submit" [disabled]="guardando() || !revision.id">Guardar revisión</button>
   </form>
 
   @if (cargando()) {
@@ -46,10 +46,10 @@
           <tr>
             <th>ID</th>
             <th>Alumno</th>
-            <th>Mision</th>
+            <th>Misión</th>
             <th>Estado</th>
             <th>Evidencia</th>
-            <th>Accion</th>
+            <th>Acción</th>
           </tr>
         </thead>
         <tbody>

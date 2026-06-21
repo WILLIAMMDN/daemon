@@ -1,8 +1,8 @@
-<section class="page">
+﻿<section class="page">
   <header class="page-header">
     <div>
       <p class="kicker">Evaluaciones</p>
-      <h1>Examenes activos</h1>
+      <h1>Exámenes activos</h1>
       <p>Responde las evaluaciones disponibles para tu nivel.</p>
     </div>
     <button type="button" (click)="cargar()">Actualizar</button>
@@ -38,7 +38,7 @@
           </div>
           <button type="submit" [disabled]="enviando() === examen.id">Enviar respuestas</button>
         } @else {
-          <p class="empty">Esta evaluacion no tiene preguntas registradas.</p>
+          <p class="empty">Esta evaluación no tiene preguntas registradas.</p>
         }
       </form>
     }

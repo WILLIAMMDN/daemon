@@ -1,8 +1,8 @@
-<section class="page">
+﻿<section class="page">
   <header class="page-header">
     <div>
       <p class="kicker">Competencia</p>
-      <h1>Votacion en vivo</h1>
+      <h1>Votación en vivo</h1>
       <p>Estado de la ronda y voto del estudiante.</p>
     </div>
     <button type="button" (click)="cargar()">Actualizar</button>
@@ -24,7 +24,7 @@
         <strong>{{ data.promedio || data.ronda.promedio_alumnos || 0 }}</strong>
       </article>
       <article class="stat">
-        <span>Duracion</span>
+        <span>Duración</span>
         <strong>{{ data.ronda.duracion || 0 }}</strong>
       </article>
     </section>
@@ -47,7 +47,7 @@
         }
         <div class="form-grid">
           <label>
-            Puntuacion
+            Puntuación
             <input name="puntuacion" type="number" min="1" max="10" [(ngModel)]="voto.puntuacion" required>
           </label>
           <label class="field-wide">

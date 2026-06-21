@@ -1,5 +1,70 @@
-<section class="top"><div><p>Asistente local con Ollama</p><h1>{{ bot()?.nombre_bot || 'Mi bot educativo' }}</h1></div><div><a routerLink="/alumno/crear-bot">Configurar bot</a><button (click)="limpiar()">Limpiar chat</button></div></section>
-@if (!bot()) { <div class="notice">Configura primero el nombre, personalidad y conocimiento de tu bot.</div> }
-<section class="chat">@for (mensaje of mensajes(); track $index) { <article [class.user]="mensaje.role === 'user'"><strong>{{ mensaje.role === 'user' ? 'Tu' : bot()?.nombre_bot || 'Bot' }}</strong><p>{{ mensaje.content }}</p></article> } @if (enviando()) { <article><strong>Bot</strong><p>Pensando con Gemma...</p></article> }</section>
-@if (error()) { <p class="error">{{ error() }}</p> }
-<form (ngSubmit)="enviar()"><textarea name="texto" [(ngModel)]="texto" placeholder="Escribe tu pregunta..." rows="3"></textarea><button [disabled]="!bot() || enviando()">Enviar</button></form>
+<section class="chat-page">
+  <header class="page-header">
+    <div>
+      <p class="kicker">Asistente local con Ollama</p>
+      <h1>{{ bot()?.nombre_bot || 'Mi bot educativo' }}</h1>
+      <p>Conversación conectada al bot personal del estudiante.</p>
+    </div>
+    <div class="actions">
+      <a class="ghost-btn" routerLink="/alumno/crear-bot">Configurar bot</a>
+      <button type="button" (click)="limpiar()" [disabled]="!mensajes().length">Limpiar chat</button>
+    </div>
+  </header>
+
+  @if (!bot()) {
+    <article class="notice setup-notice">
+      <div>
+        <strong>El bot aún no está configurado</strong>
+        <p>Guarda nombre, personalidad y conocimiento para habilitar el chat.</p>
+      </div>
+      <a class="btn" routerLink="/alumno/crear-bot">Configurar ahora</a>
+    </article>
+  }
+
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+
+  <section class="chat-shell">
+    <aside class="bot-context">
+      <span class="badge" [class.warn]="!bot()">{{ bot() ? 'Activo' : 'Pendiente' }}</span>
+      <h2>Base del asistente</h2>
+      <p>{{ bot()?.system_prompt || 'Sin personalidad guardada.' }}</p>
+      <h3>Conocimiento</h3>
+      <p>{{ bot()?.conocimiento || 'Aún no hay conocimiento especializado.' }}</p>
+    </aside>
+
+    <section class="conversation" aria-label="Conversación con el bot">
+      @if (mensajes().length) {
+        @for (mensaje of mensajes(); track $index) {
+          <article class="message" [class.user]="mensaje.role === 'user'">
+            <strong>{{ mensaje.role === 'user' ? 'Tú' : bot()?.nombre_bot || 'Bot' }}</strong>
+            <p>{{ mensaje.content }}</p>
+          </article>
+        }
+      } @else {
+        <article class="empty">
+          Aún no hay mensajes. Escribe una pregunta cuando el bot esté configurado.
+        </article>
+      }
+
+      @if (enviando()) {
+        <article class="message">
+          <strong>{{ bot()?.nombre_bot || 'Bot' }}</strong>
+          <p>Generando respuesta con Gemma...</p>
+        </article>
+      }
+    </section>
+  </section>
+
+  <form class="composer" (ngSubmit)="enviar()">
+    <textarea
+      name="texto"
+      [(ngModel)]="texto"
+      placeholder="Escribe tu pregunta..."
+      rows="3"
+      [disabled]="!bot() || enviando()"
+    ></textarea>
+    <button type="submit" [disabled]="!bot() || enviando() || !texto.trim()">Enviar</button>
+  </form>
+</section>

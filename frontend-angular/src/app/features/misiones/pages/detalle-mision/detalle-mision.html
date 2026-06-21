@@ -1,14 +1,14 @@
 @if (cargando()) {
-  <section class="state">Cargando mision...</section>
+  <section class="state">Cargando misión...</section>
 } @else if (error()) {
   <section class="error">{{ error() }}</section>
 } @else if (detalle(); as datos) {
   <section class="page">
     <header class="page-header">
       <div>
-        <p class="kicker">Detalle de mision</p>
+        <p class="kicker">Detalle de misión</p>
         <h1>{{ datos.mision.titulo }}</h1>
-        <p>{{ datos.mision.descripcion || 'Sin descripcion registrada.' }}</p>
+        <p>{{ datos.mision.descripcion || 'Sin descripción registrada.' }}</p>
       </div>
       <a class="ghost-btn" routerLink="/alumno/misiones">Volver</a>
     </header>
@@ -38,15 +38,15 @@
             <p><strong>Comentario:</strong> {{ datos.entrega.comentario_docente }}</p>
           }
         } @else {
-          <p class="empty">Todavia no registraste entrega para esta mision.</p>
+          <p class="empty">Todavía no registraste entrega para esta misión.</p>
         }
       </article>
 
       <article class="panel">
-        <h2>Acciones</h2>
+        <h2>Acciónes</h2>
         <div class="actions">
           <a class="btn" [routerLink]="['/alumno/misiones', datos.mision.id, 'entregar']">Entregar evidencia</a>
-          <a class="ghost-btn" routerLink="/alumno/desafios">Ver desafios</a>
+          <a class="ghost-btn" routerLink="/alumno/desafios">Ver desafíos</a>
         </div>
       </article>
     </section>

@@ -1,4 +1,48 @@
-<div class="portal">
-  <aside><a class="brand" routerLink="/docente">DAEMON</a><p class="role">Portal docente</p><nav>@for (enlace of enlaces; track enlace[1]) { <a [routerLink]="enlace[1]" routerLinkActive="active" [routerLinkActiveOptions]="{exact: enlace[1] === '/docente'}">{{ enlace[0] }}</a> }</nav></aside>
-  <section class="workspace"><header><div><strong>{{ sesion.usuario()?.nombre_completo }}</strong><small>Administracion academica</small></div><button (click)="salir()">Cerrar sesion</button></header><main><router-outlet /></main></section>
+﻿<div class="portal">
+  <aside class="sidebar" aria-label="Navegación de docente">
+    <a class="brand" routerLink="/docente">
+      <span>DAEMON</span>
+      <small>Panel docente</small>
+    </a>
+
+    <div class="account-card">
+      <span>Docente</span>
+      <strong>{{ sesion.usuario()?.nombre_completo || 'Cuenta activa' }}</strong>
+      <small>Administración académica</small>
+    </div>
+
+    <nav class="nav-groups">
+      @for (grupo of grupos; track grupo.titulo) {
+        @if (!grupo.soloAdmin || sesion.usuario()?.rol === 'admin') {
+          <section class="nav-group">
+            <p>{{ grupo.titulo }}</p>
+            @for (enlace of grupo.enlaces; track enlace.ruta) {
+              <a
+                [routerLink]="enlace.ruta"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: enlace.ruta === '/docente' }"
+              >
+                <span>{{ enlace.etiqueta }}</span>
+                <small>{{ enlace.detalle }}</small>
+              </a>
+            }
+          </section>
+        }
+      }
+    </nav>
+  </aside>
+
+  <section class="workspace">
+    <header class="topbar">
+      <div>
+        <span>Portal docente</span>
+        <strong>{{ sesion.usuario()?.usuario || sesion.usuario()?.nombre_completo }}</strong>
+      </div>
+      <button type="button" (click)="salir()">Cerrar sesión</button>
+    </header>
+
+    <main class="content-area">
+      <router-outlet />
+    </main>
+  </section>
 </div>

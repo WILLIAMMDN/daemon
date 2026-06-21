@@ -1,4 +1,5 @@
 import { Component, signal } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { CertificadoService } from '../../services/certificado';
 
 @Component({
@@ -12,8 +13,18 @@ export class ImprimirCarnet {
   cargando = signal(true);
   error = signal('');
 
-  constructor(private certificado: CertificadoService) {
-    this.certificado.actual().subscribe({
+  constructor(private certificado: CertificadoService, private route: ActivatedRoute) {
+    this.cargar();
+  }
+
+  cargar(): void {
+    this.cargando.set(true);
+    this.error.set('');
+
+    const usuarioId = this.route.snapshot.paramMap.get('usuarioId');
+    const solicitud = usuarioId ? this.certificado.porUsuario(usuarioId) : this.certificado.actual();
+
+    solicitud.subscribe({
       next: (datos) => {
         this.datos.set(datos);
         this.cargando.set(false);

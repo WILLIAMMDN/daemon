@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+﻿import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Mision } from '../../../misiones/services/mision';
 
@@ -49,13 +49,13 @@ export class GestionarMisiones {
     this.error.set('');
     this.mision.crear(this.nueva).subscribe({
       next: () => {
-        this.mensaje.set('Mision creada.');
+        this.mensaje.set('Misión creada.');
         this.nueva = { titulo: '', descripcion: '', recompensa: 0, tipo_evidencia: 'texto', nivel_requerido: 'TODOS', estado: 'activo', es_mision_nivel: false };
         this.guardando.set(false);
         this.cargar();
       },
       error: (e) => {
-        this.error.set(e.error?.message ?? 'No se pudo crear la mision.');
+        this.error.set(e.error?.message ?? 'No se pudo crear la misión.');
         this.guardando.set(false);
       },
     });

@@ -1,1 +1,82 @@
-<section class="card"><p class="eyebrow">Personalidad y conocimiento</p><h1>Configura tu bot</h1><form (ngSubmit)="guardar()"><label>Nombre<input name="nombre" [(ngModel)]="datos.nombre_bot" required></label><label>Personalidad<textarea name="prompt" [(ngModel)]="datos.system_prompt" rows="5" placeholder="Ejemplo: Eres un tutor paciente..."></textarea></label><label>Conocimiento especializado<textarea name="conocimiento" [(ngModel)]="datos.conocimiento" rows="8"></textarea></label><div><button>Guardar bot</button><a routerLink="/alumno/chatbot">Ir al chat</a></div>@if (mensaje()) { <p class="ok">{{ mensaje() }}</p> }@if (error()) { <p class="error">{{ error() }}</p> }</form></section>
+<section class="page bot-config">
+  <header class="page-header">
+    <div>
+      <p class="kicker">Personalidad y conocimiento</p>
+      <h1>Configura tu bot</h1>
+      <p>Esta información alimenta el asistente conectado a Gemma mediante el backend.</p>
+    </div>
+    <div class="actions">
+      <a class="ghost-btn" routerLink="/alumno/chatbot">Volver al chat</a>
+    </div>
+  </header>
+
+  @if (cargando()) {
+    <p class="state">Cargando configuración...</p>
+  } @else {
+    <section class="split">
+      <form class="panel bot-form" (ngSubmit)="guardar()">
+        <h2>Datos del asistente</h2>
+
+        <label class="field">
+          Nombre
+          <input name="nombre" [(ngModel)]="datos.nombre_bot" required>
+        </label>
+
+        <label class="field">
+          Personalidad
+          <textarea
+            name="prompt"
+            [(ngModel)]="datos.system_prompt"
+            rows="6"
+            placeholder="Ejemplo: Eres un tutor paciente que explica paso a paso."
+          ></textarea>
+        </label>
+
+        <label class="field">
+          Conocimiento especializado
+          <textarea
+            name="conocimiento"
+            [(ngModel)]="datos.conocimiento"
+            rows="10"
+            placeholder="Temas, reglas de clase, contexto de la academia o instrucciones propias."
+          ></textarea>
+        </label>
+
+        <div class="actions">
+          <button type="submit" [disabled]="guardando() || !datos.nombre_bot.trim()">Guardar bot</button>
+          <a class="ghost-btn" routerLink="/alumno/chatbot">Probar en chat</a>
+        </div>
+
+        @if (mensaje()) {
+          <p class="success">{{ mensaje() }}</p>
+        }
+        @if (error()) {
+          <p class="error">{{ error() }}</p>
+        }
+      </form>
+
+      <aside class="panel guide">
+        <h2>Estado del bot</h2>
+        <p>La configuración guardada se aplica a las conversaciones del estudiante.</p>
+
+        <div>
+          <span class="badge">Perfil</span>
+          <strong>{{ datos.nombre_bot || 'Sin nombre' }}</strong>
+          <small>Nombre visible del asistente.</small>
+        </div>
+
+        <div>
+          <span class="badge" [class.warn]="!datos.system_prompt.trim()">Prompt</span>
+          <strong>{{ datos.system_prompt.trim() ? 'Configurado' : 'Pendiente' }}</strong>
+          <small>Personalidad base del bot.</small>
+        </div>
+
+        <div>
+          <span class="badge" [class.warn]="!datos.conocimiento.trim()">Conocimiento</span>
+          <strong>{{ datos.conocimiento.trim() ? 'Configurado' : 'Pendiente' }}</strong>
+          <small>Contexto propio de la academia.</small>
+        </div>
+      </aside>
+    </section>
+  }
+</section>

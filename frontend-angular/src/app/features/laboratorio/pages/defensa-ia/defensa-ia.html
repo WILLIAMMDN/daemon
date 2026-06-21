@@ -1,18 +1,39 @@
-<section class="page">
+<section class="page lab-module">
   <header class="page-header">
     <div>
       <p class="kicker">Defensa IA</p>
       <h1>Motor de defensa</h1>
-      <p>Assets heredados listos para conectar a una vista interactiva.</p>
+      <p>Módulo heredado del laboratorio para conectar visión/modelo local dentro de Angular.</p>
+    </div>
+    <div class="actions">
+      <a class="ghost-btn" routerLink="/alumno/laboratorio">Cerebro IA</a>
+      <a class="ghost-btn" routerLink="/alumno/laboratorio/entrenamiento-mascota">Entrenamiento</a>
     </div>
   </header>
 
-  <div class="card-list">
-    @for (archivo of archivos; track archivo.ruta) {
-      <article class="data-card">
-        <h2>{{ archivo.nombre }}</h2>
-        <a class="btn" [href]="archivo.ruta" target="_blank">Abrir archivo</a>
-      </article>
-    }
-  </div>
+  <section class="split">
+    <article class="panel status-panel">
+      <span class="badge warn">Motor heredado</span>
+      <h2>Base técnica disponible</h2>
+      <p>La logica de defensa, estilos y dependencia de modelo estan conservados en `public/legacy` para la integración final.</p>
+
+      <div class="actions">
+        @for (enlace of enlaces; track enlace.ruta) {
+          <a class="ghost-btn" [routerLink]="enlace.ruta">{{ enlace.etiqueta }}</a>
+        }
+      </div>
+    </article>
+
+    <article class="panel">
+      <h2>Activos detectados</h2>
+      <div class="asset-list">
+        @for (archivo of archivos; track archivo.ruta) {
+          <a [href]="archivo.ruta" target="_blank">
+            <span>{{ archivo.tipo }}</span>
+            <strong>{{ archivo.nombre }}</strong>
+          </a>
+        }
+      </div>
+    </article>
+  </section>
 </section>

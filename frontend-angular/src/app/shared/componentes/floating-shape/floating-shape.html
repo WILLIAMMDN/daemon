@@ -1,0 +1,49 @@
+<span class="shape-shell absolute pointer-events-none z-40 block" [ngClass]="customClass">
+  <span class="shape-motion block" [ngClass]="motionClass">
+    <svg
+      [class]="size + ' ' + color"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+      [ngSwitch]="shape"
+    >
+      <ng-container *ngSwitchCase="'cross'">
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+      </ng-container>
+
+      <ng-container *ngSwitchCase="'triangle'">
+        <path d="M12 3L22 20H2L12 3Z"></path>
+      </ng-container>
+
+      <ng-container *ngSwitchCase="'circle'">
+        <circle cx="12" cy="12" r="8"></circle>
+      </ng-container>
+
+      <ng-container *ngSwitchCase="'sun'">
+        <circle cx="12" cy="12" r="4"></circle>
+        <path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41m11.32-11.32l1.41-1.41"></path>
+      </ng-container>
+
+      <ng-container *ngSwitchCase="'airplane'">
+        <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"></path>
+      </ng-container>
+
+      <g *ngSwitchCase="'dots'" fill="currentColor" stroke="none">
+        <circle cx="4" cy="4" r="1.5"></circle>
+        <circle cx="12" cy="4" r="1.5"></circle>
+        <circle cx="20" cy="4" r="1.5"></circle>
+        <circle cx="4" cy="12" r="1.5"></circle>
+        <circle cx="12" cy="12" r="1.5"></circle>
+        <circle cx="20" cy="12" r="1.5"></circle>
+        <circle cx="4" cy="20" r="1.5"></circle>
+        <circle cx="12" cy="20" r="1.5"></circle>
+        <circle cx="20" cy="20" r="1.5"></circle>
+      </g>
+    </svg>
+  </span>
+</span>
