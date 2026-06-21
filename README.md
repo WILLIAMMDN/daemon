@@ -1,45 +1,191 @@
-# DAEMON - plataforma academica Angular + Laravel
+# DAEMON
 
-Esta entrega separa la aplicacion PHP original en una plataforma academica DAEMON:
+DAEMON es una plataforma academica para aula rural construida con Angular y Laravel. El proyecto migra la aplicacion PHP original a una arquitectura separada entre frontend, API REST, base de datos y recursos legados.
 
-- `frontend-angular/`: interfaz Angular 21 por modulos, layouts, guardias, interceptor y servicios.
-- `backend-laravel/`: API REST Laravel 12 con Sanctum, controladores, modelos y almacenamiento.
-- `database/iaparateens_db.sql`: esquema y datos originales de MariaDB.
-- `legado/`: ZIP original conservado como respaldo y referencia funcional.
-- `frontend-angular/public/legacy/`: audio, CSS, JavaScript, PDFs y modelos de IA originales.
+## Estado actual
+
+- Frontend Angular con rutas para alumno, docente y paginas publicas.
+- Backend Laravel 12 con API versionada en `api/v1`.
+- Autenticacion con Laravel Sanctum.
+- Paneles principales de alumno y docente ya adaptados a la marca DAEMON.
+- Integracion preparada para IA local con Ollama.
+- Recursos originales conservados para juegos, laboratorio y contenido legado.
+
+## Tecnologias
+
+- Angular 21
+- Laravel 12
+- PHP 8.2+
+- MariaDB/MySQL
+- Laravel Sanctum
+- Ollama con `gemma2:9b`
+
+## Estructura
+
+```text
+backend-laravel/              API REST Laravel, modelos, servicios y pruebas
+frontend-angular/             Aplicacion Angular
+database/iaparateens_db.sql   Esquema y datos originales importados por migracion
+legado/                       Aplicacion PHP original conservada como referencia
+scripts/iniciar.ps1           Arranque local de backend y frontend
+docs/                         Documentacion del proyecto
+```
 
 ## Requisitos
 
-- PHP 8.2 o superior con extensiones `pdo_mysql`, `mbstring`, `openssl` y `fileinfo`.
-- Composer 2, Node.js 22, npm 11 y MariaDB/MySQL.
-- Ollama con el modelo `gemma2:9b` para el chatbot.
+- PHP 8.2 o superior con `pdo_mysql`, `mbstring`, `openssl` y `fileinfo`
+- Composer 2
+- Node.js 22 y npm 11
+- MariaDB o MySQL
+- Ollama, solo si usaras el chatbot local
 
-## Instalacion
+## Instalacion local
 
-1. Crea una base vacia llamada `iaparateens_db`.
-2. En `backend-laravel`, ejecuta `composer install`.
-3. Copia `.env.example` como `.env`, revisa las credenciales de MariaDB y ejecuta `php artisan key:generate`.
-4. Ejecuta `php artisan migrate`. La primera migracion importa `database/iaparateens_db.sql` y las siguientes agregan la infraestructura de Laravel/Sanctum.
-5. Ejecuta `php artisan storage:link` y luego `php artisan serve`.
-6. En `frontend-angular`, ejecuta `npm ci` y `npm start`.
-7. Para IA local: `ollama pull gemma2:9b` y luego inicia Ollama.
+Clona el repositorio:
 
-Frontend: `http://localhost:4200`  
-Backend: `http://localhost:8000`  
-Salud API: `http://localhost:8000/api/v1/salud`
+```powershell
+git clone https://github.com/WILLIAMMDN/daemon.git C:\laragon\www\daemon
+cd C:\laragon\www\daemon
+```
 
-## Datos de prueba incluidos
+Configura el backend:
+
+```powershell
+cd backend-laravel
+composer install
+Copy-Item .env.example .env
+php artisan key:generate
+```
+
+En `backend-laravel/.env`, revisa estos valores:
+
+```env
+APP_NAME=DAEMON
+APP_URL=http://localhost:8000
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=yachayia_rural
+DB_USERNAME=root
+DB_PASSWORD=
+FRONTEND_URL=http://localhost:4200
+```
+
+Crea la base de datos vacia `yachayia_rural` en MySQL/MariaDB y ejecuta:
+
+```powershell
+php artisan migrate
+php artisan storage:link
+```
+
+Configura el frontend:
+
+```powershell
+cd ..\frontend-angular
+npm ci
+```
+
+## Ejecutar el proyecto
+
+Inicia el backend:
+
+```powershell
+cd C:\laragon\www\daemon\backend-laravel
+php artisan serve --host=127.0.0.1 --port=8000
+```
+
+Inicia el frontend en otra terminal:
+
+```powershell
+cd C:\laragon\www\daemon\frontend-angular
+npm start -- --host 127.0.0.1 --port 4200
+```
+
+URLs locales:
+
+- Frontend: `http://127.0.0.1:4200`
+- Backend: `http://127.0.0.1:8000`
+- Salud API: `http://127.0.0.1:8000/api/v1/salud`
+
+Tambien puedes usar:
+
+```powershell
+.\scripts\iniciar.ps1
+```
+
+## IA local con Ollama
+
+Instala el modelo usado por el chatbot:
+
+```powershell
+ollama pull gemma2:9b
+```
+
+Variables relacionadas:
+
+```env
+OLLAMA_URL=http://127.0.0.1:11434
+OLLAMA_MODEL=gemma2:9b
+```
+
+## Datos de prueba
 
 - Alumno: `jose123` / `1234`
 - Docente: `william1013` / `M_edina9735`
 
 ## Modulos conectados
 
-Autenticacion, perfiles, comunidad, alumnos y tokens, insignias, misiones y entregas, tienda y canjes, evaluaciones y resultados, chatbot Ollama, cerebro de aprendizaje por refuerzo, competencia en vivo, cuentos, ranking, certificados y carga de archivos.
+- Autenticacion y recuperacion de clave
+- Panel de alumno
+- Panel docente
+- Perfil y comunidad
+- Alumnos, tokens e historial
+- Insignias
+- Misiones y entregas
+- Tienda y canjes
+- Evaluaciones y resultados
+- Chatbot con Ollama
+- Cerebro de aprendizaje por refuerzo
+- Competencia en vivo
+- Cuentos
+- Ranking
+- Certificados
+- Carga de archivos
 
-## Notas
+## Comandos utiles
 
-- No publiques el `.env` de produccion ni una base con datos de estudiantes.
-- La URL de la API Angular esta en `src/app/core/servicios/api.ts`.
-- El modelo y la URL de Ollama se configuran con `OLLAMA_MODEL` y `OLLAMA_URL`.
-- La carpeta `public/legacy` conserva recursos de juegos y laboratorio que pueden reutilizarse sin depender del PHP monolitico.
+Pruebas backend:
+
+```powershell
+cd C:\laragon\www\daemon\backend-laravel
+php artisan test
+php artisan route:list --path=api/v1 -v
+```
+
+Build frontend:
+
+```powershell
+cd C:\laragon\www\daemon\frontend-angular
+npm run build
+```
+
+Verificar estado de Git:
+
+```powershell
+cd C:\laragon\www\daemon
+git status --short --branch
+```
+
+## Notas de seguridad
+
+- No subas `backend-laravel/.env`.
+- No publiques bases de datos reales con informacion sensible de estudiantes.
+- La base SQL original se conserva solo como respaldo/importacion inicial.
+- Antes de despliegue publico, revisa credenciales, CORS, `APP_DEBUG=false` y configuracion de almacenamiento.
+
+## Roadmap inmediato
+
+- Convertir pantallas genericas de `PaginaApi` en vistas finales.
+- Pulir flujos de misiones, tienda, evaluaciones, lista de alumnos, perfil y ranking.
+- Preparar configuracion de despliegue.
+- Revisar branding visual final: logo, favicon, colores y textos publicos.
