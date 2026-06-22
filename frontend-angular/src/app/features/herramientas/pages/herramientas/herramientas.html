@@ -1,0 +1,33 @@
+<section class="tools-page">
+  <header class="tools-hero">
+    <div>
+      <p class="kicker">Herramientas</p>
+      <h1>Super Lab</h1>
+      <p>Elige qué módulo abrir sin llenar el menú lateral.</p>
+    </div>
+    <span class="level-pill">Nivel actual: 1</span>
+  </header>
+
+  <section class="tools-grid" aria-label="Herramientas disponibles">
+    @for (herramienta of herramientas; track herramienta.ruta) {
+      <a class="tool-card" [class]="herramienta.tono" [routerLink]="herramienta.ruta">
+        <div class="tool-card-header">
+          <span>{{ herramienta.estado }}</span>
+        </div>
+
+        <div class="tool-card-body">
+          <h2>{{ herramienta.titulo }}</h2>
+          <p>{{ herramienta.detalle }}</p>
+        </div>
+
+        <ul>
+          @for (accion of herramienta.acciones; track accion) {
+            <li>{{ accion }}</li>
+          }
+        </ul>
+
+        <strong>Abrir</strong>
+      </a>
+    }
+  </section>
+</section>

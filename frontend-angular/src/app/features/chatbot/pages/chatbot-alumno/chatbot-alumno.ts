@@ -1,7 +1,20 @@
 import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { environment } from '../../../../../environments/environment';
 import { Api } from '../../../../core/servicios/api';
+
+interface BotAlumno {
+  nombre_bot?: string | null;
+  system_prompt?: string | null;
+  conocimiento?: string | null;
+  avatar?: string | null;
+}
+
+interface MensajeChat {
+  role: 'user' | 'assistant' | string;
+  content: string;
+}
 
 @Component({
   selector: 'app-chatbot-alumno',
@@ -10,19 +23,20 @@ import { Api } from '../../../../core/servicios/api';
   styleUrl: './chatbot-alumno.scss',
 })
 export class ChatbotAlumno {
-  mensajes = signal<any[]>([]);
-  bot = signal<any>(null);
+  mensajes = signal<MensajeChat[]>([]);
+  bot = signal<BotAlumno | null>(null);
   texto = '';
   enviando = signal(false);
   error = signal('');
+  private readonly assetBaseUrl = environment.apiUrl.replace(/\/api\/v1\/?$/, '');
 
   constructor(private api: Api) {
     this.cargar();
   }
 
   cargar(): void {
-    this.api.get<any>('/chatbot/bot').subscribe((bot) => this.bot.set(bot));
-    this.api.get<any[]>('/chatbot/mensajes').subscribe((mensajes) => this.mensajes.set(mensajes));
+    this.api.get<BotAlumno | null>('/chatbot/bot').subscribe((bot) => this.bot.set(bot));
+    this.api.get<MensajeChat[]>('/chatbot/mensajes').subscribe((mensajes) => this.mensajes.set(mensajes));
   }
 
   enviar(): void {
@@ -34,7 +48,7 @@ export class ChatbotAlumno {
     this.enviando.set(true);
     this.error.set('');
 
-    this.api.post<any>('/chatbot/mensajes', { content }).subscribe({
+    this.api.post<MensajeChat>('/chatbot/mensajes', { content }).subscribe({
       next: (mensaje) => {
         this.mensajes.update((lista) => [...lista, mensaje]);
         this.enviando.set(false);
@@ -48,5 +62,22 @@ export class ChatbotAlumno {
 
   limpiar(): void {
     this.api.delete('/chatbot/mensajes').subscribe(() => this.mensajes.set([]));
+  }
+
+  botAvatar(): string {
+    return this.asset(this.bot()?.avatar || 'img/bot_default.png');
+  }
+
+  asset(ruta?: string | null): string {
+    const limpia = ruta?.trim();
+    if (!limpia) return '';
+    if (/^(https?:|data:)/i.test(limpia)) return limpia;
+    if (limpia === 'img/bot_default.png') return '/img/bot_default.svg';
+
+    const path = limpia.startsWith('/') ? limpia : `/${limpia}`;
+    if (/^\/?(uploads|img|legacy)\//i.test(limpia)) return path;
+    if (/^\/?storage\//i.test(limpia)) return `${this.assetBaseUrl}${path}`;
+
+    return `${this.assetBaseUrl}/storage${path}`;
   }
 }

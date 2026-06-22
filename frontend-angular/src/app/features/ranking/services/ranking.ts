@@ -6,5 +6,5 @@ import { Api } from '../../../core/servicios/api';
 })
 export class Ranking {
   constructor(private api: Api) {}
-  listar() { return this.api.get('/ranking'); }
+  listar<T = unknown>() { return this.api.get<T>('/ranking'); }
 }

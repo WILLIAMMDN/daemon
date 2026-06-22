@@ -3,7 +3,10 @@
 namespace App\Services\Auth;
 
 use App\Models\Usuario;
+use InvalidArgumentException;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use Laravel\Socialite\Two\User as SocialiteUser;
 
 class AutenticacionService
 {
@@ -32,6 +35,41 @@ class AutenticacionService
             'tokens' => 100,
             'avatar' => null,
         ]);
+    }
+
+    public function autenticarConGoogle(SocialiteUser $googleUser): Usuario
+    {
+        $email = $googleUser->getEmail();
+
+        if (! $email) {
+            throw new InvalidArgumentException('Google no devolvio un correo valido.');
+        }
+
+        $usuario = Usuario::where('google_id', $googleUser->getId())->first()
+            ?? Usuario::where('email', $email)->first();
+
+        if ($usuario) {
+            $usuario->update([
+                'google_id' => $googleUser->getId(),
+                'avatar' => $usuario->avatar ?: $googleUser->getAvatar(),
+            ]);
+        } else {
+            $usuario = Usuario::create([
+                'nombre_completo' => $googleUser->getName() ?: $email,
+                'email' => $email,
+                'usuario' => $this->generarUsuarioGoogle($email),
+                'password_hash' => Hash::make(Str::random(32)),
+                'nivel' => 'TEENS',
+                'rol' => 'alumno',
+                'tokens' => 100,
+                'avatar' => $googleUser->getAvatar(),
+                'google_id' => $googleUser->getId(),
+            ]);
+        }
+
+        $usuario->tokens()->delete();
+
+        return $usuario->fresh();
     }
 
     public function crearUsuarioInterno(array $datos): Usuario
@@ -65,5 +103,25 @@ class AutenticacionService
     public function emitirToken(Usuario $usuario, string $nombre = 'angular'): string
     {
         return $usuario->createToken($nombre)->plainTextToken;
+    }
+
+    private function generarUsuarioGoogle(string $email): string
+    {
+        $base = Str::of(Str::before($email, '@'))
+            ->ascii()
+            ->lower()
+            ->replaceMatches('/[^a-z0-9_-]+/', '')
+            ->trim('-_')
+            ->limit(40, '')
+            ->toString();
+
+        $base = $base !== '' ? $base : 'google';
+        $usuario = $base;
+
+        while (Usuario::where('usuario', $usuario)->exists()) {
+            $usuario = Str::limit($base, 40, '').random_int(1000, 9999);
+        }
+
+        return $usuario;
     }
 }

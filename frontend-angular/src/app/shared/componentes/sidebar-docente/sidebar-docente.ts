@@ -1,9 +1,13 @@
 import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { HlmCardImports } from '@spartan-ng/helm/card';
+import { HlmButtonImports } from '@spartan-ng/helm/button';
 
 @Component({
   selector: 'app-sidebar-docente',
-  imports: [RouterLink, RouterLinkActive],
+  standalone: true,
+  imports: [CommonModule, RouterLink, RouterLinkActive, ...HlmCardImports, ...HlmButtonImports],
   templateUrl: './sidebar-docente.html',
   styleUrl: './sidebar-docente.scss',
 })

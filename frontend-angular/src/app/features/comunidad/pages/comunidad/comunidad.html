@@ -15,7 +15,7 @@
   } @else if (miembros().length) {
     <div class="card-list">
       @for (persona of miembros(); track persona.id) {
-        <article class="data-card">
+        <a class="data-card" [routerLink]="['/alumno/comunidad/perfil', persona.id]" [attr.aria-label]="'Ver perfil de ' + persona.nombre_completo">
           @if (persona.avatar) {
             <img class="image-thumb" [src]="asset(persona.avatar)" [alt]="persona.nombre_completo">
           }
@@ -23,7 +23,7 @@
           <h2>{{ persona.nombre_completo }}</h2>
           <p>{{ persona.usuario }} - {{ persona.nivel || 'Sin nivel' }}</p>
           <p><strong>{{ persona.tokens }}</strong> tokens</p>
-        </article>
+        </a>
       }
     </div>
   } @else {

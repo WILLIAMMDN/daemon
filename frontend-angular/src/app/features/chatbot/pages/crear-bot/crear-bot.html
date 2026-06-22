@@ -6,7 +6,7 @@
       <p>Esta información alimenta el asistente conectado a Gemma mediante el backend.</p>
     </div>
     <div class="actions">
-      <a class="ghost-btn" routerLink="/alumno/chatbot">Volver al chat</a>
+      <a class="ghost-btn" routerLink="/alumno/herramientas/chatbot">Volver al chat</a>
     </div>
   </header>
 
@@ -16,6 +16,21 @@
     <section class="split">
       <form class="panel bot-form" (ngSubmit)="guardar()">
         <h2>Datos del asistente</h2>
+
+        <div class="avatar-picker">
+          <input
+            #avatarInput
+            type="file"
+            accept="image/*"
+            class="sr-only"
+            (change)="seleccionarAvatar($event)"
+          >
+          <button type="button" class="avatar-button" (click)="avatarInput.click()" aria-label="Seleccionar imagen del bot">
+            <img [src]="avatarVisible()" alt="Avatar del bot">
+            <span>Cambiar imagen</span>
+          </button>
+          <small>Selecciona una foto para que aparezca en el chat.</small>
+        </div>
 
         <label class="field">
           Nombre
@@ -44,7 +59,7 @@
 
         <div class="actions">
           <button type="submit" [disabled]="guardando() || !datos.nombre_bot.trim()">Guardar bot</button>
-          <a class="ghost-btn" routerLink="/alumno/chatbot">Probar en chat</a>
+          <a class="ghost-btn" routerLink="/alumno/herramientas/chatbot">Probar en chat</a>
         </div>
 
         @if (mensaje()) {

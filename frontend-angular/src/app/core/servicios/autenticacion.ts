@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { SocialAuthService } from '@abacritt/angularx-social-login';
 import { tap } from 'rxjs';
 import { Api } from './api';
 import { Sesion, UsuarioSesion } from './sesion';
@@ -7,7 +8,7 @@ import { Sesion, UsuarioSesion } from './sesion';
   providedIn: 'root',
 })
 export class Autenticacion {
-  constructor(private api: Api, private sesion: Sesion) {}
+  constructor(private api: Api, private sesion: Sesion, private socialAuth: SocialAuthService) {}
 
   login(datos: { usuario: string; password: string }) {
     return this.api.post<{ token: string; usuario: UsuarioSesion }>('/auth/login', datos)
@@ -16,6 +17,13 @@ export class Autenticacion {
 
   registro(datos: Record<string, unknown>) {
     return this.api.post<{ token: string; usuario: UsuarioSesion }>('/auth/registro', datos)
+      .pipe(tap((respuesta) => this.sesion.guardar(respuesta.token, respuesta.usuario)));
+  }
+
+  loginGoogle(idToken: string) {
+    this.sesion.limpiar();
+
+    return this.api.post<{ token: string; usuario: UsuarioSesion }>('/auth/google', { id_token: idToken })
       .pipe(tap((respuesta) => this.sesion.guardar(respuesta.token, respuesta.usuario)));
   }
 
@@ -31,5 +39,11 @@ export class Autenticacion {
     return this.api.post<{ message: string }>('/auth/cambiar-clave', datos);
   }
 
-  logout() { return this.api.post('/auth/logout', {}).pipe(tap(() => this.sesion.limpiar())); }
+  logout() {
+    return this.api.post('/auth/logout', {}).pipe(tap(() => {
+      this.sesion.limpiar();
+      // También cerrar sesión en proveedores sociales (Google)
+      try { this.socialAuth.signOut().catch(() => {}); } catch { /* ignore */ }
+    }));
+  }
 }

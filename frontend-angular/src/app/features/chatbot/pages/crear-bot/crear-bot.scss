@@ -16,6 +16,46 @@
   resize: vertical;
 }
 
+.sr-only {
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  position: absolute;
+  width: 1px;
+}
+
+.avatar-picker {
+  align-items: center;
+  display: grid;
+  gap: .45rem;
+  justify-items: start;
+}
+
+.avatar-button {
+  align-items: center;
+  background: #f8fafc;
+  border: 1px solid #dfe6f1;
+  color: #17203a;
+  display: inline-flex;
+  gap: .85rem;
+  min-height: 72px;
+  padding: .65rem .9rem;
+}
+
+.avatar-button img {
+  background: #eef4ff;
+  border: 3px solid #fff;
+  border-radius: 999px;
+  box-shadow: 0 6px 18px rgba(23, 32, 58, .12);
+  height: 58px;
+  object-fit: cover;
+  width: 58px;
+}
+
+.avatar-picker small {
+  color: #61708d;
+}
+
 .guide {
   align-content: start;
   display: grid;

@@ -1,12 +1,15 @@
 <section class="chat-page">
   <header class="page-header">
-    <div>
-      <p class="kicker">Asistente local con Ollama</p>
-      <h1>{{ bot()?.nombre_bot || 'Mi bot educativo' }}</h1>
-      <p>Conversación conectada al bot personal del estudiante.</p>
+    <div class="bot-heading">
+      <img [src]="botAvatar()" [alt]="bot()?.nombre_bot || 'Avatar del bot'">
+      <div>
+        <p class="kicker">Asistente local con Ollama</p>
+        <h1>{{ bot()?.nombre_bot || 'Mi bot educativo' }}</h1>
+        <p>Conversación conectada al bot personal del estudiante.</p>
+      </div>
     </div>
     <div class="actions">
-      <a class="ghost-btn" routerLink="/alumno/crear-bot">Configurar bot</a>
+      <a class="ghost-btn" routerLink="/alumno/herramientas/bot">Configurar bot</a>
       <button type="button" (click)="limpiar()" [disabled]="!mensajes().length">Limpiar chat</button>
     </div>
   </header>
@@ -15,9 +18,9 @@
     <article class="notice setup-notice">
       <div>
         <strong>El bot aún no está configurado</strong>
-        <p>Guarda nombre, personalidad y conocimiento para habilitar el chat.</p>
+        <p>Guarda nombre, personalidad, avatar y conocimiento para habilitar el chat.</p>
       </div>
-      <a class="btn" routerLink="/alumno/crear-bot">Configurar ahora</a>
+      <a class="btn" routerLink="/alumno/herramientas/bot">Configurar ahora</a>
     </article>
   }
 
@@ -27,6 +30,7 @@
 
   <section class="chat-shell">
     <aside class="bot-context">
+      <img class="context-avatar" [src]="botAvatar()" [alt]="bot()?.nombre_bot || 'Avatar del bot'">
       <span class="badge" [class.warn]="!bot()">{{ bot() ? 'Activo' : 'Pendiente' }}</span>
       <h2>Base del asistente</h2>
       <p>{{ bot()?.system_prompt || 'Sin personalidad guardada.' }}</p>
@@ -38,8 +42,13 @@
       @if (mensajes().length) {
         @for (mensaje of mensajes(); track $index) {
           <article class="message" [class.user]="mensaje.role === 'user'">
-            <strong>{{ mensaje.role === 'user' ? 'Tú' : bot()?.nombre_bot || 'Bot' }}</strong>
-            <p>{{ mensaje.content }}</p>
+            @if (mensaje.role !== 'user') {
+              <img class="message-avatar" [src]="botAvatar()" [alt]="bot()?.nombre_bot || 'Bot'">
+            }
+            <div>
+              <strong>{{ mensaje.role === 'user' ? 'Tú' : bot()?.nombre_bot || 'Bot' }}</strong>
+              <p>{{ mensaje.content }}</p>
+            </div>
           </article>
         }
       } @else {
@@ -50,8 +59,11 @@
 
       @if (enviando()) {
         <article class="message">
-          <strong>{{ bot()?.nombre_bot || 'Bot' }}</strong>
-          <p>Generando respuesta con Gemma...</p>
+          <img class="message-avatar" [src]="botAvatar()" [alt]="bot()?.nombre_bot || 'Bot'">
+          <div>
+            <strong>{{ bot()?.nombre_bot || 'Bot' }}</strong>
+            <p>Generando respuesta con Gemma...</p>
+          </div>
         </article>
       }
     </section>

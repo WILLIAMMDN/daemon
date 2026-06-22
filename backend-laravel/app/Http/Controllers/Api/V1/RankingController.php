@@ -9,6 +9,11 @@ class RankingController extends Controller
 {
     public function index()
     {
-        return Usuario::where('rol', 'alumno')->select('id', 'nombre_completo', 'usuario', 'nivel', 'tokens', 'rango', 'avatar')->orderBy('nivel')->orderByDesc('tokens')->get()->groupBy('nivel');
+        return Usuario::where('rol', 'alumno')
+            ->select('id', 'nombre_completo', 'usuario', 'nivel', 'tokens', 'rango', 'avatar')
+            ->orderByDesc('tokens')
+            ->orderBy('nombre_completo')
+            ->get()
+            ->values();
     }
 }

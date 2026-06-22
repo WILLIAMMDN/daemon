@@ -56,13 +56,6 @@ export class LayoutDocente {
         { etiqueta: 'Historial de rondas', ruta: '/docente/rondas', detalle: 'Resultados anteriores' },
       ],
     },
-    {
-      titulo: 'Administración',
-      soloAdmin: true,
-      enlaces: [
-        { etiqueta: 'Usuarios internos', ruta: '/docente/usuarios', detalle: 'Docentes y administradores' },
-      ],
-    },
   ];
 
   constructor(public sesion: Sesion, private auth: Autenticacion, private router: Router) {}

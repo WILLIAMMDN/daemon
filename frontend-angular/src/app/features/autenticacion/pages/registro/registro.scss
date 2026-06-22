@@ -1,1 +1,35 @@
-@use '../login/login.scss';select{padding:.9rem 1rem;border-radius:12px;border:1px solid #ffffff2a;background:#091128;color:white;font:inherit}.back{display:block;margin-top:1.2rem;color:#7dd3fc}.auth-card{margin:2rem 0}
+@use '../login/login.scss';
+
+.registro-hero-title {
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+}
+
+/* Tipografía clásica para el título del formulario */
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@700;900&display=swap');
+.registro-form-title {
+  font-family: 'Merriweather', Georgia, 'Times New Roman', serif;
+  font-weight: 700;
+  color: #0f1724;
+  letter-spacing: -0.01em;
+}
+
+select {
+  padding: .9rem 1rem;
+  border-radius: 12px;
+  border: 1px solid #ffffff2a;
+  background: #091128;
+  color: white;
+  font: inherit;
+}
+
+.back {
+  display: block;
+  margin-top: 1.2rem;
+  color: #7dd3fc;
+}
+
+.auth-card {
+  margin: 2rem 0;
+}

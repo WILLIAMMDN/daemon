@@ -1,6 +1,6 @@
-<nav class="module-card">
+<nav class="module-card" hlmCard>
   <strong>Menu docente</strong>
   @for (enlace of enlaces; track enlace[1]) {
-    <a [routerLink]="enlace[1]" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: enlace[1] === '/docente' }">{{ enlace[0] }}</a>
+    <a hlmBtn [routerLink]="enlace[1]" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: enlace[1] === '/docente' }">{{ enlace[0] }}</a>
   }
 </nav>

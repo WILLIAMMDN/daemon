@@ -6,8 +6,8 @@ import { LayoutAlumno } from './core/layouts/layout-alumno/layout-alumno';
 import { LayoutDocente } from './core/layouts/layout-docente/layout-docente';
 import { Inicio } from './features/publico/pages/inicio/inicio';
 import { Login } from './features/autenticacion/pages/login/login';
+import { LoginDocente } from './features/autenticacion/pages/login-docente/login-docente';
 import { Registro } from './features/autenticacion/pages/registro/registro';
-import { RegistroDocente } from './features/autenticacion/pages/registro-docente/registro-docente';
 import { RecuperarClave } from './features/autenticacion/pages/recuperar-clave/recuperar-clave';
 import { PanelAlumno } from './features/alumno/pages/panel-alumno/panel-alumno';
 import { PerfilAlumno } from './features/alumno/pages/perfil-alumno/perfil-alumno';
@@ -38,6 +38,7 @@ import { GestionarEvaluacion } from './features/evaluaciones/pages/gestionar-eva
 import { ExamenLive } from './features/evaluaciones/pages/examen-live/examen-live';
 import { ResultadosExamen } from './features/evaluaciones/pages/resultados-examen/resultados-examen';
 import { VerResultados } from './features/evaluaciones/pages/ver-resultados/ver-resultados';
+import { Herramientas } from './features/herramientas/pages/herramientas/herramientas';
 import { DefensaIa } from './features/laboratorio/pages/defensa-ia/defensa-ia';
 import { EntrenamientoMascota } from './features/laboratorio/pages/entrenamiento-mascota/entrenamiento-mascota';
 import { LabIa } from './features/laboratorio/pages/lab-ia/lab-ia';
@@ -52,6 +53,7 @@ import { MisCanjes } from './features/tienda/pages/mis-canjes/mis-canjes';
 export const routes: Routes = [
   { path: '', component: Inicio },
   { path: 'login', component: Login },
+  { path: 'login-docente', component: LoginDocente },
   { path: 'registro', component: Registro },
   { path: 'recuperar-clave', component: RecuperarClave },
   {
@@ -63,8 +65,11 @@ export const routes: Routes = [
       { path: 'misiones', component: ListaMisiones },
       { path: 'misiones/:id', component: DetalleMision },
       { path: 'misiones/:id/entregar', component: EntregarMision },
-      { path: 'chatbot', component: ChatbotAlumno },
-      { path: 'crear-bot', component: CrearBot },
+      { path: 'chatbot', redirectTo: 'herramientas/chatbot', pathMatch: 'full' },
+      { path: 'crear-bot', redirectTo: 'herramientas/bot', pathMatch: 'full' },
+      { path: 'herramientas', component: Herramientas },
+      { path: 'herramientas/chatbot', component: ChatbotAlumno },
+      { path: 'herramientas/bot', component: CrearBot },
       { path: 'recursos', component: Recursos },
       { path: 'tienda', component: TiendaAlumno, data: { titulo: 'Tienda', descripcion: 'Canjea tus tokens por premios disponibles.', endpoint: '/tienda', accion: { etiqueta: 'Canjear premio', endpoint: '/tienda/canjear/{id}', campos: [{ nombre: 'id', etiqueta: 'ID del premio', tipo: 'number' }] } } },
       { path: 'canjes', component: MisCanjes, data: { titulo: 'Mis canjes', descripcion: 'Historial y códigos de premios digitales.', endpoint: '/tienda/canjes' } },
@@ -77,10 +82,15 @@ export const routes: Routes = [
       { path: 'cuentos/:id', component: VerCuento },
       { path: 'ranking', component: Ranking, data: { titulo: 'Ranking', descripcion: 'Clasificación por nivel y tokens.', endpoint: '/ranking' } },
       { path: 'comunidad', component: Comunidad, data: { titulo: 'Comunidad', descripcion: 'Estudiantes y docentes de la plataforma.', endpoint: '/comunidad' } },
-      { path: 'laboratorio', component: LabIa, data: { titulo: 'Laboratorio IA', descripcion: 'Entrenamiento del cerebro de tu mascota mediante una matriz Q.', endpoint: '/chatbot/cerebro', aviso: 'Los motores originales de neuro-maze, defensa IA y aprendizaje por refuerzo se conservaron en public/legacy/js.', accion: { etiqueta: 'Guardar matriz neural', endpoint: '/chatbot/cerebro', campos: [{ nombre: 'matriz_neural', etiqueta: 'Matriz en JSON', tipo: 'json', valor: '{"qTable":{},"epsilon":1}' }] } } },
-      { path: 'laboratorio/neuro-maze', component: NeuroMaze },
-      { path: 'laboratorio/defensa-ia', component: DefensaIa },
-      { path: 'laboratorio/entrenamiento-mascota', component: EntrenamientoMascota },
+      { path: 'comunidad/perfil/:usuarioId', component: PerfilAlumno, data: { titulo: 'Perfil de compañero', descripcion: 'Perfil público de un participante de la comunidad.', endpoint: '/alumno/perfil/{usuarioId}' } },
+      { path: 'laboratorio', redirectTo: 'herramientas/laboratorio', pathMatch: 'full' },
+      { path: 'laboratorio/neuro-maze', redirectTo: 'herramientas/neuro-maze', pathMatch: 'full' },
+      { path: 'laboratorio/defensa-ia', redirectTo: 'herramientas/defensa-ia', pathMatch: 'full' },
+      { path: 'laboratorio/entrenamiento-mascota', redirectTo: 'herramientas/entrenamiento', pathMatch: 'full' },
+      { path: 'herramientas/laboratorio', component: LabIa, data: { titulo: 'Laboratorio IA', descripcion: 'Entrenamiento del cerebro de tu mascota mediante una matriz Q.', endpoint: '/chatbot/cerebro', aviso: 'Los motores originales de neuro-maze, defensa IA y aprendizaje por refuerzo se conservaron en public/legacy/js.', accion: { etiqueta: 'Guardar matriz neural', endpoint: '/chatbot/cerebro', campos: [{ nombre: 'matriz_neural', etiqueta: 'Matriz en JSON', tipo: 'json', valor: '{"qTable":{},"epsilon":1}' }] } } },
+      { path: 'herramientas/neuro-maze', component: NeuroMaze },
+      { path: 'herramientas/defensa-ia', component: DefensaIa },
+      { path: 'herramientas/entrenamiento', component: EntrenamientoMascota },
       { path: 'certificado', component: Certificado, data: { titulo: 'Certificado y carnet', descripcion: 'Datos listos para impresión y acreditación.', endpoint: '/certificados' } },
       { path: 'certificado/imprimir', component: ImprimirCarnet },
     ],
@@ -89,7 +99,6 @@ export const routes: Routes = [
     path: 'docente', component: LayoutDocente, canActivate: [authGuard, docenteGuard], children: [
       { path: '', component: PanelDocente, data: { titulo: 'Panel docente', descripcion: 'Indicadores generales del aula y ranking.', endpoint: '/docente/panel' } },
       { path: 'perfil', component: PerfilDocente },
-      { path: 'usuarios', component: RegistroDocente },
       { path: 'alumnos', component: ListaAlumnos, data: { titulo: 'Alumnos y tokens', descripcion: 'Listado completo y ajustes de economía escolar.', endpoint: '/docente/alumnos', accion: { etiqueta: 'Asignar o retirar tokens', endpoint: '/docente/tokens', campos: [{ nombre: 'id_alumno', etiqueta: 'ID del alumno', tipo: 'number' }, { nombre: 'cantidad', etiqueta: 'Cantidad', tipo: 'number' }, { nombre: 'motivo', etiqueta: 'Motivo' }] } } },
       { path: 'carnets/:usuarioId', component: ImprimirCarnet },
       { path: 'misiones', component: GestionarMisiones, data: { titulo: 'Gestionar misiones', descripcion: 'Crea desafíos y revisa su disponibilidad.', endpoint: '/misiones', accion: { etiqueta: 'Crear misión', endpoint: '/misiones', campos: [{ nombre: 'titulo', etiqueta: 'Título' }, { nombre: 'descripcion', etiqueta: 'Descripción', tipo: 'textarea' }, { nombre: 'recompensa', etiqueta: 'Recompensa', tipo: 'number' }, { nombre: 'tipo_evidencia', etiqueta: 'Evidencia', tipo: 'select', opciones: ['texto','archivo','imagen','video'], valor: 'texto' }, { nombre: 'nivel_requerido', etiqueta: 'Nivel', tipo: 'select', opciones: ['TODOS','KIDS','TEENS','PRO'], valor: 'TODOS' }] } } },

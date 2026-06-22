@@ -26,6 +26,7 @@ class Usuario extends Authenticatable
         'fecha_registro',
         'tokens',
         'avatar',
+        'google_id',
         'rol',
         'insignia',
         'mision_actual',

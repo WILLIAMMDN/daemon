@@ -1,12 +1,114 @@
-﻿<main class="auth-shell"><section class="auth-card">
-  <a class="brand" routerLink="/">DAEMON</a><h1>Crea tu cuenta</h1>
-  <form (ngSubmit)="registrar()">
-    <label>Nombre completo<input name="nombre" [(ngModel)]="datos.nombre_completo" required></label>
-    <label>Correo<input name="email" [(ngModel)]="datos.email" type="email"></label>
-    <label>Usuario<input name="usuario" [(ngModel)]="datos.usuario" required></label>
-    <label>Contraseña<input name="password" [(ngModel)]="datos.password" type="password" required></label>
-    <label>Nivel<select name="nivel" [(ngModel)]="datos.nivel"><option>KIDS</option><option>TEENS</option><option>PRO</option></select></label>
-    @if (error()) { <p class="error">{{ error() }}</p> }
-    <button [disabled]="enviando()">{{ enviando() ? 'Creando...' : 'Crear cuenta' }}</button>
-  </form><a class="back" routerLink="/login">Ya tengo una cuenta</a>
-</section></main>
+﻿<main class="min-h-screen w-full flex font-nunito bg-white">
+  
+  <!-- LADO IZQUIERDO: Escenario 3D Inmersivo -->
+  <div class="hidden lg:flex w-5/12 bg-[#000000] relative overflow-hidden">
+    
+    <!-- EFECTO GLOW (Luz de fondo) -->
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#15326b] rounded-full blur-[150px] opacity-40 pointer-events-none z-0"></div>
+
+    <!-- EL MOTOR SPLINE 3D -->
+    <div class="absolute inset-0 w-full h-full z-0 cursor-grab active:cursor-grabbing">
+      <spline-viewer 
+        url="https://prod.spline.design/nMNnp2Qj0GPfUDUz/scene.splinecode" 
+        style="width: 100%; height: 100%; background: transparent;">
+      </spline-viewer>
+    </div>
+
+    <!-- CAPA DE CONTENIDO: Textos alineados a los bordes para no tapar al robot -->
+    <div class="relative z-10 flex flex-col justify-between w-full h-full px-12 py-16 pointer-events-none">
+      
+      <!-- Arriba: Logo y Título -->
+      <div class="flex flex-col items-start">
+        <h1 class="registro-hero-title text-5xl xl:text-6xl font-black text-white leading-tight tracking-[-0.03em]">
+          Academia Daemon<br>
+        </h1>
+      </div>
+
+      <!-- Abajo: Footer Izquierdo -->
+      <div class="w-full">
+        <div class="h-[1px] w-12 bg-white/20 mb-4"></div>
+        <p class="text-sm text-slate-300 font-medium drop-shadow-md max-w-xs leading-relaxed">
+          Únete a la élite académica. Completa tus misiones, gana recompensas y domina la tecnología.
+        </p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- LADO DERECHO: Tu Formulario Intacto -->
+  <div class="w-full lg:w-7/12 flex flex-col justify-center px-8 sm:px-16 lg:px-24 py-12 relative bg-white">
+    
+    <div class="absolute top-8 right-8 lg:right-12 flex items-center gap-2 text-sm text-slate-600">
+      ¿Ya tienes una cuenta? <a routerLink="/login" class=" underline font-bold text-[#102b5f] hover:underline underline-offset-4">Inicia sesión &rarr;</a>
+    </div>
+
+    <div class="w-full max-w-md mx-auto mt-12 lg:mt-0">
+      
+      <h2 class="registro-form-title text-3xl mb-8">Regístrate en Daemon</h2>
+
+      <div class="flex w-full mb-4 justify-center">
+        <div class="w-full max-w-xs flex justify-center">
+          <asl-google-signin-button type="standard" size="large"></asl-google-signin-button>
+        </div>
+      </div>
+
+      <div class="flex items-center my-4" aria-hidden="true">
+        <span class="flex-1 h-px bg-slate-300/40"></span>
+        <span class="mx-3 text-sm text-slate-500">o</span>
+        <span class="flex-1 h-px bg-slate-300/40"></span>
+      </div>
+
+      <form #registroForm="ngForm" (ngSubmit)="registrar(registroForm)" class="space-y-5" novalidate>
+        
+        <div class="space-y-1.5">
+          <label hlmLabel class="text-slate-900 font-bold text-sm">Nombre completo <span class="text-red-500">*</span></label>
+          <input hlmInput name="nombre_completo" [(ngModel)]="datos.nombre_completo" required minlength="3" #nombreModel="ngModel" class="w-full bg-white border-slate-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all rounded-md h-11" [ngClass]="{'border-red-500 focus:border-red-500 focus:ring-red-500': nombreModel.invalid && (nombreModel.dirty || nombreModel.touched)}" placeholder="Ej: Juan Pérez">
+        </div>
+
+        <div class="space-y-1.5">
+          <label hlmLabel class="text-slate-900 font-bold text-sm">Correo electrónico <span class="text-red-500">*</span></label>
+          <input hlmInput name="email" [(ngModel)]="datos.email" type="email" required #emailModel="ngModel" class="w-full bg-white border-slate-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all rounded-md h-11" [ngClass]="{'border-red-500 focus:border-red-500 focus:ring-red-500': emailModel.invalid && (emailModel.dirty || emailModel.touched)}" placeholder="tucorreo@ejemplo.com">
+        </div>
+
+        <div class="space-y-1.5">
+          <label hlmLabel class="text-slate-900 font-bold text-sm">Usuario <span class="text-red-500">*</span></label>
+          <input hlmInput name="usuario" [(ngModel)]="datos.usuario" required minlength="4" #usuarioModel="ngModel" class="w-full bg-white border-slate-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all rounded-md h-11" [ngClass]="{'border-red-500 focus:border-red-500 focus:ring-red-500': usuarioModel.invalid && (usuarioModel.dirty || usuarioModel.touched)}" placeholder="Nickname">
+          <p class="text-xs text-slate-500 mt-1 leading-relaxed">El usuario solo puede contener letras y números, y debe tener al menos 4 caracteres.</p>
+        </div>
+
+        <div class="space-y-1.5">
+          <label hlmLabel class="text-slate-900 font-bold text-sm">Nivel de estudio <span class="text-red-500">*</span></label>
+          <select hlmInput name="nivel" [(ngModel)]="datos.nivel" class="w-full bg-white border-slate-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all rounded-md cursor-pointer h-11">
+            <option value="KIDS">KIDS</option>
+            <option value="TEENS">TEENS</option>
+            <option value="PRO">PRO</option>
+          </select>
+        </div>
+
+        <div class="space-y-1.5">
+          <label hlmLabel class="text-slate-900 font-bold text-sm">Contraseña <span class="text-red-500">*</span></label>
+          <input hlmInput name="password" type="password" [(ngModel)]="datos.password" required minlength="6" #passwordModel="ngModel" class="w-full bg-white border-slate-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all rounded-md h-11" [ngClass]="{'border-red-500 focus:border-red-500 focus:ring-red-500': passwordModel.invalid && (passwordModel.dirty || passwordModel.touched)}" placeholder="••••••••">
+        </div>
+
+        <div *ngIf="error()" class="p-3 rounded-md bg-red-50 text-sm font-bold text-red-600 border border-red-200 mt-2">
+          {{ error() }}
+        </div>
+
+        <div class="flex items-start gap-2 pt-2">
+          <input type="checkbox" id="preferences" class="mt-1 w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+          <label for="preferences" class="text-sm text-slate-600 font-medium cursor-pointer">
+            Recibir actualizaciones y anuncios ocasionales de la academia.
+          </label>
+        </div>
+
+        <button hlmBtn type="submit" [disabled]="enviando() || registroForm.invalid" class="w-full h-12 mt-6 rounded-md bg-[#1a1f24] text-white hover:bg-[#2d333b] font-bold text-base transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed focus:ring-2 focus:ring-offset-2 focus:ring-[#1a1f24] flex items-center justify-center gap-2">
+          {{ enviando() ? 'Creando cuenta...' : 'Continuar' }} <span *ngIf="!enviando()" class="text-lg leading-none">&rsaquo;</span>
+        </button>
+
+        <p class="text-xs text-slate-500 mt-4 leading-relaxed">
+          Al crear una cuenta, aceptas los <a href="#" class=" underline text-blue-600 hover:underline">Términos de Servicio</a>. Para más información sobre nuestras prácticas, revisa la <a href="#" class="underline text-blue-600 hover:underline">Declaración de Privacidad</a> de Daemon.
+        </p>
+      </form>
+    </div>
+  </div>
+</main>

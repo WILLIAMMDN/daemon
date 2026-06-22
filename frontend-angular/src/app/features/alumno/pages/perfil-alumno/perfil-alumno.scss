@@ -1,0 +1,20 @@
+.profile-item-card {
+  align-items: center;
+  grid-template-columns: auto minmax(0, 1fr);
+}
+
+.profile-item-card > div {
+  display: grid;
+  gap: .25rem;
+  min-width: 0;
+}
+
+.profile-item-image {
+  object-fit: contain;
+}
+
+@media (max-width: 520px) {
+  .profile-item-card {
+    grid-template-columns: 1fr;
+  }
+}

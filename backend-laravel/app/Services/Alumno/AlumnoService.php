@@ -53,6 +53,7 @@ class AlumnoService
     {
         return Usuario::query()
             ->select('id', 'nombre_completo', 'usuario', 'nivel', 'tokens', 'rango', 'avatar', 'rol')
+            ->whereIn('rol', ['alumno', 'docente'])
             ->orderByDesc('tokens')
             ->get();
     }

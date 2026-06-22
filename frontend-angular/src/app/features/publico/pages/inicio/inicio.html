@@ -27,7 +27,7 @@
           </a>
         </div>
       </div>
-
+       <app-floating-shape shape="triangle" color="text-[#f687b3]/30" size="w-6 h-6 md:w-8 md:h-8" customClass="bottom-12 left-8 md:bottom-28 md:left-12 -rotate-12" animation="animate-float-fast"></app-floating-shape>
       <div class="w-full md:w-2/3 lg:w-3/4 relative min-h-[260px] sm:min-h-[360px] md:min-h-[500px] lg:min-h-[650px] xl:min-h-[620px] bg-[#15326b] overflow-hidden">
         <div class="hidden md:block absolute -left-6 -top-12 -bottom-12 w-12 bg-[#15326b] rounded-[100%] z-10"></div>
         <img
@@ -37,7 +37,8 @@
         >
       </div>
     </section>
-
+     <app-floating-shape shape="sun" color="text-[#f6e05e]/20" size="w-10 h-10 md:w-16 md:h-16" customClass="top-8 right-8 md:top-16 md:-right-6" animation="animate-spin-slow"></app-floating-shape>
+     <app-floating-shape shape="triangle" color="text-[#f687b3]/30" size="w-6 h-6 md:w-8 md:h-8" customClass="bottom-12 left-8 md:bottom-28 md:left-12 -rotate-12" animation="animate-float-fast"></app-floating-shape>
     <main id="informacion" class="max-w-5xl mx-auto px-6 py-16 md:py-24 relative">
       <div class="hidden md:flex absolute inset-y-0 left-1/2 transform -translate-x-1/2 items-center py-24">
         <div class="h-full w-px bg-gray-300"></div>
@@ -51,14 +52,29 @@
             <span class="font-semibold text-sm sm:text-base">(consulta tus tokens, misiones, notas y más).</span>
           </p>
 
-          <a routerLink="/login" class="bg-orange-600 text-white w-full max-w-sm rounded-full py-3.5 font-bold text-sm hover:bg-orange-700 transition-colors shadow-md uppercase">
-            Ingresa al Portal del Estudiante
-          </a>
-
-          <a routerLink="/recuperar-clave" class="text-[#198754] font-bold text-sm mt-5 hover:underline decoration-2 underline-offset-4">
+          <div class="grid gap-3 w-full max-w-sm mx-auto">
+            <a routerLink="/login" class="bg-orange-600 text-white w-full rounded-full py-3.5 font-bold text-sm hover:bg-orange-700 transition-colors shadow-md uppercase">
+              Ingresa al Portal del Estudiante
+            </a>
+            <a routerLink="/login-docente" class="bg-slate-900 text-white w-full rounded-full py-3.5 font-bold text-sm hover:bg-slate-800 transition-colors shadow-md uppercase">
+              Ingresa al Portal Docente
+            </a>
+          </div>
+          <app-floating-shape shape="sun" color="text-[#f6e05e]/20" size="w-10 h-10 md:w-16 md:h-16" customClass="top-8 right-8 md:top-16 md:-right-6" animation="animate-spin-slow"></app-floating-shape>
+          <a routerLink="/recuperar-clave" class="m-4 text-[#198754] font-bold text-sm mt-2 hover:underline decoration-2 underline-offset-4">
             Olvidaste tu contraseña
           </a>
-
+          
+          <div class="flex flex-col items-center gap-2">
+            <asl-google-signin-button type="standard" size="large"></asl-google-signin-button>
+            @if (procesandoGoogle()) {
+              <p class="text-xs font-bold text-[#15326b]">Validando cuenta de Google...</p>
+            }
+            @if (errorGoogle()) {
+              <p class="max-w-sm text-xs font-bold text-red-600">{{ errorGoogle() }}</p>
+            }
+          </div>
+          
           <div class="mt-8 bg-[#f4f7f9] rounded-xl p-5 flex items-center gap-4 w-full max-w-sm text-left">
             <div class="w-8 h-8 rounded-full border border-gray-400 flex items-center justify-center shrink-0 text-gray-500 font-bold">!</div>
             <p class="text-xs text-[#15326b] leading-tight">
@@ -67,7 +83,7 @@
             </p>
           </div>
         </div>
-
+       
         <div class="flex flex-col items-center px-4">
           <p class="text-[#15326b] font-bold text-base sm:text-lg mb-8 leading-relaxed max-w-sm mx-auto">
             Si eres <strong>alumno nuevo</strong>, crea tu <br>
@@ -77,68 +93,99 @@
           <a routerLink="/registro" class="bg-white text-[#198754] border border-[#198754] w-full max-w-sm rounded-full py-3 font-bold text-sm hover:bg-gray-50 transition-colors uppercase">
             Crea tu cuenta de estudiante
           </a>
-
+ <app-floating-shape shape="airplane" color="text-[#ed8936]/40" size="w-9 h-9 md:w-14 md:h-14" customClass="hidden sm:block bottom-12 right-8 md:bottom-12 md:-right-8 rotate-12" animation="animate-float-diagonal"></app-floating-shape>
           <a href="/img/Temario_Oficial_Uripa.pdf" target="_blank" class="text-[#198754] font-bold text-sm mt-5 hover:underline decoration-2 underline-offset-4">
             Descarga el tutorial
           </a>
 
-          <fa-icon [icon]="iconoAvion" class="mt-8 text-[64px] md:text-[70px] text-sky-500 animate-bounce"></fa-icon>
+          
         </div>
       </div>
     </main>
-
+ <app-floating-shape shape="triangle" color="text-[#f687b3]/30" size="w-6 h-6 md:w-8 md:h-8" customClass="bottom-12 left-8 md:bottom-28 md:left-12 -rotate-12" animation="animate-float-fast"></app-floating-shape>
     <section id="novedades" class="w-full bg-white py-16 md:py-24 border-t border-gray-100">
-      <div class="max-w-7xl mx-auto px-6">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">
-          <div>
-            <h2 class="text-3xl md:text-4xl font-black text-[#15326b] tracking-tight mb-2">Descubre nuestras novedades</h2>
-            <p class="text-gray-500 font-medium text-lg">Mantente al día con los últimos eventos y talleres.</p>
-          </div>
-          <a href="#novedades" class="text-[#198754] font-bold text-sm hover:underline decoration-2 underline-offset-4 whitespace-nowrap">Ver todas las noticias &rarr;</a>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <article class="bg-white rounded-2xl shadow-lg shadow-gray-200/50 border border-gray-100 overflow-hidden flex flex-col group hover:-translate-y-1.5 transition-all duration-300">
-            <div class="h-48 relative overflow-hidden bg-gray-200">
-              <img src="/img/premio_gemini1.jpg" alt="IA" class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500">
-              <div class="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-black text-[#15326b] tracking-wide">PLATAFORMA</div>
-            </div>
-            <div class="p-6 flex flex-col flex-grow">
-              <p class="text-gray-400 text-xs font-bold mb-3 uppercase tracking-wider">Hace 2 días</p>
-              <h3 class="text-xl font-black text-[#15326b] mb-3 leading-tight group-hover:text-[#198754] transition-colors">Nuevas misiones de IA habilitadas</h3>
-              <p class="text-gray-600 text-sm mb-6 flex-grow">Los cadetes ya pueden interactuar con los modelos locales para resolver nuevos retos.</p>
-              <a href="#novedades" class="text-[#198754] font-bold text-sm uppercase tracking-wide flex items-center gap-2 group-hover:gap-3 transition-all">Leer artículo <span>&rarr;</span></a>
-            </div>
-          </article>
-
-          <article class="bg-white rounded-2xl shadow-lg shadow-gray-200/50 border border-gray-100 overflow-hidden flex flex-col group hover:-translate-y-1.5 transition-all duration-300">
-            <div class="h-48 relative overflow-hidden bg-gray-200">
-              <img src="/img/fondo_arcade.jpg" alt="Robótica" class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500">
-              <div class="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-black text-[#15326b] tracking-wide">ACADÉMICO</div>
-            </div>
-            <div class="p-6 flex flex-col flex-grow">
-              <p class="text-gray-400 text-xs font-bold mb-3 uppercase tracking-wider">15 de Junio, 2026</p>
-              <h3 class="text-xl font-black text-[#15326b] mb-3 leading-tight group-hover:text-[#198754] transition-colors">Preparación para feria de ciencias</h3>
-              <p class="text-gray-600 text-sm mb-6 flex-grow">Conoce los requisitos para participar armando circuitos con Arduino y ESP32.</p>
-              <a href="#novedades" class="text-[#198754] font-bold text-sm uppercase tracking-wide flex items-center gap-2 group-hover:gap-3 transition-all">Leer artículo <span>&rarr;</span></a>
-            </div>
-          </article>
-
-          <article class="bg-white rounded-2xl shadow-lg shadow-gray-200/50 border border-gray-100 overflow-hidden flex flex-col group hover:-translate-y-1.5 transition-all duration-300">
-            <div class="h-48 relative overflow-hidden bg-gray-200">
-              <img src="/img/fondo_banner_tokens.jpg" alt="Tokens" class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500">
-              <div class="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-black text-[#15326b] tracking-wide">ECONOMÍA</div>
-            </div>
-            <div class="p-6 flex flex-col flex-grow">
-              <p class="text-gray-400 text-xs font-bold mb-3 uppercase tracking-wider">08 de Junio, 2026</p>
-              <h3 class="text-xl font-black text-[#15326b] mb-3 leading-tight group-hover:text-[#198754] transition-colors">Actualización en la Tienda Daemon</h3>
-              <p class="text-gray-600 text-sm mb-6 flex-grow">Nuevos premios disponibles. Acumula tokens y canjéalos desde tu portal.</p>
-              <a href="#novedades" class="text-[#198754] font-bold text-sm uppercase tracking-wide flex items-center gap-2 group-hover:gap-3 transition-all">Leer artículo <span>&rarr;</span></a>
-            </div>
-          </article>
-        </div>
+  <div class="max-w-7xl mx-auto px-6">
+<fa-icon [icon]="iconoAvion" class="mt-1 text-[64px] md:text-[43px] text-sky-500 animate-bounce"></fa-icon>
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">
+      <div>
+        <h2 class="text-3xl md:text-4xl font-black text-[#15326b] tracking-tight mb-2">Descubre nuestras novedades</h2>
+        <p class="text-gray-500 font-medium text-lg">Mantente al día con los últimos eventos y talleres.</p>
       </div>
-    </section>
+      <a href="#novedades" class="text-[#198754] font-bold text-sm hover:underline decoration-2 underline-offset-4 whitespace-nowrap">Ver todas las noticias &rarr;</a>
+    </div>
+ <app-floating-shape shape="triangle" color="text-[#f687b3]/30" size="w-6 h-6 md:w-8 md:h-8" customClass="bottom-12 left-8 md:bottom-28 md:left-12 -rotate-12" animation="animate-float-fast"></app-floating-shape>
+    <div class="relative">
+
+      <div #carrusel class="carousel w-full flex flex-row flex-nowrap overflow-x-auto overflow-y-hidden rounded-2xl border border-gray-100 bg-white shadow-2xl shadow-[#15326b]/20 scroll-smooth snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+
+        @for (novedad of novedades; track novedad.id; let i = $index) {
+
+          <article class="carousel-item relative w-full shrink-0 snap-start">
+            <div class="grid min-h-[430px] w-full grid-cols-1 bg-[#102b5f] md:min-h-[400px] md:grid-cols-[1.25fr_.75fr]">
+
+              <div class="relative min-h-[260px] md:min-h-[400px] w-full">
+                <img
+                  [src]="novedad.imagen"
+                  [alt]="novedad.alt"
+                  class="absolute inset-0 h-full w-full object-cover object-center"
+                >
+                <app-floating-shape shape="airplane" color="text-[#ed8936]/40" size="w-9 h-9 md:w-14 md:h-14" customClass="hidden sm:block bottom-12 right-8 md:bottom-12 md:-right-8 rotate-12" animation="animate-float-diagonal"></app-floating-shape>
+                <div class="block md:hidden absolute bottom-0 left-0 right-0 h-12 z-10 pointer-events-none">
+                  <svg viewBox="0 0 100 100" preserveAspectRatio="none" class="w-full h-full text-[#102b5f]" fill="currentColor">
+                    <path d="M0 100 L100 100 L100 0 C 70 80 30 80 0 0 Z"></path>
+                  </svg>
+                </div>
+                <app-floating-shape shape="sun" color="text-[#f6e05e]/20" size="w-10 h-10 md:w-16 md:h-16" customClass="top-8 right-8 md:top-16 md:-right-6" animation="animate-spin-slow"></app-floating-shape>
+                <div class="hidden md:block absolute right-0 top-0 bottom-0 w-24 z-10 pointer-events-none">
+                  <svg viewBox="0 0 100 100" preserveAspectRatio="none" class="w-full h-full text-[#102b5f]" fill="currentColor">
+                    <path d="M100 0 L100 100 L0 100 C 45 75 45 25 0 0 Z"></path>
+                  </svg>
+                </div>
+
+                <span class="absolute left-5 top-5 rounded-full bg-white/95 px-4 py-1.5 text-xs font-black tracking-widest text-[#15326b] shadow-lg z-20">
+                  {{ novedad.categoria }}
+                </span>
+              </div>
+
+              <div class="flex flex-col justify-center px-6 py-8 text-white sm:px-8 md:px-10 z-20">
+                <p class="mb-3 text-xs font-extrabold uppercase tracking-[0.2em] text-[#FFC600]">{{ novedad.fecha }}</p>
+                <h3 class="mb-4 text-2xl font-black leading-tight sm:text-3xl md:text-4xl">{{ novedad.titulo }}</h3>
+                <p class="mb-8 max-w-md text-sm leading-relaxed text-blue-100/80 sm:text-base">{{ novedad.descripcion }}</p>
+                <a href="#novedades" class="inline-flex w-fit items-center gap-2 rounded-full bg-[#FFC600] px-6 py-3 text-sm font-extrabold uppercase text-[#15326b] shadow-lg shadow-black/10 transition-transform duration-300 hover:scale-105">
+                  Leer artículo
+                  <span class="text-lg leading-none">&rarr;</span>
+                </a>
+              </div>
+
+              <div class="absolute left-3 right-3 top-1/2 flex -translate-y-1/2 transform justify-between sm:left-5 sm:right-5 z-30">
+                <button type="button"
+                        (click)="carrusel.scrollLeft = (i === 0 ? novedades.length - 1 : i - 1) * carrusel.clientWidth"
+                        class="btn btn-circle min-h-0 h-12 w-12 border-0 bg-white/20 backdrop-blur-md text-xl text-white shadow-xl hover:bg-[#FFC600] hover:text-[#15326b] transition-all"
+                        aria-label="Novedad anterior">‹</button>
+
+                <button type="button"
+                        (click)="carrusel.scrollLeft = (i === novedades.length - 1 ? 0 : i + 1) * carrusel.clientWidth"
+                        class="btn btn-circle min-h-0 h-12 w-12 border-0 bg-white/20 backdrop-blur-md text-xl text-white shadow-xl hover:bg-[#FFC600] hover:text-[#15326b] transition-all"
+                        aria-label="Novedad siguiente">›</button>
+              </div>
+            </div>
+          </article>
+
+        }
+      </div>
+
+      <div class="mt-6 flex justify-center gap-3">
+        @for (novedad of novedades; track novedad.id; let i = $index) {
+          <button type="button"
+                  (click)="carrusel.scrollLeft = i * carrusel.clientWidth"
+                  class="h-3 w-10 rounded-full bg-[#15326b]/20 transition-colors hover:bg-[#15326b]"
+                  [attr.aria-label]="'Ir a ' + novedad.titulo"></button>
+        }
+      </div>
+
+    </div>
+  </div>
+</section>
   </div>
 
   <app-footer></app-footer>

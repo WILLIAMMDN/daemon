@@ -11,6 +11,8 @@ use App\Http\Requests\Api\V1\Auth\RegistroAlumnoRequest;
 use App\Http\Resources\Api\V1\UsuarioResource;
 use App\Services\Auth\AutenticacionService;
 use Illuminate\Http\Request;
+use Laravel\Socialite\Facades\Socialite;
+use Throwable;
 
 class AutenticacionController extends Controller
 {
@@ -41,6 +43,30 @@ class AutenticacionController extends Controller
         return response()->json([
             'message' => 'Si la cuenta existe, se enviaran instrucciones de recuperacion al canal configurado.',
         ], 202);
+    }
+
+    public function google(Request $request)
+    {
+        $datos = $request->validate([
+            'id_token' => ['required', 'string'],
+        ]);
+
+        try {
+            $googleUser = Socialite::driver('google')->stateless()->userFromToken($datos['id_token']);
+            $raw = $googleUser->getRaw();
+
+            if (array_key_exists('email_verified', $raw) && ! $raw['email_verified']) {
+                return response()->json(['message' => 'Google no pudo confirmar el correo de la cuenta.'], 422);
+            }
+
+            $usuario = $this->autenticacion->autenticarConGoogle($googleUser);
+
+            return $this->respuestaAutenticada($usuario);
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return response()->json(['message' => 'No se pudo validar la cuenta de Google.'], 422);
+        }
     }
 
     public function cambiarClave(CambiarClaveRequest $request)

@@ -19,6 +19,8 @@ Route::prefix('v1')->group(function (): void {
     Route::post('/auth/login', [AutenticacionController::class, 'login'])->middleware('throttle:10,1');
     Route::post('/auth/registro', [AutenticacionController::class, 'registro'])->middleware('throttle:5,1');
     Route::post('/auth/recuperar', [AutenticacionController::class, 'recuperar'])->middleware('throttle:5,1');
+    Route::post('/auth/google', [AutenticacionController::class, 'google'])->middleware('throttle:10,1');
+    Route::post('/login-google', [AutenticacionController::class, 'google'])->middleware('throttle:10,1');
     Route::get('/ranking', [RankingController::class, 'index']);
     Route::get('/cuentos', [CuentoController::class, 'index']);
     Route::get('/cuentos/{cuento}', [CuentoController::class, 'show']);

@@ -20,6 +20,28 @@
   margin-top: .25rem;
 }
 
+.bot-heading {
+  align-items: center;
+  display: grid;
+  gap: .85rem;
+  grid-template-columns: auto minmax(0, 1fr);
+}
+
+.bot-heading img,
+.context-avatar,
+.message-avatar {
+  background: #eef4ff;
+  border: 3px solid #fff;
+  border-radius: 999px;
+  box-shadow: 0 6px 18px rgba(23, 32, 58, .12);
+  object-fit: cover;
+}
+
+.bot-heading img {
+  height: 66px;
+  width: 66px;
+}
+
 .chat-shell {
   align-items: stretch;
   display: grid;
@@ -42,6 +64,11 @@
   display: grid;
   gap: .75rem;
   padding: 1rem;
+}
+
+.context-avatar {
+  height: 86px;
+  width: 86px;
 }
 
 .bot-context h2,
@@ -80,7 +107,8 @@
   background: #f8fafc;
   border: 1px solid #dfe6f1;
   border-radius: 8px;
-  display: grid;
+  display: flex;
+  align-items: flex-start;
   gap: .35rem;
   justify-self: start;
   max-width: min(760px, 82%);
@@ -91,6 +119,18 @@
   background: #dff8f1;
   border-color: #a7ead8;
   justify-self: end;
+}
+
+.message-avatar {
+  flex: 0 0 auto;
+  height: 38px;
+  width: 38px;
+}
+
+.message > div {
+  display: grid;
+  gap: .35rem;
+  min-width: 0;
 }
 
 .message strong {
@@ -148,5 +188,9 @@
 
   .message {
     max-width: 100%;
+  }
+
+  .bot-heading {
+    align-items: start;
   }
 }

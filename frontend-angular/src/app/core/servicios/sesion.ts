@@ -33,6 +33,7 @@ export class Sesion {
 
   limpiar(): void {
     localStorage.removeItem(this.claveToken); localStorage.removeItem(this.claveUsuario);
+    localStorage.removeItem('access_token');
     this.token.set(null); this.usuario.set(null);
   }
 

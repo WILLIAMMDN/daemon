@@ -9,11 +9,15 @@
   <section class="page">
     <header class="page-header">
       <div>
-        <p class="kicker">Mi perfil</p>
+        <p class="kicker">{{ perfilPropio() ? 'Mi perfil' : 'Perfil de compañero' }}</p>
         <h1>{{ datos.usuario.nombre_completo }}</h1>
         <p>{{ datos.usuario.usuario }} - Nivel {{ datos.usuario.nivel }} - {{ datos.usuario.rango || 'Rango en progreso' }}</p>
       </div>
-      <a class="btn" routerLink="/alumno/perfil/editar">Editar perfil</a>
+      @if (perfilPropio()) {
+        <a class="btn" routerLink="/alumno/perfil/editar">Editar perfil</a>
+      } @else {
+        <a class="btn" routerLink="/alumno/comunidad">Volver a comunidad</a>
+      }
     </header>
 
     <section class="stats">
@@ -45,13 +49,18 @@
         <h2>Mochila digital</h2>
         @if (datos.mochila.length) {
           @for (premio of datos.mochila; track premio.id) {
-            <div class="data-card">
-              <strong>{{ premio.nombre }}</strong>
-              <span class="muted">{{ premio.descripcion || 'Premio entregado' }}</span>
+            <div class="data-card profile-item-card">
+              @if (premio.imagen) {
+                <img class="image-thumb profile-item-image" [src]="asset(premio.imagen)" [alt]="premio.nombre">
+              }
+              <div>
+                <strong>{{ premio.nombre }}</strong>
+                <span class="muted">{{ premio.descripcion || 'Premio entregado' }}</span>
+              </div>
             </div>
           }
         } @else {
-          <p class="empty">Todavía no tienes premios entregados.</p>
+          <p class="empty">{{ perfilPropio() ? 'Todavía no tienes premios entregados.' : 'Todavía no tiene premios entregados.' }}</p>
         }
       </article>
     </section>
@@ -61,15 +70,20 @@
       @if (datos.insignias.length) {
         <div class="card-list">
           @for (insignia of datos.insignias; track insignia.id) {
-            <article class="data-card">
-              <strong>{{ insignia.nombre }}</strong>
-              <span class="muted">{{ insignia.descripcion }}</span>
-              <small>{{ insignia.fecha }}</small>
+            <article class="data-card profile-item-card">
+              @if (insignia.imagen) {
+                <img class="image-thumb profile-item-image" [src]="asset(insignia.imagen)" [alt]="insignia.nombre">
+              }
+              <div>
+                <strong>{{ insignia.nombre }}</strong>
+                <span class="muted">{{ insignia.descripcion }}</span>
+                <small>{{ insignia.fecha }}</small>
+              </div>
             </article>
           }
         </div>
       } @else {
-        <p class="empty">Todavía no tienes insignias registradas.</p>
+        <p class="empty">{{ perfilPropio() ? 'Todavía no tienes insignias registradas.' : 'Todavía no tiene insignias registradas.' }}</p>
       }
     </section>
   </section>

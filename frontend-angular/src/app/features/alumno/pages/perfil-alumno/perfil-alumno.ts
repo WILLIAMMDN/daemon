@@ -1,5 +1,7 @@
 import { Component, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { environment } from '../../../../../environments/environment';
+import { Sesion } from '../../../../core/servicios/sesion';
 import { Alumno } from '../../services/alumno';
 
 interface UsuarioPerfil {
@@ -30,17 +32,25 @@ export class PerfilAlumno {
   perfil = signal<PerfilData | null>(null);
   cargando = signal(true);
   error = signal('');
+  perfilPropio = signal(true);
+  private readonly assetBaseUrl = environment.apiUrl.replace(/\/api\/v1\/?$/, '');
 
-  constructor(private alumno: Alumno) {
-    this.cargar();
+  constructor(
+    private alumno: Alumno,
+    private route: ActivatedRoute,
+    private sesion: Sesion,
+  ) {
+    this.route.paramMap.subscribe(() => this.cargar());
   }
 
   cargar(): void {
+    const usuarioId = this.usuarioIdActual();
+    this.perfilPropio.set(!usuarioId || usuarioId === this.sesion.usuario()?.id);
     this.cargando.set(true);
     this.error.set('');
-    this.alumno.perfil().subscribe({
+    this.alumno.perfil<PerfilData>(usuarioId).subscribe({
       next: (perfil) => {
-        this.perfil.set(perfil as PerfilData);
+        this.perfil.set(perfil);
         this.cargando.set(false);
       },
       error: (e) => {
@@ -51,7 +61,21 @@ export class PerfilAlumno {
   }
 
   asset(ruta?: string | null): string {
-    if (!ruta) return '';
-    return /^https?:\/\//i.test(ruta) || ruta.startsWith('/') ? ruta : `/${ruta}`;
+    const limpia = ruta?.trim();
+    if (!limpia) return '';
+    if (/^(https?:|data:)/i.test(limpia)) return limpia;
+
+    const path = limpia.startsWith('/') ? limpia : `/${limpia}`;
+    if (/^\/?(uploads|img|legacy)\//i.test(limpia)) return path;
+
+    return `${this.assetBaseUrl}${path}`;
+  }
+
+  private usuarioIdActual(): number | null {
+    const valor = this.route.snapshot.paramMap.get('usuarioId');
+    if (!valor) return null;
+
+    const id = Number(valor);
+    return Number.isFinite(id) && id > 0 ? id : null;
   }
 }

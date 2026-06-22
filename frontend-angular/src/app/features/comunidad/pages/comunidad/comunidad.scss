@@ -1,0 +1,18 @@
+a.data-card {
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+a.data-card:hover {
+  transform: translateY(-2px);
+}
+
+a.data-card:focus-visible {
+  outline: 3px solid rgba(20, 184, 166, 0.35);
+  outline-offset: 3px;
+}

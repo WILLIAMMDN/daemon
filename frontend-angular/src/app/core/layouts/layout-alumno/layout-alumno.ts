@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+﻿import { Component } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { Autenticacion } from '../../servicios/autenticacion';
 import { Sesion } from '../../servicios/sesion';
@@ -33,31 +33,28 @@ export class LayoutAlumno {
     {
       titulo: 'Aprendizaje',
       enlaces: [
-        { etiqueta: 'Mis desafíos', ruta: '/alumno/desafios', detalle: 'Misiones y evidencias' },
-        { etiqueta: 'Evaluaciones', ruta: '/alumno/evaluaciones', detalle: 'Exámenes activos' },
-        { etiqueta: 'Resultados', ruta: '/alumno/resultados', detalle: 'Historial académico' },
+        { etiqueta: 'Mis desafÃ­os', ruta: '/alumno/desafios', detalle: 'Misiones y evidencias' },
+        { etiqueta: 'Evaluaciones', ruta: '/alumno/evaluaciones', detalle: 'ExÃ¡menes activos' },
+        { etiqueta: 'Resultados', ruta: '/alumno/resultados', detalle: 'Historial acadÃ©mico' },
         { etiqueta: 'Certificado', ruta: '/alumno/certificado', detalle: 'Carnet y constancia' },
       ],
     },
     {
-      titulo: 'IA y creatividad',
+      titulo: 'Herramientas',
       enlaces: [
-        { etiqueta: 'Chatbot', ruta: '/alumno/chatbot', detalle: 'Bot tutor conectado' },
-        { etiqueta: 'Configurar bot', ruta: '/alumno/crear-bot', detalle: 'Personalidad y base' },
-        { etiqueta: 'Cuentos', ruta: '/alumno/cuentos', detalle: 'Galería y creación' },
-        { etiqueta: 'Laboratorio IA', ruta: '/alumno/laboratorio', detalle: 'Cerebro y motores' },
+        { etiqueta: 'Herramientas', ruta: '/alumno/herramientas', detalle: 'Chatbot, juegos y laboratorio' },
       ],
     },
     {
       titulo: 'Comunidad',
       enlaces: [
-        { etiqueta: 'Competencia', ruta: '/alumno/competencia', detalle: 'Votación en vivo' },
-        { etiqueta: 'Ranking', ruta: '/alumno/ranking', detalle: 'Clasificación por nivel' },
+        { etiqueta: 'Competencia', ruta: '/alumno/competencia', detalle: 'VotaciÃ³n en vivo' },
+        { etiqueta: 'Ranking', ruta: '/alumno/ranking', detalle: 'ClasificaciÃ³n por nivel' },
         { etiqueta: 'Comunidad', ruta: '/alumno/comunidad', detalle: 'Perfiles del aula' },
       ],
     },
     {
-      titulo: 'Economía',
+      titulo: 'EconomÃ­a',
       enlaces: [
         { etiqueta: 'Tienda', ruta: '/alumno/tienda', detalle: 'Premios disponibles' },
         { etiqueta: 'Mis canjes', ruta: '/alumno/canjes', detalle: 'Historial de premios' },
