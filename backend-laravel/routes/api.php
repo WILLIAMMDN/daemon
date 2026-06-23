@@ -29,6 +29,7 @@ Route::prefix('v1')->group(function (): void {
         Route::get('/auth/yo', [AutenticacionController::class, 'yo']);
         Route::post('/auth/logout', [AutenticacionController::class, 'logout']);
         Route::post('/auth/cambiar-clave', [AutenticacionController::class, 'cambiarClave'])->middleware('throttle:5,1');
+        Route::post('/auth/google/perfil', [AutenticacionController::class, 'completarPerfilGoogle'])->middleware('throttle:10,1');
         Route::post('/auth/usuarios', [AutenticacionController::class, 'crearUsuario'])->middleware('role:admin');
 
         Route::middleware('role:alumno')->group(function (): void {

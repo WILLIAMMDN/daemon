@@ -2,10 +2,9 @@
   <app-header></app-header>
 
   <div class="flex-grow">
-    <section class="w-full bg-[#15326b] relative overflow-hidden flex flex-col md:flex-row shadow-2xl">
-      <div class="w-full md:w-1/3 lg:w-1/4 px-6 py-14 sm:py-16 md:py-24 lg:pl-10 xl:pl-16 flex flex-col justify-center z-30 relative shrink-0 min-h-[330px] md:min-h-0">
+    <section class="inicio-hero w-full bg-[#15326b] relative overflow-hidden flex flex-col md:flex-row shadow-2xl">
+      <div class="hero-copy-panel w-full md:w-1/3 lg:w-1/4 px-6 py-14 sm:py-16 md:py-24 lg:pl-10 xl:pl-16 flex flex-col justify-center z-30 relative shrink-0 min-h-[330px] md:min-h-0">
         <app-floating-shape shape="cross" color="text-[#63b3ed]/30" size="w-7 h-7 md:w-10 md:h-10" customClass="top-8 left-6 md:top-10 md:left-8 rotate-12" animation="animate-float-slow"></app-floating-shape>
-        <app-floating-shape shape="sun" color="text-[#f6e05e]/20" size="w-10 h-10 md:w-16 md:h-16" customClass="top-8 right-8 md:top-16 md:-right-6" animation="animate-spin-slow"></app-floating-shape>
         <app-floating-shape shape="triangle" color="text-[#f687b3]/30" size="w-6 h-6 md:w-8 md:h-8" customClass="bottom-12 left-8 md:bottom-28 md:left-12 -rotate-12" animation="animate-float-fast"></app-floating-shape>
         <app-floating-shape shape="airplane" color="text-[#ed8936]/40" size="w-9 h-9 md:w-14 md:h-14" customClass="hidden sm:block bottom-12 right-8 md:bottom-12 md:-right-8 rotate-12" animation="animate-float-diagonal"></app-floating-shape>
         <app-floating-shape shape="dots" color="text-white/10" size="w-14 h-14 md:w-20 md:h-20" customClass="bottom-4 right-6 md:-bottom-4 md:left-1/3 md:right-auto" animation="animate-pulse"></app-floating-shape>
@@ -28,16 +27,55 @@
         </div>
       </div>
        <app-floating-shape shape="triangle" color="text-[#f687b3]/30" size="w-6 h-6 md:w-8 md:h-8" customClass="bottom-12 left-8 md:bottom-28 md:left-12 -rotate-12" animation="animate-float-fast"></app-floating-shape>
-      <div class="w-full md:w-2/3 lg:w-3/4 relative min-h-[260px] sm:min-h-[360px] md:min-h-[500px] lg:min-h-[650px] xl:min-h-[620px] bg-[#15326b] overflow-hidden">
-        <div class="hidden md:block absolute -left-6 -top-12 -bottom-12 w-12 bg-[#15326b] rounded-[100%] z-10"></div>
-        <img
-          src="/img/banners/zoe-banner.png"
-          alt="Estudiantes en clases"
-          class="absolute inset-0 w-full h-full object-contain md:object-cover object-center md:object-left"
-        >
+      <div class="hero-image-panel w-full md:w-2/3 lg:w-3/4 relative min-h-[260px] sm:min-h-[360px] md:min-h-[500px] lg:min-h-[650px] xl:min-h-[620px] bg-[#15326b] overflow-hidden">
+        @for (slide of heroSlides; track slide.imagen; let i = $index) {
+          <img
+            [src]="slide.imagen"
+            [alt]="slide.alt"
+            class="hero-slide"
+            [class.is-active]="i === heroSlideIndex()"
+            [class.hero-slide--contain-left]="slide.estilo === 'contain-left'"
+          >
+        }
+
+        <div class="hero-image-glass" aria-hidden="true"></div>
+
+        <div class="hero-cut-desktop hidden md:block" aria-hidden="true">
+          <svg viewBox="0 0 140 100" preserveAspectRatio="none">
+            <path class="hero-cut-fill" d="M0 0H56C105 14 133 37 140 50C133 63 105 86 56 100H0Z"></path>
+            <path class="hero-cut-line" d="M63 0C112 17 136 38 140 50C136 62 112 83 63 100"></path>
+          </svg>
+        </div>
+
+        <div class="hero-cut-mobile md:hidden" aria-hidden="true">
+          <svg viewBox="0 0 100 54" preserveAspectRatio="none">
+            <path d="M0 0H100V20C74 48 35 25 0 54Z"></path>
+          </svg>
+        </div>
+
+        <div class="hero-carousel-controls" aria-label="Carrusel principal">
+          <button type="button" class="hero-arrow" (click)="anteriorHeroSlide()" aria-label="Imagen anterior">
+            ‹
+          </button>
+
+          <div class="hero-dots">
+            @for (slide of heroSlides; track slide.imagen; let i = $index) {
+              <button
+                type="button"
+                class="hero-dot"
+                [class.is-active]="i === heroSlideIndex()"
+                (click)="irAHeroSlide(i)"
+                [attr.aria-label]="'Ver imagen ' + (i + 1)"
+              ></button>
+            }
+          </div>
+
+          <button type="button" class="hero-arrow" (click)="siguienteHeroSlide()" aria-label="Imagen siguiente">
+            ›
+          </button>
+        </div>
       </div>
     </section>
-     <app-floating-shape shape="sun" color="text-[#f6e05e]/20" size="w-10 h-10 md:w-16 md:h-16" customClass="top-8 right-8 md:top-16 md:-right-6" animation="animate-spin-slow"></app-floating-shape>
      <app-floating-shape shape="triangle" color="text-[#f687b3]/30" size="w-6 h-6 md:w-8 md:h-8" customClass="bottom-12 left-8 md:bottom-28 md:left-12 -rotate-12" animation="animate-float-fast"></app-floating-shape>
     <main id="informacion" class="max-w-5xl mx-auto px-6 py-16 md:py-24 relative">
       <div class="hidden md:flex absolute inset-y-0 left-1/2 transform -translate-x-1/2 items-center py-24">
@@ -60,7 +98,6 @@
               Ingresa al Portal Docente
             </a>
           </div>
-          <app-floating-shape shape="sun" color="text-[#f6e05e]/20" size="w-10 h-10 md:w-16 md:h-16" customClass="top-8 right-8 md:top-16 md:-right-6" animation="animate-spin-slow"></app-floating-shape>
           <a routerLink="/recuperar-clave" class="m-4 text-[#198754] font-bold text-sm mt-2 hover:underline decoration-2 underline-offset-4">
             Olvidaste tu contraseña
           </a>

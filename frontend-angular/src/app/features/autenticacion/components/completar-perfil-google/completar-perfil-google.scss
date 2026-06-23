@@ -1,0 +1,247 @@
+:host {
+  display: contents;
+}
+
+.profile-overlay {
+  align-items: center;
+  background: #0b1220a8;
+  display: grid;
+  inset: 0;
+  justify-items: center;
+  padding: 1.25rem;
+  position: fixed;
+  z-index: 60;
+}
+
+.profile-dialog {
+  background: #ffffff;
+  border: 1px solid #cfd4dc;
+  border-radius: 2px;
+  box-shadow: 0 24px 70px #02061752;
+  max-height: calc(100vh - 2.5rem);
+  max-width: 600px;
+  overflow: auto;
+  position: relative;
+  width: min(100%, 600px);
+}
+
+.dialog-accent {
+  background: #0b5bd3;
+  height: 5px;
+}
+
+.dialog-head {
+  align-items: center;
+  display: grid;
+  gap: 1.05rem;
+  grid-template-columns: auto minmax(0, 1fr);
+  padding: 1.8rem 2.2rem 0;
+}
+
+.google-mark {
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #d6dbe3;
+  border-radius: 50%;
+  box-shadow: 0 8px 22px #11182714;
+  display: inline-flex;
+  height: 52px;
+  justify-content: center;
+  width: 52px;
+}
+
+.google-mark svg {
+  display: block;
+  height: 27px;
+  width: 27px;
+}
+
+.eyebrow {
+  color: #5d6878;
+  font-size: .73rem;
+  font-weight: 900;
+  letter-spacing: .13em;
+  margin: 0 0 .35rem;
+  text-transform: uppercase;
+}
+
+.dialog-head h2 {
+  color: #020b18;
+  font-size: clamp(1.55rem, 5vw, 1.95rem);
+  font-weight: 900;
+  line-height: 1.1;
+  margin: 0;
+}
+
+.dialog-copy {
+  color: #4b5565;
+  font-size: .98rem;
+  line-height: 1.55;
+  margin: 1rem 0 0;
+  padding: 0 2.2rem;
+}
+
+.verified-email {
+  background: #f8fafc;
+  border: 1px solid #dbe2ec;
+  display: grid;
+  gap: .25rem;
+  margin: 1rem 2.2rem 0;
+  padding: .85rem 1rem;
+}
+
+.verified-email span {
+  color: #687386;
+  font-size: .72rem;
+  font-weight: 900;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.verified-email strong {
+  color: #1f2937;
+  font-size: .96rem;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.profile-form {
+  display: grid;
+  gap: 1rem;
+  padding: 1.15rem 2.2rem 2.2rem;
+}
+
+.classic-field {
+  align-items: stretch;
+  border: 1px solid #c8ced8;
+  display: grid;
+  grid-template-columns: 60px minmax(0, 1fr);
+  min-height: 58px;
+  position: relative;
+}
+
+.classic-field:focus-within {
+  border-color: #0b5bd3;
+  box-shadow: 0 0 0 1px #0b5bd3;
+}
+
+.field-icon {
+  align-items: center;
+  background: #fafafa;
+  border-right: 1px solid #d6dbe3;
+  color: #313842;
+  display: inline-flex;
+  justify-content: center;
+}
+
+.field-icon svg {
+  display: block;
+  fill: currentColor;
+  height: 23px;
+  width: 23px;
+}
+
+.classic-field input,
+.classic-field select {
+  background: #ffffff;
+  border: 0;
+  color: #263244;
+  font: inherit;
+  font-size: 1.08rem;
+  font-weight: 500;
+  min-width: 0;
+  outline: 0;
+  padding: 0 1.1rem;
+}
+
+.classic-field select {
+  appearance: none;
+  cursor: pointer;
+}
+
+.classic-field input::placeholder {
+  color: #6c7482;
+  opacity: 1;
+}
+
+.form-alert {
+  background: #fff1f2;
+  border: 1px solid #fecdd3;
+  color: #be123c;
+  font-size: .9rem;
+  font-weight: 850;
+  padding: .85rem 1rem;
+}
+
+.dialog-actions {
+  display: grid;
+  gap: .85rem;
+  grid-template-columns: auto minmax(0, 1fr);
+  margin-top: .35rem;
+}
+
+.secondary-button,
+.submit-button {
+  border-radius: 4px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 750;
+  min-height: 54px;
+  padding: 0 1rem;
+}
+
+.secondary-button {
+  background: #ffffff;
+  border: 1px solid #cfd4dc;
+  color: #22304a;
+}
+
+.submit-button {
+  background: #0b5bd3;
+  border: 0;
+  color: #ffffff;
+}
+
+.submit-button:hover:not(:disabled) {
+  background: #004fbd;
+}
+
+.secondary-button:disabled,
+.submit-button:disabled {
+  cursor: not-allowed;
+  opacity: .65;
+}
+
+@media (max-width: 640px) {
+  .profile-overlay {
+    align-items: start;
+    padding: .9rem;
+  }
+
+  .dialog-head {
+    padding: 1.45rem 1.15rem 0;
+  }
+
+  .dialog-copy {
+    padding: 0 1.15rem;
+  }
+
+  .verified-email {
+    margin-left: 1.15rem;
+    margin-right: 1.15rem;
+  }
+
+  .profile-form {
+    padding: 1.15rem;
+  }
+
+  .classic-field {
+    grid-template-columns: 52px minmax(0, 1fr);
+    min-height: 56px;
+  }
+
+  .dialog-actions {
+    grid-template-columns: 1fr;
+  }
+}

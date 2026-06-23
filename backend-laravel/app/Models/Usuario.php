@@ -27,6 +27,7 @@ class Usuario extends Authenticatable
         'tokens',
         'avatar',
         'google_id',
+        'perfil_completo',
         'rol',
         'insignia',
         'mision_actual',
@@ -43,6 +44,7 @@ class Usuario extends Authenticatable
             'tokens' => 'integer',
             'pro_tokens' => 'integer',
             'mision_actual' => 'integer',
+            'perfil_completo' => 'boolean',
             'fecha_registro' => 'datetime',
         ];
     }

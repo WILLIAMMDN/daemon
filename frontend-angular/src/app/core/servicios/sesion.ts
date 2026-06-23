@@ -3,11 +3,13 @@ import { Injectable, computed, signal } from '@angular/core';
 export interface UsuarioSesion {
   id: number;
   nombre_completo: string;
+  email?: string | null;
   usuario: string;
   rol: 'alumno' | 'docente' | 'admin';
   nivel: string;
   tokens: number;
   avatar?: string | null;
+  perfil_completo?: boolean;
 }
 
 @Injectable({

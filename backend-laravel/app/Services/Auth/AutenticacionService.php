@@ -31,13 +31,14 @@ class AutenticacionService
             'usuario' => $datos['usuario'],
             'password_hash' => Hash::make($datos['password']),
             'nivel' => $datos['nivel'] ?? 'TEENS',
+            'perfil_completo' => true,
             'rol' => 'alumno',
             'tokens' => 100,
             'avatar' => null,
         ]);
     }
 
-    public function autenticarConGoogle(SocialiteUser $googleUser): Usuario
+    public function autenticarConGoogle(SocialiteUser $googleUser, bool $crearCuenta = false): ?Usuario
     {
         $email = $googleUser->getEmail();
 
@@ -53,19 +54,34 @@ class AutenticacionService
                 'google_id' => $googleUser->getId(),
                 'avatar' => $usuario->avatar ?: $googleUser->getAvatar(),
             ]);
-        } else {
-            $usuario = Usuario::create([
-                'nombre_completo' => $googleUser->getName() ?: $email,
-                'email' => $email,
-                'usuario' => $this->generarUsuarioGoogle($email),
-                'password_hash' => Hash::make(Str::random(32)),
-                'nivel' => 'TEENS',
-                'rol' => 'alumno',
-                'tokens' => 100,
-                'avatar' => $googleUser->getAvatar(),
-                'google_id' => $googleUser->getId(),
-            ]);
+
+            if (! $crearCuenta && ! $usuario->perfil_completo) {
+                $usuario->tokens()->delete();
+
+                return null;
+            }
+
+            $usuario->tokens()->delete();
+
+            return $usuario->fresh();
         }
+
+        if (! $crearCuenta) {
+            return null;
+        }
+
+        $usuario = Usuario::create([
+            'nombre_completo' => $googleUser->getName() ?: $email,
+            'email' => $email,
+            'usuario' => $this->generarUsuarioGoogle($email),
+            'password_hash' => Hash::make(Str::random(32)),
+            'nivel' => 'TEENS',
+            'perfil_completo' => false,
+            'rol' => 'alumno',
+            'tokens' => 100,
+            'avatar' => $googleUser->getAvatar(),
+            'google_id' => $googleUser->getId(),
+        ]);
 
         $usuario->tokens()->delete();
 
@@ -82,6 +98,7 @@ class AutenticacionService
             'usuario' => $datos['usuario'],
             'password_hash' => Hash::make($datos['password']),
             'nivel' => $rol === 'docente' ? 'DOCENTE' : ($datos['nivel'] ?? 'TEENS'),
+            'perfil_completo' => true,
             'rol' => $rol,
             'tokens' => $rol === 'alumno' ? 100 : 0,
             'avatar' => null,
@@ -98,6 +115,18 @@ class AutenticacionService
         $usuario->tokens()->where('id', '!=', $usuario->currentAccessToken()?->id)->delete();
 
         return true;
+    }
+
+    public function completarPerfilGoogle(Usuario $usuario, array $datos): Usuario
+    {
+        $usuario->update([
+            'nombre_completo' => $datos['nombre_completo'],
+            'usuario' => $datos['usuario'],
+            'nivel' => $datos['nivel'],
+            'perfil_completo' => true,
+        ]);
+
+        return $usuario->fresh();
     }
 
     public function emitirToken(Usuario $usuario, string $nombre = 'angular'): string

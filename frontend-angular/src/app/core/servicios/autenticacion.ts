@@ -4,6 +4,17 @@ import { tap } from 'rxjs';
 import { Api } from './api';
 import { Sesion, UsuarioSesion } from './sesion';
 
+export interface AuthRespuesta {
+  token: string;
+  usuario: UsuarioSesion;
+}
+
+export interface CompletarPerfilGoogleDatos {
+  nombre_completo: string;
+  usuario: string;
+  nivel: 'KIDS' | 'TEENS' | 'PRO';
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -11,20 +22,33 @@ export class Autenticacion {
   constructor(private api: Api, private sesion: Sesion, private socialAuth: SocialAuthService) {}
 
   login(datos: { usuario: string; password: string }) {
-    return this.api.post<{ token: string; usuario: UsuarioSesion }>('/auth/login', datos)
+    return this.api.post<AuthRespuesta>('/auth/login', datos)
       .pipe(tap((respuesta) => this.sesion.guardar(respuesta.token, respuesta.usuario)));
   }
 
   registro(datos: Record<string, unknown>) {
-    return this.api.post<{ token: string; usuario: UsuarioSesion }>('/auth/registro', datos)
+    return this.api.post<AuthRespuesta>('/auth/registro', datos)
       .pipe(tap((respuesta) => this.sesion.guardar(respuesta.token, respuesta.usuario)));
   }
 
-  loginGoogle(idToken: string) {
+  loginGoogle(idToken: string, crearCuenta = false) {
     this.sesion.limpiar();
 
-    return this.api.post<{ token: string; usuario: UsuarioSesion }>('/auth/google', { id_token: idToken })
+    return this.api.post<AuthRespuesta>('/auth/google', { id_token: idToken, crear_cuenta: crearCuenta })
       .pipe(tap((respuesta) => this.sesion.guardar(respuesta.token, respuesta.usuario)));
+  }
+
+  completarPerfilGoogle(datos: CompletarPerfilGoogleDatos) {
+    return this.api.post<{ usuario: UsuarioSesion }>('/auth/google/perfil', datos)
+      .pipe(tap((respuesta) => this.sesion.actualizarUsuario(respuesta.usuario)));
+  }
+
+  cerrarSesionGoogle(): void {
+    try {
+      void this.socialAuth.signOut().catch(() => {});
+    } catch {
+      // Algunos navegadores no mantienen una sesion social activa.
+    }
   }
 
   crearUsuario(datos: Record<string, unknown>) {
@@ -42,7 +66,7 @@ export class Autenticacion {
   logout() {
     return this.api.post('/auth/logout', {}).pipe(tap(() => {
       this.sesion.limpiar();
-      // También cerrar sesión en proveedores sociales (Google)
+      // Tambien cerrar sesion en proveedores sociales (Google).
       try { this.socialAuth.signOut().catch(() => {}); } catch { /* ignore */ }
     }));
   }

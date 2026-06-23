@@ -1,13 +1,12 @@
-﻿<header class="w-full bg-white border-b border-gray-200 font-nunito">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 md:py-4 flex flex-col md:flex-row md:justify-between items-center gap-3 md:gap-4">
-    <a routerLink="/" class="flex items-center gap-3 shrink-0" aria-label="Ir al inicio de DAEMON">
-      <img src="img/brand/logo.png" alt="Logo Academia Daemon" class="h-14 sm:h-16 md:h-20 w-auto max-w-[210px] object-contain">
+<header class="site-header">
+  <div class="site-header__inner">
+    <a routerLink="/" class="site-header__brand" aria-label="Ir al inicio de DAEMON">
+      <img src="img/brand/logo.png" alt="Logo Academia Daemon">
     </a>
 
-    <nav class="w-full md:w-auto flex flex-col sm:flex-row items-center justify-center md:justify-end gap-2 sm:gap-5 md:gap-8 text-[11px] sm:text-xs md:text-sm font-extrabold text-gray-600 tracking-wide uppercase">
-      <a routerLink="/registro" class="text-center hover:text-[#15326b] transition-colors">Matrícula</a>
-      <a href="#informacion" class="text-center hover:text-[#15326b] transition-colors">Guía del Cadete</a>
-      <a routerLink="/login" class="text-center md:hidden hover:text-[#15326b] transition-colors">Portal</a>
+    <nav class="site-header__nav" aria-label="Navegaci&oacute;n principal">
+      <a routerLink="/registro" class="site-header__link">Matr&iacute;cula</a>
+      <a href="#informacion" class="site-header__link">Gu&iacute;a del Cadete</a>
     </nav>
   </div>
 </header>

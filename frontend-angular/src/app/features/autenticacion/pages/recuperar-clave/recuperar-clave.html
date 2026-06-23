@@ -1,70 +1,123 @@
-﻿<main class="min-h-screen flex items-center justify-center bg-white">
-  <section class="w-full max-w-4xl mx-4 lg:mx-8 grid lg:grid-cols-2 gap-6 items-center">
+<main class="recovery-page min-h-screen px-4 py-8 sm:px-6">
+  <a routerLink="/" class="home-link" aria-label="Volver al inicio">
+    <span aria-hidden="true">&larr;</span>
+    <span>Inicio</span>
+  </a>
 
-    <!-- Left: Visual -->
-    <div class="hidden lg:flex bg-[#0b1220] rounded-2xl overflow-hidden relative h-[540px]">
-      <div class="absolute inset-0 opacity-30 bg-gradient-to-br from-[#07122a] via-[#0f2a4a] to-transparent"></div>
-      <div class="p-8 z-10 self-end text-white">
-        <h2 class="text-3xl font-black mb-2">Recupera tu acceso</h2>
-        <p class="text-sm text-slate-200 max-w-xs">Sigue el proceso seguro y recupera tu cuenta en pocos minutos.</p>
-      </div>
-      <div class="absolute inset-0">
-        <spline-viewer url="https://prod.spline.design/nMNnp2Qj0GPfUDUz/scene.splinecode" style="width:100%;height:100%;background:transparent"></spline-viewer>
-      </div>
-    </div>
+  <section class="recovery-stage">
+    <header class="login-brand" aria-label="DAEMON">
+      <span class="brand-symbol" aria-hidden="true"></span>
+      <span class="brand-name">DAEMON</span>
+    </header>
 
-    <!-- Right: Form -->
-    <div class="bg-white rounded-2xl shadow-lg p-8 lg:p-12">
-      <a class="text-sm text-slate-500 hover:underline" routerLink="/">&larr; Volver</a>
-      <h1 class="text-2xl font-extrabold text-slate-900 mt-4 mb-2">Recuperar acceso</h1>
-      <p class="text-sm text-slate-600 mb-6">Ingresa tu usuario o correo electrónico y te enviaremos instrucciones seguras.</p>
+    <article class="recovery-card">
+      <div class="card-accent" aria-hidden="true"></div>
 
-      <div class="flex w-full mb-4 justify-center">
-        <div class="w-full max-w-xs flex justify-center">
+      <section class="recovery-visual" aria-label="Animación de recuperación de acceso">
+        <div class="visual-copy">
+          <p class="eyebrow">Acceso seguro</p>
+          <h2>Recupera tu cuenta</h2>
+          <p>Restablece tu acceso con tu usuario, correo o cuenta de Google.</p>
+        </div>
+
+        <div class="spline-frame" aria-hidden="true">
+          <spline-viewer url="https://prod.spline.design/nMNnp2Qj0GPfUDUz/scene.splinecode"></spline-viewer>
+        </div>
+      </section>
+
+      <section class="recovery-form-panel">
+        <div class="panel-heading">
+          <p class="eyebrow">Recuperación</p>
+          <h1>Recuperar acceso</h1>
+        </div>
+
+        <div class="google-block">
           <asl-google-signin-button type="standard" size="large"></asl-google-signin-button>
         </div>
-      </div>
 
-      <div *ngIf="googleEmail()" class="mt-4 p-3 rounded-md border border-slate-200/10 bg-slate-50/5">
-        <p class="text-sm">Cuenta detectada: <strong class="text-slate-200">{{ googleEmail() }}</strong></p>
-        <div class="mt-3 flex gap-2">
-          <button hlmBtn (click)="enviarCodigoGoogle()" [disabled]="enviando()" class="px-4 py-2">Enviar código al correo de Google</button>
-          <button hlmBtn variant="ghost" (click)="googleEmail.set(null)" class="px-4 py-2">Usar otra dirección</button>
-        </div>
-      </div>
+        @if (googleEmail()) {
+          <div class="google-detected">
+            <div>
+              <span>Cuenta detectada</span>
+              <strong>{{ googleEmail() }}</strong>
+            </div>
+            <div class="google-actions">
+              <button type="button" class="secondary-action" (click)="enviarCodigoGoogle()" [disabled]="enviando()">
+                Enviar código
+              </button>
+              <button type="button" class="text-action" (click)="googleEmail.set(null)" [disabled]="enviando()">
+                Usar otra dirección
+              </button>
+            </div>
+          </div>
+        }
 
-      <div class="flex items-center my-4" aria-hidden="true">
-        <span class="flex-1 h-px bg-slate-300/40"></span>
-        <span class="mx-3 text-sm text-slate-500">o</span>
-        <span class="flex-1 h-px bg-slate-300/40"></span>
-      </div>
-
-      <form #recForm="ngForm" (ngSubmit)="solicitar(recForm)" class="space-y-4" novalidate>
-
-        <div class="space-y-1">
-          <label hlmLabel class="text-sm font-semibold text-slate-700">Usuario</label>
-          <input hlmInput name="usuario" [(ngModel)]="datos.usuario" #usuarioModel="ngModel" class="w-full" placeholder="Ingresa tu usuario">
-        </div>
-
-        <div class="space-y-1">
-          <label hlmLabel class="text-sm font-semibold text-slate-700">Correo electrónico</label>
-          <input hlmInput name="email" [(ngModel)]="datos.email" type="email" #emailModel="ngModel" class="w-full" placeholder="tu@correo.com">
+        <div class="divider">
+          <span>o usa tus datos</span>
         </div>
 
-        <div *ngIf="mensaje()" class="p-3 rounded-md bg-green-50 text-green-700 border border-green-100 text-sm">{{ mensaje() }}</div>
-        <div *ngIf="error()" class="p-3 rounded-md bg-red-50 text-red-700 border border-red-100 text-sm">{{ error() }}</div>
+        <form #recForm="ngForm" (ngSubmit)="solicitar(recForm)" class="recovery-form" novalidate>
+          <label class="classic-field" for="usuario">
+            <span class="field-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Zm0 2c-4.42 0-8 2.24-8 5v1h16v-1c0-2.76-3.58-5-8-5Z" />
+              </svg>
+            </span>
+            <input
+              id="usuario"
+              name="usuario"
+              [(ngModel)]="datos.usuario"
+              autocomplete="username"
+              placeholder="Usuario"
+            >
+          </label>
 
-        <div class="pt-2">
-          <button hlmBtn type="submit" [disabled]="enviando()" class="w-full h-12 flex items-center justify-center">
+          <label class="classic-field" for="email">
+            <span class="field-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm-.4 4.25-7.07 4.42a1 1 0 0 1-1.06 0L4.4 8.25V6.6L12 11.35l7.6-4.75Z" />
+              </svg>
+            </span>
+            <input
+              id="email"
+              name="email"
+              [(ngModel)]="datos.email"
+              type="email"
+              #emailModel="ngModel"
+              autocomplete="email"
+              placeholder="Correo electrónico"
+            >
+          </label>
+          <p *ngIf="emailModel.invalid && (emailModel.dirty || emailModel.touched)" class="field-error">
+            Ingresa un correo electrónico válido.
+          </p>
+
+          @if (mensaje()) {
+            <div class="form-alert success" role="status">{{ mensaje() }}</div>
+          }
+
+          @if (error()) {
+            <div class="form-alert" role="alert">{{ error() }}</div>
+          }
+
+          <button type="submit" [disabled]="enviando()" class="submit-button">
             {{ enviando() ? 'Enviando...' : 'Solicitar recuperación' }}
           </button>
-        </div>
+        </form>
 
-        <div class="text-center text-sm text-slate-500 mt-3">
-          <a routerLink="/login" class="underline">Iniciar sesión</a>
-        </div>
-      </form>
-    </div>
+        <footer class="login-footer">
+          <p><a routerLink="/login">Volver al login</a></p>
+        </footer>
+      </section>
+    </article>
 
+    <aside class="recovery-note">
+      <span class="note-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" focusable="false">
+          <path d="M12 2 4 5.5V11c0 5.05 3.41 9.74 8 11 4.59-1.26 8-5.95 8-11V5.5Zm3.54 7.46-4.25 4.25a1 1 0 0 1-1.41 0l-1.92-1.92 1.41-1.41 1.21 1.21 3.54-3.54Z" />
+        </svg>
+      </span>
+      <p>Por seguridad, DAEMON enviará instrucciones únicamente al correo asociado a tu cuenta.</p>
+    </aside>
   </section>
 </main>

@@ -1,0 +1,128 @@
+:host {
+  display: block;
+  position: relative;
+  z-index: 80;
+}
+
+.site-header {
+  background: rgba(255, 255, 255, .96);
+  border-bottom: 1px solid rgba(21, 50, 107, .08);
+  box-shadow: 0 16px 40px rgba(15, 23, 42, .06);
+  font-family: 'Nunito', sans-serif;
+  width: 100%;
+}
+
+.site-header__inner {
+  align-items: center;
+  display: flex;
+  gap: 1.25rem;
+  justify-content: space-between;
+  margin: 0 auto;
+  max-width: 1180px;
+  min-height: 92px;
+  padding: .55rem clamp(1rem, 4vw, 2rem);
+}
+
+.site-header__brand {
+  align-items: center;
+  display: inline-flex;
+  flex: 0 0 auto;
+  min-width: 0;
+}
+
+.site-header__brand img {
+  display: block;
+  height: clamp(58px, 7vw, 78px);
+  max-width: min(190px, 44vw);
+  object-fit: contain;
+  width: auto;
+}
+
+.site-header__nav {
+  align-items: center;
+  background: #f8fafc;
+  border: 1px solid rgba(21, 50, 107, .1);
+  border-radius: 999px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .9);
+  display: inline-flex;
+  gap: .35rem;
+  justify-content: flex-end;
+  padding: .35rem;
+}
+
+.site-header__link {
+  align-items: center;
+  border-radius: 999px;
+  color: #334155;
+  display: inline-flex;
+  font-size: .78rem;
+  font-weight: 900;
+  justify-content: center;
+  letter-spacing: .06em;
+  line-height: 1;
+  min-height: 2.5rem;
+  padding: 0 1rem;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: background .2s ease, color .2s ease, transform .2s ease, box-shadow .2s ease;
+  white-space: nowrap;
+}
+
+.site-header__link:hover {
+  background: #ffffff;
+  color: #15326b;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, .07);
+}
+
+@media (max-width: 767px) {
+  .site-header__inner {
+    gap: .75rem;
+    min-height: 82px;
+    padding: .55rem .8rem;
+  }
+
+  .site-header__brand img {
+    height: 54px;
+    max-width: 132px;
+  }
+
+  .site-header__nav {
+    gap: .2rem;
+    max-width: calc(100vw - 155px);
+    overflow-x: auto;
+    padding: .25rem;
+    scrollbar-width: none;
+  }
+
+  .site-header__nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .site-header__link {
+    font-size: .64rem;
+    min-height: 2rem;
+    padding: 0 .62rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .site-header__inner {
+    align-items: center;
+    flex-direction: column;
+    gap: .55rem;
+    min-height: 108px;
+    padding-bottom: .7rem;
+    padding-top: .55rem;
+  }
+
+  .site-header__brand img {
+    height: 48px;
+    max-width: 140px;
+  }
+
+  .site-header__nav {
+    justify-content: center;
+    max-width: 100%;
+    width: 100%;
+  }
+}

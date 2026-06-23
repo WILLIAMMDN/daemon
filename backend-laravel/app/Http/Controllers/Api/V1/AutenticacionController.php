@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Auth\CambiarClaveRequest;
+use App\Http\Requests\Api\V1\Auth\CompletarPerfilGoogleRequest;
 use App\Http\Requests\Api\V1\Auth\CrearUsuarioRequest;
 use App\Http\Requests\Api\V1\Auth\LoginRequest;
 use App\Http\Requests\Api\V1\Auth\RecuperarClaveRequest;
@@ -49,6 +50,7 @@ class AutenticacionController extends Controller
     {
         $datos = $request->validate([
             'id_token' => ['required', 'string'],
+            'crear_cuenta' => ['sometimes', 'boolean'],
         ]);
 
         try {
@@ -59,7 +61,14 @@ class AutenticacionController extends Controller
                 return response()->json(['message' => 'Google no pudo confirmar el correo de la cuenta.'], 422);
             }
 
-            $usuario = $this->autenticacion->autenticarConGoogle($googleUser);
+            $usuario = $this->autenticacion->autenticarConGoogle($googleUser, (bool) ($datos['crear_cuenta'] ?? false));
+
+            if (! $usuario) {
+                return response()->json([
+                    'message' => 'No encontramos una cuenta DAEMON activa para este Google. Para crearla o terminar el registro, usa la opcion de registro.',
+                    'requires_registration' => true,
+                ], 404);
+            }
 
             return $this->respuestaAutenticada($usuario);
         } catch (Throwable $exception) {
@@ -86,6 +95,13 @@ class AutenticacionController extends Controller
         $usuario = $this->autenticacion->crearUsuarioInterno($request->validated());
 
         return response()->json(['usuario' => UsuarioResource::make($usuario)], 201);
+    }
+
+    public function completarPerfilGoogle(CompletarPerfilGoogleRequest $request)
+    {
+        $usuario = $this->autenticacion->completarPerfilGoogle($request->user(), $request->validated());
+
+        return response()->json(['usuario' => UsuarioResource::make($usuario)]);
     }
 
     public function yo(Request $request)

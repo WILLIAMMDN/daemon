@@ -1,1 +1,477 @@
-.auth-shell{min-height:100vh;display:grid;place-items:center;padding:2rem;background:radial-gradient(circle at top left,#233d73,#10162d 58%,#090c18);color:#eef4ff}.auth-card{width:min(440px,100%);padding:2.4rem;border:1px solid #ffffff24;border-radius:28px;background:#111a35e8;box-shadow:0 24px 80px #0008}.brand{font-size:1.7rem;font-weight:900;color:#6ee7c8;text-decoration:none}.eyebrow{margin:1rem 0 .35rem;color:#7dd3fc;text-transform:uppercase;letter-spacing:.12em;font-size:.72rem}.intro{color:#bac7e6}form{display:grid;gap:1rem;margin-top:1.5rem}label{display:grid;gap:.45rem;font-weight:700}input{padding:.9rem 1rem;border-radius:12px;border:1px solid #ffffff2a;background:#091128;color:white;font:inherit}button{padding:1rem;border:0;border-radius:12px;background:#6ee7c8;color:#07132d;font-weight:900;cursor:pointer}button:disabled{opacity:.6}.links{display:flex;justify-content:space-between;margin-top:1.2rem}.links a{color:#7dd3fc}.error{color:#fda4af;margin:0}
+:host {
+  display: block;
+}
+
+.daemon-login {
+  align-items: center;
+  background: #eef0f3;
+  color: #111827;
+  display: grid;
+  min-height: 100vh;
+  position: relative;
+}
+
+.home-link {
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #cfd4dc;
+  border-radius: 2px;
+  box-shadow: 0 1px 3px #11182714;
+  color: #22304a;
+  display: inline-flex;
+  font-size: .92rem;
+  font-weight: 800;
+  gap: .45rem;
+  left: clamp(1rem, 4vw, 3rem);
+  min-height: 38px;
+  padding: .55rem .9rem;
+  position: absolute;
+  text-decoration: none;
+  top: clamp(1rem, 4vw, 2rem);
+  transition: border-color .18s ease, color .18s ease;
+  z-index: 3;
+}
+
+.home-link:hover {
+  border-color: #0b5bd3;
+  color: #0b5bd3;
+}
+
+.login-stage {
+  display: grid;
+  gap: .85rem;
+  justify-items: center;
+  margin: 0 auto;
+  max-width: 600px;
+  width: min(100%, 600px);
+}
+
+.login-brand {
+  align-items: center;
+  display: inline-flex;
+  gap: .7rem;
+  justify-content: center;
+  margin-bottom: .3rem;
+}
+
+.brand-symbol {
+  border-bottom: 17px solid #d7182a;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  display: block;
+  height: 0;
+  position: relative;
+  transform: skewX(-18deg);
+  width: 28px;
+}
+
+.brand-symbol::after {
+  background: #ffffff;
+  border-radius: 50%;
+  content: "";
+  height: 8px;
+  position: absolute;
+  right: -4px;
+  top: 7px;
+  width: 8px;
+}
+
+.brand-name {
+  color: #1d2430;
+  font-size: clamp(1.7rem, 5vw, 2.15rem);
+  font-weight: 950;
+  letter-spacing: -.02em;
+}
+
+.login-card {
+  background: #ffffff;
+  border: 1px solid #cfd4dc;
+  border-radius: 2px;
+  box-shadow: 0 2px 6px #11182724;
+  padding: 0 clamp(1.5rem, 7vw, 3.15rem) clamp(1.45rem, 4vw, 2rem);
+  position: relative;
+  width: 100%;
+}
+
+.card-accent {
+  background: #0b5bd3;
+  height: 5px;
+  margin: 0 calc(clamp(1.5rem, 7vw, 3.15rem) * -1) 0;
+}
+
+.login-card-head {
+  align-items: end;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: minmax(0, 1fr) auto;
+  margin-top: 2.2rem;
+}
+
+.eyebrow {
+  color: #5d6878;
+  font-size: .73rem;
+  font-weight: 900;
+  letter-spacing: .13em;
+  margin: 0 0 .35rem;
+  text-transform: uppercase;
+}
+
+.login-card-head h1 {
+  color: #020b18;
+  font-size: clamp(1.7rem, 5vw, 2rem);
+  font-weight: 900;
+  line-height: 1.1;
+  margin: 0;
+}
+
+.portal-switch {
+  align-items: center;
+  display: inline-flex;
+  font-size: 1rem;
+  gap: .7rem;
+  white-space: nowrap;
+}
+
+.portal-switch span,
+.portal-switch a {
+  color: #5d6878;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.portal-switch .is-active {
+  color: #0b5bd3;
+}
+
+.rive-medallion {
+  align-items: center;
+  background:
+    linear-gradient(#ffffff, #ffffff) padding-box,
+    linear-gradient(135deg, #d8dde6, #ffffff 32%, #a8b2c2) border-box;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  box-shadow:
+    inset 0 0 0 7px #f7f8fa,
+    0 8px 20px #11182718;
+  display: grid;
+  height: 132px;
+  justify-content: center;
+  margin: -1.2rem auto 1.1rem;
+  overflow: hidden;
+  position: relative;
+  width: 132px;
+}
+
+.rive-medallion::after {
+  border: 1px solid #e3e7ee;
+  border-radius: 50%;
+  content: "";
+  inset: 7px;
+  pointer-events: none;
+  position: absolute;
+}
+
+.rive-mascot {
+  display: block;
+  height: 142px;
+  opacity: 0;
+  transform: translateY(5px) scale(1.18);
+  transition: opacity .22s ease;
+  width: 142px;
+}
+
+.rive-medallion.is-ready .rive-mascot {
+  opacity: 1;
+}
+
+.rive-fallback {
+  align-items: center;
+  background: #f7f8fa;
+  border-radius: 50%;
+  color: #0b5bd3;
+  display: inline-flex;
+  font-size: 2.25rem;
+  font-weight: 950;
+  height: 110px;
+  justify-content: center;
+  position: absolute;
+  width: 110px;
+}
+
+.login-form {
+  display: grid;
+  gap: 1.05rem;
+}
+
+.classic-field {
+  align-items: stretch;
+  border: 1px solid #c8ced8;
+  display: grid;
+  grid-template-columns: 66px minmax(0, 1fr) auto;
+  min-height: 62px;
+  position: relative;
+}
+
+.classic-field:focus-within {
+  border-color: #0b5bd3;
+  box-shadow: 0 0 0 1px #0b5bd3;
+}
+
+.field-icon {
+  align-items: center;
+  background: #fafafa;
+  border-right: 1px solid #d6dbe3;
+  color: #313842;
+  display: inline-flex;
+  justify-content: center;
+}
+
+.field-icon svg,
+.field-action svg,
+.note-icon svg {
+  display: block;
+  fill: currentColor;
+  height: 24px;
+  width: 24px;
+}
+
+.classic-field input {
+  background: #ffffff;
+  border: 0;
+  color: #263244;
+  font: inherit;
+  font-size: 1.28rem;
+  font-weight: 500;
+  min-width: 0;
+  outline: 0;
+  padding: 0 1.25rem;
+}
+
+.classic-field input::placeholder {
+  color: #6c7482;
+  opacity: 1;
+}
+
+.field-action {
+  align-items: center;
+  background: #ffffff;
+  border: 0;
+  color: #0f172a;
+  cursor: pointer;
+  display: inline-flex;
+  justify-content: center;
+  min-width: 58px;
+  padding: 0 1rem;
+}
+
+.field-action:hover {
+  color: #0b5bd3;
+}
+
+.field-error {
+  color: #b42331;
+  font-size: .82rem;
+  font-weight: 700;
+  margin: -.6rem 0 0;
+}
+
+.help-link {
+  color: #0057d8;
+  font-size: 1rem;
+  font-weight: 500;
+  justify-self: end;
+  margin-top: -.35rem;
+  text-decoration: none;
+}
+
+.help-link:hover,
+.login-footer a:hover,
+.portal-switch a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.form-alert {
+  background: #fff1f2;
+  border: 1px solid #fecdd3;
+  color: #be123c;
+  font-size: .9rem;
+  font-weight: 850;
+  padding: .85rem 1rem;
+}
+
+.submit-button {
+  background: #0b5bd3;
+  border: 0;
+  border-radius: 4px;
+  color: #ffffff;
+  cursor: pointer;
+  font-size: 1.1rem;
+  font-weight: 600;
+  min-height: 60px;
+  transition: background .18s ease;
+}
+
+.submit-button:hover:not(:disabled) {
+  background: #004fbd;
+}
+
+.submit-button:disabled {
+  background: #b8c7de;
+  cursor: not-allowed;
+}
+
+.google-block {
+  display: grid;
+  justify-items: center;
+  margin-top: 1.1rem;
+}
+
+.divider {
+  align-items: center;
+  color: #7a8492;
+  display: grid;
+  font-size: .78rem;
+  font-weight: 800;
+  gap: .8rem;
+  grid-template-columns: minmax(54px, 1fr) auto minmax(54px, 1fr);
+  letter-spacing: .08em;
+  margin: 0 0 .75rem;
+  text-transform: uppercase;
+  width: 100%;
+}
+
+.divider::before,
+.divider::after {
+  background: #e1e5eb;
+  content: "";
+  height: 1px;
+}
+
+.login-footer {
+  color: #687386;
+  font-size: 1rem;
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.login-footer p {
+  margin: 0;
+}
+
+.login-footer a {
+  color: #0057d8;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.login-note {
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #cfd4dc;
+  border-radius: 2px;
+  box-shadow: 0 2px 5px #1118271f;
+  display: grid;
+  gap: .85rem;
+  grid-template-columns: auto minmax(0, 1fr);
+  padding: 1rem 1.35rem;
+  width: 100%;
+}
+
+.note-icon {
+  align-items: center;
+  border: 2px solid #5d6878;
+  border-radius: 4px;
+  color: #5d6878;
+  display: inline-flex;
+  height: 34px;
+  justify-content: center;
+  width: 26px;
+}
+
+.note-icon svg {
+  height: 20px;
+  width: 20px;
+}
+
+.login-note p {
+  color: #1f2937;
+  font-size: 1rem;
+  line-height: 1.45;
+  margin: 0;
+}
+
+@media (max-width: 640px) {
+  .daemon-login {
+    align-items: start;
+    padding-top: 5rem;
+  }
+
+  .home-link {
+    min-height: 36px;
+    padding: .48rem .75rem;
+  }
+
+  .login-stage {
+    max-width: 100%;
+  }
+
+  .login-card {
+    padding-left: 1.15rem;
+    padding-right: 1.15rem;
+  }
+
+  .card-accent {
+    margin-left: -1.15rem;
+    margin-right: -1.15rem;
+  }
+
+  .login-card-head {
+    align-items: start;
+    grid-template-columns: 1fr;
+    margin-top: 1.65rem;
+  }
+
+  .portal-switch {
+    justify-self: start;
+  }
+
+  .rive-medallion {
+    height: 112px;
+    margin-top: .15rem;
+    width: 112px;
+  }
+
+  .rive-mascot {
+    height: 124px;
+    width: 124px;
+  }
+
+  .classic-field {
+    grid-template-columns: 52px minmax(0, 1fr) auto;
+    min-height: 56px;
+  }
+
+  .classic-field input {
+    font-size: 1.05rem;
+    padding: 0 .9rem;
+  }
+
+  .field-action {
+    min-width: 46px;
+    padding: 0 .75rem;
+  }
+
+  .help-link {
+    justify-self: start;
+  }
+
+  .submit-button {
+    min-height: 56px;
+  }
+
+  .login-note {
+    align-items: start;
+    padding: .95rem 1rem;
+  }
+}

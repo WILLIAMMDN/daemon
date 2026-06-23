@@ -1,12 +1,483 @@
-/* Styles for recuperar-clave page */
-
-.auth-card { }
-
-.recuperar-visual {
-  background: linear-gradient(180deg, rgba(7,18,42,0.6), rgba(15,42,74,0.4));
+:host {
+  display: block;
 }
 
-/* Small adjustments to hlm inputs/buttons inside this form */
-.recuperar-form .hlm-input {
+.recovery-page {
+  align-items: center;
+  background: #eef0f3;
+  color: #111827;
+  display: grid;
+  min-height: 100vh;
+  position: relative;
+}
+
+.home-link {
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #cfd4dc;
+  border-radius: 2px;
+  box-shadow: 0 1px 3px #11182714;
+  color: #22304a;
+  display: inline-flex;
+  font-size: .92rem;
+  font-weight: 800;
+  gap: .45rem;
+  left: clamp(1rem, 4vw, 3rem);
+  min-height: 38px;
+  padding: .55rem .9rem;
+  position: absolute;
+  text-decoration: none;
+  top: clamp(1rem, 4vw, 2rem);
+  transition: border-color .18s ease, color .18s ease;
+  z-index: 3;
+}
+
+.home-link:hover {
+  border-color: #0b5bd3;
+  color: #0b5bd3;
+}
+
+.recovery-stage {
+  display: grid;
+  gap: .85rem;
+  margin: 0 auto;
+  max-width: 980px;
+  width: min(100%, 980px);
+}
+
+.login-brand {
+  align-items: center;
+  display: inline-flex;
+  gap: .7rem;
+  justify-content: center;
+  justify-self: center;
+  margin-bottom: .3rem;
+}
+
+.brand-symbol {
+  border-bottom: 17px solid #d7182a;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  display: block;
+  height: 0;
+  position: relative;
+  transform: skewX(-18deg);
+  width: 28px;
+}
+
+.brand-symbol::after {
+  background: #ffffff;
+  border-radius: 50%;
+  content: "";
+  height: 8px;
+  position: absolute;
+  right: -4px;
+  top: 7px;
+  width: 8px;
+}
+
+.brand-name {
+  color: #1d2430;
+  font-size: clamp(1.7rem, 5vw, 2.15rem);
+  font-weight: 950;
+  letter-spacing: -.02em;
+}
+
+.recovery-card {
+  background: #ffffff;
+  border: 1px solid #cfd4dc;
+  border-radius: 2px;
+  box-shadow: 0 2px 6px #11182724;
+  display: grid;
+  grid-template-columns: minmax(320px, .86fr) minmax(360px, 1fr);
+  min-height: 610px;
+  overflow: hidden;
+  position: relative;
+}
+
+.card-accent {
+  background: #0b5bd3;
+  grid-column: 1 / -1;
+  height: 5px;
+}
+
+.recovery-visual {
+  background: #101826;
+  border-right: 1px solid #cfd4dc;
+  display: grid;
+  min-height: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.recovery-visual::after {
+  background: linear-gradient(180deg, #10182600 0%, #101826 88%);
+  content: "";
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+}
+
+.visual-copy {
+  align-self: end;
+  color: #ffffff;
+  padding: 2rem;
+  position: relative;
+  z-index: 2;
+}
+
+.eyebrow {
+  color: #5d6878;
+  font-size: .73rem;
+  font-weight: 900;
+  letter-spacing: .13em;
+  margin: 0 0 .35rem;
+  text-transform: uppercase;
+}
+
+.visual-copy .eyebrow {
+  color: #96b9ff;
+}
+
+.visual-copy h2 {
+  font-size: clamp(1.55rem, 4vw, 2rem);
+  font-weight: 900;
+  line-height: 1.1;
+  margin: 0;
+}
+
+.visual-copy p:last-child {
+  color: #dbe6f8;
+  line-height: 1.55;
+  margin: .65rem 0 0;
+  max-width: 330px;
+}
+
+.spline-frame {
+  inset: 0;
+  position: absolute;
+}
+
+.spline-frame spline-viewer {
+  background: transparent;
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+
+.recovery-form-panel {
+  display: grid;
+  padding: clamp(1.5rem, 4vw, 3rem);
+}
+
+.panel-heading {
+  margin-bottom: 1.35rem;
+}
+
+.panel-heading h1 {
+  color: #020b18;
+  font-size: clamp(1.7rem, 4vw, 2rem);
+  font-weight: 900;
+  line-height: 1.1;
+  margin: 0;
+}
+
+.google-block {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
   min-height: 44px;
+}
+
+.google-detected {
+  background: #f8fafc;
+  border: 1px solid #dbe2ec;
+  display: grid;
+  gap: .9rem;
+  margin-bottom: 1rem;
+  padding: .95rem 1rem;
+}
+
+.google-detected span {
+  color: #687386;
+  display: block;
+  font-size: .78rem;
+  font-weight: 900;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.google-detected strong {
+  color: #1f2937;
+  display: block;
+  margin-top: .2rem;
+  overflow-wrap: anywhere;
+}
+
+.google-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .6rem;
+}
+
+.secondary-action,
+.text-action {
+  border-radius: 3px;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 800;
+  min-height: 40px;
+  padding: .55rem .8rem;
+}
+
+.secondary-action {
+  background: #0b5bd3;
+  border: 1px solid #0b5bd3;
+  color: #ffffff;
+}
+
+.text-action {
+  background: #ffffff;
+  border: 1px solid #cfd4dc;
+  color: #22304a;
+}
+
+.secondary-action:disabled,
+.text-action:disabled {
+  cursor: not-allowed;
+  opacity: .65;
+}
+
+.divider {
+  align-items: center;
+  color: #7a8492;
+  display: grid;
+  font-size: .78rem;
+  font-weight: 800;
+  gap: .8rem;
+  grid-template-columns: minmax(54px, 1fr) auto minmax(54px, 1fr);
+  letter-spacing: .08em;
+  margin: .15rem 0 1rem;
+  text-transform: uppercase;
+  width: 100%;
+}
+
+.divider::before,
+.divider::after {
+  background: #e1e5eb;
+  content: "";
+  height: 1px;
+}
+
+.recovery-form {
+  display: grid;
+  gap: 1.05rem;
+}
+
+.classic-field {
+  align-items: stretch;
+  border: 1px solid #c8ced8;
+  display: grid;
+  grid-template-columns: 66px minmax(0, 1fr);
+  min-height: 62px;
+  position: relative;
+}
+
+.classic-field:focus-within {
+  border-color: #0b5bd3;
+  box-shadow: 0 0 0 1px #0b5bd3;
+}
+
+.field-icon {
+  align-items: center;
+  background: #fafafa;
+  border-right: 1px solid #d6dbe3;
+  color: #313842;
+  display: inline-flex;
+  justify-content: center;
+}
+
+.field-icon svg,
+.note-icon svg {
+  display: block;
+  fill: currentColor;
+  height: 24px;
+  width: 24px;
+}
+
+.classic-field input {
+  background: #ffffff;
+  border: 0;
+  color: #263244;
+  font: inherit;
+  font-size: 1.2rem;
+  font-weight: 500;
+  min-width: 0;
+  outline: 0;
+  padding: 0 1.25rem;
+}
+
+.classic-field input::placeholder {
+  color: #6c7482;
+  opacity: 1;
+}
+
+.field-error {
+  color: #b42331;
+  font-size: .82rem;
+  font-weight: 700;
+  margin: -.6rem 0 0;
+}
+
+.form-alert {
+  background: #fff1f2;
+  border: 1px solid #fecdd3;
+  color: #be123c;
+  font-size: .9rem;
+  font-weight: 850;
+  padding: .85rem 1rem;
+}
+
+.form-alert.success {
+  background: #ecfdf3;
+  border-color: #bbf7d0;
+  color: #047857;
+}
+
+.submit-button {
+  background: #0b5bd3;
+  border: 0;
+  border-radius: 4px;
+  color: #ffffff;
+  cursor: pointer;
+  font-size: 1.05rem;
+  font-weight: 700;
+  min-height: 58px;
+  transition: background .18s ease;
+}
+
+.submit-button:hover:not(:disabled) {
+  background: #004fbd;
+}
+
+.submit-button:disabled {
+  background: #b8c7de;
+  cursor: not-allowed;
+}
+
+.login-footer {
+  color: #687386;
+  font-size: 1rem;
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.login-footer p {
+  margin: 0;
+}
+
+.login-footer a {
+  color: #0057d8;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.login-footer a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.recovery-note {
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #cfd4dc;
+  border-radius: 2px;
+  box-shadow: 0 2px 5px #1118271f;
+  display: grid;
+  gap: .85rem;
+  grid-template-columns: auto minmax(0, 1fr);
+  padding: 1rem 1.35rem;
+  width: 100%;
+}
+
+.note-icon {
+  align-items: center;
+  border: 2px solid #5d6878;
+  border-radius: 4px;
+  color: #5d6878;
+  display: inline-flex;
+  height: 34px;
+  justify-content: center;
+  width: 34px;
+}
+
+.note-icon svg {
+  height: 20px;
+  width: 20px;
+}
+
+.recovery-note p {
+  color: #1f2937;
+  font-size: 1rem;
+  line-height: 1.45;
+  margin: 0;
+}
+
+@media (max-width: 880px) {
+  .recovery-page {
+    align-items: start;
+    padding-top: 5rem;
+  }
+
+  .recovery-card {
+    grid-template-columns: 1fr;
+  }
+
+  .recovery-visual {
+    min-height: 280px;
+  }
+
+  .visual-copy {
+    padding: 1.4rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .recovery-visual {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .home-link {
+    min-height: 36px;
+    padding: .48rem .75rem;
+  }
+
+  .recovery-card {
+    min-height: auto;
+  }
+
+  .recovery-form-panel {
+    padding: 1.25rem 1.15rem 1.35rem;
+  }
+
+  .classic-field {
+    grid-template-columns: 52px minmax(0, 1fr);
+    min-height: 56px;
+  }
+
+  .classic-field input {
+    font-size: 1.05rem;
+    padding: 0 .9rem;
+  }
+
+  .google-actions {
+    display: grid;
+  }
+
+  .recovery-note {
+    align-items: start;
+    padding: .95rem 1rem;
+  }
 }

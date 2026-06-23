@@ -20,6 +20,7 @@ class UsuarioResource extends JsonResource
             'rango' => $this->rango,
             'biografia' => $this->biografia,
             'avatar' => $this->avatar,
+            'perfil_completo' => (bool) ($this->perfil_completo ?? true),
             'rol' => $this->rol,
             'insignia' => $this->insignia,
             'mision_actual' => $this->mision_actual,

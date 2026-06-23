@@ -189,6 +189,10 @@ cd C:\laragon\www\daemon
 git status --short --branch
 ```
 
+## Creditos de terceros
+
+- Mascota interactiva del login: "Login Teddy" by yoonikuu, remix de "Animated Login Screen" by JcToon, licencia CC BY 4.0. Fuente: https://rive.app/marketplace/4771-9633-login-teddy/
+
 ## Notas de seguridad
 
 - No subas `backend-laravel/.env`.
