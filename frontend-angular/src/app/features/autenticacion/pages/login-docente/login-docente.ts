@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, NgZone, OnDestroy, ViewChild, signal } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import type { Rive, StateMachineInput } from '@rive-app/webgl2';
+import type { Rive, StateMachineInput } from '@rive-app/canvas';
 import { Autenticacion } from '../../../../core/servicios/autenticacion';
 import { Sesion } from '../../../../core/servicios/sesion';
 import { validarCredenciales } from '../../../../shared/validadores/auth-validadores';
@@ -145,38 +145,55 @@ export class LoginDocente implements AfterViewInit, OnDestroy {
     }
 
     this.zone.runOutsideAngular(() => {
-      void import('@rive-app/webgl2')
+      void import('@rive-app/canvas')
         .then(({ Alignment, Fit, Layout, Rive, RuntimeLoader }) => {
           RuntimeLoader.setWasmUrl('/rive/rive.wasm');
           RuntimeLoader.setWasmFallbackUrl('/rive/rive_fallback.wasm');
 
-          this.rive = new Rive({
-            src: '/rive/login-teddy.riv',
-            canvas,
-            artboard: 'Teddy',
-            stateMachines: this.maquinaLogin,
-            autoplay: true,
-            layout: new Layout({
-              fit: Fit.Contain,
-              alignment: Alignment.Center,
-            }),
-            onLoad: () => {
-              this.rive?.resizeDrawingSurfaceToCanvas();
-              this.configurarInputsRive();
-              this.actualizarMascota();
-              window.addEventListener('resize', this.reajustarRive);
-              this.zone.run(() => {
-                this.riveDisponible.set(true);
-                this.riveError.set(false);
-              });
-            },
-            onLoadError: () => {
-              this.zone.run(() => {
-                this.riveDisponible.set(false);
-                this.riveError.set(true);
-              });
-            },
+          const layout = new Layout({
+            fit: Fit.Contain,
+            alignment: Alignment.Center,
           });
+
+          const marcarListo = () => {
+            this.rive?.resizeDrawingSurfaceToCanvas();
+            this.configurarInputsRive();
+            this.actualizarMascota();
+            window.addEventListener('resize', this.reajustarRive);
+            this.zone.run(() => {
+              this.riveDisponible.set(true);
+              this.riveError.set(false);
+            });
+          };
+
+          const marcarError = () => {
+            this.zone.run(() => {
+              this.riveDisponible.set(false);
+              this.riveError.set(true);
+            });
+          };
+
+          const cargar = (interactivo: boolean) => {
+            this.rive = new Rive({
+              src: '/rive/login-teddy.riv',
+              canvas,
+              ...(interactivo ? { artboard: 'Teddy', stateMachines: this.maquinaLogin } : {}),
+              autoplay: true,
+              layout,
+              onLoad: marcarListo,
+              onLoadError: () => {
+                if (interactivo) {
+                  this.rive?.cleanup();
+                  cargar(false);
+                  return;
+                }
+
+                marcarError();
+              },
+            });
+          };
+
+          cargar(true);
         })
         .catch(() => {
           this.zone.run(() => {

@@ -20,7 +20,7 @@
     "@angular/router": "^21.2.0",
     "@fortawesome/angular-fontawesome": "^4.0.0",
     "@fortawesome/free-solid-svg-icons": "^7.2.0",
-    "@rive-app/webgl2": "^2.38.2",
+    "@rive-app/canvas": "^2.38.2",
     "@spartan-ng/brain": "^0.0.1-alpha.710",
     "@spartan-ng/cli": "^0.0.1-alpha.710",
     "class-variance-authority": "^0.7.0",
