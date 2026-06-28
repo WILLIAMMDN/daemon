@@ -67,4 +67,4 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 EXPOSE 80
 
 # Entry point que cachea config con las ENV vars reales antes de arrancar Apache
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]+
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
