@@ -37,4 +37,25 @@ jobs:
           echo "GOOGLE_APPLICATION_CREDENTIALS=$RUNNER_TEMP/firebase-service-account.json" >> "$GITHUB_ENV"
 
       - name: Deploy to Firebase Hosting
-        run: npx firebase-tools@latest deploy --only hosting:estudiante --project daemon-a41f8 --non-interactive
+        shell: bash
+        run: |
+          set +e
+          npx firebase-tools@latest deploy --only hosting:estudiante --project daemon-a41f8 --non-interactive 2>&1 | tee firebase-deploy.log
+          status=${PIPESTATUS[0]}
+
+          if [ "$status" -ne 0 ]; then
+            tail -n 80 firebase-deploy.log \
+              | sed -E 's/[A-Za-z0-9_\/+=-]{120,}/[redacted]/g' \
+              > firebase-deploy-tail.log
+
+            {
+              echo "Firebase deploy failed. Last sanitized lines:"
+              echo '```'
+              cat firebase-deploy-tail.log
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+
+            message=$(tr '\n' ' ' < firebase-deploy-tail.log | cut -c1-900)
+            echo "::error title=Firebase deploy failed::$message"
+            exit "$status"
+          fi
