@@ -1,0 +1,44 @@
+# Excluye archivos que NO deben ir en la imagen Docker
+
+# Variables de entorno con secretos (se pasan por Render, no se copian)
+.env
+.env.*
+!.env.example
+!.env.supabase.example
+
+# Dependencias (se reinstalan dentro del contenedor)
+vendor/
+node_modules/
+
+# Cache de Composer
+composer.phar
+
+# Archivos de testing
+.phpunit.result.cache
+.phpunit.cache/
+
+# Archivos basura
+.rnd
+.git/
+.gitignore
+.gitattributes
+
+# IDEs y editores
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Documentacion interna
+README.md
+docker-compose.yml
+
+# Archivos locales que no aplican en produccion
+storage/logs/*
+storage/framework/cache/data/
+storage/framework/sessions/
+storage/framework/views/
