@@ -44,7 +44,9 @@ jobs:
           status=${PIPESTATUS[0]}
 
           if [ "$status" -ne 0 ]; then
-            tail -n 80 firebase-deploy.log \
+            grep -v '^npm warn' firebase-deploy.log \
+              | tail -n 120 \
+              | perl -pe 's/\e\[[0-9;]*[mK]//g' \
               | sed -E 's/[A-Za-z0-9_\/+=-]{120,}/[redacted]/g' \
               > firebase-deploy-tail.log
 
@@ -55,7 +57,7 @@ jobs:
               echo '```'
             } >> "$GITHUB_STEP_SUMMARY"
 
-            message=$(tr '\n' ' ' < firebase-deploy-tail.log | cut -c1-900)
+            message=$(tr '\n' ' ' < firebase-deploy-tail.log | cut -c1-6000)
             echo "::error title=Firebase deploy failed::$message"
             exit "$status"
           fi
