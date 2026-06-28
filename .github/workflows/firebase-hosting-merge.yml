@@ -22,7 +22,28 @@ jobs:
           cache-dependency-path: frontend-angular/package-lock.json
 
       - name: Install frontend dependencies
-        run: npm ci --ignore-scripts --no-audit --no-fund
+        shell: bash
+        run: |
+          set +e
+          npm ci --ignore-scripts --no-audit --no-fund 2>&1 | tee npm-install.log
+          status=${PIPESTATUS[0]}
+
+          if [ "$status" -ne 0 ]; then
+            echo "npm ci failed; retrying with npm install for this CI runner." | tee -a npm-install.log
+            npm install --ignore-scripts --no-audit --no-fund 2>&1 | tee -a npm-install.log
+            status=${PIPESTATUS[0]}
+          fi
+
+          if [ "$status" -ne 0 ]; then
+            tail -n 120 npm-install.log \
+              | perl -pe 's/\e\[[0-9;]*[mK]//g' \
+              | sed -E 's/[A-Za-z0-9_\/+=-]{120,}/[redacted]/g' \
+              > npm-install-tail.log
+
+            message=$(tr '\n' ' ' < npm-install-tail.log | cut -c1-6000)
+            echo "::error title=NPM install failed::$message"
+            exit "$status"
+          fi
         working-directory: frontend-angular
 
       - name: Build frontend
