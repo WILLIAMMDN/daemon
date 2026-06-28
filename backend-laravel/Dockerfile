@@ -38,12 +38,14 @@ COPY . .
 # Optimiza el autoloader de Composer para produccion
 RUN composer dump-autoload --optimize --no-dev
 
-# Cachea la configuracion y rutas de Laravel (acelera el arranque)
-# view:cache se omite a proposito: requiere que la ruta de views exista,
-# y durante el build el cwd del artisan puede no resolver bien resource_path().
-# Las vistas se compilan en runtime sin problema.
-RUN php artisan config:cache && \
-    php artisan route:cache
+# NO corremos config:cache / route:cache aqui:
+#   - En build time no existen las ENV vars reales de Render
+#   - php artisan config:cache congela los valores de .env en ese momento
+#   - Eso dejaria DB_PASSWORD, FIREBASE_*, etc. vacios en la config cacheada
+#   - Al arrancar el contenedor, Laravel usa la config cacheada e IGNORA las env vars reales
+#   - Resultado: 500 Internal Server Error por no conectar a Postgres
+# Solucion: cachear la config al primer arranque, en un entrypoint que ya tiene las env vars.
+# Como mejora minima, solo limpiamos cualquier cache que pudiera haberse colado.
 
 # Crea los directorios que Laravel necesita para escribir (logs, cache, sesiones, vistas compiladas)
 RUN mkdir -p \
@@ -56,5 +58,13 @@ RUN mkdir -p \
     && chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R ug+rwX storage bootstrap/cache
 
+# Crea un entrypoint que cachea config/rutas con las ENV vars reales ya presentes
+# antes de arrancar Apache. Asi Laravel ve los valores correctos en cada deploy.
+COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
 # Expone el puerto 80 (Render lo mapea automaticamente a su $PORT)
 EXPOSE 80
+
+# Entry point que cachea config con las ENV vars reales antes de arrancar Apache
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]+
