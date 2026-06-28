@@ -71,6 +71,7 @@ class ImportarDumpSupabase extends Command
 
         try {
             $datos = $this->leerDump($archivo);
+            $this->sanearReferenciasLegacy($datos);
         } catch (Throwable $exception) {
             $this->error('No se pudo leer el dump.');
             $this->line($exception->getMessage());
@@ -401,7 +402,59 @@ class ImportarDumpSupabase extends Command
             $fila['perfil_completo'] ??= true;
         }
 
+        if ($tabla === 'bots_alumnos' && ($fila['avatar'] ?? null) === 'img/bot_default.png') {
+            $fila['avatar'] = 'img/bot_default.svg';
+        }
+
         return $fila;
+    }
+
+    /**
+     * El dump historico contiene movimientos de alumnos/docentes eliminados y
+     * acciones de sistema con id 0. El esquema profesional conserva esos ids en
+     * columnas legacy y deja las FKs reales limpias.
+     *
+     * @param  array<string, array<int, array<string, mixed>>>  $datos
+     */
+    private function sanearReferenciasLegacy(array &$datos): void
+    {
+        $usuarios = collect($datos['usuarios'] ?? [])
+            ->pluck('id')
+            ->filter(fn (mixed $id): bool => $id !== null)
+            ->map(fn (mixed $id): int => (int) $id)
+            ->flip();
+
+        if (! isset($datos['historial_movimientos'])) {
+            return;
+        }
+
+        foreach ($datos['historial_movimientos'] as &$fila) {
+            $fila['legacy_id_docente'] ??= null;
+            $fila['legacy_id_alumno'] ??= null;
+
+            if (! $this->idExiste($usuarios, $fila['id_docente'] ?? null)) {
+                $fila['legacy_id_docente'] = $fila['id_docente'] ?? null;
+                $fila['id_docente'] = null;
+            }
+
+            if (! $this->idExiste($usuarios, $fila['id_alumno'] ?? null)) {
+                $fila['legacy_id_alumno'] = $fila['id_alumno'] ?? null;
+                $fila['id_alumno'] = null;
+            }
+
+            if (! $this->idExiste($usuarios, $fila['id_operador'] ?? null)) {
+                $fila['id_operador'] = null;
+            }
+        }
+        unset($fila);
+    }
+
+    /**
+     * @param  \Illuminate\Support\Collection<int, int>  $ids
+     */
+    private function idExiste($ids, mixed $id): bool
+    {
+        return $id !== null && (int) $id > 0 && $ids->has((int) $id);
     }
 
     /**

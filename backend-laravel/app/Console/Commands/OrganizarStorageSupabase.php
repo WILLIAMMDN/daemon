@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Storage;
 
 class OrganizarStorageSupabase extends Command
 {
-    protected $signature = 'daemon:organizar-storage-supabase {--disk=supabase : Disco cloud destino} {--confirm : Ejecutar subidas, actualizar rutas en BD y limpiar objetos no referenciados}';
+    protected $signature = 'daemon:organizar-storage-supabase {--disk=supabase : Disco cloud destino} {--keep-unreferenced : No borrar objetos existentes del bucket que no esten referenciados por la BD} {--confirm : Ejecutar subidas, actualizar rutas en BD y limpiar objetos no referenciados}';
 
     protected $description = 'Ordena archivos referenciados por la base en carpetas de negocio y retira del bucket assets que pertenecen al hosting frontend.';
 
@@ -88,7 +88,9 @@ class OrganizarStorageSupabase extends Command
             }
         }
 
-        $eliminados = $this->limpiarBucket($disk, array_keys($targets));
+        $eliminados = $this->option('keep-unreferenced')
+            ? 0
+            : $this->limpiarBucket($disk, array_keys($targets));
 
         $this->info("Storage organizado. Subidos: {$subidos}. Rutas BD actualizadas: {$actualizados}. Objetos no referenciados eliminados del bucket: {$eliminados}.");
 
