@@ -18,7 +18,7 @@
     "@angular/forms": "^21.2.0",
     "@angular/platform-browser": "^21.2.0",
     "@angular/router": "^21.2.0",
-    "@fortawesome/angular-fontawesome": "^5.0.0",
+    "@fortawesome/angular-fontawesome": "^4.0.0",
     "@fortawesome/free-solid-svg-icons": "^7.2.0",
     "@rive-app/webgl2": "^2.38.2",
     "@spartan-ng/brain": "^0.0.1-alpha.719",
