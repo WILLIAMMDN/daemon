@@ -6,9 +6,7 @@ import { Autenticacion } from '../../../../core/servicios/autenticacion';
 
 type Estado =
   | { tipo: 'inicial' }
-  | { tipo: 'verificando' }
-  | { tipo: 'opciones'; email: string; tieneGoogle: boolean; tieneClave: boolean }
-  | { tipo: 'recuperacion_enviada'; email: string }
+  | { tipo: 'enviado'; email: string }
   | { tipo: 'error'; mensaje: string };
 
 @Component({
@@ -24,14 +22,16 @@ export class RecuperarClave {
   estado = signal<Estado>({ tipo: 'inicial' });
   enviando = signal(false);
 
-  get opcionesActuales(): { email: string; tieneGoogle: boolean; tieneClave: boolean } | null {
-    const e = this.estado();
-    return e.tipo === 'opciones' ? e : null;
+  get emailEnviado(): string {
+    const estado = this.estado();
+
+    return estado.tipo === 'enviado' ? estado.email : '';
   }
 
-  get emailEnviado(): string {
-    const e = this.estado();
-    return e.tipo === 'recuperacion_enviada' ? e.email : '';
+  get mensajeError(): string {
+    const estado = this.estado();
+
+    return estado.tipo === 'error' ? estado.mensaje : '';
   }
 
   constructor(
@@ -39,82 +39,36 @@ export class RecuperarClave {
     private router: Router,
   ) {}
 
-  verificarCorreo(form: NgForm): void {
+  solicitar(form: NgForm): void {
     if (form.invalid) {
+      form.control.markAllAsTouched();
       return;
     }
 
     const email = this.email.trim();
-    this.estado.set({ tipo: 'verificando' });
-
-    this.auth.metodosInicioSesion(email).subscribe({
-      next: (methods) => {
-        const tieneGoogle = methods.includes('google.com');
-        const tieneClave = methods.includes('password');
-
-        // Si Firebase reporta metodos, mostramos opciones reales.
-        // Si no reporta ninguno (raro), igual mostramos opciones por las dudas,
-        // porque Firebase puede no devolver metodos incluso si la cuenta existe.
-        this.estado.set({
-          tipo: 'opciones',
-          email,
-          tieneGoogle,
-          tieneClave,
-        });
-      },
-      error: () => {
-        // Firebase rechaza el lookup si la cuenta no existe o por proteccion.
-        // Mostramos opciones neutrales: que el usuario intente el camino que prefiera.
-        this.estado.set({
-          tipo: 'opciones',
-          email,
-          tieneGoogle: true,
-          tieneClave: true,
-        });
-      },
-    });
-  }
-
-  recuperarPorClave(): void {
-    const estadoActual = this.estado();
-    if (estadoActual.tipo !== 'opciones' || !estadoActual.tieneClave) {
-      return;
-    }
-
-    const email = estadoActual.email;
     this.enviando.set(true);
+    this.estado.set({ tipo: 'inicial' });
 
     this.auth.recuperarPasswordFirebase(email).subscribe({
-      next: () => {
-        this.enviando.set(false);
-        this.estado.set({ tipo: 'recuperacion_enviada', email });
-      },
-      error: () => {
-        this.enviando.set(false);
-        this.estado.set({
-          tipo: 'recuperacion_enviada',
-          email,
-        });
-      },
+      next: () => this.marcarComoEnviado(email),
+      error: () => this.marcarComoEnviado(email),
     });
   }
 
   continuarConGoogle(): void {
-    const estadoActual = this.estado();
-    if (estadoActual.tipo !== 'opciones' || !estadoActual.tieneGoogle) {
-      return;
-    }
-
     this.enviando.set(true);
+
     this.auth.loginGoogleFirebase().subscribe({
       next: () => {
         this.enviando.set(false);
         this.router.navigateByUrl('/alumno');
       },
-      error: () => {
+      error: (error) => {
         this.enviando.set(false);
-        // Volvemos a la vista de opciones sin error visible
-        // (loginGoogleFirebase ya muestra el error en su propia UI).
+        this.estado.set({
+          tipo: 'error',
+          mensaje: error?.error?.message ?? error?.message ?? 'No se pudo iniciar sesion con Google.',
+        });
       },
     });
   }
@@ -122,5 +76,10 @@ export class RecuperarClave {
   volver(): void {
     this.email = '';
     this.estado.set({ tipo: 'inicial' });
+  }
+
+  private marcarComoEnviado(email: string): void {
+    this.enviando.set(false);
+    this.estado.set({ tipo: 'enviado', email });
   }
 }

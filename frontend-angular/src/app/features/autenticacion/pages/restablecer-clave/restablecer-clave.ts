@@ -52,8 +52,9 @@ export class RestablecerClave implements OnInit {
 
   ngOnInit(): void {
     this.oobCode = this.ruta.snapshot.queryParamMap.get('oobCode');
+    const mode = this.ruta.snapshot.queryParamMap.get('mode');
 
-    if (!this.oobCode) {
+    if (!this.oobCode || (mode && mode !== 'resetPassword')) {
       this.estado.set({
         tipo: 'error',
         mensaje: 'El enlace de recuperacion no es valido. Solicita uno nuevo desde la pagina de inicio.',

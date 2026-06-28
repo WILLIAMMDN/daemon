@@ -16,6 +16,8 @@ backend-laravel/bootstrap/cache/*.php
 # Sistema
 .DS_Store
 Thumbs.db
+firebase-debug.log
+.firebase/
 
 # Archivos pesados o temporales
 *.zip

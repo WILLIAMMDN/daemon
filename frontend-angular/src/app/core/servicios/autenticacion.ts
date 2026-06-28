@@ -105,14 +105,6 @@ export class Autenticacion {
   }
 
   /**
-   * Consulta a Firebase que metodos de inicio de sesion estan asociados
-   * al correo (Google, email/password, ambos). Devuelve la lista.
-   */
-  metodosInicioSesion(email: string): Observable<string[]> {
-    return from(this.firebaseAuth.metodosInicioSesion(email));
-  }
-
-  /**
    * Verifica que el codigo de reseteo del enlace de Firebase sea valido
    * y devuelve el email asociado.
    */
@@ -147,7 +139,10 @@ export class Autenticacion {
   }
 
   private sincronizarClave(password: string): Observable<unknown> {
-    return this.api.post('/auth/me/sync-password', { password });
+    return this.api.post('/auth/me/sync-password', {
+      password,
+      password_confirmation: password,
+    });
   }
 
   cambiarClave(datos: { password_actual: string; password: string; password_confirmation: string }) {

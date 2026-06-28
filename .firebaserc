@@ -1,0 +1,15 @@
+{
+  "projects": {
+    "default": "daemon-a41f8"
+  },
+  "targets": {
+    "daemon-a41f8": {
+      "hosting": {
+        "estudiante": [
+          "daemonestudiante"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

@@ -1,0 +1,17 @@
+{
+  "hosting": {
+    "target": "estudiante",
+    "public": "frontend-angular/dist/frontend-angular/browser",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}

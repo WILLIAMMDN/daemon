@@ -2,10 +2,10 @@ import { Injectable } from '@angular/core';
 import { FirebaseApp, getApps, initializeApp } from 'firebase/app';
 import {
   Auth,
+  ActionCodeSettings,
   GoogleAuthProvider,
   confirmPasswordReset,
   createUserWithEmailAndPassword,
-  fetchSignInMethodsForEmail,
   getAuth,
   sendPasswordResetEmail,
   signInWithCredential,
@@ -62,18 +62,10 @@ export class FirebaseAuth {
   }
 
   async recuperarPassword(email: string): Promise<void> {
-    await sendPasswordResetEmail(this.requerirAuth(), email);
-  }
+    const auth = this.requerirAuth();
+    auth.languageCode = 'es';
 
-  /**
-   * Devuelve los metodos de inicio de sesion asociados al correo.
-   * Usado por el flujo de recuperacion para mostrar solo las opciones validas.
-   *
-   * Si el correo no existe en Firebase, Firebase devuelve un error.
-   * Por privacidad, el caller debe tratar el error como "puede o no existir".
-   */
-  async metodosInicioSesion(email: string): Promise<string[]> {
-    return await fetchSignInMethodsForEmail(this.requerirAuth(), email);
+    await sendPasswordResetEmail(auth, email, this.actionCodeSettings());
   }
 
   /**
@@ -116,5 +108,14 @@ export class FirebaseAuth {
     }
 
     return this.auth;
+  }
+
+  private actionCodeSettings(): ActionCodeSettings {
+    const origin = globalThis.location?.origin ?? 'http://localhost:4200';
+
+    return {
+      url: `${origin}/login`,
+      handleCodeInApp: false,
+    };
   }
 }
