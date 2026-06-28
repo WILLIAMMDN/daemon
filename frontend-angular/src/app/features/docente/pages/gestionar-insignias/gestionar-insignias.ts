@@ -17,6 +17,7 @@ export class GestionarInsignias {
   error = signal('');
   nueva = { nombre: '', descripcion: '', imagen: '' };
   asignacion = { id_alumno: null as number | null, id_insignia: null as number | null, asignar: true };
+  private archivoImagen: File | null = null;
 
   constructor(private docente: Docente) {
     this.cargar();
@@ -26,7 +27,6 @@ export class GestionarInsignias {
     this.cargando.set(true);
     this.error.set('');
 
-    // --- Carga segura de INSIGNIAS ---
     this.docente.insignias().subscribe({
       next: (respuesta: any) => {
         if (Array.isArray(respuesta)) {
@@ -38,16 +38,16 @@ export class GestionarInsignias {
         } else {
           this.insignias.set([]);
         }
+
         this.cargando.set(false);
       },
       error: (e) => {
         this.error.set(e.error?.message ?? 'No se pudieron cargar las insignias.');
-        this.insignias.set([]); // Previene error de iteración si falla
+        this.insignias.set([]);
         this.cargando.set(false);
       },
     });
 
-    // --- Carga segura de ALUMNOS (para el selector) ---
     this.docente.alumnos().subscribe({
       next: (respuesta: any) => {
         if (Array.isArray(respuesta)) {
@@ -60,20 +60,34 @@ export class GestionarInsignias {
           this.alumnos.set([]);
         }
       },
-      error: () => {
-        // En caso de error al traer alumnos, aseguramos que el Signal sea un array vacío
-        this.alumnos.set([]);
-      }
+      error: () => this.alumnos.set([]),
     });
+  }
+
+  seleccionarImagen(evento: Event): void {
+    const input = evento.target as HTMLInputElement;
+    this.archivoImagen = input.files?.[0] ?? null;
   }
 
   crear(): void {
     this.guardando.set(true);
     this.mensaje.set('');
     this.error.set('');
-    this.docente.crearInsignia(this.nueva).subscribe({
+
+    const datos = new FormData();
+    datos.append('nombre', this.nueva.nombre);
+    datos.append('descripcion', this.nueva.descripcion ?? '');
+
+    if (this.archivoImagen) {
+      datos.append('archivo', this.archivoImagen);
+    } else if (this.nueva.imagen.trim()) {
+      datos.append('imagen', this.nueva.imagen.trim());
+    }
+
+    this.docente.crearInsignia(datos).subscribe({
       next: () => {
         this.nueva = { nombre: '', descripcion: '', imagen: '' };
+        this.archivoImagen = null;
         this.mensaje.set('Insignia creada.');
         this.guardando.set(false);
         this.cargar();
@@ -83,6 +97,10 @@ export class GestionarInsignias {
         this.guardando.set(false);
       },
     });
+  }
+
+  puedeCrear(): boolean {
+    return Boolean(this.nueva.nombre.trim() && (this.archivoImagen || this.nueva.imagen.trim()));
   }
 
   asignar(): void {

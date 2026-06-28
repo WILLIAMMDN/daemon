@@ -7,6 +7,7 @@ use App\Http\Requests\Api\V1\Tienda\PremioStoreRequest;
 use App\Http\Requests\Api\V1\Tienda\PremioUpdateRequest;
 use App\Models\Canje;
 use App\Models\Premio;
+use App\Services\Archivo\ArchivoUrlService;
 use App\Services\Tienda\CanjeService;
 use App\Services\Tienda\PremioService;
 use Illuminate\Http\Request;
@@ -17,11 +18,19 @@ class TiendaController extends Controller
     public function __construct(
         private readonly CanjeService $canjesService,
         private readonly PremioService $premiosService,
+        private readonly ArchivoUrlService $archivos,
     ) {}
 
     public function index(Request $request)
     {
-        return ['saldo' => $request->user()->tokens, 'premios' => Premio::where('stock', '>', 0)->whereIn('categoria', ['GENERAL', $request->user()->nivel])->orderBy('precio')->get()];
+        return [
+            'saldo' => $request->user()->tokens,
+            'premios' => Premio::where('stock', '>', 0)
+                ->whereIn('categoria', ['GENERAL', $request->user()->nivel])
+                ->orderBy('precio')
+                ->get()
+                ->map(fn (Premio $premio) => $this->premioConUrls($premio)),
+        ];
     }
 
     public function canjear(Request $request, Premio $premio)
@@ -32,12 +41,16 @@ class TiendaController extends Controller
     public function canjes(Request $request)
     {
         return DB::table('canjes as c')->join('premios as p', 'p.id', '=', 'c.id_premio')->leftJoin('premios_stock_digital as psd', 'psd.id_canje', '=', 'c.id')
-            ->where('c.id_alumno', $request->user()->id)->select('c.*', 'p.nombre', 'p.descripcion', 'p.imagen', 'p.tipo_entrega', 'psd.dato_publico', 'psd.dato_privado')->orderByDesc('c.fecha')->get();
+            ->where('c.id_alumno', $request->user()->id)->select('c.*', 'p.nombre', 'p.descripcion', 'p.imagen', 'p.tipo_entrega', 'psd.dato_publico', 'psd.dato_privado')->orderByDesc('c.fecha')->get()
+            ->map(fn ($canje) => $this->conImagen($canje));
     }
 
     public function administrar()
     {
-        return ['premios' => Premio::orderByDesc('id')->get(), 'canjes' => DB::table('canjes as c')->join('usuarios as u', 'u.id', '=', 'c.id_alumno')->join('premios as p', 'p.id', '=', 'c.id_premio')->select('c.*', 'u.nombre_completo as alumno', 'p.nombre as premio')->orderByDesc('c.fecha')->get()];
+        return [
+            'premios' => Premio::orderByDesc('id')->get()->map(fn (Premio $premio) => $this->premioConUrls($premio)),
+            'canjes' => DB::table('canjes as c')->join('usuarios as u', 'u.id', '=', 'c.id_alumno')->join('premios as p', 'p.id', '=', 'c.id_premio')->select('c.*', 'u.nombre_completo as alumno', 'p.nombre as premio')->orderByDesc('c.fecha')->get(),
+        ];
     }
 
     public function store(PremioStoreRequest $request)
@@ -62,5 +75,20 @@ class TiendaController extends Controller
         $canje->update(['estado' => 'entregado']);
 
         return $canje;
+    }
+
+    private function premioConUrls(Premio $premio): array
+    {
+        return [
+            ...$premio->toArray(),
+            'imagen' => $this->archivos->url($premio->imagen),
+        ];
+    }
+
+    private function conImagen(object $registro): object
+    {
+        $registro->imagen = $this->archivos->url($registro->imagen);
+
+        return $registro;
     }
 }

@@ -3,9 +3,9 @@
 namespace App\Services\Auth;
 
 use App\Models\Usuario;
-use InvalidArgumentException;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use InvalidArgumentException;
 use Laravel\Socialite\Two\User as SocialiteUser;
 
 class AutenticacionService
@@ -28,6 +28,7 @@ class AutenticacionService
         return Usuario::create([
             'nombre_completo' => $datos['nombre_completo'],
             'email' => $datos['email'] ?? null,
+            'telefono' => $datos['telefono'] ?? null,
             'usuario' => $datos['usuario'],
             'password_hash' => Hash::make($datos['password']),
             'nivel' => $datos['nivel'] ?? 'TEENS',
@@ -88,6 +89,81 @@ class AutenticacionService
         return $usuario->fresh();
     }
 
+    public function autenticarConFirebase(array $claims, bool $crearCuenta = false): ?Usuario
+    {
+        $firebaseUid = (string) $claims['uid'];
+        $email = $claims['email'] ?? null;
+        $telefono = $claims['phone_number'] ?? null;
+        $googleId = $claims['google_id'] ?? null;
+
+        // Si el token trae email, exigimos que Firebase lo tenga verificado.
+        // El login solo por telefono no pasa por este chequeo porque no lleva email.
+        if ($email !== null && ! ($claims['email_verified'] ?? false)) {
+            throw new InvalidArgumentException('Firebase no confirmo el correo de la cuenta.');
+        }
+
+        $usuario = Usuario::where('firebase_uid', $firebaseUid)->first()
+            ?? ($email ? Usuario::where('email', $email)->first() : null)
+            ?? ($telefono ? Usuario::where('telefono', $telefono)->first() : null);
+
+        if ($usuario) {
+            $actualizacion = [
+                'firebase_uid' => $firebaseUid,
+            ];
+
+            if ($email && ! $usuario->email) {
+                $actualizacion['email'] = $email;
+            }
+
+            if ($telefono && ! $usuario->telefono) {
+                $actualizacion['telefono'] = $telefono;
+            }
+
+            if ($googleId && ! $usuario->google_id) {
+                $actualizacion['google_id'] = $googleId;
+            }
+
+            if (($claims['picture'] ?? null) && ! $usuario->avatar) {
+                $actualizacion['avatar'] = $claims['picture'];
+            }
+
+            $usuario->update($actualizacion);
+
+            if (! $crearCuenta && ! $usuario->perfil_completo) {
+                $usuario->tokens()->delete();
+
+                return null;
+            }
+
+            $usuario->tokens()->delete();
+
+            return $usuario->fresh();
+        }
+
+        if (! $crearCuenta) {
+            return null;
+        }
+
+        $usuario = Usuario::create([
+            'nombre_completo' => $claims['name'] ?? $email ?? $telefono ?? 'Usuario Firebase',
+            'email' => $email,
+            'telefono' => $telefono,
+            'usuario' => $this->generarUsuarioFirebase($claims),
+            'password_hash' => Hash::make(Str::random(40)),
+            'nivel' => 'TEENS',
+            'perfil_completo' => false,
+            'rol' => 'alumno',
+            'tokens' => 100,
+            'avatar' => $claims['picture'] ?? null,
+            'google_id' => $googleId,
+            'firebase_uid' => $firebaseUid,
+        ]);
+
+        $usuario->tokens()->delete();
+
+        return $usuario->fresh();
+    }
+
     public function crearUsuarioInterno(array $datos): Usuario
     {
         $rol = $datos['rol'];
@@ -95,6 +171,7 @@ class AutenticacionService
         return Usuario::create([
             'nombre_completo' => $datos['nombre_completo'],
             'email' => $datos['email'] ?? null,
+            'telefono' => $datos['telefono'] ?? null,
             'usuario' => $datos['usuario'],
             'password_hash' => Hash::make($datos['password']),
             'nivel' => $rol === 'docente' ? 'DOCENTE' : ($datos['nivel'] ?? 'TEENS'),
@@ -117,6 +194,16 @@ class AutenticacionService
         return true;
     }
 
+    /**
+     * Sincroniza la clave de DAEMON con la clave que el usuario acaba de
+     * setear en Firebase. Pensado para usarse despues de un password reset
+     * donde el usuario ya esta autenticado por Sanctum.
+     */
+    public function sincronizarClave(Usuario $usuario, string $passwordNueva): void
+    {
+        $usuario->update(['password_hash' => Hash::make($passwordNueva)]);
+    }
+
     public function completarPerfilGoogle(Usuario $usuario, array $datos): Usuario
     {
         $usuario->update([
@@ -136,7 +223,19 @@ class AutenticacionService
 
     private function generarUsuarioGoogle(string $email): string
     {
-        $base = Str::of(Str::before($email, '@'))
+        return $this->generarUsuarioUnico(Str::before($email, '@'), 'google');
+    }
+
+    private function generarUsuarioFirebase(array $claims): string
+    {
+        $base = $claims['email'] ?? $claims['phone_number'] ?? $claims['uid'] ?? 'firebase';
+
+        return $this->generarUsuarioUnico((string) $base, 'firebase');
+    }
+
+    private function generarUsuarioUnico(string $valor, string $fallback): string
+    {
+        $base = Str::of(Str::before($valor, '@'))
             ->ascii()
             ->lower()
             ->replaceMatches('/[^a-z0-9_-]+/', '')
@@ -144,7 +243,7 @@ class AutenticacionService
             ->limit(40, '')
             ->toString();
 
-        $base = $base !== '' ? $base : 'google';
+        $base = $base !== '' ? $base : $fallback;
         $usuario = $base;
 
         while (Usuario::where('usuario', $usuario)->exists()) {

@@ -3,11 +3,14 @@
 namespace App\Services\Alumno;
 
 use App\Models\Usuario;
+use App\Services\Archivo\ArchivoUrlService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class AlumnoService
 {
+    public function __construct(private readonly ArchivoUrlService $archivos) {}
+
     public function panel(Usuario $usuario): array
     {
         $posicion = Usuario::where('nivel', $usuario->nivel)
@@ -32,13 +35,23 @@ class AlumnoService
                 ->join('insignias as i', 'i.id', '=', 'io.id_insignia')
                 ->where('io.id_alumno', $usuario->id)
                 ->select('i.*', 'io.fecha')
-                ->get(),
+                ->get()
+                ->map(function ($insignia) {
+                    $insignia->imagen = $this->archivos->url($insignia->imagen);
+
+                    return $insignia;
+                }),
             'mochila' => DB::table('canjes as c')
                 ->join('premios as p', 'p.id', '=', 'c.id_premio')
                 ->where('c.id_alumno', $usuario->id)
                 ->where('c.estado', 'entregado')
                 ->select('p.*', 'c.fecha')
-                ->get(),
+                ->get()
+                ->map(function ($premio) {
+                    $premio->imagen = $this->archivos->url($premio->imagen);
+
+                    return $premio;
+                }),
         ];
     }
 

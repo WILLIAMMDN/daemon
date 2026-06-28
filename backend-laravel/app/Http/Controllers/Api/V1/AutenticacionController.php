@@ -6,18 +6,27 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Auth\CambiarClaveRequest;
 use App\Http\Requests\Api\V1\Auth\CompletarPerfilGoogleRequest;
 use App\Http\Requests\Api\V1\Auth\CrearUsuarioRequest;
+use App\Http\Requests\Api\V1\Auth\FirebaseLoginRequest;
 use App\Http\Requests\Api\V1\Auth\LoginRequest;
 use App\Http\Requests\Api\V1\Auth\RecuperarClaveRequest;
 use App\Http\Requests\Api\V1\Auth\RegistroAlumnoRequest;
+use App\Http\Requests\Api\V1\Auth\SyncPasswordRequest;
 use App\Http\Resources\Api\V1\UsuarioResource;
 use App\Services\Auth\AutenticacionService;
+use App\Services\Auth\FirebaseTokenVerifier;
 use Illuminate\Http\Request;
+use InvalidArgumentException;
 use Laravel\Socialite\Facades\Socialite;
+use RuntimeException;
 use Throwable;
+use UnexpectedValueException;
 
 class AutenticacionController extends Controller
 {
-    public function __construct(private readonly AutenticacionService $autenticacion) {}
+    public function __construct(
+        private readonly AutenticacionService $autenticacion,
+        private readonly FirebaseTokenVerifier $firebase,
+    ) {}
 
     public function login(LoginRequest $request)
     {
@@ -78,6 +87,33 @@ class AutenticacionController extends Controller
         }
     }
 
+    public function firebase(FirebaseLoginRequest $request)
+    {
+        $datos = $request->validated();
+
+        try {
+            $claims = $this->firebase->verify($datos['id_token']);
+            $usuario = $this->autenticacion->autenticarConFirebase($claims, (bool) ($datos['crear_cuenta'] ?? false));
+
+            if (! $usuario) {
+                return response()->json([
+                    'message' => 'No encontramos una cuenta DAEMON activa para este acceso. Para crearla o terminar el registro, usa la opcion de registro.',
+                    'requires_registration' => true,
+                ], 404);
+            }
+
+            return $this->respuestaAutenticada($usuario);
+        } catch (InvalidArgumentException|RuntimeException|UnexpectedValueException $exception) {
+            report($exception);
+
+            return response()->json(['message' => $exception->getMessage()], 422);
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return response()->json(['message' => 'No se pudo validar la cuenta de Firebase.'], 422);
+        }
+    }
+
     public function cambiarClave(CambiarClaveRequest $request)
     {
         $datos = $request->validated();
@@ -88,6 +124,18 @@ class AutenticacionController extends Controller
         }
 
         return ['message' => 'Contrasena actualizada.'];
+    }
+
+    /**
+     * Sincroniza la clave local con la que el usuario acaba de setear en
+     * Firebase tras un password reset. Requiere Sanctum (el usuario ya
+     * paso por /auth/firebase con su nuevo token).
+     */
+    public function sincronizarClave(SyncPasswordRequest $request)
+    {
+        $this->autenticacion->sincronizarClave($request->user(), $request->validated()['password']);
+
+        return ['message' => 'Contrasena sincronizada con DAEMON.'];
     }
 
     public function crearUsuario(CrearUsuarioRequest $request)
@@ -102,6 +150,14 @@ class AutenticacionController extends Controller
         $usuario = $this->autenticacion->completarPerfilGoogle($request->user(), $request->validated());
 
         return response()->json(['usuario' => UsuarioResource::make($usuario)]);
+    }
+
+    public function completarPerfilFirebase(CompletarPerfilGoogleRequest $request)
+    {
+        // Reusamos el handler de Google porque ambos flujos (Google y Firebase)
+        // terminan con un usuario ya autenticado en DAEMON y pendiente de
+        // completar nombre, usuario y nivel. Las reglas de validacion son las mismas.
+        return $this->completarPerfilGoogle($request);
     }
 
     public function yo(Request $request)

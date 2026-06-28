@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Chatbot\EnviarMensajeRequest;
 use App\Http\Requests\Api\V1\Chatbot\GuardarBotRequest;
 use App\Http\Requests\Api\V1\Chatbot\GuardarCerebroRequest;
+use App\Services\Archivo\ArchivoService;
 use App\Services\Chatbot\ChatbotService;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
@@ -14,7 +15,10 @@ use RuntimeException;
 
 class ChatbotController extends Controller
 {
-    public function __construct(private readonly ChatbotService $chatbot) {}
+    public function __construct(
+        private readonly ChatbotService $chatbot,
+        private readonly ArchivoService $archivos,
+    ) {}
 
     public function bot(Request $request)
     {
@@ -25,7 +29,7 @@ class ChatbotController extends Controller
     {
         $datos = $request->validated();
         if ($request->hasFile('avatar')) {
-            $datos['avatar'] = $request->file('avatar')->store("bots/{$request->user()->id}", 'public');
+            $datos['avatar'] = $this->archivos->guardarRuta($request->user(), $request->file('avatar'), $this->archivos->directorioBot($request->user()));
         }
 
         return $this->chatbot->guardarBot($request->user(), $datos);

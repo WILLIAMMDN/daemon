@@ -1,6 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { environment } from '../../../../../environments/environment';
+import { Activos } from '../../../../core/servicios/activos';
 import { Sesion } from '../../../../core/servicios/sesion';
 import { Alumno } from '../../services/alumno';
 
@@ -33,12 +33,12 @@ export class PerfilAlumno {
   cargando = signal(true);
   error = signal('');
   perfilPropio = signal(true);
-  private readonly assetBaseUrl = environment.apiUrl.replace(/\/api\/v1\/?$/, '');
 
   constructor(
     private alumno: Alumno,
     private route: ActivatedRoute,
     private sesion: Sesion,
+    private activos: Activos,
   ) {
     this.route.paramMap.subscribe(() => this.cargar());
   }
@@ -61,14 +61,7 @@ export class PerfilAlumno {
   }
 
   asset(ruta?: string | null): string {
-    const limpia = ruta?.trim();
-    if (!limpia) return '';
-    if (/^(https?:|data:)/i.test(limpia)) return limpia;
-
-    const path = limpia.startsWith('/') ? limpia : `/${limpia}`;
-    if (/^\/?(uploads|img|legacy)\//i.test(limpia)) return path;
-
-    return `${this.assetBaseUrl}${path}`;
+    return this.activos.url(ruta);
   }
 
   private usuarioIdActual(): number | null {

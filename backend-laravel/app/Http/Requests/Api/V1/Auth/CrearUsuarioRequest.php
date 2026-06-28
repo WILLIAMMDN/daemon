@@ -16,6 +16,7 @@ class CrearUsuarioRequest extends FormRequest
         return [
             'nombre_completo' => ['required', 'string', 'max:100'],
             'email' => ['nullable', 'email', 'max:100'],
+            'telefono' => ['nullable', 'string', 'max:30', 'unique:usuarios,telefono'],
             'usuario' => ['required', 'alpha_dash', 'max:50', 'unique:usuarios,usuario'],
             'password' => ['required', 'string', 'min:8'],
             'nivel' => ['nullable', 'in:KIDS,TEENS,PRO,DOCENTE'],

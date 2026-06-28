@@ -7,11 +7,15 @@ use App\Http\Requests\Api\V1\Alumno\ActualizarPerfilRequest;
 use App\Http\Resources\Api\V1\UsuarioResource;
 use App\Models\Usuario;
 use App\Services\Alumno\AlumnoService;
+use App\Services\Archivo\ArchivoService;
 use Illuminate\Http\Request;
 
 class AlumnoController extends Controller
 {
-    public function __construct(private readonly AlumnoService $alumnos) {}
+    public function __construct(
+        private readonly AlumnoService $alumnos,
+        private readonly ArchivoService $archivos,
+    ) {}
 
     public function panel(Request $request)
     {
@@ -36,7 +40,7 @@ class AlumnoController extends Controller
 
         foreach (['avatar', 'fondo', 'heroe'] as $campo) {
             if ($request->hasFile($campo)) {
-                $datos[$campo] = $request->file($campo)->store("usuarios/{$usuario->id}", 'public');
+                $datos[$campo] = $this->archivos->guardarRuta($usuario, $request->file($campo), $this->archivos->directorioPerfil($usuario, $campo));
             }
         }
 

@@ -16,7 +16,8 @@ class InsigniaStoreRequest extends FormRequest
         return [
             'nombre' => ['required', 'string', 'max:100'],
             'descripcion' => ['nullable', 'string'],
-            'imagen' => ['required', 'string', 'max:255'],
+            'imagen' => ['nullable', 'required_without:archivo', 'string', 'max:255'],
+            'archivo' => ['nullable', 'required_without:imagen', 'image', 'max:4096'],
         ];
     }
 }

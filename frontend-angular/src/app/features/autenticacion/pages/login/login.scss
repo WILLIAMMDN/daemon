@@ -327,6 +327,62 @@
   margin-top: 1.1rem;
 }
 
+.firebase-google-button {
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #dadce0;
+  border-radius: 8px;
+  color: #1f1f1f;
+  cursor: pointer;
+  display: inline-flex;
+  font-family: 'Google Sans', 'Roboto', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 500;
+  gap: 0.75rem;
+  justify-content: center;
+  letter-spacing: 0.0107em;
+  min-height: 44px;
+  min-width: 240px;
+  padding: 0.6rem 1.2rem;
+  transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+  width: 100%;
+}
+
+.firebase-google-button:hover:not(:disabled) {
+  background: #f8f9fa;
+  border-color: #d2e3fc;
+  box-shadow: 0 1px 2px rgba(60, 64, 67, 0.15), 0 1px 3px 1px rgba(60, 64, 67, 0.08);
+  transform: translateY(-1px);
+}
+
+.firebase-google-button:focus-visible {
+  border-color: #1a73e8;
+  box-shadow: 0 0 0 1px #1a73e8;
+  outline: 0;
+}
+
+.firebase-google-button:active:not(:disabled) {
+  background: #f1f3f4;
+  transform: translateY(0);
+}
+
+.firebase-google-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+  transform: none;
+}
+
+.google-logo {
+  display: block;
+  flex-shrink: 0;
+  height: 18px;
+  width: 18px;
+}
+
+.firebase-google-button__text {
+  font-weight: 500;
+}
+
 .divider {
   align-items: center;
   color: #7a8492;

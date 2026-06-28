@@ -1,5 +1,13 @@
 export const environment = {
   production: true,
   apiUrl: '/api/v1',
-  googleClientId: '1063065415577-fu6sgnvfod5v6c29qcg058upk6kitn4o.apps.googleusercontent.com',
+  assetBaseUrl: '',
+  firebase: {
+    apiKey: 'AIzaSyCarHu8PP3LR7mcNHLk_FTN2rhfnUf4FD4',
+    authDomain: 'daemon-a41f8.firebaseapp.com',
+    projectId: 'daemon-a41f8',
+    storageBucket: 'daemon-a41f8.firebasestorage.app',
+    messagingSenderId: '516236234992',
+    appId: '1:516236234992:web:7811801e0441ee2d46f235',
+  },
 };

@@ -7,11 +7,14 @@ use App\Models\CompetenciaLive;
 use App\Models\HistorialRonda;
 use App\Models\Usuario;
 use App\Models\VotoLive;
+use App\Services\Archivo\ArchivoUrlService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class CompetenciaService
 {
+    public function __construct(private readonly ArchivoUrlService $archivos) {}
+
     public function ronda(): CompetenciaLive
     {
         return CompetenciaLive::firstOrCreate(['id' => 1], ['estado' => 'espera', 'duracion' => 60]);
@@ -25,6 +28,9 @@ class CompetenciaService
         $miVoto = $candidato
             ? VotoLive::where('id_alumno_juez', $usuario->id)->where('id_alumno_candidato', $candidato->id)->first()
             : null;
+        if ($candidato) {
+            $candidato->avatar = $this->archivos->url($candidato->avatar);
+        }
 
         return [
             'ronda' => $ronda,

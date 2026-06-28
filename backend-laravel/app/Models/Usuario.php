@@ -17,6 +17,7 @@ class Usuario extends Authenticatable
     protected $fillable = [
         'nombre_completo',
         'email',
+        'telefono',
         'usuario',
         'password_hash',
         'nivel',
@@ -27,6 +28,7 @@ class Usuario extends Authenticatable
         'tokens',
         'avatar',
         'google_id',
+        'firebase_uid',
         'perfil_completo',
         'rol',
         'insignia',

@@ -1,5 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { Activos } from '../../../../core/servicios/activos';
 import { Tienda } from '../../services/tienda';
 
 @Component({
@@ -16,7 +17,7 @@ export class TiendaAlumno {
   mensaje = signal('');
   error = signal('');
 
-  constructor(private tienda: Tienda) {
+  constructor(private tienda: Tienda, private activos: Activos) {
     this.cargar();
   }
 
@@ -55,7 +56,6 @@ export class TiendaAlumno {
   }
 
   asset(ruta?: string | null): string {
-    if (!ruta) return '';
-    return /^https?:\/\//i.test(ruta) || ruta.startsWith('/') ? ruta : `/${ruta}`;
+    return this.activos.url(ruta);
   }
 }

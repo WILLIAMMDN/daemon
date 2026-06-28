@@ -9,6 +9,7 @@ import { Login } from './features/autenticacion/pages/login/login';
 import { LoginDocente } from './features/autenticacion/pages/login-docente/login-docente';
 import { Registro } from './features/autenticacion/pages/registro/registro';
 import { RecuperarClave } from './features/autenticacion/pages/recuperar-clave/recuperar-clave';
+import { RestablecerClave } from './features/autenticacion/pages/restablecer-clave/restablecer-clave';
 import { PanelAlumno } from './features/alumno/pages/panel-alumno/panel-alumno';
 import { PerfilAlumno } from './features/alumno/pages/perfil-alumno/perfil-alumno';
 import { EditarPerfil } from './features/alumno/pages/editar-perfil/editar-perfil';
@@ -56,6 +57,7 @@ export const routes: Routes = [
   { path: 'login-docente', component: LoginDocente },
   { path: 'registro', component: Registro },
   { path: 'recuperar-clave', component: RecuperarClave },
+  { path: 'restablecer-clave', component: RestablecerClave },
   {
     path: 'alumno', component: LayoutAlumno, canActivate: [authGuard, alumnoGuard], children: [
       { path: '', component: PanelAlumno, data: { titulo: 'Mi panel', descripcion: 'Resumen de progreso, tokens, insignias y actividad.', endpoint: '/alumno/panel' } },

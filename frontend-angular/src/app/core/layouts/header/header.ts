@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { Activos } from '../../servicios/activos';
 
 @Component({
   selector: 'app-header',
@@ -7,4 +8,6 @@ import { RouterLink } from '@angular/router';
   templateUrl: './header.html',
   styleUrl: './header.scss',
 })
-export class Header {}
+export class Header {
+  constructor(public activos: Activos) {}
+}

@@ -1,8 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild, signal } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, NgZone, OnDestroy, ViewChild, signal } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { GoogleSigninButtonModule, SocialAuthService } from '@abacritt/angularx-social-login';
 import type { Rive, StateMachineInput } from '@rive-app/webgl2';
 import { Autenticacion } from '../../../../core/servicios/autenticacion';
 import { Sesion } from '../../../../core/servicios/sesion';
@@ -19,11 +18,11 @@ type TeddyInputs = {
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, GoogleSigninButtonModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './login.html',
   styleUrls: ['./login.scss'],
 })
-export class Login implements OnInit, AfterViewInit, OnDestroy {
+export class Login implements AfterViewInit, OnDestroy {
   @ViewChild('riveCanvas') private riveCanvas?: ElementRef<HTMLCanvasElement>;
 
   private readonly maquinaLogin = 'Login Machine';
@@ -44,46 +43,8 @@ export class Login implements OnInit, AfterViewInit, OnDestroy {
     private auth: Autenticacion,
     public sesion: Sesion,
     private router: Router,
-    private socialAuthService: SocialAuthService,
     private zone: NgZone,
   ) {}
-
-  ngOnInit(): void {
-    this.socialAuthService.authState.subscribe((googleUser) => {
-      if (!googleUser) {
-        return;
-      }
-
-      this.enviando.set(true);
-      this.error.set('');
-
-      this.auth.loginGoogle(googleUser.idToken).subscribe({
-        next: () => {
-          if (this.sesion.esDocente()) {
-            this.error.set('Este acceso es solo para estudiantes. Usa el login docente si eres profesor.');
-            this.sesion.limpiar();
-            this.enviando.set(false);
-            this.dispararFallo();
-            return;
-          }
-
-          this.dispararExito();
-          setTimeout(() => this.router.navigateByUrl('/alumno'), 420);
-        },
-        error: (err) => {
-          if (err.error?.requires_registration) {
-            this.auth.cerrarSesionGoogle();
-          }
-
-          this.error.set(err.error?.requires_registration
-            ? 'Ese Google todavia no tiene una cuenta activa. Termina el registro desde Crear cuenta.'
-            : (err.error?.message ?? 'No se pudo iniciar sesion con Google en el servidor.'));
-          this.enviando.set(false);
-          this.dispararFallo();
-        },
-      });
-    });
-  }
 
   ngAfterViewInit(): void {
     this.cargarRive();
@@ -129,7 +90,11 @@ export class Login implements OnInit, AfterViewInit, OnDestroy {
     this.enviando.set(true);
     this.error.set('');
 
-    this.auth.login({ usuario: this.usuario, password: this.password }).subscribe({
+    const acceso = this.usuario.includes('@')
+      ? this.auth.loginEmailFirebase(this.usuario.trim(), this.password)
+      : this.auth.login({ usuario: this.usuario, password: this.password });
+
+    acceso.subscribe({
       next: () => {
         if (this.sesion.esDocente()) {
           this.error.set('Este acceso es solo para estudiantes. Usa el login docente si eres profesor.');
@@ -144,6 +109,37 @@ export class Login implements OnInit, AfterViewInit, OnDestroy {
       },
       error: (error) => {
         this.error.set(error.error?.message ?? 'Credenciales incorrectas.');
+        this.enviando.set(false);
+        this.dispararFallo();
+      },
+    });
+  }
+
+  continuarConGoogle(): void {
+    this.enviando.set(true);
+    this.error.set('');
+
+    this.auth.loginGoogleFirebase().subscribe({
+      next: () => {
+        if (this.sesion.esDocente()) {
+          this.error.set('Este acceso es solo para estudiantes. Usa el login docente si eres profesor.');
+          this.sesion.limpiar();
+          this.enviando.set(false);
+          this.dispararFallo();
+          return;
+        }
+
+        this.dispararExito();
+        setTimeout(() => this.router.navigateByUrl('/alumno'), 420);
+      },
+      error: (err) => {
+        if (err.error?.requires_registration) {
+          this.auth.cerrarSesionGoogle();
+        }
+
+        this.error.set(err.error?.requires_registration
+          ? 'Ese Google todavia no tiene una cuenta activa. Termina el registro desde Crear cuenta.'
+          : (err.error?.message ?? err.message ?? 'No se pudo iniciar sesion con Google.'));
         this.enviando.set(false);
         this.dispararFallo();
       },

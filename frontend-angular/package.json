@@ -11,7 +11,6 @@
   "private": true,
   "packageManager": "npm@11.12.1",
   "dependencies": {
-    "@abacritt/angularx-social-login": "^2.4.0",
     "@angular/cdk": "21.0.0",
     "@angular/common": "^21.2.0",
     "@angular/compiler": "^21.2.0",
@@ -26,6 +25,7 @@
     "@spartan-ng/cli": "^0.0.1-alpha.719",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "firebase": "^12.15.0",
     "rxjs": "~7.8.0",
     "tailwind-merge": "^3.5.0",
     "tslib": "^2.3.0"

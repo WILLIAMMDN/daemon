@@ -4,11 +4,14 @@ namespace App\Services\Docente;
 
 use App\Models\Insignia;
 use App\Models\Usuario;
+use App\Services\Archivo\ArchivoUrlService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class DocenteService
 {
+    public function __construct(private readonly ArchivoUrlService $archivos) {}
+
     public function panel(): array
     {
         return [
@@ -54,9 +57,9 @@ class DocenteService
     public function historialTokens(): Collection
     {
         return DB::table('historial_movimientos as h')
-            ->join('usuarios as d', 'd.id', '=', 'h.id_docente')
-            ->join('usuarios as a', 'a.id', '=', 'h.id_alumno')
-            ->select('h.*', 'd.nombre_completo as docente', 'a.nombre_completo as alumno')
+            ->leftJoin('usuarios as d', 'd.id', '=', 'h.id_docente')
+            ->leftJoin('usuarios as a', 'a.id', '=', 'h.id_alumno')
+            ->select('h.*', DB::raw("coalesce(d.nombre_completo, 'Sistema o docente eliminado') as docente"), DB::raw("coalesce(a.nombre_completo, 'Alumno eliminado') as alumno"))
             ->orderByDesc('h.fecha')
             ->limit(500)
             ->get();
@@ -64,7 +67,9 @@ class DocenteService
 
     public function insignias(): Collection
     {
-        return Insignia::orderByDesc('id')->get();
+        return Insignia::orderByDesc('id')
+            ->get()
+            ->map(fn (Insignia $insignia) => $this->insigniaConUrl($insignia));
     }
 
     public function crearInsignia(array $datos): Insignia
@@ -101,5 +106,12 @@ class DocenteService
         }
 
         DB::table('insignias_otorgadas')->where($clave)->delete();
+    }
+
+    public function insigniaConUrl(Insignia $insignia): Insignia
+    {
+        $insignia->imagen = $this->archivos->url($insignia->imagen);
+
+        return $insignia;
     }
 }

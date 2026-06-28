@@ -5,20 +5,24 @@ namespace App\Services\Chatbot;
 use App\Models\BotAlumno;
 use App\Models\ChatMensaje;
 use App\Models\Usuario;
+use App\Services\Archivo\ArchivoUrlService;
 use Illuminate\Support\Collection;
 
 class ChatbotService
 {
-    public function __construct(private readonly OllamaService $ollama) {}
+    public function __construct(
+        private readonly OllamaService $ollama,
+        private readonly ArchivoUrlService $archivos,
+    ) {}
 
     public function bot(Usuario $alumno): ?BotAlumno
     {
-        return BotAlumno::where('id_alumno', $alumno->id)->first();
+        return $this->botConUrls(BotAlumno::where('id_alumno', $alumno->id)->first());
     }
 
     public function guardarBot(Usuario $alumno, array $datos): BotAlumno
     {
-        return BotAlumno::updateOrCreate(['id_alumno' => $alumno->id], $datos);
+        return $this->botConUrls(BotAlumno::updateOrCreate(['id_alumno' => $alumno->id], $datos));
     }
 
     public function mensajes(Usuario $alumno): Collection
@@ -65,6 +69,15 @@ class ChatbotService
             'nivel_entrenamiento' => ((int) $bot->nivel_entrenamiento) + 1,
         ]);
 
-        return $bot->fresh();
+        return $this->botConUrls($bot->fresh());
+    }
+
+    private function botConUrls(?BotAlumno $bot): ?BotAlumno
+    {
+        if ($bot) {
+            $bot->avatar = $this->archivos->url($bot->avatar);
+        }
+
+        return $bot;
     }
 }

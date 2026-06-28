@@ -19,6 +19,7 @@ Route::prefix('v1')->group(function (): void {
     Route::post('/auth/login', [AutenticacionController::class, 'login'])->middleware('throttle:10,1');
     Route::post('/auth/registro', [AutenticacionController::class, 'registro'])->middleware('throttle:5,1');
     Route::post('/auth/recuperar', [AutenticacionController::class, 'recuperar'])->middleware('throttle:5,1');
+    Route::post('/auth/firebase', [AutenticacionController::class, 'firebase'])->middleware('throttle:10,1');
     Route::post('/auth/google', [AutenticacionController::class, 'google'])->middleware('throttle:10,1');
     Route::post('/login-google', [AutenticacionController::class, 'google'])->middleware('throttle:10,1');
     Route::get('/ranking', [RankingController::class, 'index']);
@@ -29,6 +30,8 @@ Route::prefix('v1')->group(function (): void {
         Route::get('/auth/yo', [AutenticacionController::class, 'yo']);
         Route::post('/auth/logout', [AutenticacionController::class, 'logout']);
         Route::post('/auth/cambiar-clave', [AutenticacionController::class, 'cambiarClave'])->middleware('throttle:5,1');
+        Route::post('/auth/me/sync-password', [AutenticacionController::class, 'sincronizarClave'])->middleware('throttle:5,1');
+        Route::post('/auth/firebase/perfil', [AutenticacionController::class, 'completarPerfilFirebase'])->middleware('throttle:10,1');
         Route::post('/auth/google/perfil', [AutenticacionController::class, 'completarPerfilGoogle'])->middleware('throttle:10,1');
         Route::post('/auth/usuarios', [AutenticacionController::class, 'crearUsuario'])->middleware('role:admin');
 

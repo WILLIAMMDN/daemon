@@ -1,0 +1,112 @@
+<main class="recovery-page min-h-screen px-4 py-8 sm:px-6">
+  <a routerLink="/" class="home-link" aria-label="Volver al inicio">
+    <span aria-hidden="true">&larr;</span>
+    <span>Inicio</span>
+  </a>
+
+  <section class="recovery-stage">
+    <header class="login-brand" aria-label="DAEMON">
+      <span class="brand-symbol" aria-hidden="true"></span>
+      <span class="brand-name">DAEMON</span>
+    </header>
+
+    <article class="recovery-card">
+      <div class="card-accent" aria-hidden="true"></div>
+
+      <section class="recovery-visual" aria-label="Animacion de recuperacion de acceso">
+        <div class="visual-copy">
+          <p class="eyebrow">Nueva clave</p>
+          <h2>Restablece tu acceso</h2>
+          <p>Crea una clave nueva para tu cuenta de DAEMON. La sincronizamos automaticamente con Firebase.</p>
+        </div>
+
+        <div class="spline-frame" aria-hidden="true">
+          <spline-viewer url="https://prod.spline.design/nMNnp2Qj0GPfUDUz/scene.splinecode"></spline-viewer>
+        </div>
+      </section>
+
+      <section class="recovery-form-panel">
+        <div class="panel-heading">
+          <p class="eyebrow">Seguridad</p>
+          <h1>Restablecer clave</h1>
+        </div>
+
+        @switch (estado().tipo) {
+          @case ('cargando') {
+            <div class="form-alert" role="status">
+              Verificando tu enlace de recuperacion...
+            </div>
+          }
+
+          @case ('formulario') {
+            <p class="form-hint">
+              Restableciendo la clave para
+              <strong>{{ emailDetectado }}</strong>
+            </p>
+
+            <form [formGroup]="formulario" (ngSubmit)="restablecer()" class="recovery-form" novalidate>
+              <label class="classic-field" for="password">
+                <span class="field-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" focusable="false">
+                    <path d="M17 9h-1V7a4 4 0 0 0-8 0v2H7a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2Zm-7-2a2 2 0 0 1 4 0v2h-4Zm3 9.73V18h-2v-1.27a2 2 0 1 1 2 0Z" />
+                  </svg>
+                </span>
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  formControlName="password"
+                  autocomplete="new-password"
+                  placeholder="Nueva contrasena"
+                >
+              </label>
+
+              <label class="classic-field" for="password_confirmation">
+                <span class="field-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" focusable="false">
+                    <path d="M17 9h-1V7a4 4 0 0 0-8 0v2H7a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2Zm-7-2a2 2 0 0 1 4 0v2h-4Zm3 9.73V18h-2v-1.27a2 2 0 1 1 2 0Z" />
+                  </svg>
+                </span>
+                <input
+                  type="password"
+                  id="password_confirmation"
+                  name="password_confirmation"
+                  formControlName="password_confirmation"
+                  autocomplete="new-password"
+                  placeholder="Confirma la nueva contrasena"
+                >
+              </label>
+
+              @if (formulario.errors?.['noCoincide']) {
+                <p class="field-error">Las contrasenas no coinciden.</p>
+              }
+
+              <button type="submit" [disabled]="enviando() || formulario.invalid" class="submit-button">
+                {{ enviando() ? 'Restableciendo...' : 'Restablecer clave' }}
+              </button>
+            </form>
+          }
+
+          @case ('exito') {
+            <div class="form-alert success" role="status">
+              Tu clave fue actualizada. Te llevamos a tu portal en un momento.
+            </div>
+          }
+
+          @case ('error') {
+            <div class="form-alert" role="alert">
+              {{ mensajeError }}
+            </div>
+            <a routerLink="/recuperar-clave" class="submit-button" style="text-align:center; text-decoration:none;">
+              Solicitar un nuevo enlace
+            </a>
+          }
+        }
+
+        <footer class="login-footer">
+          <p><a routerLink="/login">Volver al login</a></p>
+        </footer>
+      </section>
+    </article>
+  </section>
+</main>

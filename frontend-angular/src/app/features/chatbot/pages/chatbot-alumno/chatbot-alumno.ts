@@ -1,7 +1,7 @@
 import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { environment } from '../../../../../environments/environment';
+import { Activos } from '../../../../core/servicios/activos';
 import { Api } from '../../../../core/servicios/api';
 
 interface BotAlumno {
@@ -28,9 +28,8 @@ export class ChatbotAlumno {
   texto = '';
   enviando = signal(false);
   error = signal('');
-  private readonly assetBaseUrl = environment.apiUrl.replace(/\/api\/v1\/?$/, '');
 
-  constructor(private api: Api) {
+  constructor(private api: Api, private activos: Activos) {
     this.cargar();
   }
 
@@ -69,15 +68,6 @@ export class ChatbotAlumno {
   }
 
   asset(ruta?: string | null): string {
-    const limpia = ruta?.trim();
-    if (!limpia) return '';
-    if (/^(https?:|data:)/i.test(limpia)) return limpia;
-    if (limpia === 'img/bot_default.png') return '/img/bot_default.svg';
-
-    const path = limpia.startsWith('/') ? limpia : `/${limpia}`;
-    if (/^\/?(uploads|img|legacy)\//i.test(limpia)) return path;
-    if (/^\/?storage\//i.test(limpia)) return `${this.assetBaseUrl}${path}`;
-
-    return `${this.assetBaseUrl}/storage${path}`;
+    return this.activos.url(ruta);
   }
 }

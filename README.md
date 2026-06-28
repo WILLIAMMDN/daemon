@@ -29,7 +29,7 @@ DAEMON es una plataforma academica para gestionar una academia con estudiantes, 
 - Angular 21
 - Laravel 12
 - PHP 8.2+
-- MariaDB/MySQL
+- PostgreSQL en Supabase o MariaDB/MySQL local
 - Laravel Sanctum
 - Ollama con `gemma2:9b`
 
@@ -46,7 +46,7 @@ docs/                         Documentacion del proyecto
 
 ## Requisitos
 
-- PHP 8.2 o superior con `pdo_mysql`, `mbstring`, `openssl` y `fileinfo`
+- PHP 8.2 o superior con `pdo_pgsql`, `pgsql`, `pdo_mysql`, `mbstring`, `openssl`, `intl` y `fileinfo`
 - Composer 2
 - Node.js 22 y npm 11
 - MariaDB o MySQL
@@ -75,20 +75,20 @@ En `backend-laravel/.env`, revisa estos valores:
 ```env
 APP_NAME=DAEMON
 APP_URL=http://localhost:8000
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=yachayia_rural
-DB_USERNAME=root
-DB_PASSWORD=
+DB_CONNECTION=pgsql
+DB_HOST=aws-1-sa-east-1.pooler.supabase.com
+DB_PORT=5432
+DB_DATABASE=postgres
+DB_USERNAME=postgres.lbxdcvsrmkkynttgwblc
+DB_PASSWORD=tu_password_de_supabase
+DB_SSLMODE=require
 FRONTEND_URL=http://localhost:4200
 ```
 
-Crea la base de datos vacia `yachayia_rural` en MySQL/MariaDB y ejecuta:
+Ejecuta migraciones sobre Supabase:
 
 ```powershell
 php artisan migrate
-php artisan storage:link
 ```
 
 Configura el frontend:
@@ -125,6 +125,31 @@ Tambien puedes usar:
 ```powershell
 .\scripts\iniciar.ps1
 ```
+
+## Base de datos en Supabase
+
+DAEMON puede usar PostgreSQL en Supabase para desarrollo en la nube sin encender MySQL local todo el tiempo. La guia completa esta en:
+
+```text
+docs/supabase-postgres.md
+```
+
+Resumen del flujo:
+
+```powershell
+cd C:\laragon\www\daemon\backend-laravel
+Copy-Item .env.supabase.example .env
+php artisan key:generate
+php artisan config:clear
+php artisan migrate
+php artisan daemon:migrar-a-supabase
+php artisan daemon:migrar-a-supabase --confirm
+# Alternativa si MySQL/Laragon no esta disponible:
+php artisan daemon:importar-dump-supabase --confirm
+php artisan daemon:organizar-storage-supabase
+```
+
+El bucket Storage preparado por el proyecto es `daemon-assets`. Para organizar archivos reales necesitas las credenciales S3 de Supabase Storage en `.env` y luego ejecutar `php artisan daemon:organizar-storage-supabase --confirm`.
 
 ## IA local con Ollama
 
@@ -197,7 +222,7 @@ git status --short --branch
 
 - No subas `backend-laravel/.env`.
 - No publiques bases de datos reales con informacion sensible de estudiantes.
-- Antes de despliegue publico, revisa credenciales, CORS, `APP_DEBUG=false` y configuracion de almacenamiento.
+- Antes de despliegue publico, revisa credenciales, CORS, `APP_DEBUG=false`, claves S3, Firebase Auth y configuracion de almacenamiento.
 
 ## Roadmap inmediato
 

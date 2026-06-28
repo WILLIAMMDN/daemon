@@ -8,6 +8,8 @@ frontend-angular/dist/
 
 # Laravel
 backend-laravel/.env
+backend-laravel/.env.*
+backend-laravel/.rnd
 backend-laravel/storage/logs/*.log
 backend-laravel/bootstrap/cache/*.php
 
@@ -19,3 +21,5 @@ Thumbs.db
 *.zip
 *.rar
 *.7z
+.storage-quarantine/
+.runtime-logs/
