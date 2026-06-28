@@ -7,6 +7,7 @@
 - Firebase Auth integrado para Google, email/password y recuperacion con handler oficial.
 - Firebase Hosting desplegado en `https://daemonestudiante.web.app`.
 - Firebase Hosting configurado con target `estudiante`.
+- Backend Laravel desplegado en Render en `https://daemon-5vo1.onrender.com`.
 - GitHub remoto configurado en `WILLIAMMDN/daemon`.
 - GitHub Actions preparado para desplegar Firebase Hosting desde `main`.
 
@@ -14,9 +15,9 @@
 
 1. Hacer commit y push de la configuracion actual.
 
-2. Desplegar el backend Laravel en una URL publica.
+2. Revisar que Render tenga las variables de entorno de produccion actualizadas.
 
-3. Cambiar `frontend-angular/src/environments/environment.ts` para que `apiUrl` apunte al backend publico.
+3. Confirmar que `frontend-angular/src/environments/environment.ts` apunte al backend publico.
 
 4. Configurar variables de entorno del backend en el proveedor donde se despliegue Laravel.
 
@@ -51,6 +52,16 @@ Roles otorgados en `daemon-a41f8`:
 - Backups programados de Supabase.
 - Rotacion de credenciales de Supabase Storage y service accounts.
 - Reglas operativas para no subir `.env`, dumps, backups ni llaves privadas al repositorio.
+
+## Variables clave del backend en Render
+
+En produccion, Laravel debe resolver archivos asi:
+
+- `ASSET_PUBLIC_URL=https://daemonestudiante.web.app` para assets del frontend como `img`, `galeria`, `audio`, `rive`, `docs`.
+- `ASSET_CLOUD_URL=https://lbxdcvsrmkkynttgwblc.supabase.co/storage/v1/object/public/daemon-assets` para archivos de negocio bajo `uploads`.
+- `UPLOADS_DISK=supabase` para que nuevos archivos subidos desde DAEMON se guarden en Supabase Storage.
+- `APP_URL=https://daemon-5vo1.onrender.com` para URLs propias del backend.
+- `FRONTEND_URL=https://daemonestudiante.web.app` para CORS y redirecciones.
 
 ## Decision pendiente para backend
 

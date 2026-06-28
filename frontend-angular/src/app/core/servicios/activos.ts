@@ -19,6 +19,10 @@ export class Activos {
     const normalizada = limpia.replace(/^\/+/, '');
     const rutaFinal = normalizada === 'img/bot_default.png' ? 'img/bot_default.svg' : normalizada;
 
-    return this.baseCloud ? `${this.baseCloud}/${rutaFinal}` : `/${rutaFinal}`;
+    if (rutaFinal.startsWith('uploads/') && this.baseCloud) {
+      return `${this.baseCloud}/${rutaFinal}`;
+    }
+
+    return `/${rutaFinal}`;
   }
 }

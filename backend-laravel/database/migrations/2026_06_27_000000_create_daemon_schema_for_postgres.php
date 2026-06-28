@@ -164,7 +164,7 @@ return new class extends Migration
             $table->string('nombre_bot', 100)->nullable();
             $table->text('system_prompt')->nullable();
             $table->dateTime('fecha_creacion')->useCurrent();
-            $table->string('avatar')->default('img/bot_default.png');
+            $table->string('avatar')->default('img/bot_default.svg');
             $table->text('conocimiento')->nullable();
             $table->longText('matriz_neural')->nullable();
             $table->integer('victorias')->default(0);

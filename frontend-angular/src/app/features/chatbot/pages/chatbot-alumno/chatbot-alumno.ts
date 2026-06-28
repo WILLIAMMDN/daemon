@@ -64,7 +64,7 @@ export class ChatbotAlumno {
   }
 
   botAvatar(): string {
-    return this.asset(this.bot()?.avatar || 'img/bot_default.png');
+    return this.asset(this.bot()?.avatar || 'img/bot_default.svg');
   }
 
   asset(ruta?: string | null): string {

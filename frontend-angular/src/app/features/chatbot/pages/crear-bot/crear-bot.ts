@@ -93,7 +93,7 @@ export class CrearBot {
   }
 
   avatarVisible(): string {
-    return this.avatarPreview() || this.asset(this.avatarActual() || 'img/bot_default.png');
+    return this.avatarPreview() || this.asset(this.avatarActual() || 'img/bot_default.svg');
   }
 
   asset(ruta?: string | null): string {

@@ -117,7 +117,7 @@ class OrganizarStorageSupabase extends Command
     private function bots(): void
     {
         foreach (DB::table('bots_alumnos')->select('id', 'id_alumno', 'avatar')->get() as $bot) {
-            if ($bot->avatar === 'img/bot_default.png') {
+            if (in_array($bot->avatar, ['img/bot_default.png', 'img/bot_default.svg'], true)) {
                 continue;
             }
 

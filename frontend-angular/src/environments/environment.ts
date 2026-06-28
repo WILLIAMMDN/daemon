@@ -1,7 +1,7 @@
 export const environment = {
   production: true,
   apiUrl: 'https://daemon-5vo1.onrender.com/api/v1',
-  assetBaseUrl: '',
+  assetBaseUrl: 'https://lbxdcvsrmkkynttgwblc.supabase.co/storage/v1/object/public/daemon-assets',
   firebase: {
     apiKey: 'AIzaSyCarHu8PP3LR7mcNHLk_FTN2rhfnUf4FD4',
     authDomain: 'daemon-a41f8.firebaseapp.com',

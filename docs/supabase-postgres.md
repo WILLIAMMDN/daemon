@@ -162,6 +162,7 @@ Ese modo solo revisa. Cuando tengas las credenciales S3 de Supabase Storage, com
 ```env
 UPLOADS_DISK=supabase
 ASSET_CLOUD_URL=https://lbxdcvsrmkkynttgwblc.supabase.co/storage/v1/object/public/daemon-assets
+ASSET_PUBLIC_URL=https://daemonestudiante.web.app
 SUPABASE_STORAGE_ENDPOINT=https://lbxdcvsrmkkynttgwblc.storage.supabase.co/storage/v1/s3
 SUPABASE_STORAGE_PUBLIC_URL=https://lbxdcvsrmkkynttgwblc.supabase.co/storage/v1/object/public/daemon-assets
 SUPABASE_STORAGE_BUCKET=daemon-assets
