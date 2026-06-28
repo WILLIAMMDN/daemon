@@ -39,12 +39,22 @@ COPY . .
 RUN composer dump-autoload --optimize --no-dev
 
 # Cachea la configuracion y rutas de Laravel (acelera el arranque)
+# view:cache se omite a proposito: requiere que la ruta de views exista,
+# y durante el build el cwd del artisan puede no resolver bien resource_path().
+# Las vistas se compilan en runtime sin problema.
 RUN php artisan config:cache && \
-    php artisan route:cache && \
-    php artisan view:cache
+    php artisan route:cache
 
-# Permisos correctos para que Apache pueda escribir en storage y cache
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+# Crea los directorios que Laravel necesita para escribir (logs, cache, sesiones, vistas compiladas)
+RUN mkdir -p \
+    storage/framework/cache/data \
+    storage/framework/sessions \
+    storage/framework/views \
+    storage/framework/testing \
+    storage/logs \
+    bootstrap/cache \
+    && chown -R www-data:www-data storage bootstrap/cache \
+    && chmod -R ug+rwX storage bootstrap/cache
 
 # Expone el puerto 80 (Render lo mapea automaticamente a su $PORT)
 EXPOSE 80
