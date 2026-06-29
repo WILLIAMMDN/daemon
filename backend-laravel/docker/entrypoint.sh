@@ -20,6 +20,20 @@ if [ -f bootstrap/cache/.config-cached ]; then
     fi
 fi
 
+# Tambien invalidar si cambiaron ENV vars relevantes (mailer + providers).
+# Sin esto, un cambio SOLO de env vars (sin commit nuevo) deja la cache
+# apuntando a valores viejos (p.ej. MAIL_MAILER=smtp viejo).
+ENV_HASH_FILE=bootstrap/cache/.env-hash
+ENV_HASH_INPUT="${MAIL_MAILER:-}|${RESEND_API_KEY:-}|${MAIL_FROM_ADDRESS:-}|${FIREBASE_SERVICE_ACCOUNT_BASE64:-}|${DB_PASSWORD:-}|${APP_KEY:-}"
+CURRENT_ENV_HASH=$(printf '%s' "$ENV_HASH_INPUT" | md5sum | cut -d' ' -f1)
+if [ -f "$ENV_HASH_FILE" ]; then
+    CACHED_ENV_HASH=$(cat "$ENV_HASH_FILE")
+    if [ "$CURRENT_ENV_HASH" != "$CACHED_ENV_HASH" ]; then
+        echo "[entrypoint] ENV vars cambiaron, invalidando cache."
+        NEED_CACHE=1
+    fi
+fi
+
 if [ "$NEED_CACHE" = "1" ]; then
     echo "[entrypoint] Regenerando config:cache y route:cache con ENV vars actuales..."
     # Borrar caches anteriores (pueden tener env vars del build time)
@@ -27,6 +41,7 @@ if [ "$NEED_CACHE" = "1" ]; then
     php artisan config:cache
     php artisan route:cache
     echo "${RENDER_GIT_COMMIT:-unknown}" > bootstrap/cache/.config-cached
+    echo "${CURRENT_ENV_HASH}" > "$ENV_HASH_FILE"
     echo "[entrypoint] Cache listo."
 fi
 
