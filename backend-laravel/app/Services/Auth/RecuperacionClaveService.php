@@ -4,7 +4,7 @@ namespace App\Services\Auth;
 
 use App\Mail\RecuperarClaveMail;
 use App\Models\Usuario;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Throwable;
 
@@ -25,14 +25,39 @@ class RecuperacionClaveService
 
         try {
             $link = $this->tokens->crear($usuario);
-            Mail::to($usuario->email)->send(new RecuperarClaveMail($usuario, $link));
+            $mailer = config('mail.default');
+            $fromAddress = config('mail.from.address');
+            $host = config('mail.mailers.smtp.host');
+            $port = config('mail.mailers.smtp.port');
+            $usernameSet = filled(config('mail.mailers.smtp.username'));
+            $passwordSet = filled(config('mail.mailers.smtp.password'));
+
+            error_log(sprintf(
+                '[mail-recovery] intentando enviar a uid=%d mailer=%s from=%s host=%s port=%s user_ok=%d pass_ok=%d',
+                $usuario->id,
+                (string) $mailer,
+                (string) $fromAddress,
+                (string) $host,
+                (string) $port,
+                $usernameSet ? 1 : 0,
+                $passwordSet ? 1 : 0,
+            ));
+
+            $sent = Mail::to($usuario->email)->send(new RecuperarClaveMail($usuario, $link));
+
+            error_log(sprintf(
+                '[mail-recovery] Mail::send retorno=%s uid=%d',
+                var_export($sent, true),
+                $usuario->id,
+            ));
         } catch (Throwable $exception) {
-            Log::warning('No se pudo enviar recuperacion de clave.', [
-                'usuario_id' => $usuario->id,
-                'email_hash' => sha1((string) $usuario->email),
-                'exception' => $exception::class,
-                'message' => $exception->getMessage(),
-            ]);
+            error_log(sprintf(
+                '[mail-recovery] ERROR uid=%d ex=%s msg=%s trace=%s',
+                $usuario->id,
+                $exception::class,
+                $exception->getMessage(),
+                substr($exception->getTraceAsString(), 0, 1500),
+            ));
         }
     }
 
