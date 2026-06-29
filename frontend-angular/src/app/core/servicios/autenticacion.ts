@@ -21,10 +21,13 @@ export interface RegistroFirebaseDatos {
 
 type RespuestaReenvioVerificacion = {
   message: string;
+  estado?: 'enviado' | 'verificado' | 'fallo_envio';
   enviado: boolean;
   email_verified_at: string | null;
   usuario?: UsuarioSesion;
 };
+
+type RespuestaYo = UsuarioSesion | { data: UsuarioSesion };
 
 @Injectable({
   providedIn: 'root',
@@ -126,6 +129,13 @@ export class Autenticacion {
     return this.api.post('/auth/usuarios', datos);
   }
 
+  refrescarSesion(): Observable<UsuarioSesion> {
+    return this.api.get<RespuestaYo>('/auth/yo').pipe(
+      map((respuesta) => ('data' in respuesta ? respuesta.data : respuesta)),
+      tap((usuario) => this.sesion.actualizarUsuario(usuario)),
+    );
+  }
+
   solicitarRecuperacion(datos: { usuario?: string; email?: string }) {
     return this.api.post<{ message: string }>('/auth/recuperar', datos);
   }
@@ -204,37 +214,20 @@ export class Autenticacion {
   /**
    * Reenvia el correo de verificacion. Pensado para usuarios ya
    * autenticados que no recibieron (o perdieron) el mail inicial.
-   * Usa Firebase Auth para emitir el correo y Laravel/Supabase solo
-   * sincroniza el estado cuando Firebase confirme email_verified=true.
+   * Primero usa el correo personalizado de DAEMON; si el proveedor de
+   * correo del backend esta temporalmente caido, usa Firebase Auth como
+   * respaldo para no dejar bloqueado al estudiante.
    */
   reenviarVerificacion(): Observable<RespuestaReenvioVerificacion> {
-    const usuario = this.sesion.usuario();
-
-    return from(this.firebaseAuth.enviarVerificacionCorreo(usuario?.email)).pipe(
-      switchMap((estado) => {
-        if (estado === 'enviado') {
-          return of({
-            message: 'Te enviamos un correo de Firebase para verificar tu cuenta. Revisa tu bandeja de entrada y spam.',
-            enviado: true,
-            email_verified_at: null,
-            usuario: usuario ?? undefined,
-          });
+    return this.reenviarVerificacionBackend().pipe(
+      switchMap((respuesta) => {
+        if (respuesta.estado === 'fallo_envio') {
+          return this.enviarVerificacionFirebase();
         }
 
-        if (estado === 'ya-verificado') {
-          return this.sincronizarVerificacionFirebase().pipe(
-            map((respuesta) => ({
-              message: respuesta.message,
-              enviado: false,
-              email_verified_at: respuesta.usuario.email_verified_at ?? null,
-              usuario: respuesta.usuario,
-            })),
-          );
-        }
-
-        return throwError(() => new Error('Necesitamos reactivar tu sesion segura de Firebase para enviar la verificacion. Cierra sesion, vuelve a entrar con tu correo y solicita el envio nuevamente.'));
+        return of(respuesta);
       }),
-      catchError((error) => throwError(() => this.normalizarErrorFirebase(error))),
+      catchError(() => this.enviarVerificacionFirebase()),
     );
   }
 
@@ -256,6 +249,39 @@ export class Autenticacion {
     );
   }
 
+  private enviarVerificacionFirebase(): Observable<RespuestaReenvioVerificacion> {
+    const usuario = this.sesion.usuario();
+
+    return from(this.firebaseAuth.enviarVerificacionCorreo(usuario?.email)).pipe(
+      switchMap((estado) => {
+        if (estado === 'enviado') {
+          return of({
+            message: 'Te enviamos un correo de Firebase para verificar tu cuenta. Revisa tu bandeja de entrada y spam.',
+            estado: 'enviado' as const,
+            enviado: true,
+            email_verified_at: null,
+            usuario: usuario ?? undefined,
+          });
+        }
+
+        if (estado === 'ya-verificado') {
+          return this.sincronizarVerificacionFirebase().pipe(
+            map((respuesta) => ({
+              message: respuesta.message,
+              estado: 'verificado' as const,
+              enviado: false,
+              email_verified_at: respuesta.usuario.email_verified_at ?? null,
+              usuario: respuesta.usuario,
+            })),
+          );
+        }
+
+        return throwError(() => new Error('Necesitamos reactivar tu sesion segura de Firebase para enviar la verificacion. Cierra sesion, vuelve a entrar con tu correo y solicita el envio nuevamente.'));
+      }),
+      catchError((error) => throwError(() => this.normalizarErrorFirebase(error))),
+    );
+  }
+
   private autenticarConFirebaseToken(idToken: string, crearCuenta = false, limpiarSesion = true): Observable<AuthRespuesta> {
     if (limpiarSesion) {
       this.sesion.limpiar();
@@ -263,6 +289,17 @@ export class Autenticacion {
 
     return this.api.post<AuthRespuesta>('/auth/firebase', { id_token: idToken, crear_cuenta: crearCuenta })
       .pipe(tap((respuesta) => this.sesion.guardar(respuesta.usuario)));
+  }
+
+  private reenviarVerificacionBackend(): Observable<RespuestaReenvioVerificacion> {
+    return this.api.post<RespuestaReenvioVerificacion>(
+      '/auth/enviar-verificacion',
+      {},
+    ).pipe(tap((respuesta) => {
+      if (respuesta.usuario) {
+        this.sesion.actualizarUsuario(respuesta.usuario);
+      }
+    }));
   }
 
   private normalizarErrorFirebase(error: unknown): Error {

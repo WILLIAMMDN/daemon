@@ -103,6 +103,7 @@ class AutenticacionController extends Controller
         if ($usuario->hasVerifiedEmail()) {
             return response()->json([
                 'message' => 'Tu correo ya estaba verificado.',
+                'estado' => 'verificado',
                 'enviado' => false,
                 'email_verified_at' => optional($usuario->email_verified_at)->toIso8601String(),
                 'usuario' => UsuarioResource::make($usuario),
@@ -113,15 +114,17 @@ class AutenticacionController extends Controller
 
         if (! $enviado) {
             return response()->json([
-                'message' => 'No pudimos enviar el correo de verificacion en este momento. Revisa la configuracion del correo del backend o intentalo nuevamente.',
+                'message' => 'No pudimos enviar el correo personalizado de DAEMON en este momento.',
+                'estado' => 'fallo_envio',
                 'enviado' => false,
                 'email_verified_at' => null,
                 'usuario' => UsuarioResource::make($usuario),
-            ], 503);
+            ], 202);
         }
 
         return response()->json([
             'message' => 'Te enviamos un correo con el enlace de verificacion.',
+            'estado' => 'enviado',
             'enviado' => true,
             'email_verified_at' => optional($usuario->email_verified_at)->toIso8601String(),
             'usuario' => UsuarioResource::make($usuario),

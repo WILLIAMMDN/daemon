@@ -63,6 +63,7 @@ class EmailVerificationEndpointTest extends TestCase
 
         $response
             ->assertOk()
+            ->assertJsonPath('estado', 'enviado')
             ->assertJsonPath('enviado', true)
             ->assertJsonPath('usuario.email_verificado', false);
 
@@ -79,6 +80,7 @@ class EmailVerificationEndpointTest extends TestCase
         $response
             ->assertOk()
             ->assertJsonPath('message', 'Tu correo ya estaba verificado.')
+            ->assertJsonPath('estado', 'verificado')
             ->assertJsonPath('enviado', false)
             ->assertJsonPath('usuario.email_verificado', true);
 
@@ -101,7 +103,8 @@ class EmailVerificationEndpointTest extends TestCase
         $response = $this->postJson('/api/v1/auth/enviar-verificacion');
 
         $response
-            ->assertStatus(503)
+            ->assertAccepted()
+            ->assertJsonPath('estado', 'fallo_envio')
             ->assertJsonPath('enviado', false)
             ->assertJsonPath('usuario.email_verificado', false);
     }

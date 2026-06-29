@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, OnInit, signal } from '@angular/core';
+import { Component, computed, OnDestroy, OnInit, signal } from '@angular/core';
 import { Autenticacion } from '../../../core/servicios/autenticacion';
 import { Sesion } from '../../../core/servicios/sesion';
 
@@ -10,7 +10,7 @@ import { Sesion } from '../../../core/servicios/sesion';
   templateUrl: './email-verification-banner.html',
   styleUrl: './email-verification-banner.scss',
 })
-export class EmailVerificationBanner implements OnInit {
+export class EmailVerificationBanner implements OnInit, OnDestroy {
   readonly visible = computed(() => {
     const usuario = this.sesion.usuario();
 
@@ -21,6 +21,7 @@ export class EmailVerificationBanner implements OnInit {
   readonly sincronizando = signal(false);
   readonly mensaje = signal('');
   readonly error = signal('');
+  private refrescoId: number | null = null;
 
   constructor(
     private auth: Autenticacion,
@@ -29,7 +30,16 @@ export class EmailVerificationBanner implements OnInit {
 
   ngOnInit(): void {
     if (globalThis.location?.search.includes('verificacion=firebase')) {
-      this.sincronizar();
+      this.sincronizarFirebaseSilencioso();
+    }
+
+    this.refrescarEstado();
+    this.refrescoId = window.setInterval(() => this.refrescarEstado(), 12000);
+  }
+
+  ngOnDestroy(): void {
+    if (this.refrescoId !== null) {
+      window.clearInterval(this.refrescoId);
     }
   }
 
@@ -46,6 +56,7 @@ export class EmailVerificationBanner implements OnInit {
       next: (respuesta) => {
         this.reenviando.set(false);
         this.mensaje.set(respuesta.message);
+        this.refrescarEstado();
       },
       error: (error) => {
         this.reenviando.set(false);
@@ -54,7 +65,29 @@ export class EmailVerificationBanner implements OnInit {
     });
   }
 
-  sincronizar(): void {
+  private refrescarEstado(): void {
+    if (!this.visible() || this.reenviando() || this.sincronizando()) {
+      return;
+    }
+
+    this.sincronizando.set(true);
+
+    this.auth.refrescarSesion().subscribe({
+      next: () => {
+        this.sincronizando.set(false);
+
+        if (!this.visible()) {
+          this.mensaje.set('');
+          this.error.set('');
+        }
+      },
+      error: () => {
+        this.sincronizando.set(false);
+      },
+    });
+  }
+
+  private sincronizarFirebaseSilencioso(): void {
     if (this.sincronizando() || this.reenviando()) {
       return;
     }
@@ -67,10 +100,12 @@ export class EmailVerificationBanner implements OnInit {
       next: (respuesta) => {
         this.sincronizando.set(false);
         this.mensaje.set(respuesta.message);
+        this.refrescarEstado();
       },
       error: (error) => {
         this.sincronizando.set(false);
         this.error.set(error.error?.message ?? error.message ?? 'Todavia no aparece verificado. Revisa el correo y vuelve a intentarlo.');
+        this.refrescarEstado();
       },
     });
   }
