@@ -29,10 +29,6 @@ export class EmailVerificationBanner implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    if (globalThis.location?.search.includes('verificacion=firebase')) {
-      this.sincronizarFirebaseSilencioso();
-    }
-
     this.refrescarEstado();
     this.refrescoId = window.setInterval(() => this.refrescarEstado(), 12000);
   }
@@ -83,29 +79,6 @@ export class EmailVerificationBanner implements OnInit, OnDestroy {
       },
       error: () => {
         this.sincronizando.set(false);
-      },
-    });
-  }
-
-  private sincronizarFirebaseSilencioso(): void {
-    if (this.sincronizando() || this.reenviando()) {
-      return;
-    }
-
-    this.sincronizando.set(true);
-    this.mensaje.set('');
-    this.error.set('');
-
-    this.auth.sincronizarVerificacionFirebase().subscribe({
-      next: (respuesta) => {
-        this.sincronizando.set(false);
-        this.mensaje.set(respuesta.message);
-        this.refrescarEstado();
-      },
-      error: (error) => {
-        this.sincronizando.set(false);
-        this.error.set(error.error?.message ?? error.message ?? 'Todavia no aparece verificado. Revisa el correo y vuelve a intentarlo.');
-        this.refrescarEstado();
       },
     });
   }

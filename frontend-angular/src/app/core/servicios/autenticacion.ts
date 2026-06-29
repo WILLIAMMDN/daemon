@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { catchError, from, map, Observable, of, switchMap, tap, throwError } from 'rxjs';
+import { catchError, from, map, Observable, of, switchMap, tap } from 'rxjs';
 import { Api } from './api';
 import { FirebaseAuth } from './firebase-auth';
 import { Sesion, UsuarioSesion } from './sesion';
@@ -225,24 +225,6 @@ export class Autenticacion {
         enviado: false,
         email_verified_at: null,
         usuario: this.sesion.usuario() ?? undefined,
-      })),
-    );
-  }
-
-  sincronizarVerificacionFirebase(): Observable<{ message: string; usuario: UsuarioSesion }> {
-    const usuario = this.sesion.usuario();
-
-    return from(this.firebaseAuth.idTokenVerificadoActual(usuario?.email)).pipe(
-      switchMap((idToken) => {
-        if (!idToken) {
-          return throwError(() => new Error('Todavia no aparece verificado en Firebase. Abre el enlace del correo y vuelve a intentarlo.'));
-        }
-
-        return this.autenticarConFirebaseToken(idToken, false, false);
-      }),
-      map((respuesta) => ({
-        message: 'Tu correo quedo verificado y sincronizado con DAEMON.',
-        usuario: respuesta.usuario,
       })),
     );
   }
