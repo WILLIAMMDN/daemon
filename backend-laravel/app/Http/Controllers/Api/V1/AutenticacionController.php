@@ -114,7 +114,7 @@ class AutenticacionController extends Controller
 
         if (! $enviado) {
             return response()->json([
-                'message' => 'No pudimos enviar el correo personalizado de DAEMON en este momento.',
+                'message' => 'Registramos tu solicitud de verificacion. Si el correo no llega en unos minutos, vuelve a intentarlo.',
                 'estado' => 'fallo_envio',
                 'enviado' => false,
                 'email_verified_at' => null,
