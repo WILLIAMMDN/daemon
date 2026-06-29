@@ -88,7 +88,7 @@ class EmailVerificationServiceTest extends TestCase
         Mail::assertNothingSent();
     }
 
-    public function test_solicitar_con_forzar_reenvia_incluso_si_ya_verificado(): void
+    public function test_solicitar_con_forzar_no_reenvia_si_ya_verificado(): void
     {
         $usuario = Usuario::create([
             'nombre_completo' => 'Alumno DAEMON',
@@ -100,8 +100,8 @@ class EmailVerificationServiceTest extends TestCase
 
         $resultado = app(EmailVerificationService::class)->solicitar($usuario, forzar: true);
 
-        $this->assertTrue($resultado);
-        Mail::assertSent(VerificarCorreoMail::class);
+        $this->assertFalse($resultado);
+        Mail::assertNothingSent();
     }
 
     public function test_confirmar_marca_correo_como_verificado(): void
@@ -145,7 +145,7 @@ class EmailVerificationServiceTest extends TestCase
         $servicio = app(EmailVerificationService::class);
         $servicio->solicitar($usuario);
 
-        Mail::assertSent(VerificarCorreoMail::class, function (VerificarCorreoMail $mail) use ($servicio, $usuario) {
+        Mail::assertSent(VerificarCorreoMail::class, function (VerificarCorreoMail $mail) use ($servicio) {
             $query = parse_url($mail->link, PHP_URL_QUERY);
             parse_str((string) $query, $params);
 

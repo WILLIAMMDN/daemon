@@ -97,16 +97,14 @@ export class VerificarCorreo implements OnInit {
         this.reenviando.set(false);
         this.estado.set({
           tipo: 'exito',
-          mensaje: respuesta.enviado
-            ? 'Te reenviamos el correo de verificacion. Revisa tu bandeja de entrada.'
-            : 'Tu correo ya estaba verificado.',
+          mensaje: respuesta.message,
         });
       },
-      error: () => {
+      error: (error) => {
         this.reenviando.set(false);
         this.estado.set({
           tipo: 'error',
-          mensaje: 'No pudimos reenviar el correo. Intentalo de nuevo desde tu portal.',
+          mensaje: error?.error?.message ?? 'No pudimos reenviar el correo. Intentalo de nuevo desde tu portal.',
         });
       },
     });

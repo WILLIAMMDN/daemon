@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, signal } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { Autenticacion, CompletarPerfilGoogleDatos } from '../../../../core/servicios/autenticacion';
@@ -12,6 +12,7 @@ import { AuthValidators } from '../../../../shared/validadores/auth-validadores'
   imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './bienvenida.html',
   styleUrl: './bienvenida.scss',
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class Bienvenida implements OnInit {
   readonly nombreMinLength = AuthValidators.NOMBRE_MIN_LENGTH;

@@ -1,77 +1,39 @@
-@use '../login/login.scss';
+@use '../registro/registro.scss';
 
 :host {
   display: block;
 }
 
-.welcome-page {
-  align-items: center;
-  background: #eef0f3;
-  color: #111827;
-  display: grid;
-  min-height: 100vh;
-  position: relative;
-}
-
-.welcome-stage {
-  display: grid;
-  gap: .85rem;
-  margin: 0 auto;
-  max-width: 1040px;
-  width: min(100%, 1040px);
-}
-
 .welcome-card {
-  background: #ffffff;
-  border: 1px solid #cfd4dc;
-  border-radius: 2px;
-  box-shadow: 0 2px 6px #11182724;
-  display: grid;
-  grid-template-columns: minmax(420px, 1fr) minmax(300px, .7fr);
-  min-height: 560px;
-  overflow: hidden;
-  position: relative;
-}
-
-.card-accent {
-  background: #0b5bd3;
-  grid-column: 1 / -1;
-  height: 5px;
+  min-height: 600px;
 }
 
 .welcome-form-panel {
   align-content: center;
-  display: grid;
-  padding: clamp(1.5rem, 4vw, 3rem);
 }
 
-.panel-heading {
-  display: grid;
-  gap: .55rem;
-  margin-bottom: 1.15rem;
+.portal-switch button {
+  background: transparent;
+  border: 0;
+  color: #4d586b;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 850;
+  padding: 0;
 }
 
-.panel-heading h1 {
-  color: #020b18;
-  font-size: clamp(1.9rem, 4vw, 2.35rem);
-  font-weight: 900;
-  line-height: 1.05;
-  margin: 0;
-}
-
-.panel-heading p:last-child {
-  color: #4b5565;
-  line-height: 1.45;
-  margin: 0;
+.portal-switch button:disabled {
+  cursor: not-allowed;
+  opacity: .55;
 }
 
 .account-email {
   background: #f8fafc;
   border: 1px solid #dbe2ec;
   display: grid;
-  gap: .2rem;
-  margin-bottom: 1rem;
-  padding: .85rem 1rem;
+  gap: .18rem;
+  margin-bottom: .9rem;
+  padding: .8rem 1rem;
 }
 
 .account-email span {
@@ -88,145 +50,27 @@
   overflow-wrap: anywhere;
 }
 
-.welcome-form {
-  display: grid;
-  gap: 1rem;
-}
-
-.welcome-form .classic-field {
-  grid-template-columns: 60px minmax(0, 1fr);
-  min-height: 58px;
-}
-
-.welcome-form .classic-field input,
-.welcome-form .classic-field select {
-  background: #ffffff;
-  border: 0;
-  color: #263244;
-  font: inherit;
-  font-size: 1.05rem;
-  font-weight: 500;
-  min-width: 0;
-  outline: 0;
-  padding: 0 1.1rem;
-}
-
-.welcome-form .classic-field select {
-  appearance: none;
-  cursor: pointer;
+.welcome-copy {
+  color: #4b5565;
+  line-height: 1.45;
+  margin: 0 0 1rem;
 }
 
 .welcome-actions {
   display: grid;
-  gap: .85rem;
-  grid-template-columns: auto minmax(0, 1fr);
-  margin-top: .35rem;
+  margin-top: .2rem;
 }
 
-.secondary-button,
-.submit-button {
-  border-radius: 4px;
-  cursor: pointer;
-  font: inherit;
-  font-weight: 800;
-  min-height: 56px;
-  padding: 0 1rem;
+.welcome-actions .submit-button {
+  width: 100%;
 }
 
-.secondary-button {
-  background: #ffffff;
-  border: 1px solid #cfd4dc;
-  color: #22304a;
-}
-
-.submit-button {
-  background: #0b5bd3;
-  border: 0;
-  color: #ffffff;
-}
-
-.secondary-button:disabled,
-.submit-button:disabled {
-  cursor: not-allowed;
-  opacity: .65;
-}
-
-.welcome-visual {
-  align-content: end;
-  background: #101826;
-  border-left: 1px solid #cfd4dc;
-  color: #ffffff;
-  display: grid;
-  gap: 1.5rem;
-  overflow: hidden;
-  padding: 2rem;
-  position: relative;
-}
-
-.welcome-visual::before {
-  background:
-    linear-gradient(135deg, #0b5bd3 0%, #0b5bd300 52%),
-    linear-gradient(180deg, #10182600 0%, #101826 82%);
-  content: "";
-  inset: 0;
-  position: absolute;
-}
-
-.welcome-visual img,
-.welcome-visual div {
-  position: relative;
-  z-index: 1;
-}
-
-.welcome-visual img {
-  background: #ffffff;
-  border: 1px solid #ffffff38;
-  border-radius: 8px;
-  box-shadow: 0 18px 45px #02061754;
-  max-width: 120px;
-  padding: .85rem;
-}
-
-.welcome-visual h2 {
-  font-size: clamp(1.45rem, 4vw, 2rem);
-  font-weight: 900;
-  line-height: 1.12;
-  margin: 0;
-}
-
-.welcome-visual p:last-child {
-  color: #dbe6f8;
-  line-height: 1.55;
-  margin: .75rem 0 0;
-}
-
-@media (max-width: 900px) {
-  .welcome-page {
-    align-items: start;
-    padding-top: 5rem;
-  }
-
-  .welcome-card {
-    grid-template-columns: 1fr;
-    min-height: auto;
-  }
-
-  .welcome-visual {
-    display: none;
-  }
+.welcome-note p {
+  color: #1f2937;
 }
 
 @media (max-width: 640px) {
-  .welcome-form-panel {
-    padding: 1.25rem 1.15rem 1.35rem;
-  }
-
-  .welcome-form .classic-field {
-    grid-template-columns: 52px minmax(0, 1fr);
-    min-height: 56px;
-  }
-
-  .welcome-actions {
-    grid-template-columns: 1fr;
+  .account-email {
+    padding: .75rem .85rem;
   }
 }

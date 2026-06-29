@@ -26,7 +26,7 @@ class EmailVerificationService
     /**
      * Envia el correo de verificacion al usuario. No-op si la cuenta ya
      * esta verificada (idempotencia: si el usuario pide reenviar y ya
-     * esta OK, no mandamos mail al pedo).
+     * esta OK, no mandamos otro correo).
      *
      * Si el envio falla por error de transporte, lo logueamos pero NO
      * propagamos la excepcion: la verificacion de email es un "nice to
@@ -39,7 +39,7 @@ class EmailVerificationService
             return false;
         }
 
-        if (! $forzar && $usuario->hasVerifiedEmail()) {
+        if ($usuario->hasVerifiedEmail()) {
             return false;
         }
 

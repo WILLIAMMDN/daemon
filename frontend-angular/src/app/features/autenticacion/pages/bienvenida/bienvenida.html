@@ -1,23 +1,29 @@
-<main class="welcome-page min-h-screen px-4 py-8 sm:px-6">
+<main class="register-page welcome-page min-h-screen px-4 py-8 sm:px-6">
   <a routerLink="/" class="home-link" aria-label="Volver al inicio">
     <span aria-hidden="true">&larr;</span>
     <span>Inicio</span>
   </a>
 
-  <section class="welcome-stage">
+  <section class="register-stage welcome-stage">
     <header class="login-brand" aria-label="DAEMON">
       <span class="brand-symbol" aria-hidden="true"></span>
       <span class="brand-name">DAEMON</span>
     </header>
 
-    <article class="welcome-card">
+    <article class="register-card welcome-card">
       <div class="card-accent" aria-hidden="true"></div>
 
-      <section class="welcome-form-panel">
-        <div class="panel-heading">
-          <p class="eyebrow">Cuenta creada</p>
-          <h1>Completa tu perfil</h1>
-          <p>Estos datos se usaran para tu portal, ranking, insignias y certificados.</p>
+      <section class="register-form-panel welcome-form-panel">
+        <div class="register-card-head">
+          <div>
+            <p class="eyebrow">Cuenta creada</p>
+            <h1>Completa tu perfil</h1>
+          </div>
+
+          <div class="portal-switch" aria-label="Paso actual">
+            <span class="is-active">Perfil</span>
+            <button type="button" (click)="salir()" [disabled]="guardando()">Salir</button>
+          </div>
         </div>
 
         @if (sesion.usuario()?.email) {
@@ -27,7 +33,9 @@
           </div>
         }
 
-        <form #perfilForm="ngForm" (ngSubmit)="guardar(perfilForm)" class="welcome-form" autocomplete="off" novalidate>
+        <p class="welcome-copy">Usaremos estos datos para tu portal, ranking, insignias y certificados.</p>
+
+        <form #perfilForm="ngForm" (ngSubmit)="guardar(perfilForm)" class="register-form welcome-form" autocomplete="off" novalidate>
           <label class="classic-field" for="nombre_completo">
             <span class="field-icon" aria-hidden="true">
               <svg viewBox="0 0 24 24" focusable="false">
@@ -81,9 +89,6 @@
           }
 
           <div class="welcome-actions">
-            <button type="button" class="secondary-button" (click)="salir()" [disabled]="guardando()">
-              Usar otra cuenta
-            </button>
             <button type="submit" class="submit-button" [disabled]="guardando() || perfilForm.invalid">
               {{ guardando() ? 'Guardando...' : 'Entrar a mi portal' }}
             </button>
@@ -91,14 +96,26 @@
         </form>
       </section>
 
-      <section class="welcome-visual" aria-label="Resumen de cuenta">
-        <img src="/img/brand/logo.png" alt="" aria-hidden="true">
-        <div>
-          <p class="eyebrow">Siguiente paso</p>
-          <h2>Tu espacio DAEMON queda listo despues de esto.</h2>
-          <p>La verificacion de correo aparecera como aviso dentro del portal hasta que confirmes el enlace enviado.</p>
+      <section class="register-visual welcome-visual" aria-label="Animacion de bienvenida">
+        <div class="visual-copy">
+          <p class="eyebrow">Perfil estudiante</p>
+          <h2>Daemon Academy</h2>
+          <p>Tu cuenta ya existe. Falta darle nombre a tu espacio para entrar al portal.</p>
+        </div>
+
+        <div class="spline-frame" aria-hidden="true">
+          <spline-viewer url="https://prod.spline.design/nMNnp2Qj0GPfUDUz/scene.splinecode"></spline-viewer>
         </div>
       </section>
     </article>
+
+    <aside class="register-note welcome-note">
+      <span class="note-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" focusable="false">
+          <path d="M12 2 4 5.5V11c0 5.05 3.41 9.74 8 11 4.59-1.26 8-5.95 8-11V5.5Zm3.54 7.46-4.25 4.25a1 1 0 0 1-1.41 0l-1.92-1.92 1.41-1.41 1.21 1.21 3.54-3.54Z" />
+        </svg>
+      </span>
+      <p>Despues de completar el perfil, DAEMON te pedira verificar el correo desde tu portal.</p>
+    </aside>
   </section>
 </main>

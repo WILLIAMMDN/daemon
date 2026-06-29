@@ -77,7 +77,7 @@ class AutenticacionController extends Controller
                 (string) $datos['token'],
                 (string) $datos['password'],
             );
-        } catch (\RuntimeException $exception) {
+        } catch (RuntimeException $exception) {
             return response()->json([
                 'message' => $exception->getMessage(),
             ], 422);
@@ -92,7 +92,7 @@ class AutenticacionController extends Controller
      */
     public function enviarVerificacion(EnviarVerificacionRequest $request)
     {
-        $usuario = $request->user();
+        $usuario = $request->user()->fresh();
 
         if (! $usuario->email) {
             return response()->json([
@@ -100,15 +100,31 @@ class AutenticacionController extends Controller
             ], 422);
         }
 
+        if ($usuario->hasVerifiedEmail()) {
+            return response()->json([
+                'message' => 'Tu correo ya estaba verificado.',
+                'enviado' => false,
+                'email_verified_at' => optional($usuario->email_verified_at)->toIso8601String(),
+                'usuario' => UsuarioResource::make($usuario),
+            ]);
+        }
+
         $enviado = $this->verificacionCorreo->solicitar($usuario, forzar: true);
 
+        if (! $enviado) {
+            return response()->json([
+                'message' => 'No pudimos enviar el correo de verificacion en este momento. Revisa la configuracion del correo del backend o intentalo nuevamente.',
+                'enviado' => false,
+                'email_verified_at' => null,
+                'usuario' => UsuarioResource::make($usuario),
+            ], 503);
+        }
+
         return response()->json([
-            'message' => $enviado
-                ? 'Te enviamos un correo con el enlace de verificacion.'
-                : 'Tu correo ya estaba verificado.',
-            'enviado' => $enviado,
+            'message' => 'Te enviamos un correo con el enlace de verificacion.',
+            'enviado' => true,
             'email_verified_at' => optional($usuario->email_verified_at)->toIso8601String(),
-            'usuario' => UsuarioResource::make($usuario->fresh()),
+            'usuario' => UsuarioResource::make($usuario),
         ]);
     }
 
@@ -123,7 +139,7 @@ class AutenticacionController extends Controller
 
         try {
             $usuario = $this->verificacionCorreo->confirmar((string) $datos['token']);
-        } catch (\RuntimeException $exception) {
+        } catch (RuntimeException $exception) {
             return response()->json([
                 'message' => $exception->getMessage(),
             ], 422);
