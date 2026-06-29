@@ -23,6 +23,7 @@ class FirebaseAuthFlowTest extends TestCase
             $table->id();
             $table->string('nombre_completo');
             $table->string('email')->nullable()->unique();
+            $table->timestamp('email_verified_at')->nullable();
             $table->string('telefono', 30)->nullable()->unique();
             $table->string('usuario')->unique();
             $table->string('password_hash');
@@ -189,7 +190,7 @@ class FirebaseAuthFlowTest extends TestCase
         $this->assertSame(0, Usuario::count());
     }
 
-    public function test_rechaza_email_no_verificado(): void
+    public function test_rechaza_email_no_verificado_en_login(): void
     {
         $service = app(AutenticacionService::class);
 
@@ -202,8 +203,30 @@ class FirebaseAuthFlowTest extends TestCase
                 'email' => 'sospechoso@example.com',
                 'email_verified' => false,
             ]),
+            false,
+        );
+    }
+
+    public function test_registro_permite_email_no_verificado_para_no_bloquear_alta(): void
+    {
+        $service = app(AutenticacionService::class);
+
+        $usuario = $service->autenticarConFirebase(
+            $this->claims([
+                'uid' => 'firebase-fresco',
+                'email' => 'fresco@example.com',
+                'name' => 'Recién Llegado',
+                'email_verified' => false,
+            ]),
             true,
         );
+
+        $this->assertNotNull($usuario);
+        $this->assertSame('fresco@example.com', $usuario->email);
+        // El email queda como NO verificado: el usuario lo confirmara
+        // despues desde el enlace que le envia el flujo de
+        // EmailVerificationService.
+        $this->assertNull($usuario->email_verified_at);
     }
 
     public function test_login_solo_por_telefono_no_pasa_por_chequeo_de_email_verificado(): void

@@ -23,6 +23,7 @@ class GoogleAuthFlowTest extends TestCase
             $table->id();
             $table->string('nombre_completo');
             $table->string('email')->nullable()->unique();
+            $table->timestamp('email_verified_at')->nullable();
             $table->string('usuario')->unique();
             $table->string('password_hash');
             $table->string('nivel')->default('TEENS');

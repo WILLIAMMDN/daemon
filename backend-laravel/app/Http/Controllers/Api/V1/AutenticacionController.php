@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Auth\CambiarClaveRequest;
 use App\Http\Requests\Api\V1\Auth\CompletarPerfilGoogleRequest;
 use App\Http\Requests\Api\V1\Auth\ConfirmarResetClaveRequest;
+use App\Http\Requests\Api\V1\Auth\ConfirmarVerificacionRequest;
 use App\Http\Requests\Api\V1\Auth\CrearUsuarioRequest;
+use App\Http\Requests\Api\V1\Auth\EnviarVerificacionRequest;
 use App\Http\Requests\Api\V1\Auth\FirebaseLoginRequest;
 use App\Http\Requests\Api\V1\Auth\LoginRequest;
 use App\Http\Requests\Api\V1\Auth\RecuperarClaveRequest;
@@ -14,6 +16,7 @@ use App\Http\Requests\Api\V1\Auth\RegistroAlumnoRequest;
 use App\Http\Requests\Api\V1\Auth\SyncPasswordRequest;
 use App\Http\Resources\Api\V1\UsuarioResource;
 use App\Services\Auth\AutenticacionService;
+use App\Services\Auth\EmailVerificationService;
 use App\Services\Auth\FirebaseTokenVerifier;
 use App\Services\Auth\RecuperacionClaveService;
 use Illuminate\Http\Request;
@@ -30,6 +33,7 @@ class AutenticacionController extends Controller
         private readonly AutenticacionService $autenticacion,
         private readonly FirebaseTokenVerifier $firebase,
         private readonly RecuperacionClaveService $recuperacionClave,
+        private readonly EmailVerificationService $verificacionCorreo,
     ) {}
 
     public function login(LoginRequest $request)
@@ -81,6 +85,54 @@ class AutenticacionController extends Controller
         return $this->respuestaAutenticada($usuario);
     }
 
+    /**
+     * Re-envia el correo de verificacion al usuario autenticado.
+     * Idempotente: si ya esta verificado, responde 200 sin mandar mail.
+     */
+    public function enviarVerificacion(EnviarVerificacionRequest $request)
+    {
+        $usuario = $request->user();
+
+        if (! $usuario->email) {
+            return response()->json([
+                'message' => 'Tu cuenta no tiene un correo electronico asociado. Actualiza tu perfil primero.',
+            ], 422);
+        }
+
+        $enviado = $this->verificacionCorreo->solicitar($usuario, forzar: true);
+
+        return response()->json([
+            'message' => $enviado
+                ? 'Te enviamos un correo con el enlace de verificacion.'
+                : 'Tu correo ya estaba verificado.',
+            'enviado' => $enviado,
+            'email_verified_at' => optional($usuario->email_verified_at)->toIso8601String(),
+        ]);
+    }
+
+    /**
+     * Confirma la verificacion de correo a partir del token JWT firmado
+     * por el backend. NO requiere sesion: el token ya identifica al
+     * usuario. Devuelve el usuario actualizado.
+     */
+    public function confirmarVerificacion(ConfirmarVerificacionRequest $request)
+    {
+        $datos = $request->validated();
+
+        try {
+            $usuario = $this->verificacionCorreo->confirmar((string) $datos['token']);
+        } catch (\RuntimeException $exception) {
+            return response()->json([
+                'message' => $exception->getMessage(),
+            ], 422);
+        }
+
+        return response()->json([
+            'message' => 'Tu correo electronico quedo verificado.',
+            'usuario' => UsuarioResource::make($usuario),
+        ]);
+    }
+
     public function google(Request $request)
     {
         $datos = $request->validate([
@@ -91,12 +143,18 @@ class AutenticacionController extends Controller
         try {
             $googleUser = Socialite::driver('google')->stateless()->userFromToken($datos['id_token']);
             $raw = $googleUser->getRaw();
+            $crearCuenta = (bool) ($datos['crear_cuenta'] ?? false);
 
-            if (array_key_exists('email_verified', $raw) && ! $raw['email_verified']) {
+            // En REGISTRO (crear_cuenta = true) permitimos que Google
+            // aun no haya verificado el correo: el flujo de
+            // EmailVerificationService emite un mail DAEMON-brandeado
+            // con un JWT propio para cerrar la verificacion.
+            // En LOGIN exigimos verificacion previa.
+            if (array_key_exists('email_verified', $raw) && ! $raw['email_verified'] && ! $crearCuenta) {
                 return response()->json(['message' => 'Google no pudo confirmar el correo de la cuenta.'], 422);
             }
 
-            $usuario = $this->autenticacion->autenticarConGoogle($googleUser, (bool) ($datos['crear_cuenta'] ?? false));
+            $usuario = $this->autenticacion->autenticarConGoogle($googleUser, $crearCuenta);
 
             if (! $usuario) {
                 return response()->json([

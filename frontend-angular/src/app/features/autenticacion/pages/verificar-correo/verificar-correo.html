@@ -1,0 +1,68 @@
+<main class="recovery-page min-h-screen px-4 py-8 sm:px-6">
+  <a routerLink="/" class="home-link" aria-label="Volver al inicio">
+    <span aria-hidden="true">&larr;</span>
+    <span>Inicio</span>
+  </a>
+
+  <section class="recovery-stage">
+    <header class="login-brand" aria-label="DAEMON">
+      <span class="brand-symbol" aria-hidden="true"></span>
+      <span class="brand-name">DAEMON</span>
+    </header>
+
+    <article class="recovery-card">
+      <div class="card-accent" aria-hidden="true"></div>
+
+      <section class="recovery-visual" aria-label="Animacion de verificacion de correo">
+        <div class="visual-copy">
+          <p class="eyebrow">Verificacion</p>
+          <h2>Confirma tu correo</h2>
+          <p>Terminamos de activar tu cuenta validando que controlas el correo electronico asociado.</p>
+        </div>
+
+        <div class="spline-frame" aria-hidden="true">
+          <spline-viewer url="https://prod.spline.design/nMNnp2Qj0GPfUDUz/scene.splinecode"></spline-viewer>
+        </div>
+      </section>
+
+      <section class="recovery-form-panel">
+        <div class="panel-heading">
+          <p class="eyebrow">Cuenta</p>
+          <h1>Verificar correo</h1>
+        </div>
+
+        @switch (estado().tipo) {
+          @case ('cargando') {
+            <div class="form-alert" role="status">
+              Verificando tu correo electronico...
+            </div>
+          }
+
+          @case ('exito') {
+            <div class="form-alert success" role="status">
+              {{ mensajeExito }} Te llevamos a tu portal en un momento.
+            </div>
+          }
+
+          @case ('error') {
+            <div class="form-alert" role="alert">
+              {{ mensajeError }}
+            </div>
+            <button
+              type="button"
+              class="submit-button"
+              [disabled]="reenviando()"
+              (click)="reenviar()"
+            >
+              {{ reenviando() ? 'Enviando...' : 'Reenviar correo de verificacion' }}
+            </button>
+          }
+        }
+
+        <footer class="login-footer">
+          <p><a routerLink="/login">Volver al login</a></p>
+        </footer>
+      </section>
+    </article>
+  </section>
+</main>

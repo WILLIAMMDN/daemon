@@ -18,6 +18,7 @@ class Usuario extends Authenticatable
     protected $fillable = [
         'nombre_completo',
         'email',
+        'email_verified_at',
         'telefono',
         'usuario',
         'password_hash',
@@ -53,6 +54,7 @@ class Usuario extends Authenticatable
             'id_aula' => 'integer',
             'perfil_completo' => 'boolean',
             'fecha_registro' => 'datetime',
+            'email_verified_at' => 'datetime',
         ];
     }
 
@@ -64,6 +66,31 @@ class Usuario extends Authenticatable
     public function getAuthPassword(): string
     {
         return $this->password_hash;
+    }
+
+    /**
+     * Determina si el correo electronico de la cuenta ya fue verificado.
+     * NULL en email_verified_at => no verificado. Cualquier timestamp => verificado.
+     */
+    public function hasVerifiedEmail(): bool
+    {
+        return $this->email_verified_at !== null;
+    }
+
+    /**
+     * Marca el correo como verificado a fecha/hora actual. Persiste el cambio
+     * en la base de datos. Idempotente: si ya estaba verificado, no hace nada.
+     */
+    public function markEmailAsVerified(): bool
+    {
+        if ($this->hasVerifiedEmail()) {
+            return false;
+        }
+
+        $this->email_verified_at = now();
+        $this->save();
+
+        return true;
     }
 
     public function bot(): HasMany

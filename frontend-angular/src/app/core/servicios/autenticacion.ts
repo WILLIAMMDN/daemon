@@ -151,6 +151,37 @@ export class Autenticacion {
     }).pipe(tap((respuesta) => this.sesion.guardar(respuesta.usuario)));
   }
 
+  /**
+   * Confirma la verificacion de correo a partir del token JWT firmado
+   * por el backend. El token llega en el link que recibe el usuario
+   * por mail. Si el usuario esta autenticado, actualizamos la sesion
+   * local para reflejar el nuevo email_verified_at.
+   */
+  confirmarVerificacionConToken(token: string): Observable<{ message: string; usuario: UsuarioSesion }> {
+    return this.api.post<{ message: string; usuario: UsuarioSesion }>('/auth/confirmar-verificar', {
+      token,
+    }).pipe(tap((respuesta) => {
+      // Si el usuario estaba logueado al confirmar, sincronizamos
+      // la sesion local para que la UI deje de mostrar el banner
+      // de "verifica tu correo".
+      if (respuesta.usuario) {
+        this.sesion.actualizarUsuario(respuesta.usuario);
+      }
+    }));
+  }
+
+  /**
+   * Reenvia el correo de verificacion. Pensado para usuarios ya
+   * autenticados que no recibieron (o perdieron) el mail inicial.
+   * Devuelve 'enviado: false' si el correo ya estaba verificado.
+   */
+  reenviarVerificacion(): Observable<{ message: string; enviado: boolean; email_verified_at: string | null }> {
+    return this.api.post<{ message: string; enviado: boolean; email_verified_at: string | null }>(
+      '/auth/enviar-verificacion',
+      {},
+    );
+  }
+
   private sincronizarClave(password: string): Observable<unknown> {
     return this.api.post('/auth/me/sync-password', {
       password,

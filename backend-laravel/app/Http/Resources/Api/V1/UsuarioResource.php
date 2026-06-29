@@ -25,6 +25,8 @@ class UsuarioResource extends JsonResource
             'biografia' => $this->biografia,
             'avatar' => $archivos->url($this->avatar),
             'perfil_completo' => (bool) ($this->perfil_completo ?? true),
+            'email_verificado' => $this->hasVerifiedEmail(),
+            'email_verified_at' => optional($this->email_verified_at)->toIso8601String(),
             'rol' => $this->rol,
             'id_institucion' => $this->id_institucion,
             'id_aula' => $this->id_aula,

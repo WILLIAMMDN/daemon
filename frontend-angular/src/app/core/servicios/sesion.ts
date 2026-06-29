@@ -4,6 +4,8 @@ export interface UsuarioSesion {
   id: number;
   nombre_completo: string;
   email?: string | null;
+  email_verificado?: boolean;
+  email_verified_at?: string | null;
   telefono?: string | null;
   usuario: string;
   rol: 'alumno' | 'docente' | 'admin';
