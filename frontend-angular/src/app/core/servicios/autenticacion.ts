@@ -72,7 +72,13 @@ export class Autenticacion {
   registroFirebase(datos: RegistroFirebaseDatos) {
     this.sesion.limpiar();
 
-    return from(this.firebaseAuth.crearCuentaEmail(datos.email, datos.password)).pipe(
+    // Patrón "login-first, create-on-miss": primero intentamos login
+    // con email+password. Si Firebase ya tiene ese usuario (por un
+    // intento de registro previo que fallo a mitad de camino, por
+    // ejemplo), entramos directamente sin chocar con
+    // auth/email-already-in-use. Si Firebase NO lo tiene, ahi si
+    // creamos la cuenta.
+    return from(this.loginORegistroFirebase(datos)).pipe(
       switchMap((idToken) => this.loginFirebase(idToken, true)),
       switchMap(() => this.completarPerfilGoogle({
         nombre_completo: datos.nombre_completo,
@@ -80,6 +86,28 @@ export class Autenticacion {
         nivel: datos.nivel,
       })),
     );
+  }
+
+  /**
+   * Helper interno: intenta hacer login con las credenciales. Si el
+   * usuario no existe en Firebase, lo crea. Devuelve el idToken en
+   * cualquier caso.
+   */
+  private async loginORegistroFirebase(datos: RegistroFirebaseDatos): Promise<string> {
+    try {
+      return await this.firebaseAuth.loginEmail(datos.email, datos.password);
+    } catch (error) {
+      const codigo = (error as { code?: string })?.code ?? '';
+      // auth/invalid-credential / auth/user-not-found => el usuario
+      // no existe todavia, lo creamos.
+      // auth/wrong-password => existe pero la contrasena no coincide
+      // con el intento de registro. Re-lanzamos el error para que el
+      // usuario sepa que ya tiene cuenta con otra clave.
+      if (codigo === 'auth/user-not-found' || codigo === 'auth/invalid-credential') {
+        return await this.firebaseAuth.crearCuentaEmail(datos.email, datos.password);
+      }
+      throw error;
+    }
   }
 
   completarPerfilGoogle(datos: CompletarPerfilGoogleDatos) {
