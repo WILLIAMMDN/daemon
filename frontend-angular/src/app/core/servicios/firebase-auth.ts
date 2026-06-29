@@ -114,7 +114,7 @@ export class FirebaseAuth {
     const origin = globalThis.location?.origin ?? 'http://localhost:4200';
 
     return {
-      url: `${origin}/login`,
+      url: `${origin}/restablecer-clave`,
       handleCodeInApp: false,
     };
   }

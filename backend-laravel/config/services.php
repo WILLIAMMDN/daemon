@@ -44,6 +44,11 @@ return [
     'firebase' => [
         'project_id' => env('FIREBASE_PROJECT_ID'),
         'certificates_url' => env('FIREBASE_CERTIFICATES_URL', 'https://www.googleapis.com/robot/v1/metadata/x509/securetoken@system.gserviceaccount.com'),
+        'service_account_path' => env('FIREBASE_SERVICE_ACCOUNT_PATH'),
+        'service_account_json' => env('FIREBASE_SERVICE_ACCOUNT_JSON'),
+        'service_account_base64' => env('FIREBASE_SERVICE_ACCOUNT_BASE64'),
+        'password_reset_url' => env('FIREBASE_PASSWORD_RESET_URL', rtrim((string) env('FRONTEND_PRODUCTION_URL', env('FRONTEND_URL', '')), '/').'/restablecer-clave'),
+        'auth_link_domain' => env('FIREBASE_AUTH_LINK_DOMAIN'),
     ],
 
 ];

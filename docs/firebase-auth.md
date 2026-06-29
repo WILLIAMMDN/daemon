@@ -19,17 +19,18 @@ El login por usuario/clave local queda disponible para cuentas existentes. Si el
 3. Activar Google.
 4. Activar Email/Password si se usara recuperacion por correo desde Firebase.
 5. Activar Phone cuando se vaya a implementar login por telefono.
-6. En Authentication > Settings > Authorized domains agregar:
+6. Activar la API de Google Cloud `Identity Toolkit API` (`identitytoolkit.googleapis.com`) para que Laravel pueda generar enlaces de recuperacion desde backend.
+7. En Authentication > Settings > Authorized domains agregar:
    - `localhost`
    - `127.0.0.1`
    - `daemonestudiante.web.app`
    - el dominio final de produccion, cuando exista
-7. En Project settings > General > Your apps crear una app Web y copiar el objeto `firebaseConfig`.
-8. No personalizar por ahora el action URL de Authentication > Templates > Password reset.
+8. En Project settings > General > Your apps crear una app Web y copiar el objeto `firebaseConfig`.
+9. No depender de la plantilla de recuperacion de Firebase Console. DAEMON genera el link desde Laravel y envia su propio correo.
 
-Firebase Console esta rechazando la actualizacion de la URL de accion con `EMAIL_TEMPLATE_UPDATE_NOT_ALLOWED`. Mientras esa restriccion exista, el flujo estable es usar el handler oficial de Firebase y volver a DAEMON mediante `continueUrl`.
+Firebase Console rechazo la actualizacion de la URL de accion con `EMAIL_TEMPLATE_UPDATE_NOT_ALLOWED`. Por eso el flujo profesional ahora queda en Laravel: el backend genera el OOB link con Identity Platform y envia un correo propio hacia `/restablecer-clave`.
 
-El enlace de Firebase enviara parametros como `mode=resetPassword` y `oobCode=...`; la pantalla `restablecer-clave` los usa para validar y confirmar la clave nueva.
+El enlace enviado por DAEMON incluye parametros como `mode=resetPassword` y `oobCode=...`; la pantalla `restablecer-clave` los usa para validar y confirmar la clave nueva en Firebase.
 
 ## Firebase Hosting y GitHub
 
@@ -66,9 +67,22 @@ En `backend-laravel/.env`:
 
 ```env
 FIREBASE_PROJECT_ID=tu-project-id
+FIREBASE_SERVICE_ACCOUNT_BASE64=base64-del-json-service-account
+FIREBASE_PASSWORD_RESET_URL=https://daemonestudiante.web.app/restablecer-clave
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.tu-proveedor.com
+MAIL_PORT=587
+MAIL_USERNAME=tu-usuario-smtp
+MAIL_PASSWORD=tu-password-smtp
+MAIL_FROM_ADDRESS=soporte@tu-dominio.com
+MAIL_FROM_NAME=DAEMON
 ```
 
-El `projectId` debe ser el mismo que aparece dentro del objeto `firebaseConfig`.
+El `projectId` debe ser el mismo que aparece dentro del objeto `firebaseConfig`. La cuenta de servicio debe tener permiso para Identity Platform/Firebase Authentication.
+
+Para Render/produccion, se recomienda guardar el JSON de la service account como base64 en `FIREBASE_SERVICE_ACCOUNT_BASE64`. En local se puede usar `FIREBASE_SERVICE_ACCOUNT_PATH` apuntando al archivo descargado. Nunca se debe commitear el JSON.
+
+Proveedor de correo recomendado para empezar gratis: Brevo SMTP o Resend. Si se usa SMTP, no hace falta instalar paquetes adicionales en Laravel.
 
 ## Configuracion Angular
 
@@ -100,9 +114,9 @@ Esta configuracion web no es una clave secreta, pero debe pertenecer al proyecto
 El flujo correcto es:
 
 1. El usuario escribe su correo en `/recuperar-clave`.
-2. Angular pide a Firebase enviar un correo de recuperacion.
-3. La respuesta visual siempre es generica para no revelar si una cuenta existe.
-4. El usuario abre el enlace y Firebase muestra el formulario oficial de cambio de clave.
-5. Al terminar, Firebase puede devolver al usuario a `https://daemonestudiante.web.app/login`.
-
-La pantalla `/restablecer-clave` queda lista para un handler propio. Para usarla sin depender del bloqueo de plantillas de Firebase, el siguiente paso profesional seria enviar correos desde Laravel con SMTP propio y generar enlaces de reseteo mediante Firebase Admin.
+2. Angular llama `POST /api/v1/auth/recuperar`.
+3. Laravel responde siempre de forma generica para no revelar si una cuenta existe.
+4. Si la cuenta existe, Laravel genera un enlace de recuperacion con Identity Platform usando la service account.
+5. Laravel envia el correo propio de DAEMON mediante el mailer configurado.
+6. El usuario abre `/restablecer-clave?mode=resetPassword&oobCode=...`.
+7. Angular confirma la nueva clave en Firebase, inicia sesion y sincroniza `password_hash` en DAEMON.

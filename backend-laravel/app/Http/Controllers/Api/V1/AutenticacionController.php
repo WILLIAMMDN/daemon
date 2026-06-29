@@ -14,6 +14,7 @@ use App\Http\Requests\Api\V1\Auth\SyncPasswordRequest;
 use App\Http\Resources\Api\V1\UsuarioResource;
 use App\Services\Auth\AutenticacionService;
 use App\Services\Auth\FirebaseTokenVerifier;
+use App\Services\Auth\RecuperacionClaveService;
 use Illuminate\Http\Request;
 use InvalidArgumentException;
 use Laravel\Socialite\Facades\Socialite;
@@ -27,6 +28,7 @@ class AutenticacionController extends Controller
     public function __construct(
         private readonly AutenticacionService $autenticacion,
         private readonly FirebaseTokenVerifier $firebase,
+        private readonly RecuperacionClaveService $recuperacionClave,
     ) {}
 
     public function login(LoginRequest $request)
@@ -49,7 +51,7 @@ class AutenticacionController extends Controller
 
     public function recuperar(RecuperarClaveRequest $request)
     {
-        $request->validated();
+        $this->recuperacionClave->solicitar($request->validated());
 
         return response()->json([
             'message' => 'Si la cuenta existe, se enviaran instrucciones de recuperacion al canal configurado.',
