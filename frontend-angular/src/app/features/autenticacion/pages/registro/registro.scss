@@ -28,7 +28,7 @@
   box-shadow: 0 2px 6px #11182724;
   display: grid;
   grid-template-columns: minmax(420px, 1fr) minmax(330px, .78fr);
-  min-height: 680px;
+  min-height: 560px;
   overflow: hidden;
   position: relative;
 }
@@ -115,25 +115,6 @@
 
 .register-form + .login-footer {
   margin-top: 1.05rem;
-}
-
-.preference-check {
-  align-items: start;
-  color: #4b5565;
-  cursor: pointer;
-  display: grid;
-  font-size: .92rem;
-  font-weight: 650;
-  gap: .65rem;
-  grid-template-columns: auto minmax(0, 1fr);
-  line-height: 1.35;
-}
-
-.preference-check input {
-  accent-color: #0b5bd3;
-  height: 17px;
-  margin-top: .12rem;
-  width: 17px;
 }
 
 .register-visual {

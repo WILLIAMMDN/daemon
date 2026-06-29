@@ -2,7 +2,6 @@ import { Component, OnDestroy, OnInit, signal } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faCloud, faPaperPlane, faPlane, faStar } from '@fortawesome/free-solid-svg-icons';
 import { Router, RouterLink } from '@angular/router';
-import { of, switchMap } from 'rxjs';
 import { Footer } from '../../../../core/layouts/footer/footer';
 import { Header } from '../../../../core/layouts/header/header';
 import { Activos } from '../../../../core/servicios/activos';
@@ -135,12 +134,12 @@ export class Inicio implements OnInit, OnDestroy {
     this.errorGoogle.set(null);
     this.procesandoGoogle.set(true);
 
-    this.autenticacion.loginGoogleFirebase(true).pipe(
-      switchMap(() => this.completarPerfilGooglePendiente()),
-    ).subscribe({
-      next: ({ usuario }) => {
+    this.autenticacion.loginGoogleFirebase(true).subscribe({
+      next: () => {
+        const usuario = this.sesion.usuario();
+
         if (usuario?.rol === 'alumno') {
-          this.router.navigateByUrl('/alumno');
+          this.router.navigateByUrl(usuario.perfil_completo === false ? '/bienvenida' : '/alumno');
           return;
         }
 
@@ -164,22 +163,6 @@ export class Inicio implements OnInit, OnDestroy {
   private iniciarCarruselHero(): void {
     this.detenerCarruselHero();
     this.heroTimer = window.setInterval(() => this.avanzarHeroSlide(), 6500);
-  }
-
-  private completarPerfilGooglePendiente() {
-    const usuario = this.sesion.usuario();
-
-    if (!usuario || usuario.perfil_completo !== false) {
-      return of({ usuario });
-    }
-
-    const nivel = ['KIDS', 'TEENS', 'PRO'].includes(usuario.nivel) ? usuario.nivel as 'KIDS' | 'TEENS' | 'PRO' : 'TEENS';
-
-    return this.autenticacion.completarPerfilGoogle({
-      nombre_completo: usuario.nombre_completo || usuario.usuario || 'Estudiante DAEMON',
-      usuario: usuario.usuario,
-      nivel,
-    });
   }
 
   private detenerCarruselHero(): void {

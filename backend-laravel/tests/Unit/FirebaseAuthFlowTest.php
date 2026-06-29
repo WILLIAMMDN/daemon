@@ -7,7 +7,6 @@ use App\Services\Auth\AutenticacionService;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Schema;
-use InvalidArgumentException;
 use Tests\TestCase;
 
 class FirebaseAuthFlowTest extends TestCase
@@ -21,14 +20,14 @@ class FirebaseAuthFlowTest extends TestCase
         Schema::dropIfExists('usuarios');
         Schema::create('usuarios', function (Blueprint $table): void {
             $table->id();
-            $table->string('nombre_completo');
+            $table->string('nombre_completo')->nullable();
             $table->string('email')->nullable()->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('telefono', 30)->nullable()->unique();
-            $table->string('usuario')->unique();
+            $table->string('usuario')->nullable()->unique();
             $table->string('password_hash');
-            $table->string('nivel')->default('TEENS');
-            $table->boolean('perfil_completo')->default(true);
+            $table->string('nivel')->nullable();
+            $table->boolean('perfil_completo')->default(false);
             $table->string('rol')->default('alumno');
             $table->integer('tokens')->default(0);
             $table->string('avatar')->nullable();
@@ -37,7 +36,7 @@ class FirebaseAuthFlowTest extends TestCase
         });
     }
 
-    public function test_perfil_incompleto_no_puede_logear_sin_crear_cuenta(): void
+    public function test_perfil_incompleto_puede_logear_para_completar_bienvenida(): void
     {
         Usuario::create([
             'nombre_completo' => 'Pendiente Firebase',
@@ -53,17 +52,11 @@ class FirebaseAuthFlowTest extends TestCase
 
         $service = app(AutenticacionService::class);
 
-        $this->assertNull($service->autenticarConFirebase(
-            $this->claims(['uid' => 'firebase-pending', 'email' => 'pendiente-firebase@example.com']),
-            false,
-        ));
-
         $usuario = $service->autenticarConFirebase(
             $this->claims(['uid' => 'firebase-pending', 'email' => 'pendiente-firebase@example.com']),
-            true,
+            false,
         );
 
-        $this->assertNotNull($usuario);
         $this->assertFalse($usuario->perfil_completo);
         $this->assertSame('pendiente-firebase@example.com', $usuario->email);
     }
@@ -190,14 +183,23 @@ class FirebaseAuthFlowTest extends TestCase
         $this->assertSame(0, Usuario::count());
     }
 
-    public function test_rechaza_email_no_verificado_en_login(): void
+    public function test_login_permite_email_no_verificado_y_mantiene_banner_pendiente(): void
     {
         $service = app(AutenticacionService::class);
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Firebase no confirmo el correo de la cuenta.');
+        Usuario::create([
+            'nombre_completo' => 'Sin verificar',
+            'email' => 'sospechoso@example.com',
+            'usuario' => 'sospechoso',
+            'password_hash' => 'irrelevant',
+            'nivel' => 'TEENS',
+            'perfil_completo' => true,
+            'rol' => 'alumno',
+            'tokens' => 100,
+            'firebase_uid' => 'firebase-no-verificado',
+        ]);
 
-        $service->autenticarConFirebase(
+        $usuario = $service->autenticarConFirebase(
             $this->claims([
                 'uid' => 'firebase-no-verificado',
                 'email' => 'sospechoso@example.com',
@@ -205,6 +207,9 @@ class FirebaseAuthFlowTest extends TestCase
             ]),
             false,
         );
+
+        $this->assertNotNull($usuario);
+        $this->assertNull($usuario->email_verified_at);
     }
 
     public function test_registro_permite_email_no_verificado_para_no_bloquear_alta(): void
@@ -256,9 +261,9 @@ class FirebaseAuthFlowTest extends TestCase
         );
 
         $this->assertNotNull($usuario);
-        $this->assertSame('Usuario Firebase', $usuario->nombre_completo);
+        $this->assertNull($usuario->nombre_completo);
         $this->assertNull($usuario->email);
-        $this->assertStringStartsWith('firebase', $usuario->usuario);
+        $this->assertNull($usuario->usuario);
     }
 
     /**

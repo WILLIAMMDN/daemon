@@ -3,7 +3,6 @@ import { AfterViewInit, Component, ElementRef, NgZone, OnDestroy, ViewChild, sig
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import type { Rive, StateMachineInput } from '@rive-app/canvas';
-import { of, switchMap } from 'rxjs';
 import { Autenticacion } from '../../../../core/servicios/autenticacion';
 import { Sesion } from '../../../../core/servicios/sesion';
 import { validarCredenciales } from '../../../../shared/validadores/auth-validadores';
@@ -106,7 +105,9 @@ export class Login implements AfterViewInit, OnDestroy {
         }
 
         this.dispararExito();
-        setTimeout(() => this.router.navigateByUrl('/alumno'), 420);
+        setTimeout(() => this.router.navigateByUrl(
+          this.sesion.usuario()?.perfil_completo === false ? '/bienvenida' : '/alumno',
+        ), 420);
       },
       error: (error) => {
         this.error.set(error.error?.message ?? 'Credenciales incorrectas.');
@@ -120,9 +121,7 @@ export class Login implements AfterViewInit, OnDestroy {
     this.enviando.set(true);
     this.error.set('');
 
-    this.auth.loginGoogleFirebase(true).pipe(
-      switchMap(() => this.completarPerfilGooglePendiente()),
-    ).subscribe({
+    this.auth.loginGoogleFirebase(true).subscribe({
       next: () => {
         if (this.sesion.esDocente()) {
           this.error.set('Este acceso es solo para estudiantes. Usa el login docente si eres profesor.');
@@ -133,7 +132,9 @@ export class Login implements AfterViewInit, OnDestroy {
         }
 
         this.dispararExito();
-        setTimeout(() => this.router.navigateByUrl('/alumno'), 420);
+        setTimeout(() => this.router.navigateByUrl(
+          this.sesion.usuario()?.perfil_completo === false ? '/bienvenida' : '/alumno',
+        ), 420);
       },
       error: (err) => {
         if (err.error?.requires_registration) {
@@ -229,22 +230,6 @@ export class Login implements AfterViewInit, OnDestroy {
         setWasmFallbackUrl(url: string): void;
       };
     };
-  }
-
-  private completarPerfilGooglePendiente() {
-    const usuario = this.sesion.usuario();
-
-    if (!usuario || usuario.perfil_completo !== false) {
-      return of(null);
-    }
-
-    const nivel = ['KIDS', 'TEENS', 'PRO'].includes(usuario.nivel) ? usuario.nivel as 'KIDS' | 'TEENS' | 'PRO' : 'TEENS';
-
-    return this.auth.completarPerfilGoogle({
-      nombre_completo: usuario.nombre_completo || usuario.usuario || 'Estudiante DAEMON',
-      usuario: usuario.usuario,
-      nivel,
-    });
   }
 
   private configurarInputsRive(): void {

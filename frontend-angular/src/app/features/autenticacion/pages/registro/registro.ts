@@ -5,24 +5,20 @@ import { Router, RouterLink } from '@angular/router';
 import { Autenticacion, RegistroFirebaseDatos } from '../../../../core/servicios/autenticacion';
 import { Sesion } from '../../../../core/servicios/sesion';
 import { AuthValidators, validarRegistro } from '../../../../shared/validadores/auth-validadores';
-import { CompletarPerfilGoogle } from '../../components/completar-perfil-google/completar-perfil-google';
 
 @Component({
   selector: 'app-registro',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, CompletarPerfilGoogle],
+  imports: [CommonModule, FormsModule, RouterLink],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './registro.html',
   styleUrl: './registro.scss',
 })
 export class Registro {
-  readonly nombreMinLength = AuthValidators.NOMBRE_MIN_LENGTH;
-  readonly usuarioMinLength = AuthValidators.USUARIO_MIN_LENGTH;
   readonly passwordMinLength = AuthValidators.REGISTRO_PASSWORD_MIN_LENGTH;
 
-  datos: RegistroFirebaseDatos = { nombre_completo: '', email: '', usuario: '', password: '', nivel: 'TEENS' };
+  datos: RegistroFirebaseDatos = { email: '', password: '' };
   passwordVisible = signal(false);
-  perfilGooglePendiente = signal(false);
   enviando = signal(false);
   error = signal('');
 
@@ -43,8 +39,7 @@ export class Registro {
     this.auth.loginGoogleFirebase(true).subscribe({
       next: () => {
         if (!this.sesion.esDocente() && this.sesion.usuario()?.perfil_completo === false) {
-          this.perfilGooglePendiente.set(true);
-          this.enviando.set(false);
+          this.router.navigateByUrl('/bienvenida');
           return;
         }
 
@@ -57,29 +52,10 @@ export class Registro {
     });
   }
 
-  perfilGoogleCompletado(): void {
-    this.perfilGooglePendiente.set(false);
-    this.enviando.set(false);
-    this.router.navigateByUrl('/alumno');
-  }
-
-  cancelarPerfilGoogle(): void {
-    this.perfilGooglePendiente.set(false);
-    this.enviando.set(false);
-
-    this.auth.logout().subscribe({
-      next: () => undefined,
-      error: () => this.sesion.limpiar(),
-    });
-  }
-
   registrar(form: NgForm): void {
     const payload = {
-      nombre_completo: this.datos.nombre_completo.trim(),
       email: this.datos.email.trim(),
-      usuario: this.datos.usuario.trim(),
       password: this.datos.password,
-      nivel: this.datos.nivel,
     };
 
     const validacion = validarRegistro(payload);
@@ -97,12 +73,11 @@ export class Registro {
     this.error.set('');
 
     this.auth.registroFirebase(payload).subscribe({
-      next: () => this.router.navigateByUrl('/alumno'),
+      next: () => this.router.navigateByUrl(
+        this.sesion.usuario()?.perfil_completo === false ? '/bienvenida' : '/alumno',
+      ),
       error: (error) => {
         this.error.set(error.error?.message ?? error.message ?? 'No se pudo crear la cuenta en Firebase.');
-        if (!this.sesion.esDocente() && this.sesion.usuario()?.perfil_completo === false) {
-          this.perfilGooglePendiente.set(true);
-        }
         this.enviando.set(false);
       },
     });

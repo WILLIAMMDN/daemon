@@ -25,14 +25,25 @@ class AutenticacionService
 
     public function registrarAlumno(array $datos): Usuario
     {
+        // Flujo minimalista: solo email + password son requeridos. El
+        // resto del perfil lo pide /bienvenida despues. Si el cliente
+        // manda datos extra (compatibilidad), los respetamos y marcamos
+        // perfil_completo segun corresponda.
+        $datosRequeridosCompletos = ! empty($datos['nombre_completo'])
+            && ! empty($datos['usuario'])
+            && ! empty($datos['nivel']);
+
         $usuario = Usuario::create([
-            'nombre_completo' => $datos['nombre_completo'],
+            'nombre_completo' => $datos['nombre_completo'] ?? null,
             'email' => $datos['email'] ?? null,
             'telefono' => $datos['telefono'] ?? null,
-            'usuario' => $datos['usuario'],
+            'usuario' => $datos['usuario'] ?? null,
             'password_hash' => Hash::make($datos['password']),
-            'nivel' => $datos['nivel'] ?? 'TEENS',
-            'perfil_completo' => true,
+            'nivel' => $datos['nivel'] ?? null,
+            // Si el cliente ya manda todo, lo marcamos completo. Si solo
+            // manda lo minimo, queda incompleto hasta que pase por
+            // /bienvenida (PATCH /auth/me/perfil).
+            'perfil_completo' => $datosRequeridosCompletos,
             'rol' => 'alumno',
             'tokens' => 100,
             'avatar' => null,
@@ -42,15 +53,7 @@ class AutenticacionService
         // para no bloquear la respuesta del registro. Si falla (mailer
         // caido, Resend rate limit, etc.) el usuario sigue existiendo y
         // puede pedir reenvio desde el panel sin perder la cuenta.
-        if ($usuario->email && app()->bound(EmailVerificationService::class)) {
-            try {
-                app(EmailVerificationService::class)->solicitar($usuario);
-            } catch (\Throwable $exception) {
-                // No rompemos el registro si el envio falla: el usuario
-                // puede reenviar manualmente desde /auth/enviar-verificacion.
-                report($exception);
-            }
-        }
+        $this->solicitarVerificacionSiPendiente($usuario);
 
         return $usuario;
     }
@@ -67,20 +70,24 @@ class AutenticacionService
             ?? Usuario::where('email', $email)->first();
 
         if ($usuario) {
-            $usuario->update([
+            $actualizacion = [
                 'google_id' => $googleUser->getId(),
-                'avatar' => $usuario->avatar ?: $googleUser->getAvatar(),
-            ]);
+            ];
+
+            // Solo rellenamos avatar / nombre si estan vacios: nunca
+            // pisamos lo que el usuario ya configuro manualmente.
+            if (! $usuario->avatar) {
+                $actualizacion['avatar'] = $googleUser->getAvatar();
+            }
+            if (! $usuario->nombre_completo && $googleUser->getName()) {
+                $actualizacion['nombre_completo'] = $googleUser->getName();
+            }
+
+            $usuario->update($actualizacion);
 
             // Google ya valido el correo, asi que marcamos como verificado.
             // Idempotente: si ya estaba verificado, no se vuelve a escribir.
             $usuario->markEmailAsVerified();
-
-            if (! $crearCuenta && ! $usuario->perfil_completo) {
-                $usuario->tokens()->delete();
-
-                return null;
-            }
 
             $usuario->tokens()->delete();
 
@@ -91,12 +98,16 @@ class AutenticacionService
             return null;
         }
 
+        // Registro nuevo desde Google: pre-llenamos nombre (de Google)
+        // pero dejamos perfil_completo=false porque el usuario todavia
+        // no eligio su "usuario" (handle) ni su nivel. /bienvenida se
+        // encarga de pedir lo que falta.
         $usuario = Usuario::create([
-            'nombre_completo' => $googleUser->getName() ?: $email,
+            'nombre_completo' => $googleUser->getName() ?: null,
             'email' => $email,
-            'usuario' => $this->generarUsuarioGoogle($email),
+            'usuario' => null,
             'password_hash' => Hash::make(Str::random(32)),
-            'nivel' => 'TEENS',
+            'nivel' => null,
             'perfil_completo' => false,
             'rol' => 'alumno',
             'tokens' => 100,
@@ -116,17 +127,6 @@ class AutenticacionService
         $email = $claims['email'] ?? null;
         $telefono = $claims['phone_number'] ?? null;
         $googleId = $claims['google_id'] ?? null;
-
-        // Si el token trae email Y es un login de cuenta ya existente
-        // (crearCuenta = false), exigimos que Firebase lo tenga verificado.
-// El login solo por telefono no pasa por este chequeo porque no lleva email.
-// En REGISTRO (crearCuenta = true) permitimos email no verificado: la
-// cuenta se acaba de crear y la verificacion la maneja el flujo
-// EmailVerificationService con un JWT propio, asi que el usuario va
-// a recibir nuestro mail DAEMON-brandeado y no se queda trabado.
-        if ($email !== null && ! ($claims['email_verified'] ?? false) && ! $crearCuenta) {
-            throw new InvalidArgumentException('Firebase no confirmo el correo de la cuenta.');
-        }
 
         $usuario = Usuario::where('firebase_uid', $firebaseUid)->first()
             ?? ($email ? Usuario::where('email', $email)->first() : null)
@@ -159,12 +159,8 @@ class AutenticacionService
             // marcamos en la DB. Idempotente via markEmailAsVerified().
             if ($email && ($claims['email_verified'] ?? false)) {
                 $usuario->markEmailAsVerified();
-            }
-
-            if (! $crearCuenta && ! $usuario->perfil_completo) {
-                $usuario->tokens()->delete();
-
-                return null;
+            } elseif ($crearCuenta) {
+                $this->solicitarVerificacionSiPendiente($usuario);
             }
 
             $usuario->tokens()->delete();
@@ -177,12 +173,14 @@ class AutenticacionService
         }
 
         $usuario = Usuario::create([
-            'nombre_completo' => $claims['name'] ?? $email ?? $telefono ?? 'Usuario Firebase',
+            // Registro minimalista: pre-llenamos solo lo que ya viene
+            // validado de Firebase. El resto lo pide /bienvenida.
+            'nombre_completo' => $claims['name'] ?? null,
             'email' => $email,
             'telefono' => $telefono,
-            'usuario' => $this->generarUsuarioFirebase($claims),
+            'usuario' => null,
             'password_hash' => Hash::make(Str::random(40)),
-            'nivel' => 'TEENS',
+            'nivel' => null,
             'perfil_completo' => false,
             'rol' => 'alumno',
             'tokens' => 100,
@@ -197,6 +195,7 @@ class AutenticacionService
         ]);
 
         $usuario->tokens()->delete();
+        $this->solicitarVerificacionSiPendiente($usuario);
 
         return $usuario->fresh();
     }
@@ -241,7 +240,7 @@ class AutenticacionService
         $usuario->update(['password_hash' => Hash::make($passwordNueva)]);
     }
 
-    public function completarPerfilGoogle(Usuario $usuario, array $datos): Usuario
+    public function completarPerfil(Usuario $usuario, array $datos): Usuario
     {
         $usuario->update([
             'nombre_completo' => $datos['nombre_completo'],
@@ -258,35 +257,18 @@ class AutenticacionService
         return $usuario->createToken($nombre)->plainTextToken;
     }
 
-    private function generarUsuarioGoogle(string $email): string
+    private function solicitarVerificacionSiPendiente(Usuario $usuario): void
     {
-        return $this->generarUsuarioUnico(Str::before($email, '@'), 'google');
-    }
-
-    private function generarUsuarioFirebase(array $claims): string
-    {
-        $base = $claims['email'] ?? $claims['phone_number'] ?? $claims['uid'] ?? 'firebase';
-
-        return $this->generarUsuarioUnico((string) $base, 'firebase');
-    }
-
-    private function generarUsuarioUnico(string $valor, string $fallback): string
-    {
-        $base = Str::of(Str::before($valor, '@'))
-            ->ascii()
-            ->lower()
-            ->replaceMatches('/[^a-z0-9_-]+/', '')
-            ->trim('-_')
-            ->limit(40, '')
-            ->toString();
-
-        $base = $base !== '' ? $base : $fallback;
-        $usuario = $base;
-
-        while (Usuario::where('usuario', $usuario)->exists()) {
-            $usuario = Str::limit($base, 40, '').random_int(1000, 9999);
+        if (! $usuario->email || $usuario->hasVerifiedEmail() || ! app()->bound(EmailVerificationService::class)) {
+            return;
         }
 
-        return $usuario;
+        try {
+            app(EmailVerificationService::class)->solicitar($usuario);
+        } catch (\Throwable $exception) {
+            // No rompemos el registro si el envio falla: el usuario
+            // puede reenviar manualmente desde /auth/enviar-verificacion.
+            report($exception);
+        }
     }
 }

@@ -1,0 +1,18 @@
+@if (visible()) {
+  <section class="verification-banner" role="status" aria-live="polite">
+    <div>
+      <strong>Verifica tu correo</strong>
+      <span>Confirma {{ sesion.usuario()?.email }} para proteger tu cuenta y recuperar acceso sin fricciones.</span>
+      @if (mensaje()) {
+        <small class="success">{{ mensaje() }}</small>
+      }
+      @if (error()) {
+        <small class="error">{{ error() }}</small>
+      }
+    </div>
+
+    <button type="button" (click)="reenviar()" [disabled]="reenviando()">
+      {{ reenviando() ? 'Enviando...' : 'Reenviar correo' }}
+    </button>
+  </section>
+}

@@ -13,6 +13,7 @@ export class Api {
 
   get<T>(ruta: string): Observable<T> { return this.http.get<T>(this.url(ruta), this.options); }
   post<T>(ruta: string, datos: unknown): Observable<T> { return this.http.post<T>(this.url(ruta), datos, this.options); }
+  patch<T>(ruta: string, datos: unknown): Observable<T> { return this.http.patch<T>(this.url(ruta), datos, this.options); }
   put<T>(ruta: string, datos: unknown): Observable<T> { return this.http.put<T>(this.url(ruta), datos, this.options); }
   delete<T>(ruta: string): Observable<T> { return this.http.delete<T>(this.url(ruta), this.options); }
 

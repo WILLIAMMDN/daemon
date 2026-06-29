@@ -2,6 +2,7 @@
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { Autenticacion } from '../../servicios/autenticacion';
 import { Sesion } from '../../servicios/sesion';
+import { EmailVerificationBanner } from '../../../shared/componentes/email-verification-banner/email-verification-banner';
 
 interface EnlacePortal {
   etiqueta: string;
@@ -17,7 +18,7 @@ interface GrupoPortal {
 
 @Component({
   selector: 'app-layout-docente',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, EmailVerificationBanner],
   templateUrl: './layout-docente.html',
   styleUrl: './layout-docente.scss',
 })

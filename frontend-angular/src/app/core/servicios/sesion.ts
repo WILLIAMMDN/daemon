@@ -2,14 +2,14 @@ import { Injectable, computed, signal } from '@angular/core';
 
 export interface UsuarioSesion {
   id: number;
-  nombre_completo: string;
+  nombre_completo?: string | null;
   email?: string | null;
   email_verificado?: boolean;
   email_verified_at?: string | null;
   telefono?: string | null;
-  usuario: string;
+  usuario?: string | null;
   rol: 'alumno' | 'docente' | 'admin';
-  nivel: string;
+  nivel?: string | null;
   tokens: number;
   avatar?: string | null;
   perfil_completo?: boolean;
@@ -34,11 +34,13 @@ export class Sesion {
   }
 
   actualizarUsuario(usuario: UsuarioSesion): void {
-    localStorage.setItem(this.claveUsuario, JSON.stringify(usuario)); this.usuario.set(usuario);
+    localStorage.setItem(this.claveUsuario, JSON.stringify(usuario));
+    this.usuario.set(usuario);
   }
 
   limpiar(): void {
-    localStorage.removeItem('daemon_token'); localStorage.removeItem(this.claveUsuario);
+    localStorage.removeItem('daemon_token');
+    localStorage.removeItem(this.claveUsuario);
     localStorage.removeItem('access_token');
     this.usuario.set(null);
   }

@@ -21,13 +21,13 @@ class GoogleAuthFlowTest extends TestCase
         Schema::dropIfExists('usuarios');
         Schema::create('usuarios', function (Blueprint $table): void {
             $table->id();
-            $table->string('nombre_completo');
+            $table->string('nombre_completo')->nullable();
             $table->string('email')->nullable()->unique();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('usuario')->unique();
+            $table->string('usuario')->nullable()->unique();
             $table->string('password_hash');
-            $table->string('nivel')->default('TEENS');
-            $table->boolean('perfil_completo')->default(true);
+            $table->string('nivel')->nullable();
+            $table->boolean('perfil_completo')->default(false);
             $table->string('rol')->default('alumno');
             $table->integer('tokens')->default(0);
             $table->string('avatar')->nullable();
@@ -35,7 +35,7 @@ class GoogleAuthFlowTest extends TestCase
         });
     }
 
-    public function test_incomplete_google_profile_cannot_be_completed_from_login(): void
+    public function test_incomplete_google_profile_can_login_and_remains_pending(): void
     {
         Usuario::create([
             'nombre_completo' => 'Pendiente',
@@ -57,9 +57,7 @@ class GoogleAuthFlowTest extends TestCase
             'name' => 'Pendiente Google',
         ]);
 
-        $this->assertNull($service->autenticarConGoogle($googleUser, false));
-
-        $usuario = $service->autenticarConGoogle($googleUser, true);
+        $usuario = $service->autenticarConGoogle($googleUser, false);
 
         $this->assertNotNull($usuario);
         $this->assertFalse($usuario->perfil_completo);

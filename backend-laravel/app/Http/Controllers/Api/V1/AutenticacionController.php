@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\V1\Auth\ActualizarPerfilRequest;
 use App\Http\Requests\Api\V1\Auth\CambiarClaveRequest;
 use App\Http\Requests\Api\V1\Auth\CompletarPerfilGoogleRequest;
 use App\Http\Requests\Api\V1\Auth\ConfirmarResetClaveRequest;
@@ -107,6 +108,7 @@ class AutenticacionController extends Controller
                 : 'Tu correo ya estaba verificado.',
             'enviado' => $enviado,
             'email_verified_at' => optional($usuario->email_verified_at)->toIso8601String(),
+            'usuario' => UsuarioResource::make($usuario->fresh()),
         ]);
     }
 
@@ -231,7 +233,7 @@ class AutenticacionController extends Controller
 
     public function completarPerfilGoogle(CompletarPerfilGoogleRequest $request)
     {
-        $usuario = $this->autenticacion->completarPerfilGoogle($request->user(), $request->validated());
+        $usuario = $this->autenticacion->completarPerfil($request->user(), $request->validated());
 
         return response()->json(['usuario' => UsuarioResource::make($usuario)]);
     }
@@ -242,6 +244,18 @@ class AutenticacionController extends Controller
         // terminan con un usuario ya autenticado en DAEMON y pendiente de
         // completar nombre, usuario y nivel. Las reglas de validacion son las mismas.
         return $this->completarPerfilGoogle($request);
+    }
+
+    /**
+     * Endpoint canonico para completar el perfil inicial luego de crear la
+     * cuenta. Se usa desde /bienvenida sin importar si el alta fue con Google,
+     * Firebase email/password o registro legacy.
+     */
+    public function completarPerfil(ActualizarPerfilRequest $request)
+    {
+        $usuario = $this->autenticacion->completarPerfil($request->user(), $request->validated());
+
+        return response()->json(['usuario' => UsuarioResource::make($usuario)]);
     }
 
     public function yo(Request $request)

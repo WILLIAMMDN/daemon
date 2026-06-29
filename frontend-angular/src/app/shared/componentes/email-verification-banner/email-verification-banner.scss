@@ -1,0 +1,79 @@
+:host {
+  display: block;
+}
+
+.verification-banner {
+  align-items: center;
+  background: #fff7ed;
+  border-bottom: 1px solid #fed7aa;
+  color: #7c2d12;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  min-height: 64px;
+  padding: .85rem 2rem;
+}
+
+.verification-banner div {
+  display: grid;
+  gap: .18rem;
+  min-width: 0;
+}
+
+.verification-banner strong {
+  color: #7c2d12;
+  font-size: .92rem;
+  font-weight: 900;
+}
+
+.verification-banner span,
+.verification-banner small {
+  font-size: .86rem;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.verification-banner span {
+  color: #9a3412;
+}
+
+.verification-banner .success {
+  color: #166534;
+  font-weight: 800;
+}
+
+.verification-banner .error {
+  color: #b91c1c;
+  font-weight: 800;
+}
+
+.verification-banner button {
+  background: #9a3412;
+  border: 0;
+  border-radius: 6px;
+  color: #ffffff;
+  cursor: pointer;
+  flex: 0 0 auto;
+  font: inherit;
+  font-size: .9rem;
+  font-weight: 850;
+  min-height: 40px;
+  padding: .6rem .9rem;
+}
+
+.verification-banner button:disabled {
+  cursor: not-allowed;
+  opacity: .62;
+}
+
+@media (max-width: 720px) {
+  .verification-banner {
+    align-items: stretch;
+    flex-direction: column;
+    padding: .85rem 1rem;
+  }
+
+  .verification-banner button {
+    width: 100%;
+  }
+}

@@ -14,10 +14,17 @@ export interface CompletarPerfilGoogleDatos {
   nivel: 'KIDS' | 'TEENS' | 'PRO';
 }
 
-export interface RegistroFirebaseDatos extends CompletarPerfilGoogleDatos {
+export interface RegistroFirebaseDatos {
   email: string;
   password: string;
 }
+
+type RespuestaReenvioVerificacion = {
+  message: string;
+  enviado: boolean;
+  email_verified_at: string | null;
+  usuario?: UsuarioSesion;
+};
 
 @Injectable({
   providedIn: 'root',
@@ -80,11 +87,6 @@ export class Autenticacion {
     // creamos la cuenta.
     return from(this.loginORegistroFirebase(datos)).pipe(
       switchMap((idToken) => this.loginFirebase(idToken, true)),
-      switchMap(() => this.completarPerfilGoogle({
-        nombre_completo: datos.nombre_completo,
-        usuario: datos.usuario,
-        nivel: datos.nivel,
-      })),
     );
   }
 
@@ -110,9 +112,13 @@ export class Autenticacion {
     }
   }
 
-  completarPerfilGoogle(datos: CompletarPerfilGoogleDatos) {
-    return this.api.post<{ usuario: UsuarioSesion }>('/auth/firebase/perfil', datos)
+  completarPerfil(datos: CompletarPerfilGoogleDatos) {
+    return this.api.patch<{ usuario: UsuarioSesion }>('/auth/me/perfil', datos)
       .pipe(tap((respuesta) => this.sesion.actualizarUsuario(respuesta.usuario)));
+  }
+
+  completarPerfilGoogle(datos: CompletarPerfilGoogleDatos) {
+    return this.completarPerfil(datos);
   }
 
   cerrarSesionGoogle(): void {
@@ -203,11 +209,15 @@ export class Autenticacion {
    * autenticados que no recibieron (o perdieron) el mail inicial.
    * Devuelve 'enviado: false' si el correo ya estaba verificado.
    */
-  reenviarVerificacion(): Observable<{ message: string; enviado: boolean; email_verified_at: string | null }> {
-    return this.api.post<{ message: string; enviado: boolean; email_verified_at: string | null }>(
+  reenviarVerificacion(): Observable<RespuestaReenvioVerificacion> {
+    return this.api.post<RespuestaReenvioVerificacion>(
       '/auth/enviar-verificacion',
       {},
-    );
+    ).pipe(tap((respuesta) => {
+      if (respuesta.usuario) {
+        this.sesion.actualizarUsuario(respuesta.usuario);
+      }
+    }));
   }
 
   private sincronizarClave(password: string): Observable<unknown> {

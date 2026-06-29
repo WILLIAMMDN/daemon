@@ -11,6 +11,7 @@ import { Registro } from './features/autenticacion/pages/registro/registro';
 import { RecuperarClave } from './features/autenticacion/pages/recuperar-clave/recuperar-clave';
 import { RestablecerClave } from './features/autenticacion/pages/restablecer-clave/restablecer-clave';
 import { VerificarCorreo } from './features/autenticacion/pages/verificar-correo/verificar-correo';
+import { Bienvenida } from './features/autenticacion/pages/bienvenida/bienvenida';
 import { PanelAlumno } from './features/alumno/pages/panel-alumno/panel-alumno';
 import { PerfilAlumno } from './features/alumno/pages/perfil-alumno/perfil-alumno';
 import { EditarPerfil } from './features/alumno/pages/editar-perfil/editar-perfil';
@@ -57,6 +58,7 @@ export const routes: Routes = [
   { path: 'login', component: Login },
   { path: 'login-docente', component: LoginDocente },
   { path: 'registro', component: Registro },
+  { path: 'bienvenida', component: Bienvenida, canActivate: [authGuard] },
   { path: 'recuperar-clave', component: RecuperarClave },
   { path: 'restablecer-clave', component: RestablecerClave },
   { path: 'verificar-correo', component: VerificarCorreo },

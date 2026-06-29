@@ -1,22 +1,19 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, signal } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
 import { Autenticacion, CompletarPerfilGoogleDatos } from '../../../../core/servicios/autenticacion';
-import { UsuarioSesion } from '../../../../core/servicios/sesion';
+import { Sesion } from '../../../../core/servicios/sesion';
 import { AuthValidators } from '../../../../shared/validadores/auth-validadores';
 
 @Component({
-  selector: 'app-completar-perfil-google',
+  selector: 'app-bienvenida',
   standalone: true,
-  imports: [CommonModule, FormsModule],
-  templateUrl: './completar-perfil-google.html',
-  styleUrl: './completar-perfil-google.scss',
+  imports: [CommonModule, FormsModule, RouterLink],
+  templateUrl: './bienvenida.html',
+  styleUrl: './bienvenida.scss',
 })
-export class CompletarPerfilGoogle implements OnChanges {
-  @Input() usuario: UsuarioSesion | null = null;
-  @Output() completado = new EventEmitter<UsuarioSesion>();
-  @Output() cancelado = new EventEmitter<void>();
-
+export class Bienvenida implements OnInit {
   readonly nombreMinLength = AuthValidators.NOMBRE_MIN_LENGTH;
   readonly usuarioMinLength = AuthValidators.USUARIO_MIN_LENGTH;
   readonly patronUsuario = /^[A-Za-z0-9_-]+$/;
@@ -30,21 +27,29 @@ export class CompletarPerfilGoogle implements OnChanges {
   guardando = signal(false);
   error = signal('');
 
-  constructor(private auth: Autenticacion) {}
+  constructor(
+    private auth: Autenticacion,
+    public sesion: Sesion,
+    private router: Router,
+  ) {}
 
-  get correoGoogle(): string | null {
-    return this.usuario?.email ?? null;
-  }
+  ngOnInit(): void {
+    const usuario = this.sesion.usuario();
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (!changes['usuario']) {
+    if (!usuario) {
+      this.router.navigateByUrl('/login');
+      return;
+    }
+
+    if (usuario.perfil_completo !== false) {
+      this.router.navigateByUrl(usuario.rol === 'docente' || usuario.rol === 'admin' ? '/docente' : '/alumno');
       return;
     }
 
     this.datos = {
-      nombre_completo: '',
-      usuario: '',
-      nivel: this.normalizarNivel(this.usuario?.nivel),
+      nombre_completo: usuario.nombre_completo?.trim() ?? '',
+      usuario: usuario.usuario?.trim() ?? '',
+      nivel: this.normalizarNivel(usuario.nivel),
     };
   }
 
@@ -64,11 +69,8 @@ export class CompletarPerfilGoogle implements OnChanges {
     this.guardando.set(true);
     this.error.set('');
 
-    this.auth.completarPerfilGoogle(payload).subscribe({
-      next: (respuesta) => {
-        this.guardando.set(false);
-        this.completado.emit(respuesta.usuario);
-      },
+    this.auth.completarPerfil(payload).subscribe({
+      next: () => this.router.navigateByUrl('/alumno'),
       error: (error) => {
         const errores = error.error?.errors;
         const primerError = errores ? Object.values(errores).flat()[0] : null;
@@ -78,12 +80,18 @@ export class CompletarPerfilGoogle implements OnChanges {
     });
   }
 
-  cancelar(): void {
+  salir(): void {
     if (this.guardando()) {
       return;
     }
 
-    this.cancelado.emit();
+    this.auth.logout().subscribe({
+      next: () => this.router.navigateByUrl('/login'),
+      error: () => {
+        this.sesion.limpiar();
+        this.router.navigateByUrl('/login');
+      },
+    });
   }
 
   private validar(payload: CompletarPerfilGoogleDatos, form: NgForm): string | null {
@@ -96,7 +104,7 @@ export class CompletarPerfilGoogle implements OnChanges {
     }
 
     if (!this.patronUsuario.test(payload.usuario)) {
-      return 'El usuario solo puede usar letras, números, guiones y guiones bajos.';
+      return 'El usuario solo puede usar letras, numeros, guiones y guiones bajos.';
     }
 
     if (form.invalid) {

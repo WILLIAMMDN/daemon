@@ -1,9 +1,6 @@
 export interface AuthRegistroDatos {
-  nombre_completo: string;
   email: string;
-  usuario: string;
   password: string;
-  nivel: string;
 }
 
 export const AuthValidators = {
@@ -23,28 +20,12 @@ export const AuthValidators = {
 };
 
 export function validarRegistro(datos: AuthRegistroDatos): string | null {
-  if (!datos.nombre_completo?.trim()) {
-    return AuthValidators.requiredFieldMessage('nombre completo');
-  }
-
-  if (datos.nombre_completo.trim().length < AuthValidators.NOMBRE_MIN_LENGTH) {
-    return AuthValidators.minLengthMessage('nombre completo', AuthValidators.NOMBRE_MIN_LENGTH);
-  }
-
   if (!datos.email?.trim()) {
     return AuthValidators.requiredFieldMessage('correo electr\u00f3nico');
   }
 
   if (!AuthValidators.EMAIL_PATTERN.test(datos.email)) {
     return AuthValidators.invalidEmailMessage;
-  }
-
-  if (!datos.usuario?.trim()) {
-    return AuthValidators.requiredFieldMessage('usuario');
-  }
-
-  if (datos.usuario.trim().length < AuthValidators.USUARIO_MIN_LENGTH) {
-    return AuthValidators.minLengthMessage('usuario', AuthValidators.USUARIO_MIN_LENGTH);
   }
 
   if (!datos.password) {

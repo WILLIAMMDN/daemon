@@ -5,6 +5,9 @@
 - Supabase PostgreSQL conectado desde Laravel.
 - Supabase Storage configurado como disco de archivos de negocio.
 - Firebase Auth integrado para Google, email/password y recuperacion con handler oficial.
+- Registro profesional en dos pasos: cuenta primero, `/bienvenida` despues para perfil.
+- Verificacion de correo con token propio Laravel y banner persistente en portales.
+- Recuperacion de clave con correo propio Laravel y token firmado por `APP_KEY`.
 - Firebase Hosting desplegado en `https://daemonestudiante.web.app`.
 - Firebase Hosting configurado con target `estudiante`.
 - Backend Laravel desplegado en Render en `https://daemon-5vo1.onrender.com`.
@@ -48,7 +51,6 @@ Roles otorgados en `daemon-a41f8`:
 
 ## Pendiente planificado
 
-- Handler propio de DAEMON para `/restablecer-clave` con correo enviado desde Laravel por SMTP propio.
 - Backups programados de Supabase.
 - Rotacion de credenciales de Supabase Storage y service accounts.
 - Reglas operativas para no subir `.env`, dumps, backups ni llaves privadas al repositorio.
@@ -62,6 +64,8 @@ En produccion, Laravel debe resolver archivos asi:
 - `UPLOADS_DISK=supabase` para que nuevos archivos subidos desde DAEMON se guarden en Supabase Storage.
 - `APP_URL=https://daemon-5vo1.onrender.com` para URLs propias del backend.
 - `FRONTEND_URL=https://daemonestudiante.web.app` para CORS y redirecciones.
+- `FRONTEND_EMAIL_VERIFICATION_URL=https://daemonestudiante.web.app/verificar-correo` para correos de verificacion.
+- `FIREBASE_PASSWORD_RESET_URL=https://daemonestudiante.web.app/restablecer-clave` para correos de recuperacion.
 
 ## Decision pendiente para backend
 

@@ -9,6 +9,9 @@ DAEMON usa Supabase para PostgreSQL y Storage. Firebase se usa solo como proveed
 3. Laravel valida la firma del token con las llaves publicas de Firebase.
 4. Laravel enlaza el `firebase_uid` con la tabla `usuarios`.
 5. Laravel emite el token interno de Sanctum para conservar roles, permisos, tokens, insignias y progreso.
+6. Si el perfil esta incompleto, Angular redirige a `/bienvenida`.
+7. `/bienvenida` llama `PATCH /api/v1/auth/me/perfil` y marca `perfil_completo=true`.
+8. Si el correo no esta verificado, los portales muestran un banner persistente con reenvio.
 
 El login por usuario/clave local queda disponible para cuentas existentes. Si el campo de login contiene un correo, Angular intenta email/password con Firebase.
 
@@ -28,9 +31,9 @@ El login por usuario/clave local queda disponible para cuentas existentes. Si el
 8. En Project settings > General > Your apps crear una app Web y copiar el objeto `firebaseConfig`.
 9. No depender de la plantilla de recuperacion de Firebase Console. DAEMON genera el link desde Laravel y envia su propio correo.
 
-Firebase Console rechazo la actualizacion de la URL de accion con `EMAIL_TEMPLATE_UPDATE_NOT_ALLOWED`. Por eso el flujo profesional ahora queda en Laravel: el backend genera el OOB link con Identity Platform y envia un correo propio hacia `/restablecer-clave`.
+Firebase Console rechazo la actualizacion de la URL de accion con `EMAIL_TEMPLATE_UPDATE_NOT_ALLOWED`. Por eso los flujos profesionales de recuperacion y verificacion quedan en Laravel: el backend genera tokens propios, envia correos DAEMON y apunta a pantallas propias.
 
-El enlace enviado por DAEMON incluye parametros como `mode=resetPassword` y `oobCode=...`; la pantalla `restablecer-clave` los usa para validar y confirmar la clave nueva en Firebase.
+El enlace de recuperacion enviado por DAEMON usa `/restablecer-clave?token=...&correo=1`. El backend valida ese token y actualiza Firebase Auth mediante service account, ademas de sincronizar `password_hash` en DAEMON.
 
 ## Firebase Hosting y GitHub
 
@@ -69,6 +72,7 @@ En `backend-laravel/.env`:
 FIREBASE_PROJECT_ID=tu-project-id
 FIREBASE_SERVICE_ACCOUNT_BASE64=base64-del-json-service-account
 FIREBASE_PASSWORD_RESET_URL=https://daemonestudiante.web.app/restablecer-clave
+FRONTEND_EMAIL_VERIFICATION_URL=https://daemonestudiante.web.app/verificar-correo
 MAIL_MAILER=smtp
 MAIL_HOST=smtp.tu-proveedor.com
 MAIL_PORT=587
@@ -104,10 +108,12 @@ Esta configuracion web no es una clave secreta, pero debe pertenecer al proyecto
 ## Rutas nuevas
 
 - `POST /api/v1/auth/firebase`
-- `POST /api/v1/auth/firebase/perfil`
+- `PATCH /api/v1/auth/me/perfil`
+- `POST /api/v1/auth/enviar-verificacion`
+- `POST /api/v1/auth/confirmar-verificar`
 - `POST /api/v1/auth/me/sync-password`
 
-`/api/v1/auth/google` queda disponible por compatibilidad, pero el frontend nuevo usa Firebase.
+`POST /api/v1/auth/firebase/perfil` y `POST /api/v1/auth/google/perfil` quedan disponibles por compatibilidad, pero el endpoint canonico nuevo es `PATCH /api/v1/auth/me/perfil`.
 
 ## Recuperacion de contrasena
 
@@ -116,7 +122,17 @@ El flujo correcto es:
 1. El usuario escribe su correo en `/recuperar-clave`.
 2. Angular llama `POST /api/v1/auth/recuperar`.
 3. Laravel responde siempre de forma generica para no revelar si una cuenta existe.
-4. Si la cuenta existe, Laravel genera un enlace de recuperacion con Identity Platform usando la service account.
+4. Si la cuenta existe, Laravel genera un enlace de recuperacion con JWT propio firmado por `APP_KEY`.
 5. Laravel envia el correo propio de DAEMON mediante el mailer configurado.
-6. El usuario abre `/restablecer-clave?mode=resetPassword&oobCode=...`.
-7. Angular confirma la nueva clave en Firebase, inicia sesion y sincroniza `password_hash` en DAEMON.
+6. El usuario abre `/restablecer-clave?token=...&correo=1`.
+7. Angular llama `POST /api/v1/auth/confirmar-reset`.
+8. Laravel actualiza la clave en Firebase Auth usando la service account y sincroniza `password_hash`.
+
+## Verificacion de correo
+
+1. Tras crear una cuenta con email/password, Laravel envia el correo de verificacion propio.
+2. El usuario puede entrar con la cuenta aunque el correo siga pendiente.
+3. Los layouts de alumno/docente muestran un banner si `email_verificado=false`.
+4. El boton del banner llama `POST /api/v1/auth/enviar-verificacion`.
+5. El enlace recibido abre `/verificar-correo?token=...`.
+6. Angular llama `POST /api/v1/auth/confirmar-verificar` y actualiza la sesion local.

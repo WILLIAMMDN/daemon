@@ -42,31 +42,10 @@
         </div>
 
         <div class="divider">
-          <span>o completa tus datos</span>
+          <span>o crea tu cuenta con correo</span>
         </div>
 
         <form #registroForm="ngForm" (ngSubmit)="registrar(registroForm)" class="register-form" novalidate>
-          <label class="classic-field" for="nombre_completo">
-            <span class="field-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" focusable="false">
-                <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Zm0 2c-4.42 0-8 2.24-8 5v1h16v-1c0-2.76-3.58-5-8-5Z" />
-              </svg>
-            </span>
-            <input
-              id="nombre_completo"
-              name="nombre_completo"
-              [(ngModel)]="datos.nombre_completo"
-              required
-              [minlength]="nombreMinLength"
-              #nombreModel="ngModel"
-              autocomplete="name"
-              placeholder="Nombre completo"
-            >
-          </label>
-          <p *ngIf="nombreModel.invalid && (nombreModel.dirty || nombreModel.touched)" class="field-error">
-            Ingresa tu nombre completo.
-          </p>
-
           <label class="classic-field" for="email">
             <span class="field-icon" aria-hidden="true">
               <svg viewBox="0 0 24 24" focusable="false">
@@ -87,40 +66,6 @@
           <p *ngIf="emailModel.invalid && (emailModel.dirty || emailModel.touched)" class="field-error">
             Ingresa un correo electr&oacute;nico v&aacute;lido.
           </p>
-
-          <label class="classic-field" for="usuario">
-            <span class="field-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" focusable="false">
-                <path d="M12 2a7 7 0 0 0-7 7v2a7 7 0 0 0 14 0V9a7 7 0 0 0-7-7Zm0 16c-3.31 0-6 1.57-6 3.5V22h12v-.5c0-1.93-2.69-3.5-6-3.5Zm3-8H9V8h6Z" />
-              </svg>
-            </span>
-            <input
-              id="usuario"
-              name="usuario"
-              [(ngModel)]="datos.usuario"
-              required
-              [minlength]="usuarioMinLength"
-              #usuarioModel="ngModel"
-              autocomplete="username"
-              placeholder="Usuario"
-            >
-          </label>
-          <p *ngIf="usuarioModel.invalid && (usuarioModel.dirty || usuarioModel.touched)" class="field-error">
-            El usuario debe tener al menos {{ usuarioMinLength }} caracteres.
-          </p>
-
-          <label class="classic-field" for="nivel">
-            <span class="field-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" focusable="false">
-                <path d="M12 3 1 9l11 6 9-4.91V17h2V9Zm0 14.3L5 13.48V17c0 1.66 3.13 3 7 3s7-1.34 7-3v-3.52Z" />
-              </svg>
-            </span>
-            <select id="nivel" name="nivel" [(ngModel)]="datos.nivel" autocomplete="off">
-              <option value="KIDS">KIDS</option>
-              <option value="TEENS">TEENS</option>
-              <option value="PRO">PRO</option>
-            </select>
-          </label>
 
           <label class="classic-field has-action" for="password">
             <span class="field-icon" aria-hidden="true">
@@ -161,11 +106,6 @@
             </div>
           }
 
-          <label class="preference-check" for="preferences">
-            <input type="checkbox" id="preferences" name="preferences">
-            <span>Recibir novedades importantes de la academia.</span>
-          </label>
-
           <button type="submit" [disabled]="enviando() || registroForm.invalid" class="submit-button">
             {{ enviando() ? 'Creando cuenta...' : 'Crear cuenta' }}
           </button>
@@ -198,12 +138,4 @@
       <p>La cuenta se crea como estudiante y queda protegida por el acceso seguro de DAEMON.</p>
     </aside>
   </section>
-
-  @if (perfilGooglePendiente()) {
-    <app-completar-perfil-google
-      [usuario]="sesion.usuario()"
-      (completado)="perfilGoogleCompletado()"
-      (cancelado)="cancelarPerfilGoogle()"
-    ></app-completar-perfil-google>
-  }
 </main>
