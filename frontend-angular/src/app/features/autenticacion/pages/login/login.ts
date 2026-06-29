@@ -158,7 +158,8 @@ export class Login implements AfterViewInit, OnDestroy {
 
     this.zone.runOutsideAngular(() => {
       void import('@rive-app/canvas')
-        .then(({ Alignment, Fit, Layout, Rive, RuntimeLoader }) => {
+        .then((riveModule) => {
+          const { Alignment, Fit, Layout, Rive, RuntimeLoader } = this.apiRive(riveModule);
           RuntimeLoader.setWasmUrl('/rive/rive.wasm');
           RuntimeLoader.setWasmFallbackUrl('/rive/rive_fallback.wasm');
 
@@ -214,6 +215,20 @@ export class Login implements AfterViewInit, OnDestroy {
           });
         });
     });
+  }
+
+  private apiRive(riveModule: unknown) {
+    const modulo = riveModule as Record<string, any>;
+    return (modulo['Rive'] ? modulo : modulo['default'] ?? modulo['module.exports']) as {
+      Alignment: { Center: unknown };
+      Fit: { Contain: unknown };
+      Layout: new (options: { fit: unknown; alignment: unknown }) => unknown;
+      Rive: new (options: Record<string, unknown>) => Rive;
+      RuntimeLoader: {
+        setWasmUrl(url: string): void;
+        setWasmFallbackUrl(url: string): void;
+      };
+    };
   }
 
   private completarPerfilGooglePendiente() {

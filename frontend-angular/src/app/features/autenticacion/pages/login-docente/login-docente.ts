@@ -116,7 +116,7 @@ export class LoginDocente implements AfterViewInit, OnDestroy {
         }
 
         this.error.set(err.error?.requires_registration
-          ? 'Ese Google todavia no tiene cuenta DAEMON. Primero debe registrarse desde Crear cuenta.'
+          ? 'Ese Google no esta vinculado a una cuenta docente o administradora de DAEMON.'
           : (err.error?.message ?? err.message ?? 'No se pudo iniciar sesion con Google.'));
         this.enviando.set(false);
         this.dispararFallo();
@@ -146,7 +146,8 @@ export class LoginDocente implements AfterViewInit, OnDestroy {
 
     this.zone.runOutsideAngular(() => {
       void import('@rive-app/canvas')
-        .then(({ Alignment, Fit, Layout, Rive, RuntimeLoader }) => {
+        .then((riveModule) => {
+          const { Alignment, Fit, Layout, Rive, RuntimeLoader } = this.apiRive(riveModule);
           RuntimeLoader.setWasmUrl('/rive/rive.wasm');
           RuntimeLoader.setWasmFallbackUrl('/rive/rive_fallback.wasm');
 
@@ -202,6 +203,20 @@ export class LoginDocente implements AfterViewInit, OnDestroy {
           });
         });
     });
+  }
+
+  private apiRive(riveModule: unknown) {
+    const modulo = riveModule as Record<string, any>;
+    return (modulo['Rive'] ? modulo : modulo['default'] ?? modulo['module.exports']) as {
+      Alignment: { Center: unknown };
+      Fit: { Contain: unknown };
+      Layout: new (options: { fit: unknown; alignment: unknown }) => unknown;
+      Rive: new (options: Record<string, unknown>) => Rive;
+      RuntimeLoader: {
+        setWasmUrl(url: string): void;
+        setWasmFallbackUrl(url: string): void;
+      };
+    };
   }
 
   private configurarInputsRive(): void {
