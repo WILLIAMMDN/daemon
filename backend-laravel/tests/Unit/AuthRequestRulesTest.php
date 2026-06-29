@@ -15,6 +15,7 @@ class AuthRequestRulesTest extends TestCase
 
         $this->assertArrayNotHasKey('rol', $rules);
         $this->assertContains('min:8', $rules['password']);
+        $this->assertContains('unique:usuarios,email', $rules['email']);
     }
 
     public function test_password_change_requires_current_password_and_confirmation(): void

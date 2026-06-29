@@ -27,8 +27,22 @@ class RemainingRequestRulesTest extends TestCase
         $rules = (new ArchivoStoreRequest)->rules();
 
         $this->assertContains('file', $rules['archivo']);
-        $this->assertContains('max:25600', $rules['archivo']);
+        $this->assertContains('max:8192', $rules['archivo']);
         $this->assertNotContains('mimes:php', $rules['archivo']);
+        $this->assertNotContains('mimes:svg', $rules['archivo']);
+        $this->assertStringNotContainsString('zip', implode(',', $rules['archivo']));
+    }
+
+    public function test_evidence_uploads_allow_documents_without_svg_or_zip(): void
+    {
+        $request = new ArchivoStoreRequest;
+        $request->merge(['carpeta' => 'evidencia']);
+        $rules = $request->rules();
+
+        $this->assertContains('max:20480', $rules['archivo']);
+        $this->assertStringContainsString('pdf', implode(',', $rules['archivo']));
+        $this->assertStringNotContainsString('svg', implode(',', $rules['archivo']));
+        $this->assertStringNotContainsString('zip', implode(',', $rules['archivo']));
     }
 
     public function test_chatbot_messages_are_bounded(): void

@@ -6,4 +6,11 @@ return [
         'ASSET_PUBLIC_URL',
         env('FRONTEND_PRODUCTION_URL', env('FRONTEND_URL', '')),
     ),
+    'auth_cookie' => [
+        'name' => env('AUTH_COOKIE_NAME', 'daemon_access'),
+        'minutes' => (int) env('SANCTUM_TOKEN_EXPIRATION', 480),
+        'same_site' => env('AUTH_COOKIE_SAME_SITE', env('APP_ENV') === 'production' ? 'none' : 'lax'),
+        'secure' => env('AUTH_COOKIE_SECURE', env('APP_ENV') === 'production'),
+        'expose_bearer_token' => env('AUTH_EXPOSE_BEARER_TOKEN', false),
+    ],
 ];

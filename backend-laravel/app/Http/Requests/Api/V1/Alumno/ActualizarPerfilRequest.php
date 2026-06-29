@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Api\V1\Alumno;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class ActualizarPerfilRequest extends FormRequest
 {
@@ -15,7 +16,7 @@ class ActualizarPerfilRequest extends FormRequest
     {
         return [
             'nombre_completo' => ['sometimes', 'string', 'max:100'],
-            'email' => ['nullable', 'email', 'max:100'],
+            'email' => ['nullable', 'email', 'max:100', Rule::unique('usuarios', 'email')->ignore($this->user()?->id)],
             'biografia' => ['nullable', 'string'],
             'genero' => ['nullable', 'string', 'max:20'],
             'avatar' => ['nullable', 'image', 'max:4096'],

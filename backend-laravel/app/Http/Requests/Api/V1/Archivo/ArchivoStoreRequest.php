@@ -7,6 +7,8 @@ use Illuminate\Validation\Rule;
 
 class ArchivoStoreRequest extends FormRequest
 {
+    private const EVIDENCE_FOLDERS = ['entrega', 'entregas', 'evidencia', 'evidencias'];
+
     public function authorize(): bool
     {
         return $this->user() !== null;
@@ -14,8 +16,18 @@ class ArchivoStoreRequest extends FormRequest
 
     public function rules(): array
     {
+        $carpeta = (string) $this->input('carpeta', 'general');
+        $esEvidencia = in_array($carpeta, self::EVIDENCE_FOLDERS, true);
+
         return [
-            'archivo' => ['required', 'file', 'max:25600', 'mimes:jpg,jpeg,png,gif,webp,svg,pdf,doc,docx,ppt,pptx,xls,xlsx,txt,csv,zip,mp3,wav,mp4,webm'],
+            'archivo' => [
+                'required',
+                'file',
+                $esEvidencia ? 'max:20480' : 'max:8192',
+                $esEvidencia
+                    ? 'mimes:jpg,jpeg,png,gif,webp,pdf,doc,docx,ppt,pptx,txt,csv,mp3,wav,mp4,webm'
+                    : 'mimes:jpg,jpeg,png,gif,webp',
+            ],
             'carpeta' => ['nullable', 'string', 'max:40', Rule::in([
                 'general',
                 'perfil',

@@ -18,6 +18,7 @@ use Illuminate\Http\Request;
 use InvalidArgumentException;
 use Laravel\Socialite\Facades\Socialite;
 use RuntimeException;
+use Symfony\Component\HttpFoundation\Cookie;
 use Throwable;
 use UnexpectedValueException;
 
@@ -169,14 +170,49 @@ class AutenticacionController extends Controller
     {
         $request->user()->currentAccessToken()?->delete();
 
-        return ['message' => 'Sesion cerrada.'];
+        return response()
+            ->json(['message' => 'Sesion cerrada.'])
+            ->withoutCookie($this->authCookieName(), '/', null);
     }
 
     private function respuestaAutenticada($usuario, int $estado = 200)
     {
-        return response()->json([
-            'token' => $this->autenticacion->emitirToken($usuario),
+        $token = $this->autenticacion->emitirToken($usuario);
+        $payload = [
             'usuario' => UsuarioResource::make($usuario),
-        ], $estado);
+        ];
+
+        if (config('daemon.auth_cookie.expose_bearer_token')) {
+            $payload['token'] = $token;
+        }
+
+        return response()
+            ->json($payload, $estado)
+            ->withCookie($this->authCookie($token));
+    }
+
+    private function authCookie(string $token): Cookie
+    {
+        return cookie(
+            $this->authCookieName(),
+            $this->encodeCookieToken($token),
+            (int) config('daemon.auth_cookie.minutes', 480),
+            '/',
+            null,
+            (bool) config('daemon.auth_cookie.secure', false),
+            true,
+            false,
+            (string) config('daemon.auth_cookie.same_site', 'lax'),
+        );
+    }
+
+    private function authCookieName(): string
+    {
+        return (string) config('daemon.auth_cookie.name', 'daemon_access');
+    }
+
+    private function encodeCookieToken(string $token): string
+    {
+        return rtrim(strtr(base64_encode($token), '+/', '-_'), '=');
     }
 }

@@ -11,6 +11,7 @@ use App\Http\Resources\Api\V1\UsuarioResource;
 use App\Models\Insignia;
 use App\Services\Archivo\ArchivoService;
 use App\Services\Docente\DocenteService;
+use Illuminate\Http\Request;
 
 class DocenteController extends Controller
 {
@@ -19,17 +20,17 @@ class DocenteController extends Controller
         private readonly ArchivoService $archivos,
     ) {}
 
-    public function panel()
+    public function panel(Request $request)
     {
-        $panel = $this->docente->panel();
+        $panel = $this->docente->panel($request->user());
         $panel['ranking'] = UsuarioResource::collection($panel['ranking']);
 
         return $panel;
     }
 
-    public function alumnos()
+    public function alumnos(Request $request)
     {
-        return UsuarioResource::collection($this->docente->alumnos());
+        return UsuarioResource::collection($this->docente->alumnos($request->user()));
     }
 
     public function asignarTokens(AsignarTokensRequest $request)
@@ -37,9 +38,9 @@ class DocenteController extends Controller
         return UsuarioResource::make($this->docente->asignarTokens($request->user(), $request->validated()));
     }
 
-    public function historialTokens()
+    public function historialTokens(Request $request)
     {
-        return $this->docente->historialTokens();
+        return $this->docente->historialTokens($request->user());
     }
 
     public function insignias()
@@ -89,7 +90,7 @@ class DocenteController extends Controller
 
     public function asignarInsignia(AsignarInsigniaRequest $request)
     {
-        $this->docente->asignarInsignia($request->validated());
+        $this->docente->asignarInsignia($request->user(), $request->validated());
 
         return ['ok' => true];
     }

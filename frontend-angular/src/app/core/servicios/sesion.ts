@@ -11,23 +11,24 @@ export interface UsuarioSesion {
   tokens: number;
   avatar?: string | null;
   perfil_completo?: boolean;
+  id_institucion?: number | null;
+  id_aula?: number | null;
 }
 
 @Injectable({
   providedIn: 'root',
 })
 export class Sesion {
-  private readonly claveToken = 'daemon_token';
   private readonly claveUsuario = 'daemon_usuario';
-  readonly token = signal<string | null>(localStorage.getItem(this.claveToken));
   readonly usuario = signal<UsuarioSesion | null>(this.leerUsuario());
-  readonly autenticado = computed(() => Boolean(this.token() && this.usuario()));
+  readonly autenticado = computed(() => Boolean(this.usuario()));
   readonly esDocente = computed(() => ['docente', 'admin'].includes(this.usuario()?.rol ?? ''));
 
-  guardar(token: string, usuario: UsuarioSesion): void {
-    localStorage.setItem(this.claveToken, token);
+  guardar(usuario: UsuarioSesion): void {
     localStorage.setItem(this.claveUsuario, JSON.stringify(usuario));
-    this.token.set(token); this.usuario.set(usuario);
+    localStorage.removeItem('daemon_token');
+    localStorage.removeItem('access_token');
+    this.usuario.set(usuario);
   }
 
   actualizarUsuario(usuario: UsuarioSesion): void {
@@ -35,9 +36,9 @@ export class Sesion {
   }
 
   limpiar(): void {
-    localStorage.removeItem(this.claveToken); localStorage.removeItem(this.claveUsuario);
+    localStorage.removeItem('daemon_token'); localStorage.removeItem(this.claveUsuario);
     localStorage.removeItem('access_token');
-    this.token.set(null); this.usuario.set(null);
+    this.usuario.set(null);
   }
 
   private leerUsuario(): UsuarioSesion | null {

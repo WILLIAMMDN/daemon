@@ -7,8 +7,8 @@ import { Sesion } from '../servicios/sesion';
 export const tokenInterceptor: HttpInterceptorFn = (req, next) => {
   const sesion = inject(Sesion);
   const router = inject(Router);
-  const token = sesion.token();
-  const peticion = token ? req.clone({ setHeaders: { Authorization: `Bearer ${token}`, Accept: 'application/json' } }) : req;
+  const peticion = req.clone({ setHeaders: { Accept: 'application/json' }, withCredentials: true });
+
   return next(peticion).pipe(catchError((error: HttpErrorResponse) => {
     if (error.status === 401) {
       sesion.limpiar();

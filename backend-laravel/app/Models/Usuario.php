@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Sanctum\HasApiTokens;
@@ -31,6 +32,8 @@ class Usuario extends Authenticatable
         'firebase_uid',
         'perfil_completo',
         'rol',
+        'id_institucion',
+        'id_aula',
         'insignia',
         'mision_actual',
         'fondo',
@@ -46,6 +49,8 @@ class Usuario extends Authenticatable
             'tokens' => 'integer',
             'pro_tokens' => 'integer',
             'mision_actual' => 'integer',
+            'id_institucion' => 'integer',
+            'id_aula' => 'integer',
             'perfil_completo' => 'boolean',
             'fecha_registro' => 'datetime',
         ];
@@ -69,5 +74,15 @@ class Usuario extends Authenticatable
     public function entregas(): HasMany
     {
         return $this->hasMany(Entrega::class, 'id_alumno');
+    }
+
+    public function institucion(): BelongsTo
+    {
+        return $this->belongsTo(Institucion::class, 'id_institucion');
+    }
+
+    public function aula(): BelongsTo
+    {
+        return $this->belongsTo(Aula::class, 'id_aula');
     }
 }

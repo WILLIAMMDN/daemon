@@ -26,6 +26,8 @@ class UsuarioResource extends JsonResource
             'avatar' => $archivos->url($this->avatar),
             'perfil_completo' => (bool) ($this->perfil_completo ?? true),
             'rol' => $this->rol,
+            'id_institucion' => $this->id_institucion,
+            'id_aula' => $this->id_aula,
             'insignia' => $this->insignia,
             'mision_actual' => $this->mision_actual,
             'fondo' => $archivos->url($this->fondo),

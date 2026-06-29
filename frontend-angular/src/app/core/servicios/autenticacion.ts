@@ -5,7 +5,6 @@ import { FirebaseAuth } from './firebase-auth';
 import { Sesion, UsuarioSesion } from './sesion';
 
 export interface AuthRespuesta {
-  token: string;
   usuario: UsuarioSesion;
 }
 
@@ -32,26 +31,26 @@ export class Autenticacion {
 
   login(datos: { usuario: string; password: string }) {
     return this.api.post<AuthRespuesta>('/auth/login', datos)
-      .pipe(tap((respuesta) => this.sesion.guardar(respuesta.token, respuesta.usuario)));
+      .pipe(tap((respuesta) => this.sesion.guardar(respuesta.usuario)));
   }
 
   registro(datos: Record<string, unknown>) {
     return this.api.post<AuthRespuesta>('/auth/registro', datos)
-      .pipe(tap((respuesta) => this.sesion.guardar(respuesta.token, respuesta.usuario)));
+      .pipe(tap((respuesta) => this.sesion.guardar(respuesta.usuario)));
   }
 
   loginGoogle(idToken: string, crearCuenta = false) {
     this.sesion.limpiar();
 
     return this.api.post<AuthRespuesta>('/auth/google', { id_token: idToken, crear_cuenta: crearCuenta })
-      .pipe(tap((respuesta) => this.sesion.guardar(respuesta.token, respuesta.usuario)));
+      .pipe(tap((respuesta) => this.sesion.guardar(respuesta.usuario)));
   }
 
   loginFirebase(idToken: string, crearCuenta = false) {
     this.sesion.limpiar();
 
     return this.api.post<AuthRespuesta>('/auth/firebase', { id_token: idToken, crear_cuenta: crearCuenta })
-      .pipe(tap((respuesta) => this.sesion.guardar(respuesta.token, respuesta.usuario)));
+      .pipe(tap((respuesta) => this.sesion.guardar(respuesta.usuario)));
   }
 
   loginGoogleFirebase(crearCuenta = false) {
@@ -131,7 +130,7 @@ export class Autenticacion {
       switchMap((respuesta) =>
         // 4) Sincronizamos password_hash en DAEMON
         this.sincronizarClave(nuevaContrasena).pipe(
-          tap(() => this.sesion.guardar(respuesta.token, respuesta.usuario)),
+          tap(() => this.sesion.guardar(respuesta.usuario)),
           switchMap(() => from([respuesta])),
         ),
       ),

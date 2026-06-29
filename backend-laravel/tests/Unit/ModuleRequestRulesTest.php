@@ -35,6 +35,7 @@ class ModuleRequestRulesTest extends TestCase
         $this->assertContains('file', $rules['archivo']);
         $this->assertContains('max:20480', $rules['archivo']);
         $this->assertNotContains('mimes:php', $rules['archivo']);
+        $this->assertStringNotContainsString('zip', implode(',', $rules['archivo']));
     }
 
     public function test_prize_creation_requires_store_economy_fields(): void

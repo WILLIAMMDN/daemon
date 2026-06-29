@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Middleware\EnsureRole;
+use App\Http\Middleware\SecurityHeaders;
+use App\Http\Middleware\UseSanctumCookieToken;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -16,6 +18,11 @@ return Application::configure(basePath: dirname(__DIR__))
         __DIR__.'/../app/Console/Commands',
     ])
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->api(
+            prepend: [UseSanctumCookieToken::class],
+            append: [SecurityHeaders::class],
+        );
+
         $middleware->alias([
             'role' => EnsureRole::class,
         ]);
