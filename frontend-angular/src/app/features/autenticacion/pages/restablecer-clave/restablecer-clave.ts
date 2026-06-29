@@ -31,6 +31,7 @@ export class RestablecerClave implements OnInit {
   }
 
   private token: string | null = null;
+  private modo: 'backend' | 'firebase' | null = null;
 
   constructor(
     private ruta: ActivatedRoute,
@@ -46,7 +47,8 @@ export class RestablecerClave implements OnInit {
   }
 
   ngOnInit(): void {
-    this.token = this.ruta.snapshot.queryParamMap.get('token');
+    this.token = this.ruta.snapshot.queryParamMap.get('token')
+      ?? this.ruta.snapshot.queryParamMap.get('oobCode');
 
     if (!this.token || this.token.length < 10) {
       this.estado.set({
@@ -56,8 +58,21 @@ export class RestablecerClave implements OnInit {
       return;
     }
 
-    // El token lo firmo el backend con APP_KEY; no necesitamos verificarlo
-    // del lado del cliente. Lo unico que validamos aca es que exista.
+    this.modo = this.ruta.snapshot.queryParamMap.has('oobCode') ? 'firebase' : 'backend';
+
+    if (this.modo === 'firebase') {
+      this.auth.verificarCodigoResetFirebase(this.token).subscribe({
+        next: () => this.estado.set({ tipo: 'formulario' }),
+        error: () => this.estado.set({
+          tipo: 'error',
+          mensaje: 'El enlace de Firebase expiro o no es valido. Solicita uno nuevo.',
+        }),
+      });
+      return;
+    }
+
+    // El token backend lo firmo Laravel con APP_KEY; no necesitamos
+    // verificarlo del lado del cliente. Lo unico que validamos aca es que exista.
     this.estado.set({ tipo: 'formulario' });
   }
 
@@ -76,7 +91,11 @@ export class RestablecerClave implements OnInit {
 
     this.enviando.set(true);
 
-    this.auth.confirmarResetConToken(this.token!, password).subscribe({
+    const solicitud = this.modo === 'firebase'
+      ? this.auth.restablecerClave(this.token!, password)
+      : this.auth.confirmarResetConToken(this.token!, password);
+
+    solicitud.subscribe({
       next: (respuesta) => {
         this.enviando.set(false);
         this.estado.set({ tipo: 'exito' });

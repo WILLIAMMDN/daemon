@@ -17,7 +17,7 @@
         <div class="visual-copy">
           <p class="eyebrow">Nueva clave</p>
           <h2>Restablece tu acceso</h2>
-          <p>Crea una clave nueva para tu cuenta de DAEMON. La sincronizamos automaticamente con Firebase.</p>
+          <p>Crea una clave nueva para tu cuenta de DAEMON desde un enlace seguro.</p>
         </div>
 
         <div class="spline-frame" aria-hidden="true">
@@ -40,8 +40,7 @@
 
           @case ('formulario') {
             <p class="form-hint">
-              Define tu nueva clave de acceso para DAEMON. La guardamos
-              cifrada y la sincronizamos con tu cuenta automaticamente.
+              Define tu nueva clave de acceso. La guardamos de forma segura y actualizamos tu sesion automaticamente.
             </p>
 
             <form [formGroup]="formulario" (ngSubmit)="restablecer()" class="recovery-form" novalidate>

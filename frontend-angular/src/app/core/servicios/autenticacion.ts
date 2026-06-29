@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { catchError, from, map, Observable, of, switchMap, tap } from 'rxjs';
+import { catchError, from, map, Observable, of, switchMap, tap, throwError } from 'rxjs';
 import { Api } from './api';
 import { FirebaseAuth } from './firebase-auth';
 import { Sesion, UsuarioSesion } from './sesion';
@@ -136,10 +136,6 @@ export class Autenticacion {
     );
   }
 
-  solicitarRecuperacion(datos: { usuario?: string; email?: string }) {
-    return this.api.post<{ message: string }>('/auth/recuperar', datos);
-  }
-
   recuperarPasswordFirebase(email: string) {
     return from(this.firebaseAuth.recuperarPassword(email));
   }
@@ -212,19 +208,63 @@ export class Autenticacion {
   }
 
   /**
-   * Reenvia el correo de verificacion. Pensado para usuarios ya
-   * autenticados que no recibieron (o perdieron) el mail inicial.
-   * Usa el correo personalizado de DAEMON, igual que recuperacion de
-   * clave. No exponemos errores de proveedores externos al estudiante.
+   * Reenvia el correo de verificacion desde Firebase Auth. Es menos
+   * personalizable que el mail propio, pero funciona sin dominio de
+   * correo verificado y sirve para alumnos reales desde el plan gratis.
    */
   reenviarVerificacion(): Observable<RespuestaReenvioVerificacion> {
-    return this.reenviarVerificacionBackend().pipe(
-      catchError(() => of({
-        message: 'Registramos tu solicitud de verificacion. Si el correo no llega en unos minutos, vuelve a intentarlo.',
+    const usuario = this.sesion.usuario();
+
+    return from(this.firebaseAuth.enviarVerificacionCorreo(usuario?.email)).pipe(
+      switchMap((estadoFirebase) => {
+        if (estadoFirebase === 'ya-verificado') {
+          return this.sincronizarVerificacionFirebase().pipe(
+            map((respuesta) => ({
+              message: respuesta.message,
+              estado: 'verificado' as const,
+              enviado: false,
+              email_verified_at: respuesta.usuario.email_verified_at ?? null,
+              usuario: respuesta.usuario,
+            })),
+          );
+        }
+
+        if (estadoFirebase === 'sin-sesion') {
+          return throwError(() => new Error('Inicia sesion nuevamente con tu correo y vuelve a enviar la verificacion.'));
+        }
+
+        return of({
+          message: 'Te enviamos un correo de Firebase con el enlace de verificacion.',
+          estado: 'enviado' as const,
+          enviado: true,
+          email_verified_at: usuario?.email_verified_at ?? null,
+          usuario: usuario ?? undefined,
+        });
+      }),
+      catchError((error) => of({
+        message: error?.message ?? 'No pudimos enviar la verificacion en este momento.',
         estado: 'fallo_envio' as const,
         enviado: false,
-        email_verified_at: null,
-        usuario: this.sesion.usuario() ?? undefined,
+        email_verified_at: usuario?.email_verified_at ?? null,
+        usuario: usuario ?? undefined,
+      })),
+    );
+  }
+
+  sincronizarVerificacionFirebase(): Observable<{ message: string; usuario: UsuarioSesion }> {
+    const usuario = this.sesion.usuario();
+
+    return from(this.firebaseAuth.idTokenVerificadoActual(usuario?.email)).pipe(
+      switchMap((idToken) => {
+        if (!idToken) {
+          return throwError(() => new Error('Todavia no aparece verificado en Firebase. Abre el enlace del correo y vuelve a intentarlo.'));
+        }
+
+        return this.autenticarConFirebaseToken(idToken, false, false);
+      }),
+      map((respuesta) => ({
+        message: 'Tu correo quedo verificado y sincronizado con DAEMON.',
+        usuario: respuesta.usuario,
       })),
     );
   }
@@ -236,17 +276,6 @@ export class Autenticacion {
 
     return this.api.post<AuthRespuesta>('/auth/firebase', { id_token: idToken, crear_cuenta: crearCuenta })
       .pipe(tap((respuesta) => this.sesion.guardar(respuesta.usuario)));
-  }
-
-  private reenviarVerificacionBackend(): Observable<RespuestaReenvioVerificacion> {
-    return this.api.post<RespuestaReenvioVerificacion>(
-      '/auth/enviar-verificacion',
-      {},
-    ).pipe(tap((respuesta) => {
-      if (respuesta.usuario) {
-        this.sesion.actualizarUsuario(respuesta.usuario);
-      }
-    }));
   }
 
   private sincronizarClave(password: string): Observable<unknown> {

@@ -49,7 +49,7 @@ export class RecuperarClave {
     this.enviando.set(true);
     this.estado.set({ tipo: 'inicial' });
 
-    this.auth.solicitarRecuperacion({ email }).subscribe({
+    this.auth.recuperarPasswordFirebase(email).subscribe({
       next: () => this.marcarComoEnviado(email),
       error: () => this.marcarComoEnviado(email),
     });

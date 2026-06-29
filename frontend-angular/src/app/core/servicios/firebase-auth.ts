@@ -4,9 +4,12 @@ import {
   Auth,
   ActionCodeSettings,
   GoogleAuthProvider,
+  User,
   confirmPasswordReset,
   createUserWithEmailAndPassword,
   getAuth,
+  onAuthStateChanged,
+  sendEmailVerification,
   sendPasswordResetEmail,
   signInWithCredential,
   signInWithEmailAndPassword,
@@ -59,11 +62,45 @@ export class FirebaseAuth {
   async crearCuentaEmail(email: string, password: string): Promise<string> {
     const credencial = await createUserWithEmailAndPassword(this.requerirAuth(), email, password);
 
-    // La verificacion de correo la envia DAEMON desde Laravel con su
-    // plantilla propia despues de registrar/sincronizar la cuenta local.
-    // No usamos la verificacion de correo del SDK de Firebase: asi
-    // evitamos correos genericos y mantenemos una sola fuente de verdad.
+    // Firebase se encarga del correo real de verificacion para evitar
+    // depender de un dominio propio en Resend durante la etapa gratuita.
+    void this.enviarVerificacionAUsuario(credencial.user).catch(() => {});
+
     return credencial.user.getIdToken();
+  }
+
+  async enviarVerificacionCorreo(emailEsperado?: string | null): Promise<'enviado' | 'ya-verificado' | 'sin-sesion'> {
+    const usuario = await this.usuarioActual();
+
+    if (!this.emailCoincide(usuario, emailEsperado)) {
+      return 'sin-sesion';
+    }
+
+    await usuario.reload();
+
+    if (usuario.emailVerified) {
+      return 'ya-verificado';
+    }
+
+    await this.enviarVerificacionAUsuario(usuario);
+
+    return 'enviado';
+  }
+
+  async idTokenVerificadoActual(emailEsperado?: string | null): Promise<string | null> {
+    const usuario = await this.usuarioActual();
+
+    if (!this.emailCoincide(usuario, emailEsperado)) {
+      return null;
+    }
+
+    await usuario.reload();
+
+    if (!usuario.emailVerified) {
+      return null;
+    }
+
+    return usuario.getIdToken(true);
   }
 
   async recuperarPassword(email: string): Promise<void> {
@@ -115,11 +152,60 @@ export class FirebaseAuth {
     return this.auth;
   }
 
+  private async usuarioActual(): Promise<User | null> {
+    const auth = this.requerirAuth();
+
+    if (auth.currentUser) {
+      return auth.currentUser;
+    }
+
+    return await new Promise<User | null>((resolve) => {
+      const timeout = window.setTimeout(() => {
+        unsubscribe();
+        resolve(null);
+      }, 2500);
+
+      const unsubscribe = onAuthStateChanged(auth, (usuario) => {
+        window.clearTimeout(timeout);
+        unsubscribe();
+        resolve(usuario);
+      });
+    });
+  }
+
+  private emailCoincide(usuario: User | null, emailEsperado?: string | null): usuario is User {
+    if (!usuario?.email) {
+      return false;
+    }
+
+    if (!emailEsperado) {
+      return true;
+    }
+
+    return usuario.email.toLowerCase() === emailEsperado.toLowerCase();
+  }
+
+  private async enviarVerificacionAUsuario(usuario: User): Promise<void> {
+    const auth = this.requerirAuth();
+    auth.languageCode = 'es';
+
+    await sendEmailVerification(usuario, this.emailVerificationSettings());
+  }
+
   private actionCodeSettings(): ActionCodeSettings {
     const origin = globalThis.location?.origin ?? 'http://localhost:4200';
 
     return {
-      url: `${origin}/restablecer-clave`,
+      url: `${origin}/login?reset=firebase`,
+      handleCodeInApp: false,
+    };
+  }
+
+  private emailVerificationSettings(): ActionCodeSettings {
+    const origin = globalThis.location?.origin ?? 'http://localhost:4200';
+
+    return {
+      url: `${origin}/alumno?verificacion=firebase`,
       handleCodeInApp: false,
     };
   }

@@ -159,8 +159,6 @@ class AutenticacionService
             // marcamos en la DB. Idempotente via markEmailAsVerified().
             if ($email && ($claims['email_verified'] ?? false)) {
                 $usuario->markEmailAsVerified();
-            } elseif ($crearCuenta) {
-                $this->solicitarVerificacionSiPendiente($usuario);
             }
 
             $usuario->tokens()->delete();
@@ -189,13 +187,12 @@ class AutenticacionService
             'firebase_uid' => $firebaseUid,
             // Solo marcamos como verificado si Firebase confirmo el email
             // en sus claims. Si email_verified es false, la cuenta nace
-            // sin verificar y el usuario tendra que usar el flujo de
-            // EmailVerificationService para confirmarla.
+            // sin verificar y el usuario usa el correo de verificacion
+            // nativo de Firebase desde el frontend.
             'email_verified_at' => ($email && ($claims['email_verified'] ?? false)) ? now() : null,
         ]);
 
         $usuario->tokens()->delete();
-        $this->solicitarVerificacionSiPendiente($usuario);
 
         return $usuario->fresh();
     }

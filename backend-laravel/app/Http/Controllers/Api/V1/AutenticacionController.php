@@ -166,11 +166,10 @@ class AutenticacionController extends Controller
             $raw = $googleUser->getRaw();
             $crearCuenta = (bool) ($datos['crear_cuenta'] ?? false);
 
-            // En REGISTRO (crear_cuenta = true) permitimos que Google
-            // aun no haya verificado el correo: el flujo de
-            // EmailVerificationService emite un mail DAEMON-brandeado
-            // con un JWT propio para cerrar la verificacion.
-            // En LOGIN exigimos verificacion previa.
+            // En REGISTRO (crear_cuenta = true) permitimos terminar el
+            // alta y dejamos que Firebase/Google sea la fuente de verdad
+            // del email. En LOGIN exigimos verificacion previa si Google
+            // nos informa explicitamente que no pudo confirmarla.
             if (array_key_exists('email_verified', $raw) && ! $raw['email_verified'] && ! $crearCuenta) {
                 return response()->json(['message' => 'Google no pudo confirmar el correo de la cuenta.'], 422);
             }

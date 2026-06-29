@@ -29,6 +29,10 @@ export class EmailVerificationBanner implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    if (globalThis.location?.search.includes('verificacion=firebase')) {
+      this.sincronizarFirebaseSilencioso();
+    }
+
     this.refrescarEstado();
     this.refrescoId = window.setInterval(() => this.refrescarEstado(), 12000);
   }
@@ -51,7 +55,11 @@ export class EmailVerificationBanner implements OnInit, OnDestroy {
     this.auth.reenviarVerificacion().subscribe({
       next: (respuesta) => {
         this.reenviando.set(false);
-        this.mensaje.set(respuesta.message);
+        if (respuesta.estado === 'fallo_envio') {
+          this.error.set(respuesta.message);
+        } else {
+          this.mensaje.set(respuesta.message);
+        }
         this.refrescarEstado();
       },
       error: (error) => {
@@ -79,6 +87,28 @@ export class EmailVerificationBanner implements OnInit, OnDestroy {
       },
       error: () => {
         this.sincronizando.set(false);
+      },
+    });
+  }
+
+  private sincronizarFirebaseSilencioso(): void {
+    if (this.sincronizando() || this.reenviando()) {
+      return;
+    }
+
+    this.sincronizando.set(true);
+    this.mensaje.set('');
+    this.error.set('');
+
+    this.auth.sincronizarVerificacionFirebase().subscribe({
+      next: (respuesta) => {
+        this.sincronizando.set(false);
+        this.mensaje.set(respuesta.message);
+        this.refrescarEstado();
+      },
+      error: () => {
+        this.sincronizando.set(false);
+        this.refrescarEstado();
       },
     });
   }
