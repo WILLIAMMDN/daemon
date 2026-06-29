@@ -40,8 +40,8 @@
 
           @case ('formulario') {
             <p class="form-hint">
-              Restableciendo la clave para
-              <strong>{{ emailDetectado }}</strong>
+              Define tu nueva clave de acceso para DAEMON. La guardamos
+              cifrada y la sincronizamos con tu cuenta automaticamente.
             </p>
 
             <form [formGroup]="formulario" (ngSubmit)="restablecer()" class="recovery-form" novalidate>

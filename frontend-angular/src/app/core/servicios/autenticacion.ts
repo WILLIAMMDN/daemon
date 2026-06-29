@@ -137,6 +137,20 @@ export class Autenticacion {
     );
   }
 
+  /**
+   * Confirma el reseteo de clave a partir del token JWT firmado por el
+   * backend de Laravel (no usa el oobCode de Firebase). El backend se
+   * encarga de actualizar la clave en Firebase y en DAEMON, y devuelve
+   * una sesion autenticada lista para guardar.
+   */
+  confirmarResetConToken(token: string, nuevaContrasena: string): Observable<AuthRespuesta> {
+    return this.api.post<AuthRespuesta>('/auth/confirmar-reset', {
+      token,
+      password: nuevaContrasena,
+      password_confirmation: nuevaContrasena,
+    }).pipe(tap((respuesta) => this.sesion.guardar(respuesta.usuario)));
+  }
+
   private sincronizarClave(password: string): Observable<unknown> {
     return this.api.post('/auth/me/sync-password', {
       password,

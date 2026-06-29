@@ -7,7 +7,7 @@ import { Sesion } from '../../../../core/servicios/sesion';
 
 type Estado =
   | { tipo: 'cargando' }
-  | { tipo: 'formulario'; email: string }
+  | { tipo: 'formulario' }
   | { tipo: 'exito' }
   | { tipo: 'error'; mensaje: string };
 
@@ -25,17 +25,12 @@ export class RestablecerClave implements OnInit {
 
   readonly formulario: FormGroup;
 
-  get emailDetectado(): string {
-    const e = this.estado();
-    return e.tipo === 'formulario' ? e.email : '';
-  }
-
   get mensajeError(): string {
     const e = this.estado();
     return e.tipo === 'error' ? e.mensaje : '';
   }
 
-  private oobCode: string | null = null;
+  private token: string | null = null;
 
   constructor(
     private ruta: ActivatedRoute,
@@ -51,10 +46,9 @@ export class RestablecerClave implements OnInit {
   }
 
   ngOnInit(): void {
-    this.oobCode = this.ruta.snapshot.queryParamMap.get('oobCode');
-    const mode = this.ruta.snapshot.queryParamMap.get('mode');
+    this.token = this.ruta.snapshot.queryParamMap.get('token');
 
-    if (!this.oobCode || (mode && mode !== 'resetPassword')) {
+    if (!this.token || this.token.length < 10) {
       this.estado.set({
         tipo: 'error',
         mensaje: 'El enlace de recuperacion no es valido. Solicita uno nuevo desde la pagina de inicio.',
@@ -62,21 +56,13 @@ export class RestablecerClave implements OnInit {
       return;
     }
 
-    this.auth.verificarCodigoResetFirebase(this.oobCode).subscribe({
-      next: (email) => {
-        this.estado.set({ tipo: 'formulario', email });
-      },
-      error: () => {
-        this.estado.set({
-          tipo: 'error',
-          mensaje: 'El enlace expiro o ya fue utilizado. Solicita uno nuevo.',
-        });
-      },
-    });
+    // El token lo firmo el backend con APP_KEY; no necesitamos verificarlo
+    // del lado del cliente. Lo unico que validamos aca es que exista.
+    this.estado.set({ tipo: 'formulario' });
   }
 
   restablecer(): void {
-    if (this.formulario.invalid || !this.oobCode) {
+    if (this.formulario.invalid || !this.token) {
       this.formulario.markAllAsTouched();
       return;
     }
@@ -90,22 +76,22 @@ export class RestablecerClave implements OnInit {
 
     this.enviando.set(true);
 
-    this.auth.restablecerClave(this.oobCode!, password).subscribe({
-      next: () => {
+    this.auth.confirmarResetConToken(this.token!, password).subscribe({
+      next: (respuesta) => {
         this.enviando.set(false);
         this.estado.set({ tipo: 'exito' });
-        const destino = this.sesion.esDocente() ? '/docente' : '/alumno';
+        const destino = respuesta.usuario.rol === 'docente' ? '/docente' : '/alumno';
         setTimeout(() => this.router.navigateByUrl(destino), 1500);
       },
       error: (err) => {
         this.enviando.set(false);
-        this.estado.set({
-          tipo: 'error',
-          mensaje:
-            err?.error?.message ??
-            err?.message ??
-            'No se pudo restablecer la contrasena. Intentalo de nuevo.',
-        });
+        const mensaje =
+          err?.status === 422
+            ? 'El enlace expiro o ya fue utilizado. Solicita uno nuevo.'
+            : (err?.error?.message ??
+              err?.message ??
+              'No se pudo restablecer la contrasena. Intentalo de nuevo.');
+        this.estado.set({ tipo: 'error', mensaje });
       },
     });
   }

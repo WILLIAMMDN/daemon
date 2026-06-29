@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Auth\CambiarClaveRequest;
 use App\Http\Requests\Api\V1\Auth\CompletarPerfilGoogleRequest;
+use App\Http\Requests\Api\V1\Auth\ConfirmarResetClaveRequest;
 use App\Http\Requests\Api\V1\Auth\CrearUsuarioRequest;
 use App\Http\Requests\Api\V1\Auth\FirebaseLoginRequest;
 use App\Http\Requests\Api\V1\Auth\LoginRequest;
@@ -56,6 +57,28 @@ class AutenticacionController extends Controller
         return response()->json([
             'message' => 'Si la cuenta existe, se enviaran instrucciones de recuperacion al canal configurado.',
         ], 202);
+    }
+
+    /**
+     * Confirma el reset de clave a partir del token JWT firmado por el
+     * backend. NO requiere sesion: el token ya identifica al usuario.
+     */
+    public function confirmarReset(ConfirmarResetClaveRequest $request)
+    {
+        $datos = $request->validated();
+
+        try {
+            $usuario = $this->recuperacionClave->confirmar(
+                (string) $datos['token'],
+                (string) $datos['password'],
+            );
+        } catch (\RuntimeException $exception) {
+            return response()->json([
+                'message' => $exception->getMessage(),
+            ], 422);
+        }
+
+        return $this->respuestaAutenticada($usuario);
     }
 
     public function google(Request $request)
