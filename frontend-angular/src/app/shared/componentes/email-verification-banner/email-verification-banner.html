@@ -11,8 +11,13 @@
       }
     </div>
 
-    <button type="button" (click)="reenviar()" [disabled]="reenviando()">
-      {{ reenviando() ? 'Enviando...' : 'Enviar verificacion' }}
-    </button>
+    <div class="verification-actions">
+      <button type="button" (click)="reenviar()" [disabled]="reenviando() || sincronizando()">
+        {{ reenviando() ? 'Enviando...' : 'Enviar verificacion' }}
+      </button>
+      <button type="button" class="secondary" (click)="sincronizar()" [disabled]="reenviando() || sincronizando()">
+        {{ sincronizando() ? 'Revisando...' : 'Ya verifique' }}
+      </button>
+    </div>
   </section>
 }

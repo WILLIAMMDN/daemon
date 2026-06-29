@@ -14,7 +14,7 @@
   padding: .85rem 2rem;
 }
 
-.verification-banner div {
+.verification-banner > div:first-child {
   display: grid;
   gap: .18rem;
   min-width: 0;
@@ -47,6 +47,12 @@
   font-weight: 800;
 }
 
+.verification-actions {
+  display: flex;
+  flex: 0 0 auto;
+  gap: .55rem;
+}
+
 .verification-banner button {
   background: #9a3412;
   border: 0;
@@ -59,6 +65,12 @@
   font-weight: 850;
   min-height: 40px;
   padding: .6rem .9rem;
+}
+
+.verification-banner button.secondary {
+  background: #ffffff;
+  border: 1px solid #fdba74;
+  color: #7c2d12;
 }
 
 .verification-banner button:disabled {
@@ -74,6 +86,11 @@
   }
 
   .verification-banner button {
+    width: 100%;
+  }
+
+  .verification-actions {
+    flex-direction: column;
     width: 100%;
   }
 }
