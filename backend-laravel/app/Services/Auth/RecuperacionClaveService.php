@@ -31,14 +31,17 @@ class RecuperacionClaveService
             $port = config('mail.mailers.smtp.port');
             $usernameSet = filled(config('mail.mailers.smtp.username'));
             $passwordSet = filled(config('mail.mailers.smtp.password'));
+            $encryption = config('mail.mailers.smtp.encryption');
 
             error_log(sprintf(
-                '[mail-recovery] intentando enviar a uid=%d mailer=%s from=%s host=%s port=%s user_ok=%d pass_ok=%d',
+                '[mail-recovery] intentando enviar uid=%d to=%s mailer=%s from=%s host=%s port=%s enc=%s user_ok=%d pass_ok=%d',
                 $usuario->id,
+                $usuario->email,
                 (string) $mailer,
                 (string) $fromAddress,
                 (string) $host,
                 (string) $port,
+                (string) ($encryption ?? 'null'),
                 $usernameSet ? 1 : 0,
                 $passwordSet ? 1 : 0,
             ));
@@ -52,12 +55,54 @@ class RecuperacionClaveService
             ));
         } catch (Throwable $exception) {
             error_log(sprintf(
-                '[mail-recovery] ERROR uid=%d ex=%s msg=%s trace=%s',
+                '[mail-recovery] ERROR uid=%d ex_class=%s ex_msg=%s ex_code=%s',
                 $usuario->id,
                 $exception::class,
                 $exception->getMessage(),
-                substr($exception->getTraceAsString(), 0, 1500),
+                (string) $exception->getCode(),
             ));
+            $previous = $exception->getPrevious();
+            $i = 0;
+            while ($previous instanceof Throwable && $i < 5) {
+                error_log(sprintf(
+                    '[mail-recovery] ERROR uid=%d chain[%d] class=%s msg=%s code=%s',
+                    $usuario->id,
+                    $i,
+                    $previous::class,
+                    $previous->getMessage(),
+                    (string) $previous->getCode(),
+                ));
+                $previous = $previous->getPrevious();
+                $i++;
+            }
+
+            // Connectivity probe — see if Render can even reach the SMTP host:port
+            try {
+                $sock = @stream_socket_client(
+                    sprintf('tcp://%s:%d', (string) $host, (int) $port),
+                    $errno,
+                    $errstr,
+                    5
+                );
+                if ($sock === false) {
+                    error_log(sprintf(
+                        '[mail-recovery] probe TCP %s:%d FAIL errno=%d errstr=%s',
+                        (string) $host,
+                        (int) $port,
+                        $errno,
+                        $errstr,
+                    ));
+                } else {
+                    error_log(sprintf(
+                        '[mail-recovery] probe TCP %s:%d OK',
+                        (string) $host,
+                        (int) $port,
+                    ));
+                    fclose($sock);
+                }
+            } catch (Throwable $e) {
+                error_log('[mail-recovery] probe threw: ' . $e->getMessage());
+            }
         }
     }
 
