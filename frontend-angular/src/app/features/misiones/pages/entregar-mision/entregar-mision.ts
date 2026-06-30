@@ -2,10 +2,12 @@
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Mision } from '../../services/mision';
+import { Cargando } from '../../../../shared/componentes/cargando/cargando';
+
 
 @Component({
   selector: 'app-entregar-mision',
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink, Cargando],
   templateUrl: './entregar-mision.html',
   styleUrl: './entregar-mision.scss',
 })

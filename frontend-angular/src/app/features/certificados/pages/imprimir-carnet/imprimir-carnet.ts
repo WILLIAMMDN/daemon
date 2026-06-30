@@ -1,10 +1,12 @@
 import { Component, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CertificadoService } from '../../services/certificado';
+import { Cargando } from '../../../../shared/componentes/cargando/cargando';
+
 
 @Component({
   selector: 'app-imprimir-carnet',
-  imports: [],
+  imports: [Cargando],
   templateUrl: './imprimir-carnet.html',
   styleUrl: './imprimir-carnet.scss',
 })

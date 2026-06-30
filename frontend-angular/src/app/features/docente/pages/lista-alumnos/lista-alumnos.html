@@ -36,7 +36,7 @@
   </form>
 
   @if (cargando()) {
-    <p class="state">Cargando alumnos...</p>
+    <app-cargando class="state" texto="Cargando alumnos..."></app-cargando>
   } @else if (alumnos().length) {
     <section class="panel table-wrap">
       <table>

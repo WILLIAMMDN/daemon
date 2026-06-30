@@ -1,9 +1,11 @@
 import { Component, signal } from '@angular/core';
 import { Competencia } from '../../../competencia/services/competencia';
+import { Cargando } from '../../../../shared/componentes/cargando/cargando';
+
 
 @Component({
   selector: 'app-historial-rondas',
-  imports: [],
+  imports: [Cargando],
   templateUrl: './historial-rondas.html',
   styleUrl: './historial-rondas.scss',
 })

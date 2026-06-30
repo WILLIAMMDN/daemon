@@ -12,7 +12,7 @@
   @if (error()) { <p class="error">{{ error() }}</p> }
 
   @if (cargando()) {
-    <p class="state">Cargando competencia...</p>
+    <app-cargando class="state" texto="Cargando competencia..."></app-cargando>
   } @else if (estado(); as data) {
     <section class="stats">
       <article class="stat">

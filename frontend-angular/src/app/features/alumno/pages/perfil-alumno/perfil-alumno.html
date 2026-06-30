@@ -1,5 +1,5 @@
 @if (cargando()) {
-  <section class="state">Cargando perfil...</section>
+  <app-cargando class="state" texto="Cargando perfil..."></app-cargando>
 } @else if (error()) {
   <section class="error">
     <p>{{ error() }}</p>

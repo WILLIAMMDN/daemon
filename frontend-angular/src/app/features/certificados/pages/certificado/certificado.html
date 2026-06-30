@@ -1,5 +1,5 @@
 @if (cargando()) {
-  <section class="state">Cargando certificado...</section>
+  <app-cargando class="state" texto="Cargando certificado..."></app-cargando>
 } @else if (error()) {
   <section class="error">{{ error() }}</section>
 } @else if (datos(); as certificado) {

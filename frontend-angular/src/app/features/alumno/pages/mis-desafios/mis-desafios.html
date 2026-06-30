@@ -9,7 +9,7 @@
   </header>
 
   @if (cargando()) {
-    <p class="state">Cargando misiones...</p>
+    <app-cargando class="state" texto="Cargando misiones..."></app-cargando>
   } @else if (error()) {
     <p class="error">{{ error() }}</p>
   } @else if (misiones().length) {

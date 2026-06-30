@@ -26,6 +26,7 @@
     "@angular/router": "^21.2.0",
     "@fortawesome/angular-fontawesome": "^4.0.0",
     "@fortawesome/free-solid-svg-icons": "^7.2.0",
+    "@primeuix/themes": "^2.0.3",
     "@rive-app/canvas": "^2.38.2",
     "@spartan-ng/brain": "^0.0.1-alpha.710",
     "@spartan-ng/cli": "^0.0.1-alpha.710",
@@ -33,6 +34,7 @@
     "clsx": "^2.1.1",
     "firebase": "^12.15.0",
     "ngx-spinner": "^21.1.0",
+    "primeng": "^21.1.9",
     "rxjs": "~7.8.0",
     "tailwind-merge": "^3.5.0",
     "tslib": "^2.3.0"

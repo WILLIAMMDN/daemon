@@ -1,9 +1,11 @@
 import { Component, signal } from '@angular/core';
 import { Tienda } from '../../services/tienda';
+import { Cargando } from '../../../../shared/componentes/cargando/cargando';
+
 
 @Component({
   selector: 'app-mis-canjes',
-  imports: [],
+  imports: [Cargando],
   templateUrl: './mis-canjes.html',
   styleUrl: './mis-canjes.scss',
 })

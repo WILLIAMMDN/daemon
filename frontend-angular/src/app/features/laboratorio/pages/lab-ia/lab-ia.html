@@ -15,7 +15,7 @@
   @if (error()) { <p class="error">{{ error() }}</p> }
 
   @if (cargando()) {
-    <p class="state">Cargando cerebro...</p>
+    <app-cargando class="state" texto="Cargando cerebro..."></app-cargando>
   } @else {
     <section class="split">
       <form class="panel" (ngSubmit)="guardar()">

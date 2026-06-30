@@ -1,9 +1,11 @@
 import { Component, signal } from '@angular/core';
 import { Docente } from '../../services/docente';
+import { Cargando } from '../../../../shared/componentes/cargando/cargando';
+
 
 @Component({
   selector: 'app-historial-tokens',
-  imports: [],
+  imports: [Cargando],
   templateUrl: './historial-tokens.html',
   styleUrl: './historial-tokens.scss',
 })

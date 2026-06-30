@@ -2,9 +2,11 @@ import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Tienda } from '../../../tienda/services/tienda';
 import { CommonModule } from '@angular/common';
+import { Cargando } from '../../../../shared/componentes/cargando/cargando';
+
 @Component({
   selector: 'app-gestionar-tienda',
-  imports: [FormsModule, CommonModule],
+  imports: [FormsModule, CommonModule, Cargando],
   templateUrl: './gestionar-tienda.html',
   styleUrl: './gestionar-tienda.scss',
 })

@@ -1,10 +1,12 @@
 ﻿import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Evaluacion } from '../../services/evaluacion';
+import { Cargando } from '../../../../shared/componentes/cargando/cargando';
+
 
 @Component({
   selector: 'app-examen-live',
-  imports: [FormsModule],
+  imports: [FormsModule, Cargando],
   templateUrl: './examen-live.html',
   styleUrl: './examen-live.scss',
 })

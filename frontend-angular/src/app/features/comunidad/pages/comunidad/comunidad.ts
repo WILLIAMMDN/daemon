@@ -2,6 +2,8 @@ import { Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Activos } from '../../../../core/servicios/activos';
 import { Alumno } from '../../../alumno/services/alumno';
+import { Cargando } from '../../../../shared/componentes/cargando/cargando';
+
 
 interface PersonaComunidad {
   id: number;
@@ -20,7 +22,7 @@ interface ComunidadRespuesta {
 
 @Component({
   selector: 'app-comunidad',
-  imports: [RouterLink],
+  imports: [RouterLink, Cargando],
   templateUrl: './comunidad.html',
   styleUrl: './comunidad.scss',
 })

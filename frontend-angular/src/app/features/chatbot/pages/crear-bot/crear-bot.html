@@ -11,7 +11,7 @@
   </header>
 
   @if (cargando()) {
-    <p class="state">Cargando configuración...</p>
+    <app-cargando class="state" texto="Cargando configuración..."></app-cargando>
   } @else {
     <section class="split">
       <form class="panel bot-form" (ngSubmit)="guardar()">

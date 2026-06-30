@@ -1,10 +1,12 @@
 ﻿import { Component, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Mision } from '../../services/mision';
+import { Cargando } from '../../../../shared/componentes/cargando/cargando';
+
 
 @Component({
   selector: 'app-detalle-mision',
-  imports: [RouterLink],
+  imports: [RouterLink, Cargando],
   templateUrl: './detalle-mision.html',
   styleUrl: './detalle-mision.scss',
 })

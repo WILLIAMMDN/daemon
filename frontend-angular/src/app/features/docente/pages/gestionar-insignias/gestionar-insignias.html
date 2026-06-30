@@ -69,9 +69,7 @@
 
   <section class="catalog-section">
     @if (cargando()) {
-      <div class="state loading-state">
-        <p>Cargando catalogo de insignias...</p>
-      </div>
+      <app-cargando class="state loading-state" texto="Cargando catalogo de insignias..."></app-cargando>
     } @else if (insignias().length) {
       <div class="card-list">
         @for (insignia of insignias(); track insignia.id) {

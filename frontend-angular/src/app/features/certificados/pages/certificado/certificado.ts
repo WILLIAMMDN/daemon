@@ -1,10 +1,12 @@
 import { Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CertificadoService } from '../../services/certificado';
+import { Cargando } from '../../../../shared/componentes/cargando/cargando';
+
 
 @Component({
   selector: 'app-certificado',
-  imports: [RouterLink],
+  imports: [RouterLink, Cargando],
   templateUrl: './certificado.html',
   styleUrl: './certificado.scss',
 })

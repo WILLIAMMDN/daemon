@@ -1,9 +1,11 @@
 import { Component, signal } from '@angular/core';
 import { Evaluacion } from '../../services/evaluacion';
+import { Cargando } from '../../../../shared/componentes/cargando/cargando';
+
 
 @Component({
   selector: 'app-ver-resultados',
-  imports: [],
+  imports: [Cargando],
   templateUrl: './ver-resultados.html',
   styleUrl: './ver-resultados.scss',
 })

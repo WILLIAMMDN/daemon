@@ -12,7 +12,7 @@
   @if (error()) { <p class="error">{{ error() }}</p> }
 
   @if (cargando()) {
-    <p class="state">Cargando evaluaciones...</p>
+    <app-cargando class="state" texto="Cargando evaluaciones..."></app-cargando>
   } @else if (examenes().length) {
     @for (examen of examenes(); track examen.id) {
       <form class="panel" (ngSubmit)="responder(examen)">

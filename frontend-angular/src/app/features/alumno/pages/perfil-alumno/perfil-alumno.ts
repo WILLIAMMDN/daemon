@@ -3,6 +3,8 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Activos } from '../../../../core/servicios/activos';
 import { Sesion } from '../../../../core/servicios/sesion';
 import { Alumno } from '../../services/alumno';
+import { Cargando } from '../../../../shared/componentes/cargando/cargando';
+
 
 interface UsuarioPerfil {
   id: number;
@@ -24,7 +26,7 @@ interface PerfilData {
 
 @Component({
   selector: 'app-perfil-alumno',
-  imports: [RouterLink],
+  imports: [RouterLink, Cargando],
   templateUrl: './perfil-alumno.html',
   styleUrl: './perfil-alumno.scss',
 })

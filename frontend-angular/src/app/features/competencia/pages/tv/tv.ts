@@ -1,9 +1,11 @@
 import { Component, OnDestroy, signal } from '@angular/core';
 import { Competencia } from '../../services/competencia';
+import { Cargando } from '../../../../shared/componentes/cargando/cargando';
+
 
 @Component({
   selector: 'app-tv',
-  imports: [],
+  imports: [Cargando],
   templateUrl: './tv.html',
   styleUrl: './tv.scss',
 })

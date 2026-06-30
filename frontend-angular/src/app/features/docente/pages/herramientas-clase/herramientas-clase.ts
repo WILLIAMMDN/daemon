@@ -1,10 +1,12 @@
 import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Mision } from '../../../misiones/services/mision';
+import { Cargando } from '../../../../shared/componentes/cargando/cargando';
+
 
 @Component({
   selector: 'app-herramientas-clase',
-  imports: [FormsModule],
+  imports: [FormsModule, Cargando],
   templateUrl: './herramientas-clase.html',
   styleUrl: './herramientas-clase.scss',
 })

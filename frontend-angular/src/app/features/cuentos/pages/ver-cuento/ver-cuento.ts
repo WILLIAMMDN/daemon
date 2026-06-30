@@ -1,10 +1,12 @@
 import { Component, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Cuento } from '../../services/cuento';
+import { Cargando } from '../../../../shared/componentes/cargando/cargando';
+
 
 @Component({
   selector: 'app-ver-cuento',
-  imports: [RouterLink],
+  imports: [RouterLink, Cargando],
   templateUrl: './ver-cuento.html',
   styleUrl: './ver-cuento.scss',
 })

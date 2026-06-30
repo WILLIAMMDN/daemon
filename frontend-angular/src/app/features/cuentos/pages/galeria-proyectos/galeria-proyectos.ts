@@ -1,10 +1,12 @@
 import { Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Cuento } from '../../services/cuento';
+import { Cargando } from '../../../../shared/componentes/cargando/cargando';
+
 
 @Component({
   selector: 'app-galeria-proyectos',
-  imports: [RouterLink],
+  imports: [RouterLink, Cargando],
   templateUrl: './galeria-proyectos.html',
   styleUrl: './galeria-proyectos.scss',
 })

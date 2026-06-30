@@ -3,10 +3,12 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Sesion, UsuarioSesion } from '../../../../core/servicios/sesion';
 import { Alumno } from '../../services/alumno';
+import { Cargando } from '../../../../shared/componentes/cargando/cargando';
+
 
 @Component({
   selector: 'app-editar-perfil',
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink, Cargando],
   templateUrl: './editar-perfil.html',
   styleUrl: './editar-perfil.scss',
 })

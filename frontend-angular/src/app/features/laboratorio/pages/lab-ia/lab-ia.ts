@@ -3,10 +3,12 @@ import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Chatbot } from '../../../chatbot/services/chatbot';
+import { Cargando } from '../../../../shared/componentes/cargando/cargando';
+
 
 @Component({
   selector: 'app-lab-ia',
-  imports: [FormsModule, JsonPipe, RouterLink],
+  imports: [FormsModule, JsonPipe, RouterLink, Cargando],
   templateUrl: './lab-ia.html',
   styleUrl: './lab-ia.scss',
 })

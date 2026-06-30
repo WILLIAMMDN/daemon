@@ -3,6 +3,8 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Activos } from '../../../../core/servicios/activos';
 import { Api } from '../../../../core/servicios/api';
+import { Cargando } from '../../../../shared/componentes/cargando/cargando';
+
 
 interface BotConfig {
   nombre_bot?: string | null;
@@ -13,7 +15,7 @@ interface BotConfig {
 
 @Component({
   selector: 'app-crear-bot',
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink, Cargando],
   templateUrl: './crear-bot.html',
   styleUrl: './crear-bot.scss',
 })

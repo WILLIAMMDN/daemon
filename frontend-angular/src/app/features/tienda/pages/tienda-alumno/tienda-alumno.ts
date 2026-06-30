@@ -2,10 +2,12 @@ import { Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Activos } from '../../../../core/servicios/activos';
 import { Tienda } from '../../services/tienda';
+import { Cargando } from '../../../../shared/componentes/cargando/cargando';
+
 
 @Component({
   selector: 'app-tienda-alumno',
-  imports: [RouterLink],
+  imports: [RouterLink, Cargando],
   templateUrl: './tienda-alumno.html',
   styleUrl: './tienda-alumno.scss',
 })

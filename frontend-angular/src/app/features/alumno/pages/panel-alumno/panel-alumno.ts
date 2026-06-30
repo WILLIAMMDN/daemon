@@ -1,6 +1,8 @@
 import { Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Alumno } from '../../services/alumno';
+import { Cargando } from '../../../../shared/componentes/cargando/cargando';
+
 
 interface UsuarioPanel {
   id: number;
@@ -21,7 +23,7 @@ interface PanelAlumnoData {
 
 @Component({
   selector: 'app-panel-alumno',
-  imports: [RouterLink],
+  imports: [RouterLink, Cargando],
   templateUrl: './panel-alumno.html',
   styleUrl: './panel-alumno.scss',
 })

@@ -2,10 +2,12 @@ import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Cuento } from '../../services/cuento';
+import { Cargando } from '../../../../shared/componentes/cargando/cargando';
+
 
 @Component({
   selector: 'app-crear-cuento',
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink, Cargando],
   templateUrl: './crear-cuento.html',
   styleUrl: './crear-cuento.scss',
 })

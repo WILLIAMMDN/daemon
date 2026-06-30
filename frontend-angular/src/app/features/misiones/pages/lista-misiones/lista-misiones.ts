@@ -1,10 +1,12 @@
 import { Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Mision } from '../../services/mision';
+import { Cargando } from '../../../../shared/componentes/cargando/cargando';
+
 
 @Component({
   selector: 'app-lista-misiones',
-  imports: [RouterLink],
+  imports: [RouterLink, Cargando],
   templateUrl: './lista-misiones.html',
   styleUrl: './lista-misiones.scss',
 })

@@ -2,10 +2,12 @@ import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Docente } from '../../services/docente';
+import { Cargando } from '../../../../shared/componentes/cargando/cargando';
+
 
 @Component({
   selector: 'app-lista-alumnos',
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink, Cargando],
   templateUrl: './lista-alumnos.html',
   styleUrl: './lista-alumnos.scss',
 })

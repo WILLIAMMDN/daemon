@@ -9,7 +9,7 @@
   </header>
 
   @if (cargando()) {
-    <p class="state">Cargando comunidad...</p>
+    <app-cargando class="state" texto="Cargando comunidad..."></app-cargando>
   } @else if (error()) {
     <p class="error">{{ error() }}</p>
   } @else if (miembros().length) {

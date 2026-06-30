@@ -1,5 +1,5 @@
 ﻿@if (cargando()) {
-  <section class="state">Cargando misión...</section>
+  <app-cargando class="state" texto="Cargando misión..."></app-cargando>
 } @else if (detalle(); as datos) {
   <section class="page">
     <header class="page-header">

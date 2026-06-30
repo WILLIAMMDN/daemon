@@ -1,5 +1,7 @@
 import { Component, signal } from '@angular/core';
 import { Ranking as RankingService } from '../../services/ranking';
+import { Cargando } from '../../../../shared/componentes/cargando/cargando';
+
 
 interface AlumnoRanking {
   id: number;
@@ -14,7 +16,7 @@ interface AlumnoRanking {
 
 @Component({
   selector: 'app-ranking',
-  imports: [],
+  imports: [Cargando],
   templateUrl: './ranking.html',
   styleUrl: './ranking.scss',
 })

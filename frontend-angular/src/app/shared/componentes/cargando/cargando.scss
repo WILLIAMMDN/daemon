@@ -1,0 +1,17 @@
+:host {
+  align-items: center;
+  display: flex;
+  gap: .8rem;
+  justify-content: center;
+}
+
+span {
+  color: inherit;
+  font-weight: 700;
+}
+
+:host ::ng-deep .p-progressspinner {
+  flex: 0 0 auto;
+  height: 2rem;
+  width: 2rem;
+}

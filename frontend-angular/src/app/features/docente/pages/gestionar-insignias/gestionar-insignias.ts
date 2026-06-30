@@ -1,10 +1,12 @@
 import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Docente } from '../../services/docente';
+import { Cargando } from '../../../../shared/componentes/cargando/cargando';
+
 
 @Component({
   selector: 'app-gestionar-insignias',
-  imports: [FormsModule],
+  imports: [FormsModule, Cargando],
   templateUrl: './gestionar-insignias.html',
   styleUrl: './gestionar-insignias.scss',
 })

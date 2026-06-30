@@ -15,7 +15,7 @@
   @if (error()) { <p class="error">{{ error() }}</p> }
 
   @if (cargando()) {
-    <p class="state">Cargando premios...</p>
+    <app-cargando class="state" texto="Cargando premios..."></app-cargando>
   } @else if (premios().length) {
     <div class="card-list">
       @for (premio of premios(); track premio.id) {

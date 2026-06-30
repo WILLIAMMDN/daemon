@@ -1,10 +1,12 @@
 import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Competencia } from '../../services/competencia';
+import { Cargando } from '../../../../shared/componentes/cargando/cargando';
+
 
 @Component({
   selector: 'app-votar',
-  imports: [FormsModule],
+  imports: [FormsModule, Cargando],
   templateUrl: './votar.html',
   styleUrl: './votar.scss',
 })
