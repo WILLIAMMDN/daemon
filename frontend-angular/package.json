@@ -33,6 +33,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "firebase": "^12.15.0",
+    "ng-zorro-antd": "^21.3.2",
     "ngx-spinner": "^21.1.0",
     "primeng": "^21.1.9",
     "rxjs": "~7.8.0",

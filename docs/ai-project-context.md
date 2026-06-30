@@ -49,6 +49,8 @@ Main frontend stack:
 
 - Angular 21
 - Firebase JS SDK
+- NG-ZORRO as the preferred open-source Angular UI library for new professional
+  components; see `docs/frontend-ui-standard.md`
 - Rive canvas mascot
 - Tailwind/DaisyUI utilities
 
