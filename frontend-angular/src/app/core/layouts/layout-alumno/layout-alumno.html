@@ -16,9 +16,15 @@
     <app-email-verification-banner />
 
     <header class="topbar">
-      <div>
-        <span>Portal estudiante</span>
-        <strong>{{ sesion.usuario()?.usuario || sesion.usuario()?.nombre_completo }}</strong>
+      <div class="topbar-user">
+        <nz-badge [nzDot]="sesion.usuario()?.email_verificado === false" nzStatus="warning" nzTitle="Correo pendiente de verificación">
+          <nz-avatar class="daemon-avatar" [nzSize]="44" [nzSrc]="avatarUrl() || undefined" [nzText]="iniciales()"></nz-avatar>
+        </nz-badge>
+        <div>
+          <span>Portal estudiante</span>
+          <strong>{{ sesion.usuario()?.usuario || sesion.usuario()?.nombre_completo }}</strong>
+          <small>{{ perfilDetalle() }}</small>
+        </div>
       </div>
       <button nz-button nzType="default" class="daemon-btn topbar-logout" type="button" (click)="salir()">Cerrar sesión</button>
     </header>

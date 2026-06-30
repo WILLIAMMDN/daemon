@@ -31,7 +31,14 @@
   z-index: 10;
 }
 
-.topbar div {
+.topbar-user {
+  align-items: center;
+  display: flex;
+  gap: .85rem;
+  min-width: 0;
+}
+
+.topbar-user > div {
   display: grid;
   min-width: 0;
 }
@@ -49,6 +56,11 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.topbar small {
+  color: #64748b;
+  font-size: .78rem;
 }
 
 .topbar-logout {

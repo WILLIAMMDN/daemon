@@ -3,34 +3,41 @@
     <div>
       <p class="kicker">Personalidad y conocimiento</p>
       <h1>Configura tu bot</h1>
-      <p>Esta información alimenta el asistente conectado a Gemma mediante el backend.</p>
+      <p>Esta informacion alimenta el asistente conectado a Gemma mediante el backend.</p>
     </div>
     <div class="actions">
-      <a class="ghost-btn" routerLink="/alumno/herramientas/chatbot">Volver al chat</a>
+      <a nz-button nzType="default" class="daemon-btn" routerLink="/alumno/herramientas/chatbot">Volver al chat</a>
     </div>
   </header>
 
   @if (cargando()) {
-    <app-cargando class="state" texto="Cargando configuración..."></app-cargando>
+    <app-cargando class="state" texto="Cargando configuracion..."></app-cargando>
   } @else {
     <section class="split">
       <form class="panel bot-form" (ngSubmit)="guardar()">
-        <h2>Datos del asistente</h2>
-
-        <div class="avatar-picker">
-          <input
-            #avatarInput
-            type="file"
-            accept="image/*"
-            class="sr-only"
-            (change)="seleccionarAvatar($event)"
-          >
-          <button type="button" class="avatar-button" (click)="avatarInput.click()" aria-label="Seleccionar imagen del bot">
-            <img [src]="avatarVisible()" alt="Avatar del bot">
-            <span>Cambiar imagen</span>
-          </button>
-          <small>Selecciona una foto para que aparezca en el chat.</small>
+        <div class="section-title">
+          <h2>Datos del asistente</h2>
+          <nz-tag class="daemon-tag" nzColor="purple">IA personal</nz-tag>
         </div>
+
+        <div class="bot-preview">
+          <nz-avatar class="daemon-avatar bot-avatar" [nzSize]="86" [nzSrc]="avatarVisible()" nzText="AI"></nz-avatar>
+          <div>
+            <span class="muted">Vista en chat</span>
+            <strong>{{ datos.nombre_bot || 'Asistente DAEMON' }}</strong>
+            <small>{{ datos.system_prompt.trim() ? 'Personalidad configurada' : 'Personalidad pendiente' }}</small>
+          </div>
+        </div>
+
+        <app-media-uploader
+          titulo="Avatar del bot"
+          descripcion="Selecciona una imagen para que aparezca en el chat del estudiante."
+          accept="image/*"
+          [maxMb]="4"
+          [resetKey]="uploadResetKey()"
+          lista="picture"
+          (archivoChange)="seleccionarAvatar($event)"
+        />
 
         <label class="field">
           Nombre
@@ -58,36 +65,44 @@
         </label>
 
         <div class="actions">
-          <button type="submit" [disabled]="guardando() || !datos.nombre_bot.trim()">Guardar bot</button>
-          <a class="ghost-btn" routerLink="/alumno/herramientas/chatbot">Probar en chat</a>
+          <button nz-button nzType="primary" class="daemon-btn" type="submit" [disabled]="guardando() || !datos.nombre_bot.trim()">
+            @if (guardando()) { Guardando... } @else { Guardar bot }
+          </button>
+          <a nz-button nzType="default" class="daemon-btn" routerLink="/alumno/herramientas/chatbot">Probar en chat</a>
         </div>
 
         @if (mensaje()) {
-          <p class="success">{{ mensaje() }}</p>
+          <nz-alert class="daemon-alert" nzType="success" nzShowIcon [nzMessage]="mensaje()"></nz-alert>
         }
         @if (error()) {
-          <p class="error">{{ error() }}</p>
+          <nz-alert class="daemon-alert" nzType="error" nzShowIcon [nzMessage]="error()"></nz-alert>
         }
       </form>
 
       <aside class="panel guide">
         <h2>Estado del bot</h2>
-        <p>La configuración guardada se aplica a las conversaciones del estudiante.</p>
+        <p>La configuracion guardada se aplica a las conversaciones del estudiante.</p>
+
+        <div class="bot-score">
+          <span>Configuracion completa</span>
+          <strong>{{ progresoBot() }}%</strong>
+          <nz-progress [nzPercent]="progresoBot()" [nzStatus]="estadoProgreso()" [nzStrokeWidth]="8"></nz-progress>
+        </div>
 
         <div>
-          <span class="badge">Perfil</span>
+          <nz-tag class="daemon-tag" nzColor="blue">Perfil</nz-tag>
           <strong>{{ datos.nombre_bot || 'Sin nombre' }}</strong>
           <small>Nombre visible del asistente.</small>
         </div>
 
         <div>
-          <span class="badge" [class.warn]="!datos.system_prompt.trim()">Prompt</span>
+          <nz-tag class="daemon-tag" [nzColor]="datos.system_prompt.trim() ? 'green' : 'gold'">Prompt</nz-tag>
           <strong>{{ datos.system_prompt.trim() ? 'Configurado' : 'Pendiente' }}</strong>
           <small>Personalidad base del bot.</small>
         </div>
 
         <div>
-          <span class="badge" [class.warn]="!datos.conocimiento.trim()">Conocimiento</span>
+          <nz-tag class="daemon-tag" [nzColor]="datos.conocimiento.trim() ? 'green' : 'gold'">Conocimiento</nz-tag>
           <strong>{{ datos.conocimiento.trim() ? 'Configurado' : 'Pendiente' }}</strong>
           <small>Contexto propio de la academia.</small>
         </div>

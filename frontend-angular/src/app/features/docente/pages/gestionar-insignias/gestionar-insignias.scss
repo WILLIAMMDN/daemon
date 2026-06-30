@@ -1,0 +1,91 @@
+.insignias-page {
+  max-width: 1180px;
+}
+
+.section-title {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: .75rem;
+  justify-content: space-between;
+}
+
+.section-title h2 {
+  margin: 0;
+}
+
+.insignia-form,
+.assign-form {
+  align-content: start;
+}
+
+.insignia-preview {
+  align-items: center;
+  background: #f8fbff;
+  border: 1px solid #dfe8f8;
+  border-radius: 8px;
+  display: grid;
+  gap: .85rem;
+  grid-template-columns: auto minmax(0, 1fr);
+  padding: .85rem;
+}
+
+.insignia-preview > div {
+  display: grid;
+  gap: .2rem;
+  min-width: 0;
+}
+
+.insignia-preview strong,
+.insignia-preview small {
+  overflow-wrap: anywhere;
+}
+
+.insignia-preview small {
+  color: #61708d;
+}
+
+.catalog-section {
+  display: grid;
+  gap: 1rem;
+}
+
+.insignia-card {
+  grid-template-columns: auto minmax(0, 1fr);
+}
+
+.insignia-figure {
+  align-items: center;
+  background: #f8fbff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  display: inline-flex;
+  height: 76px;
+  justify-content: center;
+  margin: 0;
+  width: 76px;
+}
+
+.insignia-img {
+  height: 58px;
+  object-fit: contain;
+  width: 58px;
+}
+
+.insignia-content {
+  display: grid;
+  gap: .25rem;
+  min-width: 0;
+}
+
+.insignia-desc {
+  color: #61708d;
+  margin: 0;
+}
+
+@media (max-width: 520px) {
+  .insignia-preview,
+  .insignia-card {
+    grid-template-columns: 1fr;
+  }
+}

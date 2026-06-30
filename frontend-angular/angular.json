@@ -58,6 +58,12 @@
               "node_modules/ng-zorro-antd/alert/style/index.min.css",
               "node_modules/ng-zorro-antd/empty/style/index.min.css",
               "node_modules/ng-zorro-antd/tag/style/index.min.css",
+              "node_modules/ng-zorro-antd/avatar/style/index.min.css",
+              "node_modules/ng-zorro-antd/badge/style/index.min.css",
+              "node_modules/ng-zorro-antd/descriptions/style/index.min.css",
+              "node_modules/ng-zorro-antd/progress/style/index.min.css",
+              "node_modules/ng-zorro-antd/statistic/style/index.min.css",
+              "node_modules/ng-zorro-antd/upload/style/index.min.css",
               "src/styles.scss"
             ]
           },

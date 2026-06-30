@@ -1,0 +1,54 @@
+:host {
+  display: block;
+}
+
+.media-uploader {
+  display: grid;
+  gap: .65rem;
+}
+
+.upload-drop {
+  align-items: center;
+  color: #17243c;
+  display: grid;
+  gap: .25rem;
+  justify-items: center;
+  padding: .9rem;
+  text-align: center;
+}
+
+.upload-mark {
+  align-items: center;
+  background: #eef4ff;
+  border-radius: 999px;
+  color: #2563eb;
+  display: inline-flex;
+  font-size: 1.35rem;
+  font-weight: 900;
+  height: 44px;
+  justify-content: center;
+  width: 44px;
+}
+
+.upload-drop strong {
+  font-size: .98rem;
+}
+
+.upload-drop small {
+  color: #61708d;
+  max-width: 28rem;
+}
+
+.upload-alert {
+  margin-top: .15rem;
+}
+
+:host ::ng-deep .ant-upload.ant-upload-drag {
+  background: #f8fbff;
+  border-color: #cbd8ee;
+  border-radius: 8px;
+}
+
+:host ::ng-deep .ant-upload.ant-upload-drag:not(.ant-upload-disabled):hover {
+  border-color: #2563eb;
+}

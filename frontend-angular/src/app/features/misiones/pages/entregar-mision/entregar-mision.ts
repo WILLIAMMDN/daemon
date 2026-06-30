@@ -1,13 +1,26 @@
-﻿import { Component, signal } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { Mision } from '../../services/mision';
+import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
+import { NzTagModule } from 'ng-zorro-antd/tag';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
-
+import { MediaUploader } from '../../../../shared/componentes/media-uploader/media-uploader';
+import { Mision } from '../../services/mision';
 
 @Component({
   selector: 'app-entregar-mision',
-  imports: [FormsModule, RouterLink, Cargando],
+  imports: [
+    FormsModule,
+    RouterLink,
+    NzAlertModule,
+    NzButtonModule,
+    NzDescriptionsModule,
+    NzTagModule,
+    Cargando,
+    MediaUploader,
+  ],
   templateUrl: './entregar-mision.html',
   styleUrl: './entregar-mision.scss',
 })
@@ -18,7 +31,10 @@ export class EntregarMision {
   enviando = signal(false);
   mensaje = signal('');
   error = signal('');
+  archivoNombre = signal('');
+  uploadResetKey = signal(0);
   texto = '';
+  private archivo: File | null = null;
 
   constructor(private route: ActivatedRoute, private mision: Mision) {
     this.id = Number(this.route.snapshot.paramMap.get('id'));
@@ -34,7 +50,7 @@ export class EntregarMision {
         this.cargando.set(false);
       },
       error: (e) => {
-        this.error.set(e.error?.message ?? 'No se pudo cargar la misión.');
+        this.error.set(e.error?.message ?? 'No se pudo cargar la mision.');
         this.cargando.set(false);
       },
     });
@@ -44,10 +60,17 @@ export class EntregarMision {
     this.enviando.set(true);
     this.mensaje.set('');
     this.error.set('');
-    this.mision.entregar(this.id, { texto: this.texto }).subscribe({
+
+    const datos = new FormData();
+    datos.append('texto', this.texto.trim());
+    if (this.archivo) {
+      datos.append('archivo', this.archivo);
+    }
+
+    this.mision.entregar(this.id, datos).subscribe({
       next: () => {
         this.mensaje.set('Entrega registrada.');
-        this.texto = '';
+        this.limpiar();
         this.enviando.set(false);
         this.cargar();
       },
@@ -56,5 +79,21 @@ export class EntregarMision {
         this.enviando.set(false);
       },
     });
+  }
+
+  seleccionarArchivo(archivo: File | null): void {
+    this.archivo = archivo;
+    this.archivoNombre.set(archivo?.name ?? '');
+  }
+
+  puedeEntregar(): boolean {
+    return Boolean(this.texto.trim() || this.archivo);
+  }
+
+  limpiar(): void {
+    this.texto = '';
+    this.archivo = null;
+    this.archivoNombre.set('');
+    this.uploadResetKey.update((valor) => valor + 1);
   }
 }

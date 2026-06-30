@@ -1,12 +1,27 @@
 import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Docente } from '../../services/docente';
+import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { NzAvatarModule } from 'ng-zorro-antd/avatar';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzTagModule } from 'ng-zorro-antd/tag';
+import { Activos } from '../../../../core/servicios/activos';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
-
+import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
+import { MediaUploader } from '../../../../shared/componentes/media-uploader/media-uploader';
+import { Docente } from '../../services/docente';
 
 @Component({
   selector: 'app-gestionar-insignias',
-  imports: [FormsModule, Cargando],
+  imports: [
+    FormsModule,
+    NzAlertModule,
+    NzAvatarModule,
+    NzButtonModule,
+    NzTagModule,
+    Cargando,
+    EstadoVacio,
+    MediaUploader,
+  ],
   templateUrl: './gestionar-insignias.html',
   styleUrl: './gestionar-insignias.scss',
 })
@@ -17,11 +32,13 @@ export class GestionarInsignias {
   guardando = signal(false);
   mensaje = signal('');
   error = signal('');
+  imagenPreview = signal('');
+  uploadResetKey = signal(0);
   nueva = { nombre: '', descripcion: '', imagen: '' };
   asignacion = { id_alumno: null as number | null, id_insignia: null as number | null, asignar: true };
   private archivoImagen: File | null = null;
 
-  constructor(private docente: Docente) {
+  constructor(private docente: Docente, private activos: Activos) {
     this.cargar();
   }
 
@@ -66,9 +83,17 @@ export class GestionarInsignias {
     });
   }
 
-  seleccionarImagen(evento: Event): void {
-    const input = evento.target as HTMLInputElement;
-    this.archivoImagen = input.files?.[0] ?? null;
+  seleccionarImagen(archivo: File | null): void {
+    this.archivoImagen = archivo;
+
+    if (!archivo) {
+      this.imagenPreview.set('');
+      return;
+    }
+
+    const lector = new FileReader();
+    lector.onload = () => this.imagenPreview.set(String(lector.result ?? ''));
+    lector.readAsDataURL(archivo);
   }
 
   crear(): void {
@@ -90,6 +115,8 @@ export class GestionarInsignias {
       next: () => {
         this.nueva = { nombre: '', descripcion: '', imagen: '' };
         this.archivoImagen = null;
+        this.imagenPreview.set('');
+        this.uploadResetKey.update((valor) => valor + 1);
         this.mensaje.set('Insignia creada.');
         this.guardando.set(false);
         this.cargar();
@@ -119,5 +146,13 @@ export class GestionarInsignias {
         this.guardando.set(false);
       },
     });
+  }
+
+  imagenNuevaVisible(): string {
+    return this.imagenPreview() || this.activos.url(this.nueva.imagen);
+  }
+
+  imagenInsignia(ruta?: string | null): string {
+    return this.activos.url(ruta);
   }
 }

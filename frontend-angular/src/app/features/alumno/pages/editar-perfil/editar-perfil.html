@@ -1,43 +1,105 @@
-﻿@if (cargando()) {
+@if (cargando()) {
   <app-cargando class="state" texto="Cargando datos..."></app-cargando>
 } @else {
-  <section class="page">
+  <section class="page edit-profile">
     <header class="page-header">
       <div>
         <p class="kicker">Perfil</p>
         <h1>Editar mis datos</h1>
-        <p>Actualiza la información que aparece en tu cuenta de DAEMON.</p>
+        <p>Actualiza tu identidad, biografia y recursos visuales dentro de DAEMON.</p>
       </div>
-      <a class="ghost-btn" routerLink="/alumno/perfil">Volver</a>
+      <a nz-button nzType="default" class="daemon-btn" routerLink="/alumno/perfil">Volver</a>
     </header>
 
-    <form class="panel" (ngSubmit)="guardar()">
-      <div class="form-grid">
-        <label>
-          Nombre completo
-          <input name="nombre_completo" [(ngModel)]="formulario.nombre_completo" required>
-        </label>
-        <label>
-          Correo
-          <input name="email" [(ngModel)]="formulario.email" type="email">
-        </label>
-        <label>
-          Genero
-          <input name="genero" [(ngModel)]="formulario.genero">
-        </label>
-        <label class="field-wide">
-          Biografía
-          <textarea name="biografia" [(ngModel)]="formulario.biografia" rows="5"></textarea>
-        </label>
-      </div>
+    <section class="split edit-profile-grid">
+      <form class="panel edit-profile-form" (ngSubmit)="guardar()">
+        <div class="section-title">
+          <h2>Informacion principal</h2>
+          <nz-tag class="daemon-tag" nzColor="blue">Cuenta estudiante</nz-tag>
+        </div>
 
-      <div class="actions">
-        <button type="submit" [disabled]="guardando()">Guardar cambios</button>
-        <button type="button" (click)="cargar()">Restaurar</button>
-      </div>
+        <div class="form-grid">
+          <label>
+            Nombre completo
+            <input name="nombre_completo" [(ngModel)]="formulario.nombre_completo" required>
+          </label>
+          <label>
+            Correo
+            <input name="email" [(ngModel)]="formulario.email" type="email">
+          </label>
+          <label>
+            Genero
+            <input name="genero" [(ngModel)]="formulario.genero">
+          </label>
+          <label class="field-wide">
+            Biografia
+            <textarea name="biografia" [(ngModel)]="formulario.biografia" rows="6"></textarea>
+          </label>
+        </div>
 
-      @if (mensaje()) { <p class="success">{{ mensaje() }}</p> }
-      @if (error()) { <p class="error">{{ error() }}</p> }
-    </form>
+        <div class="actions">
+          <button nz-button nzType="primary" class="daemon-btn" type="submit" [disabled]="guardando()">
+            @if (guardando()) { Guardando... } @else { Guardar cambios }
+          </button>
+          <button nz-button nzType="default" class="daemon-btn" type="button" (click)="cargar()" [disabled]="guardando()">Restaurar</button>
+        </div>
+
+        @if (mensaje()) {
+          <nz-alert class="daemon-alert" nzType="success" nzShowIcon [nzMessage]="mensaje()"></nz-alert>
+        }
+        @if (error()) {
+          <nz-alert class="daemon-alert" nzType="error" nzShowIcon [nzMessage]="error()"></nz-alert>
+        }
+      </form>
+
+      <aside class="panel profile-media">
+        <div class="profile-preview">
+          <nz-avatar class="daemon-avatar profile-avatar" [nzSize]="96" [nzSrc]="avatarVisible() || undefined" [nzText]="iniciales()"></nz-avatar>
+          <div>
+            <span class="muted">Vista publica</span>
+            <strong>{{ formulario.nombre_completo || sesion.usuario()?.usuario || 'Estudiante DAEMON' }}</strong>
+            <small>{{ formulario.email || 'Correo pendiente' }}</small>
+          </div>
+        </div>
+
+        <div class="progress-block">
+          <div>
+            <strong>Perfil completo</strong>
+            <span>{{ progresoPerfil() }}%</span>
+          </div>
+          <nz-progress [nzPercent]="progresoPerfil()" [nzStatus]="estadoProgreso()" [nzStrokeWidth]="8"></nz-progress>
+        </div>
+
+        <app-media-uploader
+          titulo="Avatar del estudiante"
+          descripcion="Imagen cuadrada para mostrar en el portal, ranking y comunidad."
+          accept="image/*"
+          [maxMb]="4"
+          [resetKey]="uploadResetKey()"
+          lista="picture"
+          (archivoChange)="seleccionarAvatar($event)"
+        />
+
+        <app-media-uploader
+          titulo="Fondo del perfil"
+          descripcion="Imagen opcional para futuras vistas destacadas del perfil."
+          accept="image/*"
+          [maxMb]="8"
+          [resetKey]="uploadResetKey()"
+          lista="picture"
+          (archivoChange)="seleccionarFondo($event)"
+        />
+
+        <app-media-uploader
+          titulo="Hero visual"
+          descripcion="Recurso opcional para representar al estudiante en experiencias especiales."
+          accept="image/*"
+          [maxMb]="8"
+          [resetKey]="uploadResetKey()"
+          lista="picture"
+          (archivoChange)="seleccionarHeroe($event)"
+        />
+      </aside>
+    </section>
   </section>
 }

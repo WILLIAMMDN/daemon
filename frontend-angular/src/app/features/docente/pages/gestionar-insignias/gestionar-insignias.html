@@ -1,29 +1,48 @@
-<section class="page">
+<section class="page insignias-page">
   <header class="page-header">
     <div>
       <p class="kicker">Docente</p>
       <h1>Insignias</h1>
       <p>Catalogo y asignacion de reconocimientos para los estudiantes.</p>
     </div>
-    <button type="button" class="btn-primary" (click)="cargar()" [disabled]="cargando()">
+    <button nz-button nzType="default" class="daemon-btn" type="button" (click)="cargar()" [disabled]="cargando()">
       @if (cargando()) { Actualizando... } @else { Actualizar }
     </button>
   </header>
 
-  @if (mensaje()) { <div class="alert success-alert">{{ mensaje() }}</div> }
-  @if (error()) { <div class="alert error-alert">{{ error() }}</div> }
+  @if (mensaje()) {
+    <nz-alert class="daemon-alert" nzType="success" nzShowIcon [nzMessage]="mensaje()"></nz-alert>
+  }
+  @if (error()) {
+    <nz-alert class="daemon-alert" nzType="error" nzShowIcon [nzMessage]="error()"></nz-alert>
+  }
 
   <section class="split">
-    <form class="panel" (ngSubmit)="crear()">
-      <h2>Nueva insignia</h2>
+    <form class="panel insignia-form" (ngSubmit)="crear()">
+      <div class="section-title">
+        <h2>Nueva insignia</h2>
+        <nz-tag class="daemon-tag" nzColor="gold">Reconocimiento</nz-tag>
+      </div>
+
+      <div class="insignia-preview">
+        <nz-avatar
+          class="daemon-avatar"
+          nzShape="square"
+          [nzSize]="74"
+          [nzSrc]="imagenNuevaVisible() || undefined"
+          nzText="DA"
+        ></nz-avatar>
+        <div>
+          <span class="muted">Vista previa</span>
+          <strong>{{ nueva.nombre || 'Nueva insignia' }}</strong>
+          <small>{{ nueva.descripcion || 'Descripcion pendiente' }}</small>
+        </div>
+      </div>
+
       <div class="form-grid">
         <label>
           Nombre
           <input name="nombre" [(ngModel)]="nueva.nombre" required placeholder="Ej. Cerebro de Oro">
-        </label>
-        <label>
-          Imagen
-          <input name="archivo" type="file" accept="image/*" (change)="seleccionarImagen($event)">
         </label>
         <label>
           URL existente
@@ -34,13 +53,28 @@
           <textarea name="descripcion" [(ngModel)]="nueva.descripcion" rows="3" placeholder="Por que se otorga este reconocimiento"></textarea>
         </label>
       </div>
-      <button type="submit" [disabled]="guardando() || !puedeCrear()">
+
+      <app-media-uploader
+        titulo="Imagen de la insignia"
+        descripcion="Sube una imagen cuadrada o PNG transparente para el catalogo."
+        accept="image/*"
+        [maxMb]="4"
+        [resetKey]="uploadResetKey()"
+        lista="picture"
+        (archivoChange)="seleccionarImagen($event)"
+      />
+
+      <button nz-button nzType="primary" class="daemon-btn" type="submit" [disabled]="guardando() || !puedeCrear()">
         @if (guardando()) { Creando... } @else { Crear insignia }
       </button>
     </form>
 
-    <form class="panel highlight-panel" (ngSubmit)="asignar()">
-      <h2>Asignar a alumno</h2>
+    <form class="panel highlight-panel assign-form" (ngSubmit)="asignar()">
+      <div class="section-title">
+        <h2>Asignar a alumno</h2>
+        <nz-tag class="daemon-tag" nzColor="cyan">Progreso</nz-tag>
+      </div>
+
       <div class="form-grid">
         <label>
           Alumno
@@ -61,7 +95,7 @@
           </select>
         </label>
       </div>
-      <button type="submit" [disabled]="guardando() || !asignacion.id_alumno || !asignacion.id_insignia">
+      <button nz-button nzType="primary" class="daemon-btn" type="submit" [disabled]="guardando() || !asignacion.id_alumno || !asignacion.id_insignia">
         @if (guardando()) { Asignando... } @else { Asignar }
       </button>
     </form>
@@ -75,7 +109,7 @@
         @for (insignia of insignias(); track insignia.id) {
           <article class="data-card insignia-card">
             <figure class="insignia-figure">
-              <img [src]="insignia.imagen" [alt]="'Insignia ' + insignia.nombre" class="insignia-img">
+              <img [src]="imagenInsignia(insignia.imagen)" [alt]="'Insignia ' + insignia.nombre" class="insignia-img">
             </figure>
 
             <div class="insignia-content">
@@ -86,9 +120,10 @@
         }
       </div>
     } @else {
-      <div class="empty state">
-        <p>No hay insignias registradas todavia. Crea el primer reconocimiento.</p>
-      </div>
+      <app-estado-vacio
+        titulo="Sin insignias todavia"
+        descripcion="Crea el primer reconocimiento para empezar a premiar avances de los estudiantes."
+      />
     }
   </section>
 </section>

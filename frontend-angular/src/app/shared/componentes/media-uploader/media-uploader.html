@@ -1,0 +1,28 @@
+<section class="media-uploader" [class.is-compact]="tipo === 'select'">
+  <nz-upload
+    [nzType]="tipo"
+    [nzListType]="lista"
+    [nzAccept]="accept"
+    [nzMaxCount]="1"
+    [nzDisabled]="disabled"
+    [nzBeforeUpload]="beforeUpload"
+    [nzRemove]="removeFile"
+    [nzFileList]="archivos"
+  >
+    @if (tipo === 'drag') {
+      <div class="upload-drop">
+        <span class="upload-mark">+</span>
+        <strong>{{ titulo }}</strong>
+        <small>{{ descripcion }}</small>
+      </div>
+    } @else {
+      <button nz-button nzType="default" class="daemon-btn" type="button" [disabled]="disabled">
+        {{ textoBoton }}
+      </button>
+    }
+  </nz-upload>
+
+  @if (error) {
+    <nz-alert class="daemon-alert upload-alert" nzType="warning" nzShowIcon [nzMessage]="error"></nz-alert>
+  }
+</section>

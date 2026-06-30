@@ -3,64 +3,80 @@
 } @else if (error()) {
   <section class="error">
     <p>{{ error() }}</p>
-    <button type="button" (click)="cargar()">Reintentar</button>
+    <button nz-button nzType="primary" class="daemon-btn" type="button" (click)="cargar()">Reintentar</button>
   </section>
 } @else if (perfil(); as datos) {
-  <section class="page">
-    <header class="page-header">
-      <div>
-        <p class="kicker">{{ perfilPropio() ? 'Mi perfil' : 'Perfil de compañero' }}</p>
-        <h1>{{ datos.usuario.nombre_completo }}</h1>
-        <p>{{ datos.usuario.usuario }} - Nivel {{ datos.usuario.nivel }} - {{ datos.usuario.rango || 'Rango en progreso' }}</p>
+  <section class="page profile-page">
+    <header class="profile-hero daemon-surface">
+      <div class="hero-identity">
+        <nz-avatar class="daemon-avatar hero-avatar" [nzSize]="104" [nzSrc]="avatar(datos.usuario) || undefined" [nzText]="iniciales(datos.usuario)"></nz-avatar>
+        <div>
+          <p class="kicker">{{ perfilPropio() ? 'Mi perfil' : 'Perfil de companero' }}</p>
+          <h1>{{ datos.usuario.nombre_completo }}</h1>
+          <div class="profile-tags">
+            <nz-tag class="daemon-tag" nzColor="blue">Nivel {{ datos.usuario.nivel }}</nz-tag>
+            <nz-tag class="daemon-tag" nzColor="green">{{ datos.usuario.rango || 'Rango en progreso' }}</nz-tag>
+          </div>
+          <p>{{ datos.usuario.usuario }}</p>
+        </div>
       </div>
-      @if (perfilPropio()) {
-        <a class="btn" routerLink="/alumno/perfil/editar">Editar perfil</a>
-      } @else {
-        <a class="btn" routerLink="/alumno/comunidad">Volver a comunidad</a>
-      }
+
+      <div class="hero-actions">
+        <div class="hero-progress">
+          <span>Perfil completo</span>
+          <strong>{{ progresoPerfil(datos.usuario) }}%</strong>
+          <nz-progress [nzPercent]="progresoPerfil(datos.usuario)" [nzStatus]="estadoProgreso(datos.usuario)" [nzShowInfo]="false" [nzStrokeWidth]="8"></nz-progress>
+        </div>
+        @if (perfilPropio()) {
+          <a nz-button nzType="primary" class="daemon-btn" routerLink="/alumno/perfil/editar">Editar perfil</a>
+        } @else {
+          <a nz-button nzType="default" class="daemon-btn" routerLink="/alumno/comunidad">Volver a comunidad</a>
+        }
+      </div>
     </header>
 
-    <section class="stats">
-      <article class="stat">
-        <span>Tokens</span>
-        <strong>{{ datos.usuario.tokens }}</strong>
+    <section class="stats profile-stats">
+      <article class="stat daemon-surface">
+        <nz-statistic class="daemon-stat" nzTitle="Tokens" [nzValue]="datos.usuario.tokens"></nz-statistic>
       </article>
-      <article class="stat">
-        <span>Insignias</span>
-        <strong>{{ datos.insignias.length }}</strong>
+      <article class="stat daemon-surface">
+        <nz-statistic class="daemon-stat" nzTitle="Insignias" [nzValue]="datos.insignias.length"></nz-statistic>
       </article>
-      <article class="stat">
-        <span>Premios entregados</span>
-        <strong>{{ datos.mochila.length }}</strong>
+      <article class="stat daemon-surface">
+        <nz-statistic class="daemon-stat" nzTitle="Premios entregados" [nzValue]="datos.mochila.length"></nz-statistic>
       </article>
     </section>
 
     <section class="split">
-      <article class="panel">
+      <article class="panel profile-details">
         <h2>Datos personales</h2>
-        @if (datos.usuario.avatar) {
-          <img class="image-thumb" [src]="asset(datos.usuario.avatar)" alt="Avatar">
-        }
-        <p><strong>Correo:</strong> {{ datos.usuario.email || 'Sin correo registrado' }}</p>
-        <p><strong>Biografía:</strong> {{ datos.usuario.biografia || 'Sin biografía registrada' }}</p>
+        <nz-descriptions class="daemon-descriptions" nzBordered [nzColumn]="1">
+          <nz-descriptions-item nzTitle="Correo">{{ datos.usuario.email || 'Sin correo registrado' }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Biografia">{{ datos.usuario.biografia || 'Sin biografia registrada' }}</nz-descriptions-item>
+        </nz-descriptions>
       </article>
 
       <article class="panel">
         <h2>Mochila digital</h2>
         @if (datos.mochila.length) {
-          @for (premio of datos.mochila; track premio.id) {
-            <div class="data-card profile-item-card">
-              @if (premio.imagen) {
-                <img class="image-thumb profile-item-image" [src]="asset(premio.imagen)" [alt]="premio.nombre">
-              }
-              <div>
-                <strong>{{ premio.nombre }}</strong>
-                <span class="muted">{{ premio.descripcion || 'Premio entregado' }}</span>
+          <div class="profile-list">
+            @for (premio of datos.mochila; track premio.id) {
+              <div class="data-card profile-item-card">
+                @if (premio.imagen) {
+                  <img class="image-thumb profile-item-image" [src]="asset(premio.imagen)" [alt]="premio.nombre">
+                }
+                <div>
+                  <strong>{{ premio.nombre }}</strong>
+                  <span class="muted">{{ premio.descripcion || 'Premio entregado' }}</span>
+                </div>
               </div>
-            </div>
-          }
+            }
+          </div>
         } @else {
-          <p class="empty">{{ perfilPropio() ? 'Todavía no tienes premios entregados.' : 'Todavía no tiene premios entregados.' }}</p>
+          <app-estado-vacio
+            [titulo]="perfilPropio() ? 'Mochila sin premios' : 'Mochila sin premios'"
+            [descripcion]="perfilPropio() ? 'Todavia no tienes premios entregados.' : 'Todavia no tiene premios entregados.'"
+          />
         }
       </article>
     </section>
@@ -83,7 +99,10 @@
           }
         </div>
       } @else {
-        <p class="empty">{{ perfilPropio() ? 'Todavía no tienes insignias registradas.' : 'Todavía no tiene insignias registradas.' }}</p>
+        <app-estado-vacio
+          [titulo]="perfilPropio() ? 'Aun sin insignias' : 'Aun sin insignias'"
+          [descripcion]="perfilPropio() ? 'Cuando completes logros importantes apareceran aqui.' : 'Este estudiante aun no tiene insignias registradas.'"
+        />
       }
     </section>
   </section>

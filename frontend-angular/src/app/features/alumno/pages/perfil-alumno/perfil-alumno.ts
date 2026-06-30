@@ -1,10 +1,17 @@
 import { Component, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { NzAvatarModule } from 'ng-zorro-antd/avatar';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
+import { NzProgressModule } from 'ng-zorro-antd/progress';
+import { NzStatisticModule } from 'ng-zorro-antd/statistic';
+import { NzTagModule } from 'ng-zorro-antd/tag';
 import { Activos } from '../../../../core/servicios/activos';
 import { Sesion } from '../../../../core/servicios/sesion';
-import { Alumno } from '../../services/alumno';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
-
+import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
+import { Alumno } from '../../services/alumno';
 
 interface UsuarioPerfil {
   id: number;
@@ -26,7 +33,18 @@ interface PerfilData {
 
 @Component({
   selector: 'app-perfil-alumno',
-  imports: [RouterLink, Cargando],
+  imports: [
+    RouterLink,
+    NzAlertModule,
+    NzAvatarModule,
+    NzButtonModule,
+    NzDescriptionsModule,
+    NzProgressModule,
+    NzStatisticModule,
+    NzTagModule,
+    Cargando,
+    EstadoVacio,
+  ],
   templateUrl: './perfil-alumno.html',
   styleUrl: './perfil-alumno.scss',
 })
@@ -64,6 +82,37 @@ export class PerfilAlumno {
 
   asset(ruta?: string | null): string {
     return this.activos.url(ruta);
+  }
+
+  avatar(usuario: UsuarioPerfil): string {
+    return this.asset(usuario.avatar);
+  }
+
+  iniciales(usuario: UsuarioPerfil): string {
+    const base = usuario.nombre_completo || usuario.usuario || 'DAEMON';
+    return base
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((parte) => parte[0]?.toUpperCase())
+      .join('') || 'D';
+  }
+
+  progresoPerfil(usuario: UsuarioPerfil): number {
+    const puntos = [
+      usuario.nombre_completo,
+      usuario.usuario,
+      usuario.email,
+      usuario.biografia,
+      usuario.avatar,
+      usuario.rango,
+    ].filter(Boolean).length;
+
+    return Math.round((puntos / 6) * 100);
+  }
+
+  estadoProgreso(usuario: UsuarioPerfil): 'active' | 'success' {
+    return this.progresoPerfil(usuario) >= 80 ? 'success' : 'active';
   }
 
   private usuarioIdActual(): number | null {

@@ -1,36 +1,85 @@
-﻿@if (cargando()) {
-  <app-cargando class="state" texto="Cargando misión..."></app-cargando>
+@if (cargando()) {
+  <app-cargando class="state" texto="Cargando mision..."></app-cargando>
 } @else if (detalle(); as datos) {
-  <section class="page">
+  <section class="page deliver-page">
     <header class="page-header">
       <div>
         <p class="kicker">Entrega</p>
         <h1>{{ datos.mision.titulo }}</h1>
-        <p>{{ datos.mision.descripcion || 'Sin descripción registrada.' }}</p>
+        <p>{{ datos.mision.descripcion || 'Sin descripcion registrada.' }}</p>
       </div>
-      <a class="ghost-btn" [routerLink]="['/alumno/misiones', id]">Ver detalle</a>
+      <a nz-button nzType="default" class="daemon-btn" [routerLink]="['/alumno/misiones', id]">Ver detalle</a>
     </header>
 
-    <form class="panel" (ngSubmit)="entregar()">
-      <label class="field">
-        Evidencia
-        <textarea name="texto" [(ngModel)]="texto" rows="8" required></textarea>
-      </label>
-      <div class="actions">
-        <button type="submit" [disabled]="enviando() || !texto.trim()">Registrar entrega</button>
-        <button type="button" (click)="texto = ''">Limpiar</button>
-      </div>
-      @if (mensaje()) { <p class="success">{{ mensaje() }}</p> }
-      @if (error()) { <p class="error">{{ error() }}</p> }
-    </form>
+    <section class="split deliver-grid">
+      <form class="panel deliver-form" (ngSubmit)="entregar()">
+        <div class="section-title">
+          <h2>Nueva evidencia</h2>
+          <nz-tag class="daemon-tag" nzColor="cyan">Texto + archivo</nz-tag>
+        </div>
 
-    @if (datos.entrega) {
-      <article class="panel">
-        <h2>Entrega actual</h2>
-        <p><span class="badge" [class.warn]="datos.entrega.estado === 'pendiente'">{{ datos.entrega.estado }}</span></p>
-        <p class="content">{{ datos.entrega.archivo_url }}</p>
-      </article>
-    }
+        <label class="field">
+          Evidencia escrita
+          <textarea
+            name="texto"
+            [(ngModel)]="texto"
+            rows="8"
+            placeholder="Explica lo que hiciste, pega enlaces o describe tu solucion."
+          ></textarea>
+        </label>
+
+        <app-media-uploader
+          titulo="Archivo de evidencia"
+          descripcion="Puedes adjuntar imagen, PDF, documento, audio o video segun la mision."
+          accept=".jpg,.jpeg,.png,.gif,.webp,.pdf,.doc,.docx,.ppt,.pptx,.txt,.csv,.mp3,.wav,.mp4,.webm"
+          [maxMb]="20"
+          [resetKey]="uploadResetKey()"
+          (archivoChange)="seleccionarArchivo($event)"
+        />
+
+        @if (archivoNombre()) {
+          <p class="daemon-upload-summary">Archivo listo: <strong>{{ archivoNombre() }}</strong></p>
+        }
+
+        <div class="actions">
+          <button nz-button nzType="primary" class="daemon-btn" type="submit" [disabled]="enviando() || !puedeEntregar()">
+            @if (enviando()) { Enviando... } @else { Registrar entrega }
+          </button>
+          <button nz-button nzType="default" class="daemon-btn" type="button" (click)="limpiar()" [disabled]="enviando()">Limpiar</button>
+        </div>
+
+        @if (mensaje()) {
+          <nz-alert class="daemon-alert" nzType="success" nzShowIcon [nzMessage]="mensaje()"></nz-alert>
+        }
+        @if (error()) {
+          <nz-alert class="daemon-alert" nzType="error" nzShowIcon [nzMessage]="error()"></nz-alert>
+        }
+      </form>
+
+      <aside class="panel mission-summary">
+        <h2>Resumen de la mision</h2>
+        <nz-descriptions class="daemon-descriptions" nzBordered [nzColumn]="1">
+          <nz-descriptions-item nzTitle="Titulo">{{ datos.mision.titulo }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Estado">
+            <nz-tag class="daemon-tag" [nzColor]="datos.entrega?.estado === 'aprobada' ? 'green' : 'gold'">
+              {{ datos.entrega?.estado || 'Sin entrega' }}
+            </nz-tag>
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Descripcion">{{ datos.mision.descripcion || 'Sin descripcion registrada.' }}</nz-descriptions-item>
+        </nz-descriptions>
+
+        @if (datos.entrega) {
+          <div class="current-delivery">
+            <h3>Entrega actual</h3>
+            @if (datos.entrega.archivo_url) {
+              <a class="evidence-link" [href]="datos.entrega.archivo_url" target="_blank" rel="noopener">Abrir archivo enviado</a>
+            } @else {
+              <p class="muted">Entrega registrada sin archivo adjunto.</p>
+            }
+          </div>
+        }
+      </aside>
+    </section>
   </section>
 } @else if (error()) {
   <section class="error">{{ error() }}</section>
