@@ -14,33 +14,70 @@
 <aside
   class="portal-sidebar"
   [class.mobile-open]="mobileOpen"
-  [class.theme-docente]="modo === 'docente'"
   [attr.aria-label]="ariaLabel"
+  (mouseenter)="onMouseEnter()"
+  (mouseleave)="onMouseLeave()"
 >
-  <header class="sidebar-head">
-    <a class="brand" [routerLink]="homeLink" (click)="navegar()" [attr.title]="collapsed ? 'DAEMON' : null">
-      <span class="brand-mark">D</span>
+  <!-- Brand bar: tipo Material toolbar, color sólido institucional -->
+  <header class="brand-bar">
+    <a class="brand-link" [routerLink]="homeLink" (click)="navegar()" [attr.title]="colapsado ? 'DAEMON' : null">
+      <span class="brand-mark" aria-hidden="true">D</span>
       <span class="brand-copy">
-        <strong>DAEMON</strong>
-        <small>{{ brandDetalle }}</small>
+        <strong class="brand-title">DAEMON</strong>
+        <small class="brand-subtitle">{{ brandDetalle }}</small>
       </span>
     </a>
 
-    <button type="button" class="icon-button desktop-only" (click)="toggleCollapsed()" aria-label="Cambiar tamaño del menú">
-      <fa-icon [icon]="collapsed ? iconos.desplegar : iconos.colapsar" />
-    </button>
+    <div class="brand-actions">
+      <span class="role-tag" [class.role-docente]="modo === 'docente'" [class.role-alumno]="modo === 'alumno'">
+        <fa-icon [icon]="modo === 'docente' ? iconos.docente : iconos.alumno" />
+        <span class="role-label">{{ etiquetaRol }}</span>
+      </span>
+      <button
+        type="button"
+        class="pin-button"
+        [class.is-pinned]="fijado"
+        (click)="toggleFijado()"
+        [attr.aria-pressed]="fijado"
+        [attr.title]="fijado ? 'Menú fijado (clic para soltar)' : 'Fijar menú abierto'"
+        aria-label="Fijar menú"
+      >
+        <fa-icon [icon]="iconos.fijar" />
+      </button>
 
-    <button type="button" class="icon-button mobile-only" (click)="cerrarMovil()" aria-label="Cerrar menú">
-      <fa-icon [icon]="iconos.cerrar" />
-    </button>
+      <button type="button" class="close-button mobile-only" (click)="cerrarMovil()" aria-label="Cerrar menú">
+        <fa-icon [icon]="iconos.cerrar" />
+      </button>
+    </div>
   </header>
 
+  <!-- User summary card (debajo del brand bar) -->
+  <section class="user-card" aria-label="Cuenta activa">
+    <nz-avatar
+      class="user-avatar"
+      [nzSize]="48"
+      [nzSrc]="perfilAvatar || undefined"
+      [nzText]="iniciales()"
+    ></nz-avatar>
+    <div class="user-copy">
+      <span class="user-role">{{ rol }}</span>
+      <strong class="user-name" [attr.title]="perfilNombre">{{ perfilNombre }}</strong>
+      @if (perfilEmail) {
+        <small class="user-email" [attr.title]="perfilEmail">{{ perfilEmail }}</small>
+      } @else if (perfilDetalle) {
+        <small class="user-email">{{ perfilDetalle }}</small>
+      }
+    </div>
+    <fa-icon class="user-chevron" [icon]="iconos.submenuCerrado" />
+  </section>
+
+  <!-- Navigation body -->
   <nav class="sidebar-nav">
-    @for (seccion of secciones; track seccion.titulo) {
+    @for (seccion of secciones; track seccion.titulo; let last = $last) {
       <section class="sidebar-section">
-        <p class="section-title" [attr.title]="collapsed ? seccion.titulo : null">
-          <fa-icon [icon]="iconos.punto" />
-          <span>{{ seccion.titulo }}</span>
+        <p class="section-title">
+          <span class="section-dot" aria-hidden="true"></span>
+          <span class="section-label">{{ seccion.titulo }}</span>
         </p>
 
         @for (item of seccion.items; track item.id) {
@@ -51,7 +88,7 @@
               [class.active]="estaActivo(item)"
               [class.open]="estaAbierto(item)"
               [attr.aria-expanded]="estaAbierto(item)"
-              [attr.title]="collapsed ? item.etiqueta : null"
+              [attr.title]="colapsado ? item.etiqueta : null"
               (click)="toggleGrupo(item)"
             >
               <span class="nav-icon"><fa-icon [icon]="item.icono" /></span>
@@ -74,19 +111,16 @@
                   [routerLink]="hijo.ruta"
                   routerLinkActive="active"
                   [routerLinkActiveOptions]="{ exact: hijo.exacto ?? false }"
-                  [attr.title]="collapsed ? hijo.etiqueta : null"
+                  [attr.title]="colapsado ? hijo.etiqueta : null"
                   (click)="navegar()"
                 >
-                  <span class="nav-icon"><fa-icon [icon]="hijo.icono" /></span>
+                  <span class="nav-icon nav-icon-sm"><fa-icon [icon]="hijo.icono" /></span>
                   <span class="nav-copy">
                     <strong>{{ hijo.etiqueta }}</strong>
                     @if (hijo.detalle) {
                       <small>{{ hijo.detalle }}</small>
                     }
                   </span>
-                  @if (hijo.badge) {
-                    <span class="nav-badge">{{ hijo.badge }}</span>
-                  }
                 </a>
               }
             </div>
@@ -96,7 +130,7 @@
               [routerLink]="item.ruta"
               routerLinkActive="active"
               [routerLinkActiveOptions]="{ exact: item.exacto ?? false }"
-              [attr.title]="collapsed ? item.etiqueta : null"
+              [attr.title]="colapsado ? item.etiqueta : null"
               (click)="navegar()"
             >
               <span class="nav-icon"><fa-icon [icon]="item.icono" /></span>
@@ -113,18 +147,18 @@
           }
         }
       </section>
+
+      @if (!last) {
+        <nz-divider class="sidebar-divider"></nz-divider>
+      }
     }
   </nav>
 
-  <footer class="sidebar-profile">
-    <div class="profile-avatar">{{ perfilNombre.slice(0, 1).toUpperCase() || 'D' }}</div>
-    <div class="profile-copy">
-      <span>{{ rol }}</span>
-      <strong>{{ perfilNombre }}</strong>
-      <small>{{ perfilDetalle }}</small>
-    </div>
-    <button type="button" class="logout-button" (click)="emitirLogout()" aria-label="Cerrar sesión">
+  <!-- Footer con cerrar sesión -->
+  <footer class="sidebar-footer">
+    <button type="button" class="logout-button" (click)="emitirLogout()" aria-label="Cerrar sesión" title="Cerrar sesión">
       <fa-icon [icon]="iconos.salir" />
+      <span class="logout-label">Cerrar sesión</span>
     </button>
   </footer>
 </aside>
