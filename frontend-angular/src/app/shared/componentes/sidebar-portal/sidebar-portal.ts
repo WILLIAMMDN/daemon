@@ -83,6 +83,11 @@ export class SidebarPortal implements OnInit, OnChanges {
   /** Hover activo (mouse encima). */
   hoverActivo = false;
   mobileOpen = false;
+  /**
+   * Si la imagen del avatar falla al cargar (404, CORS, etc.),
+   * se vuelve false y nz-avatar vuelve a mostrar las iniciales.
+   */
+  avatarSrcVisible = true;
 
   private readonly gruposAbiertos = new Set<string>();
 
@@ -126,10 +131,6 @@ export class SidebarPortal implements OnInit, OnChanges {
     this.sincronizarGruposIniciales();
   }
 
-  ngOnChanges(): void {
-    this.sincronizarGruposIniciales();
-  }
-
   /** Etiqueta corta del rol mostrada en el badge del brand bar. */
   get etiquetaRol(): string {
     if (this.modo === 'docente') return 'Docente';
@@ -169,6 +170,28 @@ export class SidebarPortal implements OnInit, OnChanges {
         .map((parte) => parte[0]?.toUpperCase())
         .join('') || 'D'
     );
+  }
+
+  /**
+   * URL resuelta del avatar, lista para pasar a nz-avatar.
+   * Vacía cuando no hay avatar para que nz-avatar muestre nzText.
+   */
+  avatarSrc(): string {
+    return this.perfilAvatar?.trim() ?? '';
+  }
+
+  /**
+   * Se ejecuta cuando la imagen del avatar falla al cargar.
+   * Vuelve a las iniciales automáticamente.
+   */
+  onAvatarError(): void {
+    this.avatarSrcVisible = false;
+  }
+
+  ngOnChanges(): void {
+    // Cuando cambia el avatar (login, actualización de perfil), re-intentar mostrarlo.
+    this.avatarSrcVisible = true;
+    this.sincronizarGruposIniciales();
   }
 
   navegar(): void {

@@ -56,8 +56,9 @@
     <nz-avatar
       class="user-avatar"
       [nzSize]="48"
-      [nzSrc]="perfilAvatar || undefined"
+      [nzSrc]="avatarSrcVisible && avatarSrc() ? avatarSrc() : undefined"
       [nzText]="iniciales()"
+      (nzError)="onAvatarError()"
     ></nz-avatar>
     <div class="user-copy">
       <span class="user-role">{{ rol }}</span>
