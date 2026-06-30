@@ -1,12 +1,14 @@
-@if (cargando()) {
-  <section class="estado">Cargando panel docente...</section>
-} @else if (error()) {
+@if (error()) {
   <section class="estado error">
     <p>{{ error() }}</p>
     <button type="button" (click)="cargar()">Reintentar</button>
   </section>
-} @else if (panel(); as datos) {
-  <section class="dashboard">
+} @else {
+  <section class="dashboard" [class.is-loading]="cargando()" [attr.aria-busy]="cargando()">
+    @if (cargando()) {
+      <p class="sr-only" aria-live="polite">Cargando panel docente...</p>
+    }
+
     <header class="hero">
       <div>
         <p class="eyebrow">Portal docente</p>
@@ -17,22 +19,31 @@
     </header>
 
     <section class="metricas">
-      <article>
-        <span>Alumnos</span>
-        <strong>{{ datos.alumnos }}</strong>
-      </article>
-      <article>
-        <span>Tokens en circulación</span>
-        <strong>{{ datos.tokens_circulacion }}</strong>
-      </article>
-      <article>
-        <span>Entregas pendientes</span>
-        <strong>{{ datos.entregas_pendientes }}</strong>
-      </article>
-      <article>
-        <span>Canjes pendientes</span>
-        <strong>{{ datos.canjes_pendientes }}</strong>
-      </article>
+      @if (panel(); as datos) {
+        <article>
+          <span>Alumnos</span>
+          <strong>{{ datos.alumnos }}</strong>
+        </article>
+        <article>
+          <span>Tokens en circulación</span>
+          <strong>{{ datos.tokens_circulacion }}</strong>
+        </article>
+        <article>
+          <span>Entregas pendientes</span>
+          <strong>{{ datos.entregas_pendientes }}</strong>
+        </article>
+        <article>
+          <span>Canjes pendientes</span>
+          <strong>{{ datos.canjes_pendientes }}</strong>
+        </article>
+      } @else {
+        @for (item of [1, 2, 3, 4]; track item) {
+          <article class="metric-skeleton" aria-hidden="true">
+            <span class="skeleton-line short"></span>
+            <strong class="skeleton-line number"></strong>
+          </article>
+        }
+      }
     </section>
 
     <section class="contenido">
@@ -41,21 +52,36 @@
           <p class="eyebrow">Ranking actual</p>
           <h2>Top estudiantes</h2>
         </div>
-        @if (datos.ranking.length) {
-          <ol>
-            @for (alumno of datos.ranking; track alumno.id; let i = $index) {
+        @if (panel(); as datos) {
+          @if (datos.ranking.length) {
+            <ol>
+              @for (alumno of datos.ranking; track alumno.id; let i = $index) {
+                <li>
+                  <span>{{ i + 1 }}</span>
+                  <div>
+                    <strong>{{ alumno.nombre_completo }}</strong>
+                    <small>{{ alumno.nivel }} - {{ alumno.rango || alumno.usuario }}</small>
+                  </div>
+                  <b>{{ alumno.tokens }}</b>
+                </li>
+              }
+            </ol>
+          } @else {
+            <p class="vacio">Aún no hay estudiantes en el ranking.</p>
+          }
+        } @else {
+          <ol class="ranking-skeleton" aria-hidden="true">
+            @for (item of [1, 2, 3, 4, 5]; track item) {
               <li>
-                <span>{{ i + 1 }}</span>
+                <span class="skeleton-dot"></span>
                 <div>
-                  <strong>{{ alumno.nombre_completo }}</strong>
-                  <small>{{ alumno.nivel }} - {{ alumno.rango || alumno.usuario }}</small>
+                  <strong class="skeleton-line"></strong>
+                  <small class="skeleton-line narrow"></small>
                 </div>
-                <b>{{ alumno.tokens }}</b>
+                <b class="skeleton-line token"></b>
               </li>
             }
           </ol>
-        } @else {
-          <p class="vacio">Aún no hay estudiantes en el ranking.</p>
         }
       </article>
 
