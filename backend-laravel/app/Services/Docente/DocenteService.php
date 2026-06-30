@@ -15,13 +15,19 @@ class DocenteService
 
     public function panel(?Usuario $docente = null): array
     {
-        $alumnos = $this->alumnosQuery($docente);
+        $alumnos = $this->alumnosBaseQuery($docente);
+        $metricas = DB::query()
+            ->selectSub((clone $alumnos)->selectRaw('count(*)'), 'alumnos')
+            ->selectSub((clone $alumnos)->selectRaw('coalesce(sum(tokens), 0)'), 'tokens_circulacion')
+            ->selectSub($this->pendientesQuery('entregas', $docente)->selectRaw('count(*)'), 'entregas_pendientes')
+            ->selectSub($this->pendientesQuery('canjes', $docente)->selectRaw('count(*)'), 'canjes_pendientes')
+            ->first();
 
         return [
-            'alumnos' => (clone $alumnos)->count(),
-            'tokens_circulacion' => (clone $alumnos)->sum('tokens'),
-            'entregas_pendientes' => $this->conteoPendientes('entregas', $docente),
-            'canjes_pendientes' => $this->conteoPendientes('canjes', $docente),
+            'alumnos' => (int) ($metricas->alumnos ?? 0),
+            'tokens_circulacion' => (int) ($metricas->tokens_circulacion ?? 0),
+            'entregas_pendientes' => (int) ($metricas->entregas_pendientes ?? 0),
+            'canjes_pendientes' => (int) ($metricas->canjes_pendientes ?? 0),
             'ranking' => $this->ranking($docente),
         ];
     }
@@ -134,6 +140,17 @@ class DocenteService
         return $query;
     }
 
+    private function alumnosBaseQuery(?Usuario $docente = null): \Illuminate\Database\Query\Builder
+    {
+        $query = DB::table('usuarios')->where('rol', 'alumno');
+
+        if ($this->docenteConAula($docente)) {
+            $query->where('id_aula', $docente->id_aula);
+        }
+
+        return $query;
+    }
+
     private function alumnoGestionable(Usuario $docente, int $idAlumno, bool $bloquear = false): Usuario
     {
         $query = $this->alumnosQuery($docente);
@@ -147,6 +164,11 @@ class DocenteService
 
     private function conteoPendientes(string $tabla, ?Usuario $docente = null): int
     {
+        return $this->pendientesQuery($tabla, $docente)->count();
+    }
+
+    private function pendientesQuery(string $tabla, ?Usuario $docente = null): \Illuminate\Database\Query\Builder
+    {
         $query = DB::table($tabla)->where("{$tabla}.estado", 'pendiente');
 
         if ($this->docenteConAula($docente)) {
@@ -155,7 +177,7 @@ class DocenteService
                 ->where('alumno_scope.id_aula', $docente->id_aula);
         }
 
-        return $query->count();
+        return $query;
     }
 
     private function docenteConAula(?Usuario $docente): bool

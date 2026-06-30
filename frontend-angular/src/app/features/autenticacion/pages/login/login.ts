@@ -3,6 +3,7 @@ import { AfterViewInit, Component, ElementRef, NgZone, OnDestroy, ViewChild, sig
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import type { Rive, StateMachineInput } from '@rive-app/canvas';
+import { CargaGlobal } from '../../../../core/servicios/carga-global';
 import { Autenticacion } from '../../../../core/servicios/autenticacion';
 import { Sesion } from '../../../../core/servicios/sesion';
 import { validarCredenciales } from '../../../../shared/validadores/auth-validadores';
@@ -44,6 +45,7 @@ export class Login implements AfterViewInit, OnDestroy {
     public sesion: Sesion,
     private router: Router,
     private zone: NgZone,
+    private cargaGlobal: CargaGlobal,
   ) {}
 
   ngAfterViewInit(): void {
@@ -89,6 +91,7 @@ export class Login implements AfterViewInit, OnDestroy {
 
     this.enviando.set(true);
     this.error.set('');
+    const carga = this.cargaGlobal.mostrar('Validando tus credenciales...');
 
     const acceso = this.usuario.includes('@')
       ? this.auth.loginEmailFirebase(this.usuario.trim(), this.password)
@@ -100,18 +103,23 @@ export class Login implements AfterViewInit, OnDestroy {
           this.error.set('Este acceso es solo para estudiantes. Usa el login docente si eres profesor.');
           this.sesion.limpiar();
           this.enviando.set(false);
+          this.cargaGlobal.ocultar(carga);
           this.dispararFallo();
           return;
         }
 
         this.dispararExito();
-        setTimeout(() => this.router.navigateByUrl(
-          this.sesion.usuario()?.perfil_completo === false ? '/bienvenida' : '/alumno',
-        ), 420);
+        this.cargaGlobal.cambiarMensaje('Abriendo tu portal de estudiante...');
+        setTimeout(() => {
+          void this.router.navigateByUrl(
+            this.sesion.usuario()?.perfil_completo === false ? '/bienvenida' : '/alumno',
+          ).finally(() => this.cargaGlobal.ocultar(carga));
+        }, 420);
       },
       error: (error) => {
         this.error.set(error.error?.message ?? 'Credenciales incorrectas.');
         this.enviando.set(false);
+        this.cargaGlobal.ocultar(carga);
         this.dispararFallo();
       },
     });
@@ -120,6 +128,7 @@ export class Login implements AfterViewInit, OnDestroy {
   continuarConGoogle(): void {
     this.enviando.set(true);
     this.error.set('');
+    const carga = this.cargaGlobal.mostrar('Conectando con Google...');
 
     this.auth.loginGoogleFirebase(true).subscribe({
       next: () => {
@@ -127,14 +136,18 @@ export class Login implements AfterViewInit, OnDestroy {
           this.error.set('Este acceso es solo para estudiantes. Usa el login docente si eres profesor.');
           this.sesion.limpiar();
           this.enviando.set(false);
+          this.cargaGlobal.ocultar(carga);
           this.dispararFallo();
           return;
         }
 
         this.dispararExito();
-        setTimeout(() => this.router.navigateByUrl(
-          this.sesion.usuario()?.perfil_completo === false ? '/bienvenida' : '/alumno',
-        ), 420);
+        this.cargaGlobal.cambiarMensaje('Abriendo tu portal de estudiante...');
+        setTimeout(() => {
+          void this.router.navigateByUrl(
+            this.sesion.usuario()?.perfil_completo === false ? '/bienvenida' : '/alumno',
+          ).finally(() => this.cargaGlobal.ocultar(carga));
+        }, 420);
       },
       error: (err) => {
         if (err.error?.requires_registration) {
@@ -145,6 +158,7 @@ export class Login implements AfterViewInit, OnDestroy {
           ? 'Ese Google todavia no tiene una cuenta activa. Termina el registro desde Crear cuenta.'
           : (err.error?.message ?? err.message ?? 'No se pudo iniciar sesion con Google.'));
         this.enviando.set(false);
+        this.cargaGlobal.ocultar(carga);
         this.dispararFallo();
       },
     });

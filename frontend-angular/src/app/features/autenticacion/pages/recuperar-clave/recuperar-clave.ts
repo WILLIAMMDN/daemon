@@ -3,6 +3,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { Autenticacion } from '../../../../core/servicios/autenticacion';
+import { CargaGlobal } from '../../../../core/servicios/carga-global';
 
 type Estado =
   | { tipo: 'inicial' }
@@ -37,6 +38,7 @@ export class RecuperarClave {
   constructor(
     private auth: Autenticacion,
     private router: Router,
+    private cargaGlobal: CargaGlobal,
   ) {}
 
   solicitar(form: NgForm): void {
@@ -48,23 +50,32 @@ export class RecuperarClave {
     const email = this.email.trim();
     this.enviando.set(true);
     this.estado.set({ tipo: 'inicial' });
+    const carga = this.cargaGlobal.mostrar('Enviando recuperacion...');
 
     this.auth.recuperarPasswordFirebase(email).subscribe({
-      next: () => this.marcarComoEnviado(email),
-      error: () => this.marcarComoEnviado(email),
+      next: () => {
+        this.cargaGlobal.ocultar(carga);
+        this.marcarComoEnviado(email);
+      },
+      error: () => {
+        this.cargaGlobal.ocultar(carga);
+        this.marcarComoEnviado(email);
+      },
     });
   }
 
   continuarConGoogle(): void {
     this.enviando.set(true);
+    const carga = this.cargaGlobal.mostrar('Conectando con Google...');
 
     this.auth.loginGoogleFirebase().subscribe({
       next: () => {
         this.enviando.set(false);
-        this.router.navigateByUrl('/alumno');
+        void this.router.navigateByUrl('/alumno').finally(() => this.cargaGlobal.ocultar(carga));
       },
       error: (error) => {
         this.enviando.set(false);
+        this.cargaGlobal.ocultar(carga);
         this.estado.set({
           tipo: 'error',
           mensaje: error?.error?.message ?? error?.message ?? 'No se pudo iniciar sesion con Google.',

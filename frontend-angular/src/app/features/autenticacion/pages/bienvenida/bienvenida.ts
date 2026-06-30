@@ -3,6 +3,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, signal } from '@angular/core
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { Autenticacion, CompletarPerfilGoogleDatos } from '../../../../core/servicios/autenticacion';
+import { CargaGlobal } from '../../../../core/servicios/carga-global';
 import { Sesion } from '../../../../core/servicios/sesion';
 import { AuthValidators } from '../../../../shared/validadores/auth-validadores';
 
@@ -32,6 +33,7 @@ export class Bienvenida implements OnInit {
     private auth: Autenticacion,
     public sesion: Sesion,
     private router: Router,
+    private cargaGlobal: CargaGlobal,
   ) {}
 
   ngOnInit(): void {
@@ -69,14 +71,18 @@ export class Bienvenida implements OnInit {
 
     this.guardando.set(true);
     this.error.set('');
+    const carga = this.cargaGlobal.mostrar('Guardando perfil...');
 
     this.auth.completarPerfil(payload).subscribe({
-      next: () => this.router.navigateByUrl('/alumno'),
+      next: () => {
+        void this.router.navigateByUrl('/alumno').finally(() => this.cargaGlobal.ocultar(carga));
+      },
       error: (error) => {
         const errores = error.error?.errors;
         const primerError = errores ? Object.values(errores).flat()[0] : null;
         this.error.set(String(primerError ?? error.error?.message ?? 'No se pudo completar tu perfil.'));
         this.guardando.set(false);
+        this.cargaGlobal.ocultar(carga);
       },
     });
   }

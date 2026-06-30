@@ -13,17 +13,42 @@ class AlumnoService
 
     public function panel(Usuario $usuario): array
     {
-        $posicion = Usuario::where('nivel', $usuario->nivel)
-            ->where('rol', 'alumno')
-            ->where('tokens', '>', $usuario->tokens)
-            ->count() + 1;
+        $metricas = DB::query()
+            ->selectSub(
+                DB::table('usuarios')
+                    ->where('nivel', $usuario->nivel)
+                    ->where('rol', 'alumno')
+                    ->where('tokens', '>', $usuario->tokens)
+                    ->selectRaw('count(*) + 1'),
+                'posicion',
+            )
+            ->selectSub(
+                DB::table('desafios')
+                    ->where('estado', 'activo')
+                    ->selectRaw('count(*)'),
+                'misiones_pendientes',
+            )
+            ->selectSub(
+                DB::table('insignias_otorgadas')
+                    ->where('id_alumno', $usuario->id)
+                    ->selectRaw('count(*)'),
+                'insignias',
+            )
+            ->selectSub(
+                DB::table('canjes')
+                    ->where('id_alumno', $usuario->id)
+                    ->where('estado', 'pendiente')
+                    ->selectRaw('count(*)'),
+                'canjes_pendientes',
+            )
+            ->first();
 
         return [
             'usuario' => $usuario,
-            'posicion' => $posicion,
-            'misiones_pendientes' => DB::table('desafios')->where('estado', 'activo')->count(),
-            'insignias' => DB::table('insignias_otorgadas')->where('id_alumno', $usuario->id)->count(),
-            'canjes_pendientes' => DB::table('canjes')->where('id_alumno', $usuario->id)->where('estado', 'pendiente')->count(),
+            'posicion' => (int) ($metricas->posicion ?? 1),
+            'misiones_pendientes' => (int) ($metricas->misiones_pendientes ?? 0),
+            'insignias' => (int) ($metricas->insignias ?? 0),
+            'canjes_pendientes' => (int) ($metricas->canjes_pendientes ?? 0),
         ];
     }
 

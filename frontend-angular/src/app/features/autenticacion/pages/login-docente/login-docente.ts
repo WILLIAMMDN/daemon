@@ -4,6 +4,7 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import type { Rive, StateMachineInput } from '@rive-app/canvas';
 import { Autenticacion } from '../../../../core/servicios/autenticacion';
+import { CargaGlobal } from '../../../../core/servicios/carga-global';
 import { Sesion } from '../../../../core/servicios/sesion';
 import { validarCredenciales } from '../../../../shared/validadores/auth-validadores';
 
@@ -44,6 +45,7 @@ export class LoginDocente implements AfterViewInit, OnDestroy {
     private sesion: Sesion,
     private router: Router,
     private zone: NgZone,
+    private cargaGlobal: CargaGlobal,
   ) {}
 
   ngAfterViewInit(): void {
@@ -89,16 +91,18 @@ export class LoginDocente implements AfterViewInit, OnDestroy {
 
     this.enviando.set(true);
     this.error.set('');
+    const carga = this.cargaGlobal.mostrar('Validando acceso docente...');
 
     const acceso = this.usuario.includes('@')
       ? this.auth.loginEmailFirebase(this.usuario.trim(), this.password)
       : this.auth.login({ usuario: this.usuario, password: this.password });
 
     acceso.subscribe({
-      next: () => this.entrarComoDocente(),
+      next: () => this.entrarComoDocente(carga),
       error: (error) => {
         this.error.set(error.error?.message ?? 'Credenciales incorrectas.');
         this.enviando.set(false);
+        this.cargaGlobal.ocultar(carga);
         this.dispararFallo();
       },
     });
@@ -107,9 +111,10 @@ export class LoginDocente implements AfterViewInit, OnDestroy {
   continuarConGoogle(): void {
     this.enviando.set(true);
     this.error.set('');
+    const carga = this.cargaGlobal.mostrar('Conectando con Google...');
 
     this.auth.loginGoogleFirebase().subscribe({
-      next: () => this.entrarComoDocente(),
+      next: () => this.entrarComoDocente(carga),
       error: (err) => {
         if (err.error?.requires_registration) {
           this.auth.cerrarSesionGoogle();
@@ -119,21 +124,26 @@ export class LoginDocente implements AfterViewInit, OnDestroy {
           ? 'Ese Google no esta vinculado a una cuenta docente o administradora de DAEMON.'
           : (err.error?.message ?? err.message ?? 'No se pudo iniciar sesion con Google.'));
         this.enviando.set(false);
+        this.cargaGlobal.ocultar(carga);
         this.dispararFallo();
       },
     });
   }
 
-  private entrarComoDocente(): void {
+  private entrarComoDocente(carga: symbol): void {
     if (this.sesion.esDocente()) {
       this.dispararExito();
-      setTimeout(() => this.router.navigateByUrl('/docente'), 420);
+      this.cargaGlobal.cambiarMensaje('Abriendo el portal docente...');
+      setTimeout(() => {
+        void this.router.navigateByUrl('/docente').finally(() => this.cargaGlobal.ocultar(carga));
+      }, 420);
       return;
     }
 
     this.error.set('Este usuario no tiene permiso docente.');
     this.sesion.limpiar();
     this.enviando.set(false);
+    this.cargaGlobal.ocultar(carga);
     this.dispararFallo();
   }
 

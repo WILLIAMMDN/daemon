@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Autenticacion } from '../../../../core/servicios/autenticacion';
+import { CargaGlobal } from '../../../../core/servicios/carga-global';
 import { Sesion } from '../../../../core/servicios/sesion';
 
 type Estado =
@@ -63,6 +64,7 @@ export class VerificarCorreo implements OnInit {
     private router: Router,
     private auth: Autenticacion,
     private sesion: Sesion,
+    private cargaGlobal: CargaGlobal,
   ) {}
 
   ngOnInit(): void {
@@ -111,8 +113,11 @@ export class VerificarCorreo implements OnInit {
   }
 
   private confirmar(): void {
+    const carga = this.cargaGlobal.mostrar('Verificando correo...');
+
     this.auth.confirmarVerificacionConToken(this.token!).subscribe({
       next: (respuesta) => {
+        this.cargaGlobal.ocultar(carga);
         this.estado.set({ tipo: 'exito', mensaje: respuesta.message });
 
         // Si el usuario estaba logueado, el backend ya actualizo la
@@ -126,6 +131,7 @@ export class VerificarCorreo implements OnInit {
         setTimeout(() => this.router.navigateByUrl(destino), 1800);
       },
       error: (err) => {
+        this.cargaGlobal.ocultar(carga);
         const mensaje = err?.status === 422
           ? 'El enlace expiro o ya fue utilizado. Te enviamos uno nuevo si estas logueado.'
           : (err?.error?.message ?? 'No se pudo confirmar el correo. Intentalo de nuevo.');

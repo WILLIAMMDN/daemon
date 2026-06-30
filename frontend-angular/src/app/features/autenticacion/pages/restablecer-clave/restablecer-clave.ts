@@ -3,6 +3,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, signal } from '@angular/core
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Autenticacion } from '../../../../core/servicios/autenticacion';
+import { CargaGlobal } from '../../../../core/servicios/carga-global';
 import { Sesion } from '../../../../core/servicios/sesion';
 
 type Estado =
@@ -39,6 +40,7 @@ export class RestablecerClave implements OnInit {
     private fb: FormBuilder,
     private auth: Autenticacion,
     private sesion: Sesion,
+    private cargaGlobal: CargaGlobal,
   ) {
     this.formulario = this.fb.group({
       password: ['', [Validators.required, Validators.minLength(8)]],
@@ -61,12 +63,20 @@ export class RestablecerClave implements OnInit {
     this.modo = this.ruta.snapshot.queryParamMap.has('oobCode') ? 'firebase' : 'backend';
 
     if (this.modo === 'firebase') {
+      const carga = this.cargaGlobal.mostrar('Validando enlace...');
+
       this.auth.verificarCodigoResetFirebase(this.token).subscribe({
-        next: () => this.estado.set({ tipo: 'formulario' }),
-        error: () => this.estado.set({
-          tipo: 'error',
-          mensaje: 'El enlace de Firebase expiro o no es valido. Solicita uno nuevo.',
-        }),
+        next: () => {
+          this.cargaGlobal.ocultar(carga);
+          this.estado.set({ tipo: 'formulario' });
+        },
+        error: () => {
+          this.cargaGlobal.ocultar(carga);
+          this.estado.set({
+            tipo: 'error',
+            mensaje: 'El enlace de Firebase expiro o no es valido. Solicita uno nuevo.',
+          });
+        },
       });
       return;
     }
@@ -90,6 +100,7 @@ export class RestablecerClave implements OnInit {
     }
 
     this.enviando.set(true);
+    const carga = this.cargaGlobal.mostrar('Restableciendo clave...');
 
     const solicitud = this.modo === 'firebase'
       ? this.auth.restablecerClave(this.token!, password)
@@ -98,12 +109,14 @@ export class RestablecerClave implements OnInit {
     solicitud.subscribe({
       next: (respuesta) => {
         this.enviando.set(false);
+        this.cargaGlobal.ocultar(carga);
         this.estado.set({ tipo: 'exito' });
         const destino = respuesta.usuario.rol === 'docente' ? '/docente' : '/alumno';
         setTimeout(() => this.router.navigateByUrl(destino), 1500);
       },
       error: (err) => {
         this.enviando.set(false);
+        this.cargaGlobal.ocultar(carga);
         const mensaje =
           err?.status === 422
             ? 'El enlace expiro o ya fue utilizado. Solicita uno nuevo.'

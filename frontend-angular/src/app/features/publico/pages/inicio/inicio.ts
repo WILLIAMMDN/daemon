@@ -6,6 +6,7 @@ import { Footer } from '../../../../core/layouts/footer/footer';
 import { Header } from '../../../../core/layouts/header/header';
 import { Activos } from '../../../../core/servicios/activos';
 import { Autenticacion } from '../../../../core/servicios/autenticacion';
+import { CargaGlobal } from '../../../../core/servicios/carga-global';
 import { Sesion } from '../../../../core/servicios/sesion';
 import { FloatingShape } from '../../../../shared/componentes/floating-shape/floating-shape';
 
@@ -103,6 +104,7 @@ export class Inicio implements OnInit, OnDestroy {
     private sesion: Sesion,
     private router: Router,
     public activos: Activos,
+    private cargaGlobal: CargaGlobal,
   ) {}
 
   ngOnInit(): void {
@@ -133,19 +135,23 @@ export class Inicio implements OnInit, OnDestroy {
   continuarConGoogle(): void {
     this.errorGoogle.set(null);
     this.procesandoGoogle.set(true);
+    const carga = this.cargaGlobal.mostrar('Conectando con Google...');
 
     this.autenticacion.loginGoogleFirebase(true).subscribe({
       next: () => {
         const usuario = this.sesion.usuario();
 
         if (usuario?.rol === 'alumno') {
-          this.router.navigateByUrl(usuario.perfil_completo === false ? '/bienvenida' : '/alumno');
+          this.cargaGlobal.cambiarMensaje('Abriendo tu portal de estudiante...');
+          void this.router.navigateByUrl(usuario.perfil_completo === false ? '/bienvenida' : '/alumno')
+            .finally(() => this.cargaGlobal.ocultar(carga));
           return;
         }
 
         this.errorGoogle.set('Este acceso es solo para estudiantes. Usa el login docente si eres profesor.');
         this.sesion.limpiar();
         this.procesandoGoogle.set(false);
+        this.cargaGlobal.ocultar(carga);
       },
       error: (err) => {
         if (err.error?.requires_registration) {
@@ -156,6 +162,7 @@ export class Inicio implements OnInit, OnDestroy {
           ? 'Ese Google todavia no tiene una cuenta DAEMON. Crea tu cuenta desde el registro.'
           : (err.error?.message ?? err.message ?? 'No se pudo iniciar sesion con Google.'));
         this.procesandoGoogle.set(false);
+        this.cargaGlobal.ocultar(carga);
       },
     });
   }

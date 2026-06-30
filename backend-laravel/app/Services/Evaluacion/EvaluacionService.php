@@ -13,20 +13,19 @@ class EvaluacionService
 {
     public function listadoDocente(): Collection
     {
-        return Evaluacion::orderByDesc('id')->get()
+        return Evaluacion::with('preguntas')->orderByDesc('id')->get()
             ->map(fn ($evaluacion) => [
                 ...$evaluacion->toArray(),
-                'preguntas' => Pregunta::where('examen_id', $evaluacion->id)->orderBy('orden')->get(),
+                'preguntas' => $evaluacion->preguntas,
             ]);
     }
 
     public function activasParaNivel(string $nivel): Collection
     {
-        return Evaluacion::where('nivel', $nivel)->where('estado', 'activo')->get()
+        return Evaluacion::with('preguntas')->where('nivel', $nivel)->where('estado', 'activo')->get()
             ->map(fn ($evaluacion) => [
                 ...$evaluacion->toArray(),
-                'preguntas' => Pregunta::where('examen_id', $evaluacion->id)->orderBy('orden')->get()
-                    ->map(fn ($pregunta) => $pregunta->makeHidden('respuesta_correcta')),
+                'preguntas' => $evaluacion->preguntas->map(fn ($pregunta) => $pregunta->makeHidden('respuesta_correcta')),
             ]);
     }
 

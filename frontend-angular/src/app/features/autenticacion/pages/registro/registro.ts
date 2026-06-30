@@ -3,6 +3,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { Autenticacion, RegistroFirebaseDatos } from '../../../../core/servicios/autenticacion';
+import { CargaGlobal } from '../../../../core/servicios/carga-global';
 import { Sesion } from '../../../../core/servicios/sesion';
 import { AuthValidators, validarRegistro } from '../../../../shared/validadores/auth-validadores';
 
@@ -26,6 +27,7 @@ export class Registro {
     private auth: Autenticacion,
     private router: Router,
     public sesion: Sesion,
+    private cargaGlobal: CargaGlobal,
   ) {}
 
   alternarPassword(): void {
@@ -35,19 +37,24 @@ export class Registro {
   continuarConGoogle(): void {
     this.enviando.set(true);
     this.error.set('');
+    const carga = this.cargaGlobal.mostrar('Creando tu cuenta con Google...');
 
     this.auth.loginGoogleFirebase(true).subscribe({
       next: () => {
+        this.cargaGlobal.cambiarMensaje('Preparando tu espacio DAEMON...');
+
         if (!this.sesion.esDocente() && this.sesion.usuario()?.perfil_completo === false) {
-          this.router.navigateByUrl('/bienvenida');
+          void this.router.navigateByUrl('/bienvenida').finally(() => this.cargaGlobal.ocultar(carga));
           return;
         }
 
-        this.router.navigateByUrl(this.sesion.esDocente() ? '/docente' : '/alumno');
+        void this.router.navigateByUrl(this.sesion.esDocente() ? '/docente' : '/alumno')
+          .finally(() => this.cargaGlobal.ocultar(carga));
       },
       error: (error) => {
         this.error.set(error.error?.message ?? error.message ?? 'No se pudo crear la cuenta con Google.');
         this.enviando.set(false);
+        this.cargaGlobal.ocultar(carga);
       },
     });
   }
@@ -71,14 +78,19 @@ export class Registro {
 
     this.enviando.set(true);
     this.error.set('');
+    const carga = this.cargaGlobal.mostrar('Registrando tu cuenta DAEMON...');
 
     this.auth.registroFirebase(payload).subscribe({
-      next: () => this.router.navigateByUrl(
-        this.sesion.usuario()?.perfil_completo === false ? '/bienvenida' : '/alumno',
-      ),
+      next: () => {
+        this.cargaGlobal.cambiarMensaje('Abriendo tu bienvenida...');
+        void this.router.navigateByUrl(
+          this.sesion.usuario()?.perfil_completo === false ? '/bienvenida' : '/alumno',
+        ).finally(() => this.cargaGlobal.ocultar(carga));
+      },
       error: (error) => {
         this.error.set(error.error?.message ?? error.message ?? 'No se pudo crear la cuenta en Firebase.');
         this.enviando.set(false);
+        this.cargaGlobal.ocultar(carga);
       },
     });
   }
