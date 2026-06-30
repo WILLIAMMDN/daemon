@@ -42,7 +42,29 @@ database/iaparateens_db.sql   Base inicial del proyecto
 legado/                       Referencia historica del sistema anterior
 scripts/iniciar.ps1           Arranque local de backend y frontend
 docs/                         Documentacion del proyecto
+AGENTS.md                     Guia rapida para agentes IA
 ```
+
+## Documentacion para agentes IA
+
+Para continuar el proyecto sin gastar tokens reconstruyendo contexto, empieza por:
+
+```text
+AGENTS.md
+docs/ai-project-context.md
+docs/firebase-auth.md
+docs/supabase-postgres.md
+docs/estado-nube-github-produccion.md
+```
+
+Tambien existe una skill local de Codex en:
+
+```text
+C:\Users\MEDINA\.codex\skills\daemon-project
+```
+
+Se puede invocar como `$daemon-project` en proximas conversaciones para cargar
+solo el contexto necesario del sistema.
 
 ## Requisitos
 

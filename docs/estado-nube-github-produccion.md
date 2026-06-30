@@ -1,46 +1,72 @@
 # Estado nube, GitHub y produccion
 
+Este documento resume el estado operativo de DAEMON en nube.
+
 ## Listo
 
-- Supabase PostgreSQL conectado desde Laravel.
-- Supabase Storage configurado como disco de archivos de negocio.
-- Firebase Auth integrado para Google, email/password y recuperacion con handler oficial.
-- Registro profesional en dos pasos: cuenta primero, `/bienvenida` despues para perfil.
-- Verificacion de correo con token propio Laravel y banner persistente en portales.
-- Recuperacion de clave con correo propio Laravel y token firmado por `APP_KEY`.
-- Firebase Hosting desplegado en `https://daemonestudiante.web.app`.
-- Firebase Hosting configurado con target `estudiante`.
-- Backend Laravel desplegado en Render en `https://daemon-5vo1.onrender.com`.
 - GitHub remoto configurado en `WILLIAMMDN/daemon`.
-- GitHub Actions preparado para desplegar Firebase Hosting desde `main`.
+- Frontend Angular desplegado en Firebase Hosting.
+- Hosting publico: `https://daemonestudiante.web.app`.
+- Firebase Hosting target: `estudiante`.
+- Firebase project: `daemon-a41f8`.
+- Backend Laravel desplegado en Render.
+- Backend publico: `https://daemon-5vo1.onrender.com/api/v1`.
+- Health endpoint: `https://daemon-5vo1.onrender.com/api/v1/salud`.
+- Supabase PostgreSQL conectado como base de datos de negocio.
+- Supabase Storage configurado para uploads de negocio.
+- Firebase Auth integrado para Google, email/password, verificacion y
+  recuperacion de clave.
+- Registro profesional en dos pasos: cuenta primero, perfil en `/bienvenida`.
+- Firebase Hosting con `Cache-Control: no-store` para evitar bundles viejos.
+- Firebase Hosting `retainedReleaseCount` reducido a `5` para evitar bloqueo
+  por cuota de storage.
+- GitHub Actions preparado para despliegue de Firebase Hosting desde `main`.
 
-## Pendiente critico
+## Decision actual de correos
 
-1. Hacer commit y push de la configuracion actual.
+Firebase envia los correos de verificacion y recuperacion. Es menos
+personalizado visualmente, pero funciona gratis con alumnos reales.
 
-2. Revisar que Render tenga las variables de entorno de produccion actualizadas.
+Resend/Laravel mail queda como opcion futura cuando exista dominio verificado.
+No usar Resend como camino principal si no hay dominio, porque Resend rechaza
+destinatarios que no sean el correo dueno de la cuenta en modo prueba.
 
-3. Confirmar que `frontend-angular/src/environments/environment.ts` apunte al backend publico.
+## Firebase Hosting
 
-4. Configurar variables de entorno del backend en el proveedor donde se despliegue Laravel.
+Archivos:
 
-5. Probar el flujo completo en nube:
+```text
+.firebaserc
+firebase.json
+.github/workflows/firebase-hosting-merge.yml
+.github/workflows/firebase-hosting-pull-request.yml
+```
 
-   ```text
-   Angular Hosting -> Laravel publico -> Supabase PostgreSQL/Storage -> Firebase Auth
-   ```
+Comando manual:
+
+```powershell
+cd C:\laragon\www\daemon
+firebase deploy --only hosting:estudiante --project daemon-a41f8
+```
+
+`firebase.json` publica:
+
+```text
+frontend-angular/dist/frontend-angular/browser
+```
 
 ## GitHub Actions
 
-El secret de GitHub Actions ya fue creado:
+Secret requerido:
 
-   ```text
-   FIREBASE_SERVICE_ACCOUNT_DAEMON_A41F8
-   ```
+```text
+FIREBASE_SERVICE_ACCOUNT_DAEMON_A41F8
+```
 
-El JSON usado pertenece a una service account externa y se le otorgaron permisos sobre el proyecto Firebase `daemon-a41f8`. Esto es valido para despliegue siempre que la service account conserve los roles requeridos en el proyecto objetivo.
+Debe contener el JSON de la service account con permisos de Firebase Hosting.
+No guardar ese JSON en el repositorio.
 
-Roles otorgados en `daemon-a41f8`:
+Roles que fueron usados para la service account:
 
 - Firebase Authentication Admin
 - Firebase Hosting Admin
@@ -49,30 +75,78 @@ Roles otorgados en `daemon-a41f8`:
 - Cloud Run Viewer
 - Cloud Functions Developer
 
-## Pendiente planificado
+## Render backend
 
-- Backups programados de Supabase.
-- Rotacion de credenciales de Supabase Storage y service accounts.
-- Reglas operativas para no subir `.env`, dumps, backups ni llaves privadas al repositorio.
+Variables importantes de produccion:
 
-## Variables clave del backend en Render
+```env
+APP_URL=https://daemon-5vo1.onrender.com
+FRONTEND_URL=https://daemonestudiante.web.app
+FRONTEND_PRODUCTION_URL=https://daemonestudiante.web.app
+DB_CONNECTION=pgsql
+DB_SSLMODE=require
+ASSET_PUBLIC_URL=https://daemonestudiante.web.app
+ASSET_CLOUD_URL=https://lbxdcvsrmkkynttgwblc.supabase.co/storage/v1/object/public/daemon-assets
+UPLOADS_DISK=supabase
+FIREBASE_PROJECT_ID=daemon-a41f8
+```
 
-En produccion, Laravel debe resolver archivos asi:
+Si se cambia el backend, verificar que Render haya desplegado el commit nuevo.
 
-- `ASSET_PUBLIC_URL=https://daemonestudiante.web.app` para assets del frontend como `img`, `galeria`, `audio`, `rive`, `docs`.
-- `ASSET_CLOUD_URL=https://lbxdcvsrmkkynttgwblc.supabase.co/storage/v1/object/public/daemon-assets` para archivos de negocio bajo `uploads`.
-- `UPLOADS_DISK=supabase` para que nuevos archivos subidos desde DAEMON se guarden en Supabase Storage.
-- `APP_URL=https://daemon-5vo1.onrender.com` para URLs propias del backend.
-- `FRONTEND_URL=https://daemonestudiante.web.app` para CORS y redirecciones.
-- `FRONTEND_EMAIL_VERIFICATION_URL=https://daemonestudiante.web.app/verificar-correo` para correos de verificacion.
-- `FIREBASE_PASSWORD_RESET_URL=https://daemonestudiante.web.app/restablecer-clave` para correos de recuperacion.
+## Supabase
 
-## Decision pendiente para backend
+Base:
 
-Elegir proveedor de despliegue para Laravel:
+```text
+PostgreSQL en Supabase
+```
 
-- Render: simple para empezar, plan gratis limitado.
-- Railway: practico para Laravel, puede requerir tarjeta.
-- Fly.io: profesional, mas tecnico.
-- VPS: mas control, mas mantenimiento.
-- Google Cloud Run: buena integracion con Firebase/GCP, requiere configurar contenedor.
+Storage:
+
+```text
+Bucket: daemon-assets
+Region: sa-east-1
+```
+
+Uploads que van a Supabase Storage:
+
+```text
+uploads/perfiles
+uploads/bots
+uploads/tienda/premios
+uploads/insignias
+uploads/entregas
+uploads/cuentos
+```
+
+Assets que se quedan en Firebase Hosting:
+
+```text
+img/
+galeria/
+audio/
+rive/
+legacy/
+docs/
+```
+
+## Verificacion rapida de produccion
+
+```powershell
+Invoke-WebRequest -Uri 'https://daemon-5vo1.onrender.com/api/v1/salud' -UseBasicParsing
+
+$r = Invoke-WebRequest -Uri 'https://daemonestudiante.web.app/login' -UseBasicParsing
+$main = [regex]::Match($r.Content, 'main-[A-Z0-9]+\.js').Value
+$bundle = Invoke-WebRequest -Uri "https://daemonestudiante.web.app/$main" -UseBasicParsing
+$bundle.Content.Contains('verificacion=firebase')
+$bundle.Content.Contains('reset=firebase')
+```
+
+## Pendiente recomendado
+
+- Comprar/verificar dominio cuando se quiera correo transaccional con marca
+  propia DAEMON.
+- Configurar backups programados de Supabase.
+- Rotar credenciales despues de exposiciones accidentales.
+- Mantener `.env`, dumps privados y service accounts fuera de git.
+- Optimizar bundle Angular cuando los flujos principales esten estables.

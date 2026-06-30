@@ -1,138 +1,202 @@
 # Firebase Auth en DAEMON
 
-DAEMON usa Supabase para PostgreSQL y Storage. Firebase se usa solo como proveedor de identidad.
+DAEMON usa Firebase Auth como proveedor de identidad y entrega de correos de
+auth. Laravel sigue siendo la API principal y Supabase PostgreSQL sigue siendo
+la base de datos de negocio.
 
-## Flujo implementado
+## Decision actual
+
+La decision activa es:
+
+```text
+Firebase Auth:
+  - Google login
+  - Email/password login
+  - Email verification delivery
+  - Password reset delivery
+
+Laravel/Sanctum:
+  - Validar Firebase ID tokens
+  - Emitir sesion DAEMON
+  - Mantener roles y permisos
+  - Mantener usuarios, tokens, misiones, insignias, tienda, evaluaciones, etc.
+  - Sincronizar email_verified_at desde Firebase
+```
+
+Esta decision se tomo porque Resend en modo prueba solo envia al correo dueno
+de la cuenta. Para enviar correos a alumnos reales con Resend hay que verificar
+un dominio propio. Mientras no exista ese dominio, Firebase es el proveedor que
+funciona sin costo extra para verificacion y recuperacion.
+
+## Flujo de login con Firebase
 
 1. Angular inicia sesion con Firebase Auth.
-2. Angular obtiene un ID token de Firebase.
-3. Laravel valida la firma del token con las llaves publicas de Firebase.
-4. Laravel enlaza el `firebase_uid` con la tabla `usuarios`.
-5. Laravel emite el token interno de Sanctum para conservar roles, permisos, tokens, insignias y progreso.
-6. Si el perfil esta incompleto, Angular redirige a `/bienvenida`.
-7. `/bienvenida` llama `PATCH /api/v1/auth/me/perfil` y marca `perfil_completo=true`.
-8. Si el correo no esta verificado, los portales muestran un banner persistente con reenvio.
+2. Angular obtiene un ID token.
+3. Angular llama `POST /api/v1/auth/firebase`.
+4. Laravel valida el token con las llaves publicas de Firebase.
+5. Laravel enlaza o crea el registro en `usuarios`.
+6. Laravel emite sesion/token de Sanctum.
+7. Angular guarda la sesion DAEMON.
 
-El login por usuario/clave local queda disponible para cuentas existentes. Si el campo de login contiene un correo, Angular intenta email/password con Firebase.
-
-## Configuracion pendiente en Firebase Console
-
-1. Crear o abrir el proyecto Firebase.
-2. Ir a Authentication > Sign-in method.
-3. Activar Google.
-4. Activar Email/Password si se usara recuperacion por correo desde Firebase.
-5. Activar Phone cuando se vaya a implementar login por telefono.
-6. Activar la API de Google Cloud `Identity Toolkit API` (`identitytoolkit.googleapis.com`) para que Laravel pueda generar enlaces de recuperacion desde backend.
-7. En Authentication > Settings > Authorized domains agregar:
-   - `localhost`
-   - `127.0.0.1`
-   - `daemonestudiante.web.app`
-   - el dominio final de produccion, cuando exista
-8. En Project settings > General > Your apps crear una app Web y copiar el objeto `firebaseConfig`.
-9. No depender de la plantilla de recuperacion de Firebase Console. DAEMON genera el link desde Laravel y envia su propio correo.
-
-Firebase Console rechazo la actualizacion de la URL de accion con `EMAIL_TEMPLATE_UPDATE_NOT_ALLOWED`. Por eso los flujos profesionales de recuperacion y verificacion quedan en Laravel: el backend genera tokens propios, envia correos DAEMON y apunta a pantallas propias.
-
-El enlace de recuperacion enviado por DAEMON usa `/restablecer-clave?token=...&correo=1`. El backend valida ese token y actualiza Firebase Auth mediante service account, ademas de sincronizar `password_hash` en DAEMON.
-
-## Firebase Hosting y GitHub
-
-El frontend se publica en Firebase Hosting desde:
+Archivos:
 
 ```text
-frontend-angular/dist/frontend-angular/browser
+frontend-angular/src/app/core/servicios/firebase-auth.ts
+frontend-angular/src/app/core/servicios/autenticacion.ts
+backend-laravel/app/Services/Auth/FirebaseTokenVerifier.php
+backend-laravel/app/Services/Auth/AutenticacionService.php
+backend-laravel/app/Http/Controllers/Api/V1/AutenticacionController.php
 ```
 
-Archivos de configuracion:
+## Registro email/password
 
-- `firebase.json`: define el target `estudiante`, la carpeta publica y el rewrite de Angular hacia `index.html`.
-- `.firebaserc`: apunta al proyecto `daemon-a41f8`.
-- `.github/workflows/firebase-hosting-merge.yml`: despliega a produccion cuando hay push a `main`.
-- `.github/workflows/firebase-hosting-pull-request.yml`: crea previews para pull requests.
+1. Usuario se registra en Angular con correo y clave.
+2. Angular crea la cuenta en Firebase.
+3. Firebase envia correo de verificacion.
+4. Angular envia ID token a Laravel.
+5. Laravel crea/enlaza `usuarios.firebase_uid`.
+6. Si `email_verified=false`, `email_verified_at` queda `null`.
+7. Si el perfil esta incompleto, Angular redirige a `/bienvenida`.
 
-GitHub Actions necesita el secret:
+El perfil DAEMON se completa despues con:
 
 ```text
-FIREBASE_SERVICE_ACCOUNT_DAEMON_A41F8
+PATCH /api/v1/auth/me/perfil
 ```
-
-Ese valor debe ser el JSON de una service account con permisos de Firebase Hosting. No debe guardarse en el repositorio.
-
-Roles recomendados para la service account de despliegue:
-
-- Firebase Hosting Admin
-- Firebase Authentication Admin, si se usaran preview channels que deban agregarse a dominios autorizados
-- API Keys Viewer, requerido por algunos despliegues del CLI
-
-## Variables Laravel
-
-En `backend-laravel/.env`:
-
-```env
-FIREBASE_PROJECT_ID=tu-project-id
-FIREBASE_SERVICE_ACCOUNT_BASE64=base64-del-json-service-account
-FIREBASE_PASSWORD_RESET_URL=https://daemonestudiante.web.app/restablecer-clave
-FRONTEND_EMAIL_VERIFICATION_URL=https://daemonestudiante.web.app/verificar-correo
-MAIL_MAILER=smtp
-MAIL_HOST=smtp.tu-proveedor.com
-MAIL_PORT=587
-MAIL_USERNAME=tu-usuario-smtp
-MAIL_PASSWORD=tu-password-smtp
-MAIL_FROM_ADDRESS=soporte@tu-dominio.com
-MAIL_FROM_NAME=DAEMON
-```
-
-El `projectId` debe ser el mismo que aparece dentro del objeto `firebaseConfig`. La cuenta de servicio debe tener permiso para Identity Platform/Firebase Authentication.
-
-Para Render/produccion, se recomienda guardar el JSON de la service account como base64 en `FIREBASE_SERVICE_ACCOUNT_BASE64`. En local se puede usar `FIREBASE_SERVICE_ACCOUNT_PATH` apuntando al archivo descargado. Nunca se debe commitear el JSON.
-
-Proveedor de correo recomendado para empezar gratis: Brevo SMTP o Resend. Si se usa SMTP, no hace falta instalar paquetes adicionales en Laravel.
-
-## Configuracion Angular
-
-En `frontend-angular/src/environments/environment.development.ts` y en produccion cuando toque desplegar:
-
-```ts
-firebase: {
-  apiKey: '...',
-  authDomain: '...',
-  projectId: '...',
-  storageBucket: '...',
-  messagingSenderId: '...',
-  appId: '...',
-}
-```
-
-Esta configuracion web no es una clave secreta, pero debe pertenecer al proyecto Firebase correcto.
-
-## Rutas nuevas
-
-- `POST /api/v1/auth/firebase`
-- `PATCH /api/v1/auth/me/perfil`
-- `POST /api/v1/auth/enviar-verificacion`
-- `POST /api/v1/auth/confirmar-verificar`
-- `POST /api/v1/auth/me/sync-password`
-
-`POST /api/v1/auth/firebase/perfil` y `POST /api/v1/auth/google/perfil` quedan disponibles por compatibilidad, pero el endpoint canonico nuevo es `PATCH /api/v1/auth/me/perfil`.
-
-## Recuperacion de contrasena
-
-El flujo correcto es:
-
-1. El usuario escribe su correo en `/recuperar-clave`.
-2. Angular llama `POST /api/v1/auth/recuperar`.
-3. Laravel responde siempre de forma generica para no revelar si una cuenta existe.
-4. Si la cuenta existe, Laravel genera un enlace de recuperacion con JWT propio firmado por `APP_KEY`.
-5. Laravel envia el correo propio de DAEMON mediante el mailer configurado.
-6. El usuario abre `/restablecer-clave?token=...&correo=1`.
-7. Angular llama `POST /api/v1/auth/confirmar-reset`.
-8. Laravel actualiza la clave en Firebase Auth usando la service account y sincroniza `password_hash`.
 
 ## Verificacion de correo
 
-1. Tras crear una cuenta con email/password, Laravel envia el correo de verificacion propio.
-2. El usuario puede entrar con la cuenta aunque el correo siga pendiente.
-3. Los layouts de alumno/docente muestran un banner si `email_verificado=false`.
-4. El boton del banner llama `POST /api/v1/auth/enviar-verificacion`.
-5. El enlace recibido abre `/verificar-correo?token=...`.
-6. Angular llama `POST /api/v1/auth/confirmar-verificar` y actualiza la sesion local.
+Estado actual:
+
+- El correo de verificacion lo envia Firebase.
+- El remitente y plantilla son de Firebase, no DAEMON.
+- Esto es aceptado porque funciona para alumnos reales sin comprar dominio.
+- El retorno configurado es:
+
+```text
+https://daemonestudiante.web.app/alumno?verificacion=firebase
+```
+
+Cuando el usuario vuelve a DAEMON con esa URL:
+
+1. `EmailVerificationBanner` detecta `verificacion=firebase`.
+2. Angular recarga el usuario actual de Firebase.
+3. Si Firebase dice `emailVerified=true`, Angular obtiene un ID token fresco.
+4. Angular llama otra vez `POST /api/v1/auth/firebase`.
+5. Laravel sincroniza `email_verified_at`.
+6. El banner desaparece al refrescar `/auth/yo`.
+
+## Recuperacion de contrasena
+
+Estado actual:
+
+- `/recuperar-clave` llama Firebase `sendPasswordResetEmail`.
+- No usa `POST /api/v1/auth/recuperar` desde el frontend actual.
+- Firebase envia el correo de recuperacion.
+- La URL de retorno configurada es:
+
+```text
+https://daemonestudiante.web.app/login?reset=firebase
+```
+
+`/restablecer-clave` aun soporta tokens antiguos de DAEMON y `oobCode` de
+Firebase, pero el flujo activo para alumnos reales es el correo oficial de
+Firebase.
+
+## Google login
+
+Google se gestiona con Firebase Auth. DAEMON acepta el ID token de Firebase y
+lo valida en Laravel. Google normalmente ya valido el correo, asi que Laravel
+puede marcar `email_verified_at`.
+
+El login docente usa el mismo proveedor, pero Laravel/Angular verifican el rol
+DAEMON antes de permitir entrada al portal docente.
+
+## Endpoints relacionados
+
+Activos en el frontend:
+
+```text
+POST /api/v1/auth/firebase
+PATCH /api/v1/auth/me/perfil
+GET  /api/v1/auth/yo
+POST /api/v1/auth/logout
+POST /api/v1/auth/me/sync-password
+```
+
+Disponibles por compatibilidad o para un futuro con dominio propio:
+
+```text
+POST /api/v1/auth/recuperar
+POST /api/v1/auth/confirmar-reset
+POST /api/v1/auth/enviar-verificacion
+POST /api/v1/auth/confirmar-verificar
+```
+
+No borrar esos endpoints sin revisar tests y compatibilidad historica.
+
+## Firebase Console
+
+Debe estar habilitado:
+
+- Authentication > Sign-in method > Google.
+- Authentication > Sign-in method > Email/Password.
+- Authentication > Settings > Authorized domains:
+  - `localhost`
+  - `127.0.0.1`
+  - `daemonestudiante.web.app`
+  - dominio final, cuando exista
+
+Si se intenta personalizar profundamente las plantillas de Firebase, la consola
+puede rechazar cambios de URL de accion. Para la etapa gratis, aceptar los
+correos oficiales de Firebase.
+
+## Variables frontend
+
+En `frontend-angular/src/environments/environment.ts`:
+
+```ts
+apiUrl: 'https://daemon-5vo1.onrender.com/api/v1'
+assetBaseUrl: 'https://lbxdcvsrmkkynttgwblc.supabase.co/storage/v1/object/public/daemon-assets'
+firebase.projectId: 'daemon-a41f8'
+```
+
+La config web de Firebase no es secreto. Las service accounts si son secreto.
+
+## Variables backend
+
+Laravel necesita:
+
+```env
+FIREBASE_PROJECT_ID=daemon-a41f8
+FIREBASE_SERVICE_ACCOUNT_BASE64=...
+FRONTEND_URL=https://daemonestudiante.web.app
+FRONTEND_PRODUCTION_URL=https://daemonestudiante.web.app
+```
+
+`FIREBASE_SERVICE_ACCOUNT_BASE64` se usa para operaciones administrativas como
+sincronizacion de clave si corresponde. No commitear el JSON ni el base64.
+
+## Resend y correos propios
+
+Resend queda como opcion futura. Para usarlo en produccion real:
+
+1. Comprar o tener un dominio.
+2. Verificarlo en Resend.
+3. Configurar DNS.
+4. Usar remitente del dominio verificado:
+
+```env
+MAIL_MAILER=resend
+RESEND_API_KEY=...
+MAIL_FROM_ADDRESS=no-reply@tudominio.com
+MAIL_FROM_NAME=DAEMON
+```
+
+Sin dominio verificado, Resend puede rechazar correos con:
+
+```text
+You can only send testing emails to your own email address.
+```
+
+No reactivar Resend como flujo principal para alumnos hasta resolver eso.
