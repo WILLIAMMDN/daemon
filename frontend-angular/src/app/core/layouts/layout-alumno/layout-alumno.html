@@ -1,34 +1,16 @@
-﻿<div class="portal">
-  <aside class="sidebar" aria-label="Navegación de estudiante">
-    <a class="brand" routerLink="/alumno">
-      <span>DAEMON</span>
-      <small>Academia IA</small>
-    </a>
-
-    <div class="account-card">
-      <span>Estudiante</span>
-      <strong>{{ sesion.usuario()?.nombre_completo || 'Cuenta activa' }}</strong>
-      <small>{{ sesion.usuario()?.nivel || 'Nivel' }} - {{ sesion.usuario()?.tokens || 0 }} tokens</small>
-    </div>
-
-    <nav class="nav-groups">
-      @for (grupo of grupos; track grupo.titulo) {
-        <section class="nav-group">
-          <p>{{ grupo.titulo }}</p>
-          @for (enlace of grupo.enlaces; track enlace.ruta) {
-            <a
-              [routerLink]="enlace.ruta"
-              routerLinkActive="active"
-              [routerLinkActiveOptions]="{ exact: enlace.ruta === '/alumno' }"
-            >
-              <span>{{ enlace.etiqueta }}</span>
-              <small>{{ enlace.detalle }}</small>
-            </a>
-          }
-        </section>
-      }
-    </nav>
-  </aside>
+<div class="portal">
+  <app-sidebar-portal
+    ariaLabel="Navegación de estudiante"
+    brandDetalle="Academia IA"
+    homeLink="/alumno"
+    modo="alumno"
+    rol="Estudiante"
+    storageKey="daemon_sidebar_alumno_colapsado"
+    [perfilDetalle]="perfilDetalle()"
+    [perfilNombre]="sesion.usuario()?.nombre_completo || sesion.usuario()?.usuario || 'Cuenta activa'"
+    [secciones]="seccionesSidebar"
+    (logout)="salir()"
+  />
 
   <section class="workspace">
     <app-email-verification-banner />

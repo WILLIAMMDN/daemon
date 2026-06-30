@@ -1,0 +1,130 @@
+<button type="button" class="mobile-menu-button" (click)="abrirMovil()" aria-label="Abrir menú">
+  <fa-icon [icon]="iconos.colapsar" />
+  <span>Menú</span>
+</button>
+
+<button
+  type="button"
+  class="sidebar-backdrop"
+  [class.visible]="mobileOpen"
+  (click)="cerrarMovil()"
+  aria-label="Cerrar menú"
+></button>
+
+<aside
+  class="portal-sidebar"
+  [class.mobile-open]="mobileOpen"
+  [class.theme-docente]="modo === 'docente'"
+  [attr.aria-label]="ariaLabel"
+>
+  <header class="sidebar-head">
+    <a class="brand" [routerLink]="homeLink" (click)="navegar()" [attr.title]="collapsed ? 'DAEMON' : null">
+      <span class="brand-mark">D</span>
+      <span class="brand-copy">
+        <strong>DAEMON</strong>
+        <small>{{ brandDetalle }}</small>
+      </span>
+    </a>
+
+    <button type="button" class="icon-button desktop-only" (click)="toggleCollapsed()" aria-label="Cambiar tamaño del menú">
+      <fa-icon [icon]="collapsed ? iconos.desplegar : iconos.colapsar" />
+    </button>
+
+    <button type="button" class="icon-button mobile-only" (click)="cerrarMovil()" aria-label="Cerrar menú">
+      <fa-icon [icon]="iconos.cerrar" />
+    </button>
+  </header>
+
+  <nav class="sidebar-nav">
+    @for (seccion of secciones; track seccion.titulo) {
+      <section class="sidebar-section">
+        <p class="section-title" [attr.title]="collapsed ? seccion.titulo : null">
+          <fa-icon [icon]="iconos.punto" />
+          <span>{{ seccion.titulo }}</span>
+        </p>
+
+        @for (item of seccion.items; track item.id) {
+          @if (item.hijos?.length) {
+            <button
+              type="button"
+              class="nav-item nav-parent"
+              [class.active]="estaActivo(item)"
+              [class.open]="estaAbierto(item)"
+              [attr.aria-expanded]="estaAbierto(item)"
+              [attr.title]="collapsed ? item.etiqueta : null"
+              (click)="toggleGrupo(item)"
+            >
+              <span class="nav-icon"><fa-icon [icon]="item.icono" /></span>
+              <span class="nav-copy">
+                <strong>{{ item.etiqueta }}</strong>
+                @if (item.detalle) {
+                  <small>{{ item.detalle }}</small>
+                }
+              </span>
+              @if (item.badge) {
+                <span class="nav-badge">{{ item.badge }}</span>
+              }
+              <fa-icon class="chevron" [icon]="estaAbierto(item) ? iconos.submenuAbierto : iconos.submenuCerrado" />
+            </button>
+
+            <div class="submenu" [class.open]="estaAbierto(item)">
+              @for (hijo of item.hijos; track hijo.id) {
+                <a
+                  class="submenu-item"
+                  [routerLink]="hijo.ruta"
+                  routerLinkActive="active"
+                  [routerLinkActiveOptions]="{ exact: hijo.exacto ?? false }"
+                  [attr.title]="collapsed ? hijo.etiqueta : null"
+                  (click)="navegar()"
+                >
+                  <span class="nav-icon"><fa-icon [icon]="hijo.icono" /></span>
+                  <span class="nav-copy">
+                    <strong>{{ hijo.etiqueta }}</strong>
+                    @if (hijo.detalle) {
+                      <small>{{ hijo.detalle }}</small>
+                    }
+                  </span>
+                  @if (hijo.badge) {
+                    <span class="nav-badge">{{ hijo.badge }}</span>
+                  }
+                </a>
+              }
+            </div>
+          } @else {
+            <a
+              class="nav-item"
+              [routerLink]="item.ruta"
+              routerLinkActive="active"
+              [routerLinkActiveOptions]="{ exact: item.exacto ?? false }"
+              [attr.title]="collapsed ? item.etiqueta : null"
+              (click)="navegar()"
+            >
+              <span class="nav-icon"><fa-icon [icon]="item.icono" /></span>
+              <span class="nav-copy">
+                <strong>{{ item.etiqueta }}</strong>
+                @if (item.detalle) {
+                  <small>{{ item.detalle }}</small>
+                }
+              </span>
+              @if (item.badge) {
+                <span class="nav-badge">{{ item.badge }}</span>
+              }
+            </a>
+          }
+        }
+      </section>
+    }
+  </nav>
+
+  <footer class="sidebar-profile">
+    <div class="profile-avatar">{{ perfilNombre.slice(0, 1).toUpperCase() || 'D' }}</div>
+    <div class="profile-copy">
+      <span>{{ rol }}</span>
+      <strong>{{ perfilNombre }}</strong>
+      <small>{{ perfilDetalle }}</small>
+    </div>
+    <button type="button" class="logout-button" (click)="emitirLogout()" aria-label="Cerrar sesión">
+      <fa-icon [icon]="iconos.salir" />
+    </button>
+  </footer>
+</aside>
