@@ -50,24 +50,6 @@ small {
   margin-top: .45rem;
 }
 
-a,
-button {
-  border: 0;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 800;
-  text-decoration: none;
-}
-
-.hero a,
-.acciones a,
-.estado button {
-  background: #17243c;
-  color: #ffffff;
-  padding: .85rem 1rem;
-  text-align: center;
-}
-
 .metricas {
   display: grid;
   gap: 1rem;
@@ -171,16 +153,23 @@ li b {
   gap: .65rem;
 }
 
-.acciones a:nth-of-type(2) {
+.teacher-action {
+  min-height: 46px;
+}
+
+.teacher-action--review.ant-btn-primary {
   background: #0f766e;
+  border-color: #0f766e;
 }
 
-.acciones a:nth-of-type(3) {
+.teacher-action--eval.ant-btn-primary {
   background: #744210;
+  border-color: #744210;
 }
 
-.acciones a:nth-of-type(4) {
+.teacher-action--store.ant-btn-primary {
   background: #4c1d95;
+  border-color: #4c1d95;
 }
 
 .estado {
@@ -192,9 +181,9 @@ li b {
 }
 
 .estado.error {
-  background: #fff1f2;
   border-color: #fecdd3;
-  color: #9f1239;
+  display: grid;
+  gap: .75rem;
 }
 
 .sr-only {

@@ -5,11 +5,11 @@
       <h1>Gestionar misiones</h1>
       <p>Crea desafíos y revisa su disponibilidad.</p>
     </div>
-    <button type="button" (click)="cargar()">Actualizar</button>
+    <button nz-button nzType="default" class="daemon-btn" type="button" [nzLoading]="cargando()" (click)="cargar()">Actualizar</button>
   </header>
 
-  @if (mensaje()) { <p class="success">{{ mensaje() }}</p> }
-  @if (error()) { <p class="error">{{ error() }}</p> }
+  @if (mensaje()) { <nz-alert class="daemon-alert" nzType="success" nzShowIcon [nzMessage]="mensaje()"></nz-alert> }
+  @if (error()) { <nz-alert class="daemon-alert" nzType="error" nzShowIcon [nzMessage]="error()"></nz-alert> }
 
   <form class="panel" (ngSubmit)="crear()">
     <h2>Nueva misión</h2>
@@ -52,7 +52,7 @@
         <textarea name="descripcion" [(ngModel)]="nueva.descripcion" rows="4"></textarea>
       </label>
     </div>
-    <button type="submit" [disabled]="guardando() || !nueva.titulo.trim()">Crear misión</button>
+    <button nz-button nzType="primary" class="daemon-btn" type="submit" [nzLoading]="guardando()" [disabled]="guardando() || !nueva.titulo.trim()">Crear misión</button>
   </form>
 
   @if (cargando()) {
@@ -73,9 +73,9 @@
           @for (mision of misiones(); track mision.id) {
             <tr>
               <td>{{ mision.titulo }}</td>
-              <td><span class="badge">{{ mision.nivel_requerido }}</span></td>
+              <td><nz-tag class="daemon-tag" nzColor="blue">{{ mision.nivel_requerido }}</nz-tag></td>
               <td>{{ mision.recompensa }}</td>
-              <td>{{ mision.estado }}</td>
+              <td><nz-tag class="daemon-tag" [nzColor]="mision.estado === 'activo' ? 'green' : 'default'">{{ mision.estado }}</nz-tag></td>
               <td>{{ mision.tipo_evidencia }}</td>
             </tr>
           }
@@ -83,6 +83,6 @@
       </table>
     </section>
   } @else {
-    <p class="empty">No hay misiones creadas.</p>
+    <app-estado-vacio titulo="Sin misiones creadas" descripcion="Crea la primera misión para que tus estudiantes tengan un reto activo."></app-estado-vacio>
   }
 </section>

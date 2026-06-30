@@ -5,30 +5,30 @@
       <h1>Retos del aula</h1>
       <p>Misiones activas y entregas asociadas a tu cuenta.</p>
     </div>
-    <button type="button" (click)="cargar()">Actualizar</button>
+    <button nz-button nzType="default" class="daemon-btn" type="button" [nzLoading]="cargando()" (click)="cargar()">Actualizar</button>
   </header>
 
   @if (cargando()) {
     <app-cargando class="state" texto="Cargando misiones..."></app-cargando>
   } @else if (error()) {
-    <p class="error">{{ error() }}</p>
+    <nz-alert class="daemon-alert" nzType="error" nzShowIcon [nzMessage]="error()"></nz-alert>
   } @else if (misiones().length) {
     <div class="card-list">
       @for (mision of misiones(); track mision.id) {
         <article class="data-card">
-          <span class="badge" [class.warn]="mision.entrega?.estado === 'pendiente'">{{ mision.entrega?.estado || mision.estado }}</span>
+          <nz-tag class="daemon-tag" [nzColor]="mision.entrega?.estado === 'pendiente' ? 'gold' : 'blue'">{{ mision.entrega?.estado || mision.estado }}</nz-tag>
           <h2>{{ mision.titulo }}</h2>
           <p>{{ mision.descripcion || 'Sin descripción registrada.' }}</p>
           <p><strong>Recompensa:</strong> {{ mision.recompensa }} tokens</p>
           <p><strong>Evidencia:</strong> {{ mision.tipo_evidencia }}</p>
           <div class="actions">
-            <a class="btn" [routerLink]="['/alumno/misiones', mision.id]">Detalle</a>
-            <a class="ghost-btn" [routerLink]="['/alumno/misiones', mision.id, 'entregar']">Entregar</a>
+            <a nz-button nzType="primary" class="daemon-btn" [routerLink]="['/alumno/misiones', mision.id]">Detalle</a>
+            <a nz-button nzType="default" class="daemon-btn" [routerLink]="['/alumno/misiones', mision.id, 'entregar']">Entregar</a>
           </div>
         </article>
       }
     </div>
   } @else {
-    <p class="empty">No hay misiones disponibles.</p>
+    <app-estado-vacio titulo="Sin misiones disponibles" descripcion="Cuando tu docente publique retos para tu nivel, los verás aquí."></app-estado-vacio>
   }
 </section>

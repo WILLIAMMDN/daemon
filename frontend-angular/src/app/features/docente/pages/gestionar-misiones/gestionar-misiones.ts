@@ -1,12 +1,16 @@
 ﻿import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzTagModule } from 'ng-zorro-antd/tag';
 import { Mision } from '../../../misiones/services/mision';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
+import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
 
 
 @Component({
   selector: 'app-gestionar-misiones',
-  imports: [FormsModule, Cargando],
+  imports: [FormsModule, NzAlertModule, NzButtonModule, NzTagModule, Cargando, EstadoVacio],
   templateUrl: './gestionar-misiones.html',
   styleUrl: './gestionar-misiones.scss',
 })

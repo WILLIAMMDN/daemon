@@ -5,11 +5,11 @@
       <h1>Alumnos y tokens</h1>
       <p>Listado de estudiantes y ajustes de economía escolar.</p>
     </div>
-    <button type="button" (click)="cargar()">Actualizar</button>
+    <button nz-button nzType="default" class="daemon-btn" type="button" [nzLoading]="cargando()" (click)="cargar()">Actualizar</button>
   </header>
 
-  @if (mensaje()) { <p class="success">{{ mensaje() }}</p> }
-  @if (error()) { <p class="error">{{ error() }}</p> }
+  @if (mensaje()) { <nz-alert class="daemon-alert" nzType="success" nzShowIcon [nzMessage]="mensaje()"></nz-alert> }
+  @if (error()) { <nz-alert class="daemon-alert" nzType="error" nzShowIcon [nzMessage]="error()"></nz-alert> }
 
   <form class="panel" (ngSubmit)="asignarTokens()">
     <h2>Ajustar tokens</h2>
@@ -32,7 +32,7 @@
         <input name="motivo" [(ngModel)]="ajuste.motivo">
       </label>
     </div>
-    <button type="submit" [disabled]="guardando() || !ajuste.id_alumno">Aplicar</button>
+    <button nz-button nzType="primary" class="daemon-btn" type="submit" [nzLoading]="guardando()" [disabled]="guardando() || !ajuste.id_alumno">Aplicar</button>
   </form>
 
   @if (cargando()) {
@@ -55,16 +55,16 @@
             <tr>
               <td>{{ alumno.nombre_completo }}</td>
               <td>{{ alumno.usuario }}</td>
-              <td><span class="badge">{{ alumno.nivel }}</span></td>
+              <td><nz-tag class="daemon-tag" nzColor="blue">{{ alumno.nivel }}</nz-tag></td>
               <td>{{ alumno.rango || '-' }}</td>
               <td><strong>{{ alumno.tokens }}</strong></td>
-              <td><a class="ghost-btn compact" [routerLink]="['/docente/carnets', alumno.id]">Abrir</a></td>
+              <td><a nz-button nzType="default" class="daemon-btn compact" [routerLink]="['/docente/carnets', alumno.id]">Abrir</a></td>
             </tr>
           }
         </tbody>
       </table>
     </section>
   } @else {
-    <p class="empty">No hay alumnos registrados.</p>
+    <app-estado-vacio titulo="Sin alumnos registrados" descripcion="Cuando se registren estudiantes, podrás administrar sus tokens y carnets desde aquí."></app-estado-vacio>
   }
 </section>

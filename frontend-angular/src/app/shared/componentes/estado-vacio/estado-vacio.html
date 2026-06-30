@@ -1,4 +1,9 @@
-<section class="module-card">
-  <h2>Sin información</h2>
-  <p>Todavía no hay registros para mostrar.</p>
+<section class="daemon-empty">
+  <nz-empty [nzNotFoundContent]="contenido">
+    <ng-template #contenido>
+      <h2>{{ titulo }}</h2>
+      <p>{{ descripcion }}</p>
+    </ng-template>
+  </nz-empty>
+  <ng-content></ng-content>
 </section>

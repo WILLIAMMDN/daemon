@@ -340,3 +340,77 @@ th {
   padding: .35rem .65rem;
   text-transform: uppercase;
 }
+
+.daemon-btn.ant-btn {
+  align-items: center;
+  border-radius: 8px;
+  display: inline-flex;
+  font-weight: 850;
+  justify-content: center;
+  min-height: 40px;
+}
+
+.daemon-btn.ant-btn-primary {
+  background: #17243c;
+  border-color: #17243c;
+  box-shadow: 0 10px 22px #17243c24;
+  color: #fff;
+}
+
+.daemon-btn.ant-btn-primary:not(:disabled):hover {
+  background: #21365e;
+  border-color: #21365e;
+  color: #fff;
+}
+
+.daemon-btn.ant-btn-default {
+  background: #eef4ff;
+  border-color: #d8e2f4;
+  color: #17243c;
+}
+
+.daemon-btn.ant-btn-default:not(:disabled):hover {
+  background: #e3edff;
+  border-color: #b9c9e8;
+  color: #0f2350;
+}
+
+.daemon-btn.ant-btn-link {
+  color: #0f766e;
+  font-weight: 850;
+  padding-inline: .2rem;
+}
+
+.daemon-alert.ant-alert {
+  border-radius: 8px;
+  font-weight: 700;
+}
+
+.daemon-empty {
+  background: #fff;
+  border: 1px solid #dfe6f1;
+  border-radius: 8px;
+  display: grid;
+  justify-items: center;
+  padding: 1.35rem;
+}
+
+.daemon-empty h2 {
+  color: #17203a;
+  font-size: 1.05rem;
+  margin: .6rem 0 .2rem;
+}
+
+.daemon-empty p {
+  color: #61708d;
+  margin: 0;
+  max-width: 34rem;
+  text-align: center;
+}
+
+.daemon-tag.ant-tag {
+  border-radius: 999px;
+  font-weight: 850;
+  margin: 0;
+  text-transform: uppercase;
+}

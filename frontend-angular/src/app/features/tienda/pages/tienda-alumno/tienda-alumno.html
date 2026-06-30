@@ -6,13 +6,13 @@
       <p>Saldo actual: <strong>{{ saldo() }}</strong> tokens.</p>
     </div>
     <div class="actions">
-      <button type="button" (click)="cargar()">Actualizar</button>
-      <a class="ghost-btn" routerLink="/alumno/canjes">Mis canjes</a>
+      <button nz-button nzType="default" class="daemon-btn" type="button" [nzLoading]="cargando()" (click)="cargar()">Actualizar</button>
+      <a nz-button nzType="default" class="daemon-btn" routerLink="/alumno/canjes">Mis canjes</a>
     </div>
   </header>
 
-  @if (mensaje()) { <p class="success">{{ mensaje() }}</p> }
-  @if (error()) { <p class="error">{{ error() }}</p> }
+  @if (mensaje()) { <nz-alert class="daemon-alert" nzType="success" nzShowIcon [nzMessage]="mensaje()"></nz-alert> }
+  @if (error()) { <nz-alert class="daemon-alert" nzType="error" nzShowIcon [nzMessage]="error()"></nz-alert> }
 
   @if (cargando()) {
     <app-cargando class="state" texto="Cargando premios..."></app-cargando>
@@ -23,17 +23,17 @@
           @if (premio.imagen) {
             <img class="image-thumb" [src]="asset(premio.imagen)" [alt]="premio.nombre">
           }
-          <span class="badge">{{ premio.categoria }}</span>
+          <nz-tag class="daemon-tag" nzColor="green">{{ premio.categoria }}</nz-tag>
           <h2>{{ premio.nombre }}</h2>
           <p>{{ premio.descripcion || 'Sin descripción registrada.' }}</p>
           <p><strong>{{ premio.precio }}</strong> tokens - Stock {{ premio.stock }}</p>
-          <button type="button" (click)="canjear(premio.id)" [disabled]="procesando() === premio.id || saldo() < premio.precio || premio.stock < 1">
+          <button nz-button nzType="primary" class="daemon-btn" type="button" (click)="canjear(premio.id)" [nzLoading]="procesando() === premio.id" [disabled]="procesando() === premio.id || saldo() < premio.precio || premio.stock < 1">
             Canjear
           </button>
         </article>
       }
     </div>
   } @else {
-    <p class="empty">No hay premios disponibles para tu nivel.</p>
+    <app-estado-vacio titulo="Sin premios disponibles" descripcion="Cuando haya premios para tu nivel, aparecerán listos para canjear con tus tokens."></app-estado-vacio>
   }
 </section>

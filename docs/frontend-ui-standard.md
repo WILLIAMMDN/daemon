@@ -28,6 +28,14 @@ Use NG-ZORRO first for:
 - Tabs, steps, breadcrumbs, menus, collapses.
 - Admin/teacher workflows where scanability and repeated use matter.
 
+The first applied component set is:
+
+- `NzButtonModule` for portal actions, refresh buttons, form submits, retry
+  actions, and internal CTA links.
+- `NzAlertModule` for success and error feedback returned by the API.
+- `NzEmptyModule` through `app-estado-vacio` for professional empty states.
+- `NzTagModule` for levels, categories, and status labels.
+
 Use custom DAEMON components first for:
 
 - Public landing sections and branded hero areas.

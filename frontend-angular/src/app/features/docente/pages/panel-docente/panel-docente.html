@@ -1,7 +1,7 @@
 @if (error()) {
   <section class="estado error">
-    <p>{{ error() }}</p>
-    <button type="button" (click)="cargar()">Reintentar</button>
+    <nz-alert class="daemon-alert" nzType="error" nzShowIcon nzMessage="No pudimos cargar el panel docente" [nzDescription]="error()"></nz-alert>
+    <button nz-button nzType="primary" class="daemon-btn" type="button" (click)="cargar()">Reintentar</button>
   </section>
 } @else {
   <section class="dashboard" [class.is-loading]="cargando()" [attr.aria-busy]="cargando()">
@@ -15,7 +15,7 @@
         <h1>Control del aula DAEMON</h1>
         <p>Monitorea actividad, economía escolar, entregas y estudiantes con mejor avance.</p>
       </div>
-      <a routerLink="/docente/alumnos">Gestionar alumnos</a>
+      <a nz-button nzType="primary" nzSize="large" class="daemon-btn" routerLink="/docente/alumnos">Gestionar alumnos</a>
     </header>
 
     <section class="metricas">
@@ -67,7 +67,7 @@
               }
             </ol>
           } @else {
-            <p class="vacio">Aún no hay estudiantes en el ranking.</p>
+            <app-estado-vacio titulo="Sin ranking todavía" descripcion="Cuando los estudiantes acumulen tokens, aparecerán aquí."></app-estado-vacio>
           }
         } @else {
           <ol class="ranking-skeleton" aria-hidden="true">
@@ -90,10 +90,10 @@
           <p class="eyebrow">Gestión rápida</p>
           <h2>Acciónes de clase</h2>
         </div>
-        <a routerLink="/docente/misiones">Crear misiones</a>
-        <a routerLink="/docente/entregas">Revisar entregas</a>
-        <a routerLink="/docente/evaluaciones">Evaluaciones</a>
-        <a routerLink="/docente/tienda">Tienda y premios</a>
+        <a nz-button nzType="primary" class="daemon-btn teacher-action" routerLink="/docente/misiones">Crear misiones</a>
+        <a nz-button nzType="primary" class="daemon-btn teacher-action teacher-action--review" routerLink="/docente/entregas">Revisar entregas</a>
+        <a nz-button nzType="primary" class="daemon-btn teacher-action teacher-action--eval" routerLink="/docente/evaluaciones">Evaluaciones</a>
+        <a nz-button nzType="primary" class="daemon-btn teacher-action teacher-action--store" routerLink="/docente/tienda">Tienda y premios</a>
       </article>
     </section>
   </section>

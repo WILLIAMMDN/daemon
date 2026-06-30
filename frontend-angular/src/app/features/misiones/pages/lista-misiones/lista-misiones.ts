@@ -1,12 +1,16 @@
 import { Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzTagModule } from 'ng-zorro-antd/tag';
 import { Mision } from '../../services/mision';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
+import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
 
 
 @Component({
   selector: 'app-lista-misiones',
-  imports: [RouterLink, Cargando],
+  imports: [RouterLink, NzAlertModule, NzButtonModule, NzTagModule, Cargando, EstadoVacio],
   templateUrl: './lista-misiones.html',
   styleUrl: './lista-misiones.scss',
 })

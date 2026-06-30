@@ -2,8 +2,8 @@
   <app-cargando class="estado" texto="Cargando tu panel..."></app-cargando>
 } @else if (error()) {
   <section class="estado error">
-    <p>{{ error() }}</p>
-    <button type="button" (click)="cargar()">Reintentar</button>
+    <nz-alert class="daemon-alert" nzType="error" nzShowIcon nzMessage="No pudimos cargar tu panel" [nzDescription]="error()"></nz-alert>
+    <button nz-button nzType="primary" class="daemon-btn" type="button" (click)="cargar()">Reintentar</button>
   </section>
 } @else if (panel(); as datos) {
   <section class="dashboard">
@@ -24,25 +24,25 @@
       <article>
         <span>Misiones activas</span>
         <strong>{{ datos.misiones_pendientes }}</strong>
-        <a routerLink="/alumno/misiones">Ver misiones</a>
+        <a nz-button nzType="link" class="daemon-btn" routerLink="/alumno/misiones">Ver misiones</a>
       </article>
       <article>
         <span>Insignias ganadas</span>
         <strong>{{ datos.insignias }}</strong>
-        <a routerLink="/alumno/perfil">Mi perfil</a>
+        <a nz-button nzType="link" class="daemon-btn" routerLink="/alumno/perfil">Mi perfil</a>
       </article>
       <article>
         <span>Canjes pendientes</span>
         <strong>{{ datos.canjes_pendientes }}</strong>
-        <a routerLink="/alumno/canjes">Mis canjes</a>
+        <a nz-button nzType="link" class="daemon-btn" routerLink="/alumno/canjes">Mis canjes</a>
       </article>
     </section>
 
     <section class="acciones">
-      <a routerLink="/alumno/herramientas/chatbot">Abrir mi bot</a>
-      <a routerLink="/alumno/evaluaciones">Evaluaciones</a>
-      <a routerLink="/alumno/tienda">Tienda</a>
-      <a routerLink="/alumno/ranking">Ranking</a>
+      <a nz-button nzType="primary" class="daemon-btn student-action student-action--bot" routerLink="/alumno/herramientas/chatbot">Abrir mi bot</a>
+      <a nz-button nzType="primary" class="daemon-btn student-action student-action--eval" routerLink="/alumno/evaluaciones">Evaluaciones</a>
+      <a nz-button nzType="primary" class="daemon-btn student-action student-action--store" routerLink="/alumno/tienda">Tienda</a>
+      <a nz-button nzType="primary" class="daemon-btn student-action student-action--rank" routerLink="/alumno/ranking">Ranking</a>
     </section>
 
     <article class="ruta">
@@ -51,7 +51,7 @@
         <h2>Completa una misión y sube evidencia</h2>
         <p>Las misiones, evaluaciones y votos alimentan tus tokens, insignias y posición en DAEMON.</p>
       </div>
-      <a routerLink="/alumno/desafios">Ir a desafíos</a>
+      <a nz-button nzType="primary" nzSize="large" class="daemon-btn" routerLink="/alumno/desafios">Ir a desafíos</a>
     </article>
   </section>
 }

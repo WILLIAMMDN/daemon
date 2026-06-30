@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
+import { NzButtonModule } from 'ng-zorro-antd/button';
 import { EmailVerificationBanner } from '../../../shared/componentes/email-verification-banner/email-verification-banner';
 import { SidebarPortal } from '../../../shared/componentes/sidebar-portal/sidebar-portal';
 import { Autenticacion } from '../../servicios/autenticacion';
@@ -8,7 +9,7 @@ import { docenteSidebarSections } from '../portal-sidebar.config';
 
 @Component({
   selector: 'app-layout-docente',
-  imports: [RouterOutlet, EmailVerificationBanner, SidebarPortal],
+  imports: [RouterOutlet, NzButtonModule, EmailVerificationBanner, SidebarPortal],
   templateUrl: './layout-docente.html',
   styleUrl: './layout-docente.scss',
 })

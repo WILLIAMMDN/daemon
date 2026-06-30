@@ -1,5 +1,8 @@
 import { Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
 import { Docente } from '../../services/docente';
 
 interface AlumnoRanking {
@@ -21,7 +24,7 @@ interface PanelDocenteData {
 
 @Component({
   selector: 'app-panel-docente',
-  imports: [RouterLink],
+  imports: [RouterLink, NzAlertModule, NzButtonModule, EstadoVacio],
   templateUrl: './panel-docente.html',
   styleUrl: './panel-docente.scss',
 })

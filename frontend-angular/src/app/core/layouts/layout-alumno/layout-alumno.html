@@ -20,7 +20,7 @@
         <span>Portal estudiante</span>
         <strong>{{ sesion.usuario()?.usuario || sesion.usuario()?.nombre_completo }}</strong>
       </div>
-      <button type="button" (click)="salir()">Cerrar sesión</button>
+      <button nz-button nzType="default" class="daemon-btn topbar-logout" type="button" (click)="salir()">Cerrar sesión</button>
     </header>
 
     <main class="content-area">

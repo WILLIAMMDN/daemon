@@ -1,13 +1,17 @@
 import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzTagModule } from 'ng-zorro-antd/tag';
 import { Docente } from '../../services/docente';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
+import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
 
 
 @Component({
   selector: 'app-lista-alumnos',
-  imports: [FormsModule, RouterLink, Cargando],
+  imports: [FormsModule, RouterLink, NzAlertModule, NzButtonModule, NzTagModule, Cargando, EstadoVacio],
   templateUrl: './lista-alumnos.html',
   styleUrl: './lista-alumnos.scss',
 })

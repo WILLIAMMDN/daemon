@@ -106,15 +106,6 @@ h2 {
   line-height: 1;
 }
 
-a,
-button {
-  border: 0;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 800;
-  text-decoration: none;
-}
-
 .metricas a {
   color: #0f766e;
   width: fit-content;
@@ -127,24 +118,28 @@ button {
 }
 
 .acciones a,
-.ruta a,
-.estado button {
-  background: #17243c;
-  color: #ffffff;
-  padding: .85rem 1rem;
+.ruta a {
+  width: 100%;
   text-align: center;
 }
 
-.acciones a:nth-child(2) {
+.student-action {
+  min-height: 48px;
+}
+
+.student-action--eval.ant-btn-primary {
   background: #744210;
+  border-color: #744210;
 }
 
-.acciones a:nth-child(3) {
+.student-action--store.ant-btn-primary {
   background: #0f766e;
+  border-color: #0f766e;
 }
 
-.acciones a:nth-child(4) {
+.student-action--rank.ant-btn-primary {
   background: #4c1d95;
+  border-color: #4c1d95;
 }
 
 .ruta {
@@ -168,9 +163,12 @@ button {
 }
 
 .estado.error {
-  background: #fff1f2;
+  display: grid;
+  gap: .75rem;
+}
+
+.estado.error {
   border-color: #fecdd3;
-  color: #9f1239;
 }
 
 @media (max-width: 900px) {

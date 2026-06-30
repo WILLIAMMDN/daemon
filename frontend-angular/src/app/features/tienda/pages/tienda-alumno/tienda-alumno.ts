@@ -1,13 +1,17 @@
 import { Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzTagModule } from 'ng-zorro-antd/tag';
 import { Activos } from '../../../../core/servicios/activos';
 import { Tienda } from '../../services/tienda';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
+import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
 
 
 @Component({
   selector: 'app-tienda-alumno',
-  imports: [RouterLink, Cargando],
+  imports: [RouterLink, NzAlertModule, NzButtonModule, NzTagModule, Cargando, EstadoVacio],
   templateUrl: './tienda-alumno.html',
   styleUrl: './tienda-alumno.scss',
 })

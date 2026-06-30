@@ -1,5 +1,7 @@
 import { Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { NzButtonModule } from 'ng-zorro-antd/button';
 import { Alumno } from '../../services/alumno';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 
@@ -23,7 +25,7 @@ interface PanelAlumnoData {
 
 @Component({
   selector: 'app-panel-alumno',
-  imports: [RouterLink, Cargando],
+  imports: [RouterLink, NzAlertModule, NzButtonModule, Cargando],
   templateUrl: './panel-alumno.html',
   styleUrl: './panel-alumno.scss',
 })
