@@ -203,7 +203,7 @@
   <!-- Navigation body -->
   <nav class="sidebar-nav">
     @for (seccion of secciones; track seccion.titulo; let last = $last) {
-      <section class="sidebar-section">
+      <section class="sidebar-section" [attr.data-tone]="seccion.tono ?? 'indigo'">
         <p class="section-title">
           <span class="section-label">{{ seccion.titulo }}</span>
         </p>
