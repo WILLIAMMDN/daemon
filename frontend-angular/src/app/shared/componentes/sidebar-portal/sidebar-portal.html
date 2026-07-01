@@ -18,44 +18,37 @@
   (mouseenter)="onMouseEnter()"
   (mouseleave)="onMouseLeave()"
 >
-  <!-- Brand bar: tipo Material toolbar, color sólido institucional -->
-  <header class="brand-bar">
+  <!-- Header plano: solo texto, sin fondo de color -->
+  <header class="sidebar-header">
     <a class="brand-link" [routerLink]="homeLink" (click)="navegar()" [attr.title]="colapsado ? 'DAEMON' : null">
-      <span class="brand-mark" aria-hidden="true">D</span>
-      <span class="brand-copy">
-        <strong class="brand-title">DAEMON</strong>
-        <small class="brand-subtitle">{{ brandDetalle }}</small>
-      </span>
+      <span class="brand-title">DAEMON</span>
+      @if (!colapsado) {
+        <span class="brand-subtitle">{{ brandDetalle }}</span>
+      }
     </a>
 
-    <div class="brand-actions">
-      <span class="role-tag" [class.role-docente]="modo === 'docente'" [class.role-alumno]="modo === 'alumno'">
-        <fa-icon [icon]="modo === 'docente' ? iconos.docente : iconos.alumno" />
-        <span class="role-label">{{ etiquetaRol }}</span>
-      </span>
-      <button
-        type="button"
-        class="pin-button"
-        [class.is-pinned]="fijado"
-        (click)="toggleFijado()"
-        [attr.aria-pressed]="fijado"
-        [attr.title]="fijado ? 'Menú fijado (clic para soltar)' : 'Fijar menú abierto'"
-        aria-label="Fijar menú"
-      >
-        <fa-icon [icon]="iconos.fijar" />
-      </button>
+    <button
+      type="button"
+      class="pin-button"
+      [class.is-pinned]="fijado"
+      (click)="toggleFijado()"
+      [attr.aria-pressed]="fijado"
+      [attr.title]="fijado ? 'Menú fijado (clic para soltar)' : 'Fijar menú abierto'"
+      aria-label="Fijar menú"
+    >
+      <fa-icon [icon]="iconos.fijar" />
+    </button>
 
-      <button type="button" class="close-button mobile-only" (click)="cerrarMovil()" aria-label="Cerrar menú">
-        <fa-icon [icon]="iconos.cerrar" />
-      </button>
-    </div>
+    <button type="button" class="close-button mobile-only" (click)="cerrarMovil()" aria-label="Cerrar menú">
+      <fa-icon [icon]="iconos.cerrar" />
+    </button>
   </header>
 
-  <!-- User summary card (debajo del brand bar) -->
+  <!-- User summary card -->
   <section class="user-card" aria-label="Cuenta activa">
     <nz-avatar
       class="user-avatar"
-      [nzSize]="48"
+      [nzSize]="44"
       [nzSrc]="avatarSrcVisible && avatarSrc() ? avatarSrc() : undefined"
       [nzText]="iniciales()"
       (nzError)="onAvatarError()"
@@ -77,7 +70,6 @@
     @for (seccion of secciones; track seccion.titulo; let last = $last) {
       <section class="sidebar-section">
         <p class="section-title">
-          <span class="section-dot" aria-hidden="true"></span>
           <span class="section-label">{{ seccion.titulo }}</span>
         </p>
 
@@ -94,9 +86,9 @@
             >
               <span class="nav-icon"><fa-icon [icon]="item.icono" /></span>
               <span class="nav-copy">
-                <strong>{{ item.etiqueta }}</strong>
+                <span class="nav-label">{{ item.etiqueta }}</span>
                 @if (item.detalle) {
-                  <small>{{ item.detalle }}</small>
+                  <span class="nav-detail">{{ item.detalle }}</span>
                 }
               </span>
               @if (item.badge) {
@@ -117,9 +109,9 @@
                 >
                   <span class="nav-icon nav-icon-sm"><fa-icon [icon]="hijo.icono" /></span>
                   <span class="nav-copy">
-                    <strong>{{ hijo.etiqueta }}</strong>
+                    <span class="nav-label">{{ hijo.etiqueta }}</span>
                     @if (hijo.detalle) {
-                      <small>{{ hijo.detalle }}</small>
+                      <span class="nav-detail">{{ hijo.detalle }}</span>
                     }
                   </span>
                 </a>
@@ -136,9 +128,9 @@
             >
               <span class="nav-icon"><fa-icon [icon]="item.icono" /></span>
               <span class="nav-copy">
-                <strong>{{ item.etiqueta }}</strong>
+                <span class="nav-label">{{ item.etiqueta }}</span>
                 @if (item.detalle) {
-                  <small>{{ item.detalle }}</small>
+                  <span class="nav-detail">{{ item.detalle }}</span>
                 }
               </span>
               @if (item.badge) {
@@ -150,16 +142,21 @@
       </section>
 
       @if (!last) {
-        <nz-divider class="sidebar-divider"></nz-divider>
+        <span class="sidebar-divider" aria-hidden="true"></span>
       }
     }
   </nav>
 
-  <!-- Footer con cerrar sesión -->
+  <!-- Footer plano: solo logout -->
   <footer class="sidebar-footer">
     <button type="button" class="logout-button" (click)="emitirLogout()" aria-label="Cerrar sesión" title="Cerrar sesión">
       <fa-icon [icon]="iconos.salir" />
       <span class="logout-label">Cerrar sesión</span>
     </button>
+
+    <span class="sidebar-foot-meta">
+      <span class="foot-mark">D</span>
+      <span class="foot-text">DAEMON · {{ modo === 'docente' ? 'Panel docente' : 'Academia IA' }}</span>
+    </span>
   </footer>
 </aside>
