@@ -723,7 +723,7 @@
   background: #ffffff;
   border-top: 1px solid var(--sb-border);
   display: grid;
-  gap: .6rem;
+  gap: 0;
   padding: .9rem 1.45rem 1rem;
   position: relative;
   z-index: 2;
@@ -763,36 +763,6 @@
 .logout-label {
   flex: 1 1 auto;
   text-align: left;
-}
-
-.sidebar-foot-meta {
-  align-items: center;
-  color: var(--sb-muted);
-  display: inline-flex;
-  font-size: .68rem;
-  font-weight: 500;
-  gap: .4rem;
-  justify-content: center;
-  letter-spacing: .02em;
-}
-
-.foot-mark {
-  align-items: center;
-  background: var(--sb-accent);
-  border-radius: 4px;
-  color: #ffffff;
-  display: inline-flex;
-  flex: 0 0 auto;
-  font-size: .65rem;
-  font-weight: 800;
-  height: 16px;
-  justify-content: center;
-  width: 16px;
-}
-
-.foot-text {
-  color: var(--sb-muted);
-  font-size: .68rem;
 }
 
 /* ============================================================
@@ -925,8 +895,7 @@
 }
 
 :host(.sidebar-collapsed) .submenu,
-:host(.sidebar-collapsed) .sidebar-divider,
-:host(.sidebar-collapsed) .sidebar-foot-meta {
+:host(.sidebar-collapsed) .sidebar-divider {
   display: none;
 }
 
