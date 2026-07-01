@@ -184,11 +184,12 @@
 }
 
 :host(.theme-alumno) .brand-mark {
-  background: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 14px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-  padding: 4px;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.75)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
+  padding: 0;
 }
 
 .brand-mark::after {
@@ -339,8 +340,8 @@
 }
 
 :host(.theme-alumno) .profile-trigger {
-  background: rgba(255, 255, 255, .05);
-  border-color: rgba(255, 255, 255, .12);
+  background: transparent;
+  border: 1px solid transparent;
   color: #ffffff;
   box-shadow: none;
 }
@@ -348,8 +349,8 @@
 :host(.theme-alumno) .profile-trigger:hover,
 :host(.theme-alumno) .profile-trigger:focus-visible {
   background: rgba(255, 255, 255, .08);
-  border-color: rgba(255, 255, 255, .2);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  border-color: transparent;
+  box-shadow: none;
 }
 
 .profile-trigger:active {
@@ -1019,9 +1020,9 @@
 }
 
 :host(.theme-alumno) .logout-button {
-  background: rgba(255, 255, 255, .1);
-  border-color: rgba(255, 255, 255, .22);
-  color: rgba(255, 255, 255, .9);
+  background: transparent;
+  border: 1px solid transparent;
+  color: rgba(255, 255, 255, .75);
 }
 
 .logout-button:hover {
@@ -1032,10 +1033,10 @@
 }
 
 :host(.theme-alumno) .logout-button:hover {
-  background: #ffffff;
-  border-color: #ffffff;
-  box-shadow: 0 10px 22px rgba(13, 23, 78, .12);
-  color: var(--sb-brand-royal-deep);
+  background: rgba(255, 255, 255, .08);
+  border-color: transparent;
+  box-shadow: none;
+  color: #ffffff;
 }
 
 .logout-button fa-icon {
