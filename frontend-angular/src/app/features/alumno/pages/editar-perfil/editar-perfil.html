@@ -38,7 +38,7 @@
         </div>
 
         <div class="actions">
-          <button nz-button nzType="primary" class="daemon-btn" type="submit" [disabled]="guardando()">
+          <button nz-button nzType="primary" class="daemon-btn" type="submit" [disabled]="guardando()" [nzLoading]="guardando()">
             @if (guardando()) { Guardando... } @else { Guardar cambios }
           </button>
           <button nz-button nzType="default" class="daemon-btn" type="button" (click)="cargar()" [disabled]="guardando()">Restaurar</button>
@@ -70,11 +70,32 @@
           <nz-progress [nzPercent]="progresoPerfil()" [nzStatus]="estadoProgreso()" [nzStrokeWidth]="8"></nz-progress>
         </div>
 
+        <div class="media-preview-grid">
+          <figure class="media-preview">
+            @if (fondoVisible()) {
+              <img [src]="fondoVisible()" alt="Vista previa del fondo de perfil">
+            } @else {
+              <span class="media-preview-empty">Fondo</span>
+            }
+            <figcaption>Fondo</figcaption>
+          </figure>
+
+          <figure class="media-preview">
+            @if (heroeVisible()) {
+              <img [src]="heroeVisible()" alt="Vista previa del hero visual">
+            } @else {
+              <span class="media-preview-empty">Hero</span>
+            }
+            <figcaption>Hero visual</figcaption>
+          </figure>
+        </div>
+
         <app-media-uploader
           titulo="Avatar del estudiante"
           descripcion="Imagen cuadrada para mostrar en el portal, ranking y comunidad."
           accept="image/*"
           [maxMb]="4"
+          [disabled]="guardando()"
           [resetKey]="uploadResetKey()"
           lista="picture"
           (archivoChange)="seleccionarAvatar($event)"
@@ -85,6 +106,7 @@
           descripcion="Imagen opcional para futuras vistas destacadas del perfil."
           accept="image/*"
           [maxMb]="8"
+          [disabled]="guardando()"
           [resetKey]="uploadResetKey()"
           lista="picture"
           (archivoChange)="seleccionarFondo($event)"
@@ -95,6 +117,7 @@
           descripcion="Recurso opcional para representar al estudiante en experiencias especiales."
           accept="image/*"
           [maxMb]="8"
+          [disabled]="guardando()"
           [resetKey]="uploadResetKey()"
           lista="picture"
           (archivoChange)="seleccionarHeroe($event)"

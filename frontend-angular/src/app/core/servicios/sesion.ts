@@ -11,11 +11,19 @@ export interface UsuarioSesion {
   rol: 'alumno' | 'docente' | 'admin';
   nivel?: string | null;
   tokens: number;
+  pro_tokens?: number | null;
+  rango?: string | null;
+  biografia?: string | null;
   avatar?: string | null;
+  fondo?: string | null;
+  heroe?: string | null;
+  genero?: string | null;
   perfil_completo?: boolean;
   id_institucion?: number | null;
   id_aula?: number | null;
 }
+
+type UsuarioSesionEntrada = UsuarioSesion | { data?: UsuarioSesion; usuario?: UsuarioSesion };
 
 @Injectable({
   providedIn: 'root',
@@ -33,9 +41,12 @@ export class Sesion {
     this.usuario.set(usuario);
   }
 
-  actualizarUsuario(usuario: UsuarioSesion): void {
-    localStorage.setItem(this.claveUsuario, JSON.stringify(usuario));
-    this.usuario.set(usuario);
+  actualizarUsuario(usuario: UsuarioSesionEntrada): void {
+    const posible = usuario as { data?: UsuarioSesion; usuario?: UsuarioSesion };
+    const usuarioLimpio = posible.usuario ?? posible.data ?? (usuario as UsuarioSesion);
+    const usuarioActualizado = { ...(this.usuario() ?? {}), ...usuarioLimpio } as UsuarioSesion;
+    localStorage.setItem(this.claveUsuario, JSON.stringify(usuarioActualizado));
+    this.usuario.set(usuarioActualizado);
   }
 
   limpiar(): void {

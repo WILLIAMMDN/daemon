@@ -7,7 +7,7 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzProgressModule } from 'ng-zorro-antd/progress';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { Activos } from '../../../../core/servicios/activos';
-import { Sesion, UsuarioSesion } from '../../../../core/servicios/sesion';
+import { Sesion } from '../../../../core/servicios/sesion';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 import { MediaUploader } from '../../../../shared/componentes/media-uploader/media-uploader';
 import { Alumno } from '../../services/alumno';
@@ -34,6 +34,8 @@ export class EditarPerfil {
   mensaje = signal('');
   error = signal('');
   avatarActual = signal('');
+  fondoActual = signal('');
+  heroeActual = signal('');
   avatarPreview = signal('');
   fondoPreview = signal('');
   heroePreview = signal('');
@@ -65,6 +67,8 @@ export class EditarPerfil {
           genero: usuario.genero ?? '',
         };
         this.avatarActual.set(usuario.avatar ?? this.sesion.usuario()?.avatar ?? '');
+        this.fondoActual.set(usuario.fondo ?? this.sesion.usuario()?.fondo ?? '');
+        this.heroeActual.set(usuario.heroe ?? this.sesion.usuario()?.heroe ?? '');
         this.limpiarArchivos();
         this.cargando.set(false);
       },
@@ -91,8 +95,10 @@ export class EditarPerfil {
 
     this.alumno.actualizarPerfil(datos).subscribe({
       next: (usuario) => {
-        this.sesion.actualizarUsuario(usuario as UsuarioSesion);
-        this.avatarActual.set((usuario as UsuarioSesion).avatar ?? this.avatarActual());
+        this.sesion.actualizarUsuario(usuario);
+        this.avatarActual.set(usuario.avatar ?? this.avatarActual());
+        this.fondoActual.set(usuario.fondo ?? this.fondoActual());
+        this.heroeActual.set(usuario.heroe ?? this.heroeActual());
         this.limpiarArchivos();
         this.mensaje.set('Perfil actualizado.');
         this.guardando.set(false);
@@ -121,6 +127,14 @@ export class EditarPerfil {
 
   avatarVisible(): string {
     return this.avatarPreview() || this.activos.url(this.avatarActual());
+  }
+
+  fondoVisible(): string {
+    return this.fondoPreview() || this.activos.url(this.fondoActual());
+  }
+
+  heroeVisible(): string {
+    return this.heroePreview() || this.activos.url(this.heroeActual());
   }
 
   iniciales(): string {
