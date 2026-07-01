@@ -140,9 +140,9 @@
 }
 
 :host(.theme-alumno) .portal-sidebar {
-  background: var(--sb-brand-royal);
-  border-color: rgba(255, 255, 255, .2);
-  box-shadow: 0 20px 48px rgba(70, 82, 244, .24);
+  background: var(--sb-surface);
+  border-color: rgba(255, 255, 255, .12);
+  box-shadow: 0 16px 36px rgba(15, 23, 42, .08);
 }
 
 /* ============================================================
@@ -184,16 +184,11 @@
 }
 
 :host(.theme-alumno) .brand-mark {
-  background: transparent;
-  border: 0;
-  border-radius: 0;
-  box-shadow: none;
-  padding: 0;
-}
-
-:host(.theme-alumno) .brand-logo {
-  filter: brightness(0) invert(1);
-  opacity: 0.95;
+  background: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  padding: 6px;
 }
 
 .brand-mark::after {
@@ -965,7 +960,7 @@
 :host(.theme-alumno) .nav-item.active .nav-badge,
 :host(.theme-alumno) .nav-parent.active .nav-badge,
 :host(.theme-alumno) .submenu-item.active .nav-badge {
-  color: var(--sb-brand-royal);
+  color: var(--sb-item-active-ink);
 }
 
 .chevron {
@@ -988,7 +983,7 @@
 }
 
 :host(.theme-alumno) .nav-parent.active .chevron {
-  color: var(--sb-brand-royal);
+  color: var(--sb-item-active-ink);
 }
 
 .submenu {
