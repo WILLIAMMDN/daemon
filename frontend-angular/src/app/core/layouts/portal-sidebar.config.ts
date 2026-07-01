@@ -50,14 +50,14 @@ export const alumnoSidebarSections: PortalSidebarSection[] = [
     titulo: 'Aprendizaje',
     tono: 'indigo',
     items: [
-      { id: 'alumno-panel', etiqueta: 'Dashboard', ruta: '/alumno', detalle: 'Vista general', icono: faGaugeHigh, exacto: true, badge: 'Hoy' },
+      { id: 'alumno-panel', etiqueta: 'Dashboard', ruta: '/alumno', detalle: 'Vista general', icono: faGaugeHigh, exacto: true },
       { id: 'alumno-recursos', etiqueta: 'Cursos', ruta: '/alumno/recursos', detalle: 'Materiales y rutas', icono: faBookOpenReader },
       { id: 'alumno-desafios', etiqueta: 'Retos', ruta: '/alumno/desafios', detalle: 'Para tu nivel', icono: faBullseye },
       { id: 'alumno-proyectos', etiqueta: 'Proyectos', ruta: '/alumno/cuentos', detalle: 'Cuentos y creatividad', icono: faCode },
       { id: 'alumno-misiones', etiqueta: 'Misiones', ruta: '/alumno/misiones', detalle: 'Retos activos', icono: faRocket },
       { id: 'alumno-ranking', etiqueta: 'Ranking', ruta: '/alumno/ranking', detalle: 'Clasificacion', icono: faRankingStar },
       { id: 'alumno-comunidad', etiqueta: 'Comunidad', ruta: '/alumno/comunidad', detalle: 'Perfiles del aula', icono: faPeopleGroup },
-      { id: 'alumno-recompensas', etiqueta: 'Recompensas', ruta: '/alumno/tienda', detalle: 'Tienda y canjes', icono: faGift, badge: 'DAEMON' },
+      { id: 'alumno-recompensas', etiqueta: 'Recompensas', ruta: '/alumno/tienda', detalle: 'Tienda y canjes', icono: faGift },
     ],
   },
   {
@@ -65,7 +65,7 @@ export const alumnoSidebarSections: PortalSidebarSection[] = [
     tono: 'cyan',
     items: [
       { id: 'alumno-perfil', etiqueta: 'Mi perfil', ruta: '/alumno/perfil', detalle: 'Cuenta y logros', icono: faCircleUser },
-      { id: 'alumno-herramientas', etiqueta: 'Herramientas IA', ruta: '/alumno/herramientas', detalle: 'Chatbot y laboratorio', icono: faWandMagicSparkles, badge: 'IA' },
+      { id: 'alumno-herramientas', etiqueta: 'Herramientas IA', ruta: '/alumno/herramientas', detalle: 'Chatbot y laboratorio', icono: faWandMagicSparkles },
       { id: 'alumno-evaluaciones', etiqueta: 'Evaluaciones', ruta: '/alumno/evaluaciones', detalle: 'Examenes activos', icono: faClipboardQuestion },
       { id: 'alumno-certificado', etiqueta: 'Certificado', ruta: '/alumno/certificado', detalle: 'Carnet y constancia', icono: faCertificate },
     ],
@@ -79,7 +79,7 @@ export const docenteSidebarSections: PortalSidebarSection[] = [
     items: [
       { id: 'docente-panel', etiqueta: 'Panel', ruta: '/docente', detalle: 'Resumen del aula', icono: faGaugeHigh, exacto: true },
       { id: 'docente-perfil', etiqueta: 'Perfil', ruta: '/docente/perfil', detalle: 'Cuenta docente', icono: faCircleUser },
-      { id: 'docente-alumnos', etiqueta: 'Alumnos y tokens', ruta: '/docente/alumnos', detalle: 'Cuentas y tokens', icono: faUsersGear, badge: 'Aula' },
+      { id: 'docente-alumnos', etiqueta: 'Alumnos y tokens', ruta: '/docente/alumnos', detalle: 'Cuentas y tokens', icono: faUsersGear },
     ],
   },
   {
@@ -133,7 +133,7 @@ export const docenteSidebarSections: PortalSidebarSection[] = [
           { id: 'docente-rondas', etiqueta: 'Historial rondas', ruta: '/docente/rondas', detalle: 'Resultados anteriores', icono: faTrophy },
         ],
       },
-      { id: 'docente-alertas', etiqueta: 'Actividad', ruta: '/docente/tokens', detalle: 'Movimientos recientes', icono: faBullhorn, badge: 'Live' },
+      { id: 'docente-alertas', etiqueta: 'Actividad', ruta: '/docente/tokens', detalle: 'Movimientos recientes', icono: faBullhorn },
     ],
   },
 ];
