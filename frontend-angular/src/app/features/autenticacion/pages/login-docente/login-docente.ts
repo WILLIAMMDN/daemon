@@ -2,13 +2,23 @@ import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, NgZone, OnDestroy, ViewChild, signal } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import type { Rive, StateMachineInput } from '@rive-app/canvas';
+import {
+  Alignment,
+  Fit,
+  Layout,
+  RuntimeLoader,
+  Rive as RiveCanvas,
+  type Rive,
+  type StateMachineInput,
+} from '@rive-app/canvas';
 import { Autenticacion } from '../../../../core/servicios/autenticacion';
 import { CargaGlobal } from '../../../../core/servicios/carga-global';
 import { Sesion } from '../../../../core/servicios/sesion';
 import { validarCredenciales } from '../../../../shared/validadores/auth-validadores';
 
-const riveCanvasModule = import('@rive-app/canvas');
+RuntimeLoader.setWasmUrl('/rive/rive.wasm');
+RuntimeLoader.setWasmFallbackUrl('/rive/rive_fallback.wasm');
+const riveRuntimeReady = RuntimeLoader.awaitInstance().catch(() => undefined);
 
 type TeddyInputs = {
   isChecking?: StateMachineInput;
@@ -157,12 +167,8 @@ export class LoginDocente implements AfterViewInit, OnDestroy {
     }
 
     this.zone.runOutsideAngular(() => {
-      void riveCanvasModule
-        .then((riveModule) => {
-          const { Alignment, Fit, Layout, Rive, RuntimeLoader } = this.apiRive(riveModule);
-          RuntimeLoader.setWasmUrl('/rive/rive.wasm');
-          RuntimeLoader.setWasmFallbackUrl('/rive/rive_fallback.wasm');
-
+      void riveRuntimeReady
+        .then(() => {
           const layout = new Layout({
             fit: Fit.Contain,
             alignment: Alignment.Center,
@@ -187,7 +193,7 @@ export class LoginDocente implements AfterViewInit, OnDestroy {
           };
 
           const cargar = (interactivo: boolean) => {
-            this.rive = new Rive({
+            this.rive = new RiveCanvas({
               src: '/rive/login-teddy.riv',
               canvas,
               ...(interactivo ? { artboard: 'Teddy', stateMachines: this.maquinaLogin } : {}),
@@ -215,20 +221,6 @@ export class LoginDocente implements AfterViewInit, OnDestroy {
           });
         });
     });
-  }
-
-  private apiRive(riveModule: unknown) {
-    const modulo = riveModule as Record<string, any>;
-    return (modulo['Rive'] ? modulo : modulo['default'] ?? modulo['module.exports']) as {
-      Alignment: { Center: unknown };
-      Fit: { Contain: unknown };
-      Layout: new (options: { fit: unknown; alignment: unknown }) => unknown;
-      Rive: new (options: Record<string, unknown>) => Rive;
-      RuntimeLoader: {
-        setWasmUrl(url: string): void;
-        setWasmFallbackUrl(url: string): void;
-      };
-    };
   }
 
   private configurarInputsRive(): void {
