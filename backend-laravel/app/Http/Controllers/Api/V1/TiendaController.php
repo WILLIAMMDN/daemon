@@ -7,6 +7,7 @@ use App\Http\Requests\Api\V1\Tienda\PremioStoreRequest;
 use App\Http\Requests\Api\V1\Tienda\PremioUpdateRequest;
 use App\Models\Canje;
 use App\Models\Premio;
+use App\Services\Academico\AcademicScopeService;
 use App\Services\Archivo\ArchivoUrlService;
 use App\Services\Tienda\CanjeService;
 use App\Services\Tienda\PremioService;
@@ -19,6 +20,7 @@ class TiendaController extends Controller
         private readonly CanjeService $canjesService,
         private readonly PremioService $premiosService,
         private readonly ArchivoUrlService $archivos,
+        private readonly AcademicScopeService $alcance,
     ) {}
 
     public function index(Request $request)
@@ -45,11 +47,18 @@ class TiendaController extends Controller
             ->map(fn ($canje) => $this->conImagen($canje));
     }
 
-    public function administrar()
+    public function administrar(Request $request)
     {
+        $canjes = DB::table('canjes as c')
+            ->join('usuarios as u', 'u.id', '=', 'c.id_alumno')
+            ->join('premios as p', 'p.id', '=', 'c.id_premio')
+            ->select('c.*', 'u.nombre_completo as alumno', 'u.id_aula', 'p.nombre as premio');
+
+        $this->alcance->aplicarAlumnosQuery($canjes, $request->user(), 'u.id_aula');
+
         return [
             'premios' => Premio::orderByDesc('id')->get()->map(fn (Premio $premio) => $this->premioConUrls($premio)),
-            'canjes' => DB::table('canjes as c')->join('usuarios as u', 'u.id', '=', 'c.id_alumno')->join('premios as p', 'p.id', '=', 'c.id_premio')->select('c.*', 'u.nombre_completo as alumno', 'p.nombre as premio')->orderByDesc('c.fecha')->get(),
+            'canjes' => $canjes->orderByDesc('c.fecha')->get(),
         ];
     }
 
@@ -70,8 +79,9 @@ class TiendaController extends Controller
         return response()->noContent();
     }
 
-    public function entregar(Canje $canje)
+    public function entregar(Request $request, Canje $canje)
     {
+        $this->alcance->alumnoGestionable($request->user(), (int) $canje->id_alumno);
         $canje->update(['estado' => 'entregado']);
 
         return $canje;

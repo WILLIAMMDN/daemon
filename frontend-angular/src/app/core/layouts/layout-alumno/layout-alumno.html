@@ -7,9 +7,11 @@
     rol="Estudiante"
     storageKey="daemon_sidebar_alumno_colapsado"
     [perfilAvatar]="avatarUrl()"
-    [perfilDetalle]="perfilDetalle()"
     [perfilEmail]="sesion.usuario()?.email || ''"
     [perfilNombre]="sesion.usuario()?.nombre_completo || sesion.usuario()?.usuario || 'Cuenta activa'"
+    [perfilUsuario]="sesion.usuario()?.usuario || ''"
+    [perfilNivel]="perfilNivel()"
+    [perfilTokens]="perfilTokens()"
     [secciones]="seccionesSidebar"
     (logout)="salir()"
   />

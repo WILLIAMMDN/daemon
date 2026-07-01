@@ -9,14 +9,17 @@ use App\Http\Requests\Api\V1\Mision\MisionUpdateRequest;
 use App\Http\Requests\Api\V1\Mision\RevisarEntregaRequest;
 use App\Models\Entrega;
 use App\Models\Mision;
-use App\Models\Usuario;
+use App\Services\Academico\AcademicScopeService;
 use App\Services\Archivo\ArchivoService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class MisionController extends Controller
 {
-    public function __construct(private readonly ArchivoService $archivos) {}
+    public function __construct(
+        private readonly ArchivoService $archivos,
+        private readonly AcademicScopeService $alcance,
+    ) {}
 
     public function index(Request $request)
     {
@@ -71,10 +74,16 @@ class MisionController extends Controller
         return response()->json($this->entregaConUrl(Entrega::create(['id_desafio' => $mision->id, 'id_alumno' => $request->user()->id, 'archivo_url' => $evidencia, 'estado' => 'pendiente'])), 201);
     }
 
-    public function entregas()
+    public function entregas(Request $request)
     {
-        return DB::table('entregas as e')->join('desafios as d', 'd.id', '=', 'e.id_desafio')->join('usuarios as u', 'u.id', '=', 'e.id_alumno')
-            ->select('e.*', 'd.titulo as mision', 'd.recompensa', 'd.es_mision_nivel', 'u.nombre_completo as alumno', 'u.nivel')->orderByDesc('e.fecha_entrega')->get()
+        $query = DB::table('entregas as e')
+            ->join('desafios as d', 'd.id', '=', 'e.id_desafio')
+            ->join('usuarios as u', 'u.id', '=', 'e.id_alumno')
+            ->select('e.*', 'd.titulo as mision', 'd.recompensa', 'd.es_mision_nivel', 'u.nombre_completo as alumno', 'u.nivel', 'u.id_aula');
+
+        $this->alcance->aplicarAlumnosQuery($query, $request->user(), 'u.id_aula');
+
+        return $query->orderByDesc('e.fecha_entrega')->get()
             ->map(fn ($entrega) => $this->entregaConUrl($entrega));
     }
 
@@ -86,9 +95,10 @@ class MisionController extends Controller
             $yaAprobada = $entrega->estado === 'aprobado';
             $mision = Mision::findOrFail($entrega->id_desafio);
             $puntos = $datos['calificacion'] ?? $mision->recompensa;
+            $alumno = $this->alcance->alumnoGestionable($request->user(), (int) $entrega->id_alumno, true);
+
             $entrega->update([...$datos, 'calificacion' => $puntos]);
             if ($datos['estado'] === 'aprobado' && ! $yaAprobada) {
-                $alumno = Usuario::lockForUpdate()->findOrFail($entrega->id_alumno);
                 $alumno->increment('tokens', $puntos);
                 if ($mision->es_mision_nivel) {
                     $alumno->increment('mision_actual');

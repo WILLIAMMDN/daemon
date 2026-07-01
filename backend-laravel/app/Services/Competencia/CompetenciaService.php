@@ -7,13 +7,17 @@ use App\Models\CompetenciaLive;
 use App\Models\HistorialRonda;
 use App\Models\Usuario;
 use App\Models\VotoLive;
+use App\Services\Academico\AcademicScopeService;
 use App\Services\Archivo\ArchivoUrlService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class CompetenciaService
 {
-    public function __construct(private readonly ArchivoUrlService $archivos) {}
+    public function __construct(
+        private readonly ArchivoUrlService $archivos,
+        private readonly AcademicScopeService $alcance,
+    ) {}
 
     public function ronda(): CompetenciaLive
     {
@@ -76,7 +80,7 @@ class CompetenciaService
             $ronda = CompetenciaLive::lockForUpdate()->findOrFail(1);
 
             return match ($datos['accion']) {
-                'candidato' => $this->seleccionarCandidato($ronda, $datos),
+                'candidato' => $this->seleccionarCandidato($ronda, $docente, $datos),
                 'iniciar' => $this->iniciarVotacion($ronda, $datos),
                 'cerrar' => $this->cerrarVotacion($ronda),
                 'premiar' => $this->premiar($ronda, $docente, $datos),
@@ -90,10 +94,10 @@ class CompetenciaService
         return HistorialRonda::orderByDesc('fecha')->get();
     }
 
-    private function seleccionarCandidato(CompetenciaLive $ronda, array $datos): CompetenciaLive
+    private function seleccionarCandidato(CompetenciaLive $ronda, Usuario $docente, array $datos): CompetenciaLive
     {
         if (! empty($datos['id_alumno'])) {
-            Usuario::where('rol', 'alumno')->findOrFail($datos['id_alumno']);
+            $this->alcance->alumnoGestionable($docente, (int) $datos['id_alumno']);
         }
 
         VotoLive::query()->delete();
@@ -124,7 +128,7 @@ class CompetenciaService
 
     private function premiar(CompetenciaLive $ronda, Usuario $docente, array $datos): CompetenciaLive
     {
-        $alumno = Usuario::findOrFail($ronda->id_alumno_en_tarima);
+        $alumno = $this->alcance->alumnoGestionable($docente, (int) $ronda->id_alumno_en_tarima);
         $puntos = $datos['puntos'] ?? (int) round(((float) $ronda->promedio_alumnos) * 10);
 
         $alumno->increment('tokens', $puntos);

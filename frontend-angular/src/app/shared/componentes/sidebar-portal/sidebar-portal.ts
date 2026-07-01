@@ -1,21 +1,29 @@
 import { Component, EventEmitter, HostBinding, Input, OnChanges, OnInit, Output } from '@angular/core';
+import { DecimalPipe } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faWhatsapp } from '@fortawesome/free-brands-svg-icons';
 import {
   faBars,
+  faChartLine,
   faChevronDown,
   faChevronRight,
+  faEnvelope,
   faGraduationCap,
   faChalkboardUser,
+  faHeadset,
   faRightFromBracket,
   faThumbtack,
+  faUserTag,
   faXmark,
 } from '@fortawesome/free-solid-svg-icons';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzBadgeModule } from 'ng-zorro-antd/badge';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzPopoverModule } from 'ng-zorro-antd/popover';
 import { NzTagModule } from 'ng-zorro-antd/tag';
+import { MonedaDaemon } from '../moneda-daemon/moneda-daemon';
 import { PortalSidebarItem, PortalSidebarSection } from '../../../core/layouts/portal-sidebar.config';
 
 const SUFFIJO_PIN = '_pin';
@@ -31,9 +39,13 @@ const SUFFIJO_PIN = '_pin';
  *
  * Estructura visual:
  *  - Brand bar superior con color sólido institucional (alumno / docente).
- *  - User card con avatar, rol, nombre y email.
+ *  - Bloque de perfil limpio tipo University: avatar grande arriba (nz-avatar),
+ *    nombre + chevron debajo; click en el bloque abre un popover con toda la
+ *    información de la cuenta (correo, rol, nivel, tokens).
+ *  - Saldo de la moneda DAEMON visible debajo del rol, sin necesidad de abrir
+ *    el popover (usa el componente reutilizable <app-moneda-daemon>).
  *  - Navegación con secciones, submenús, badges e iconos.
- *  - Footer con cerrar sesión.
+ *  - Footer con botón de soporte, cerrar sesión y firma institucional.
  */
 @Component({
   selector: 'app-sidebar-portal',
@@ -41,11 +53,14 @@ const SUFFIJO_PIN = '_pin';
     RouterLink,
     RouterLinkActive,
     FontAwesomeModule,
+    DecimalPipe,
     NzAvatarModule,
     NzBadgeModule,
     NzDividerModule,
     NzIconModule,
+    NzPopoverModule,
     NzTagModule,
+    MonedaDaemon,
   ],
   templateUrl: './sidebar-portal.html',
   styleUrl: './sidebar-portal.scss',
@@ -57,11 +72,17 @@ export class SidebarPortal implements OnInit, OnChanges {
   @Input() modo: 'alumno' | 'docente' = 'alumno';
   @Input() perfilDetalle = '';
   @Input() perfilNombre = 'Cuenta activa';
+  @Input() perfilUsuario = '';
   @Input() perfilEmail = '';
   @Input() perfilAvatar = '';
+  @Input() perfilNivel: string | null = null;
+  @Input() perfilTokens: number | null = null;
   @Input() rol = 'Usuario';
   @Input() secciones: PortalSidebarSection[] = [];
   @Input() storageKey = 'daemon_sidebar_colapsado';
+
+  /** Botón de soporte (visible en expandido). Por defecto abre WhatsApp. */
+  @Input() soporteLink = 'https://wa.me/51930893675';
 
   @Output() logout = new EventEmitter<void>();
 
@@ -72,8 +93,14 @@ export class SidebarPortal implements OnInit, OnChanges {
     salir: faRightFromBracket,
     submenuAbierto: faChevronDown,
     submenuCerrado: faChevronRight,
+    chevronDown: faChevronDown,
     alumno: faGraduationCap,
     docente: faChalkboardUser,
+    correo: faEnvelope,
+    rolIcono: faUserTag,
+    nivel: faChartLine,
+    soporte: faHeadset,
+    whatsapp: faWhatsapp,
   };
 
   /** Estado manual persistido (cuando está fijado). */
@@ -83,6 +110,11 @@ export class SidebarPortal implements OnInit, OnChanges {
   /** Hover activo (mouse encima). */
   hoverActivo = false;
   mobileOpen = false;
+  /**
+   * Estado del popover del bloque de perfil (click sobre avatar/nombre/chevron).
+   * Lo expone `[(nzPopoverVisible)]` para que el click toggle lo abra/cierre.
+   */
+  profilePopoverOpen = false;
   /**
    * Si la imagen del avatar falla al cargar (404, CORS, etc.),
    * se vuelve false y nz-avatar vuelve a mostrar las iniciales.

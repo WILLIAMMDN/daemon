@@ -8,6 +8,10 @@ export class Docente {
   constructor(private api: Api) {}
   panel() { return this.api.get('/docente/panel'); }
   alumnos() { return this.api.get('/docente/alumnos'); }
+  docentes() { return this.api.get('/docente/docentes'); }
+  aulas() { return this.api.get('/docente/aulas'); }
+  crearAula(datos: unknown) { return this.api.post('/docente/aulas', datos); }
+  asignarAulaUsuario(idUsuario: number, datos: unknown) { return this.api.patch(`/docente/usuarios/${idUsuario}/aula`, datos); }
   asignarTokens(datos: unknown) { return this.api.post('/docente/tokens', datos); }
   historialTokens() { return this.api.get('/docente/historial-tokens'); }
   insignias() { return this.api.get('/docente/insignias'); }

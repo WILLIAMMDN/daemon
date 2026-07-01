@@ -64,6 +64,10 @@ Route::prefix('v1')->group(function (): void {
         Route::middleware('role:docente,admin')->group(function (): void {
             Route::get('/docente/panel', [DocenteController::class, 'panel']);
             Route::get('/docente/alumnos', [DocenteController::class, 'alumnos']);
+            Route::get('/docente/docentes', [DocenteController::class, 'docentes']);
+            Route::get('/docente/aulas', [DocenteController::class, 'aulas']);
+            Route::post('/docente/aulas', [DocenteController::class, 'crearAula']);
+            Route::patch('/docente/usuarios/{usuario}/aula', [DocenteController::class, 'asignarAulaUsuario']);
             Route::post('/docente/tokens', [DocenteController::class, 'asignarTokens']);
             Route::get('/docente/historial-tokens', [DocenteController::class, 'historialTokens']);
             Route::apiResource('/docente/insignias', DocenteController::class)->only(['store', 'update', 'destroy']);

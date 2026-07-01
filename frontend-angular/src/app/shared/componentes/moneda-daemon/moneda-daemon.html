@@ -1,0 +1,42 @@
+<span
+  class="moneda-shell"
+  [class]="claseLayout"
+  [attr.role]="tieneCantidad ? 'group' : 'img'"
+  [attr.aria-label]="tituloAccesible"
+  [attr.title]="tituloAccesible"
+>
+  @if (!soloNumero) {
+    @if (imagenOk) {
+      <img
+        class="moneda-icon"
+        [src]="rutaSvg"
+        [alt]="tituloAccesible"
+        [style]="estilosIcono"
+        draggable="false"
+        (error)="onImagenError()"
+      />
+    } @else {
+      <!-- Fallback: medallón con la D de DAEMON si el SVG no carga -->
+      <span
+        class="moneda-fallback"
+        [style.width.px]="size"
+        [style.height.px]="size"
+        [style.fontSize.px]="tamanoFallback"
+        aria-hidden="true"
+      >D</span>
+    }
+  }
+
+  @if (tieneCantidad) {
+    <span class="moneda-valor" [style.fontSize]="tamanoTexto">
+      <span class="moneda-valor-numero">{{ cantidad | number }}</span>
+      @if (etiqueta && layout === 'apilado') {
+        <span class="moneda-valor-etiqueta">{{ etiqueta }}</span>
+      }
+    </span>
+  }
+
+  @if (etiqueta && layout === 'horizontal' && tieneCantidad) {
+    <span class="moneda-etiqueta-lateral" [style.fontSize]="tamanoTexto">{{ etiqueta }}</span>
+  }
+</span>

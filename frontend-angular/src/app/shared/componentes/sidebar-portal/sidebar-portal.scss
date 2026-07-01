@@ -1,5 +1,5 @@
 /*
- * Sidebar de portales DAEMON — versión minimal & profesional
+ * Sidebar de portales DAEMON — versión "University"
  *
  * Reglas de diseño:
  *   - Sin gradientes: todos los colores son sólidos.
@@ -9,6 +9,10 @@
  *   - Iconos sin cuadro de fondo: solo color de acento sutil.
  *   - Paleta alumno: indigo vibrante pero profesional (#4f46e5) — niños/adolescentes.
  *   - Paleta docente: azul oscuro serio (#1e3a8a) — administración académica.
+ *   - Bloque de perfil limpio: avatar grande arriba (nz-avatar) + nombre + chevron,
+ *     click → popover con toda la info de la cuenta.
+ *   - Saldo de la moneda DAEMON visible bajo el rol, con el componente reutilizable.
+ *   - Botón "Soporte" en el footer (visible solo expandido).
  */
 
 :host {
@@ -22,6 +26,7 @@
   /* Superficies */
   --sb-surface: #ffffff;
   --sb-surface-alt: #f8fafc;
+  --sb-surface-soft: #f1f5f9;
   --sb-border: #e2e8f0;
   --sb-border-strong: #cbd5e1;
 
@@ -42,8 +47,8 @@
   --sb-icon-ink-active: var(--sb-accent);
 
   /* Avatar */
-  --sb-avatar-bg: #4f46e5;
-  --sb-avatar-ink: #ffffff;
+  --sb-avatar-bg: #eef2ff;
+  --sb-avatar-ink: #4f46e5;
 
   /* Geometría */
   --sb-width: 264px;
@@ -74,7 +79,8 @@
   --sb-icon-ink-active: #1e3a8a;
   --sb-item-active-bg: #eff6ff;
   --sb-item-active-ink: #172554;
-  --sb-avatar-bg: #1e3a8a;
+  --sb-avatar-bg: #eff6ff;
+  --sb-avatar-ink: #1e3a8a;
 }
 
 .portal-sidebar {
@@ -191,44 +197,75 @@
 }
 
 /* ============================================================
-   2. Profile block — compacto, estilo tarjeta de cuenta
+   2. Bloque de perfil — estilo University: avatar grande arriba,
+       nombre + chevron, popover con toda la info al hacer click.
+       Debajo del rol se muestra el saldo de la moneda DAEMON.
    ============================================================ */
 .profile-block {
+  align-items: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  margin: 0 .9rem .85rem;
+  padding: .25rem 0 .25rem;
+}
+
+.profile-trigger {
   align-items: center;
-  background: var(--sb-surface-alt);
-  border: 1px solid var(--sb-border);
-  border-radius: var(--sb-radius-md);
-  display: grid;
-  gap: .7rem;
-  grid-template-columns: 40px minmax(0, 1fr) 14px;
-  margin: 0 1.1rem .9rem;
-  padding: .65rem .75rem;
-  transition: border-color .12s ease, background .12s ease;
+  appearance: none;
+  background: transparent;
+  border: 0;
+  border-radius: var(--sb-radius-lg);
+  color: inherit;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: .35rem;
+  min-width: 0;
+  padding: .65rem .5rem .75rem;
+  text-align: center;
+  transition: background .12s ease, transform .12s ease;
+  width: 100%;
 }
 
-.profile-block:hover {
-  border-color: var(--sb-border-strong);
-  background: var(--sb-item-hover);
+.profile-trigger:hover,
+.profile-trigger:focus-visible {
+  background: var(--sb-surface-soft);
+  outline: none;
 }
 
-.profile-avatar {
-  background: var(--sb-avatar-bg);
-  border: none;
-  border-radius: 50%;
-  color: var(--sb-avatar-ink);
-  flex: 0 0 40px;
-  font-size: .9rem;
-  font-weight: 700;
-  height: 40px;
-  overflow: hidden;
-  width: 40px;
+.profile-trigger:active {
+  transform: scale(.99);
+}
+
+.profile-trigger--compact {
+  align-items: center;
+  flex-direction: row;
+  justify-content: center;
+  padding: .35rem;
+}
+
+.profile-avatar-wrap {
+  align-items: center;
+  display: inline-flex;
+  flex: 0 0 auto;
+  justify-content: center;
+  position: relative;
 }
 
 .profile-avatar.ant-avatar {
   background: var(--sb-avatar-bg);
+  border: 0;
+  box-shadow: 0 0 0 1px var(--sb-border);
   color: var(--sb-avatar-ink);
+  flex: 0 0 auto;
+  font-size: 1.6rem;
   font-weight: 700;
+  height: 88px;
   line-height: 1;
+  overflow: hidden;
+  transition: box-shadow .15s ease;
+  width: 88px;
 }
 
 .profile-avatar.ant-avatar img {
@@ -246,64 +283,105 @@
   width: 100%;
 }
 
-.profile-info {
-  display: grid;
-  gap: 1px;
+.profile-trigger:hover .profile-avatar.ant-avatar,
+.profile-trigger:focus-visible .profile-avatar.ant-avatar {
+  box-shadow: 0 0 0 2px var(--sb-accent);
+}
+
+.profile-avatar--compact.ant-avatar {
+  font-size: .98rem;
+  height: 48px;
+  width: 48px;
+}
+
+.profile-status {
+  background: #16a34a;
+  border: 2.5px solid var(--sb-surface);
+  border-radius: 50%;
+  bottom: 2px;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, .15);
+  height: 16px;
+  position: absolute;
+  right: 2px;
+  width: 16px;
+}
+
+.profile-status--compact {
+  border-width: 2px;
+  bottom: 0;
+  height: 12px;
+  right: 0;
+  width: 12px;
+}
+
+.profile-id {
+  align-items: center;
+  color: var(--sb-ink);
+  display: inline-flex;
+  gap: .25rem;
+  max-width: 100%;
   min-width: 0;
 }
 
 .profile-name {
   color: var(--sb-ink);
-  display: block;
-  font-size: .88rem;
+  font-size: .98rem;
   font-weight: 700;
-  line-height: 1.2;
+  line-height: 1.25;
+  max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.profile-meta {
-  align-items: center;
-  color: var(--sb-muted);
-  display: inline-flex;
-  font-size: .72rem;
-  font-weight: 500;
-  gap: .35rem;
-  line-height: 1.2;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.profile-role {
-  color: var(--sb-accent);
-  font-weight: 600;
-  letter-spacing: .02em;
-  text-transform: capitalize;
-}
-
-.profile-sep {
-  color: var(--sb-muted-2);
-  flex: 0 0 auto;
-}
-
-.profile-detail {
-  color: var(--sb-muted);
-  font-weight: 500;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .profile-chevron {
-  color: var(--sb-muted-2);
-  font-size: .68rem;
-  transition: transform .15s ease;
+  color: var(--sb-muted);
+  flex: 0 0 auto;
+  font-size: .72rem;
+  transition: transform .15s ease, color .15s ease;
 }
 
-.profile-block:hover .profile-chevron {
-  color: var(--sb-muted);
+.profile-trigger:hover .profile-chevron {
+  color: var(--sb-ink);
+}
+
+/* Insignia de rol — Diseño clásico, tipográfico y profesional */
+.profile-role-tag {
+  align-items: center;
+  display: inline-flex;
+  gap: 0.4rem;
+  line-height: 1;
+  margin-top: 0.3rem;
+  max-width: 100%;
+  min-width: 0;
+}
+
+/* Icono contextual (Birrete para alumno, Pizarra para docente) */
+.profile-role-icon {
+  color: var(--sb-accent);
+  font-size: 0.75rem;
+  opacity: 0.9;
+}
+
+/* Tipografía sobria y refinada */
+.profile-role-text {
+  color: var(--sb-ink-soft);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Saldo de la moneda DAEMON — pill visible bajo el rol del usuario */
+.profile-balance {
+  align-items: center;
+  display: inline-flex;
+  margin-top: .15rem;
+  max-width: 100%;
 }
 
 /* ============================================================
@@ -539,13 +617,59 @@
 }
 
 /* ============================================================
-   4. Footer plano
+   4. Footer — soporte + logout + firma
    ============================================================ */
 .sidebar-footer {
   border-top: 1px solid var(--sb-border);
   display: grid;
-  gap: .75rem;
-  padding: .9rem .85rem 1rem;
+  gap: .55rem;
+  padding: .85rem .85rem .9rem;
+}
+
+.support-button {
+  align-items: center;
+  appearance: none;
+  background: transparent;
+  border: 1px solid var(--sb-border);
+  border-radius: var(--sb-radius-md);
+  color: var(--sb-ink-soft);
+  cursor: pointer;
+  display: inline-flex;
+  font: inherit;
+  font-size: .82rem;
+  font-weight: 600;
+  gap: .55rem;
+  justify-content: flex-start;
+  padding: .5rem .8rem;
+  text-decoration: none;
+  transition: background .12s ease, border-color .12s ease, color .12s ease;
+  width: 100%;
+}
+
+.support-button:hover {
+  background: var(--sb-item-hover);
+  border-color: var(--sb-border-strong);
+  color: var(--sb-ink);
+}
+
+.support-button fa-icon {
+  color: var(--sb-accent);
+  flex: 0 0 auto;
+  font-size: .88rem;
+}
+
+/* Soporte WhatsApp: tinte verde del brand, sin romper la paleta del sidebar. */
+.support-button--whatsapp fa-icon {
+  color: #25d366;
+}
+
+.support-button--whatsapp:hover {
+  border-color: rgba(37, 211, 102, .35);
+}
+
+.support-label {
+  flex: 1 1 auto;
+  text-align: left;
 }
 
 .logout-button {
@@ -651,14 +775,24 @@
 }
 
 :host(.sidebar-collapsed) .profile-block {
-  grid-template-columns: 1fr;
-  justify-items: center;
   margin: 0 .5rem .9rem;
-  padding: .55rem 0;
+  padding: .25rem 0;
 }
 
-:host(.sidebar-collapsed) .profile-info,
-:host(.sidebar-collapsed) .profile-chevron {
+:host(.sidebar-collapsed) .profile-trigger {
+  gap: 0;
+  padding: .35rem;
+}
+
+:host(.sidebar-collapsed) .profile-avatar.ant-avatar {
+  border-width: 0;
+  box-shadow: 0 0 0 1px var(--sb-border);
+}
+
+:host(.sidebar-collapsed) .profile-role-tag,
+:host(.sidebar-collapsed) .profile-balance,
+:host(.sidebar-collapsed) .profile-chevron,
+:host(.sidebar-collapsed) .profile-name {
   display: none;
 }
 

@@ -1,0 +1,155 @@
+/*
+ * Moneda DAEMON — componente reutilizable de la moneda académica.
+ *
+ * Variantes:
+ *   - 'suave'  → para lugares donde la moneda convive con texto
+ *                 (sidebar, badges, listas). Sin fondo, color heredado
+ *                 del contexto, número en peso medio.
+ *   - 'fuerte' → para resaltar saldo (cards de tienda, encabezado,
+ *                 perfil premium). Chip oscuro con texto blanco y
+ *                 ligero glow violeta. Nada de pasteles.
+ *
+ * Layouts:
+ *   - 'horizontal' → icono + número en línea, alineados al centro.
+ *   - 'apilado'    → icono arriba, número y etiqueta debajo.
+ *
+ * El SVG nunca se deforma: `object-fit: contain` mantiene la forma
+ * circular sin importar el `size` que se le pase.
+ */
+
+:host {
+  align-items: center;
+  display: inline-flex;
+  font-family: inherit;
+  line-height: 1;
+  max-width: 100%;
+  vertical-align: middle;
+}
+
+.moneda-shell {
+  align-items: center;
+  display: inline-flex;
+  gap: 0.4rem;
+  max-width: 100%;
+  min-width: 0;
+  vertical-align: middle;
+}
+
+.moneda-shell.moneda--apilado {
+  align-items: center;
+  flex-direction: column;
+  gap: 0.4rem;
+  text-align: center;
+}
+
+/* Icono SVG: nunca se deforma */
+.moneda-icon {
+  display: block;
+  flex: 0 0 auto;
+  height: auto;
+  object-fit: contain;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* Fallback (si el SVG no carga): medallón con la D de DAEMON */
+.moneda-fallback {
+  align-items: center;
+  background: linear-gradient(140deg, #7c3aed 0%, #3b0f86 100%);
+  border-radius: 50%;
+  color: #ffffff;
+  display: inline-flex;
+  flex: 0 0 auto;
+  font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-weight: 800;
+  justify-content: center;
+  letter-spacing: 0;
+  line-height: 1;
+  text-transform: uppercase;
+  user-select: none;
+}
+
+/* Valor numérico: tabular nums para que no salte al cambiar dígitos */
+.moneda-valor {
+  align-items: baseline;
+  display: inline-flex;
+  flex: 0 1 auto;
+  font-feature-settings: 'tnum' 1, 'cv11' 1;
+  font-variant-numeric: tabular-nums lining-nums;
+  gap: 0.3rem;
+  min-width: 0;
+  white-space: nowrap;
+}
+
+.moneda-valor-numero {
+  color: inherit;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.moneda-valor-etiqueta {
+  color: #64748b;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.moneda-etiqueta-lateral {
+  color: #64748b;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ============================================================
+   Variante fuerte: chip oscuro serio (no pastel genérico)
+   ============================================================ */
+.moneda-shell.moneda--fuerte {
+  align-items: center;
+  background: linear-gradient(135deg, #1e1b4b 0%, #4c1d95 55%, #6d28d9 100%);
+  border: 1px solid rgba(167, 139, 250, 0.35);
+  border-radius: 999px;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.12) inset,
+    0 6px 18px -8px rgba(76, 29, 149, 0.55),
+    0 1px 2px rgba(15, 12, 41, 0.25);
+  gap: 0.5rem;
+  padding: 0.32rem 0.75rem 0.32rem 0.38rem;
+}
+
+.moneda-shell.moneda--fuerte.moneda--apilado {
+  align-items: center;
+  border-radius: 18px;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding: 0.7rem 0.95rem;
+  text-align: center;
+}
+
+.moneda-shell.moneda--fuerte .moneda-valor-numero {
+  color: #ffffff;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
+}
+
+.moneda-shell.moneda--fuerte .moneda-valor-etiqueta,
+.moneda-shell.moneda--fuerte .moneda-etiqueta-lateral {
+  color: rgba(221, 214, 254, 0.92);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* En apilado, el icono y el número se separan un toque */
+.moneda-shell.moneda--apilado .moneda-icon,
+.moneda-shell.moneda--apilado .moneda-fallback {
+  margin-bottom: 0.05rem;
+}

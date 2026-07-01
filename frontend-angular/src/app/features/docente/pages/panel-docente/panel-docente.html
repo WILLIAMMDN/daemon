@@ -13,10 +13,40 @@
       <div>
         <p class="eyebrow">Portal docente</p>
         <h1>Control del aula DAEMON</h1>
-        <p>Monitorea actividad, economía escolar, entregas y estudiantes con mejor avance.</p>
+        <p>Monitorea actividad, economia escolar, entregas y estudiantes con mejor avance.</p>
       </div>
-      <a nz-button nzType="primary" nzSize="large" class="daemon-btn" routerLink="/docente/alumnos">Gestionar alumnos</a>
+      <div class="hero-actions">
+        <a nz-button nzType="primary" nzSize="large" class="daemon-btn" routerLink="/docente/alumnos">Gestionar alumnos</a>
+      </div>
     </header>
+
+    @if (panel(); as datos) {
+      <section class="scope-card" [class.scope-card--warning]="datos.alcance.tipo === 'sin_aula'">
+        <div>
+          <p class="eyebrow">Alcance academico</p>
+          <h2>{{ datos.alcance.titulo }}</h2>
+          <p>{{ datos.alcance.descripcion }}</p>
+        </div>
+        <div class="scope-tags">
+          <nz-tag class="daemon-tag" [nzColor]="datos.alcance.tipo === 'global' ? 'purple' : datos.alcance.tipo === 'sin_aula' ? 'gold' : 'green'">
+            {{ datos.alcance.tipo === 'global' ? 'Admin global' : datos.alcance.tipo === 'sin_aula' ? 'Pendiente' : 'Aula asignada' }}
+          </nz-tag>
+          @if (datos.alcance.aula?.codigo) {
+            <nz-tag class="daemon-tag" nzColor="blue">{{ datos.alcance.aula?.codigo }}</nz-tag>
+          }
+        </div>
+      </section>
+    }
+
+    @if (panel()?.alcance?.tipo === 'sin_aula') {
+      <nz-alert
+        class="daemon-alert"
+        nzType="warning"
+        nzShowIcon
+        nzMessage="Este docente todavia no tiene aula"
+        nzDescription="Por seguridad no se muestran alumnos hasta que un administrador le asigne un aula."
+      ></nz-alert>
+    }
 
     <section class="metricas">
       @if (panel(); as datos) {
@@ -25,7 +55,7 @@
           <strong>{{ datos.alumnos }}</strong>
         </article>
         <article>
-          <span>Tokens en circulación</span>
+          <span>Tokens en circulacion</span>
           <strong>{{ datos.tokens_circulacion }}</strong>
         </article>
         <article>
@@ -67,7 +97,7 @@
               }
             </ol>
           } @else {
-            <app-estado-vacio titulo="Sin ranking todavía" descripcion="Cuando los estudiantes acumulen tokens, aparecerán aquí."></app-estado-vacio>
+            <app-estado-vacio titulo="Sin ranking todavia" descripcion="Cuando los estudiantes acumulen tokens, apareceran aqui."></app-estado-vacio>
           }
         } @else {
           <ol class="ranking-skeleton" aria-hidden="true">
@@ -87,8 +117,8 @@
 
       <article class="acciones">
         <div class="section-title">
-          <p class="eyebrow">Gestión rápida</p>
-          <h2>Acciónes de clase</h2>
+          <p class="eyebrow">Gestion rapida</p>
+          <h2>Acciones de clase</h2>
         </div>
         <a nz-button nzType="primary" class="daemon-btn teacher-action" routerLink="/docente/misiones">Crear misiones</a>
         <a nz-button nzType="primary" class="daemon-btn teacher-action teacher-action--review" routerLink="/docente/entregas">Revisar entregas</a>

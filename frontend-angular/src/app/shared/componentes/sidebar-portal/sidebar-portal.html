@@ -11,6 +11,58 @@
   aria-label="Cerrar menú"
 ></button>
 
+<!-- Template reutilizable para el popover de perfil (versión expandida y colapsada) -->
+<ng-template #profilePopContent>
+  <div class="profile-popover-inner">
+    <header class="profile-popover-head">
+      <nz-avatar
+        class="profile-popover-avatar"
+        [nzSize]="56"
+        [nzSrc]="avatarSrcVisible && avatarSrc() ? avatarSrc() : undefined"
+        [nzText]="iniciales()"
+        (nzError)="onAvatarError()"
+      ></nz-avatar>
+      <div class="profile-popover-id">
+        <strong class="profile-popover-name" [attr.title]="perfilNombre">{{ perfilNombre }}</strong>
+        @if (perfilUsuario) {
+          <span class="profile-popover-username" [attr.title]="'@' + perfilUsuario">&#64;{{ perfilUsuario }}</span>
+        }
+      </div>
+    </header>
+
+    <ul class="profile-popover-list">
+      @if (perfilEmail) {
+        <li class="profile-popover-item">
+          <fa-icon class="profile-popover-icon" [icon]="iconos.correo" aria-hidden="true" />
+          <span class="profile-popover-key">Correo</span>
+          <span class="profile-popover-val" [attr.title]="perfilEmail">{{ perfilEmail }}</span>
+        </li>
+      }
+      <li class="profile-popover-item">
+        <fa-icon class="profile-popover-icon" [icon]="iconos.rolIcono" aria-hidden="true" />
+        <span class="profile-popover-key">Rol</span>
+        <span class="profile-popover-val">{{ rol }}</span>
+      </li>
+      @if (perfilNivel) {
+        <li class="profile-popover-item">
+          <fa-icon class="profile-popover-icon" [icon]="iconos.nivel" aria-hidden="true" />
+          <span class="profile-popover-key">Nivel</span>
+          <span class="profile-popover-val">{{ perfilNivel }}</span>
+        </li>
+      }
+      @if (perfilTokens !== null) {
+        <li class="profile-popover-item profile-popover-item--accent">
+          <span class="profile-popover-icon profile-popover-icon--coin">
+            <app-moneda-daemon [size]="20" titulo="Moneda DAEMON" />
+          </span>
+          <span class="profile-popover-key">Tokens</span>
+          <span class="profile-popover-val">{{ perfilTokens | number }}</span>
+        </li>
+      }
+    </ul>
+  </div>
+</ng-template>
+
 <aside
   class="portal-sidebar"
   [class.mobile-open]="mobileOpen"
@@ -47,28 +99,75 @@
     </button>
   </header>
 
-  <!-- Bloque de perfil compacto: avatar + nombre + meta + chevron -->
+  <!-- Bloque de perfil limpio tipo University: foto grande arriba (nz-avatar),
+       nombre + chevron debajo. Click en el bloque abre popover con toda la info. -->
   <section class="profile-block" aria-label="Cuenta activa">
-    <nz-avatar
-      class="profile-avatar"
-      [nzSize]="44"
-      [nzSrc]="avatarSrcVisible && avatarSrc() ? avatarSrc() : undefined"
-      [nzText]="iniciales()"
-      (nzError)="onAvatarError()"
-    ></nz-avatar>
-    <div class="profile-info">
-      <strong class="profile-name" [attr.title]="perfilNombre">{{ perfilNombre }}</strong>
-      @if (!colapsado) {
-        <span class="profile-meta">
-          <span class="profile-role">{{ rol }}</span>
-          @if (perfilDetalle) {
-            <span class="profile-sep" aria-hidden="true">·</span>
-            <span class="profile-detail">{{ perfilDetalle }}</span>
-          }
+    @if (!colapsado) {
+      <button
+        type="button"
+        class="profile-trigger"
+        nz-popover
+        nzPopoverTrigger="click"
+        nzPopoverPlacement="rightTop"
+        nzPopoverOverlayClassName="profile-popover"
+        [nzPopoverContent]="profilePopContent"
+        [(nzPopoverVisible)]="profilePopoverOpen"
+        [attr.aria-label]="'Ver datos de la cuenta ' + perfilNombre"
+      >
+        <span class="profile-avatar-wrap">
+          <nz-avatar
+            class="profile-avatar"
+            [nzSize]="88"
+            [nzSrc]="avatarSrcVisible && avatarSrc() ? avatarSrc() : undefined"
+            [nzText]="iniciales()"
+            (nzError)="onAvatarError()"
+          ></nz-avatar>
+          <span class="profile-status" aria-hidden="true"></span>
         </span>
-      }
-    </div>
-    <fa-icon class="profile-chevron" [icon]="iconos.submenuCerrado" />
+
+        <span class="profile-id">
+          <strong class="profile-name" [attr.title]="perfilNombre">{{ perfilNombre }}</strong>
+          <fa-icon class="profile-chevron" [icon]="iconos.chevronDown" aria-hidden="true" />
+        </span>
+
+        @if (rol) {
+          <span class="profile-role-tag" [attr.title]="'Rol: ' + rol">
+            <fa-icon class="profile-role-icon" [icon]="modo === 'docente' ? iconos.docente : iconos.alumno" aria-hidden="true" />
+            <span class="profile-role-text">{{ rol }}</span>
+          </span>
+        }
+
+        @if (perfilTokens !== null) {
+          <span class="profile-balance" [attr.title]="perfilTokens + ' tokens DAEMON'">
+            <app-moneda-daemon [size]="22" [cantidad]="perfilTokens" titulo="Saldo de tokens DAEMON" />
+          </span>
+        }
+      </button>
+    } @else {
+      <!-- Modo colapsado: solo avatar clickable, sin nombre ni chevron -->
+      <button
+        type="button"
+        class="profile-trigger profile-trigger--compact"
+        nz-popover
+        nzPopoverTrigger="click"
+        nzPopoverPlacement="rightTop"
+        nzPopoverOverlayClassName="profile-popover"
+        [nzPopoverContent]="profilePopContent"
+        [(nzPopoverVisible)]="profilePopoverOpen"
+        aria-label="Ver datos de la cuenta"
+      >
+        <span class="profile-avatar-wrap">
+          <nz-avatar
+            class="profile-avatar profile-avatar--compact"
+            [nzSize]="48"
+            [nzSrc]="avatarSrcVisible && avatarSrc() ? avatarSrc() : undefined"
+            [nzText]="iniciales()"
+            (nzError)="onAvatarError()"
+          ></nz-avatar>
+          <span class="profile-status profile-status--compact" aria-hidden="true"></span>
+        </span>
+      </button>
+    }
   </section>
 
   <!-- Navigation body -->
@@ -153,8 +252,22 @@
     }
   </nav>
 
-  <!-- Footer plano: solo logout -->
+  <!-- Footer plano: soporte + logout + meta -->
   <footer class="sidebar-footer">
+    @if (!colapsado) {
+      <a
+        class="support-button support-button--whatsapp"
+        [attr.href]="soporteLink"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Contactar soporte por WhatsApp"
+        title="Soporte DAEMON por WhatsApp (+51 930 893 675)"
+      >
+        <fa-icon [icon]="iconos.whatsapp" />
+        <span class="support-label">Soporte</span>
+      </a>
+    }
+
     <button type="button" class="logout-button" (click)="emitirLogout()" aria-label="Cerrar sesión" title="Cerrar sesión">
       <fa-icon [icon]="iconos.salir" />
       <span class="logout-label">Cerrar sesión</span>

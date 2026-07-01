@@ -455,3 +455,197 @@ th {
   font-size: .86rem;
   margin: .25rem 0 0;
 }
+
+/* ============================================================
+   Sidebar portal — popover de perfil
+   (renderizado fuera del componente, scope global)
+   ============================================================ */
+.profile-popover {
+  --pop-accent: #4f46e5;
+  --pop-accent-soft: #eef2ff;
+  --pop-accent-ink: #3730a3;
+  --pop-ink: #0f172a;
+  --pop-muted: #64748b;
+  --pop-border: #e2e8f0;
+  padding: 0 !important;
+
+  .ant-popover-inner {
+    background: #ffffff;
+    border: 1px solid var(--pop-border);
+    border-radius: 14px;
+    box-shadow: 0 18px 40px rgba(15, 23, 42, .18);
+    padding: 0;
+  }
+
+  .ant-popover-inner-content {
+    padding: 0;
+  }
+
+  .ant-popover-arrow {
+    display: none;
+  }
+}
+
+.profile-popover-inner {
+  display: grid;
+  gap: 0;
+  min-width: 240px;
+}
+
+.profile-popover-head {
+  align-items: center;
+  background: var(--pop-accent-soft);
+  border-bottom: 1px solid var(--pop-border);
+  display: flex;
+  gap: .75rem;
+  padding: .85rem .9rem;
+}
+
+.profile-popover-avatar.ant-avatar {
+  background: var(--pop-accent-soft);
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 0 1px var(--pop-border);
+  color: var(--pop-accent);
+  flex: 0 0 56px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  height: 56px;
+  line-height: 1;
+  width: 56px;
+}
+
+.profile-popover-avatar.ant-avatar img {
+  display: block;
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+.profile-popover-id {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.profile-popover-name {
+  color: var(--pop-ink);
+  font-size: .92rem;
+  font-weight: 700;
+  line-height: 1.2;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profile-popover-username {
+  color: var(--pop-muted);
+  font-size: .76rem;
+  font-weight: 500;
+  line-height: 1.2;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profile-popover-list {
+  display: grid;
+  gap: 0;
+  list-style: none;
+  margin: 0;
+  padding: .35rem 0;
+}
+
+.profile-popover-item {
+  align-items: center;
+  display: grid;
+  font-size: .82rem;
+  gap: .55rem;
+  grid-template-columns: 16px 64px minmax(0, 1fr);
+  line-height: 1.2;
+  min-width: 0;
+  padding: .45rem .9rem;
+  transition: background .12s ease;
+}
+
+.profile-popover-item:hover {
+  background: #f8fafc;
+}
+
+.profile-popover-icon {
+  color: var(--pop-muted);
+  flex: 0 0 auto;
+  font-size: .82rem;
+  text-align: center;
+  width: 16px;
+}
+
+.profile-popover-icon--coin {
+  align-items: center;
+  display: inline-flex;
+  height: 20px;
+  justify-content: center;
+  width: 20px;
+}
+
+.profile-popover-icon--coin app-moneda-daemon {
+  display: inline-flex;
+  line-height: 0;
+}
+
+.profile-popover-key {
+  color: var(--pop-muted);
+  font-size: .7rem;
+  font-weight: 600;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.profile-popover-val {
+  color: var(--pop-ink);
+  font-weight: 600;
+  min-width: 0;
+  overflow: hidden;
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profile-popover-item--accent {
+  background: var(--pop-accent-soft);
+}
+
+.profile-popover-item--accent .profile-popover-icon {
+  color: var(--pop-accent);
+}
+
+.profile-popover-item--accent .profile-popover-val {
+  color: var(--pop-accent-ink);
+  font-weight: 700;
+}
+
+.profile-popover-item--accent:hover {
+  background: #e0e7ff;
+}
+
+/* Variante docente — azul oscuro serio */
+.theme-docente ~ .profile-popover,
+.profile-popover.theme-docente {
+  --pop-accent: #1e3a8a;
+  --pop-accent-soft: #eff6ff;
+  --pop-accent-ink: #1e3a8a;
+}
+
+/* En Angular, el overlay del popover se monta fuera del árbol del componente,
+   así que la clase theme-docente del :host no se propaga. Forzamos el tema
+   del sidebar según el contenedor del portal (data-theme en <body>). */
+body[data-theme='docente'] .profile-popover {
+  --pop-accent: #1e3a8a;
+  --pop-accent-soft: #eff6ff;
+  --pop-accent-ink: #1e3a8a;
+}
+
+body[data-theme='docente'] .profile-popover-item--accent:hover {
+  background: #dbeafe;
+}

@@ -6,11 +6,14 @@ use App\Models\Evaluacion;
 use App\Models\Pregunta;
 use App\Models\RespuestaEvaluacion;
 use App\Models\Usuario;
+use App\Services\Academico\AcademicScopeService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class EvaluacionService
 {
+    public function __construct(private readonly AcademicScopeService $alcance) {}
+
     public function listadoDocente(): Collection
     {
         return Evaluacion::with('preguntas')->orderByDesc('id')->get()
@@ -99,6 +102,8 @@ class EvaluacionService
 
         if ($usuario->rol === 'alumno') {
             $query->where('r.alumno_id', $usuario->id);
+        } elseif ($usuario->rol === 'docente') {
+            $this->alcance->aplicarAlumnosQuery($query, $usuario, 'u.id_aula');
         }
 
         return $query->orderByDesc('r.fecha_envio')->get();

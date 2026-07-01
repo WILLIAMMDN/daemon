@@ -2,8 +2,11 @@
 
 namespace App\Services\Docente;
 
+use App\Models\Aula;
 use App\Models\Insignia;
+use App\Models\Institucion;
 use App\Models\Usuario;
+use App\Services\Academico\AcademicScopeService;
 use App\Services\Archivo\ArchivoUrlService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
@@ -11,7 +14,10 @@ use Illuminate\Support\Facades\DB;
 
 class DocenteService
 {
-    public function __construct(private readonly ArchivoUrlService $archivos) {}
+    public function __construct(
+        private readonly ArchivoUrlService $archivos,
+        private readonly AcademicScopeService $alcance,
+    ) {}
 
     public function panel(?Usuario $docente = null): array
     {
@@ -29,6 +35,7 @@ class DocenteService
             'entregas_pendientes' => (int) ($metricas->entregas_pendientes ?? 0),
             'canjes_pendientes' => (int) ($metricas->canjes_pendientes ?? 0),
             'ranking' => $this->ranking($docente),
+            'alcance' => $this->alcance->resumen($docente),
         ];
     }
 
@@ -42,10 +49,86 @@ class DocenteService
         return $this->alumnosQuery($docente)->orderBy('nombre_completo')->get();
     }
 
+    public function docentes(Usuario $usuario): Collection
+    {
+        if ($usuario->rol !== 'admin') {
+            return collect([$usuario->load('aula.institucion')]);
+        }
+
+        return Usuario::query()
+            ->with('aula.institucion')
+            ->where('rol', 'docente')
+            ->orderBy('nombre_completo')
+            ->get();
+    }
+
+    public function aulas(Usuario $usuario): Collection
+    {
+        $query = Aula::query()
+            ->with('institucion')
+            ->withCount([
+                'usuarios as alumnos_count' => fn ($query) => $query->where('rol', 'alumno'),
+                'usuarios as docentes_count' => fn ($query) => $query->whereIn('rol', ['docente', 'admin']),
+            ])
+            ->orderBy('nombre');
+
+        if ($usuario->rol === 'docente') {
+            if (blank($usuario->id_aula)) {
+                return collect();
+            }
+
+            $query->whereKey($usuario->id_aula);
+        }
+
+        return $query->get()->map(fn (Aula $aula) => [
+            ...$this->alcance->aulaPayload($aula),
+            'institucion' => $aula->institucion ? [
+                'id' => $aula->institucion->id,
+                'nombre' => $aula->institucion->nombre,
+                'slug' => $aula->institucion->slug,
+            ] : null,
+            'alumnos_count' => (int) $aula->alumnos_count,
+            'docentes_count' => (int) $aula->docentes_count,
+        ]);
+    }
+
+    public function crearAula(array $datos): Aula
+    {
+        $datos['id_institucion'] ??= $this->institucionPorDefecto()->id;
+
+        if (blank($datos['codigo'] ?? null)) {
+            unset($datos['codigo']);
+        }
+
+        return Aula::create($datos)->fresh(['institucion']);
+    }
+
+    public function asignarAulaUsuario(Usuario $usuario, ?int $idAula): Usuario
+    {
+        abort_unless(in_array($usuario->rol, ['alumno', 'docente'], true), 422, 'Solo se pueden asignar alumnos o docentes a aulas.');
+
+        if (! $idAula) {
+            $usuario->forceFill([
+                'id_aula' => null,
+                'id_institucion' => null,
+            ])->save();
+
+            return $usuario->fresh(['aula.institucion']);
+        }
+
+        $aula = Aula::findOrFail($idAula);
+        $usuario->forceFill([
+            'id_aula' => $aula->id,
+            'id_institucion' => $aula->id_institucion,
+        ])->save();
+
+        return $usuario->fresh(['aula.institucion']);
+    }
+
     public function asignarTokens(Usuario $docente, array $datos): Usuario
     {
         return DB::transaction(function () use ($docente, $datos) {
-            $alumno = $this->alumnoGestionable($docente, (int) $datos['id_alumno'], true);
+            $alumno = $this->alcance->alumnoGestionable($docente, (int) $datos['id_alumno'], true);
 
             abort_if($alumno->tokens + $datos['cantidad'] < 0, 422, 'El saldo no puede quedar negativo.');
 
@@ -70,9 +153,7 @@ class DocenteService
             ->leftJoin('usuarios as a', 'a.id', '=', 'h.id_alumno')
             ->select('h.*', DB::raw("coalesce(d.nombre_completo, 'Sistema o docente eliminado') as docente"), DB::raw("coalesce(a.nombre_completo, 'Alumno eliminado') as alumno"));
 
-        if ($this->docenteConAula($docente)) {
-            $query->where('a.id_aula', $docente->id_aula);
-        }
+        $this->alcance->aplicarAlumnosQuery($query, $docente, 'a.id_aula');
 
         return $query->orderByDesc('h.fecha')->limit(500)->get();
     }
@@ -106,7 +187,7 @@ class DocenteService
 
     public function asignarInsignia(Usuario $docente, array $datos): void
     {
-        $this->alumnoGestionable($docente, (int) $datos['id_alumno']);
+        $this->alcance->alumnoGestionable($docente, (int) $datos['id_alumno']);
 
         $clave = [
             'id_alumno' => $datos['id_alumno'],
@@ -131,35 +212,16 @@ class DocenteService
 
     private function alumnosQuery(?Usuario $docente = null): Builder
     {
-        $query = Usuario::query()->where('rol', 'alumno');
+        $query = Usuario::query()->with('aula.institucion')->where('rol', 'alumno');
 
-        if ($this->docenteConAula($docente)) {
-            $query->where('id_aula', $docente->id_aula);
-        }
-
-        return $query;
+        return $this->alcance->aplicarAlumnosEloquent($query, $docente);
     }
 
     private function alumnosBaseQuery(?Usuario $docente = null): \Illuminate\Database\Query\Builder
     {
         $query = DB::table('usuarios')->where('rol', 'alumno');
 
-        if ($this->docenteConAula($docente)) {
-            $query->where('id_aula', $docente->id_aula);
-        }
-
-        return $query;
-    }
-
-    private function alumnoGestionable(Usuario $docente, int $idAlumno, bool $bloquear = false): Usuario
-    {
-        $query = $this->alumnosQuery($docente);
-
-        if ($bloquear) {
-            $query->lockForUpdate();
-        }
-
-        return $query->findOrFail($idAlumno);
+        return $this->alcance->aplicarAlumnosQuery($query, $docente);
     }
 
     private function conteoPendientes(string $tabla, ?Usuario $docente = null): int
@@ -171,17 +233,24 @@ class DocenteService
     {
         $query = DB::table($tabla)->where("{$tabla}.estado", 'pendiente');
 
-        if ($this->docenteConAula($docente)) {
-            $query
-                ->join('usuarios as alumno_scope', 'alumno_scope.id', '=', "{$tabla}.id_alumno")
-                ->where('alumno_scope.id_aula', $docente->id_aula);
+        if ($docente?->rol === 'docente') {
+            $query->join('usuarios as alumno_scope', 'alumno_scope.id', '=', "{$tabla}.id_alumno");
+            $this->alcance->aplicarAlumnosQuery($query, $docente, 'alumno_scope.id_aula');
         }
 
         return $query;
     }
 
-    private function docenteConAula(?Usuario $docente): bool
+    public function alcance(Usuario $usuario): array
     {
-        return $docente?->rol === 'docente' && filled($docente->id_aula);
+        return $this->alcance->resumen($usuario);
+    }
+
+    private function institucionPorDefecto(): Institucion
+    {
+        return Institucion::firstOrCreate(
+            ['slug' => 'daemon-general'],
+            ['nombre' => 'DAEMON']
+        );
     }
 }

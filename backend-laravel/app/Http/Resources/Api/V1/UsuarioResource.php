@@ -30,6 +30,17 @@ class UsuarioResource extends JsonResource
             'rol' => $this->rol,
             'id_institucion' => $this->id_institucion,
             'id_aula' => $this->id_aula,
+            'aula' => $this->whenLoaded('aula', fn () => $this->aula ? [
+                'id' => $this->aula->id,
+                'nombre' => $this->aula->nombre,
+                'nivel' => $this->aula->nivel,
+                'codigo' => $this->aula->codigo,
+                'institucion' => $this->aula->relationLoaded('institucion') && $this->aula->institucion ? [
+                    'id' => $this->aula->institucion->id,
+                    'nombre' => $this->aula->institucion->nombre,
+                    'slug' => $this->aula->institucion->slug,
+                ] : null,
+            ] : null),
             'insignia' => $this->insignia,
             'mision_actual' => $this->mision_actual,
             'fondo' => $archivos->url($this->fondo),

@@ -3,12 +3,15 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\V1\Docente\AsignarAulaUsuarioRequest;
 use App\Http\Requests\Api\V1\Docente\AsignarInsigniaRequest;
 use App\Http\Requests\Api\V1\Docente\AsignarTokensRequest;
+use App\Http\Requests\Api\V1\Docente\AulaStoreRequest;
 use App\Http\Requests\Api\V1\Docente\InsigniaStoreRequest;
 use App\Http\Requests\Api\V1\Docente\InsigniaUpdateRequest;
 use App\Http\Resources\Api\V1\UsuarioResource;
 use App\Models\Insignia;
+use App\Models\Usuario;
 use App\Services\Archivo\ArchivoService;
 use App\Services\Docente\DocenteService;
 use Illuminate\Http\Request;
@@ -30,7 +33,36 @@ class DocenteController extends Controller
 
     public function alumnos(Request $request)
     {
-        return UsuarioResource::collection($this->docente->alumnos($request->user()));
+        return [
+            'data' => UsuarioResource::collection($this->docente->alumnos($request->user()))->resolve(),
+            'alcance' => $this->docente->alcance($request->user()),
+        ];
+    }
+
+    public function docentes(Request $request)
+    {
+        return [
+            'data' => UsuarioResource::collection($this->docente->docentes($request->user()))->resolve(),
+            'alcance' => $this->docente->alcance($request->user()),
+        ];
+    }
+
+    public function aulas(Request $request)
+    {
+        return [
+            'data' => $this->docente->aulas($request->user()),
+            'alcance' => $this->docente->alcance($request->user()),
+        ];
+    }
+
+    public function crearAula(AulaStoreRequest $request)
+    {
+        return response()->json($this->docente->crearAula($request->validated()), 201);
+    }
+
+    public function asignarAulaUsuario(AsignarAulaUsuarioRequest $request, Usuario $usuario)
+    {
+        return UsuarioResource::make($this->docente->asignarAulaUsuario($usuario, $request->validated()['id_aula'] ?? null));
     }
 
     public function asignarTokens(AsignarTokensRequest $request)

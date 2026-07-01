@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="DAEMON token">
+  <defs>
+    <linearGradient id="d-rim" x1="32" y1="2" x2="32" y2="62" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#a78bfa"/>
+      <stop offset="0.5" stop-color="#7c3aed"/>
+      <stop offset="1" stop-color="#3b0f86"/>
+    </linearGradient>
+    <linearGradient id="d-rim-inner" x1="32" y1="6" x2="32" y2="58" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#c4b5fd"/>
+      <stop offset="1" stop-color="#5b21b6"/>
+    </linearGradient>
+    <linearGradient id="d-face" x1="32" y1="10" x2="32" y2="54" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#ede9fe"/>
+    </linearGradient>
+    <linearGradient id="d-gloss" x1="32" y1="10" x2="32" y2="30" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Borde exterior oscuro (efecto biselado) -->
+  <circle cx="32" cy="32" r="30.5" fill="#2e1065"/>
+  <!-- Cuerpo del borde con gradiente -->
+  <circle cx="32" cy="32" r="29.5" fill="url(#d-rim)"/>
+  <!-- Brillo interior del borde -->
+  <circle cx="32" cy="32" r="25.5" fill="none" stroke="url(#d-rim-inner)" stroke-width="1" stroke-opacity="0.6"/>
+  <!-- Cara de la moneda -->
+  <circle cx="32" cy="32" r="24" fill="url(#d-face)"/>
+  <!-- Anillo decorativo interno -->
+  <circle cx="32" cy="32" r="24" fill="none" stroke="#5b21b6" stroke-width="0.5" stroke-opacity="0.45"/>
+
+  <!-- Marcas de tick a los 4 puntos cardinales (look premium) -->
+  <g fill="#5b21b6" opacity="0.55">
+    <rect x="31.4" y="10.5" width="1.2" height="2" rx="0.5"/>
+    <rect x="31.4" y="51.5" width="1.2" height="2" rx="0.5"/>
+    <rect x="10.5" y="31.4" width="2" height="1.2" rx="0.5"/>
+    <rect x="51.5" y="31.4" width="2" height="1.2" rx="0.5"/>
+  </g>
+
+  <!-- Monograma D con relleno even-odd para el hueco interior -->
+  <path
+    fill="#3b0f86"
+    fill-rule="evenodd"
+    d="M 22 18 H 32.5 C 39.6 18 44 22.8 44 32 C 44 41.2 39.6 46 32.5 46 H 22 Z M 26 22 V 42 H 32 C 35.7 42 40 39.5 40 32 C 40 24.5 35.7 22 32 22 Z"
+  />
+
+  <!-- Brillo superior para dar volumen -->
+  <ellipse cx="32" cy="15.5" rx="16" ry="3.8" fill="url(#d-gloss)"/>
+</svg>

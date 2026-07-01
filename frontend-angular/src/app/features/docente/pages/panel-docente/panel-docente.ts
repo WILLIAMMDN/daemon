@@ -2,6 +2,7 @@ import { Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzTagModule } from 'ng-zorro-antd/tag';
 import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
 import { Docente } from '../../services/docente';
 
@@ -20,11 +21,18 @@ interface PanelDocenteData {
   entregas_pendientes: number;
   canjes_pendientes: number;
   ranking: AlumnoRanking[];
+  alcance: {
+    tipo: 'global' | 'aula' | 'sin_aula' | string;
+    titulo: string;
+    descripcion: string;
+    aula?: { id: number; nombre: string; nivel?: string | null; codigo?: string | null } | null;
+    institucion?: { id: number; nombre: string; slug: string } | null;
+  };
 }
 
 @Component({
   selector: 'app-panel-docente',
-  imports: [RouterLink, NzAlertModule, NzButtonModule, EstadoVacio],
+  imports: [RouterLink, NzAlertModule, NzButtonModule, NzTagModule, EstadoVacio],
   templateUrl: './panel-docente.html',
   styleUrl: './panel-docente.scss',
 })

@@ -14,6 +14,41 @@
   padding: 1.35rem;
 }
 
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .65rem;
+  justify-content: flex-end;
+}
+
+.scope-card {
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #dfe6f1;
+  border-radius: 8px;
+  box-shadow: 0 8px 20px #2030550a;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: minmax(0, 1fr) auto;
+  padding: 1rem;
+}
+
+.scope-card--warning {
+  border-color: #f5d185;
+}
+
+.scope-card p:not(.eyebrow) {
+  color: #61708d;
+  margin-top: .35rem;
+}
+
+.scope-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .45rem;
+  justify-content: flex-end;
+}
+
 .eyebrow {
   color: #b45309;
   font-size: .75rem;
@@ -268,6 +303,18 @@ li b {
   .hero {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .hero-actions {
+    justify-content: stretch;
+  }
+
+  .scope-card {
+    grid-template-columns: 1fr;
+  }
+
+  .scope-tags {
+    justify-content: flex-start;
   }
 
   .metricas,

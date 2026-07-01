@@ -1,5 +1,103 @@
+.classroom-page {
+  max-width: 1280px;
+}
+
+.scope-panel {
+  align-items: center;
+  background: #fff;
+  border: 1px solid #dfe6f1;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px #2030550b;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: minmax(0, 1fr) auto;
+  padding: 1rem;
+}
+
+.scope-panel--warning {
+  border-color: #f5d185;
+}
+
+.scope-panel h2,
+.scope-panel p,
+.aula-list h2,
+.table-wrap h2 {
+  margin: 0;
+}
+
+.scope-panel p:not(.kicker) {
+  color: #61708d;
+  margin-top: .25rem;
+}
+
+.scope-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .45rem;
+  justify-content: flex-end;
+}
+
+.classroom-admin {
+  align-items: start;
+}
+
+.aula-list {
+  align-content: start;
+}
+
+.aula-card {
+  align-items: center;
+  background: #f8fbff;
+  border: 1px solid #dfe8f8;
+  border-radius: 8px;
+  display: grid;
+  gap: .75rem;
+  grid-template-columns: minmax(0, 1fr) auto;
+  padding: .8rem;
+}
+
+.aula-card + .aula-card {
+  margin-top: .65rem;
+}
+
+.aula-card div {
+  display: grid;
+  gap: .15rem;
+  min-width: 0;
+}
+
+.aula-card small,
+.aula-card span {
+  color: #61708d;
+}
+
+.aula-card strong {
+  overflow-wrap: anywhere;
+}
+
+.aula-select {
+  background: #fff;
+  border: 1px solid #ccd6e6;
+  border-radius: 8px;
+  color: #1e293b;
+  min-height: 36px;
+  min-width: 190px;
+  padding: .45rem .55rem;
+}
+
 .compact {
   min-height: 34px;
   padding: .45rem .7rem;
   width: fit-content;
+}
+
+@media (max-width: 760px) {
+  .scope-panel,
+  .aula-card {
+    grid-template-columns: 1fr;
+  }
+
+  .scope-tags {
+    justify-content: flex-start;
+  }
 }

@@ -1,15 +1,108 @@
-﻿<section class="page">
+<section class="page classroom-page">
   <header class="page-header">
     <div>
       <p class="kicker">Docente</p>
-      <h1>Alumnos y tokens</h1>
-      <p>Listado de estudiantes y ajustes de economía escolar.</p>
+      <h1>Alumnos y aulas</h1>
+      <p>Gestiona estudiantes, tokens y separacion academica por aula.</p>
     </div>
     <button nz-button nzType="default" class="daemon-btn" type="button" [nzLoading]="cargando()" (click)="cargar()">Actualizar</button>
   </header>
 
+  @if (alcance(); as scope) {
+    <section class="scope-panel" [class.scope-panel--warning]="scope.tipo === 'sin_aula'">
+      <div>
+        <p class="kicker">Alcance academico</p>
+        <h2>{{ scope.titulo }}</h2>
+        <p>{{ scope.descripcion }}</p>
+      </div>
+      <div class="scope-tags">
+        <nz-tag class="daemon-tag" [nzColor]="scope.tipo === 'global' ? 'purple' : scope.tipo === 'sin_aula' ? 'gold' : 'green'">
+          {{ scope.tipo === 'global' ? 'Admin global' : scope.tipo === 'sin_aula' ? 'Sin aula' : 'Aula asignada' }}
+        </nz-tag>
+        @if (scope.aula?.codigo) {
+          <nz-tag class="daemon-tag" nzColor="blue">{{ scope.aula?.codigo }}</nz-tag>
+        }
+      </div>
+    </section>
+  }
+
   @if (mensaje()) { <nz-alert class="daemon-alert" nzType="success" nzShowIcon [nzMessage]="mensaje()"></nz-alert> }
   @if (error()) { <nz-alert class="daemon-alert" nzType="error" nzShowIcon [nzMessage]="error()"></nz-alert> }
+
+  @if (esAdmin()) {
+    <section class="split classroom-admin">
+      <form class="panel" (ngSubmit)="crearAula()">
+        <h2>Nueva aula</h2>
+        <div class="form-grid">
+          <label>
+            Nombre
+            <input name="nombre_aula" [(ngModel)]="nuevaAula.nombre" required placeholder="Ej. Teens Sabado 10 AM">
+          </label>
+          <label>
+            Nivel
+            <input name="nivel_aula" [(ngModel)]="nuevaAula.nivel" placeholder="KIDS, TEENS, PRO o TODOS">
+          </label>
+          <label>
+            Codigo
+            <input name="codigo_aula" [(ngModel)]="nuevaAula.codigo" placeholder="TEENS-SAB-10">
+          </label>
+        </div>
+        <button nz-button nzType="primary" class="daemon-btn" type="submit" [nzLoading]="guardando()" [disabled]="guardando() || !puedeCrearAula()">Crear aula</button>
+      </form>
+
+      <article class="panel aula-list">
+        <h2>Aulas activas</h2>
+        @if (aulas().length) {
+          @for (aula of aulas(); track aula.id) {
+            <div class="aula-card">
+              <div>
+                <strong>{{ aula.nombre }}</strong>
+                <small>{{ aula.codigo || 'Sin codigo' }} - {{ aula.nivel || 'Sin nivel' }}</small>
+              </div>
+              <span>{{ aula.alumnos_count || 0 }} alumnos - {{ aula.docentes_count || 0 }} docentes</span>
+            </div>
+          }
+        } @else {
+          <app-estado-vacio titulo="Sin aulas" descripcion="Crea aulas para separar estudiantes y docentes."></app-estado-vacio>
+        }
+      </article>
+    </section>
+
+    <section class="panel table-wrap">
+      <h2>Docentes asignados</h2>
+      @if (docentes().length) {
+        <table>
+          <thead>
+            <tr>
+              <th>Docente</th>
+              <th>Usuario</th>
+              <th>Aula actual</th>
+              <th>Asignar aula</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (docente of docentes(); track docente.id) {
+              <tr>
+                <td>{{ docente.nombre_completo }}</td>
+                <td>{{ docente.usuario }}</td>
+                <td><nz-tag class="daemon-tag" [nzColor]="docente.id_aula ? 'green' : 'gold'">{{ aulaNombre(docente) }}</nz-tag></td>
+                <td>
+                  <select class="aula-select" [ngModel]="docente.id_aula" [ngModelOptions]="{ standalone: true }" (ngModelChange)="asignarAula(docente, $event)" [disabled]="asignando() === docente.id">
+                    <option [ngValue]="null">Sin aula</option>
+                    @for (aula of aulas(); track aula.id) {
+                      <option [ngValue]="aula.id">{{ aula.nombre }}</option>
+                    }
+                  </select>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      } @else {
+        <app-estado-vacio titulo="Sin docentes" descripcion="Cuando existan docentes, podras asignarlos a sus aulas."></app-estado-vacio>
+      }
+    </section>
+  }
 
   <form class="panel" (ngSubmit)="asignarTokens()">
     <h2>Ajustar tokens</h2>
@@ -39,14 +132,17 @@
     <app-cargando class="state" texto="Cargando alumnos..."></app-cargando>
   } @else if (alumnos().length) {
     <section class="panel table-wrap">
+      <h2>Alumnos del alcance actual</h2>
       <table>
         <thead>
           <tr>
             <th>Alumno</th>
             <th>Usuario</th>
             <th>Nivel</th>
+            <th>Aula</th>
             <th>Rango</th>
             <th>Tokens</th>
+            @if (esAdmin()) { <th>Asignar aula</th> }
             <th>Carnet</th>
           </tr>
         </thead>
@@ -56,8 +152,19 @@
               <td>{{ alumno.nombre_completo }}</td>
               <td>{{ alumno.usuario }}</td>
               <td><nz-tag class="daemon-tag" nzColor="blue">{{ alumno.nivel }}</nz-tag></td>
+              <td><nz-tag class="daemon-tag" [nzColor]="alumno.id_aula ? 'green' : 'gold'">{{ aulaNombre(alumno) }}</nz-tag></td>
               <td>{{ alumno.rango || '-' }}</td>
               <td><strong>{{ alumno.tokens }}</strong></td>
+              @if (esAdmin()) {
+                <td>
+                  <select class="aula-select" [ngModel]="alumno.id_aula" [ngModelOptions]="{ standalone: true }" (ngModelChange)="asignarAula(alumno, $event)" [disabled]="asignando() === alumno.id">
+                    <option [ngValue]="null">Sin aula</option>
+                    @for (aula of aulas(); track aula.id) {
+                      <option [ngValue]="aula.id">{{ aula.nombre }}</option>
+                    }
+                  </select>
+                </td>
+              }
               <td><a nz-button nzType="default" class="daemon-btn compact" [routerLink]="['/docente/carnets', alumno.id]">Abrir</a></td>
             </tr>
           }
@@ -65,6 +172,6 @@
       </table>
     </section>
   } @else {
-    <app-estado-vacio titulo="Sin alumnos registrados" descripcion="Cuando se registren estudiantes, podrás administrar sus tokens y carnets desde aquí."></app-estado-vacio>
+    <app-estado-vacio titulo="Sin alumnos en este alcance" descripcion="Asigna estudiantes al aula correspondiente para que aparezcan en este dashboard."></app-estado-vacio>
   }
 </section>

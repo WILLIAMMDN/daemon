@@ -4,17 +4,28 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Models\Usuario;
+use App\Services\Academico\AcademicScopeService;
 use App\Services\Archivo\ArchivoUrlService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class CertificadoController extends Controller
 {
-    public function __construct(private readonly ArchivoUrlService $archivos) {}
+    public function __construct(
+        private readonly ArchivoUrlService $archivos,
+        private readonly AcademicScopeService $alcance,
+    ) {}
 
     public function show(Request $request, ?Usuario $usuario = null)
     {
-        $usuario ??= $request->user();
+        $actor = $request->user();
+        $usuario ??= $actor;
+
+        if ((int) $usuario->id !== (int) $actor->id) {
+            abort_unless(in_array($actor->rol, ['docente', 'admin'], true), 403, 'No puedes ver este carnet.');
+            abort_unless($usuario->rol === 'alumno', 403, 'Solo se pueden emitir carnets de alumnos desde esta vista.');
+            $this->alcance->alumnoGestionable($actor, (int) $usuario->id);
+        }
 
         $usuario->avatar = $this->archivos->url($usuario->avatar);
         $usuario->fondo = $this->archivos->url($usuario->fondo);
