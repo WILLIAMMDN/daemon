@@ -82,12 +82,21 @@
       <span class="brand-mark" aria-hidden="true">
         @if (brandLogoVisible) {
           <img
-            class="brand-logo"
-            [class.brand-logo--compact]="colapsado"
-            [src]="colapsado ? brandLogoCompact : brandLogo"
+            class="brand-logo brand-logo--full"
+            [src]="brandLogo"
             alt=""
             width="112"
             height="58"
+            decoding="async"
+            loading="eager"
+            (error)="onBrandLogoError()"
+          />
+          <img
+            class="brand-logo brand-logo--compact"
+            [src]="brandLogoCompact"
+            alt=""
+            width="42"
+            height="42"
             decoding="async"
             loading="eager"
             (error)="onBrandLogoError()"

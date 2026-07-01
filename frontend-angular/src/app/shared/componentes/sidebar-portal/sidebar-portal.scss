@@ -16,12 +16,19 @@
  */
 
 :host {
+  /* Paleta DAEMON, tomada del logo y usada con moderacion. */
+  --sb-brand-orange: #ff9200;
+  --sb-brand-green: #22c55e;
+  --sb-brand-cyan: #19c1d0;
+  --sb-brand-pink: #ff009d;
+  --sb-brand-indigo: #32128e;
+
   /* Paleta alumno (default) */
-  --sb-accent: #4f46e5;
-  --sb-accent-strong: #4338ca;
-  --sb-accent-soft: #eef2ff;
-  --sb-accent-ink: #3730a3;
-  --sb-accent-icon: #6366f1;
+  --sb-accent: var(--sb-brand-indigo);
+  --sb-accent-strong: #24105f;
+  --sb-accent-soft: #f4f0ff;
+  --sb-accent-ink: #27116f;
+  --sb-accent-icon: var(--sb-brand-indigo);
 
   /* Superficies */
   --sb-surface: #ffffff;
@@ -38,17 +45,17 @@
 
   /* Item */
   --sb-item-hover: #f1f5f9;
-  --sb-item-active-bg: #eef2ff;
-  --sb-item-active-ink: #312e81;
+  --sb-item-active-bg: #fff7ed;
+  --sb-item-active-ink: #1f2937;
 
   /* Icono */
   --sb-icon-ink: #64748b;
   --sb-icon-ink-hover: #475569;
-  --sb-icon-ink-active: var(--sb-accent);
+  --sb-icon-ink-active: var(--sb-brand-indigo);
 
   /* Avatar */
-  --sb-avatar-bg: #eef2ff;
-  --sb-avatar-ink: #4f46e5;
+  --sb-avatar-bg: #f4f0ff;
+  --sb-avatar-ink: var(--sb-brand-indigo);
 
   /* Geometría */
   --sb-width: 264px;
@@ -71,16 +78,16 @@
 }
 
 :host(.theme-docente) {
-  --sb-accent: #1e3a8a;
-  --sb-accent-strong: #172554;
-  --sb-accent-soft: #eff6ff;
-  --sb-accent-ink: #1e3a8a;
-  --sb-accent-icon: #1e40af;
-  --sb-icon-ink-active: #1e3a8a;
-  --sb-item-active-bg: #eff6ff;
-  --sb-item-active-ink: #172554;
-  --sb-avatar-bg: #eff6ff;
-  --sb-avatar-ink: #1e3a8a;
+  --sb-accent: var(--sb-brand-indigo);
+  --sb-accent-strong: #24105f;
+  --sb-accent-soft: #f4f0ff;
+  --sb-accent-ink: #27116f;
+  --sb-accent-icon: var(--sb-brand-indigo);
+  --sb-icon-ink-active: var(--sb-brand-indigo);
+  --sb-item-active-bg: #fff7ed;
+  --sb-item-active-ink: #1f2937;
+  --sb-avatar-bg: #f4f0ff;
+  --sb-avatar-ink: var(--sb-brand-indigo);
 }
 
 .portal-sidebar {
@@ -103,12 +110,14 @@
   align-items: start;
   display: grid;
   gap: .65rem;
-  grid-template-columns: minmax(0, 1fr) auto;
-  padding: 1rem 1.05rem .8rem;
+  grid-template-columns: 1fr;
+  justify-items: center;
+  padding: 1rem 3.4rem .8rem;
+  position: relative;
 }
 
 .brand-link {
-  align-items: flex-start;
+  align-items: center;
   color: var(--sb-ink);
   display: inline-flex;
   flex-direction: column;
@@ -131,8 +140,12 @@
   display: block;
   height: 100%;
   object-fit: contain;
-  object-position: left center;
+  object-position: center;
   width: 100%;
+}
+
+.brand-logo--compact {
+  display: none;
 }
 
 .brand-fallback {
@@ -152,6 +165,7 @@
 }
 
 .brand-stack {
+  align-items: center;
   display: inline-flex;
   flex-direction: column;
   gap: 1px;
@@ -175,7 +189,7 @@
   font-weight: 800;
   letter-spacing: .08em;
   line-height: 1.2;
-  margin-left: .18rem;
+  margin-left: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   text-transform: uppercase;
@@ -200,19 +214,26 @@
   width: 30px;
 }
 
+.pin-button {
+  position: absolute;
+  right: 1.05rem;
+  top: 1rem;
+}
+
 .pin-button:hover,
 .close-button:hover {
-  background: var(--sb-item-hover);
-  color: var(--sb-ink);
+  background: #fff7ed;
+  border-color: #fed7aa;
+  color: var(--sb-brand-indigo);
 }
 
 .pin-button.is-pinned {
-  background: var(--sb-accent);
+  background: var(--sb-brand-orange);
   color: #ffffff;
 }
 
 .pin-button.is-pinned:hover {
-  background: var(--sb-accent-strong);
+  background: #ea580c;
   color: #ffffff;
 }
 
@@ -315,7 +336,7 @@
 }
 
 .profile-status {
-  background: #16a34a;
+  background: var(--sb-brand-green);
   border: 2.5px solid var(--sb-surface);
   border-radius: 50%;
   bottom: 2px;
@@ -378,7 +399,7 @@
 
 /* Icono contextual (Birrete para alumno, Pizarra para docente) */
 .profile-role-icon {
-  color: var(--sb-accent);
+  color: var(--sb-brand-cyan);
   font-size: 0.75rem;
   opacity: 0.9;
 }
@@ -494,7 +515,7 @@
 .nav-item.active::before,
 .nav-parent.active::before,
 .submenu-item.active::before {
-  background: var(--sb-accent);
+  background: var(--sb-brand-orange);
   border-radius: 0 2px 2px 0;
   content: '';
   height: 22px;
@@ -572,7 +593,7 @@
 }
 
 .nav-badge {
-  background: var(--sb-accent);
+  background: var(--sb-brand-indigo);
   border-radius: 6px;
   color: #ffffff;
   flex: 0 0 auto;
@@ -680,11 +701,12 @@
 
 /* Soporte WhatsApp: tinte verde del brand, sin romper la paleta del sidebar. */
 .support-button--whatsapp fa-icon {
-  color: #25d366;
+  color: var(--sb-brand-green);
 }
 
 .support-button--whatsapp:hover {
-  border-color: rgba(37, 211, 102, .35);
+  background: #f0fdf4;
+  border-color: rgba(34, 197, 94, .38);
 }
 
 .support-label {
@@ -792,8 +814,13 @@
   object-position: center;
 }
 
+:host(.sidebar-collapsed) .brand-logo--full {
+  display: none;
+}
+
 :host(.sidebar-collapsed) .brand-logo--compact {
   border-radius: 10px;
+  display: block;
 }
 
 :host(.sidebar-collapsed) .brand-stack {
@@ -801,7 +828,8 @@
 }
 
 :host(.sidebar-collapsed) .pin-button {
-  margin: 0 auto;
+  margin: .4rem auto 0;
+  position: static;
 }
 
 :host(.sidebar-collapsed) .close-button {
