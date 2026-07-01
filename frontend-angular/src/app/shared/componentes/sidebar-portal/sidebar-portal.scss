@@ -188,8 +188,12 @@
   border: 0;
   border-radius: 0;
   box-shadow: none;
-  filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.75)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
   padding: 0;
+}
+
+:host(.theme-alumno) .brand-logo {
+  filter: brightness(0) invert(1);
+  opacity: 0.95;
 }
 
 .brand-mark::after {
@@ -224,7 +228,6 @@
   width: 34px;
 }
 
-.pin-button,
 .close-button {
   align-items: center;
   appearance: none;
@@ -242,51 +245,102 @@
   width: 32px;
 }
 
-.pin-button {
-  position: static;
-}
-
-.pin-button:hover,
 .close-button:hover {
   background: var(--sb-accent-soft);
   border-color: #ddd6fe;
   color: var(--sb-brand-indigo);
 }
 
-:host(.theme-alumno) .pin-button,
 :host(.theme-alumno) .close-button {
   color: rgba(255, 255, 255, .6);
 }
 
-:host(.theme-alumno) .pin-button:hover,
 :host(.theme-alumno) .close-button:hover {
   background: rgba(255, 255, 255, .08);
   border-color: rgba(255, 255, 255, .15);
   color: #ffffff;
 }
 
-.pin-button.is-pinned {
-  background: var(--sb-accent-soft);
-  border-color: #ddd6fe;
-  color: var(--sb-accent);
+/* S-Curve Toggle Handle on right border */
+.pin-button {
+  position: absolute;
+  right: -14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 14px;
+  height: 36px;
+  background: var(--sb-surface);
+  border-radius: 0 12px 12px 0;
+  border: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.08);
+  transition: background .15s ease, box-shadow .15s ease;
+
+  fa-icon {
+    background: #64748b;
+    border-radius: 50%;
+    width: 6px;
+    height: 6px;
+    display: inline-block;
+    opacity: 0.6;
+    transition: transform .15s cubic-bezier(0.16, 1, 0.3, 1), opacity .15s ease, background .15s ease;
+    svg {
+      display: none !important;
+    }
+  }
+
+  &.is-pinned fa-icon {
+    background: #64748b;
+    opacity: 1;
+    box-shadow: 0 0 3px rgba(100, 116, 139, 0.4);
+  }
+
+  &:hover fa-icon {
+    opacity: 1;
+    transform: scale(1.25);
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: -12px;
+    width: 12px;
+    height: 12px;
+    background: transparent;
+    border-bottom-right-radius: 12px;
+    box-shadow: 4px 4px 0 0 var(--sb-surface);
+    pointer-events: none;
+    transition: box-shadow .15s ease;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    bottom: -12px;
+    width: 12px;
+    height: 12px;
+    background: transparent;
+    border-top-right-radius: 12px;
+    box-shadow: 4px -4px 0 0 var(--sb-surface);
+    pointer-events: none;
+    transition: box-shadow .15s ease;
+  }
 }
 
-:host(.theme-alumno) .pin-button.is-pinned {
-  background: rgba(255, 255, 255, .15);
-  border-color: rgba(255, 255, 255, .25);
-  color: #ffffff;
-}
-
-.pin-button.is-pinned:hover {
-  background: #ede9fe;
-  border-color: #c4b5fd;
-  color: var(--sb-accent-strong);
-}
-
-:host(.theme-alumno) .pin-button.is-pinned:hover {
-  background: rgba(255, 255, 255, .22);
-  border-color: rgba(255, 255, 255, .32);
-  color: #ffffff;
+:host(.theme-alumno) .pin-button {
+  fa-icon {
+    background: rgba(255, 255, 255, 0.4);
+  }
+  &.is-pinned fa-icon {
+    background: #ffffff;
+    box-shadow: 0 0 4px #ffffff;
+  }
 }
 
 /* ============================================================
@@ -1099,10 +1153,7 @@
   width: 42px;
 }
 
-:host(.sidebar-collapsed) .pin-button {
-  margin: .45rem auto 0;
-  position: static;
-}
+/* Keep absolute positioning on right border when collapsed */
 
 :host(.sidebar-collapsed) .close-button {
   display: none;
