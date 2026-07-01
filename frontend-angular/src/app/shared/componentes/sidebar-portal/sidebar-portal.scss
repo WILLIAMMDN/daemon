@@ -86,9 +86,9 @@
   --sb-accent-soft: rgba(255, 255, 255, .08);
   --sb-accent-ink: #252a5e;
   --sb-accent-icon: #ffffff;
-  --sb-surface: #252a5e;
-  --sb-surface-alt: #2a306c;
-  --sb-surface-soft: rgba(255, 255, 255, .06);
+  --sb-surface: var(--sb-brand-royal);
+  --sb-surface-alt: var(--sb-brand-royal-deep);
+  --sb-surface-soft: rgba(255, 255, 255, .1);
   --sb-border: rgba(255, 255, 255, .12);
   --sb-border-strong: rgba(255, 255, 255, .25);
   --sb-ink: #ffffff;
@@ -134,7 +134,7 @@
   height: calc(100vh - 1.5rem);
   isolation: isolate;
   margin: .75rem;
-  overflow: hidden;
+  overflow: visible; /* Necesario para que el boton S-curve toggle salga del contenedor */
   position: sticky;
   top: .75rem;
 }
@@ -184,11 +184,11 @@
 }
 
 :host(.theme-alumno) .brand-mark {
-  background: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  padding: 6px;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
 }
 
 .brand-mark::after {
@@ -199,8 +199,11 @@
   display: block;
   height: 60px;
   object-fit: contain;
-  object-position: center;
-  width: 138px;
+  width: auto;
+}
+
+:host(.theme-alumno) .brand-logo {
+  filter: brightness(0) invert(1);
 }
 
 .brand-logo--compact {
@@ -259,7 +262,7 @@
 /* S-Curve Toggle Handle on right border */
 .pin-button {
   position: absolute;
-  right: -14px;
+  right: calc(-1.35rem - 14px);
   top: 50%;
   transform: translateY(-50%);
   width: 14px;
@@ -302,29 +305,25 @@
   &::before {
     content: '';
     position: absolute;
-    right: 0;
+    left: 0;
     top: -12px;
     width: 12px;
     height: 12px;
-    background: transparent;
-    border-bottom-right-radius: 12px;
-    box-shadow: 4px 4px 0 0 var(--sb-surface);
+    background: radial-gradient(circle at top right, transparent 12px, var(--sb-surface) 12.5px);
     pointer-events: none;
-    transition: box-shadow .15s ease;
+    transition: background .15s ease;
   }
 
   &::after {
     content: '';
     position: absolute;
-    right: 0;
+    left: 0;
     bottom: -12px;
     width: 12px;
     height: 12px;
-    background: transparent;
-    border-top-right-radius: 12px;
-    box-shadow: 4px -4px 0 0 var(--sb-surface);
+    background: radial-gradient(circle at bottom right, transparent 12px, var(--sb-surface) 12.5px);
     pointer-events: none;
-    transition: box-shadow .15s ease;
+    transition: background .15s ease;
   }
 }
 
