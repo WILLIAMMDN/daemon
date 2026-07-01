@@ -72,10 +72,30 @@
 >
   <!-- Header limpio: brand mark + nombre + detalle institucional -->
   <header class="sidebar-header">
-    <a class="brand-link" [routerLink]="homeLink" (click)="navegar()" [attr.title]="colapsado ? 'DAEMON' : null">
-      <span class="brand-mark" aria-hidden="true">D</span>
+    <a
+      class="brand-link"
+      [routerLink]="homeLink"
+      (click)="navegar()"
+      aria-label="Ir al inicio de DAEMON"
+      [attr.title]="colapsado ? 'DAEMON' : null"
+    >
+      <span class="brand-mark" aria-hidden="true">
+        @if (brandLogoVisible) {
+          <img
+            class="brand-logo"
+            [src]="brandLogo"
+            alt=""
+            width="80"
+            height="50"
+            decoding="async"
+            loading="eager"
+            (error)="onBrandLogoError()"
+          />
+        } @else {
+          <span class="brand-fallback">D</span>
+        }
+      </span>
       <span class="brand-stack">
-        <span class="brand-title">DAEMON</span>
         @if (!colapsado) {
           <span class="brand-subtitle">{{ brandDetalle }}</span>
         }

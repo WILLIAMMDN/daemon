@@ -86,6 +86,8 @@ export class SidebarPortal implements OnInit, OnChanges {
 
   @Output() logout = new EventEmitter<void>();
 
+  readonly brandLogo = '/img/brand/daemon.svg';
+
   readonly iconos = {
     cerrar: faXmark,
     colapsar: faBars,
@@ -120,6 +122,7 @@ export class SidebarPortal implements OnInit, OnChanges {
    * se vuelve false y nz-avatar vuelve a mostrar las iniciales.
    */
   avatarSrcVisible = true;
+  brandLogoVisible = true;
 
   private readonly gruposAbiertos = new Set<string>();
 
@@ -218,6 +221,10 @@ export class SidebarPortal implements OnInit, OnChanges {
    */
   onAvatarError(): void {
     this.avatarSrcVisible = false;
+  }
+
+  onBrandLogoError(): void {
+    this.brandLogoVisible = false;
   }
 
   ngOnChanges(): void {

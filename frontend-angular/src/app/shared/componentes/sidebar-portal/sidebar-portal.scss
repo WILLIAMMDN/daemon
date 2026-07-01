@@ -118,11 +118,28 @@
 
 .brand-mark {
   align-items: center;
+  display: inline-flex;
+  flex: 0 0 auto;
+  height: 50px;
+  justify-content: center;
+  overflow: hidden;
+  width: 80px;
+}
+
+.brand-logo {
+  display: block;
+  height: 100%;
+  object-fit: contain;
+  object-position: left center;
+  width: 100%;
+}
+
+.brand-fallback {
+  align-items: center;
   background: var(--sb-accent);
   border-radius: 9px;
   color: #ffffff;
   display: inline-flex;
-  flex: 0 0 auto;
   font-family: 'Inter', sans-serif;
   font-size: 1.05rem;
   font-weight: 900;
@@ -137,6 +154,7 @@
   display: inline-flex;
   flex-direction: column;
   gap: 1px;
+  justify-content: center;
   min-width: 0;
 }
 
@@ -760,6 +778,15 @@
 
 :host(.sidebar-collapsed) .brand-link {
   gap: 0;
+}
+
+:host(.sidebar-collapsed) .brand-mark {
+  height: 38px;
+  width: 48px;
+}
+
+:host(.sidebar-collapsed) .brand-logo {
+  object-position: center;
 }
 
 :host(.sidebar-collapsed) .brand-stack {
