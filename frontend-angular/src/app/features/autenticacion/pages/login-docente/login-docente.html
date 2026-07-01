@@ -26,6 +26,20 @@
       </div>
 
       <div class="rive-medallion" [class.is-ready]="riveDisponible()" [class.has-error]="riveError()">
+        <div class="rive-poster" aria-hidden="true">
+          <span class="rive-poster__ear rive-poster__ear--left"></span>
+          <span class="rive-poster__ear rive-poster__ear--right"></span>
+          <span class="rive-poster__face">
+            <span class="rive-poster__brow rive-poster__brow--left"></span>
+            <span class="rive-poster__brow rive-poster__brow--right"></span>
+            <span class="rive-poster__eye rive-poster__eye--left"></span>
+            <span class="rive-poster__eye rive-poster__eye--right"></span>
+            <span class="rive-poster__muzzle">
+              <span class="rive-poster__nose"></span>
+              <span class="rive-poster__smile"></span>
+            </span>
+          </span>
+        </div>
         <canvas
           #riveCanvas
           class="rive-mascot"
@@ -33,10 +47,6 @@
           height="280"
           aria-label="Mascota interactiva de DAEMON"
         ></canvas>
-
-        @if (riveError()) {
-          <div class="rive-fallback" aria-hidden="true"></div>
-        }
       </div>
 
       <form #docenteForm="ngForm" (ngSubmit)="entrar(docenteForm)" class="login-form" novalidate>

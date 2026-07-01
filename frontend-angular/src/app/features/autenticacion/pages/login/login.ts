@@ -8,6 +8,8 @@ import { Autenticacion } from '../../../../core/servicios/autenticacion';
 import { Sesion } from '../../../../core/servicios/sesion';
 import { validarCredenciales } from '../../../../shared/validadores/auth-validadores';
 
+const riveCanvasModule = import('@rive-app/canvas');
+
 type TeddyInputs = {
   isChecking?: StateMachineInput;
   isHandsUp?: StateMachineInput;
@@ -172,7 +174,7 @@ export class Login implements AfterViewInit, OnDestroy {
     }
 
     this.zone.runOutsideAngular(() => {
-      void import('@rive-app/canvas')
+      void riveCanvasModule
         .then((riveModule) => {
           const { Alignment, Fit, Layout, Rive, RuntimeLoader } = this.apiRive(riveModule);
           RuntimeLoader.setWasmUrl('/rive/rive.wasm');

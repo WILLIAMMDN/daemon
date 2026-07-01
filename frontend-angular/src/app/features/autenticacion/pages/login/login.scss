@@ -144,6 +144,8 @@
 }
 
 .rive-medallion {
+  --rive-poster-size: 108px;
+
   align-items: center;
   background:
     linear-gradient(#ffffff, #ffffff) padding-box,
@@ -177,13 +179,9 @@
     radial-gradient(circle at 32% 28%, #ffffff 0 7%, transparent 8%),
     linear-gradient(145deg, #f8fafc 0%, #eef3f8 54%, #dfe7f1 100%);
   border-radius: 50%;
-  color: #0b5bd3;
   content: "";
   display: grid;
-  font-size: 2.35rem;
-  font-weight: 950;
   inset: 12px;
-  line-height: 1;
   place-items: center;
   pointer-events: none;
   position: absolute;
@@ -191,14 +189,148 @@
   z-index: 0;
 }
 
-.rive-medallion:not(.is-ready)::before,
-.rive-medallion.has-error::before {
-  animation: daemon-medallion-pulse 1.4s ease-in-out infinite;
-  content: "D";
-}
-
 .rive-medallion.is-ready:not(.has-error)::before {
   opacity: 0;
+}
+
+.rive-poster {
+  height: var(--rive-poster-size);
+  pointer-events: none;
+  position: absolute;
+  transform: translateY(5px);
+  transition:
+    opacity .14s ease,
+    transform .14s ease;
+  width: var(--rive-poster-size);
+  z-index: 2;
+}
+
+.rive-poster::before {
+  background:
+    radial-gradient(circle at 33% 22%, #ffffff 0 7%, transparent 8%),
+    linear-gradient(180deg, #dbeaf2 0%, #edf5fa 46%, #bd315f 47%, #bd315f 70%, #f3f6fa 71%);
+  border: 1px solid #d7e3ed;
+  border-radius: 50%;
+  box-shadow:
+    inset 0 7px 20px #ffffffb5,
+    inset 0 -10px 0 #a927540d;
+  content: "";
+  inset: 0;
+  position: absolute;
+}
+
+.rive-poster__ear {
+  background: #f8fbff;
+  border: 3px solid #d7e1ea;
+  border-radius: 50%;
+  height: 19%;
+  position: absolute;
+  top: 41%;
+  width: 19%;
+  z-index: 1;
+}
+
+.rive-poster__ear::after {
+  background: #c33a66;
+  border-radius: 50%;
+  content: "";
+  inset: 27%;
+  opacity: .65;
+  position: absolute;
+}
+
+.rive-poster__ear--left {
+  left: 22%;
+}
+
+.rive-poster__ear--right {
+  right: 22%;
+}
+
+.rive-poster__face {
+  background: #fbfdff;
+  border-radius: 54% 54% 46% 46%;
+  box-shadow:
+    inset 0 -3px 0 #d3dce6,
+    0 2px 5px #6f7b8b24;
+  height: 36%;
+  left: 25%;
+  position: absolute;
+  top: 48%;
+  transform: rotate(4deg);
+  width: 50%;
+  z-index: 2;
+}
+
+.rive-poster__brow {
+  background: #4a4d59;
+  border-radius: 999px;
+  height: 8%;
+  position: absolute;
+  top: 22%;
+  width: 22%;
+}
+
+.rive-poster__brow--left {
+  left: 20%;
+  transform: rotate(-13deg);
+}
+
+.rive-poster__brow--right {
+  right: 20%;
+  transform: rotate(13deg);
+}
+
+.rive-poster__eye {
+  background: #46505c;
+  border-radius: 50%;
+  height: 10%;
+  position: absolute;
+  top: 42%;
+  width: 10%;
+}
+
+.rive-poster__eye--left {
+  left: 28%;
+}
+
+.rive-poster__eye--right {
+  right: 28%;
+}
+
+.rive-poster__muzzle {
+  background: #e6edf4;
+  border-radius: 50%;
+  bottom: 12%;
+  height: 33%;
+  left: 31%;
+  position: absolute;
+  width: 38%;
+}
+
+.rive-poster__nose {
+  background: #4b5563;
+  border-radius: 50%;
+  height: 22%;
+  left: 40%;
+  position: absolute;
+  top: 18%;
+  width: 20%;
+}
+
+.rive-poster__smile {
+  border-bottom: 3px solid #53606d;
+  border-radius: 0 0 999px 999px;
+  bottom: 21%;
+  height: 27%;
+  left: 22%;
+  position: absolute;
+  width: 56%;
+}
+
+.rive-medallion.is-ready:not(.has-error) .rive-poster {
+  opacity: 0;
+  transform: translateY(8px) scale(.96);
 }
 
 .rive-mascot {
@@ -214,38 +346,6 @@
 
 .rive-medallion.is-ready .rive-mascot {
   opacity: 1;
-}
-
-.rive-fallback {
-  align-items: center;
-  background:
-    radial-gradient(circle at 32% 28%, #ffffff 0 7%, transparent 8%),
-    linear-gradient(145deg, #f8fafc 0%, #eef3f8 54%, #dfe7f1 100%);
-  border-radius: 50%;
-  color: #0b5bd3;
-  display: inline-flex;
-  font-size: 2.35rem;
-  font-weight: 950;
-  height: 110px;
-  justify-content: center;
-  position: absolute;
-  width: 110px;
-  z-index: 2;
-}
-
-.rive-fallback::before {
-  content: "D";
-}
-
-@keyframes daemon-medallion-pulse {
-  0%,
-  100% {
-    box-shadow: inset 0 0 0 0 #0b5bd30f;
-  }
-
-  50% {
-    box-shadow: inset 0 0 0 8px #0b5bd30f;
-  }
 }
 
 .login-form {
@@ -543,6 +643,8 @@
   }
 
   .rive-medallion {
+    --rive-poster-size: 92px;
+
     height: 112px;
     margin-top: .15rem;
     width: 112px;
