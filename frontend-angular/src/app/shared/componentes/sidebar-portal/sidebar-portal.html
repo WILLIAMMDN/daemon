@@ -18,13 +18,16 @@
   (mouseenter)="onMouseEnter()"
   (mouseleave)="onMouseLeave()"
 >
-  <!-- Header plano: solo texto, sin fondo de color -->
+  <!-- Header limpio: brand mark + nombre + detalle institucional -->
   <header class="sidebar-header">
     <a class="brand-link" [routerLink]="homeLink" (click)="navegar()" [attr.title]="colapsado ? 'DAEMON' : null">
-      <span class="brand-title">DAEMON</span>
-      @if (!colapsado) {
-        <span class="brand-subtitle">{{ brandDetalle }}</span>
-      }
+      <span class="brand-mark" aria-hidden="true">D</span>
+      <span class="brand-stack">
+        <span class="brand-title">DAEMON</span>
+        @if (!colapsado) {
+          <span class="brand-subtitle">{{ brandDetalle }}</span>
+        }
+      </span>
     </a>
 
     <button
@@ -44,25 +47,28 @@
     </button>
   </header>
 
-  <!-- User summary card -->
-  <section class="user-card" aria-label="Cuenta activa">
+  <!-- Bloque de perfil compacto: avatar + nombre + meta + chevron -->
+  <section class="profile-block" aria-label="Cuenta activa">
     <nz-avatar
-      class="user-avatar"
+      class="profile-avatar"
       [nzSize]="44"
       [nzSrc]="avatarSrcVisible && avatarSrc() ? avatarSrc() : undefined"
       [nzText]="iniciales()"
       (nzError)="onAvatarError()"
     ></nz-avatar>
-    <div class="user-copy">
-      <span class="user-role">{{ rol }}</span>
-      <strong class="user-name" [attr.title]="perfilNombre">{{ perfilNombre }}</strong>
-      @if (perfilEmail) {
-        <small class="user-email" [attr.title]="perfilEmail">{{ perfilEmail }}</small>
-      } @else if (perfilDetalle) {
-        <small class="user-email">{{ perfilDetalle }}</small>
+    <div class="profile-info">
+      <strong class="profile-name" [attr.title]="perfilNombre">{{ perfilNombre }}</strong>
+      @if (!colapsado) {
+        <span class="profile-meta">
+          <span class="profile-role">{{ rol }}</span>
+          @if (perfilDetalle) {
+            <span class="profile-sep" aria-hidden="true">·</span>
+            <span class="profile-detail">{{ perfilDetalle }}</span>
+          }
+        </span>
       }
     </div>
-    <fa-icon class="user-chevron" [icon]="iconos.submenuCerrado" />
+    <fa-icon class="profile-chevron" [icon]="iconos.submenuCerrado" />
   </section>
 
   <!-- Navigation body -->
