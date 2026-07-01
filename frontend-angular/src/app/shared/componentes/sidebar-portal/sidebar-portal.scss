@@ -100,18 +100,19 @@
    1. Header limpio — brand mark + stack de texto
    ============================================================ */
 .sidebar-header {
-  align-items: center;
+  align-items: start;
   display: grid;
   gap: .65rem;
   grid-template-columns: minmax(0, 1fr) auto;
-  padding: 1.25rem 1.1rem .85rem;
+  padding: 1rem 1.05rem .8rem;
 }
 
 .brand-link {
-  align-items: center;
+  align-items: flex-start;
   color: var(--sb-ink);
   display: inline-flex;
-  gap: .7rem;
+  flex-direction: column;
+  gap: .18rem;
   min-width: 0;
   text-decoration: none;
 }
@@ -120,10 +121,10 @@
   align-items: center;
   display: inline-flex;
   flex: 0 0 auto;
-  height: 50px;
+  height: 58px;
   justify-content: center;
   overflow: hidden;
-  width: 80px;
+  width: 112px;
 }
 
 .brand-logo {
@@ -169,11 +170,12 @@
 }
 
 .brand-subtitle {
-  color: var(--sb-muted);
-  font-size: .68rem;
-  font-weight: 500;
-  letter-spacing: .04em;
+  color: var(--sb-ink-soft);
+  font-size: .66rem;
+  font-weight: 800;
+  letter-spacing: .08em;
   line-height: 1.2;
+  margin-left: .18rem;
   overflow: hidden;
   text-overflow: ellipsis;
   text-transform: uppercase;
@@ -777,16 +779,21 @@
 }
 
 :host(.sidebar-collapsed) .brand-link {
+  align-items: center;
   gap: 0;
 }
 
 :host(.sidebar-collapsed) .brand-mark {
-  height: 38px;
-  width: 48px;
+  height: 42px;
+  width: 42px;
 }
 
 :host(.sidebar-collapsed) .brand-logo {
   object-position: center;
+}
+
+:host(.sidebar-collapsed) .brand-logo--compact {
+  border-radius: 10px;
 }
 
 :host(.sidebar-collapsed) .brand-stack {

@@ -83,10 +83,11 @@
         @if (brandLogoVisible) {
           <img
             class="brand-logo"
-            [src]="brandLogo"
+            [class.brand-logo--compact]="colapsado"
+            [src]="colapsado ? brandLogoCompact : brandLogo"
             alt=""
-            width="80"
-            height="50"
+            width="112"
+            height="58"
             decoding="async"
             loading="eager"
             (error)="onBrandLogoError()"
