@@ -11,68 +11,6 @@
   aria-label="Cerrar menú"
 ></button>
 
-<!-- Quick switcher (Cmd/Ctrl + K): búsqueda rápida sobre todos los items navegables -->
-@if (switcherAbierto) {
-  <div class="sb-switcher-backdrop" (click)="cerrarSwitcher()" aria-hidden="true"></div>
-  <div
-    class="sb-switcher"
-    role="dialog"
-    aria-modal="true"
-    aria-label="Búsqueda rápida"
-    (keydown)="onSwitcherKeydown($event)"
-  >
-    <div class="sb-switcher-shell">
-      <fa-icon class="sb-switcher-icon" [icon]="iconos.buscar" aria-hidden="true" />
-      <input
-        type="text"
-        class="sb-switcher-input"
-        placeholder="Buscar en DAEMON… (misiones, perfil, tienda…)"
-        [value]="switcherQuery"
-        (input)="switcherQuery = $any($event.target).value; switcherIndex = 0"
-        autocomplete="off"
-        spellcheck="false"
-      />
-      <kbd class="sb-switcher-kbd">ESC</kbd>
-    </div>
-    @if (resultadosBusqueda.length > 0) {
-      <ul class="sb-switcher-results" role="listbox">
-        @for (resultado of resultadosBusqueda; track resultado.item.id; let i = $index) {
-          <li
-            class="sb-switcher-item"
-            [class.active]="i === switcherIndex"
-            role="option"
-            [attr.aria-selected]="i === switcherIndex"
-            (mouseenter)="switcherIndex = i"
-            (click)="seleccionarResultado(resultado)"
-          >
-            <span class="sb-switcher-item-icon"><fa-icon [icon]="resultado.item.icono" /></span>
-            <span class="sb-switcher-item-body">
-              <span class="sb-switcher-item-label">{{ resultado.item.etiqueta }}</span>
-              @if (resultado.item.detalle) {
-                <span class="sb-switcher-item-detail">{{ resultado.item.detalle }}</span>
-              }
-            </span>
-            <span class="sb-switcher-item-section">{{ resultado.seccion }}</span>
-            @if (badgeDeItem(resultado.item)) {
-              <span class="sb-switcher-item-badge">{{ badgeDeItem(resultado.item) }}</span>
-            }
-          </li>
-        }
-      </ul>
-    } @else {
-      <div class="sb-switcher-empty">
-        <fa-icon [icon]="iconos.buscar" />
-        <span>Sin resultados para "{{ switcherQuery }}"</span>
-      </div>
-    }
-    <footer class="sb-switcher-foot">
-      <span><kbd>↑</kbd><kbd>↓</kbd> Navegar</span>
-      <span><kbd>↵</kbd> Abrir</span>
-      <span><kbd>ESC</kbd> Cerrar</span>
-    </footer>
-  </div>
-}
-
 <!-- Template reutilizable para el popover de perfil (versión expandida y colapsada) -->
 <ng-template #profilePopContent>
   <div class="profile-popover-inner">
@@ -117,7 +55,7 @@
           <span class="profile-popover-icon profile-popover-icon--coin">
             <app-moneda-daemon [size]="20" titulo="Moneda DAEMON" />
           </span>
-          <span class="profile-popover-key">Daemons</span>
+          <span class="profile-popover-key">Tokens</span>
           <span class="profile-popover-val">{{ perfilTokens | number }}</span>
         </li>
       }
@@ -132,7 +70,7 @@
   (mouseenter)="onMouseEnter()"
   (mouseleave)="onMouseLeave()"
 >
-  <!-- Header limpio: brand mark + saldo prominente + pin -->
+  <!-- Header limpio: brand mark + nombre + detalle institucional -->
   <header class="sidebar-header">
     <a
       class="brand-link"
@@ -173,33 +111,6 @@
         }
       </span>
     </a>
-
-    <!-- Saldo prominente: siempre visible (incluso en colapsado) cuando mostrarSaldoHeader=true -->
-    @if (mostrarSaldoHeader && perfilTokens !== null) {
-      <button
-        type="button"
-        class="header-balance"
-        nz-popover
-        nzPopoverTrigger="hover"
-        nzPopoverPlacement="bottomRight"
-        nzPopoverOverlayClassName="balance-popover"
-        [nzPopoverContent]="balancePopContent"
-        [attr.title]="colapsado ? perfilTokens + ' daemons DAEMON' : null"
-        [attr.aria-label]="'Saldo actual: ' + perfilTokens + ' daemons DAEMON'"
-      >
-        <app-moneda-daemon class="header-balance-coin" [size]="18" titulo="Moneda DAEMON" />
-        @if (!colapsado) {
-          <span class="header-balance-amount">{{ perfilTokens | number }}</span>
-        }
-      </button>
-      <ng-template #balancePopContent>
-        <div class="balance-popover-inner">
-          <span class="balance-popover-label">Saldo Daemons</span>
-          <strong class="balance-popover-amount">{{ perfilTokens | number }}</strong>
-          <span class="balance-popover-foot">Tu economía en DAEMON</span>
-        </div>
-      </ng-template>
-    }
 
     <button
       type="button"
@@ -257,8 +168,8 @@
         }
 
         @if (perfilTokens !== null) {
-          <span class="profile-balance" [attr.title]="perfilTokens + ' daemons DAEMON'">
-            <app-moneda-daemon [size]="22" [cantidad]="perfilTokens" titulo="Saldo de daemons DAEMON" />
+          <span class="profile-balance" [attr.title]="perfilTokens + ' tokens DAEMON'">
+            <app-moneda-daemon [size]="22" [cantidad]="perfilTokens" titulo="Saldo de tokens DAEMON" />
           </span>
         }
       </button>
@@ -291,28 +202,10 @@
 
   <!-- Navigation body -->
   <nav class="sidebar-nav">
-    <!-- Hint de búsqueda: dispara el quick switcher (Cmd/Ctrl + K) -->
-    @if (!colapsado) {
-      <button
-        type="button"
-        class="sidebar-search-hint"
-        (click)="abrirSwitcher()"
-        aria-label="Abrir búsqueda rápida"
-        title="Buscar (Ctrl + K)"
-      >
-        <fa-icon class="sidebar-search-hint-icon" [icon]="iconos.buscar" aria-hidden="true" />
-        <span class="sidebar-search-hint-label">Buscar…</span>
-        <kbd class="sidebar-search-hint-kbd">Ctrl K</kbd>
-      </button>
-    }
-
     @for (seccion of secciones; track seccion.titulo; let last = $last) {
-      <section class="sidebar-section" [class.sidebar-section--economy]="seccion.titulo.toLowerCase() === 'economía'">
+      <section class="sidebar-section">
         <p class="section-title">
           <span class="section-label">{{ seccion.titulo }}</span>
-          @if (seccion.titulo.toLowerCase() === 'economía') {
-            <span class="section-flag" title="Tu economía DAEMON">Daemons</span>
-          }
         </p>
 
         @for (item of seccion.items; track item.id) {
@@ -333,8 +226,8 @@
                   <span class="nav-detail">{{ item.detalle }}</span>
                 }
               </span>
-              @if (badgeDeItem(item)) {
-                <span class="nav-badge">{{ badgeDeItem(item) }}</span>
+              @if (item.badge) {
+                <span class="nav-badge">{{ item.badge }}</span>
               }
               <fa-icon class="chevron" [icon]="estaAbierto(item) ? iconos.submenuAbierto : iconos.submenuCerrado" />
             </button>
@@ -375,8 +268,8 @@
                   <span class="nav-detail">{{ item.detalle }}</span>
                 }
               </span>
-              @if (badgeDeItem(item)) {
-                <span class="nav-badge">{{ badgeDeItem(item) }}</span>
+              @if (item.badge) {
+                <span class="nav-badge">{{ item.badge }}</span>
               }
             </a>
           }
@@ -409,5 +302,10 @@
       <fa-icon [icon]="iconos.salir" />
       <span class="logout-label">Cerrar sesión</span>
     </button>
+
+    <span class="sidebar-foot-meta">
+      <span class="foot-mark">D</span>
+      <span class="foot-text">DAEMON · {{ modo === 'docente' ? 'Panel docente' : 'Academia IA' }}</span>
+    </span>
   </footer>
 </aside>

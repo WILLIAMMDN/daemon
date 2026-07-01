@@ -50,7 +50,7 @@ export const alumnoSidebarSections: PortalSidebarSection[] = [
   {
     titulo: 'Home',
     items: [
-      { id: 'alumno-panel', etiqueta: 'Panel', ruta: '/alumno', detalle: 'Tu progreso', icono: faHouse, exacto: true, badge: 'Hoy' },
+      { id: 'alumno-panel', etiqueta: 'Panel', ruta: '/alumno', detalle: 'Resumen y progreso', icono: faHouse, exacto: true, badge: 'Hoy' },
       { id: 'alumno-perfil', etiqueta: 'Mi perfil', ruta: '/alumno/perfil', detalle: 'Datos, rango e insignias', icono: faUser },
       { id: 'alumno-recursos', etiqueta: 'Recursos', ruta: '/alumno/recursos', detalle: 'Materiales de aprendizaje', icono: faBookOpen },
     ],
