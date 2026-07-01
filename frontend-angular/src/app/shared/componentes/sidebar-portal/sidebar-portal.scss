@@ -12,7 +12,7 @@
  *   - Bloque de perfil limpio: avatar grande arriba (nz-avatar) + nombre + chevron,
  *     click → popover con toda la info de la cuenta.
  *   - Saldo de la moneda DAEMON visible bajo el rol, con el componente reutilizable.
- *   - Botón "Soporte" en el footer (visible solo expandido).
+ *   - Footer minimo: cerrar sesion y firma institucional.
  */
 
 :host {
@@ -111,23 +111,6 @@
   top: .75rem;
 }
 
-.portal-sidebar::before {
-  background: linear-gradient(
-    180deg,
-    var(--sb-brand-orange) 0 25%,
-    var(--sb-brand-green) 25% 50%,
-    var(--sb-brand-cyan) 50% 75%,
-    var(--sb-brand-pink) 75% 100%
-  );
-  content: '';
-  inset: 0 auto 0 0;
-  opacity: .22;
-  pointer-events: none;
-  position: absolute;
-  width: 3px;
-  z-index: 1;
-}
-
 /* ============================================================
    1. Header limpio — brand mark + stack de texto
    ============================================================ */
@@ -135,10 +118,10 @@
   align-items: center;
   border-bottom: 0;
   display: grid;
-  gap: .5rem;
-  grid-template-columns: minmax(0, 1fr) auto;
+  gap: .85rem;
+  grid-template-columns: minmax(0, 1fr) 34px;
   justify-items: stretch;
-  padding: 1.55rem 1.45rem .95rem;
+  padding: 1.15rem 1.45rem .85rem;
   position: relative;
   z-index: 2;
 }
@@ -148,7 +131,8 @@
   color: var(--sb-ink);
   display: inline-flex;
   flex-direction: row;
-  gap: .75rem;
+  gap: 0;
+  justify-content: flex-start;
   min-width: 0;
   text-decoration: none;
   width: 100%;
@@ -156,16 +140,13 @@
 
 .brand-mark {
   align-items: center;
-  background: linear-gradient(145deg, var(--sb-brand-orange), #ff7a00);
-  border-radius: 16px;
-  box-shadow: 0 12px 24px rgba(255, 146, 0, .18);
   display: inline-flex;
-  flex: 0 0 56px;
-  height: 56px;
-  justify-content: center;
+  flex: 0 1 136px;
+  height: 72px;
+  justify-content: flex-start;
   overflow: hidden;
   position: relative;
-  width: 56px;
+  width: 136px;
 }
 
 .brand-mark::after {
@@ -174,10 +155,10 @@
 
 .brand-logo {
   display: block;
-  height: 48px;
+  height: 64px;
   object-fit: contain;
-  object-position: center;
-  width: 48px;
+  object-position: left center;
+  width: 132px;
 }
 
 .brand-logo--compact {
@@ -198,42 +179,6 @@
   letter-spacing: 0;
   line-height: 1;
   width: 34px;
-}
-
-.brand-stack {
-  align-items: flex-start;
-  display: inline-flex;
-  flex-direction: column;
-  gap: 0;
-  justify-content: center;
-  min-width: 0;
-}
-
-.brand-title {
-  color: var(--sb-ink);
-  font-family: 'Inter', sans-serif;
-  font-size: 1.45rem;
-  font-weight: 850;
-  letter-spacing: 0;
-  line-height: 1.1;
-  text-transform: none;
-}
-
-.brand-subtitle {
-  background: transparent;
-  border: 0;
-  border-radius: 0;
-  color: var(--sb-brand-cyan);
-  font-size: 1.05rem;
-  font-weight: 800;
-  letter-spacing: 0;
-  line-height: 1.05;
-  margin-left: 0;
-  overflow: hidden;
-  padding: 0;
-  text-overflow: ellipsis;
-  text-transform: none;
-  white-space: nowrap;
 }
 
 .pin-button,
@@ -317,19 +262,6 @@
   width: 100%;
 }
 
-.profile-trigger::before {
-  background: linear-gradient(180deg, var(--sb-brand-orange), var(--sb-brand-green));
-  border-radius: 999px 0 0 999px;
-  content: '';
-  height: 44px;
-  left: 0;
-  opacity: .82;
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 3px;
-}
-
 .profile-trigger:hover,
 .profile-trigger:focus-visible {
   background: #ffffff;
@@ -347,10 +279,6 @@
   flex-direction: row;
   justify-content: center;
   padding: .35rem;
-}
-
-.profile-trigger--compact::before {
-  display: none;
 }
 
 .profile-avatar-wrap {
@@ -625,24 +553,10 @@
 .nav-item.active,
 .nav-parent.active,
 .submenu-item.active {
-  background: linear-gradient(90deg, color-mix(in srgb, var(--section-accent) 12%, #ffffff), #f4f7ff);
+  background: color-mix(in srgb, var(--section-accent) 10%, #ffffff);
   box-shadow: none;
-  color: #1644c5;
+  color: var(--section-accent);
   font-weight: 600;
-}
-
-.nav-item.active::before,
-.nav-parent.active::before,
-.submenu-item.active::before {
-  background: var(--section-accent);
-  border-radius: 0 2px 2px 0;
-  content: '';
-  height: 24px;
-  left: 0;
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 3px;
 }
 
 .nav-item.active .nav-icon,
@@ -662,10 +576,10 @@
   display: inline-flex;
   flex: 0 0 30px;
   font-size: 1.02rem;
-  height: 30px;
+  height: 34px;
   justify-content: center;
   transition: background .12s ease, border-color .12s ease, color .12s ease, transform .12s ease;
-  width: 30px;
+  width: 34px;
 }
 
 .nav-item:hover .nav-icon,
@@ -786,120 +700,16 @@
 }
 
 /* ============================================================
-   4. Footer — soporte + logout + firma
+   4. Footer — logout + firma
    ============================================================ */
 .sidebar-footer {
-  background: linear-gradient(180deg, rgba(248, 250, 252, 0), #ffffff 28%);
+  background: #ffffff;
   border-top: 1px solid var(--sb-border);
   display: grid;
-  gap: .55rem;
-  padding: .9rem 1.25rem 1rem 1.45rem;
+  gap: .6rem;
+  padding: .9rem 1.45rem 1rem;
   position: relative;
   z-index: 2;
-}
-
-.sidebar-upgrade {
-  background:
-    radial-gradient(circle at 18% 12%, rgba(255, 146, 0, .18), transparent 28%),
-    linear-gradient(135deg, #f3f6ff 0%, #eef7ff 52%, #f8fbff 100%);
-  border: 1px solid #dfe8f8;
-  border-radius: var(--sb-radius-lg);
-  display: grid;
-  gap: .42rem;
-  padding: .85rem;
-}
-
-.upgrade-icon {
-  align-items: center;
-  background: #ffffff;
-  border: 1px solid #e2eaf7;
-  border-radius: 14px;
-  box-shadow: 0 10px 20px rgba(37, 99, 235, .08);
-  display: inline-flex;
-  height: 46px;
-  justify-content: center;
-  width: 46px;
-}
-
-.sidebar-upgrade strong {
-  color: var(--sb-ink);
-  font-size: .86rem;
-  line-height: 1.2;
-}
-
-.sidebar-upgrade span:not(.upgrade-icon) {
-  color: var(--sb-muted);
-  font-size: .74rem;
-  line-height: 1.35;
-}
-
-.upgrade-link {
-  align-items: center;
-  background: #2557e8;
-  border-radius: 12px;
-  color: #ffffff;
-  display: inline-flex;
-  font-size: .78rem;
-  font-weight: 750;
-  gap: .45rem;
-  justify-content: center;
-  margin-top: .25rem;
-  min-height: 36px;
-  padding: .45rem .7rem;
-  text-decoration: none;
-}
-
-.upgrade-link:hover {
-  background: #1d4ed8;
-  color: #ffffff;
-}
-
-.support-button {
-  align-items: center;
-  appearance: none;
-  background: #ffffff;
-  border: 1px solid var(--sb-border);
-  border-radius: 13px;
-  color: var(--sb-ink-soft);
-  cursor: pointer;
-  display: inline-flex;
-  font: inherit;
-  font-size: .82rem;
-  font-weight: 600;
-  gap: .55rem;
-  justify-content: flex-start;
-  padding: .5rem .8rem;
-  text-decoration: none;
-  transition: background .12s ease, border-color .12s ease, box-shadow .12s ease, color .12s ease;
-  width: 100%;
-}
-
-.support-button:hover {
-  background: #f8fafc;
-  border-color: var(--sb-border-strong);
-  box-shadow: 0 8px 18px rgba(15, 23, 42, .05);
-  color: var(--sb-ink);
-}
-
-.support-button fa-icon {
-  color: var(--sb-accent);
-  flex: 0 0 auto;
-  font-size: .88rem;
-}
-
-/* Soporte WhatsApp: tinte verde del brand, sin romper la paleta del sidebar. */
-.support-button--whatsapp fa-icon {
-  color: var(--sb-brand-green);
-}
-
-.support-button--whatsapp:hover {
-  background: #f0fdf4;
-  border-color: rgba(34, 197, 94, .38);
-}
-
-.support-label {
-  flex: 1 1 auto;
-  text-align: left;
 }
 
 .logout-button {
@@ -1015,10 +825,6 @@
   width: 36px;
 }
 
-:host(.sidebar-collapsed) .brand-stack {
-  display: none;
-}
-
 :host(.sidebar-collapsed) .pin-button {
   margin: .4rem auto 0;
   position: static;
@@ -1092,7 +898,6 @@
 
 :host(.sidebar-collapsed) .submenu,
 :host(.sidebar-collapsed) .sidebar-divider,
-:host(.sidebar-collapsed) .sidebar-upgrade,
 :host(.sidebar-collapsed) .sidebar-foot-meta {
   display: none;
 }

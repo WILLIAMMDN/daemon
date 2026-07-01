@@ -2,7 +2,6 @@ import { Component, EventEmitter, HostBinding, Input, OnChanges, OnInit, Output 
 import { DecimalPipe } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faWhatsapp } from '@fortawesome/free-brands-svg-icons';
 import {
   faBars,
   faChartLine,
@@ -11,7 +10,6 @@ import {
   faEnvelope,
   faGraduationCap,
   faChalkboardUser,
-  faHeadset,
   faRightFromBracket,
   faThumbtack,
   faUserTag,
@@ -45,7 +43,7 @@ const SUFFIJO_PIN = '_pin';
  *  - Saldo de la moneda DAEMON visible debajo del rol, sin necesidad de abrir
  *    el popover (usa el componente reutilizable <app-moneda-daemon>).
  *  - Navegación con secciones, submenús, badges e iconos.
- *  - Footer con botón de soporte, cerrar sesión y firma institucional.
+ *  - Footer con cerrar sesión y firma institucional.
  */
 @Component({
   selector: 'app-sidebar-portal',
@@ -81,12 +79,9 @@ export class SidebarPortal implements OnInit, OnChanges {
   @Input() secciones: PortalSidebarSection[] = [];
   @Input() storageKey = 'daemon_sidebar_colapsado';
 
-  /** Botón de soporte (visible en expandido). Por defecto abre WhatsApp. */
-  @Input() soporteLink = 'https://wa.me/51930893675';
-
   @Output() logout = new EventEmitter<void>();
 
-  readonly brandLogo = '/img/brand/daemon-small.svg';
+  readonly brandLogo = '/img/brand/daemon.svg';
   readonly brandLogoCompact = '/img/brand/daemon-small.svg';
 
   readonly iconos = {
@@ -102,8 +97,6 @@ export class SidebarPortal implements OnInit, OnChanges {
     correo: faEnvelope,
     rolIcono: faUserTag,
     nivel: faChartLine,
-    soporte: faHeadset,
-    whatsapp: faWhatsapp,
   };
 
   /** Estado manual persistido (cuando está fijado). */
