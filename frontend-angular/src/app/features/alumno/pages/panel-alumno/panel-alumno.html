@@ -1,57 +1,125 @@
-﻿@if (cargando()) {
-  <app-cargando class="estado" texto="Cargando tu panel..."></app-cargando>
+@if (cargando()) {
+  <app-cargando class="estado" texto="Cargando tu academia..."></app-cargando>
 } @else if (error()) {
   <section class="estado error">
     <nz-alert class="daemon-alert" nzType="error" nzShowIcon nzMessage="No pudimos cargar tu panel" [nzDescription]="error()"></nz-alert>
     <button nz-button nzType="primary" class="daemon-btn" type="button" (click)="cargar()">Reintentar</button>
   </section>
 } @else if (panel(); as datos) {
-  <section class="dashboard">
-    <header class="hero">
-      <div>
-        <p class="eyebrow">Portal estudiante</p>
-        <h1>Hola, {{ datos.usuario.nombre_completo }}</h1>
-        <p>Nivel {{ datos.usuario.nivel }} - {{ datos.usuario.rango || 'Rango en progreso' }}</p>
-      </div>
-      <aside class="saldo">
-        <span>Tokens</span>
-        <strong>{{ datos.usuario.tokens }}</strong>
-        <small>Puesto #{{ datos.posicion }} en tu nivel</small>
-      </aside>
-    </header>
+  <section class="academy-dashboard">
+    <section class="welcome-card">
+      <div class="welcome-copy">
+        <p class="eyebrow">Daemon Academy</p>
+        <h1>Hola, {{ nombreCorto(datos.usuario) }}!</h1>
+        <p>Listo para aprender algo increible hoy. Tus retos, tokens y recompensas viven en una sola ruta.</p>
 
-    <section class="metricas">
-      <article>
-        <span>Misiones activas</span>
-        <strong>{{ datos.misiones_pendientes }}</strong>
-        <a nz-button nzType="link" class="daemon-btn" routerLink="/alumno/misiones">Ver misiones</a>
+        <div class="hero-stats" aria-label="Resumen rapido">
+          <article>
+            <span class="stat-icon stat-icon--fire"><fa-icon [icon]="iconos.fuego" /></span>
+            <strong>{{ racha(datos) }}</strong>
+            <span>Racha diaria</span>
+          </article>
+          <article>
+            <span class="stat-icon stat-icon--energy"><fa-icon [icon]="iconos.energia" /></span>
+            <strong>{{ xpParaNivel(datos) }} XP</strong>
+            <span>para subir de nivel</span>
+          </article>
+          <article>
+            <span class="stat-icon stat-icon--coin">
+              <app-moneda-daemon [size]="24" titulo="Tokens DAEMON" />
+            </span>
+            <strong>{{ datos.usuario.tokens }}</strong>
+            <span>DAEMONS disponibles</span>
+          </article>
+        </div>
+      </div>
+
+      <div class="welcome-art" aria-hidden="true">
+        <span class="spark spark--one"></span>
+        <span class="spark spark--two"></span>
+        <span class="spark spark--three"></span>
+        <img src="/img/bot_default.svg" alt="" width="210" height="210" loading="eager" decoding="async" />
+      </div>
+    </section>
+
+    <section class="progress-card" [style.--progress]="progreso(datos) + '%'">
+      <header>
+        <h2>Tu progreso general</h2>
+        <a routerLink="/alumno/resultados">
+          Ver detalles
+          <fa-icon [icon]="iconos.flecha" />
+        </a>
+      </header>
+
+      <div class="progress-content">
+        <div class="progress-ring" aria-label="Progreso general">
+          <span>
+            <strong>{{ progreso(datos) }}%</strong>
+            <small>Completado</small>
+          </span>
+        </div>
+
+        <div class="progress-copy">
+          <strong>Sigue asi, vas por excelente camino.</strong>
+          <span class="progress-line"><span></span></span>
+          <p>{{ misionesCompletadas(datos) }} de {{ objetivoMisiones(datos) }} misiones completadas</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="spotlight-grid" aria-label="Siguientes acciones">
+      <article class="spotlight-card">
+        <span class="card-icon card-icon--course"><fa-icon [icon]="iconos.curso" /></span>
+        <p>Curso en progreso</p>
+        <h3>Fundamentos de IA creativa</h3>
+        <div class="mini-progress" [style.--mini]="progresoCurso(datos) + '%'"><span></span></div>
+        <footer>
+          <a routerLink="/alumno/recursos">Continuar aprendiendo</a>
+          <small>{{ progresoCurso(datos) }}%</small>
+        </footer>
       </article>
-      <article>
-        <span>Insignias ganadas</span>
-        <strong>{{ datos.insignias }}</strong>
-        <a nz-button nzType="link" class="daemon-btn" routerLink="/alumno/perfil">Mi perfil</a>
+
+      <article class="spotlight-card">
+        <span class="card-icon card-icon--target"><fa-icon [icon]="iconos.reto" /></span>
+        <p>Reto activo</p>
+        <h3>{{ datos.misiones_pendientes || 1 }} misiones por completar</h3>
+        <span class="muted">Resuelve retos, sube evidencia y gana DAEMONS para canjear.</span>
+        <footer>
+          <a routerLink="/alumno/desafios">Ver retos</a>
+          <small>Hoy</small>
+        </footer>
       </article>
-      <article>
-        <span>Canjes pendientes</span>
-        <strong>{{ datos.canjes_pendientes }}</strong>
-        <a nz-button nzType="link" class="daemon-btn" routerLink="/alumno/canjes">Mis canjes</a>
+
+      <article class="spotlight-card reward-card">
+        <span class="card-icon card-icon--gift"><fa-icon [icon]="iconos.regalo" /></span>
+        <p>Ultima recompensa</p>
+        <h3>Pensador logico</h3>
+        <span class="reward-medal"><fa-icon [icon]="iconos.estrella" /></span>
+        <span class="muted">{{ datos.canjes_pendientes }} canjes pendientes en tu mochila.</span>
+        <footer>
+          <a routerLink="/alumno/tienda">Ver recompensas</a>
+          <small>DAEMON</small>
+        </footer>
       </article>
     </section>
 
-    <section class="acciones">
-      <a nz-button nzType="primary" class="daemon-btn student-action student-action--bot" routerLink="/alumno/herramientas/chatbot">Abrir mi bot</a>
-      <a nz-button nzType="primary" class="daemon-btn student-action student-action--eval" routerLink="/alumno/evaluaciones">Evaluaciones</a>
-      <a nz-button nzType="primary" class="daemon-btn student-action student-action--store" routerLink="/alumno/tienda">Tienda</a>
-      <a nz-button nzType="primary" class="daemon-btn student-action student-action--rank" routerLink="/alumno/ranking">Ranking</a>
-    </section>
+    <section class="activity-card">
+      <header>
+        <h2>Actividad reciente</h2>
+        <a routerLink="/alumno/misiones">Ver misiones</a>
+      </header>
 
-    <article class="ruta">
-      <div>
-        <p class="eyebrow">Siguiente paso</p>
-        <h2>Completa una misión y sube evidencia</h2>
-        <p>Las misiones, evaluaciones y votos alimentan tus tokens, insignias y posición en DAEMON.</p>
-      </div>
-      <a nz-button nzType="primary" nzSize="large" class="daemon-btn" routerLink="/alumno/desafios">Ir a desafíos</a>
-    </article>
+      <article class="activity-row">
+        <span class="activity-avatar"><fa-icon [icon]="iconos.cohete" /></span>
+        <div>
+          <strong>Tu ruta DAEMON esta activa</strong>
+          <p>Puesto #{{ datos.posicion }} en tu nivel, {{ datos.insignias }} insignias ganadas.</p>
+        </div>
+        <span class="activity-reward">
+          <fa-icon [icon]="iconos.estrella" />
+          +{{ xpActividad(datos) }} XP
+        </span>
+      </article>
+    </section>
   </section>
 }

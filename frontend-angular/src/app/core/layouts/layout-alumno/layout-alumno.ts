@@ -1,9 +1,12 @@
 import { Component } from '@angular/core';
-import { Router, RouterOutlet } from '@angular/router';
+import { Router, RouterLink, RouterOutlet } from '@angular/router';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faBell, faChevronDown, faMagnifyingGlass, faShieldHalved } from '@fortawesome/free-solid-svg-icons';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzBadgeModule } from 'ng-zorro-antd/badge';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { EmailVerificationBanner } from '../../../shared/componentes/email-verification-banner/email-verification-banner';
+import { MonedaDaemon } from '../../../shared/componentes/moneda-daemon/moneda-daemon';
 import { SidebarPortal } from '../../../shared/componentes/sidebar-portal/sidebar-portal';
 import { Activos } from '../../servicios/activos';
 import { Autenticacion } from '../../servicios/autenticacion';
@@ -12,12 +15,18 @@ import { alumnoSidebarSections } from '../portal-sidebar.config';
 
 @Component({
   selector: 'app-layout-alumno',
-  imports: [RouterOutlet, NzAvatarModule, NzBadgeModule, NzButtonModule, EmailVerificationBanner, SidebarPortal],
+  imports: [RouterOutlet, RouterLink, FontAwesomeModule, NzAvatarModule, NzBadgeModule, NzButtonModule, EmailVerificationBanner, MonedaDaemon, SidebarPortal],
   templateUrl: './layout-alumno.html',
   styleUrl: './layout-alumno.scss',
 })
 export class LayoutAlumno {
   readonly seccionesSidebar = alumnoSidebarSections;
+  readonly iconos = {
+    buscar: faMagnifyingGlass,
+    campana: faBell,
+    rango: faShieldHalved,
+    desplegar: faChevronDown,
+  };
 
   constructor(public sesion: Sesion, private auth: Autenticacion, private router: Router, private activos: Activos) {}
 

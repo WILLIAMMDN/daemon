@@ -107,6 +107,7 @@
       </span>
       <span class="brand-stack">
         @if (!colapsado) {
+          <span class="brand-title">Daemon</span>
           <span class="brand-subtitle">{{ brandDetalle }}</span>
         }
       </span>
@@ -285,6 +286,18 @@
   <!-- Footer plano: soporte + logout + meta -->
   <footer class="sidebar-footer">
     @if (!colapsado) {
+      <article class="sidebar-upgrade">
+        <span class="upgrade-icon" aria-hidden="true">
+          <app-moneda-daemon [size]="34" titulo="DAEMON tokens" />
+        </span>
+        <strong>{{ modo === 'docente' ? 'Gestiona tu aula' : 'Gana mas DAEMONS' }}</strong>
+        <span>{{ modo === 'docente' ? 'Alumnos, tokens y progreso en un solo lugar.' : 'Completa retos y canjea recompensas.' }}</span>
+        <a class="upgrade-link" [routerLink]="modo === 'docente' ? '/docente/alumnos' : '/alumno/misiones'" (click)="navegar()">
+          {{ modo === 'docente' ? 'Ver alumnos' : 'Ir a misiones' }}
+          <fa-icon [icon]="iconos.submenuCerrado" />
+        </a>
+      </article>
+
       <a
         class="support-button support-button--whatsapp"
         [attr.href]="soporteLink"

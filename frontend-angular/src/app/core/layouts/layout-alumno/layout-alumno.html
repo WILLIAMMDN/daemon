@@ -1,7 +1,7 @@
 <div class="portal">
   <app-sidebar-portal
-    ariaLabel="Navegación de estudiante"
-    brandDetalle="Academia IA"
+    ariaLabel="Navegacion de estudiante"
+    brandDetalle="Academy"
     homeLink="/alumno"
     modo="alumno"
     rol="Estudiante"
@@ -20,17 +20,24 @@
     <app-email-verification-banner />
 
     <header class="topbar">
-      <div class="topbar-user">
-        <nz-badge [nzDot]="sesion.usuario()?.email_verificado === false" nzStatus="warning" nzTitle="Correo pendiente de verificación">
-          <nz-avatar class="daemon-avatar" [nzSize]="44" [nzSrc]="avatarUrl() || undefined" [nzText]="iniciales()"></nz-avatar>
-        </nz-badge>
-        <div>
-          <span>Portal estudiante</span>
-          <strong>{{ sesion.usuario()?.usuario || sesion.usuario()?.nombre_completo }}</strong>
-          <small>{{ perfilDetalle() }}</small>
-        </div>
+      <label class="topbar-search">
+        <fa-icon [icon]="iconos.buscar" aria-hidden="true" />
+        <input type="search" placeholder="Buscar cursos, retos, proyectos..." aria-label="Buscar cursos, retos o proyectos" />
+      </label>
+
+      <div class="topbar-actions">
+        <button class="topbar-bell" type="button" aria-label="Notificaciones">
+          <fa-icon [icon]="iconos.campana" />
+          <span aria-hidden="true">2</span>
+        </button>
+
+        <a class="topbar-rank" routerLink="/alumno/perfil">
+          <span class="rank-icon"><fa-icon [icon]="iconos.rango" /></span>
+          <span>{{ sesion.usuario()?.rango || 'Explorador' }}</span>
+          <app-moneda-daemon [size]="20" [cantidad]="perfilTokens()" titulo="DAEMONS disponibles" />
+          <fa-icon class="rank-chevron" [icon]="iconos.desplegar" />
+        </a>
       </div>
-      <button nz-button nzType="default" class="daemon-btn topbar-logout" type="button" (click)="salir()">Cerrar sesión</button>
     </header>
 
     <main class="content-area">
