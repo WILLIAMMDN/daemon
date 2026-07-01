@@ -11,7 +11,7 @@ export class CargaGlobal {
 
   constructor(private spinner: NgxSpinnerService) {}
 
-  mostrar(_mensaje = 'Loading...', retrasoMs = 220): symbol {
+  mostrar(_mensaje = 'Loading...', retrasoMs = 80): symbol {
     const token = Symbol('carga-global');
     this.operacionesActivas.add(token);
 
@@ -29,7 +29,7 @@ export class CargaGlobal {
     return token;
   }
 
-  ocultar(token?: symbol, esperaMs = 160): void {
+  ocultar(token?: symbol, esperaMs = 40): void {
     if (token) {
       this.operacionesActivas.delete(token);
     } else {
