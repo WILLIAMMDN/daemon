@@ -106,13 +106,21 @@
 /* ============================================================
    1. Header limpio — brand mark + stack de texto
    ============================================================ */
+/*
+ * Header del sidebar: grid de 3 columnas.
+ *   Col 1 (auto) — pin-button (fijar/soltar menú).
+ *   Col 2 (1fr)  — brand-link (logo + subtítulo, centrado).
+ *   Col 3 (auto) — header-balance (saldo prominente).
+ * Esto evita que el pill del saldo se monte sobre el brand mark,
+ * problema típico del `position: absolute` cuando los contenedores
+ * cambian de ancho al colapsar o en mobile.
+ */
 .sidebar-header {
-  align-items: start;
+  align-items: center;
   display: grid;
-  gap: .65rem;
-  grid-template-columns: 1fr;
-  justify-items: center;
-  padding: 1rem 3.4rem .8rem;
+  gap: .55rem;
+  grid-template-columns: auto 1fr auto;
+  padding: 1rem .85rem .8rem;
   position: relative;
 }
 
@@ -122,6 +130,8 @@
   display: inline-flex;
   flex-direction: column;
   gap: .18rem;
+  grid-column: 2 / 3;
+  justify-self: center;
   min-width: 0;
   text-decoration: none;
 }
@@ -215,9 +225,10 @@
 }
 
 .pin-button {
-  position: absolute;
-  right: 1.05rem;
-  top: 1rem;
+  grid-column: 1 / 2;
+  justify-self: start;
+  margin: 0;
+  position: static;
 }
 
 .pin-button:hover,
@@ -577,7 +588,7 @@
 .nav-detail {
   color: var(--sb-muted);
   display: block;
-  font-size: .72rem;
+  font-size: .68rem;
   font-weight: 400;
   line-height: 1.2;
   overflow: hidden;
@@ -653,18 +664,20 @@
   border: 0;
   display: block;
   height: 1px;
-  margin: .25rem .5rem;
-  width: auto;
+  margin: .25rem 0;
+  width: 100%;
 }
 
 /* ============================================================
    4. Footer — soporte + logout + firma
+   Sin etiqueta de sección: solo separador superior y buen aire.
+   Los botones comparten --sb-radius-md y min-height con los nav-items.
    ============================================================ */
 .sidebar-footer {
   border-top: 1px solid var(--sb-border);
   display: grid;
-  gap: .55rem;
-  padding: .85rem .85rem .9rem;
+  gap: .45rem;
+  padding: 1.1rem .85rem .9rem;
 }
 
 .support-button {
@@ -795,7 +808,7 @@
    Modo colapsado
    ============================================================ */
 :host(.sidebar-collapsed) .sidebar-header {
-  grid-template-columns: 1fr;
+  grid-template-columns: auto 1fr;
   justify-items: center;
   padding: 1.1rem .5rem .85rem;
 }
@@ -959,4 +972,380 @@
     position: fixed;
     z-index: 45;
   }
+}
+
+/* ============================================================
+   Quick switcher (Cmd / Ctrl + K) — overlay profesional
+   ============================================================ */
+.sb-switcher-backdrop {
+  background: rgba(15, 23, 42, .45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  inset: 0;
+  position: fixed;
+  z-index: 80;
+  animation: sb-switcher-fade .14s ease-out;
+}
+
+@keyframes sb-switcher-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes sb-switcher-pop {
+  from { opacity: 0; transform: translate(-50%, -52%) scale(.97); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+.sb-switcher {
+  background: var(--sb-surface);
+  border: 1px solid var(--sb-border);
+  border-radius: 14px;
+  box-shadow:
+    0 24px 48px -12px rgba(15, 23, 42, .35),
+    0 0 0 1px rgba(255, 255, 255, .04) inset;
+  left: 50%;
+  max-height: 70vh;
+  max-width: min(560px, calc(100vw - 2rem));
+  position: fixed;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  z-index: 81;
+  display: flex;
+  flex-direction: column;
+  animation: sb-switcher-pop .14s ease-out;
+}
+
+.sb-switcher-shell {
+  align-items: center;
+  border-bottom: 1px solid var(--sb-border);
+  display: flex;
+  gap: .7rem;
+  padding: .85rem 1rem;
+}
+
+.sb-switcher-icon {
+  color: var(--sb-muted);
+  font-size: 1rem;
+  flex: 0 0 auto;
+}
+
+.sb-switcher-input {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  color: var(--sb-ink);
+  flex: 1 1 auto;
+  font: inherit;
+  font-size: .98rem;
+  font-weight: 500;
+  outline: none;
+  padding: 0;
+}
+
+.sb-switcher-input::placeholder {
+  color: var(--sb-muted-2);
+  font-weight: 400;
+}
+
+.sb-switcher-kbd {
+  background: var(--sb-surface-soft);
+  border: 1px solid var(--sb-border);
+  border-radius: 6px;
+  color: var(--sb-muted);
+  font-family: inherit;
+  font-size: .65rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  padding: .15rem .4rem;
+}
+
+.sb-switcher-results {
+  list-style: none;
+  margin: 0;
+  max-height: 360px;
+  overflow-y: auto;
+  padding: .35rem;
+}
+
+.sb-switcher-item {
+  align-items: center;
+  border-radius: 8px;
+  cursor: pointer;
+  display: grid;
+  gap: .7rem;
+  grid-template-columns: 22px minmax(0, 1fr) auto auto;
+  padding: .55rem .65rem;
+  transition: background .1s ease;
+}
+
+.sb-switcher-item.active,
+.sb-switcher-item:hover {
+  background: var(--sb-item-active-bg);
+}
+
+.sb-switcher-item-icon {
+  align-items: center;
+  color: var(--sb-icon-ink);
+  display: inline-flex;
+  flex: 0 0 22px;
+  font-size: .95rem;
+  height: 22px;
+  justify-content: center;
+}
+
+.sb-switcher-item.active .sb-switcher-item-icon {
+  color: var(--sb-brand-indigo);
+}
+
+.sb-switcher-item-body {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+
+.sb-switcher-item-label {
+  color: var(--sb-ink);
+  font-size: .88rem;
+  font-weight: 600;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sb-switcher-item-detail {
+  color: var(--sb-muted);
+  font-size: .72rem;
+  font-weight: 400;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sb-switcher-item-section {
+  color: var(--sb-muted-2);
+  font-size: .65rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.sb-switcher-item-badge {
+  background: var(--sb-brand-indigo);
+  border-radius: 5px;
+  color: #ffffff;
+  flex: 0 0 auto;
+  font-size: .62rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  line-height: 1;
+  padding: .22rem .4rem;
+  text-transform: uppercase;
+}
+
+.sb-switcher-empty {
+  align-items: center;
+  color: var(--sb-muted);
+  display: flex;
+  flex-direction: column;
+  gap: .55rem;
+  padding: 1.6rem 1rem;
+  text-align: center;
+  font-size: .85rem;
+}
+
+.sb-switcher-empty fa-icon {
+  font-size: 1.4rem;
+  color: var(--sb-muted-2);
+}
+
+.sb-switcher-foot {
+  align-items: center;
+  border-top: 1px solid var(--sb-border);
+  color: var(--sb-muted);
+  display: flex;
+  flex-wrap: wrap;
+  font-size: .68rem;
+  gap: .9rem;
+  justify-content: flex-start;
+  padding: .55rem .85rem;
+}
+
+.sb-switcher-foot kbd {
+  background: var(--sb-surface-soft);
+  border: 1px solid var(--sb-border);
+  border-radius: 4px;
+  color: var(--sb-ink-soft);
+  font-family: inherit;
+  font-size: .65rem;
+  font-weight: 700;
+  margin-right: .2rem;
+  padding: .05rem .35rem;
+}
+
+/* ============================================================
+   Header balance (saldo prominente)
+   Ocupa la columna 3 del grid del header. En colapsado se oculta
+   porque no hay espacio horizontal suficiente.
+   ============================================================ */
+.header-balance {
+  align-items: center;
+  appearance: none;
+  background: linear-gradient(135deg, var(--sb-accent-soft) 0%, #ede9fe 100%);
+  border: 1px solid rgba(50, 18, 142, .12);
+  border-radius: 999px;
+  color: var(--sb-accent-strong);
+  cursor: pointer;
+  display: inline-flex;
+  font: inherit;
+  gap: .4rem;
+  grid-column: 3 / 4;
+  height: 28px;
+  justify-content: center;
+  justify-self: end;
+  padding: 0 .65rem 0 .55rem;
+  position: static;
+  transition: background .15s ease, transform .12s ease, box-shadow .15s ease;
+}
+
+.header-balance:hover {
+  background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
+  box-shadow: 0 4px 10px -2px rgba(50, 18, 142, .22);
+  transform: translateY(-1px);
+}
+
+.header-balance:active {
+  transform: translateY(0);
+}
+
+.header-balance-coin {
+  display: inline-flex;
+  flex: 0 0 auto;
+}
+
+.header-balance-amount {
+  color: var(--sb-accent-strong);
+  font-size: .78rem;
+  font-weight: 800;
+  letter-spacing: .01em;
+  line-height: 1;
+}
+
+:host(.sidebar-collapsed) .header-balance {
+  /* En colapsado el sidebar mide 76px y no entran las 3 columnas,
+     así que el saldo se omite del header. El avatar sigue clickable
+     y al expandir vuelve a aparecer prominente. */
+  display: none;
+}
+
+.balance-popover-inner {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: .15rem;
+  min-width: 160px;
+}
+
+.balance-popover-label {
+  color: var(--sb-muted);
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.balance-popover-amount {
+  color: var(--sb-accent-strong);
+  font-size: 1.4rem;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.balance-popover-foot {
+  color: var(--sb-muted);
+  font-size: .7rem;
+  font-weight: 500;
+}
+
+/* Pequeño aire entre el trigger y el overlay del saldo. */
+::ng-deep .balance-popover .ant-popover-inner-content {
+  padding: .7rem .85rem;
+}
+
+/* ============================================================
+   Hint de búsqueda en nav
+   ============================================================ */
+.sidebar-search-hint {
+  align-items: center;
+  appearance: none;
+  background: var(--sb-surface-soft);
+  border: 1px solid var(--sb-border);
+  border-radius: var(--sb-radius-md);
+  color: var(--sb-muted);
+  cursor: pointer;
+  display: flex;
+  font: inherit;
+  gap: .55rem;
+  justify-content: flex-start;
+  margin: 0 0 .25rem;
+  padding: .5rem .65rem;
+  transition: background .12s ease, border-color .12s ease, color .12s ease;
+  width: 100%;
+}
+
+.sidebar-search-hint:hover {
+  background: var(--sb-surface);
+  border-color: var(--sb-border-strong);
+  color: var(--sb-ink-soft);
+}
+
+.sidebar-search-hint-icon {
+  flex: 0 0 auto;
+  font-size: .85rem;
+}
+
+.sidebar-search-hint-label {
+  flex: 1 1 auto;
+  font-size: .82rem;
+  font-weight: 500;
+  text-align: left;
+}
+
+.sidebar-search-hint-kbd {
+  background: var(--sb-surface);
+  border: 1px solid var(--sb-border);
+  border-radius: 5px;
+  color: var(--sb-muted);
+  font-family: inherit;
+  font-size: .62rem;
+  font-weight: 700;
+  letter-spacing: .03em;
+  padding: .12rem .38rem;
+}
+
+/* ============================================================
+   Bandera "Daemons" junto al título de sección Economía
+   ============================================================ */
+.section-flag {
+  align-items: center;
+  background: var(--sb-accent-soft);
+  border: 1px solid rgba(50, 18, 142, .14);
+  border-radius: 999px;
+  color: var(--sb-accent-strong);
+  display: inline-flex;
+  font-size: .58rem;
+  font-weight: 800;
+  letter-spacing: .06em;
+  line-height: 1;
+  margin-left: .5rem;
+  padding: .18rem .45rem;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+.sidebar-section--economy .section-title {
+  color: var(--sb-accent-strong);
 }

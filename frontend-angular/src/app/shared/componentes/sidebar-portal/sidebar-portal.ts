@@ -1,4 +1,4 @@
-import { Component, EventEmitter, HostBinding, Input, OnChanges, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, HostBinding, HostListener, Input, OnChanges, OnInit, Output } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -12,6 +12,7 @@ import {
   faGraduationCap,
   faChalkboardUser,
   faHeadset,
+  faMagnifyingGlass,
   faRightFromBracket,
   faThumbtack,
   faUserTag,
@@ -81,10 +82,27 @@ export class SidebarPortal implements OnInit, OnChanges {
   @Input() secciones: PortalSidebarSection[] = [];
   @Input() storageKey = 'daemon_sidebar_colapsado';
 
+  /**
+   * Contadores dinámicos por item.id. Si se provee y el número es > 0,
+   * el badge del item se compone con la cifra (ej. "Hoy · 3").
+   * Si el item ya tiene un `badge` estático, se concatena: "Hoy · 3".
+   * Si solo hay contador y no badge, se muestra solo el número.
+   * Esto convierte al sidebar en un centro de notificaciones inteligente.
+   */
+  @Input() contadores: Record<string, number> | null = null;
+
+  /**
+   * Mostrar saldo DAEMON prominente en el header del sidebar.
+   * Default true para que la economía siempre esté visible.
+   */
+  @Input() mostrarSaldoHeader = true;
+
   /** Botón de soporte (visible en expandido). Por defecto abre WhatsApp. */
   @Input() soporteLink = 'https://wa.me/51930893675';
 
   @Output() logout = new EventEmitter<void>();
+
+  readonly anioActual = new Date().getFullYear();
 
   readonly brandLogo = '/img/brand/daemon.svg';
   readonly brandLogoCompact = '/img/brand/daemon-small.svg';
@@ -104,6 +122,7 @@ export class SidebarPortal implements OnInit, OnChanges {
     nivel: faChartLine,
     soporte: faHeadset,
     whatsapp: faWhatsapp,
+    buscar: faMagnifyingGlass,
   };
 
   /** Estado manual persistido (cuando está fijado). */
@@ -124,6 +143,12 @@ export class SidebarPortal implements OnInit, OnChanges {
    */
   avatarSrcVisible = true;
   brandLogoVisible = true;
+
+  /** Estado del quick switcher (Cmd/Ctrl + K). */
+  switcherAbierto = false;
+  switcherQuery = '';
+  switcherIndex = 0;
+  switcherInputRef: HTMLInputElement | null = null;
 
   private readonly gruposAbiertos = new Set<string>();
 
@@ -304,6 +329,152 @@ export class SidebarPortal implements OnInit, OnChanges {
           this.gruposAbiertos.add(item.id);
         }
       }
+    }
+  }
+
+  // ===========================================================
+  // Quick switcher (Cmd / Ctrl + K)
+  // Overlay profesional de búsqueda sobre los items navegables.
+  // ===========================================================
+
+  /**
+   * Aplana todos los items navegables (con `ruta`) del sidebar
+   * y los etiqueta con la sección a la que pertenecen.
+   * Se usa como dataset base del buscador.
+   */
+  get itemsNavegables(): Array<{ item: PortalSidebarItem; seccion: string }> {
+    const resultado: Array<{ item: PortalSidebarItem; seccion: string }> = [];
+    for (const seccion of this.secciones) {
+      for (const item of seccion.items) {
+        if (item.ruta) {
+          resultado.push({ item, seccion: seccion.titulo });
+        }
+        if (item.hijos?.length) {
+          for (const hijo of item.hijos) {
+            if (hijo.ruta) {
+              resultado.push({ item: hijo, seccion: seccion.titulo });
+            }
+          }
+        }
+      }
+    }
+    return resultado;
+  }
+
+  /**
+   * Resultados del buscador: filtra por etiqueta, detalle o sección
+   * (case-insensitive). Si no hay query, devuelve los primeros 8.
+   */
+  get resultadosBusqueda(): Array<{ item: PortalSidebarItem; seccion: string }> {
+    const q = this.switcherQuery.trim().toLowerCase();
+    const base = this.itemsNavegables;
+    if (!q) {
+      return base.slice(0, 8);
+    }
+    return base
+      .filter(({ item, seccion }) =>
+        item.etiqueta.toLowerCase().includes(q) ||
+        (item.detalle ?? '').toLowerCase().includes(q) ||
+        seccion.toLowerCase().includes(q)
+      )
+      .slice(0, 12);
+  }
+
+  /**
+   * Compone el texto del badge respetando el orden de prioridad:
+   *  - Si hay `contadores[item.id]` y badge estático: "Hoy · 3"
+   *  - Si solo hay contador: "3"
+   *  - Si solo hay badge estático: "Hoy"
+   *  - Si no hay nada: null (no se renderiza)
+   */
+  badgeDeItem(item: PortalSidebarItem): string | null {
+    const contador = this.contadores?.[item.id];
+    const estatico = item.badge;
+    if (contador !== undefined && contador > 0 && estatico) {
+      return `${estatico} · ${contador}`;
+    }
+    if (contador !== undefined && contador > 0) {
+      return String(contador);
+    }
+    return estatico ?? null;
+  }
+
+  abrirSwitcher(): void {
+    if (this.switcherAbierto) {
+      return;
+    }
+    this.switcherAbierto = true;
+    this.switcherQuery = '';
+    this.switcherIndex = 0;
+    // Enfocar el input después de que Angular renderice el overlay.
+    setTimeout(() => {
+      const input = document.querySelector<HTMLInputElement>('.sb-switcher-input');
+      if (input) {
+        input.focus();
+        this.switcherInputRef = input;
+      }
+    }, 30);
+  }
+
+  cerrarSwitcher(): void {
+    if (!this.switcherAbierto) {
+      return;
+    }
+    this.switcherAbierto = false;
+    this.switcherQuery = '';
+    this.switcherIndex = 0;
+  }
+
+  seleccionarResultado(resultado: { item: PortalSidebarItem; seccion: string }): void {
+    if (resultado.item.ruta) {
+      this.router.navigateByUrl(resultado.item.ruta);
+    }
+    this.cerrarSwitcher();
+    this.navegar();
+  }
+
+  onSwitcherKeydown(event: KeyboardEvent): void {
+    const total = this.resultadosBusqueda.length;
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      this.switcherIndex = (this.switcherIndex + 1) % Math.max(total, 1);
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      this.switcherIndex = (this.switcherIndex - 1 + total) % Math.max(total, 1);
+    } else if (event.key === 'Enter') {
+      event.preventDefault();
+      const sel = this.resultadosBusqueda[this.switcherIndex];
+      if (sel) {
+        this.seleccionarResultado(sel);
+      }
+    } else if (event.key === 'Escape') {
+      event.preventDefault();
+      this.cerrarSwitcher();
+    }
+  }
+
+  /**
+   * Listener global: Cmd+K (Mac) o Ctrl+K (Win/Linux) abre el switcher.
+   * Si el switcher ya está abierto, lo cierra (toggle).
+   * Ignora cuando hay un input/textarea enfocado para no romper formularios.
+   */
+  @HostListener('document:keydown', ['$event'])
+  onKeydownGlobal(event: KeyboardEvent): void {
+    const isToggle = (event.metaKey || event.ctrlKey) && (event.key === 'k' || event.key === 'K');
+    if (!isToggle) {
+      return;
+    }
+    const target = event.target as HTMLElement | null;
+    const tag = target?.tagName?.toLowerCase();
+    const isEditable = tag === 'input' || tag === 'textarea' || target?.isContentEditable;
+    if (isEditable && !this.switcherAbierto) {
+      return;
+    }
+    event.preventDefault();
+    if (this.switcherAbierto) {
+      this.cerrarSwitcher();
+    } else {
+      this.abrirSwitcher();
     }
   }
 }
