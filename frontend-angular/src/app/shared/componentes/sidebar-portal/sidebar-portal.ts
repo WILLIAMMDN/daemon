@@ -1,5 +1,5 @@
 import { Component, EventEmitter, HostBinding, Input, OnChanges, OnInit, Output } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
+import { DecimalPipe, TitleCasePipe } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
@@ -52,6 +52,7 @@ const SUFFIJO_PIN = '_pin';
     RouterLinkActive,
     FontAwesomeModule,
     DecimalPipe,
+    TitleCasePipe,
     NzAvatarModule,
     NzBadgeModule,
     NzDividerModule,

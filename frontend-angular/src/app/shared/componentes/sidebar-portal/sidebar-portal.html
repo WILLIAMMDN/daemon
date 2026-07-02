@@ -22,7 +22,7 @@
         (nzError)="onAvatarError()"
       ></nz-avatar>
       <div class="profile-popover-id">
-        <strong class="profile-popover-name" [attr.title]="perfilNombre">{{ perfilNombre }}</strong>
+        <strong class="profile-popover-name" [attr.title]="perfilNombre">{{ perfilNombre | titlecase }}</strong>
         @if (perfilUsuario) {
           <span class="profile-popover-username" [attr.title]="'@' + perfilUsuario">&#64;{{ perfilUsuario }}</span>
         }
@@ -147,7 +147,7 @@
         </span>
 
         <span class="profile-id">
-          <strong class="profile-name" [attr.title]="perfilNombre">{{ perfilNombre }}</strong>
+          <strong class="profile-name" [attr.title]="perfilNombre">{{ perfilNombre | titlecase }}</strong>
           <fa-icon class="profile-chevron" [icon]="iconos.chevronDown" aria-hidden="true" />
         </span>
 
