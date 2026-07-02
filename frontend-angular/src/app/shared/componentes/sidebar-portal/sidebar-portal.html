@@ -123,71 +123,46 @@
   </header>
 
   <section class="profile-block" aria-label="Cuenta activa">
-    @if (!colapsado) {
-      <button
-        type="button"
-        class="profile-trigger"
-        nz-popover
-        nzPopoverTrigger="click"
-        nzPopoverPlacement="rightTop"
-        nzPopoverOverlayClassName="profile-popover"
-        [nzPopoverContent]="profilePopContent"
-        [(nzPopoverVisible)]="profilePopoverOpen"
-        [attr.aria-label]="'Ver datos de la cuenta ' + perfilNombre"
-      >
-        <span class="profile-avatar-wrap">
-          <nz-avatar
-            class="profile-avatar"
-            [nzSize]="56"
-            [nzSrc]="avatarSrcVisible && avatarSrc() ? avatarSrc() : undefined"
-            [nzText]="iniciales()"
-            (nzError)="onAvatarError()"
-          ></nz-avatar>
-          <span class="profile-status" aria-hidden="true"></span>
-        </span>
+    <button
+      type="button"
+      class="profile-trigger"
+      nz-popover
+      nzPopoverTrigger="click"
+      nzPopoverPlacement="rightTop"
+      nzPopoverOverlayClassName="profile-popover"
+      [nzPopoverContent]="profilePopContent"
+      [(nzPopoverVisible)]="profilePopoverOpen"
+      [attr.aria-label]="'Ver datos de la cuenta ' + perfilNombre"
+    >
+      <span class="profile-avatar-wrap">
+        <nz-avatar
+          class="profile-avatar"
+          [nzSize]="colapsado ? 42 : 56"
+          [nzSrc]="avatarSrcVisible && avatarSrc() ? avatarSrc() : undefined"
+          [nzText]="iniciales()"
+          (nzError)="onAvatarError()"
+        ></nz-avatar>
+        <span class="profile-status" aria-hidden="true"></span>
+      </span>
 
-        <span class="profile-id">
-          <strong class="profile-name" [attr.title]="perfilNombre">{{ perfilNombre | titlecase }}</strong>
-          <fa-icon class="profile-chevron" [icon]="iconos.chevronDown" aria-hidden="true" />
-        </span>
+      <span class="profile-id">
+        <strong class="profile-name" [attr.title]="perfilNombre">{{ perfilNombre | titlecase }}</strong>
+        <fa-icon class="profile-chevron" [icon]="iconos.chevronDown" aria-hidden="true" />
+      </span>
 
-        @if (rol) {
-          <span class="profile-role-tag" [attr.title]="'Rol: ' + rol">
-            <fa-icon class="profile-role-icon" [icon]="modo === 'docente' ? iconos.docente : iconos.alumno" aria-hidden="true" />
-            <span class="profile-role-text">{{ rol }}</span>
-          </span>
-        }
-
-        @if (perfilTokens !== null) {
-          <span class="profile-balance" [attr.title]="perfilTokens + ' daemons'">
-            <app-moneda-daemon [size]="22" [cantidad]="perfilTokens" titulo="Saldo de daemons" />
-          </span>
-        }
-      </button>
-    } @else {
-      <button
-        type="button"
-        class="profile-trigger profile-trigger--compact"
-        nz-popover
-        nzPopoverTrigger="click"
-        nzPopoverPlacement="rightTop"
-        nzPopoverOverlayClassName="profile-popover"
-        [nzPopoverContent]="profilePopContent"
-        [(nzPopoverVisible)]="profilePopoverOpen"
-        aria-label="Ver datos de la cuenta"
-      >
-        <span class="profile-avatar-wrap">
-          <nz-avatar
-            class="profile-avatar profile-avatar--compact"
-            [nzSize]="42"
-            [nzSrc]="avatarSrcVisible && avatarSrc() ? avatarSrc() : undefined"
-            [nzText]="iniciales()"
-            (nzError)="onAvatarError()"
-          ></nz-avatar>
-          <span class="profile-status profile-status--compact" aria-hidden="true"></span>
+      @if (rol) {
+        <span class="profile-role-tag" [attr.title]="'Rol: ' + rol">
+          <fa-icon class="profile-role-icon" [icon]="modo === 'docente' ? iconos.docente : iconos.alumno" aria-hidden="true" />
+          <span class="profile-role-text">{{ rol }}</span>
         </span>
-      </button>
-    }
+      }
+
+      @if (perfilTokens !== null) {
+        <span class="profile-balance" [attr.title]="perfilTokens + ' daemons'">
+          <app-moneda-daemon [size]="22" [cantidad]="perfilTokens" titulo="Saldo de daemons" />
+        </span>
+      }
+    </button>
   </section>
 
   <nav class="sidebar-nav">

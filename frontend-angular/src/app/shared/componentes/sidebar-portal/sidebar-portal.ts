@@ -1,4 +1,4 @@
-import { Component, EventEmitter, HostBinding, Input, OnChanges, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, HostBinding, HostListener, Input, OnChanges, OnInit, Output } from '@angular/core';
 import { DecimalPipe, TitleCasePipe } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -123,13 +123,23 @@ export class SidebarPortal implements OnInit, OnChanges {
 
   constructor(private router: Router) {}
 
+  get isMobile(): boolean {
+    return typeof window !== 'undefined' && window.innerWidth <= 980;
+  }
+
   /**
    * Estado visual efectivo del sidebar.
    *  - Si está fijado, respeta el estado manual persistido.
    *  - Si no, depende del hover.
    */
   get colapsado(): boolean {
+    if (this.isMobile) return false;
     return this.fijado ? this.colapsadoManual : !this.hoverActivo;
+  }
+
+  @HostListener('window:resize')
+  onResize(): void {
+    // Fuerzo la evaluación de isMobile para recalcular colapsado
   }
 
   @HostBinding('class.sidebar-collapsed')
