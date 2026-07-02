@@ -81,7 +81,7 @@ export class SidebarPortal implements OnInit, OnChanges {
 
   @Output() logout = new EventEmitter<void>();
 
-  readonly brandLogo = '/img/brand/daemon.svg';
+  readonly brandLogo = '/img/brand/daemon-transparent.png';
   readonly brandLogoCompact = '/img/brand/daemon-small.svg';
 
   readonly iconos = {
