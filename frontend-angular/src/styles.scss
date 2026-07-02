@@ -462,7 +462,7 @@ th {
    ============================================================ */
 .profile-popover {
   --pop-accent: #4f46e5;
-  --pop-accent-soft: #eef2ff;
+  --pop-accent-soft: #f8fafc;
   --pop-accent-ink: #3730a3;
   --pop-ink: #0f172a;
   --pop-muted: #64748b;
@@ -471,10 +471,11 @@ th {
 
   .ant-popover-inner {
     background: #ffffff;
-    border: 1px solid var(--pop-border);
-    border-radius: 14px;
-    box-shadow: 0 18px 40px rgba(15, 23, 42, .18);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    border-radius: 20px;
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.1), 0 0 20px rgba(0, 0, 0, 0.02);
     padding: 0;
+    overflow: hidden;
   }
 
   .ant-popover-inner-content {
@@ -494,11 +495,11 @@ th {
 
 .profile-popover-head {
   align-items: center;
-  background: var(--pop-accent-soft);
-  border-bottom: 1px solid var(--pop-border);
+  background: #ffffff;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
   display: flex;
-  gap: .75rem;
-  padding: .85rem .9rem;
+  gap: 1rem;
+  padding: 1.2rem 1.2rem;
 }
 
 .profile-popover-avatar.ant-avatar {
@@ -560,12 +561,12 @@ th {
 .profile-popover-item {
   align-items: center;
   display: grid;
-  font-size: .82rem;
-  gap: .55rem;
-  grid-template-columns: 16px 64px minmax(0, 1fr);
+  font-size: .85rem;
+  gap: .65rem;
+  grid-template-columns: 20px 70px minmax(0, 1fr);
   line-height: 1.2;
   min-width: 0;
-  padding: .45rem .9rem;
+  padding: .55rem 1.2rem;
   transition: background .12s ease;
 }
 

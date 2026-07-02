@@ -54,7 +54,7 @@
           <span class="profile-popover-icon profile-popover-icon--coin">
             <app-moneda-daemon [size]="20" titulo="Moneda DAEMON" />
           </span>
-          <span class="profile-popover-key">Tokens</span>
+          <span class="profile-popover-key">Daemons</span>
           <span class="profile-popover-val">{{ perfilTokens | number }}</span>
         </li>
       }
@@ -159,8 +159,8 @@
         }
 
         @if (perfilTokens !== null) {
-          <span class="profile-balance" [attr.title]="perfilTokens + ' tokens DAEMON'">
-            <app-moneda-daemon [size]="22" [cantidad]="perfilTokens" titulo="Saldo de tokens DAEMON" />
+          <span class="profile-balance" [attr.title]="perfilTokens + ' daemons'">
+            <app-moneda-daemon [size]="22" [cantidad]="perfilTokens" titulo="Saldo de daemons" />
           </span>
         }
       </button>
