@@ -173,11 +173,10 @@
 }
 
 .brand-mark {
-  align-items: center;
-  display: inline-flex;
+  display: grid;
+  place-items: center;
   flex: 0 0 auto;
   height: 66px;
-  justify-content: center;
   position: relative;
   width: auto;
 }
@@ -195,18 +194,28 @@
 
 .brand-logo {
   display: block;
+  grid-area: 1 / 1;
   height: 64px;
   object-fit: contain;
   object-position: center;
   width: auto;
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 :host(.theme-alumno) .brand-logo {
   filter: brightness(0) invert(1);
 }
 
+.brand-logo--full {
+  opacity: 1;
+  transform: scale(1);
+}
+
 .brand-logo--compact {
-  display: none;
+  height: 42px;
+  opacity: 0;
+  transform: scale(0.5);
+  width: 42px;
 }
 
 .brand-fallback {
@@ -1034,14 +1043,16 @@
 }
 
 :host(.sidebar-collapsed) .brand-logo--full {
-  display: none;
+  opacity: 0;
+  transform: scale(0.8);
+  pointer-events: none;
 }
 
 :host(.sidebar-collapsed) .brand-logo--compact {
   border-radius: 11px;
-  display: block;
-  height: 42px;
-  width: 42px;
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
 }
 
 :host(.sidebar-collapsed) .pin-button {
