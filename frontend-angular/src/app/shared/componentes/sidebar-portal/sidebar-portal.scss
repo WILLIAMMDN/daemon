@@ -203,7 +203,7 @@
 }
 
 :host(.theme-alumno) .brand-logo {
-  filter: drop-shadow(0 2px 12px rgba(255, 255, 255, 0.6));
+  filter: brightness(0) invert(1);
 }
 
 .brand-logo--compact {
