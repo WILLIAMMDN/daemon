@@ -175,12 +175,11 @@
 .brand-mark {
   align-items: center;
   display: inline-flex;
-  flex: 0 0 142px;
+  flex: 0 0 auto;
   height: 66px;
   justify-content: center;
-  overflow: hidden;
   position: relative;
-  width: 142px;
+  width: auto;
 }
 
 :host(.theme-alumno) .brand-mark {
@@ -196,7 +195,7 @@
 
 .brand-logo {
   display: block;
-  height: 48px;
+  height: 64px;
   object-fit: contain;
   object-position: center;
   width: auto;
