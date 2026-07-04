@@ -45,16 +45,6 @@
   object-position: center;
 }
 
-.hero-image-glass {
-  background:
-    linear-gradient(90deg, rgba(21, 50, 107, .24), rgba(21, 50, 107, 0) 36%),
-    linear-gradient(180deg, rgba(2, 6, 23, .16), rgba(2, 6, 23, 0) 42%, rgba(2, 6, 23, .18));
-  inset: 0;
-  pointer-events: none;
-  position: absolute;
-  z-index: 5;
-}
-
 .hero-cut-desktop {
   bottom: 0;
   filter: none;
@@ -222,10 +212,6 @@
 @media (max-width: 767px) {
   .hero-copy-panel {
     box-shadow: none;
-  }
-
-  .hero-image-glass {
-    background: linear-gradient(180deg, rgba(21, 50, 107, .2), rgba(21, 50, 107, 0) 34%, rgba(2, 6, 23, .16));
   }
 
   .hero-carousel-controls {

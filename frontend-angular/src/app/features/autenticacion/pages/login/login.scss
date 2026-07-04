@@ -4,9 +4,10 @@
 
 .daemon-login {
   align-items: center;
-  background: #eef0f3;
+  background: #f4f6f8;
   color: #111827;
   display: grid;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   min-height: 100vh;
   position: relative;
 }
@@ -14,13 +15,13 @@
 .home-link {
   align-items: center;
   background: #ffffff;
-  border: 1px solid #cfd4dc;
-  border-radius: 2px;
-  box-shadow: 0 1px 3px #11182714;
-  color: #22304a;
+  border: 1px solid #d9e1ec;
+  border-radius: 6px;
+  box-shadow: 0 8px 20px #11182712;
+  color: #25324a;
   display: inline-flex;
   font-size: .92rem;
-  font-weight: 800;
+  font-weight: 760;
   gap: .45rem;
   left: clamp(1rem, 4vw, 3rem);
   min-height: 38px;
@@ -33,13 +34,13 @@
 }
 
 .home-link:hover {
-  border-color: #0b5bd3;
-  color: #0b5bd3;
+  border-color: #15326b;
+  color: #15326b;
 }
 
 .login-stage {
   display: grid;
-  gap: .85rem;
+  gap: 1rem;
   justify-items: center;
   margin: 0 auto;
   max-width: 600px;
@@ -49,52 +50,32 @@
 .login-brand {
   align-items: center;
   display: inline-flex;
-  gap: .7rem;
   justify-content: center;
-  margin-bottom: .3rem;
+  justify-self: center;
+  min-height: 82px;
+  padding: .15rem .75rem;
 }
 
-.brand-symbol {
-  border-bottom: 17px solid #d7182a;
-  border-left: 10px solid transparent;
-  border-right: 10px solid transparent;
+.brand-logo {
   display: block;
-  height: 0;
-  position: relative;
-  transform: skewX(-18deg);
-  width: 28px;
-}
-
-.brand-symbol::after {
-  background: #ffffff;
-  border-radius: 50%;
-  content: "";
-  height: 8px;
-  position: absolute;
-  right: -4px;
-  top: 7px;
-  width: 8px;
-}
-
-.brand-name {
-  color: #1d2430;
-  font-size: clamp(1.7rem, 5vw, 2.15rem);
-  font-weight: 950;
-  letter-spacing: -.02em;
+  height: 86px;
+  max-width: min(310px, 72vw);
+  object-fit: contain;
+  width: auto;
 }
 
 .login-card {
   background: #ffffff;
-  border: 1px solid #cfd4dc;
-  border-radius: 2px;
-  box-shadow: 0 2px 6px #11182724;
-  padding: 0 clamp(1.5rem, 7vw, 3.15rem) clamp(1.45rem, 4vw, 2rem);
+  border: 1px solid #d7deea;
+  border-radius: 6px;
+  box-shadow: 0 10px 28px #1f2a4414;
+  padding: 0 clamp(1.5rem, 7vw, 3.15rem) clamp(1.25rem, 4vw, 1.65rem);
   position: relative;
   width: 100%;
 }
 
 .card-accent {
-  background: #0b5bd3;
+  background: #15326b;
   height: 5px;
   margin: 0 calc(clamp(1.5rem, 7vw, 3.15rem) * -1) 0;
 }
@@ -104,62 +85,72 @@
   display: grid;
   gap: 1rem;
   grid-template-columns: minmax(0, 1fr) auto;
-  margin-top: 2.2rem;
+  margin-top: 1.65rem;
 }
 
 .eyebrow {
-  color: #5d6878;
+  color: #516075;
   font-size: .73rem;
-  font-weight: 900;
-  letter-spacing: .13em;
+  font-weight: 850;
+  letter-spacing: 0;
   margin: 0 0 .35rem;
   text-transform: uppercase;
 }
 
 .login-card-head h1 {
   color: #020b18;
-  font-size: clamp(1.7rem, 5vw, 2rem);
-  font-weight: 900;
+  font-size: 1.9rem;
+  font-weight: 880;
   line-height: 1.1;
   margin: 0;
 }
 
 .portal-switch {
   align-items: center;
+  background: #f6f8fb;
+  border: 1px solid #dfe6f1;
+  border-radius: 6px;
   display: inline-flex;
-  font-size: 1rem;
-  gap: .7rem;
+  font-size: .9rem;
+  gap: .15rem;
+  padding: .2rem;
   white-space: nowrap;
 }
 
 .portal-switch span,
 .portal-switch a {
-  color: #5d6878;
-  font-weight: 700;
+  align-items: center;
+  border-radius: 4px;
+  color: #526075;
+  display: inline-flex;
+  font-weight: 760;
+  justify-content: center;
+  min-height: 34px;
+  padding: 0 .85rem;
   text-decoration: none;
 }
 
 .portal-switch .is-active {
-  color: #0b5bd3;
+  background: #15326b;
+  color: #ffffff;
+  box-shadow: 0 5px 14px #15326b26;
 }
 
 .rive-medallion {
   align-items: center;
-  background:
-    linear-gradient(#ffffff, #ffffff) padding-box,
-    linear-gradient(135deg, #d8dde6, #ffffff 32%, #a8b2c2) border-box;
-  border: 1px solid transparent;
+  background: #f7f8fa;
+  border: 1px solid #d8dee8;
   border-radius: 50%;
   box-shadow:
     inset 0 0 0 7px #f7f8fa,
     0 8px 20px #11182718;
   display: grid;
-  height: 132px;
+  height: 116px;
   justify-content: center;
-  margin: -1.2rem auto 1.1rem;
+  margin: .85rem auto 1rem;
   overflow: hidden;
   position: relative;
-  width: 132px;
+  width: 116px;
 }
 
 .rive-medallion::after {
@@ -173,9 +164,7 @@
 }
 
 .rive-medallion::before {
-  background:
-    radial-gradient(circle at 32% 28%, #ffffff 0 7%, transparent 8%),
-    linear-gradient(145deg, #f8fafc 0%, #eef3f8 54%, #dfe7f1 100%);
+  background: #eef2f6;
   border-radius: 50%;
   content: "";
   display: grid;
@@ -193,11 +182,11 @@
 
 .rive-mascot {
   display: block;
-  height: 142px;
+  height: 128px;
   opacity: 1;
   position: relative;
-  transform: translateY(5px) scale(1.18);
-  width: 142px;
+  transform: translateY(5px) scale(1.14);
+  width: 128px;
   z-index: 1;
 }
 
@@ -208,23 +197,27 @@
 
 .classic-field {
   align-items: stretch;
-  border: 1px solid #c8ced8;
+  background: #ffffff;
+  border: 1px solid #c9d2df;
+  border-radius: 6px;
   display: grid;
   grid-template-columns: 66px minmax(0, 1fr) auto;
-  min-height: 62px;
+  min-height: 58px;
+  overflow: hidden;
   position: relative;
+  transition: border-color .18s ease, box-shadow .18s ease;
 }
 
 .classic-field:focus-within {
-  border-color: #0b5bd3;
-  box-shadow: 0 0 0 1px #0b5bd3;
+  border-color: #15326b;
+  box-shadow: 0 0 0 3px rgba(21, 50, 107, .12);
 }
 
 .field-icon {
   align-items: center;
-  background: #fafafa;
-  border-right: 1px solid #d6dbe3;
-  color: #313842;
+  background: #f6f8fb;
+  border-right: 1px solid #dbe2ec;
+  color: #334155;
   display: inline-flex;
   justify-content: center;
 }
@@ -243,7 +236,7 @@
   border: 0;
   color: #263244;
   font: inherit;
-  font-size: 1.28rem;
+  font-size: 1.12rem;
   font-weight: 500;
   min-width: 0;
   outline: 0;
@@ -268,7 +261,7 @@
 }
 
 .field-action:hover {
-  color: #0b5bd3;
+  color: #15326b;
 }
 
 .field-error {
@@ -279,9 +272,9 @@
 }
 
 .help-link {
-  color: #0057d8;
+  color: #15326b;
   font-size: 1rem;
-  font-weight: 500;
+  font-weight: 720;
   justify-self: end;
   margin-top: -.35rem;
   text-decoration: none;
@@ -297,6 +290,7 @@
 .form-alert {
   background: #fff1f2;
   border: 1px solid #fecdd3;
+  border-radius: 6px;
   color: #be123c;
   font-size: .9rem;
   font-weight: 850;
@@ -304,19 +298,20 @@
 }
 
 .submit-button {
-  background: #0b5bd3;
+  background: #15326b;
   border: 0;
-  border-radius: 4px;
+  border-radius: 6px;
+  box-shadow: 0 12px 24px rgba(21, 50, 107, .2);
   color: #ffffff;
   cursor: pointer;
   font-size: 1.1rem;
-  font-weight: 600;
-  min-height: 60px;
+  font-weight: 800;
+  min-height: 58px;
   transition: background .18s ease;
 }
 
 .submit-button:hover:not(:disabled) {
-  background: #004fbd;
+  background: #0f2857;
 }
 
 .submit-button:disabled {
@@ -327,14 +322,14 @@
 .google-block {
   display: grid;
   justify-items: center;
-  margin-top: 1.1rem;
+  margin-top: .9rem;
 }
 
 .firebase-google-button {
   align-items: center;
   background: #ffffff;
   border: 1px solid #dadce0;
-  border-radius: 8px;
+  border-radius: 6px;
   color: #1f1f1f;
   cursor: pointer;
   display: inline-flex;
@@ -394,7 +389,7 @@
   font-weight: 800;
   gap: .8rem;
   grid-template-columns: minmax(54px, 1fr) auto minmax(54px, 1fr);
-  letter-spacing: .08em;
+  letter-spacing: 0;
   margin: 0 0 .75rem;
   text-transform: uppercase;
   width: 100%;
@@ -410,7 +405,7 @@
 .login-footer {
   color: #687386;
   font-size: 1rem;
-  margin-top: 1rem;
+  margin-top: .85rem;
   text-align: center;
 }
 
@@ -419,7 +414,7 @@
 }
 
 .login-footer a {
-  color: #0057d8;
+  color: #15326b;
   font-weight: 600;
   text-decoration: none;
 }
@@ -427,9 +422,9 @@
 .login-note {
   align-items: center;
   background: #ffffff;
-  border: 1px solid #cfd4dc;
-  border-radius: 2px;
-  box-shadow: 0 2px 5px #1118271f;
+  border: 1px solid #d7deea;
+  border-radius: 6px;
+  box-shadow: 0 12px 28px #11182712;
   display: grid;
   gap: .85rem;
   grid-template-columns: auto minmax(0, 1fr);
@@ -469,6 +464,11 @@
   .home-link {
     min-height: 36px;
     padding: .48rem .75rem;
+  }
+
+  .brand-logo {
+    height: 72px;
+    max-width: min(260px, 76vw);
   }
 
   .login-stage {

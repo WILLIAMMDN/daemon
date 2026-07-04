@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 
-type ShapeType = 'cross' | 'triangle' | 'circle' | 'sun' | 'airplane' | 'dots';
+type ShapeType = 'cross' | 'triangle' | 'circle' | 'sun' | 'airplane' | 'dots' | 'pencil' | 'book' | 'rocket';
 
 @Component({
   selector: 'app-floating-shape',

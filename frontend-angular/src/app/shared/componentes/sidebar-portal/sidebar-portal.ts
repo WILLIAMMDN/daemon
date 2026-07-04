@@ -22,6 +22,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzPopoverModule } from 'ng-zorro-antd/popover';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { MonedaDaemon } from '../moneda-daemon/moneda-daemon';
+import { FloatingShape } from '../floating-shape/floating-shape';
 import { PortalSidebarItem, PortalSidebarSection } from '../../../core/layouts/portal-sidebar.config';
 
 const SUFFIJO_PIN = '_pin';
@@ -60,6 +61,7 @@ const SUFFIJO_PIN = '_pin';
     NzPopoverModule,
     NzTagModule,
     MonedaDaemon,
+    FloatingShape,
   ],
   templateUrl: './sidebar-portal.html',
   styleUrl: './sidebar-portal.scss',
@@ -142,6 +144,11 @@ export class SidebarPortal implements OnInit, OnChanges {
     // Fuerzo la evaluación de isMobile para recalcular colapsado
   }
 
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    this.profilePopoverOpen = false;
+  }
+
   @HostBinding('class.sidebar-collapsed')
   get collapsedHost(): boolean {
     return this.colapsado;
@@ -177,15 +184,41 @@ export class SidebarPortal implements OnInit, OnChanges {
     return 'Alumno';
   }
 
+  get perfilNombreCorto(): string {
+    const base = (this.perfilNombre || this.perfilUsuario || 'Cuenta activa').trim();
+    const partes = base.split(/\s+/).filter(Boolean);
+    if (partes.length <= 2) {
+      return base || 'Cuenta activa';
+    }
+    return `${partes[0]} ${partes[1]}`;
+  }
+
+  get profilePopoverClass(): string {
+    const responsiveClass = this.isMobile ? 'profile-popover--mobile' : 'profile-popover--desktop';
+    return `profile-popover profile-popover--${this.modo} ${responsiveClass}`;
+  }
+
+  get profilePopoverPlacement(): string {
+    return this.isMobile ? 'bottomLeft' : 'rightTop';
+  }
+
   abrirMovil(): void {
     this.mobileOpen = true;
   }
 
   cerrarMovil(): void {
     this.mobileOpen = false;
+    this.profilePopoverOpen = false;
+  }
+
+  cerrarProfilePopover(event?: Event): void {
+    event?.preventDefault();
+    event?.stopPropagation();
+    this.profilePopoverOpen = false;
   }
 
   emitirLogout(): void {
+    this.profilePopoverOpen = false;
     this.logout.emit();
   }
 
@@ -240,6 +273,7 @@ export class SidebarPortal implements OnInit, OnChanges {
 
   navegar(): void {
     this.mobileOpen = false;
+    this.profilePopoverOpen = false;
   }
 
   /**

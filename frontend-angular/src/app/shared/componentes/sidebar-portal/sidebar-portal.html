@@ -14,19 +14,34 @@
 <ng-template #profilePopContent>
   <div class="profile-popover-inner">
     <header class="profile-popover-head">
-      <nz-avatar
-        class="profile-popover-avatar"
-        [nzSize]="56"
-        [nzSrc]="avatarSrcVisible && avatarSrc() ? avatarSrc() : undefined"
-        [nzText]="iniciales()"
-        (nzError)="onAvatarError()"
-      ></nz-avatar>
-      <div class="profile-popover-id">
-        <strong class="profile-popover-name" [attr.title]="perfilNombre">{{ perfilNombre | titlecase }}</strong>
-        @if (perfilUsuario) {
-          <span class="profile-popover-username" [attr.title]="'@' + perfilUsuario">&#64;{{ perfilUsuario }}</span>
-        }
+      <div class="profile-popover-avatar-shell">
+        <nz-avatar
+          class="profile-popover-avatar"
+          [nzSize]="64"
+          [nzSrc]="avatarSrcVisible && avatarSrc() ? avatarSrc() : undefined"
+          [nzText]="iniciales()"
+          (nzError)="onAvatarError()"
+        ></nz-avatar>
+        <span class="profile-popover-status" aria-hidden="true"></span>
       </div>
+
+      <div class="profile-popover-id">
+        <span class="profile-popover-eyebrow">{{ modo === 'docente' ? 'Portal docente' : 'Portal estudiante' }}</span>
+        <strong class="profile-popover-name" [attr.title]="perfilNombre">{{ perfilNombre | titlecase }}</strong>
+        <span class="profile-popover-username" [attr.title]="perfilUsuario ? '@' + perfilUsuario : rol">
+          {{ perfilUsuario ? '@' + perfilUsuario : rol }}
+        </span>
+      </div>
+
+      <button
+        type="button"
+        class="profile-popover-close"
+        (click)="cerrarProfilePopover($event)"
+        aria-label="Cerrar datos de cuenta"
+        title="Cerrar"
+      >
+        <fa-icon [icon]="iconos.cerrar" />
+      </button>
     </header>
 
     <ul class="profile-popover-list">
@@ -69,6 +84,39 @@
   (mouseenter)="onMouseEnter()"
   (mouseleave)="onMouseLeave()"
 >
+  <!-- Decoración de fondo: figuritas del componente app-floating-shape.
+       Posicionadas con absolute para no afectar la estructura del sidebar. -->
+  <app-floating-shape
+    shape="pencil"
+    color="text-white/10"
+    size="w-9 h-9"
+    customClass="top-24 right-5 rotate-12"
+  ></app-floating-shape>
+  <app-floating-shape
+    shape="airplane"
+    color="text-white/10"
+    size="w-10 h-10"
+    customClass="top-36 left-8 -rotate-12"
+  ></app-floating-shape>
+  <app-floating-shape
+    shape="dots"
+    color="text-white/10"
+    size="w-16 h-16"
+    customClass="bottom-28 left-5"
+  ></app-floating-shape>
+  <app-floating-shape
+    shape="book"
+    color="text-white/10"
+    size="w-8 h-8"
+    customClass="bottom-48 right-7 -rotate-12"
+  ></app-floating-shape>
+  <app-floating-shape
+    shape="rocket"
+    color="text-white/10"
+    size="w-9 h-9"
+    customClass="top-72 right-5 rotate-12"
+  ></app-floating-shape>
+
   <header class="sidebar-header">
     <a
       class="brand-link"
@@ -128,8 +176,8 @@
       class="profile-trigger"
       nz-popover
       nzPopoverTrigger="click"
-      nzPopoverPlacement="rightTop"
-      nzPopoverOverlayClassName="profile-popover"
+      [nzPopoverPlacement]="profilePopoverPlacement"
+      [nzPopoverOverlayClassName]="profilePopoverClass"
       [nzPopoverContent]="profilePopContent"
       [(nzPopoverVisible)]="profilePopoverOpen"
       [attr.aria-label]="'Ver datos de la cuenta ' + perfilNombre"
@@ -137,7 +185,7 @@
       <span class="profile-avatar-wrap">
         <nz-avatar
           class="profile-avatar"
-          [nzSize]="colapsado ? 42 : 56"
+          [nzSize]="colapsado ? 42 : 52"
           [nzSrc]="avatarSrcVisible && avatarSrc() ? avatarSrc() : undefined"
           [nzText]="iniciales()"
           (nzError)="onAvatarError()"
@@ -146,7 +194,7 @@
       </span>
 
       <span class="profile-id">
-        <strong class="profile-name" [attr.title]="perfilNombre">{{ perfilNombre | titlecase }}</strong>
+        <strong class="profile-name" [attr.title]="perfilNombre">{{ perfilNombreCorto | titlecase }}</strong>
         <fa-icon class="profile-chevron" [icon]="iconos.chevronDown" aria-hidden="true" />
       </span>
 
@@ -159,7 +207,7 @@
 
       @if (perfilTokens !== null) {
         <span class="profile-balance" [attr.title]="perfilTokens + ' daemons'">
-          <app-moneda-daemon [size]="22" [cantidad]="perfilTokens" titulo="Saldo de daemons" />
+          <app-moneda-daemon [size]="20" [cantidad]="perfilTokens" titulo="Saldo de daemons" />
         </span>
       }
     </button>

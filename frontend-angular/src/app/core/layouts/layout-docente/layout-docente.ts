@@ -7,6 +7,7 @@ import { EmailVerificationBanner } from '../../../shared/componentes/email-verif
 import { SidebarPortal } from '../../../shared/componentes/sidebar-portal/sidebar-portal';
 import { Activos } from '../../servicios/activos';
 import { Autenticacion } from '../../servicios/autenticacion';
+import { CargaGlobal } from '../../servicios/carga-global';
 import { Sesion } from '../../servicios/sesion';
 import { docenteSidebarSections } from '../portal-sidebar.config';
 
@@ -19,7 +20,13 @@ import { docenteSidebarSections } from '../portal-sidebar.config';
 export class LayoutDocente {
   readonly seccionesSidebar = docenteSidebarSections;
 
-  constructor(public sesion: Sesion, private auth: Autenticacion, private router: Router, private activos: Activos) {}
+  constructor(
+    public sesion: Sesion,
+    private auth: Autenticacion,
+    private router: Router,
+    private activos: Activos,
+    private cargaGlobal: CargaGlobal,
+  ) {}
 
   perfilDetalle(): string {
     const rol = this.sesion.usuario()?.rol === 'admin' ? 'Administrador académico' : 'Administración académica';
@@ -54,12 +61,21 @@ export class LayoutDocente {
   }
 
   salir(): void {
+    const carga = this.cargaGlobal.mostrar('Cerrando sesion...');
+
     this.auth.logout().subscribe({
-      next: () => this.router.navigateByUrl('/login'),
+      next: () => this.volverAlLogin(carga),
       error: () => {
         this.sesion.limpiar();
-        this.router.navigateByUrl('/login');
+        this.volverAlLogin(carga);
       },
     });
+  }
+
+  private volverAlLogin(carga: symbol): void {
+    this.cargaGlobal.cambiarMensaje('Volviendo al login...');
+    setTimeout(() => {
+      void this.router.navigateByUrl('/login').finally(() => this.cargaGlobal.ocultar(carga));
+    }, 420);
   }
 }

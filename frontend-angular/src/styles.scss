@@ -461,12 +461,13 @@ th {
    (renderizado fuera del componente, scope global)
    ============================================================ */
 .profile-popover {
-  --pop-accent: #4f46e5;
-  --pop-accent-soft: #f8fafc;
-  --pop-accent-ink: #3730a3;
+  --pop-accent: #ffc414;
+  --pop-accent-soft: #fff8dc;
+  --pop-accent-ink: #24194f;
   --pop-ink: #0f172a;
   --pop-muted: #64748b;
   --pop-border: #e2e8f0;
+  max-width: min(360px, calc(100vw - 24px));
   padding: 0 !important;
 
   .ant-popover-inner {
@@ -474,8 +475,10 @@ th {
     border: 1px solid rgba(0, 0, 0, 0.04);
     border-radius: 20px;
     box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.1), 0 0 20px rgba(0, 0, 0, 0.02);
+    max-width: min(360px, calc(100vw - 24px));
     padding: 0;
     overflow: hidden;
+    width: 360px;
   }
 
   .ant-popover-inner-content {
@@ -497,8 +500,9 @@ th {
   align-items: center;
   background: #ffffff;
   border-bottom: 1px solid rgba(0, 0, 0, 0.04);
-  display: flex;
-  gap: 1rem;
+  display: grid;
+  gap: .85rem;
+  grid-template-columns: 56px minmax(0, 1fr);
   padding: 1.2rem 1.2rem;
 }
 
@@ -526,6 +530,37 @@ th {
   display: flex;
   flex-direction: column;
   min-width: 0;
+}
+
+.profile-popover-close {
+  align-items: center;
+  appearance: none;
+  background: var(--pop-accent-soft);
+  border: 1px solid color-mix(in srgb, var(--pop-accent) 32%, #ffffff);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--pop-accent) 14%, transparent);
+  color: var(--pop-accent);
+  cursor: pointer;
+  display: inline-flex;
+  height: 34px;
+  justify-content: center;
+  min-height: 34px;
+  padding: 0;
+  position: relative;
+  transition: background .12s ease, border-color .12s ease, color .12s ease;
+  width: 34px;
+  z-index: 1;
+}
+
+.profile-popover-close:hover {
+  background: var(--pop-accent);
+  border-color: var(--pop-accent);
+  color: #ffffff;
+}
+
+.profile-popover-close fa-icon {
+  font-size: .86rem;
+  line-height: 1;
 }
 
 .profile-popover-name {
@@ -627,26 +662,378 @@ th {
 }
 
 .profile-popover-item--accent:hover {
-  background: #e0e7ff;
+  background: #fff2b8;
+}
+
+.profile-popover--alumno {
+  --pop-accent: #ffc414;
+  --pop-accent-soft: #fff8dc;
+  --pop-accent-ink: #24194f;
 }
 
 /* Variante docente — azul oscuro serio */
 .theme-docente ~ .profile-popover,
-.profile-popover.theme-docente {
-  --pop-accent: #1e3a8a;
-  --pop-accent-soft: #eff6ff;
-  --pop-accent-ink: #1e3a8a;
+.profile-popover.theme-docente,
+.profile-popover--docente {
+  --pop-accent: #19c1d0;
+  --pop-accent-soft: #ecfeff;
+  --pop-accent-ink: #062b33;
 }
 
 /* En Angular, el overlay del popover se monta fuera del árbol del componente,
    así que la clase theme-docente del :host no se propaga. Forzamos el tema
    del sidebar según el contenedor del portal (data-theme en <body>). */
 body[data-theme='docente'] .profile-popover {
-  --pop-accent: #1e3a8a;
-  --pop-accent-soft: #eff6ff;
-  --pop-accent-ink: #1e3a8a;
+  --pop-accent: #19c1d0;
+  --pop-accent-soft: #ecfeff;
+  --pop-accent-ink: #062b33;
 }
 
 body[data-theme='docente'] .profile-popover-item--accent:hover {
-  background: #dbeafe;
+  background: #cffafe;
+}
+
+@media (max-width: 480px) {
+  .profile-popover,
+  .profile-popover .ant-popover-inner {
+    max-width: min(360px, calc(100vw - 16px));
+    width: min(360px, calc(100vw - 16px));
+  }
+
+  .profile-popover-head {
+    gap: .7rem;
+    grid-template-columns: 52px minmax(0, 1fr);
+    padding: 1rem;
+  }
+
+  .profile-popover-item {
+    align-items: start;
+    gap: .5rem;
+    grid-template-columns: 20px minmax(0, 1fr);
+    padding: .55rem 1rem;
+  }
+
+  .profile-popover-icon {
+    grid-row: 1 / span 2;
+    margin-top: .08rem;
+  }
+
+  .profile-popover-val {
+    text-align: left;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+}
+
+/* Perfil de cuenta: acabado profesional y responsive para el sidebar nuevo. */
+.profile-popover {
+  --pop-accent: #ffc414;
+  --pop-accent-soft: #fff7d6;
+  --pop-accent-ink: #24194f;
+  --pop-deep: #251f6a;
+  --pop-deep-2: #332b83;
+  --pop-ink: #10172a;
+  --pop-muted: #66758f;
+  --pop-border: #dfe7f3;
+  max-width: min(388px, calc(100vw - 24px)) !important;
+  padding: 0 !important;
+}
+
+.profile-popover .ant-popover-inner {
+  background: #ffffff;
+  border: 1px solid rgba(37, 31, 106, .1);
+  border-radius: 24px;
+  box-shadow:
+    0 24px 70px rgba(21, 24, 48, .18),
+    0 8px 24px rgba(37, 31, 106, .08);
+  max-width: min(388px, calc(100vw - 24px));
+  overflow: hidden;
+  padding: 0;
+  width: 388px;
+}
+
+.profile-popover .ant-popover-inner-content {
+  padding: 0;
+}
+
+.profile-popover .ant-popover-arrow {
+  display: none;
+}
+
+.profile-popover-inner {
+  display: grid;
+  min-width: 0;
+}
+
+.profile-popover-head {
+  align-items: center;
+  background: var(--pop-deep);
+  border-bottom: 4px solid var(--pop-accent);
+  color: #ffffff;
+  display: grid;
+  gap: .9rem;
+  grid-template-columns: 64px minmax(0, 1fr) 38px;
+  min-height: 112px;
+  overflow: hidden;
+  padding: 1rem;
+  position: relative;
+}
+
+.profile-popover-avatar-shell {
+  display: grid;
+  height: 72px;
+  place-items: center;
+  position: relative;
+  width: 72px;
+}
+
+.profile-popover-avatar.ant-avatar {
+  background: var(--pop-accent-soft);
+  border: 3px solid #ffffff;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, .32);
+  color: var(--pop-accent-ink);
+  flex: 0 0 64px;
+  font-size: 1.05rem;
+  font-weight: 800;
+  height: 64px;
+  width: 64px;
+}
+
+.profile-popover-status {
+  background: #22c55e;
+  border: 2px solid #ffffff;
+  border-radius: 999px;
+  bottom: 8px;
+  height: 13px;
+  position: absolute;
+  right: 7px;
+  width: 13px;
+}
+
+.profile-popover-id {
+  display: grid;
+  gap: .18rem;
+  min-width: 0;
+}
+
+.profile-popover-eyebrow {
+  color: var(--pop-accent);
+  font-size: .64rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.profile-popover-name {
+  color: #ffffff;
+  font-size: .98rem;
+  font-weight: 800;
+  line-height: 1.18;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profile-popover-username {
+  color: rgba(255, 255, 255, .72);
+  font-size: .78rem;
+  font-weight: 600;
+  line-height: 1.2;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profile-popover-close {
+  align-items: center;
+  appearance: none;
+  background: rgba(255, 255, 255, .1);
+  border: 1px solid rgba(255, 255, 255, .2);
+  border-radius: 12px;
+  box-shadow: none;
+  color: rgba(255, 255, 255, .82);
+  cursor: pointer;
+  display: inline-flex;
+  height: 38px;
+  justify-content: center;
+  padding: 0;
+  transition: background .15s ease, border-color .15s ease, color .15s ease, transform .15s ease;
+  width: 38px;
+}
+
+.profile-popover-close:hover,
+.profile-popover-close:focus-visible {
+  background: var(--pop-accent);
+  border-color: var(--pop-accent);
+  color: var(--pop-accent-ink);
+  outline: none;
+  transform: translateY(-1px);
+}
+
+.profile-popover-list {
+  background: #ffffff;
+  display: grid;
+  gap: .38rem;
+  list-style: none;
+  margin: 0;
+  padding: .72rem;
+}
+
+.profile-popover-item {
+  align-items: center;
+  background: #f8fafc;
+  border: 1px solid transparent;
+  border-radius: 16px;
+  display: grid;
+  font-size: .86rem;
+  gap: .72rem;
+  grid-template-columns: 34px minmax(70px, .72fr) minmax(0, 1fr);
+  line-height: 1.2;
+  min-height: 50px;
+  min-width: 0;
+  padding: .62rem .72rem;
+  transition: border-color .12s ease, background .12s ease;
+}
+
+.profile-popover-item:hover {
+  background: #f3f7fc;
+  border-color: rgba(37, 31, 106, .08);
+}
+
+.profile-popover-icon {
+  align-items: center;
+  background: #eef3fb;
+  border-radius: 11px;
+  color: var(--pop-deep-2);
+  display: inline-flex;
+  font-size: .85rem;
+  height: 34px;
+  justify-content: center;
+  width: 34px;
+}
+
+.profile-popover-icon--coin {
+  background: #fff4bf;
+}
+
+.profile-popover-key {
+  color: var(--pop-muted);
+  font-size: .7rem;
+  font-weight: 800;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+
+.profile-popover-val {
+  color: var(--pop-ink);
+  font-weight: 800;
+  min-width: 0;
+  overflow: hidden;
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profile-popover-item--accent {
+  background: var(--pop-accent-soft);
+  border-color: rgba(255, 196, 20, .4);
+}
+
+.profile-popover-item--accent:hover {
+  background: #fff2bd;
+}
+
+.profile-popover-item--accent .profile-popover-icon {
+  color: var(--pop-accent-ink);
+}
+
+.profile-popover-item--accent .profile-popover-val {
+  color: var(--pop-accent-ink);
+}
+
+.profile-popover--docente,
+body[data-theme='docente'] .profile-popover {
+  --pop-accent: #19c1d0;
+  --pop-accent-soft: #e9fbfd;
+  --pop-accent-ink: #062b33;
+  --pop-deep: #211a58;
+  --pop-deep-2: #282166;
+}
+
+.profile-popover--docente .profile-popover-item--accent,
+body[data-theme='docente'] .profile-popover .profile-popover-item--accent {
+  border-color: rgba(25, 193, 208, .42);
+}
+
+.profile-popover--docente .profile-popover-item--accent:hover,
+body[data-theme='docente'] .profile-popover .profile-popover-item--accent:hover {
+  background: #d7f8fc;
+}
+
+@media (max-width: 640px) {
+  .profile-popover.profile-popover--mobile,
+  .profile-popover.profile-popover--mobile .ant-popover-inner {
+    max-width: min(342px, calc(100vw - 28px)) !important;
+    width: min(342px, calc(100vw - 28px)) !important;
+  }
+
+  .profile-popover.profile-popover--mobile .ant-popover-inner {
+    border-radius: 22px;
+    max-height: min(76vh, 620px);
+    overflow: hidden auto;
+  }
+
+  .profile-popover.profile-popover--mobile .profile-popover-head {
+    gap: .72rem;
+    grid-template-columns: 56px minmax(0, 1fr) 36px;
+    min-height: 96px;
+    padding: .86rem;
+  }
+
+  .profile-popover.profile-popover--mobile .profile-popover-avatar-shell {
+    height: 60px;
+    width: 60px;
+  }
+
+  .profile-popover.profile-popover--mobile .profile-popover-avatar.ant-avatar {
+    flex-basis: 54px;
+    height: 54px !important;
+    width: 54px !important;
+  }
+
+  .profile-popover.profile-popover--mobile .profile-popover-status {
+    bottom: 6px;
+    right: 5px;
+  }
+
+  .profile-popover.profile-popover--mobile .profile-popover-close {
+    height: 36px;
+    width: 36px;
+  }
+
+  .profile-popover.profile-popover--mobile .profile-popover-list {
+    gap: .34rem;
+    padding: .62rem;
+  }
+
+  .profile-popover.profile-popover--mobile .profile-popover-item {
+    align-items: start;
+    gap: .18rem .62rem;
+    grid-template-columns: 34px minmax(0, 1fr);
+    min-height: 54px;
+    padding: .62rem;
+  }
+
+  .profile-popover.profile-popover--mobile .profile-popover-icon {
+    grid-row: 1 / span 2;
+  }
+
+  .profile-popover.profile-popover--mobile .profile-popover-val {
+    text-align: left;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
 }

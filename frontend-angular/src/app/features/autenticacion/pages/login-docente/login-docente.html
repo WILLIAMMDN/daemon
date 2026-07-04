@@ -5,9 +5,8 @@
   </a>
 
   <section class="login-stage">
-    <header class="login-brand" aria-label="DAEMON">
-      <span class="brand-symbol" aria-hidden="true"></span>
-      <span class="brand-name">DAEMON</span>
+    <header class="login-brand" aria-label="Academia Daemon">
+      <img class="brand-logo" src="/img/brand/daemon-transparent.png" alt="Academia Daemon">
     </header>
 
     <article class="login-card">
@@ -16,7 +15,7 @@
       <div class="login-card-head">
         <div>
           <p class="eyebrow">Portal docente</p>
-          <h1>Login</h1>
+          <h1>Acceso docente</h1>
         </div>
 
         <div class="portal-switch" aria-label="Tipo de portal">
@@ -102,7 +101,7 @@
         }
 
         <button type="submit" [disabled]="enviando() || docenteForm.invalid" class="submit-button">
-          {{ enviando() ? 'Ingresando...' : 'Login' }}
+          {{ enviando() ? 'Ingresando...' : 'Ingresar al portal' }}
         </button>
       </form>
 

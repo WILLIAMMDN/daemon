@@ -3,7 +3,9 @@
 }
 
 .shape-shell {
+  opacity: var(--floating-shape-opacity, 1);
   transform-origin: center;
+  z-index: var(--floating-shape-z, 40);
 }
 
 .shape-motion {

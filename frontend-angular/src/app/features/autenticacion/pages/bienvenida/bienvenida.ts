@@ -92,13 +92,24 @@ export class Bienvenida implements OnInit {
       return;
     }
 
+    this.guardando.set(true);
+    this.error.set('');
+    const carga = this.cargaGlobal.mostrar('Cerrando sesion...');
+
     this.auth.logout().subscribe({
-      next: () => this.router.navigateByUrl('/login'),
+      next: () => this.volverAlLogin(carga),
       error: () => {
         this.sesion.limpiar();
-        this.router.navigateByUrl('/login');
+        this.volverAlLogin(carga);
       },
     });
+  }
+
+  private volverAlLogin(carga: symbol): void {
+    this.cargaGlobal.cambiarMensaje('Volviendo al login...');
+    setTimeout(() => {
+      void this.router.navigateByUrl('/login').finally(() => this.cargaGlobal.ocultar(carga));
+    }, 420);
   }
 
   private validar(payload: CompletarPerfilGoogleDatos, form: NgForm): string | null {
