@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\V1\CuentoController;
 use App\Http\Controllers\Api\V1\ComunidadController;
 use App\Http\Controllers\Api\V1\DocenteController;
 use App\Http\Controllers\Api\V1\EvaluacionController;
+use App\Http\Controllers\Api\V1\InstitucionController;
 use App\Http\Controllers\Api\V1\MisionController;
 use App\Http\Controllers\Api\V1\RankingController;
 use App\Http\Controllers\Api\V1\SaludController;
@@ -80,6 +81,8 @@ Route::prefix('v1')->group(function (): void {
             Route::apiResource('/docente/insignias', DocenteController::class)->only(['store', 'update', 'destroy']);
             Route::get('/docente/insignias', [DocenteController::class, 'insignias']);
             Route::post('/docente/insignias/asignar', [DocenteController::class, 'asignarInsignia']);
+
+            Route::apiResource('instituciones', InstitucionController::class);
 
             Route::get('/chatbot/admin/bots', [ChatbotController::class, 'adminIndex']);
             Route::get('/chatbot/admin/bots/{bot}', [ChatbotController::class, 'adminShow']);
