@@ -59,6 +59,41 @@ class EvaluacionService
         });
     }
 
+    public function publicar(Evaluacion $evaluacion): Evaluacion
+    {
+        abort_if(
+            $evaluacion->preguntas()->count() === 0,
+            422,
+            'La evaluacion necesita al menos una pregunta antes de publicarse.'
+        );
+
+        return DB::transaction(function () use ($evaluacion) {
+            Evaluacion::where('nivel', $evaluacion->nivel)
+                ->where('id', '!=', $evaluacion->id)
+                ->where('estado', 'activo')
+                ->update(['estado' => 'finalizado']);
+
+            $evaluacion->estado = 'activo';
+            $evaluacion->save();
+
+            return $evaluacion->fresh();
+        });
+    }
+
+    public function despublicar(Evaluacion $evaluacion): Evaluacion
+    {
+        abort_if(
+            $evaluacion->estado !== 'activo',
+            422,
+            'Solo se pueden despublicar evaluaciones activas.'
+        );
+
+        $evaluacion->estado = 'borrador';
+        $evaluacion->save();
+
+        return $evaluacion->fresh();
+    }
+
     public function guardarPreguntas(Evaluacion $evaluacion, array $preguntas): void
     {
         DB::transaction(function () use ($evaluacion, $preguntas) {

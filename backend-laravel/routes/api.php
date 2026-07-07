@@ -96,6 +96,8 @@ Route::prefix('v1')->group(function (): void {
             Route::post('/evaluaciones', [EvaluacionController::class, 'store']);
             Route::put('/evaluaciones/{evaluacion}', [EvaluacionController::class, 'update']);
             Route::delete('/evaluaciones/{evaluacion}', [EvaluacionController::class, 'destroy']);
+            Route::post('/evaluaciones/{evaluacion}/publicar', [EvaluacionController::class, 'publicar']);
+            Route::post('/evaluaciones/{evaluacion}/despublicar', [EvaluacionController::class, 'despublicar']);
             Route::post('/evaluaciones/{evaluacion}/preguntas', [EvaluacionController::class, 'guardarPreguntas']);
 
             Route::post('/competencia/control', [CompetenciaController::class, 'control']);

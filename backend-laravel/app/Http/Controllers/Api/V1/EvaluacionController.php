@@ -42,6 +42,16 @@ class EvaluacionController extends Controller
         return response()->noContent();
     }
 
+    public function publicar(Evaluacion $evaluacion)
+    {
+        return $this->evaluaciones->publicar($evaluacion);
+    }
+
+    public function despublicar(Evaluacion $evaluacion)
+    {
+        return $this->evaluaciones->despublicar($evaluacion);
+    }
+
     public function guardarPreguntas(GuardarPreguntasRequest $request, Evaluacion $evaluacion)
     {
         $this->evaluaciones->guardarPreguntas($evaluacion, $request->validated()['preguntas']);
