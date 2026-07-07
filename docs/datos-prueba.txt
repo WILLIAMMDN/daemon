@@ -1,10 +1,10 @@
 Usuario alumno:
 usuario: jose123
-contraseña: 1234
+contraseña: [REDACTED]
 
 Usuario docente:
 usuario: william1013
-contraseña: M_edina9735
+contraseña: [REDACTED]
 
 Modelo Ollama usado:
 gemma2:9b

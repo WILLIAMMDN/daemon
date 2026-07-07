@@ -190,8 +190,8 @@ OLLAMA_MODEL=gemma2:9b
 
 ## Datos de prueba
 
-- Alumno: `jose123` / `1234`
-- Docente: `william1013` / `M_edina9735`
+- Alumno: `jose123` / `[REDACTED]`
+- Docente: `william1013` / `[REDACTED]`
 
 ## Modulos de DAEMON
 
