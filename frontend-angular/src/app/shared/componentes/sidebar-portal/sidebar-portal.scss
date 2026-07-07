@@ -167,21 +167,18 @@
   --floating-shape-opacity: .42;
   --floating-shape-z: 1;
   background: var(--sb-surface);
-  border: 1px solid rgba(255, 255, 255, .16);
-  border-radius: 26px;
-  box-shadow:
-    0 24px 50px rgba(25, 20, 75, .26),
-    inset 0 1px 0 rgba(255, 255, 255, .12);
+  border-right: 1px solid rgba(255, 255, 255, .16);
+  box-shadow: 4px 0 24px rgba(25, 20, 75, .15);
   color: var(--sb-ink);
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: auto auto minmax(0, 1fr) auto;
-  height: calc(100vh - 1.5rem);
+  height: 100vh;
   isolation: isolate;
-  margin: .75rem;
+  margin: 0;
   overflow: hidden;
   position: sticky;
-  top: .75rem;
+  top: 0;
 }
 
 /* Las figuritas decorativas viven detras del contenido y se sienten como textura. */
