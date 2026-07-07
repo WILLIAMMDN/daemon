@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\V1\CertificadoController;
 use App\Http\Controllers\Api\V1\ChatbotController;
 use App\Http\Controllers\Api\V1\CompetenciaController;
 use App\Http\Controllers\Api\V1\CuentoController;
+use App\Http\Controllers\Api\V1\ComunidadController;
 use App\Http\Controllers\Api\V1\DocenteController;
 use App\Http\Controllers\Api\V1\EvaluacionController;
 use App\Http\Controllers\Api\V1\MisionController;
@@ -119,6 +120,13 @@ Route::prefix('v1')->group(function (): void {
         Route::get('/competencia/chat', [CompetenciaController::class, 'chat']);
         Route::post('/competencia/chat', [CompetenciaController::class, 'enviarChat']);
         Route::get('/comunidad', [AlumnoController::class, 'comunidad']);
+        Route::middleware('role:docente,admin')->prefix('comunidad')->group(function (): void {
+            Route::get('/mensajes', [ComunidadController::class, 'mensajes']);
+            Route::get('/mensajes/estadisticas', [ComunidadController::class, 'estadisticas']);
+            Route::post('/mensajes', [ComunidadController::class, 'crearMensaje']);
+            Route::delete('/mensajes/bulk', [ComunidadController::class, 'eliminarMensajesBulk']);
+            Route::delete('/mensajes/{mensaje}', [ComunidadController::class, 'eliminarMensaje']);
+        });
         Route::post('/misiones/{mision}/entregar', [MisionController::class, 'entregar'])->middleware('role:alumno');
         Route::post('/archivos', [ArchivoController::class, 'store']);
         Route::get('/certificados/{usuario?}', [CertificadoController::class, 'show']);
