@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzTagModule } from 'ng-zorro-antd/tag';
+import { NzTableModule } from 'ng-zorro-antd/table';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
 import { Docente } from '../../services/docente';
@@ -27,7 +28,7 @@ interface AlcanceAcademico {
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-lista-alumnos',
-  imports: [FormsModule, RouterLink, NzAlertModule, NzButtonModule, NzTagModule, Cargando, EstadoVacio],
+  imports: [FormsModule, RouterLink, NzAlertModule, NzButtonModule, NzTagModule, NzTableModule, Cargando, EstadoVacio],
   templateUrl: './lista-alumnos.html',
   styleUrl: './lista-alumnos.scss',
 })

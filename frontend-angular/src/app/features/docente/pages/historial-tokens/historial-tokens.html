@@ -1,43 +1,62 @@
-<section class="page">
-  <header class="page-header">
-    <div>
-      <p class="kicker">Docente</p>
-      <h1>Historial de tokens</h1>
-      <p>uuditoria de movimientos de economía escolar.</p>
+<main class="w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-6 md:gap-8 font-inter">
+  <!-- Cabecera -->
+  <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div class="flex flex-col gap-1">
+      <span class="text-sm font-semibold uppercase tracking-wider text-blue-600">Docente</span>
+      <h1 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Flujo de Tokens</h1>
+      <p class="text-base text-gray-600 dark:text-gray-400">Auditoría global de economía escolar: ingresos y gastos de estudiantes.</p>
     </div>
-    <button type="button" (click)="cargar()">uctualizar</button>
+    <button nz-button nzType="default" (click)="cargar()" [nzLoading]="cargando()" class="flex items-center gap-2">
+      Actualizar
+    </button>
   </header>
 
-  @if (cargando()) {
-    <app-cargando class="state" texto="Cargando historial..."></app-cargando>
-  } @else if (error()) {
-    <p class="error">{{ error() }}</p>
-  } @else if (movimientos().length) {
-    <section class="panel table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Fecha</th>
-            <th>ulumno</th>
-            <th>Docente</th>
-            <th>Cantidad</th>
-            <th>Motivo</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (movimiento of movimientos(); track movimiento.id) {
-            <tr>
-              <td>{{ movimiento.fecha }}</td>
-              <td>{{ movimiento.alumno }}</td>
-              <td>{{ movimiento.docente }}</td>
-              <td><strong>{{ movimiento.cantidad }}</strong></td>
-              <td>{{ movimiento.motivo }}</td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    </section>
-  } @else {
-    <p class="empty">No hay movimientos registrados.</p>
+  @if (error()) {
+    <nz-alert nzType="error" nzShowIcon [nzMessage]="error()"></nz-alert>
   }
-</section>
+
+  <!-- Contenido Principal -->
+  <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+    @if (cargando()) {
+      <div class="p-12">
+        <app-cargando texto="Cargando historial de economía..."></app-cargando>
+      </div>
+    } @else if (movimientos().length) {
+      <div class="overflow-x-auto w-full">
+        <nz-table #tablaMovimientos [nzData]="movimientos()" [nzShowPagination]="true" [nzPageSize]="15" nzSize="middle" class="w-full whitespace-nowrap">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Estudiante</th>
+              <th>Tipo</th>
+              <th>Movimiento</th>
+              <th>Concepto</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (mov of tablaMovimientos.data; track mov.id) {
+              <tr>
+                <td class="text-gray-600 dark:text-gray-400 text-sm">{{ mov.fecha }}</td>
+                <td class="font-medium text-gray-900 dark:text-white">{{ mov.alumno_nombre }}</td>
+                <td>
+                  <nz-tag [nzColor]="mov.tipo === 'ingreso' ? 'success' : 'error'">{{ mov.tipo | uppercase }}</nz-tag>
+                </td>
+                <td class="font-bold font-mono" [class]="mov.tipo === 'ingreso' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'">
+                  {{ mov.tipo === 'ingreso' ? '+' : '-' }}{{ mov.cantidad }} Tk
+                </td>
+                <td class="text-gray-700 dark:text-gray-300">{{ mov.concepto }}</td>
+              </tr>
+            }
+          </tbody>
+        </nz-table>
+      </div>
+    } @else {
+      <div class="p-12 text-center">
+        <app-estado-vacio 
+          titulo="Sin movimientos económicos" 
+          descripcion="No hay registros de tokens entregados ni gastados en el sistema hasta ahora.">
+        </app-estado-vacio>
+      </div>
+    }
+  </div>
+</main>

@@ -10,10 +10,12 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 
+import { NzAlertModule } from 'ng-zorro-antd/alert';
+
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-gestionar-tienda',
-  imports: [FormsModule, CommonModule, Cargando, NzTableModule, NzPopconfirmModule, NzModalModule, NzTagModule, NzButtonModule],
+  imports: [FormsModule, CommonModule, Cargando, NzTableModule, NzPopconfirmModule, NzModalModule, NzTagModule, NzButtonModule, NzAlertModule],
   templateUrl: './gestionar-tienda.html',
   styleUrl: './gestionar-tienda.scss',
 })

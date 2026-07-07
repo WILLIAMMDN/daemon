@@ -1,41 +1,56 @@
-<section class="page">
-  <header class="page-header">
-    <div>
-      <p class="kicker">Docente</p>
-      <h1>Historial de rondas</h1>
-      <p>Ganadores y promedios de competencias cerradas.</p>
+<main class="w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-6 md:gap-8 font-inter">
+  <!-- Cabecera -->
+  <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div class="flex flex-col gap-1">
+      <span class="text-sm font-semibold uppercase tracking-wider text-blue-600">Docente</span>
+      <h1 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Historial de rondas</h1>
+      <p class="text-base text-gray-600 dark:text-gray-400">Ganadores y promedios de competencias cerradas.</p>
     </div>
-    <button type="button" (click)="cargar()">Actualizar</button>
+    <button nz-button nzType="default" (click)="cargar()" [nzLoading]="cargando()" class="flex items-center gap-2">
+      Actualizar
+    </button>
   </header>
 
-  @if (cargando()) {
-    <app-cargando class="state" texto="Cargando rondas..."></app-cargando>
-  } @else if (error()) {
-    <p class="error">{{ error() }}</p>
-  } @else if (rondas().length) {
-    <section class="panel table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Fecha</th>
-            <th>Nivel</th>
-            <th>Ganador</th>
-            <th>Promedio</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (ronda of rondas(); track ronda.id) {
-            <tr>
-              <td>{{ ronda.fecha }}</td>
-              <td><span class="badge">{{ ronda.nivel }}</span></td>
-              <td>{{ ronda.ganador_nombre }}</td>
-              <td><strong>{{ ronda.ganador_promedio }}</strong></td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    </section>
-  } @else {
-    <p class="empty">No hay rondas cerradas.</p>
+  @if (error()) {
+    <nz-alert nzType="error" nzShowIcon [nzMessage]="error()"></nz-alert>
   }
-</section>
+
+  <!-- Contenido Principal -->
+  <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+    @if (cargando()) {
+      <div class="p-12">
+        <app-cargando texto="Cargando historial de rondas..."></app-cargando>
+      </div>
+    } @else if (rondas().length) {
+      <div class="overflow-x-auto w-full">
+        <nz-table #tablaRondas [nzData]="rondas()" [nzShowPagination]="true" [nzPageSize]="10" nzSize="middle" class="w-full whitespace-nowrap">
+          <thead>
+            <tr>
+              <th>Fecha de cierre</th>
+              <th>Nivel evaluado</th>
+              <th>Estudiante Ganador</th>
+              <th>Puntaje Promedio</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (ronda of tablaRondas.data; track ronda.id) {
+              <tr>
+                <td class="text-gray-600 dark:text-gray-400">{{ ronda.fecha }}</td>
+                <td><nz-tag nzColor="blue">{{ ronda.nivel }}</nz-tag></td>
+                <td class="font-medium text-gray-900 dark:text-white">{{ ronda.ganador_nombre }}</td>
+                <td class="font-bold text-yellow-600 dark:text-yellow-500">{{ ronda.ganador_promedio }} ptos</td>
+              </tr>
+            }
+          </tbody>
+        </nz-table>
+      </div>
+    } @else {
+      <div class="p-12 text-center">
+        <app-estado-vacio 
+          titulo="Sin historial" 
+          descripcion="Aún no hay competencias cerradas ni ganadores registrados en el sistema.">
+        </app-estado-vacio>
+      </div>
+    }
+  </div>
+</main>
