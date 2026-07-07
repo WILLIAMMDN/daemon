@@ -1,0 +1,140 @@
+openapi: 3.0.3
+info:
+  title: DAEMON API
+  description: API REST para el ecosistema educativo gamificado DAEMON.
+  version: 1.0.0
+  contact:
+    name: DAEMON Team
+    email: williamir1234@gmail.com
+servers:
+  - url: https://daemon-5vo1.onrender.com/api/v1
+    description: Servidor de Producción
+  - url: http://localhost:8000/api/v1
+    description: Servidor Local
+components:
+  securitySchemes:
+    sanctum:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - sanctum: []
+paths:
+  /misiones:
+    get:
+      summary: Lista misiones activas
+      description: Retorna misiones filtradas por nivel del alumno.
+      tags:
+        - Misiones
+      responses:
+        '200':
+          description: OK
+    post:
+      summary: Crear misión
+      tags:
+        - Misiones
+      responses:
+        '201':
+          description: Misión creada
+  /misiones/{mision}:
+    get:
+      summary: Detalle de misión
+      tags:
+        - Misiones
+      parameters:
+        - name: mision
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+    put:
+      summary: Actualizar misión
+      tags:
+        - Misiones
+      parameters:
+        - name: mision
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+    delete:
+      summary: Borrar misión
+      tags:
+        - Misiones
+      parameters:
+        - name: mision
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+  /misiones/{mision}/entregar:
+    post:
+      summary: Entregar evidencia
+      tags:
+        - Misiones
+      parameters:
+        - name: mision
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '201':
+          description: Entrega registrada
+  /tienda:
+    get:
+      summary: Listar premios visibles
+      tags:
+        - Tienda
+      responses:
+        '200':
+          description: OK
+  /evaluaciones/activas:
+    get:
+      summary: Evaluaciones activas
+      tags:
+        - Evaluaciones
+      responses:
+        '200':
+          description: OK
+  /docente/insignias:
+    get:
+      summary: Listar insignias
+      tags:
+        - Insignias
+      responses:
+        '200':
+          description: OK
+  /docente/aulas:
+    get:
+      summary: Aulas en alcance del docente
+      tags:
+        - Aulas
+      responses:
+        '200':
+          description: OK
+  /cuentos:
+    get:
+      summary: Galería de cuentos
+      tags:
+        - Cuentos
+      responses:
+        '200':
+          description: OK
+  /comunidad:
+    get:
+      summary: Feed de la comunidad
+      tags:
+        - Comunidad
+      responses:
+        '200':
+          description: OK
