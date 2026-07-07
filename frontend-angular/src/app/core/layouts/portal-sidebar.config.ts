@@ -80,6 +80,7 @@ export const docenteSidebarSections: PortalSidebarSection[] = [
       { id: 'docente-panel', etiqueta: 'Panel', ruta: '/docente', detalle: 'Resumen del aula', icono: faGaugeHigh, exacto: true },
       { id: 'docente-perfil', etiqueta: 'Perfil', ruta: '/docente/perfil', detalle: 'Cuenta docente', icono: faCircleUser },
       { id: 'docente-alumnos', etiqueta: 'Alumnos y tokens', ruta: '/docente/alumnos', detalle: 'Cuentas y tokens', icono: faUsersGear },
+      { id: 'docente-aulas', etiqueta: 'Gestionar aulas', ruta: '/docente/aulas', detalle: 'Grupos y niveles', icono: faPeopleGroup },
     ],
   },
   {

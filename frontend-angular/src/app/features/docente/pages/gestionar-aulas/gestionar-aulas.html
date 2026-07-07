@@ -1,0 +1,86 @@
+<section class="page">
+  <header class="page-header">
+    <div>
+      <p class="kicker">Docente</p>
+      <h1>Gestionar aulas</h1>
+      <p>Administra los grupos y niveles de tus estudiantes.</p>
+    </div>
+    <button nz-button nzType="default" class="daemon-btn" type="button" [nzLoading]="cargando()" (click)="cargar()">Actualizar</button>
+  </header>
+
+  @if (mensaje()) { <nz-alert class="daemon-alert" nzType="success" nzShowIcon [nzMessage]="mensaje()"></nz-alert> }
+  @if (error()) { <nz-alert class="daemon-alert" nzType="error" nzShowIcon [nzMessage]="error()"></nz-alert> }
+
+  <form class="panel" (ngSubmit)="crear()">
+    <h2>Nueva aula</h2>
+    <div class="form-grid" style="grid-template-columns: 1fr 1fr;">
+      <label>
+        Nombre del grupo
+        <input name="nombre" [(ngModel)]="nueva.nombre" required placeholder="Ej: Grupo A, Avanzados...">
+      </label>
+      <label>
+        Nivel Educativo
+        <select name="nivel" [(ngModel)]="nueva.nivel">
+          <option value="KIDS">KIDS</option>
+          <option value="TEENS">TEENS</option>
+          <option value="PRO">PRO</option>
+        </select>
+      </label>
+    </div>
+    <button nz-button nzType="primary" class="daemon-btn" type="submit" [nzLoading]="guardando()" [disabled]="guardando() || !nueva.nombre.trim()">Crear aula</button>
+  </form>
+
+  @if (cargando()) {
+    <app-cargando class="state" texto="Cargando aulas..."></app-cargando>
+  } @else if (aulas().length) {
+    <section class="panel table-wrap">
+      <nz-table #tablaAulas [nzData]="aulas()" [nzShowPagination]="true" [nzPageSize]="10" nzSize="middle">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Nivel</th>
+            <th>Alumnos asignados</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (aula of tablaAulas.data; track aula.id) {
+            <tr>
+              <td>{{ aula.nombre }}</td>
+              <td><nz-tag class="daemon-tag" nzColor="geekblue">{{ aula.nivel }}</nz-tag></td>
+              <td>{{ aula.usuarios_count ?? 0 }}</td>
+              <td>
+                <button nz-button nzType="link" (click)="abrirEditar(aula)">Editar</button>
+                <button nz-button nzType="link" nzDanger nz-popconfirm nzPopconfirmTitle="¿Seguro que deseas eliminar esta aula? Solo puedes borrar aulas sin alumnos." nzPopconfirmPlacement="left" (nzOnConfirm)="eliminar(aula.id)">Eliminar</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </nz-table>
+    </section>
+  } @else {
+    <app-estado-vacio titulo="Sin aulas creadas" descripcion="Crea tu primera aula para comenzar a agrupar a tus estudiantes."></app-estado-vacio>
+  }
+</section>
+
+<!-- Modal de Edición -->
+<nz-modal [(nzVisible)]="modalVisible" nzTitle="Editar Aula" (nzOnCancel)="cerrarEditar()" (nzOnOk)="guardarEdicion()" [nzOkLoading]="guardando()">
+  <ng-container *nzModalContent>
+    @if (aulaEditando) {
+      <div class="form-grid">
+        <label class="field-wide">
+          Nombre del grupo
+          <input name="edit_nombre" [(ngModel)]="aulaEditando.nombre" required>
+        </label>
+        <label class="field-wide">
+          Nivel Educativo
+          <select name="edit_nivel" [(ngModel)]="aulaEditando.nivel">
+            <option value="KIDS">KIDS</option>
+            <option value="TEENS">TEENS</option>
+            <option value="PRO">PRO</option>
+          </select>
+        </label>
+      </div>
+    }
+  </ng-container>
+</nz-modal>
