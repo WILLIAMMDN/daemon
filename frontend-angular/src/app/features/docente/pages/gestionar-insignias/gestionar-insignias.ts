@@ -4,6 +4,9 @@ import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzTagModule } from 'ng-zorro-antd/tag';
+import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
+import { NzMessageService } from 'ng-zorro-antd/message';
 import { Activos } from '../../../../core/servicios/activos';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
@@ -18,6 +21,8 @@ import { Docente } from '../../services/docente';
     NzAvatarModule,
     NzButtonModule,
     NzTagModule,
+    NzModalModule,
+    NzPopconfirmModule,
     Cargando,
     EstadoVacio,
     MediaUploader,
@@ -38,7 +43,13 @@ export class GestionarInsignias {
   asignacion = { id_alumno: null as number | null, id_insignia: null as number | null, asignar: true };
   private archivoImagen: File | null = null;
 
-  constructor(private docente: Docente, private activos: Activos) {
+  modalVisible = signal(false);
+  insigniaEditando: any = null;
+  imagenEditPreview = signal('');
+  archivoEditImagen: File | null = null;
+  uploadEditResetKey = signal(0);
+
+  constructor(private docente: Docente, private activos: Activos, private message: NzMessageService) {
     this.cargar();
   }
 
@@ -154,5 +165,73 @@ export class GestionarInsignias {
 
   imagenInsignia(ruta?: string | null): string {
     return this.activos.url(ruta);
+  }
+
+  abrirEditar(insignia: any): void {
+    this.insigniaEditando = { ...insignia };
+    this.imagenEditPreview.set('');
+    this.archivoEditImagen = null;
+    this.uploadEditResetKey.update((v) => v + 1);
+    this.modalVisible.set(true);
+  }
+
+  cerrarEditar(): void {
+    this.modalVisible.set(false);
+    this.insigniaEditando = null;
+  }
+
+  seleccionarImagenEdit(archivo: File | null): void {
+    this.archivoEditImagen = archivo;
+    if (!archivo) {
+      this.imagenEditPreview.set('');
+      return;
+    }
+    const lector = new FileReader();
+    lector.onload = () => this.imagenEditPreview.set(String(lector.result ?? ''));
+    lector.readAsDataURL(archivo);
+  }
+
+  imagenEditVisible(): string {
+    return this.imagenEditPreview() || this.activos.url(this.insigniaEditando?.imagen);
+  }
+
+  guardarEdicion(): void {
+    if (!this.insigniaEditando) return;
+    this.guardando.set(true);
+    
+    const datos = new FormData();
+    datos.append('nombre', this.insigniaEditando.nombre);
+    datos.append('descripcion', this.insigniaEditando.descripcion ?? '');
+
+    if (this.archivoEditImagen) {
+      datos.append('archivo', this.archivoEditImagen);
+    } else if (this.insigniaEditando.imagen && this.insigniaEditando.imagen.trim()) {
+      datos.append('imagen', this.insigniaEditando.imagen.trim());
+    }
+
+    this.docente.actualizarInsignia(this.insigniaEditando.id, datos).subscribe({
+      next: () => {
+        this.message.success('Insignia actualizada correctamente.');
+        this.guardando.set(false);
+        this.cerrarEditar();
+        this.cargar();
+      },
+      error: (e) => {
+        this.message.error(e.error?.message ?? 'Error al actualizar la insignia.');
+        this.guardando.set(false);
+      }
+    });
+  }
+
+  eliminar(id: number): void {
+    this.docente.eliminarInsignia(id).subscribe({
+      next: () => {
+        this.message.success('Insignia eliminada correctamente.');
+        this.cargar();
+      },
+      error: (e) => {
+        this.message.error(e.error?.message ?? 'Error al eliminar la insignia.');
+      }
+    });
   }
 }

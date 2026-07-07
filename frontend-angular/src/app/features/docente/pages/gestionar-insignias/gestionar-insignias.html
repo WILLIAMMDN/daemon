@@ -64,8 +64,8 @@
         (archivoChange)="seleccionarImagen($event)"
       />
 
-      <button nz-button nzType="primary" class="daemon-btn" type="submit" [disabled]="guardando() || !puedeCrear()">
-        @if (guardando()) { Creando... } @else { Crear insignia }
+      <button nz-button nzType="primary" class="daemon-btn" type="submit" [disabled]="guardando() || !puedeCrear()" [nzLoading]="guardando()">
+        Crear insignia
       </button>
     </form>
 
@@ -116,6 +116,11 @@
               <h3>{{ insignia.nombre }}</h3>
               <p class="insignia-desc">{{ insignia.descripcion || 'Sin descripcion registrada.' }}</p>
             </div>
+            
+            <div class="flex gap-2 mt-4 pt-4 border-t border-base-200">
+              <button nz-button nzType="default" nzSize="small" (click)="abrirEditar(insignia)">Editar</button>
+              <button nz-button nzDanger nzSize="small" nz-popconfirm nzPopconfirmTitle="¿Borrar insignia?" (nzOnConfirm)="eliminar(insignia.id)">Eliminar</button>
+            </div>
           </article>
         }
       </div>
@@ -127,3 +132,35 @@
     }
   </section>
 </section>
+
+<nz-modal [(nzVisible)]="modalVisible" nzTitle="Editar Insignia" (nzOnCancel)="cerrarEditar()" (nzOnOk)="guardarEdicion()" [nzOkLoading]="guardando()" nzWidth="500px">
+  <ng-container *nzModalContent>
+    @if (insigniaEditando) {
+      <div class="flex flex-col gap-4">
+        <div class="flex justify-center mb-4">
+          <nz-avatar nzShape="square" [nzSize]="96" [nzSrc]="imagenEditVisible() || undefined" nzText="DA"></nz-avatar>
+        </div>
+        
+        <label class="flex flex-col gap-1">
+          <span class="text-sm font-semibold">Nombre</span>
+          <input class="input input-bordered w-full" name="edit_nombre" [(ngModel)]="insigniaEditando.nombre" required>
+        </label>
+        
+        <label class="flex flex-col gap-1">
+          <span class="text-sm font-semibold">Descripción</span>
+          <textarea class="textarea textarea-bordered w-full" name="edit_descripcion" rows="3" [(ngModel)]="insigniaEditando.descripcion"></textarea>
+        </label>
+        
+        <app-media-uploader
+          titulo="Cambiar Imagen (opcional)"
+          descripcion="Sube una nueva imagen cuadrada o PNG transparente."
+          accept="image/*"
+          [maxMb]="4"
+          [resetKey]="uploadEditResetKey()"
+          lista="picture"
+          (archivoChange)="seleccionarImagenEdit($event)"
+        />
+      </div>
+    }
+  </ng-container>
+</nz-modal>

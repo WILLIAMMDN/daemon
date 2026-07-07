@@ -1,19 +1,28 @@
-﻿<section class="page">
+<section class="page">
   <header class="page-header">
     <div>
       <p class="kicker">Docente</p>
       <h1>Evaluaciones</h1>
       <p>Exámenes, estados y banco de preguntas.</p>
     </div>
-    <button type="button" (click)="cargar()">Actualizar</button>
+    <button nz-button nzType="default" class="daemon-btn" type="button" (click)="cargar()" [disabled]="cargando()">
+      @if (cargando()) { Actualizando... } @else { Actualizar }
+    </button>
   </header>
 
-  @if (mensaje()) { <p class="success">{{ mensaje() }}</p> }
-  @if (error()) { <p class="error">{{ error() }}</p> }
+  @if (mensaje()) {
+    <nz-alert class="daemon-alert" nzType="success" nzShowIcon [nzMessage]="mensaje()"></nz-alert>
+  }
+  @if (error()) {
+    <nz-alert class="daemon-alert" nzType="error" nzShowIcon [nzMessage]="error()"></nz-alert>
+  }
 
   <section class="split">
-    <form class="panel" (ngSubmit)="crear()">
-      <h2>Nueva evaluación</h2>
+    <form class="panel insignia-form" (ngSubmit)="crear()">
+      <div class="section-title">
+        <h2>Nueva evaluación</h2>
+        <nz-tag class="daemon-tag" nzColor="blue">General</nz-tag>
+      </div>
       <div class="form-grid">
         <label>
           Título
@@ -36,16 +45,21 @@
           </select>
         </label>
       </div>
-      <button type="submit" [disabled]="guardando() || !nueva.titulo.trim()">Crear</button>
+      <button nz-button nzType="primary" class="daemon-btn" type="submit" [disabled]="guardando() || !nueva.titulo.trim()" [nzLoading]="guardando()">
+        Crear evaluación
+      </button>
     </form>
 
-    <form class="panel" (ngSubmit)="agregarPregunta()">
-      <h2>Agregar pregunta</h2>
+    <form class="panel highlight-panel assign-form" (ngSubmit)="agregarPregunta()">
+      <div class="section-title">
+        <h2>Agregar pregunta</h2>
+        <nz-tag class="daemon-tag" nzColor="cyan">Contenido</nz-tag>
+      </div>
       <div class="form-grid">
         <label>
           Evaluación
           <select name="examen_id" [(ngModel)]="pregunta.examen_id" required>
-            <option [ngValue]="null">Selecciona</option>
+            <option [ngValue]="null" disabled selected>Selecciona</option>
             @for (examen of evaluaciones(); track examen.id) {
               <option [ngValue]="examen.id">{{ examen.titulo }}</option>
             }
@@ -64,7 +78,7 @@
           <textarea name="enunciado" [(ngModel)]="pregunta.enunciado" rows="3" required></textarea>
         </label>
         <label>
-          Opciones separadas por coma
+          Opciones (separadas por coma)
           <input name="opciones" [(ngModel)]="pregunta.opciones">
         </label>
         <label>
@@ -72,36 +86,81 @@
           <input name="respuesta_correcta" [(ngModel)]="pregunta.respuesta_correcta" required>
         </label>
       </div>
-      <button type="submit" [disabled]="guardando() || !pregunta.examen_id || !pregunta.enunciado.trim()">Guardar pregunta</button>
+      <button nz-button nzType="primary" class="daemon-btn" type="submit" [disabled]="guardando() || !pregunta.examen_id || !pregunta.enunciado.trim()">
+        Guardar pregunta
+      </button>
     </form>
   </section>
 
   @if (cargando()) {
     <app-cargando class="state" texto="Cargando evaluaciones..."></app-cargando>
   } @else if (evaluaciones().length) {
-    <section class="panel table-wrap">
-      <table>
+    <section class="panel table-wrap mt-8 p-0">
+      <nz-table #tablaEvaluaciones [nzData]="evaluaciones()" [nzShowPagination]="true" [nzPageSize]="10" nzSize="middle" nzOuterBordered>
         <thead>
           <tr>
             <th>Evaluación</th>
             <th>Nivel</th>
             <th>Estado</th>
-            <th>Preguntas</th>
+            <th class="text-center">Preguntas</th>
+            <th class="text-right">Acciones</th>
           </tr>
         </thead>
         <tbody>
-          @for (examen of evaluaciones(); track examen.id) {
+          @for (examen of tablaEvaluaciones.data; track examen.id) {
             <tr>
-              <td>{{ examen.titulo }}</td>
-              <td><span class="badge">{{ examen.nivel }}</span></td>
-              <td>{{ examen.estado }}</td>
-              <td>{{ examen.preguntas?.length || 0 }}</td>
+              <td class="font-bold">{{ examen.titulo }}</td>
+              <td><nz-tag nzColor="blue">{{ examen.nivel }}</nz-tag></td>
+              <td>
+                <nz-tag [nzColor]="examen.estado === 'activo' ? 'green' : (examen.estado === 'borrador' ? 'default' : 'red')">
+                  {{ examen.estado | uppercase }}
+                </nz-tag>
+              </td>
+              <td class="text-center font-mono">{{ examen.preguntas?.length || 0 }}</td>
+              <td class="text-right">
+                <button nz-button nzType="link" nzSize="small" (click)="alternarPublicacion(examen)">
+                  {{ examen.estado === 'activo' ? 'Despublicar' : 'Publicar' }}
+                </button>
+                <button nz-button nzType="link" nzSize="small" (click)="abrirEditar(examen)">Editar</button>
+                <button nz-button nzType="link" nzSize="small" nzDanger nz-popconfirm nzPopconfirmTitle="¿Eliminar evaluación completa?" nzPopconfirmPlacement="left" (nzOnConfirm)="eliminar(examen.id)">Eliminar</button>
+              </td>
             </tr>
           }
         </tbody>
-      </table>
+      </nz-table>
     </section>
   } @else {
-    <p class="empty">No hay evaluaciones registradas.</p>
+    <app-estado-vacio titulo="Sin evaluaciones" descripcion="Crea una evaluación para empezar." />
   }
 </section>
+
+<nz-modal [(nzVisible)]="modalVisible" nzTitle="Editar Evaluación" (nzOnCancel)="cerrarEditar()" (nzOnOk)="guardarEdicion()" [nzOkLoading]="guardando()" nzWidth="500px">
+  <ng-container *nzModalContent>
+    @if (evaluacionEditando) {
+      <div class="flex flex-col gap-4">
+        <label class="flex flex-col gap-1">
+          <span class="text-sm font-semibold">Título</span>
+          <input class="input input-bordered w-full" name="edit_titulo" [(ngModel)]="evaluacionEditando.titulo" required>
+        </label>
+        
+        <label class="flex flex-col gap-1">
+          <span class="text-sm font-semibold">Nivel</span>
+          <select class="select select-bordered w-full" name="edit_nivel" [(ngModel)]="evaluacionEditando.nivel">
+            <option value="KIDS">KIDS</option>
+            <option value="TEENS">TEENS</option>
+            <option value="PRO">PRO</option>
+          </select>
+        </label>
+        
+        <label class="flex flex-col gap-1">
+          <span class="text-sm font-semibold">Estado manual</span>
+          <select class="select select-bordered w-full" name="edit_estado" [(ngModel)]="evaluacionEditando.estado">
+            <option value="borrador">borrador</option>
+            <option value="activo">activo</option>
+            <option value="finalizado">finalizado</option>
+          </select>
+        </label>
+      </div>
+    }
+  </ng-container>
+</nz-modal>

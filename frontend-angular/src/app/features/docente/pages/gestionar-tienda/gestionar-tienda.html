@@ -1,17 +1,11 @@
-﻿<section class="container mx-auto p-4 md:p-6 max-w-7xl text-base-content">
+<section class="container mx-auto p-4 md:p-6 max-w-7xl text-base-content">
   <header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
     <div>
       <p class="text-sm font-bold text-primary uppercase tracking-wider">Docente</p>
       <h1 class="text-3xl font-extrabold">Gestionar Tienda</h1>
       <p class="text-base-content/70">Administración de premios, control de existencias y entrega de canjes.</p>
     </div>
-    <button type="button" class="btn btn-primary shadow-sm" (click)="cargar()" [disabled]="cargando()">
-      @if (cargando()) { 
-        <span class="loading loading-spinner"></span> Actualizando... 
-      } @else { 
-        Actualizar 
-      }
-    </button>
+    <button nz-button nzType="default" class="daemon-btn" (click)="cargar()" [nzLoading]="cargando()">Actualizar</button>
   </header>
 
   @if (mensaje()) { 
@@ -31,22 +25,18 @@
       
       <form (ngSubmit)="crear()">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          
           <label class="form-control w-full">
             <div class="label"><span class="label-text font-medium">Nombre</span></div>
             <input name="nombre" [(ngModel)]="nuevo.nombre" required placeholder="Ej. Lápiz 3D" class="input input-bordered w-full">
           </label>
-
           <label class="form-control w-full">
             <div class="label"><span class="label-text font-medium">Precio (Tokens)</span></div>
             <input name="precio" type="number" min="0" [(ngModel)]="nuevo.precio" required class="input input-bordered w-full">
           </label>
-
           <label class="form-control w-full">
             <div class="label"><span class="label-text font-medium">Stock</span></div>
             <input name="stock" type="number" min="0" [(ngModel)]="nuevo.stock" required class="input input-bordered w-full">
           </label>
-
           <label class="form-control w-full">
             <div class="label"><span class="label-text font-medium">Categoría</span></div>
             <select name="categoria" [(ngModel)]="nuevo.categoria" class="select select-bordered w-full">
@@ -56,7 +46,6 @@
               <option value="PRO">PRO</option>
             </select>
           </label>
-
           <label class="form-control w-full">
             <div class="label"><span class="label-text font-medium">Entrega</span></div>
             <select name="tipo_entrega" [(ngModel)]="nuevo.tipo_entrega" class="select select-bordered w-full">
@@ -64,27 +53,17 @@
               <option value="digital">Digital</option>
             </select>
           </label>
-
           <label class="form-control w-full">
             <div class="label"><span class="label-text font-medium">Ruta de la Imagen</span></div>
             <input name="imagen" [(ngModel)]="nuevo.imagen" placeholder="Ej: img/premios/premio.png" class="input input-bordered w-full">
           </label>
-
           <label class="form-control w-full md:col-span-2 lg:col-span-3">
             <div class="label"><span class="label-text font-medium">Descripción</span></div>
             <textarea name="descripcion" rows="2" [(ngModel)]="nuevo.descripcion" placeholder="Detalles del premio..." class="textarea textarea-bordered w-full"></textarea>
           </label>
-
         </div>
-        
         <div class="mt-6 flex justify-end">
-          <button type="submit" class="btn btn-neutral" [disabled]="guardando() || !nuevo.nombre.trim()">
-            @if (guardando()) { 
-              <span class="loading loading-spinner"></span> Creando... 
-            } @else { 
-              Crear premio 
-            }
-          </button>
+          <button nz-button nzType="primary" class="daemon-btn" type="submit" [nzLoading]="guardando()" [disabled]="guardando() || !nuevo.nombre.trim()">Crear premio</button>
         </div>
       </form>
     </div>
@@ -93,53 +72,49 @@
   @if (cargando()) {
     <app-cargando class="flex justify-center items-center py-20" texto="Cargando datos de la tienda..."></app-cargando>
   } @else {
-    
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
       
+      <!-- Premios con NzTable -->
       <div class="card bg-base-100 shadow-xl border border-base-200 overflow-hidden">
         <div class="card-body p-0">
           <h2 class="card-title text-lg p-6 pb-2">Premios Disponibles</h2>
-          
           @if (premios().length) {
-            <div class="overflow-x-auto">
-              <table class="table table-zebra w-full">
-                <thead class="bg-base-200">
+            <div class="overflow-x-auto p-4 pt-0">
+              <nz-table #tablaPremios [nzData]="premios()" [nzShowPagination]="true" [nzPageSize]="5" nzSize="small">
+                <thead>
                   <tr>
-                    <th class="text-center w-16">Img</th>
+                    <th>Img</th>
                     <th>Premio</th>
-                    <th>Categoría</th>
-                    <th class="text-center">Precio</th>
-                    <th class="text-center">Stock</th>
+                    <th>Stock/Precio</th>
+                    <th>Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
-                  @for (premio of premios(); track premio.id) {
-                    <tr class="hover">
-                      <td class="text-center p-2">
+                  @for (premio of tablaPremios.data; track premio.id) {
+                    <tr>
+                      <td>
                         @if (premio.imagen) {
-                          <div class="avatar">
-                            <div class="w-10 h-10 rounded shadow-sm">
-                              <img [src]="premio.imagen" [alt]="premio.nombre" />
-                            </div>
-                          </div>
+                          <div class="avatar"><div class="w-10 h-10 rounded"><img [src]="premio.imagen" [alt]="premio.nombre" /></div></div>
                         } @else {
-                          <div class="w-10 h-10 rounded bg-base-300 flex items-center justify-center text-xs text-base-content/50">N/A</div>
+                          <div class="w-10 h-10 rounded bg-base-300 flex items-center justify-center text-xs">N/A</div>
                         }
                       </td>
-                      <td class="font-semibold">{{ premio.nombre }}</td>
                       <td>
-                        <span class="badge badge-sm badge-outline">{{ premio.categoria }}</span>
+                        <div class="font-semibold">{{ premio.nombre }}</div>
+                        <nz-tag [nzColor]="'blue'">{{ premio.categoria }}</nz-tag>
                       </td>
-                      <td class="text-center font-mono">{{ premio.precio }} <span class="text-xs text-base-content/50">Tk</span></td>
-                      <td class="text-center">
-                        <span class="badge badge-sm" [class.badge-error]="premio.stock === 0" [class.badge-success]="premio.stock > 0">
-                          {{ premio.stock }}
-                        </span>
+                      <td>
+                        <div><nz-tag [nzColor]="premio.stock > 0 ? 'green' : 'red'">Stock: {{ premio.stock }}</nz-tag></div>
+                        <div class="text-xs text-base-content/70 mt-1 font-mono">{{ premio.precio }} Tk</div>
+                      </td>
+                      <td>
+                        <button nz-button nzType="link" nzSize="small" (click)="abrirEditar(premio)">Editar</button>
+                        <button nz-button nzType="link" nzSize="small" nzDanger nz-popconfirm nzPopconfirmTitle="¿Borrar premio permanentemente?" nzPopconfirmPlacement="left" (nzOnConfirm)="eliminar(premio.id)">Borrar</button>
                       </td>
                     </tr>
                   }
                 </tbody>
-              </table>
+              </nz-table>
             </div>
           } @else {
             <div class="p-8 text-center text-base-content/50">No hay premios registrados.</div>
@@ -147,46 +122,40 @@
         </div>
       </div>
 
+      <!-- Canjes con NzTable -->
       <div class="card bg-base-100 shadow-xl border border-base-200 overflow-hidden">
         <div class="card-body p-0">
           <h2 class="card-title text-lg p-6 pb-2">Historial de Canjes</h2>
-          
           @if (canjes().length) {
-            <div class="overflow-x-auto">
-              <table class="table table-zebra w-full">
-                <thead class="bg-base-200">
+            <div class="overflow-x-auto p-4 pt-0">
+              <nz-table #tablaCanjes [nzData]="canjes()" [nzShowPagination]="true" [nzPageSize]="5" nzSize="small">
+                <thead>
                   <tr>
                     <th>Alumno</th>
                     <th>Premio</th>
-                    <th class="text-center">Estado</th>
-                    <th class="text-center">Acción</th>
+                    <th>Estado</th>
+                    <th>Acción</th>
                   </tr>
                 </thead>
                 <tbody>
-                  @for (canje of canjes(); track canje.id) {
-                    <tr class="hover">
+                  @for (canje of tablaCanjes.data; track canje.id) {
+                    <tr>
                       <td>{{ canje.alumno }}</td>
-                      <td class="text-sm">{{ canje.premio }}</td>
-                      <td class="text-center">
-                        <span class="badge badge-sm font-semibold" 
-                              [class.badge-warning]="canje.estado === 'pendiente'" 
-                              [class.badge-success]="canje.estado === 'entregado'">
-                         {{ canje.estado | uppercase }}
-                        </span>
+                      <td class="text-xs">{{ canje.premio }}</td>
+                      <td>
+                        <nz-tag [nzColor]="canje.estado === 'entregado' ? 'success' : 'warning'">{{ canje.estado | uppercase }}</nz-tag>
                       </td>
-                      <td class="text-center">
+                      <td>
                         @if (canje.estado !== 'entregado') {
-                          <button type="button" class="btn btn-xs btn-accent" (click)="entregar(canje.id)" [disabled]="guardando()">
-                            Entregar
-                          </button>
+                          <button nz-button nzType="primary" nzSize="small" (click)="entregar(canje.id)" [nzLoading]="guardando()">Entregar</button>
                         } @else {
-                          <span class="text-xs text-success font-bold">✓ Listo</span>
+                          <span class="text-success text-xs font-bold">✓ Listo</span>
                         }
                       </td>
                     </tr>
                   }
                 </tbody>
-              </table>
+              </nz-table>
             </div>
           } @else {
             <div class="p-8 text-center text-base-content/50">No hay canjes registrados.</div>
@@ -197,3 +166,49 @@
     </div>
   }
 </section>
+
+<!-- Modal de Edición -->
+<nz-modal [(nzVisible)]="modalVisible" nzTitle="Editar Premio" (nzOnCancel)="cerrarEditar()" (nzOnOk)="guardarEdicion()" [nzOkLoading]="guardando()" nzWidth="600px">
+  <ng-container *nzModalContent>
+    @if (premioEditando) {
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <label class="form-control w-full">
+          <div class="label"><span class="label-text">Nombre</span></div>
+          <input name="edit_nombre" [(ngModel)]="premioEditando.nombre" required class="input input-bordered w-full">
+        </label>
+        <label class="form-control w-full">
+          <div class="label"><span class="label-text">Precio (Tokens)</span></div>
+          <input name="edit_precio" type="number" min="0" [(ngModel)]="premioEditando.precio" required class="input input-bordered w-full">
+        </label>
+        <label class="form-control w-full">
+          <div class="label"><span class="label-text">Stock</span></div>
+          <input name="edit_stock" type="number" min="0" [(ngModel)]="premioEditando.stock" required class="input input-bordered w-full">
+        </label>
+        <label class="form-control w-full">
+          <div class="label"><span class="label-text">Categoría</span></div>
+          <select name="edit_categoria" [(ngModel)]="premioEditando.categoria" class="select select-bordered w-full">
+            <option value="GENERAL">GENERAL</option>
+            <option value="KIDS">KIDS</option>
+            <option value="TEENS">TEENS</option>
+            <option value="PRO">PRO</option>
+          </select>
+        </label>
+        <label class="form-control w-full">
+          <div class="label"><span class="label-text">Entrega</span></div>
+          <select name="edit_tipo_entrega" [(ngModel)]="premioEditando.tipo_entrega" class="select select-bordered w-full">
+            <option value="fisico">Físico</option>
+            <option value="digital">Digital</option>
+          </select>
+        </label>
+        <label class="form-control w-full">
+          <div class="label"><span class="label-text">Imagen</span></div>
+          <input name="edit_imagen" [(ngModel)]="premioEditando.imagen" class="input input-bordered w-full">
+        </label>
+        <label class="form-control w-full md:col-span-2">
+          <div class="label"><span class="label-text">Descripción</span></div>
+          <textarea name="edit_descripcion" rows="2" [(ngModel)]="premioEditando.descripcion" class="textarea textarea-bordered w-full"></textarea>
+        </label>
+      </div>
+    }
+  </ng-container>
+</nz-modal>

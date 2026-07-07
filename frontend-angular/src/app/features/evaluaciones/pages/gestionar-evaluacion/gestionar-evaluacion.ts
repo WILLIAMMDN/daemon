@@ -1,12 +1,31 @@
-﻿import { Component, signal } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzTagModule } from 'ng-zorro-antd/tag';
+import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
+import { NzMessageService } from 'ng-zorro-antd/message';
 import { Evaluacion } from '../../services/evaluacion';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
-
+import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
 
 @Component({
   selector: 'app-gestionar-evaluacion',
-  imports: [FormsModule, Cargando],
+  imports: [
+    FormsModule, 
+    CommonModule,
+    Cargando,
+    EstadoVacio,
+    NzAlertModule,
+    NzButtonModule,
+    NzModalModule,
+    NzTableModule,
+    NzTagModule,
+    NzPopconfirmModule
+  ],
   templateUrl: './gestionar-evaluacion.html',
   styleUrl: './gestionar-evaluacion.scss',
 })
@@ -16,10 +35,14 @@ export class GestionarEvaluacion {
   guardando = signal(false);
   mensaje = signal('');
   error = signal('');
+  
   nueva = { titulo: '', nivel: 'TEENS', estado: 'borrador' };
   pregunta = { examen_id: null as number | null, enunciado: '', tipo: 'opcion_multiple', opciones: '', respuesta_correcta: '' };
 
-  constructor(private evaluacion: Evaluacion) {
+  modalVisible = signal(false);
+  evaluacionEditando: any = null;
+
+  constructor(private evaluacion: Evaluacion, private message: NzMessageService) {
     this.cargar();
   }
 
@@ -45,7 +68,7 @@ export class GestionarEvaluacion {
     this.evaluacion.crear(this.nueva).subscribe({
       next: () => {
         this.nueva = { titulo: '', nivel: 'TEENS', estado: 'borrador' };
-        this.mensaje.set('Evaluación creada.');
+        this.mensaje.set('Evaluación creada exitosamente.');
         this.guardando.set(false);
         this.cargar();
       },
@@ -84,6 +107,58 @@ export class GestionarEvaluacion {
         this.error.set(e.error?.message ?? 'No se pudo guardar la pregunta.');
         this.guardando.set(false);
       },
+    });
+  }
+
+  abrirEditar(ev: any): void {
+    this.evaluacionEditando = { ...ev };
+    this.modalVisible.set(true);
+  }
+
+  cerrarEditar(): void {
+    this.modalVisible.set(false);
+    this.evaluacionEditando = null;
+  }
+
+  guardarEdicion(): void {
+    if (!this.evaluacionEditando) return;
+    this.guardando.set(true);
+    this.evaluacion.actualizar(this.evaluacionEditando.id, this.evaluacionEditando).subscribe({
+      next: () => {
+        this.message.success('Evaluación actualizada correctamente.');
+        this.guardando.set(false);
+        this.cerrarEditar();
+        this.cargar();
+      },
+      error: (e) => {
+        this.message.error(e.error?.message ?? 'Error al actualizar la evaluación.');
+        this.guardando.set(false);
+      }
+    });
+  }
+
+  eliminar(id: number): void {
+    this.evaluacion.eliminar(id).subscribe({
+      next: () => {
+        this.message.success('Evaluación eliminada correctamente.');
+        this.cargar();
+      },
+      error: (e) => {
+        this.message.error(e.error?.message ?? 'Error al eliminar la evaluación.');
+      }
+    });
+  }
+
+  alternarPublicacion(ev: any): void {
+    const solicitud = ev.estado === 'activo' ? this.evaluacion.despublicar(ev.id) : this.evaluacion.publicar(ev.id);
+    solicitud.subscribe({
+      next: () => {
+        this.message.success(`Evaluación ${ev.estado === 'activo' ? 'despublicada' : 'publicada'} correctamente.`);
+        this.cargar();
+      },
+      error: (e) => {
+        this.message.error(e.error?.message ?? 'Error al cambiar estado.');
+      }
     });
   }
 }

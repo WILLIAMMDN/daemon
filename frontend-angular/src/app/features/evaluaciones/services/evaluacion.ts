@@ -14,4 +14,6 @@ export class Evaluacion {
   actualizar(id: number, datos: unknown) { return this.api.put(`/evaluaciones/${id}`, datos); }
   eliminar(id: number) { return this.api.delete(`/evaluaciones/${id}`); }
   guardarPreguntas(id: number, preguntas: unknown[]) { return this.api.post(`/evaluaciones/${id}/preguntas`, { preguntas }); }
+  publicar(id: number) { return this.api.post(`/evaluaciones/${id}/publicar`, {}); }
+  despublicar(id: number) { return this.api.post(`/evaluaciones/${id}/despublicar`, {}); }
 }
