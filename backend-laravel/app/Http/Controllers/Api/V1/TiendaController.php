@@ -52,9 +52,10 @@ class TiendaController extends Controller
         $premios = Premio::query();
 
         if ($busqueda = trim((string) $request->query('q', ''))) {
-            $premios->where(function ($query) use ($busqueda) {
-                $query->where('nombre', 'ilike', "%{$busqueda}%")
-                    ->orWhere('descripcion', 'ilike', "%{$busqueda}%");
+            $busquedaLower = mb_strtolower($busqueda);
+            $premios->where(function ($query) use ($busquedaLower) {
+                $query->whereRaw('LOWER(nombre) LIKE ?', ["%{$busquedaLower}%"])
+                    ->orWhereRaw('LOWER(descripcion) LIKE ?', ["%{$busquedaLower}%"]);
             });
         }
 
