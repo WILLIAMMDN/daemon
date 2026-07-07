@@ -9,10 +9,10 @@ return new class extends Migration
 {
     public function up(): void
     {
-        if (DB::getDriverName() !== 'pgsql') {
-            return;
-        }
-
+        // La creación de tablas es portable (driver-agnostic) para que la suite
+        // de tests con SQLite pueda levantar el esquema DAEMON sin depender de
+        // Postgres. Los retoques específicos de Postgres viven en
+        // 2026_06_28_000000_harden_daemon_postgres_schema, que sigue gateado a pgsql.
         if (Schema::hasTable('usuarios') && Schema::hasTable('bots_alumnos')) {
             return;
         }
@@ -24,10 +24,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        if (DB::getDriverName() !== 'pgsql') {
-            return;
-        }
-
         Schema::disableForeignKeyConstraints();
 
         foreach ($this->tablasParaEliminar() as $tabla) {
