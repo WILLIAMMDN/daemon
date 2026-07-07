@@ -19,24 +19,96 @@
   <section class="workspace">
     <app-email-verification-banner />
 
-    <header class="topbar">
-      <label class="topbar-search">
-        <fa-icon [icon]="iconos.buscar" aria-hidden="true" />
-        <input type="search" placeholder="Buscar cursos, retos, proyectos..." aria-label="Buscar cursos, retos o proyectos" />
-      </label>
-
-      <div class="topbar-actions">
-        <button class="topbar-bell" type="button" aria-label="Notificaciones">
-          <fa-icon [icon]="iconos.campana" />
-          <span aria-hidden="true">2</span>
-        </button>
-
-        <a class="topbar-rank" routerLink="/alumno/perfil">
-          <span class="rank-icon"><fa-icon [icon]="iconos.rango" /></span>
-          <span>{{ sesion.usuario()?.rango || 'Explorador' }}</span>
-          <app-moneda-daemon [size]="20" [cantidad]="perfilTokens()" titulo="DAEMONS disponibles" />
-          <fa-icon class="rank-chevron" [icon]="iconos.desplegar" />
+    <header class="flex items-center justify-between w-full h-16 px-4 md:px-6 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 z-10 sticky top-0 shadow-sm">
+      
+      <!-- Search Bar -->
+      <div class="flex-1 max-w-md hidden sm:flex items-center">
+        <div class="relative w-full">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+            <fa-icon [icon]="iconos.buscar"></fa-icon>
+          </div>
+          <input type="search" placeholder="Buscar misiones, proyectos, cursos..." 
+                 class="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow">
+        </div>
+      </div>
+      
+      <div class="flex items-center gap-3 md:gap-4 ml-auto">
+        
+        <!-- Rango / Monedas (solo mobile hidden) -->
+        <a routerLink="/alumno/perfil" class="hidden md:flex items-center gap-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 px-3 py-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+          <div class="flex items-center gap-2 text-blue-600 dark:text-blue-400 text-sm font-bold">
+            <fa-icon [icon]="iconos.rango"></fa-icon>
+            <span>{{ sesion.usuario()?.rango || 'Explorador' }}</span>
+          </div>
+          <div class="w-px h-4 bg-gray-300 dark:bg-gray-600"></div>
+          <app-moneda-daemon [size]="18" [cantidad]="perfilTokens()" titulo="Tokens DAEMON" />
         </a>
+
+        <!-- Notification Bell -->
+        <a nz-dropdown nzTrigger="click" [nzDropdownMenu]="notifMenu" nzPlacement="bottomRight" (nzVisibleChange)="marcarComoLeidas()" class="relative p-2 text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors cursor-pointer rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-center">
+          <nz-badge [nzCount]="notificacionesNoLeidas">
+            <fa-icon [icon]="iconos.campana" class="text-lg"></fa-icon>
+          </nz-badge>
+        </a>
+        
+        <nz-dropdown-menu #notifMenu="nzDropdownMenu">
+          <div class="w-80 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden">
+            <div class="px-4 py-3 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 flex justify-between items-center">
+              <span class="font-bold text-gray-900 dark:text-white">Notificaciones</span>
+              <span class="text-xs bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 px-2 py-0.5 rounded-full font-semibold">{{ notificaciones.length }} nuevas</span>
+            </div>
+            <div class="max-h-72 overflow-y-auto">
+              @for (notif of notificaciones; track notif.id) {
+                <div class="px-4 py-3 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer flex flex-col gap-1 transition-colors" [class.bg-blue-50]="!notif.leida" [class.dark:bg-blue-900]="!notif.leida">
+                  <div class="flex justify-between items-start gap-2">
+                    <strong class="text-sm text-gray-900 dark:text-white">{{ notif.titulo }}</strong>
+                    <span class="text-xs text-gray-500 whitespace-nowrap">{{ notif.tiempo }}</span>
+                  </div>
+                  <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">{{ notif.mensaje }}</p>
+                </div>
+              }
+            </div>
+            <div class="px-4 py-2 text-center border-t border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer">
+              <a class="text-sm text-blue-600 dark:text-blue-400 font-semibold">Ver todas</a>
+            </div>
+          </div>
+        </nz-dropdown-menu>
+
+        <!-- Separator -->
+        <div class="h-6 w-px bg-gray-200 dark:bg-gray-700 hidden md:block"></div>
+        
+        <!-- User Profile Dropdown -->
+        <a nz-dropdown nzTrigger="click" [nzDropdownMenu]="userMenu" nzPlacement="bottomRight" class="flex items-center gap-3 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50 p-1 md:pr-3 rounded-full transition-colors">
+          <nz-badge [nzDot]="sesion.usuario()?.email_verificado === false" nzStatus="warning" [nzOffset]="[-5, 5]">
+            <nz-avatar [nzSize]="40" [nzSrc]="avatarUrl() || undefined" [nzText]="iniciales()" class="bg-blue-600 flex-shrink-0 shadow-sm"></nz-avatar>
+          </nz-badge>
+          <div class="hidden md:flex flex-col text-left">
+            <span class="text-sm font-bold text-gray-900 dark:text-white leading-none">{{ sesion.usuario()?.usuario || sesion.usuario()?.nombre_completo }}</span>
+            <span class="text-xs text-gray-500 leading-none mt-1">{{ perfilNivel() || 'Cargando...' }}</span>
+          </div>
+          <fa-icon [icon]="iconos.desplegar" class="text-xs text-gray-400 hidden md:block"></fa-icon>
+        </a>
+        
+        <nz-dropdown-menu #userMenu="nzDropdownMenu">
+          <ul nz-menu class="w-56 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 p-2">
+            <div class="px-3 py-2 border-b border-gray-100 dark:border-gray-700 mb-2 md:hidden">
+              <div class="flex flex-col">
+                <span class="font-bold text-gray-900 dark:text-white">{{ sesion.usuario()?.usuario }}</span>
+                <span class="text-xs text-gray-500 mb-2">{{ perfilNivel() }}</span>
+                <app-moneda-daemon [size]="16" [cantidad]="perfilTokens()" titulo="Tokens DAEMON" />
+              </div>
+            </div>
+            
+            <li nz-menu-item routerLink="/alumno/perfil" class="rounded-lg mb-1 flex items-center gap-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white">
+              <fa-icon [icon]="iconos.perfil" class="text-gray-400"></fa-icon> Mi Perfil
+            </li>
+            <li nz-menu-divider></li>
+            <li nz-menu-item (click)="salir()" class="rounded-lg mt-1 flex items-center gap-3 text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20">
+              <fa-icon [icon]="iconos.salir" class="text-red-400"></fa-icon> Cerrar sesión
+            </li>
+          </ul>
+        </nz-dropdown-menu>
+
       </div>
     </header>
 

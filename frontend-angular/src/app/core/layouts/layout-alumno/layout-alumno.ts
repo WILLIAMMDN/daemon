@@ -14,10 +14,13 @@ import { CargaGlobal } from '../../servicios/carga-global';
 import { Sesion } from '../../servicios/sesion';
 import { alumnoSidebarSections } from '../portal-sidebar.config';
 
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { faUser, faGear, faArrowRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-layout-alumno',
-  imports: [RouterOutlet, RouterLink, FontAwesomeModule, NzAvatarModule, NzBadgeModule, NzButtonModule, EmailVerificationBanner, MonedaDaemon, SidebarPortal],
+  imports: [RouterOutlet, RouterLink, FontAwesomeModule, NzAvatarModule, NzBadgeModule, NzButtonModule, NzDropDownModule, EmailVerificationBanner, MonedaDaemon, SidebarPortal],
   templateUrl: './layout-alumno.html',
   styleUrl: './layout-alumno.scss',
 })
@@ -28,7 +31,25 @@ export class LayoutAlumno {
     campana: faBell,
     rango: faShieldHalved,
     desplegar: faChevronDown,
+    perfil: faUser,
+    config: faGear,
+    salir: faArrowRightFromBracket
   };
+
+  // Mock notifications to show a functional dropdown
+  notificaciones = [
+    { id: 1, titulo: 'Insignia ganada', mensaje: '¡Felicidades! Has ganado la insignia "Primeros Pasos".', leida: false, tiempo: 'Hace 10 min' },
+    { id: 2, titulo: 'Misión revisada', mensaje: 'Tu profesor ha revisado tu entrega. ¡Revisa tu feedback!', leida: false, tiempo: 'Hace 2 horas' },
+    { id: 3, titulo: 'Nueva misión', mensaje: 'Hay una nueva misión disponible en tu aula.', leida: true, tiempo: 'Hace 1 día' }
+  ];
+
+  get notificacionesNoLeidas(): number {
+    return this.notificaciones.filter(n => !n.leida).length;
+  }
+
+  marcarComoLeidas(): void {
+    this.notificaciones = this.notificaciones.map(n => ({ ...n, leida: true }));
+  }
 
   constructor(
     public sesion: Sesion,

@@ -19,18 +19,70 @@
   <section class="workspace">
     <app-email-verification-banner />
 
-    <header class="topbar">
-      <div class="topbar-user">
-        <nz-badge [nzDot]="sesion.usuario()?.email_verificado === false" nzStatus="warning" nzTitle="Correo pendiente de verificación">
-          <nz-avatar class="daemon-avatar" [nzSize]="44" [nzSrc]="avatarUrl() || undefined" [nzText]="iniciales()"></nz-avatar>
-        </nz-badge>
-        <div>
-          <span>Portal docente</span>
-          <strong>{{ sesion.usuario()?.usuario || sesion.usuario()?.nombre_completo }}</strong>
-          <small>{{ perfilDetalle() }}</small>
-        </div>
+    <header class="flex items-center justify-between w-full h-16 px-4 md:px-6 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 z-10 sticky top-0 shadow-sm">
+      <div class="flex items-center gap-4">
+        <span class="text-sm font-semibold text-gray-500 uppercase tracking-widest hidden md:inline-block">Portal Docente</span>
       </div>
-      <button nz-button nzType="default" class="daemon-btn topbar-logout" type="button" (click)="salir()">Cerrar sesión</button>
+
+      <div class="flex items-center gap-3 md:gap-4">
+        <!-- Notification Bell -->
+        <a nz-dropdown nzTrigger="click" [nzDropdownMenu]="notifMenu" nzPlacement="bottomRight" (nzVisibleChange)="marcarComoLeidas()" class="relative p-2 text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors cursor-pointer rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-center">
+          <nz-badge [nzCount]="notificacionesNoLeidas">
+            <fa-icon [icon]="iconos.campana" class="text-lg"></fa-icon>
+          </nz-badge>
+        </a>
+        
+        <nz-dropdown-menu #notifMenu="nzDropdownMenu">
+          <div class="w-80 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden">
+            <div class="px-4 py-3 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 flex justify-between items-center">
+              <span class="font-bold text-gray-900 dark:text-white">Notificaciones</span>
+              <span class="text-xs bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 px-2 py-0.5 rounded-full font-semibold">{{ notificaciones.length }} nuevas</span>
+            </div>
+            <div class="max-h-72 overflow-y-auto">
+              @for (notif of notificaciones; track notif.id) {
+                <div class="px-4 py-3 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer flex flex-col gap-1 transition-colors" [class.bg-blue-50]="!notif.leida" [class.dark:bg-blue-900]="!notif.leida">
+                  <div class="flex justify-between items-start gap-2">
+                    <strong class="text-sm text-gray-900 dark:text-white">{{ notif.titulo }}</strong>
+                    <span class="text-xs text-gray-500 whitespace-nowrap">{{ notif.tiempo }}</span>
+                  </div>
+                  <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">{{ notif.mensaje }}</p>
+                </div>
+              }
+            </div>
+            <div class="px-4 py-2 text-center border-t border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer">
+              <a class="text-sm text-blue-600 dark:text-blue-400 font-semibold">Ver todas</a>
+            </div>
+          </div>
+        </nz-dropdown-menu>
+
+        <!-- Separator -->
+        <div class="h-6 w-px bg-gray-200 dark:bg-gray-700 hidden md:block"></div>
+        
+        <!-- User Profile Dropdown -->
+        <a nz-dropdown nzTrigger="click" [nzDropdownMenu]="userMenu" nzPlacement="bottomRight" class="flex items-center gap-3 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50 p-1 md:pr-3 rounded-full transition-colors">
+          <nz-badge [nzDot]="sesion.usuario()?.email_verificado === false" nzStatus="warning" [nzOffset]="[-5, 5]">
+            <nz-avatar [nzSize]="40" [nzSrc]="avatarUrl() || undefined" [nzText]="iniciales()" class="bg-blue-600 flex-shrink-0"></nz-avatar>
+          </nz-badge>
+          <div class="hidden md:flex flex-col text-left">
+            <span class="text-sm font-bold text-gray-900 dark:text-white leading-none">{{ sesion.usuario()?.usuario || sesion.usuario()?.nombre_completo }}</span>
+            <span class="text-xs text-gray-500 leading-none mt-1">{{ perfilDetalle() }}</span>
+          </div>
+          <fa-icon [icon]="iconos.desplegar" class="text-xs text-gray-400 hidden md:block"></fa-icon>
+        </a>
+        
+        <nz-dropdown-menu #userMenu="nzDropdownMenu">
+          <ul nz-menu class="w-56 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 p-2">
+            <li nz-menu-item routerLink="/docente/perfil" class="rounded-lg mb-1 flex items-center gap-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white">
+              <fa-icon [icon]="iconos.perfil" class="text-gray-400"></fa-icon> Mi Perfil
+            </li>
+            <li nz-menu-divider></li>
+            <li nz-menu-item (click)="salir()" class="rounded-lg mt-1 flex items-center gap-3 text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20">
+              <fa-icon [icon]="iconos.salir" class="text-red-400"></fa-icon> Cerrar sesión
+            </li>
+          </ul>
+        </nz-dropdown-menu>
+
+      </div>
     </header>
 
     <main class="content-area">

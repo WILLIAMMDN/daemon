@@ -1,5 +1,5 @@
 import { Component , ChangeDetectionStrategy} from '@angular/core';
-import { Router, RouterOutlet } from '@angular/router';
+import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzBadgeModule } from 'ng-zorro-antd/badge';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -11,15 +11,41 @@ import { CargaGlobal } from '../../servicios/carga-global';
 import { Sesion } from '../../servicios/sesion';
 import { docenteSidebarSections } from '../portal-sidebar.config';
 
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faBell, faChevronDown, faUser, faGear, faArrowRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-layout-docente',
-  imports: [RouterOutlet, NzAvatarModule, NzBadgeModule, NzButtonModule, EmailVerificationBanner, SidebarPortal],
+  imports: [RouterOutlet, RouterLink, NzAvatarModule, NzBadgeModule, NzButtonModule, NzDropDownModule, FontAwesomeModule, EmailVerificationBanner, SidebarPortal],
   templateUrl: './layout-docente.html',
   styleUrl: './layout-docente.scss',
 })
 export class LayoutDocente {
   readonly seccionesSidebar = docenteSidebarSections;
+  readonly iconos = {
+    campana: faBell,
+    desplegar: faChevronDown,
+    perfil: faUser,
+    config: faGear,
+    salir: faArrowRightFromBracket
+  };
+
+  // Mock notifications to show a functional dropdown
+  notificaciones = [
+    { id: 1, titulo: 'Nueva entrega', mensaje: 'El alumno Juan Pérez ha entregado la misión "Cerebro de Oro".', leida: false, tiempo: 'Hace 5 min' },
+    { id: 2, titulo: 'Canje solicitado', mensaje: 'María Gómez solicitó canjear "Lápiz 3D" por 50 tokens.', leida: false, tiempo: 'Hace 1 hora' },
+    { id: 3, titulo: 'Sistema actualizado', mensaje: 'El portal ha sido actualizado a la última versión.', leida: true, tiempo: 'Hace 1 día' }
+  ];
+
+  get notificacionesNoLeidas(): number {
+    return this.notificaciones.filter(n => !n.leida).length;
+  }
+
+  marcarComoLeidas(): void {
+    this.notificaciones = this.notificaciones.map(n => ({ ...n, leida: true }));
+  }
 
   constructor(
     public sesion: Sesion,
