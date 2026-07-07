@@ -49,6 +49,33 @@ class TiendaController extends Controller
 
     public function administrar(Request $request)
     {
+        $premios = Premio::query();
+
+        if ($busqueda = trim((string) $request->query('q', ''))) {
+            $premios->where(function ($query) use ($busqueda) {
+                $query->where('nombre', 'ilike', "%{$busqueda}%")
+                    ->orWhere('descripcion', 'ilike', "%{$busqueda}%");
+            });
+        }
+
+        if ($categoria = $request->query('categoria')) {
+            $categorias = is_array($categoria) ? $categoria : explode(',', (string) $categoria);
+            $categorias = array_values(array_filter(array_map('trim', $categorias)));
+            if ($categorias) {
+                $premios->whereIn('categoria', $categorias);
+            }
+        }
+
+        if ($tipo = $request->query('tipo_entrega')) {
+            $premios->where('tipo_entrega', $tipo);
+        }
+
+        if ($request->query('solo_con_stock') === '1') {
+            $premios->where('stock', '>', 0);
+        }
+
+        $premios = $premios->orderByDesc('id')->get()->map(fn (Premio $premio) => $this->premioConUrls($premio));
+
         $canjes = DB::table('canjes as c')
             ->join('usuarios as u', 'u.id', '=', 'c.id_alumno')
             ->join('premios as p', 'p.id', '=', 'c.id_premio')
@@ -56,9 +83,25 @@ class TiendaController extends Controller
 
         $this->alcance->aplicarAlumnosQuery($canjes, $request->user(), 'u.id_aula');
 
+        if ($estado = $request->query('estado')) {
+            $canjes->where('c.estado', $estado);
+        }
+
+        if ($alumno = $request->query('id_alumno')) {
+            $canjes->where('c.id_alumno', (int) $alumno);
+        }
+
         return [
-            'premios' => Premio::orderByDesc('id')->get()->map(fn (Premio $premio) => $this->premioConUrls($premio)),
+            'premios' => $premios,
             'canjes' => $canjes->orderByDesc('c.fecha')->get(),
+            'filtros' => [
+                'q' => $request->query('q'),
+                'categoria' => $request->query('categoria'),
+                'tipo_entrega' => $request->query('tipo_entrega'),
+                'solo_con_stock' => $request->query('solo_con_stock'),
+                'estado' => $request->query('estado'),
+                'id_alumno' => $request->query('id_alumno'),
+            ],
         ];
     }
 
