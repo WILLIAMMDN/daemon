@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Aula;
+use App\Models\Entrega;
 use App\Models\Institucion;
 use App\Models\Mision;
 use App\Models\Usuario;
@@ -24,8 +25,8 @@ class MisionCrudTest extends TestCase
 
         return Usuario::create([
             'nombre_completo' => 'Docente CRUD',
-            'correo' => 'docente.misiones@example.com',
-            'clave' => bcrypt('secret-123'),
+            'usuario' => 'docente.misiones',
+            'password_hash' => bcrypt('secret-123'),
             'rol' => 'docente',
             'nivel' => 'TEENS',
             'id_aula' => $aula->id,
@@ -76,7 +77,7 @@ class MisionCrudTest extends TestCase
         $this->assertDatabaseHas('desafios', ['id' => $mision->id, 'titulo' => 'Editada', 'recompensa' => 80]);
     }
 
-    public function test_docente_elimina_mision(): void
+    public function test_docente_elimina_mision_con_cascade_en_entregas(): void
     {
         $docente = $this->docente();
         $mision = Mision::create([
@@ -88,19 +89,26 @@ class MisionCrudTest extends TestCase
             'estado' => 'activo',
             'es_mision_nivel' => false,
         ]);
+        Entrega::create([
+            'id_desafio' => $mision->id,
+            'id_alumno' => $docente->id,
+            'archivo_url' => 'uploads/entregas/test.txt',
+            'estado' => 'pendiente',
+        ]);
 
         $this->actingAs($docente)->deleteJson("/api/v1/misiones/{$mision->id}")
             ->assertNoContent();
 
         $this->assertDatabaseMissing('desafios', ['id' => $mision->id]);
+        $this->assertDatabaseMissing('entregas', ['id_desafio' => $mision->id]);
     }
 
     public function test_alumno_no_puede_crear_mision(): void
     {
         $alumno = Usuario::create([
             'nombre_completo' => 'Alumno X',
-            'correo' => 'alumno.misiones@example.com',
-            'clave' => bcrypt('secret-123'),
+            'usuario' => 'alumno.misiones',
+            'password_hash' => bcrypt('secret-123'),
             'rol' => 'alumno',
             'nivel' => 'TEENS',
         ]);
@@ -118,11 +126,20 @@ class MisionCrudTest extends TestCase
         $b = Mision::create(['titulo' => 'B', 'descripcion' => '', 'recompensa' => 10, 'tipo_evidencia' => 'texto', 'nivel_requerido' => 'TODOS', 'estado' => 'activo', 'es_mision_nivel' => false]);
 
         $this->actingAs($docente)->postJson('/api/v1/misiones/bulk-destroy', [
-            'ids' => [$a->id, $b->id, 9999],
+            'ids' => [$a->id, $b->id],
         ])->assertOk()
             ->assertJsonPath('eliminadas', 2);
 
         $this->assertDatabaseMissing('desafios', ['id' => $a->id]);
         $this->assertDatabaseMissing('desafios', ['id' => $b->id]);
+    }
+
+    public function test_bulk_destroy_rechaza_ids_inexistentes(): void
+    {
+        $docente = $this->docente();
+
+        $this->actingAs($docente)->postJson('/api/v1/misiones/bulk-destroy', [
+            'ids' => [9999],
+        ])->assertStatus(422);
     }
 }
