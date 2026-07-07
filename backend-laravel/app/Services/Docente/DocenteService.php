@@ -103,6 +103,47 @@ class DocenteService
         return Aula::create($datos)->fresh(['institucion']);
     }
 
+    public function aulaGestionable(Usuario $docente, Aula $aula): Aula
+    {
+        if ($docente->rol === 'admin') {
+            return $aula;
+        }
+
+        abort_unless(
+            $docente->rol === 'docente' && (int) $docente->id_aula === (int) $aula->id,
+            403,
+            'No puedes operar sobre aulas fuera de tu alcance.'
+        );
+
+        return $aula;
+    }
+
+    public function actualizarAula(Aula $aula, array $datos): Aula
+    {
+        if (array_key_exists('codigo', $datos) && blank($datos['codigo'])) {
+            unset($datos['codigo']);
+        }
+
+        $aula->fill($datos)->save();
+
+        return $aula->fresh(['institucion']);
+    }
+
+    public function eliminarAula(Aula $aula): void
+    {
+        DB::transaction(function () use ($aula) {
+            $usuariosAsignados = $aula->usuarios()->count();
+
+            abort_if(
+                $usuariosAsignados > 0,
+                422,
+                "No se puede eliminar el aula porque tiene {$usuariosAsignados} usuario(s) asignado(s)."
+            );
+
+            $aula->delete();
+        });
+    }
+
     public function asignarAulaUsuario(Usuario $usuario, ?int $idAula): Usuario
     {
         abort_unless(in_array($usuario->rol, ['alumno', 'docente'], true), 422, 'Solo se pueden asignar alumnos o docentes a aulas.');

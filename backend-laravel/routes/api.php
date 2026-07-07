@@ -67,6 +67,8 @@ Route::prefix('v1')->group(function (): void {
             Route::get('/docente/docentes', [DocenteController::class, 'docentes']);
             Route::get('/docente/aulas', [DocenteController::class, 'aulas']);
             Route::post('/docente/aulas', [DocenteController::class, 'crearAula']);
+            Route::put('/docente/aulas/{aula}', [DocenteController::class, 'actualizarAula']);
+            Route::delete('/docente/aulas/{aula}', [DocenteController::class, 'eliminarAula']);
             Route::patch('/docente/usuarios/{usuario}/aula', [DocenteController::class, 'asignarAulaUsuario']);
             Route::post('/docente/tokens', [DocenteController::class, 'asignarTokens']);
             Route::get('/docente/historial-tokens', [DocenteController::class, 'historialTokens']);

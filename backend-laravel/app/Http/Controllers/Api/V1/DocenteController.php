@@ -7,9 +7,11 @@ use App\Http\Requests\Api\V1\Docente\AsignarAulaUsuarioRequest;
 use App\Http\Requests\Api\V1\Docente\AsignarInsigniaRequest;
 use App\Http\Requests\Api\V1\Docente\AsignarTokensRequest;
 use App\Http\Requests\Api\V1\Docente\AulaStoreRequest;
+use App\Http\Requests\Api\V1\Docente\AulaUpdateRequest;
 use App\Http\Requests\Api\V1\Docente\InsigniaStoreRequest;
 use App\Http\Requests\Api\V1\Docente\InsigniaUpdateRequest;
 use App\Http\Resources\Api\V1\UsuarioResource;
+use App\Models\Aula;
 use App\Models\Insignia;
 use App\Models\Usuario;
 use App\Services\Archivo\ArchivoService;
@@ -58,6 +60,21 @@ class DocenteController extends Controller
     public function crearAula(AulaStoreRequest $request)
     {
         return response()->json($this->docente->crearAula($request->validated()), 201);
+    }
+
+    public function actualizarAula(AulaUpdateRequest $request, Aula $aula)
+    {
+        $this->docente->aulaGestionable($request->user(), $aula);
+
+        return $this->docente->actualizarAula($aula, $request->validated());
+    }
+
+    public function eliminarAula(Request $request, Aula $aula)
+    {
+        $this->docente->aulaGestionable($request->user(), $aula);
+        $this->docente->eliminarAula($aula);
+
+        return response()->noContent();
     }
 
     public function asignarAulaUsuario(AsignarAulaUsuarioRequest $request, Usuario $usuario)
