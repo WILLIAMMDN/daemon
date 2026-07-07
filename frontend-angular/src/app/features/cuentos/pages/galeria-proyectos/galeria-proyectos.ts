@@ -2,11 +2,11 @@ import { Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Cuento } from '../../services/cuento';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
-
+import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
 
 @Component({
   selector: 'app-galeria-proyectos',
-  imports: [RouterLink, Cargando],
+  imports: [RouterLink, Cargando, EstadoVacio],
   templateUrl: './galeria-proyectos.html',
   styleUrl: './galeria-proyectos.scss',
 })

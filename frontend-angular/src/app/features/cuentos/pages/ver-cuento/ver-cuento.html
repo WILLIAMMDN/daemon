@@ -1,29 +1,45 @@
 @if (cargando()) {
-  <app-cargando class="state" texto="Cargando cuento..."></app-cargando>
+  <app-cargando class="w-full min-h-screen bg-slate-50 flex items-center justify-center p-8" texto="Cargando cuento..."></app-cargando>
 } @else if (error()) {
-  <section class="error">{{ error() }}</section>
+  <main class="w-full max-w-3xl mx-auto p-4 md:p-8 flex justify-center">
+    <div class="w-full bg-red-50 border border-red-200 rounded-2xl p-6 text-center">
+      <p class="text-sm font-bold text-red-700">{{ error() }}</p>
+    </div>
+  </main>
 } @else if (datos(); as datosCuento) {
-  <section class="page">
-    <header class="page-header">
-      <div>
-        <p class="kicker">Lectura</p>
-        <h1>{{ datosCuento.cuento.titulo }}</h1>
-        <p>{{ datosCuento.autor?.nombre_completo || 'Autor registrado' }}</p>
+  <main class="w-full max-w-4xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-6 font-inter">
+    
+    <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white border border-slate-200 shadow-sm rounded-2xl p-6 md:p-8">
+      <div class="flex flex-col gap-2 w-full md:w-3/4">
+        <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Lectura</p>
+        <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 leading-tight">{{ datosCuento.cuento.titulo }}</h1>
+        <div class="flex items-center gap-2 mt-2">
+          <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center shrink-0">
+            <span class="text-xs font-bold">{{ (datosCuento.autor?.nombre_completo || 'A').charAt(0) }}</span>
+          </div>
+          <p class="text-sm text-slate-700 font-medium">{{ datosCuento.autor?.nombre_completo || 'Autor registrado' }}</p>
+        </div>
       </div>
-      <a class="ghost-btn" routerLink="/alumno/cuentos">aaleria</a>
+      <a nz-button nzType="default" class="daemon-btn" routerLink="/alumno/cuentos">Volver a galería</a>
     </header>
 
     @if (escenas(datosCuento.cuento).length) {
-      <section class="grid">
+      <section class="flex flex-col gap-6 md:gap-8 w-full">
         @for (escena of escenas(datosCuento.cuento); track $index) {
-          <article class="panel">
-            <p class="kicker">Escena {{ $index + 1 }}</p>
-            <p class="content">{{ escena }}</p>
+          <article class="bg-white border border-slate-200 rounded-2xl p-6 md:p-8 shadow-sm flex flex-col gap-4">
+            <div class="flex items-center gap-3 border-b border-slate-100 pb-3">
+              <span class="flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 font-bold text-slate-500 text-sm">
+                {{ $index + 1 }}
+              </span>
+              <p class="text-sm font-bold text-slate-400 uppercase tracking-widest">Escena</p>
+            </div>
+            
+            <p class="text-base md:text-lg text-slate-700 leading-relaxed font-nunito whitespace-pre-wrap">{{ escena }}</p>
           </article>
         }
       </section>
     } @else {
-      <p class="empty">Este cuento no tiene escenas registradas.</p>
+      <app-estado-vacio titulo="Cuento vacío" descripcion="Este cuento no tiene escenas registradas."></app-estado-vacio>
     }
-  </section>
+  </main>
 }

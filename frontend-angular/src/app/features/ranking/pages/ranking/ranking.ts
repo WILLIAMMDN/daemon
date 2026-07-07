@@ -1,7 +1,8 @@
 import { Component, signal } from '@angular/core';
 import { Ranking as RankingService } from '../../services/ranking';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
-
+import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
+import { NzTagModule } from 'ng-zorro-antd/tag';
 
 interface AlumnoRanking {
   id: number;
@@ -16,7 +17,7 @@ interface AlumnoRanking {
 
 @Component({
   selector: 'app-ranking',
-  imports: [Cargando],
+  imports: [Cargando, EstadoVacio, NzTagModule],
   templateUrl: './ranking.html',
   styleUrl: './ranking.scss',
 })

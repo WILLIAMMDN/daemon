@@ -1,109 +1,118 @@
 @if (cargando()) {
-  <app-cargando class="state" texto="Cargando perfil..."></app-cargando>
+  <app-cargando class="estado" texto="Cargando perfil..."></app-cargando>
 } @else if (error()) {
-  <section class="error">
-    <p>{{ error() }}</p>
+  <section class="estado error">
+    <nz-alert nzType="error" nzShowIcon nzMessage="Error al cargar perfil" [nzDescription]="error()"></nz-alert>
     <button nz-button nzType="primary" class="daemon-btn" type="button" (click)="cargar()">Reintentar</button>
   </section>
 } @else if (perfil(); as datos) {
-  <section class="page profile-page">
-    <header class="profile-hero daemon-surface">
-      <div class="hero-identity">
-        <nz-avatar class="daemon-avatar hero-avatar" [nzSize]="104" [nzSrc]="avatar(datos.usuario) || undefined" [nzText]="iniciales(datos.usuario)"></nz-avatar>
-        <div>
-          <p class="kicker">{{ perfilPropio() ? 'Mi perfil' : 'Perfil de companero' }}</p>
-          <h1>{{ datos.usuario.nombre_completo }}</h1>
-          <div class="profile-tags">
-            <nz-tag class="daemon-tag" nzColor="blue">Nivel {{ datos.usuario.nivel }}</nz-tag>
-            <nz-tag class="daemon-tag" nzColor="green">{{ datos.usuario.rango || 'Rango en progreso' }}</nz-tag>
+  <main class="w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-6 md:gap-8 font-inter">
+    <!-- HERO DE PERFIL -->
+    <header class="w-full bg-white border border-slate-200 shadow-sm rounded-2xl p-6 md:p-8 flex flex-col md:flex-row gap-6 justify-between items-center md:items-start">
+      <div class="flex flex-col md:flex-row gap-6 items-center md:items-start text-center md:text-left">
+        <nz-avatar class="daemon-avatar ring-4 ring-slate-50 shadow-sm" [nzSize]="104" [nzSrc]="avatar(datos.usuario) || undefined" [nzText]="iniciales(datos.usuario)"></nz-avatar>
+        <div class="flex flex-col gap-2 mt-2">
+          <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">{{ perfilPropio() ? 'Mi perfil' : 'Perfil de compañero' }}</p>
+          <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 leading-tight">{{ datos.usuario.nombre_completo }}</h1>
+          <div class="flex flex-wrap items-center justify-center md:justify-start gap-2 mt-1">
+            <nz-tag class="daemon-tag m-0" nzColor="blue">Nivel {{ datos.usuario.nivel }}</nz-tag>
+            <nz-tag class="daemon-tag m-0" nzColor="green">{{ datos.usuario.rango || 'Rango en progreso' }}</nz-tag>
           </div>
-          <p>{{ datos.usuario.usuario }}</p>
+          <p class="text-sm text-slate-500 font-medium mt-1">@{{ datos.usuario.usuario }}</p>
         </div>
       </div>
 
-      <div class="hero-actions">
-        <div class="hero-progress">
-          <span>Perfil completo</span>
-          <strong>{{ progresoPerfil(datos.usuario) }}%</strong>
+      <div class="flex flex-col items-center md:items-end gap-4 min-w-[200px]">
+        <div class="flex flex-col gap-1 w-full bg-slate-50 border border-slate-100 rounded-xl p-4">
+          <div class="flex justify-between items-center text-sm font-bold">
+            <span class="text-slate-600">Perfil completo</span>
+            <strong class="text-slate-900">{{ progresoPerfil(datos.usuario) }}%</strong>
+          </div>
           <nz-progress [nzPercent]="progresoPerfil(datos.usuario)" [nzStatus]="estadoProgreso(datos.usuario)" [nzShowInfo]="false" [nzStrokeWidth]="8"></nz-progress>
         </div>
         @if (perfilPropio()) {
-          <a nz-button nzType="primary" class="daemon-btn" routerLink="/alumno/perfil/editar">Editar perfil</a>
+          <a nz-button nzType="primary" class="daemon-btn w-full" routerLink="/alumno/perfil/editar">Editar perfil</a>
         } @else {
-          <a nz-button nzType="default" class="daemon-btn" routerLink="/alumno/comunidad">Volver a comunidad</a>
+          <a nz-button nzType="default" class="daemon-btn w-full" routerLink="/alumno/comunidad">Volver a comunidad</a>
         }
       </div>
     </header>
 
-    <section class="stats profile-stats">
-      <article class="stat daemon-surface">
-        <nz-statistic class="daemon-stat" nzTitle="Tokens" [nzValue]="datos.usuario.tokens"></nz-statistic>
+    <!-- ESTADÍSTICAS (GRID RESPONSIVO) -->
+    <section class="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 w-full">
+      <article class="bg-white border border-slate-200 shadow-sm rounded-2xl p-6 flex flex-col items-center md:items-start">
+        <nz-statistic class="daemon-stat" nzTitle="Tokens Acumulados" [nzValue]="datos.usuario.tokens"></nz-statistic>
       </article>
-      <article class="stat daemon-surface">
-        <nz-statistic class="daemon-stat" nzTitle="Insignias" [nzValue]="datos.insignias.length"></nz-statistic>
+      <article class="bg-white border border-slate-200 shadow-sm rounded-2xl p-6 flex flex-col items-center md:items-start">
+        <nz-statistic class="daemon-stat" nzTitle="Insignias Ganadas" [nzValue]="datos.insignias.length"></nz-statistic>
       </article>
-      <article class="stat daemon-surface">
-        <nz-statistic class="daemon-stat" nzTitle="Premios entregados" [nzValue]="datos.mochila.length"></nz-statistic>
+      <article class="bg-white border border-slate-200 shadow-sm rounded-2xl p-6 flex flex-col items-center md:items-start">
+        <nz-statistic class="daemon-stat" nzTitle="Premios en Mochila" [nzValue]="datos.mochila.length"></nz-statistic>
       </article>
     </section>
 
-    <section class="split">
-      <article class="panel profile-details">
-        <h2>Datos personales</h2>
-        <nz-descriptions class="daemon-descriptions" nzBordered [nzColumn]="1">
+    <!-- DETALLES (GRID 12 COLUMNAS) -->
+    <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8 w-full">
+      
+      <!-- Datos Personales (5 cols) -->
+      <article class="lg:col-span-5 bg-white border border-slate-200 shadow-sm rounded-2xl p-6 flex flex-col gap-4">
+        <h2 class="text-lg font-bold text-slate-900">Datos personales</h2>
+        <nz-descriptions class="daemon-descriptions w-full" nzBordered [nzColumn]="1">
           <nz-descriptions-item nzTitle="Correo">{{ datos.usuario.email || 'Sin correo registrado' }}</nz-descriptions-item>
-          <nz-descriptions-item nzTitle="Biografia">{{ datos.usuario.biografia || 'Sin biografia registrada' }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Biografía">{{ datos.usuario.biografia || 'Sin biografía registrada' }}</nz-descriptions-item>
         </nz-descriptions>
       </article>
 
-      <article class="panel">
-        <h2>Mochila digital</h2>
+      <!-- Mochila Digital (7 cols) -->
+      <article class="lg:col-span-7 bg-white border border-slate-200 shadow-sm rounded-2xl p-6 flex flex-col gap-4">
+        <h2 class="text-lg font-bold text-slate-900">Mochila digital</h2>
         @if (datos.mochila.length) {
-          <div class="profile-list">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             @for (premio of datos.mochila; track premio.id) {
-              <div class="data-card profile-item-card">
+              <div class="flex items-center gap-4 bg-slate-50 border border-slate-100 rounded-xl p-3">
                 @if (premio.imagen) {
-                  <img class="image-thumb profile-item-image" [src]="asset(premio.imagen)" [alt]="premio.nombre">
+                  <img class="w-12 h-12 rounded-lg object-cover bg-white shrink-0" [src]="asset(premio.imagen)" [alt]="premio.nombre">
                 }
-                <div>
-                  <strong>{{ premio.nombre }}</strong>
-                  <span class="muted">{{ premio.descripcion || 'Premio entregado' }}</span>
+                <div class="flex flex-col overflow-hidden">
+                  <strong class="text-sm font-bold text-slate-900 truncate">{{ premio.nombre }}</strong>
+                  <span class="text-xs text-slate-500 truncate">{{ premio.descripcion || 'Premio entregado' }}</span>
                 </div>
               </div>
             }
           </div>
         } @else {
           <app-estado-vacio
-            [titulo]="perfilPropio() ? 'Mochila sin premios' : 'Mochila sin premios'"
-            [descripcion]="perfilPropio() ? 'Todavia no tienes premios entregados.' : 'Todavia no tiene premios entregados.'"
+            [titulo]="perfilPropio() ? 'Mochila sin premios' : 'Mochila vacía'"
+            [descripcion]="perfilPropio() ? 'Todavía no tienes premios entregados.' : 'Todavía no tiene premios entregados.'"
           />
         }
       </article>
     </section>
 
-    <section class="panel">
-      <h2>Insignias ganadas</h2>
+    <!-- INSIGNIAS (CATÁLOGO RESPONSIVO) -->
+    <section class="bg-white border border-slate-200 shadow-sm rounded-2xl p-6 flex flex-col gap-6 w-full">
+      <h2 class="text-lg font-bold text-slate-900">Insignias ganadas</h2>
       @if (datos.insignias.length) {
-        <div class="card-list">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           @for (insignia of datos.insignias; track insignia.id) {
-            <article class="data-card profile-item-card">
+            <article class="flex flex-col gap-3 bg-slate-50 border border-slate-100 rounded-xl p-4 text-center items-center">
               @if (insignia.imagen) {
-                <img class="image-thumb profile-item-image" [src]="asset(insignia.imagen)" [alt]="insignia.nombre">
+                <img class="w-16 h-16 rounded-full object-cover bg-white shadow-sm mb-2" [src]="asset(insignia.imagen)" [alt]="insignia.nombre">
               }
-              <div>
-                <strong>{{ insignia.nombre }}</strong>
-                <span class="muted">{{ insignia.descripcion }}</span>
-                <small>{{ insignia.fecha }}</small>
+              <div class="flex flex-col gap-1 w-full">
+                <strong class="text-sm font-bold text-slate-900 leading-tight">{{ insignia.nombre }}</strong>
+                <span class="text-xs text-slate-500 leading-snug">{{ insignia.descripcion }}</span>
+                <small class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2">{{ insignia.fecha }}</small>
               </div>
             </article>
           }
         </div>
       } @else {
         <app-estado-vacio
-          [titulo]="perfilPropio() ? 'Aun sin insignias' : 'Aun sin insignias'"
-          [descripcion]="perfilPropio() ? 'Cuando completes logros importantes apareceran aqui.' : 'Este estudiante aun no tiene insignias registradas.'"
+          [titulo]="perfilPropio() ? 'Aún sin insignias' : 'Aún sin insignias'"
+          [descripcion]="perfilPropio() ? 'Cuando completes logros importantes aparecerán aquí.' : 'Este estudiante aún no tiene insignias registradas.'"
         />
       }
     </section>
-  </section>
+  </main>
 }

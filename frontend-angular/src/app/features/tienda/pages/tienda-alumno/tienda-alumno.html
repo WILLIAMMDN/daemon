@@ -1,39 +1,67 @@
-﻿<section class="page">
-  <header class="page-header">
-    <div>
-      <p class="kicker">Tienda</p>
-      <h1>Premios disponibles</h1>
-      <p>Saldo actual: <strong>{{ saldo() }}</strong> tokens.</p>
+<main class="w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-6 md:gap-8 font-inter">
+  <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white border border-slate-200 shadow-sm rounded-2xl p-6">
+    <div class="flex flex-col gap-1">
+      <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Tienda</p>
+      <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 leading-tight">Premios disponibles</h1>
+      <p class="text-sm text-slate-600">Saldo actual: <strong class="text-blue-600">{{ saldo() }}</strong> tokens.</p>
     </div>
-    <div class="actions">
+    <div class="flex flex-col sm:flex-row gap-2">
       <button nz-button nzType="default" class="daemon-btn" type="button" [nzLoading]="cargando()" (click)="cargar()">Actualizar</button>
-      <a nz-button nzType="default" class="daemon-btn" routerLink="/alumno/canjes">Mis canjes</a>
+      <a nz-button nzType="primary" class="daemon-btn" routerLink="/alumno/canjes">Mis canjes</a>
     </div>
   </header>
 
-  @if (mensaje()) { <nz-alert class="daemon-alert" nzType="success" nzShowIcon [nzMessage]="mensaje()"></nz-alert> }
-  @if (error()) { <nz-alert class="daemon-alert" nzType="error" nzShowIcon [nzMessage]="error()"></nz-alert> }
+  @if (mensaje()) {
+    <div class="w-full bg-green-50 border border-green-200 rounded-xl p-4">
+      <p class="text-sm font-bold text-green-700">{{ mensaje() }}</p>
+    </div>
+  }
+  @if (error()) {
+    <div class="w-full bg-red-50 border border-red-200 rounded-xl p-4">
+      <p class="text-sm font-bold text-red-700">{{ error() }}</p>
+    </div>
+  }
 
   @if (cargando()) {
-    <app-cargando class="state" texto="Cargando premios..."></app-cargando>
+    <app-cargando class="w-full bg-white border border-slate-200 shadow-sm rounded-2xl p-8" texto="Cargando premios..."></app-cargando>
   } @else if (premios().length) {
-    <div class="card-list">
+    <!-- CATÁLOGO AUTO-GRID -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 w-full">
       @for (premio of premios(); track premio.id) {
-        <article class="data-card">
+        <article class="flex flex-col gap-3 bg-white border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow duration-300 h-full">
           @if (premio.imagen) {
-            <img class="image-thumb" [src]="asset(premio.imagen)" [alt]="premio.nombre">
+            <div class="w-full h-32 md:h-40 rounded-xl overflow-hidden bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0 mb-2">
+              <img class="max-w-full max-h-full object-contain" [src]="asset(premio.imagen)" [alt]="premio.nombre">
+            </div>
           }
-          <nz-tag class="daemon-tag" nzColor="green">{{ premio.categoria }}</nz-tag>
-          <h2>{{ premio.nombre }}</h2>
-          <p>{{ premio.descripcion || 'Sin descripción registrada.' }}</p>
-          <p><strong>{{ premio.precio }}</strong> tokens - Stock {{ premio.stock }}</p>
-          <button nz-button nzType="primary" class="daemon-btn" type="button" (click)="canjear(premio.id)" [nzLoading]="procesando() === premio.id" [disabled]="procesando() === premio.id || saldo() < premio.precio || premio.stock < 1">
-            Canjear
-          </button>
+          
+          <div class="flex items-center gap-2">
+            <nz-tag class="daemon-tag m-0" nzColor="green">{{ premio.categoria }}</nz-tag>
+          </div>
+          
+          <h2 class="text-lg font-bold text-slate-900 leading-tight mt-1">{{ premio.nombre }}</h2>
+          <p class="text-sm text-slate-600 leading-relaxed flex-grow">{{ premio.descripcion || 'Sin descripción registrada.' }}</p>
+          
+          <div class="flex justify-between items-center w-full mt-2 bg-slate-50 border border-slate-100 rounded-xl p-3">
+            <div class="flex flex-col">
+              <span class="text-xs font-bold text-slate-500">Precio</span>
+              <strong class="text-base font-extrabold text-blue-600">{{ premio.precio }} <span class="text-xs">DAEMONS</span></strong>
+            </div>
+            <div class="flex flex-col text-right">
+              <span class="text-xs font-bold text-slate-500">Stock</span>
+              <strong class="text-sm font-bold text-slate-900">{{ premio.stock }}</strong>
+            </div>
+          </div>
+          
+          <div class="mt-4 pt-4 border-t border-slate-100">
+            <button nz-button nzType="primary" class="daemon-btn w-full" type="button" (click)="canjear(premio.id)" [nzLoading]="procesando() === premio.id" [disabled]="procesando() === premio.id || saldo() < premio.precio || premio.stock < 1">
+              Canjear
+            </button>
+          </div>
         </article>
       }
     </div>
   } @else {
     <app-estado-vacio titulo="Sin premios disponibles" descripcion="Cuando haya premios para tu nivel, aparecerán listos para canjear con tus tokens."></app-estado-vacio>
   }
-</section>
+</main>

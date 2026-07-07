@@ -1,12 +1,14 @@
 import { Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { UpperCasePipe } from '@angular/common';
 import { Mision } from '../../../misiones/services/mision';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
-
+import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
+import { NzTagModule } from 'ng-zorro-antd/tag';
 
 @Component({
   selector: 'app-mis-desafios',
-  imports: [RouterLink, Cargando],
+  imports: [RouterLink, Cargando, UpperCasePipe, EstadoVacio, NzTagModule],
   templateUrl: './mis-desafios.html',
   styleUrl: './mis-desafios.scss',
 })

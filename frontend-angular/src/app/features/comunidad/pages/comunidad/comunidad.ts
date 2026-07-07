@@ -1,9 +1,11 @@
 import { Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { UpperCasePipe } from '@angular/common';
 import { Activos } from '../../../../core/servicios/activos';
 import { Alumno } from '../../../alumno/services/alumno';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
-
+import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
+import { NzTagModule } from 'ng-zorro-antd/tag';
 
 interface PersonaComunidad {
   id: number;
@@ -22,7 +24,7 @@ interface ComunidadRespuesta {
 
 @Component({
   selector: 'app-comunidad',
-  imports: [RouterLink, Cargando],
+  imports: [RouterLink, Cargando, UpperCasePipe, EstadoVacio, NzTagModule],
   templateUrl: './comunidad.html',
   styleUrl: './comunidad.scss',
 })

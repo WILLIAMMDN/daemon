@@ -1,57 +1,53 @@
-<main class="register-page min-h-screen px-4 py-8 sm:px-6">
-  <a routerLink="/" class="home-link" aria-label="Volver al inicio">
+<main class="w-full min-h-screen flex items-center justify-center p-4 md:p-8 font-inter bg-slate-50 relative">
+  <a routerLink="/" class="absolute top-6 left-6 flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors z-20">
     <span aria-hidden="true">&larr;</span>
     <span>Inicio</span>
   </a>
 
-  <section class="register-stage">
-    <header class="login-brand" aria-label="Academia Daemon">
-      <img class="brand-logo" src="/img/brand/daemon-transparent.png" alt="Academia Daemon">
-    </header>
-
-    <article class="register-card">
-      <div class="card-accent" aria-hidden="true"></div>
-
-      <section class="register-form-panel">
-        <div class="register-card-head">
+  <!-- GRID DE 2 COLUMNAS PARA REGISTRO Y SPLINE -->
+  <div class="w-full max-w-5xl bg-white border border-slate-200 rounded-3xl shadow-sm flex flex-col md:flex-row overflow-hidden relative z-10">
+    
+    <!-- LADO DEL FORMULARIO -->
+    <section class="w-full md:w-1/2 flex flex-col p-8 lg:p-12">
+      <header class="flex flex-col items-start mb-8 w-full">
+        <img class="h-10 mb-6" src="/img/brand/daemon-transparent.png" alt="Academia Daemon">
+        <div class="flex justify-between items-end w-full">
           <div>
-            <p class="eyebrow">Portal estudiante</p>
-            <h1>Crear cuenta</h1>
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Portal estudiante</p>
+            <h1 class="text-3xl font-extrabold text-slate-900 mt-1">Crear cuenta</h1>
           </div>
-
-          <div class="portal-switch" aria-label="Accesos">
-            <span class="is-active">Registro</span>
-            <a routerLink="/login">Iniciar sesi&oacute;n</a>
+          <div class="flex bg-slate-100 rounded-full p-1" aria-label="Accesos">
+            <span class="px-4 py-1.5 bg-white shadow-sm rounded-full text-xs font-bold text-slate-900">Registro</span>
+            <a routerLink="/login" class="px-4 py-1.5 rounded-full text-xs font-bold text-slate-500 hover:text-slate-900 transition-colors">Iniciar sesión</a>
           </div>
         </div>
+      </header>
 
-        <div class="google-block">
-          <div class="divider">
-            <span>contin&uacute;a con Google</span>
-          </div>
-          <button type="button" class="firebase-google-button" (click)="continuarConGoogle()" [disabled]="enviando()">
-            <svg class="google-logo" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
-              <path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/>
-              <path fill="#FF3D00" d="m6.306 14.691 6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z"/>
-              <path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238A11.91 11.91 0 0 1 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"/>
-              <path fill="#1976D2" d="M43.611 20.083 43.595 20H24v8h11.303a12.04 12.04 0 0 1-4.087 5.571l.003-.002 6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"/>
-            </svg>
-            <span class="firebase-google-button__text">Continuar con Google</span>
-          </button>
-        </div>
+      <button type="button" class="w-full flex items-center justify-center gap-3 bg-white border border-slate-200 text-slate-700 font-bold text-sm py-3 rounded-xl hover:bg-slate-50 transition-colors shadow-sm disabled:opacity-50" (click)="continuarConGoogle()" [disabled]="enviando()">
+        <svg class="w-5 h-5" viewBox="0 0 48 48" aria-hidden="true">
+          <path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/>
+          <path fill="#FF3D00" d="m6.306 14.691 6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z"/>
+          <path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238A11.91 11.91 0 0 1 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"/>
+          <path fill="#1976D2" d="M43.611 20.083 43.595 20H24v8h11.303a12.04 12.04 0 0 1-4.087 5.571l.003-.002 6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"/>
+        </svg>
+        Continuar con Google
+      </button>
 
-        <div class="divider">
-          <span>o crea tu cuenta con correo</span>
-        </div>
+      <div class="relative flex items-center justify-center my-8">
+        <div class="absolute w-full border-t border-slate-200"></div>
+        <span class="relative bg-white px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">o usa tu correo</span>
+      </div>
 
-        <form #registroForm="ngForm" (ngSubmit)="registrar(registroForm)" class="register-form" novalidate>
-          <label class="classic-field" for="email">
-            <span class="field-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" focusable="false">
+      <form #registroForm="ngForm" (ngSubmit)="registrar(registroForm)" class="flex flex-col gap-4" novalidate>
+        <div class="flex flex-col gap-1">
+          <label class="relative flex items-center w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100 transition-all">
+            <span class="text-slate-400 shrink-0" aria-hidden="true">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm-.4 4.25-7.07 4.42a1 1 0 0 1-1.06 0L4.4 8.25V6.6L12 11.35l7.6-4.75Z" />
               </svg>
             </span>
             <input
+              class="w-full bg-transparent border-none focus:ring-0 text-sm font-medium text-slate-900 px-3 py-2 outline-none"
               id="email"
               name="email"
               [(ngModel)]="datos.email"
@@ -59,20 +55,23 @@
               required
               #emailModel="ngModel"
               autocomplete="email"
-              placeholder="Correo electr&oacute;nico"
+              placeholder="Correo electrónico"
             >
           </label>
-          <p *ngIf="emailModel.invalid && (emailModel.dirty || emailModel.touched)" class="field-error">
-            Ingresa un correo electr&oacute;nico v&aacute;lido.
-          </p>
+          @if (emailModel.invalid && (emailModel.dirty || emailModel.touched)) {
+            <p class="text-xs font-bold text-red-500 px-1">Ingresa un correo válido.</p>
+          }
+        </div>
 
-          <label class="classic-field has-action" for="password">
-            <span class="field-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" focusable="false">
+        <div class="flex flex-col gap-1">
+          <label class="relative flex items-center w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100 transition-all">
+            <span class="text-slate-400 shrink-0" aria-hidden="true">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M17 9h-1V7a4 4 0 0 0-8 0v2H7a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2Zm-7-2a2 2 0 0 1 4 0v2h-4Zm3 9.73V18h-2v-1.27a2 2 0 1 1 2 0Z" />
               </svg>
             </span>
             <input
+              class="w-full bg-transparent border-none focus:ring-0 text-sm font-medium text-slate-900 px-3 py-2 outline-none"
               [type]="passwordVisible() ? 'text' : 'password'"
               id="password"
               name="password"
@@ -81,54 +80,50 @@
               [minlength]="passwordMinLength"
               #passwordModel="ngModel"
               autocomplete="new-password"
-              placeholder="Contrase&ntilde;a"
+              placeholder="Contraseña"
             >
             <button
               type="button"
-              class="field-action"
+              class="p-1 text-slate-400 hover:text-slate-600 transition-colors"
               (mousedown)="$event.preventDefault()"
               (click)="alternarPassword()"
-              [attr.aria-label]="passwordVisible() ? 'Ocultar clave' : 'Mostrar clave'"
             >
-              <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M12 5c-5 0-9 4.5-10 7 1 2.5 5 7 10 7s9-4.5 10-7c-1-2.5-5-7-10-7Zm0 11a4 4 0 1 1 4-4 4 4 0 0 1-4 4Zm0-6.2A2.2 2.2 0 1 0 14.2 12 2.2 2.2 0 0 0 12 9.8Z" />
               </svg>
             </button>
           </label>
-          <p *ngIf="passwordModel.invalid && (passwordModel.dirty || passwordModel.touched)" class="field-error">
-            La contrase&ntilde;a debe tener al menos {{ passwordMinLength }} caracteres.
-          </p>
-
-          @if (error()) {
-            <div class="form-alert" role="alert">
-              {{ error() }}
-            </div>
+          @if (passwordModel.invalid && (passwordModel.dirty || passwordModel.touched)) {
+            <p class="text-xs font-bold text-red-500 px-1">La contraseña debe tener al menos {{ passwordMinLength }} caracteres.</p>
           }
-
-          <button type="submit" [disabled]="enviando() || registroForm.invalid" class="submit-button">
-            {{ enviando() ? 'Creando cuenta...' : 'Crear cuenta' }}
-          </button>
-        </form>
-
-        <footer class="login-footer">
-          <p>&iquest;Ya tienes una cuenta? <a routerLink="/login">Inicia sesi&oacute;n</a></p>
-        </footer>
-      </section>
-
-      <section class="register-visual" aria-label="Animaci&oacute;n de registro">
-        <div class="spline-frame" aria-hidden="true">
-          <spline-viewer url="https://prod.spline.design/nMNnp2Qj0GPfUDUz/scene.splinecode"></spline-viewer>
         </div>
-      </section>
-    </article>
 
-    <aside class="register-note">
-      <span class="note-icon" aria-hidden="true">
-        <svg viewBox="0 0 24 24" focusable="false">
+        @if (error()) {
+          <div class="bg-red-50 border border-red-200 rounded-xl p-3 mt-2 text-center" role="alert">
+            <p class="text-sm font-bold text-red-600">{{ error() }}</p>
+          </div>
+        }
+
+        <button type="submit" [disabled]="enviando() || registroForm.invalid" class="w-full bg-slate-900 text-white font-bold text-base py-3.5 rounded-xl mt-4 hover:bg-slate-800 disabled:opacity-50 transition-colors shadow-md">
+          {{ enviando() ? 'Creando cuenta...' : 'Crear cuenta' }}
+        </button>
+      </form>
+    </section>
+
+    <!-- LADO DEL RECURSO 3D -->
+    <section class="hidden md:flex w-full md:w-1/2 bg-slate-100 relative items-center justify-center overflow-hidden">
+      <div class="absolute inset-0 z-0">
+        <spline-viewer url="https://prod.spline.design/nMNnp2Qj0GPfUDUz/scene.splinecode"></spline-viewer>
+      </div>
+      
+      <!-- Overlay inferior informativo -->
+      <div class="absolute bottom-6 inset-x-6 z-10 flex items-center gap-3 bg-white/80 backdrop-blur-md rounded-2xl p-4 shadow-sm border border-white">
+        <svg class="w-8 h-8 text-blue-600 shrink-0" fill="currentColor" viewBox="0 0 24 24">
           <path d="M12 2 4 5.5V11c0 5.05 3.41 9.74 8 11 4.59-1.26 8-5.95 8-11V5.5Zm3.54 7.46-4.25 4.25a1 1 0 0 1-1.41 0l-1.92-1.92 1.41-1.41 1.21 1.21 3.54-3.54Z" />
         </svg>
-      </span>
-      <p>La cuenta se crea como estudiante y queda protegida por el acceso seguro de DAEMON.</p>
-    </aside>
-  </section>
+        <p class="text-xs font-bold text-slate-700 leading-tight">La cuenta se crea como estudiante y queda protegida por el acceso seguro de DAEMON.</p>
+      </div>
+    </section>
+
+  </div>
 </main>

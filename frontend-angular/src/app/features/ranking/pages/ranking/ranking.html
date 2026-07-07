@@ -1,43 +1,60 @@
-<section class="page">
-  <header class="page-header">
-    <div>
-      <p class="kicker">Ranking</p>
-      <h1>Clasificación general</h1>
-      <p>Ordenado por tokens acumulados.</p>
+<main class="w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-6 md:gap-8 font-inter">
+  <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white border border-slate-200 shadow-sm rounded-2xl p-6">
+    <div class="flex flex-col gap-1">
+      <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Ranking</p>
+      <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 leading-tight">Clasificación general</h1>
+      <p class="text-sm text-slate-600">Ordenado por tokens acumulados.</p>
     </div>
-    <button type="button" (click)="cargar()">Actualizar</button>
+    <button nz-button nzType="default" class="daemon-btn" type="button" (click)="cargar()" [disabled]="cargando()">
+      @if (cargando()) { Actualizando... } @else { Actualizar }
+    </button>
   </header>
 
   @if (cargando()) {
-    <app-cargando class="state" texto="Cargando ranking..."></app-cargando>
+    <app-cargando class="w-full bg-white border border-slate-200 shadow-sm rounded-2xl p-8" texto="Cargando ranking..."></app-cargando>
   } @else if (error()) {
-    <p class="error">{{ error() }}</p>
+    <div class="w-full bg-red-50 border border-red-200 rounded-xl p-4">
+      <p class="text-sm font-bold text-red-700">{{ error() }}</p>
+    </div>
   } @else if (alumnos().length) {
-    <section class="panel table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Estudiante</th>
-            <th>Nivel</th>
-            <th>Rango</th>
-            <th>Tokens</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (alumno of alumnos(); track alumno.id; let i = $index) {
-            <tr>
-              <td><strong>{{ alumno.posicion ?? i + 1 }}</strong></td>
-              <td>{{ alumno.nombre_completo }}</td>
-              <td><span class="badge">{{ alumno.nivel }}</span></td>
-              <td>{{ alumno.rango || '-' }}</td>
-              <td><strong>{{ alumno.tokens }}</strong></td>
-            </tr>
-          }
-        </tbody>
-      </table>
+    <!-- CLASIFICACIÓN TIPO LEADERBOARD (FLEX COLUMN) -->
+    <section class="w-full bg-white border border-slate-200 shadow-sm rounded-2xl p-4 md:p-6">
+      <div class="flex flex-col gap-3">
+        <!-- Encabezados (Solo Desktop) -->
+        <div class="hidden md:grid grid-cols-12 gap-4 px-4 py-2 border-b border-slate-200 mb-2">
+          <div class="col-span-1 font-bold text-slate-500 text-sm">#</div>
+          <div class="col-span-5 font-bold text-slate-500 text-sm">Estudiante</div>
+          <div class="col-span-2 font-bold text-slate-500 text-sm">Nivel</div>
+          <div class="col-span-2 font-bold text-slate-500 text-sm">Rango</div>
+          <div class="col-span-2 font-bold text-slate-500 text-sm text-right">Tokens</div>
+        </div>
+
+        <!-- Filas del ranking -->
+        @for (alumno of alumnos(); track alumno.id; let i = $index) {
+          <article class="flex flex-col md:grid md:grid-cols-12 md:items-center gap-4 bg-slate-50 hover:bg-slate-100 border border-slate-100 rounded-xl p-4 transition-colors duration-200">
+            <!-- Posición y Nombre (Móvil y Desktop) -->
+            <div class="md:col-span-6 flex items-center gap-4">
+              <div class="flex items-center justify-center w-8 h-8 rounded-full bg-white border border-slate-200 font-extrabold text-slate-900 shrink-0 shadow-sm">
+                {{ alumno.posicion ?? i + 1 }}
+              </div>
+              <strong class="text-base font-bold text-slate-900 truncate">{{ alumno.nombre_completo }}</strong>
+            </div>
+
+            <!-- Datos Secundarios (Móvil agrupado, Desktop separado) -->
+            <div class="md:col-span-4 flex items-center justify-start md:justify-start gap-4">
+              <nz-tag class="daemon-tag m-0" nzColor="blue">{{ alumno.nivel }}</nz-tag>
+              <span class="text-sm text-slate-600">{{ alumno.rango || 'Sin rango' }}</span>
+            </div>
+
+            <!-- Tokens (Móvil y Desktop) -->
+            <div class="md:col-span-2 flex items-center justify-end w-full">
+              <strong class="text-base md:text-lg font-extrabold text-blue-600">{{ alumno.tokens }} <span class="text-xs text-slate-500 font-bold ml-1">DAEMONS</span></strong>
+            </div>
+          </article>
+        }
+      </div>
     </section>
   } @else {
-    <p class="empty">Todavía no hay estudiantes en el ranking.</p>
+    <app-estado-vacio titulo="Sin estudiantes" descripcion="Todavía no hay estudiantes en el ranking."></app-estado-vacio>
   }
-</section>
+</main>
