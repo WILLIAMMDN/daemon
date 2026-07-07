@@ -8,5 +8,5 @@ abstract class ModeloBase extends Model
 {
     public $timestamps = false;
 
-    protected $guarded = [];
+    protected $guarded = ['id'];
 }
