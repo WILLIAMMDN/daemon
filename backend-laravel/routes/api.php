@@ -70,6 +70,10 @@ Route::prefix('v1')->group(function (): void {
             Route::put('/docente/aulas/{aula}', [DocenteController::class, 'actualizarAula']);
             Route::delete('/docente/aulas/{aula}', [DocenteController::class, 'eliminarAula']);
             Route::patch('/docente/usuarios/{usuario}/aula', [DocenteController::class, 'asignarAulaUsuario']);
+            Route::get('/cuentos/admin', [CuentoController::class, 'adminIndex']);
+            Route::put('/cuentos/{cuento}', [CuentoController::class, 'adminUpdate']);
+            Route::delete('/cuentos/{cuento}', [CuentoController::class, 'adminDestroy']);
+            Route::post('/cuentos/{cuento}/publicar', [CuentoController::class, 'adminPublicar']);
             Route::post('/docente/tokens', [DocenteController::class, 'asignarTokens']);
             Route::get('/docente/historial-tokens', [DocenteController::class, 'historialTokens']);
             Route::apiResource('/docente/insignias', DocenteController::class)->only(['store', 'update', 'destroy']);

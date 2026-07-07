@@ -45,6 +45,36 @@ class CuentoService
         return Cuento::updateOrCreate(['id_alumno' => $usuario->id], $datos);
     }
 
+    public function adminListar(): Collection
+    {
+        return DB::table('cuentos as c')
+            ->leftJoin('usuarios as u', 'u.id', '=', 'c.id_alumno')
+            ->select('c.*', 'u.nombre_completo as autor', 'u.avatar', 'u.id_aula')
+            ->orderByDesc('c.fecha_creacion')
+            ->get()
+            ->map(fn ($cuento) => $this->cuentoConUrls($cuento));
+    }
+
+    public function adminActualizar(Cuento $cuento, array $datos): Cuento
+    {
+        $cuento->fill($datos)->save();
+
+        return $cuento->fresh();
+    }
+
+    public function adminEliminar(Cuento $cuento): void
+    {
+        $cuento->delete();
+    }
+
+    public function adminPublicar(Cuento $cuento, bool $publicado): Cuento
+    {
+        $cuento->publicado = $publicado;
+        $cuento->save();
+
+        return $cuento;
+    }
+
     private function cuentoConUrls(object $cuento): object
     {
         $cuento->avatar = $this->archivos->url($cuento->avatar ?? null);
