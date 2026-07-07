@@ -80,6 +80,12 @@ Route::prefix('v1')->group(function (): void {
             Route::get('/docente/insignias', [DocenteController::class, 'insignias']);
             Route::post('/docente/insignias/asignar', [DocenteController::class, 'asignarInsignia']);
 
+            Route::get('/chatbot/admin/bots', [ChatbotController::class, 'adminIndex']);
+            Route::get('/chatbot/admin/bots/{bot}', [ChatbotController::class, 'adminShow']);
+            Route::put('/chatbot/admin/bots/{bot}', [ChatbotController::class, 'adminUpdate']);
+            Route::delete('/chatbot/admin/bots/{bot}', [ChatbotController::class, 'adminDestroy']);
+            Route::post('/chatbot/admin/bots/{bot}/limpiar-chat', [ChatbotController::class, 'adminLimpiarChat']);
+
             Route::post('/misiones', [MisionController::class, 'store']);
             Route::get('/misiones/entregas', [MisionController::class, 'entregas']);
             Route::put('/misiones/{mision}', [MisionController::class, 'update']);
