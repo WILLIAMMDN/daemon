@@ -1,4 +1,4 @@
-﻿<section class="page">
+<section class="page">
   <header class="page-header">
     <div>
       <p class="kicker">Docente</p>
@@ -59,7 +59,7 @@
     <app-cargando class="state" texto="Cargando misiones..."></app-cargando>
   } @else if (misiones().length) {
     <section class="panel table-wrap">
-      <table>
+      <nz-table #tablaMisiones [nzData]="misiones()" [nzShowPagination]="true" [nzPageSize]="10" nzSize="middle">
         <thead>
           <tr>
             <th>Misión</th>
@@ -67,22 +67,74 @@
             <th>Recompensa</th>
             <th>Estado</th>
             <th>Evidencia</th>
+            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
-          @for (mision of misiones(); track mision.id) {
+          @for (mision of tablaMisiones.data; track mision.id) {
             <tr>
               <td>{{ mision.titulo }}</td>
               <td><nz-tag class="daemon-tag" nzColor="blue">{{ mision.nivel_requerido }}</nz-tag></td>
               <td>{{ mision.recompensa }}</td>
               <td><nz-tag class="daemon-tag" [nzColor]="mision.estado === 'activo' ? 'green' : 'default'">{{ mision.estado }}</nz-tag></td>
               <td>{{ mision.tipo_evidencia }}</td>
+              <td>
+                <button nz-button nzType="link" (click)="abrirEditar(mision)">Editar</button>
+                <button nz-button nzType="link" nzDanger nz-popconfirm nzPopconfirmTitle="¿Seguro que deseas eliminar esta misión? Se borrarán también sus entregas." nzPopconfirmPlacement="left" (nzOnConfirm)="eliminar(mision.id)">Eliminar</button>
+              </td>
             </tr>
           }
         </tbody>
-      </table>
+      </nz-table>
     </section>
   } @else {
     <app-estado-vacio titulo="Sin misiones creadas" descripcion="Crea la primera misión para que tus estudiantes tengan un reto activo."></app-estado-vacio>
   }
 </section>
+
+<!-- Modal de Edición -->
+<nz-modal [(nzVisible)]="modalVisible" nzTitle="Editar Misión" (nzOnCancel)="cerrarEditar()" (nzOnOk)="guardarEdicion()" [nzOkLoading]="guardando()">
+  <ng-container *nzModalContent>
+    @if (misionEditando) {
+      <div class="form-grid">
+        <label class="field-wide">
+          Título
+          <input name="edit_titulo" [(ngModel)]="misionEditando.titulo" required>
+        </label>
+        <label>
+          Recompensa
+          <input name="edit_recompensa" type="number" min="0" [(ngModel)]="misionEditando.recompensa" required>
+        </label>
+        <label>
+          Evidencia
+          <select name="edit_tipo_evidencia" [(ngModel)]="misionEditando.tipo_evidencia">
+            <option value="texto">texto</option>
+            <option value="archivo">archivo</option>
+            <option value="imagen">imagen</option>
+            <option value="video">video</option>
+          </select>
+        </label>
+        <label>
+          Nivel
+          <select name="edit_nivel_requerido" [(ngModel)]="misionEditando.nivel_requerido">
+            <option value="TODOS">TODOS</option>
+            <option value="KIDS">KIDS</option>
+            <option value="TEENS">TEENS</option>
+            <option value="PRO">PRO</option>
+          </select>
+        </label>
+        <label>
+          Estado
+          <select name="edit_estado" [(ngModel)]="misionEditando.estado">
+            <option value="activo">activo</option>
+            <option value="inactivo">inactivo</option>
+          </select>
+        </label>
+        <label class="field-wide">
+          Descripción
+          <textarea name="edit_descripcion" [(ngModel)]="misionEditando.descripcion" rows="4"></textarea>
+        </label>
+      </div>
+    }
+  </ng-container>
+</nz-modal>
