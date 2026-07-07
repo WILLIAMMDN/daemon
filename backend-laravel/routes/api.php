@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\V1\CuentoController;
 use App\Http\Controllers\Api\V1\ComunidadController;
 use App\Http\Controllers\Api\V1\DocenteController;
 use App\Http\Controllers\Api\V1\EvaluacionController;
+use App\Http\Controllers\Api\V1\IaModeloAdminController;
 use App\Http\Controllers\Api\V1\InstitucionController;
 use App\Http\Controllers\Api\V1\MisionController;
 use App\Http\Controllers\Api\V1\RankingController;
@@ -101,6 +102,16 @@ Route::prefix('v1')->group(function (): void {
                 Route::put('/{usuario}', [AlumnoAdminController::class, 'update']);
                 Route::delete('/{usuario}', [AlumnoAdminController::class, 'destroy']);
                 Route::post('/{usuario}/resetear-clave', [AlumnoAdminController::class, 'resetearClave']);
+            });
+
+            Route::middleware('role:admin')->prefix('ia-modelos/admin')->group(function (): void {
+                Route::get('/', [IaModeloAdminController::class, 'index']);
+                Route::get('/estadisticas', [IaModeloAdminController::class, 'estadisticas']);
+                Route::post('/', [IaModeloAdminController::class, 'store']);
+                Route::get('/{modelo}', [IaModeloAdminController::class, 'show']);
+                Route::put('/{modelo}', [IaModeloAdminController::class, 'update']);
+                Route::delete('/{modelo}', [IaModeloAdminController::class, 'destroy']);
+                Route::delete('/bulk', [IaModeloAdminController::class, 'destroyBulk']);
             });
 
             Route::get('/chatbot/admin/bots', [ChatbotController::class, 'adminIndex']);
