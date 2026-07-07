@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\AlumnoController;
+use App\Http\Controllers\Api\V1\AlumnoAdminController;
 use App\Http\Controllers\Api\V1\ArchivoAdminController;
 use App\Http\Controllers\Api\V1\ArchivoController;
 use App\Http\Controllers\Api\V1\AutenticacionController;
@@ -90,6 +91,16 @@ Route::prefix('v1')->group(function (): void {
                 Route::get('/prefijos', [ArchivoAdminController::class, 'prefijos']);
                 Route::delete('/', [ArchivoAdminController::class, 'destroy']);
                 Route::delete('/bulk', [ArchivoAdminController::class, 'destroyBulk']);
+            });
+
+            Route::middleware('role:admin')->prefix('alumnos/admin')->group(function (): void {
+                Route::get('/', [AlumnoAdminController::class, 'index']);
+                Route::get('/estadisticas', [AlumnoAdminController::class, 'estadisticas']);
+                Route::post('/', [AlumnoAdminController::class, 'store']);
+                Route::get('/{usuario}', [AlumnoAdminController::class, 'show']);
+                Route::put('/{usuario}', [AlumnoAdminController::class, 'update']);
+                Route::delete('/{usuario}', [AlumnoAdminController::class, 'destroy']);
+                Route::post('/{usuario}/resetear-clave', [AlumnoAdminController::class, 'resetearClave']);
             });
 
             Route::get('/chatbot/admin/bots', [ChatbotController::class, 'adminIndex']);
