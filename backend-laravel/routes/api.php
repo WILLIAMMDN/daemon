@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\AlumnoController;
+use App\Http\Controllers\Api\V1\ArchivoAdminController;
 use App\Http\Controllers\Api\V1\ArchivoController;
 use App\Http\Controllers\Api\V1\AutenticacionController;
 use App\Http\Controllers\Api\V1\CertificadoController;
@@ -83,6 +84,13 @@ Route::prefix('v1')->group(function (): void {
             Route::post('/docente/insignias/asignar', [DocenteController::class, 'asignarInsignia']);
 
             Route::apiResource('instituciones', InstitucionController::class);
+
+            Route::middleware('role:admin')->prefix('archivos/admin')->group(function (): void {
+                Route::get('/', [ArchivoAdminController::class, 'index']);
+                Route::get('/prefijos', [ArchivoAdminController::class, 'prefijos']);
+                Route::delete('/', [ArchivoAdminController::class, 'destroy']);
+                Route::delete('/bulk', [ArchivoAdminController::class, 'destroyBulk']);
+            });
 
             Route::get('/chatbot/admin/bots', [ChatbotController::class, 'adminIndex']);
             Route::get('/chatbot/admin/bots/{bot}', [ChatbotController::class, 'adminShow']);
