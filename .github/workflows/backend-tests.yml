@@ -1,4 +1,4 @@
-name: Backend Tests
+name: Backend Tests (Laravel)
 
 on:
   push:
@@ -7,37 +7,69 @@ on:
     paths:
       - 'backend-laravel/**'
   pull_request:
+    branches:
+      - main
     paths:
       - 'backend-laravel/**'
 
 jobs:
   test:
     runs-on: ubuntu-latest
+
     defaults:
       run:
         working-directory: ./backend-laravel
 
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: daemon_test
+          POSTGRES_USER: daemon
+          POSTGRES_PASSWORD: password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.3' # Project uses 8.3/8.2
-          extensions: pdo, sqlite, pdo_sqlite
+          php-version: '8.3'
+          extensions: mbstring, xml, ctype, iconv, intl, pdo, pdo_pgsql, pgsql
           coverage: none
 
-      - name: Copy .env
-        run: php -r "file_exists('.env') || copy('.env.example', '.env');"
-
-      - name: Install Dependencies
+      - name: Install dependencies
         run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
-      - name: Generate key
-        run: php artisan key:generate
+      - name: Prepare environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate
 
-      - name: Set permissions
-        run: chmod -R 777 storage bootstrap/cache
+      - name: Run Migrations
+        env:
+          DB_CONNECTION: pgsql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 5432
+          DB_DATABASE: daemon_test
+          DB_USERNAME: daemon
+          DB_PASSWORD: password
+        run: php artisan migrate --env=testing --force
 
-      - name: Execute tests
+      - name: Execute tests via Artisan
+        env:
+          DB_CONNECTION: pgsql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 5432
+          DB_DATABASE: daemon_test
+          DB_USERNAME: daemon
+          DB_PASSWORD: password
         run: php artisan test

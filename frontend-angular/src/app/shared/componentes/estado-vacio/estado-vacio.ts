@@ -1,7 +1,8 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input , ChangeDetectionStrategy} from '@angular/core';
 import { NzEmptyModule } from 'ng-zorro-antd/empty';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-estado-vacio',
   imports: [NzEmptyModule],
   templateUrl: './estado-vacio.html',

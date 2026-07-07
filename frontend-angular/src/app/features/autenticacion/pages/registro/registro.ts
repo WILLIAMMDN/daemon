@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, signal , ChangeDetectionStrategy} from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { Autenticacion, RegistroFirebaseDatos } from '../../../../core/servicios/autenticacion';
@@ -8,6 +8,7 @@ import { Sesion } from '../../../../core/servicios/sesion';
 import { AuthValidators, validarRegistro } from '../../../../shared/validadores/auth-validadores';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-registro',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],

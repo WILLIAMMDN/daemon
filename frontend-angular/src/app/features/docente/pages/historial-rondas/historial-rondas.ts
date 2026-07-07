@@ -1,9 +1,10 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal , ChangeDetectionStrategy} from '@angular/core';
 import { Competencia } from '../../../competencia/services/competencia';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-historial-rondas',
   imports: [Cargando],
   templateUrl: './historial-rondas.html',

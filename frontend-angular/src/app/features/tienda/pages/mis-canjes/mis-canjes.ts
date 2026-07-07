@@ -1,9 +1,10 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal , ChangeDetectionStrategy} from '@angular/core';
 import { Tienda } from '../../services/tienda';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-mis-canjes',
   imports: [Cargando],
   templateUrl: './mis-canjes.html',

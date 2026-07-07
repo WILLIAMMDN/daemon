@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal , ChangeDetectionStrategy} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -12,6 +12,7 @@ import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-gestionar-misiones',
   imports: [FormsModule, NzAlertModule, NzButtonModule, NzTagModule, NzTableModule, NzPopconfirmModule, NzModalModule, Cargando, EstadoVacio],
   templateUrl: './gestionar-misiones.html',

@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal , ChangeDetectionStrategy} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -9,6 +9,7 @@ import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-
 
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-lista-misiones',
   imports: [RouterLink, NzAlertModule, NzButtonModule, NzTagModule, Cargando, EstadoVacio],
   templateUrl: './lista-misiones.html',

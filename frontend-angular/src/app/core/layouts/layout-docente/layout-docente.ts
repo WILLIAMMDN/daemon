@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component , ChangeDetectionStrategy} from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzBadgeModule } from 'ng-zorro-antd/badge';
@@ -12,6 +12,7 @@ import { Sesion } from '../../servicios/sesion';
 import { docenteSidebarSections } from '../portal-sidebar.config';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-layout-docente',
   imports: [RouterOutlet, NzAvatarModule, NzBadgeModule, NzButtonModule, EmailVerificationBanner, SidebarPortal],
   templateUrl: './layout-docente.html',

@@ -1,10 +1,11 @@
-﻿import { Component, signal } from '@angular/core';
+﻿import { Component, signal , ChangeDetectionStrategy} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Evaluacion } from '../../services/evaluacion';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-examen-live',
   imports: [FormsModule, Cargando],
   templateUrl: './examen-live.html',

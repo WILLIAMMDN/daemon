@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, signal } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, signal , ChangeDetectionStrategy} from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Autenticacion } from '../../../../core/servicios/autenticacion';
 import { CargaGlobal } from '../../../../core/servicios/carga-global';
@@ -24,6 +24,7 @@ type Estado =
  *      autenticado) o al portal (si ya estaba logueado).
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-verificar-correo',
   standalone: true,
   imports: [CommonModule, RouterLink],

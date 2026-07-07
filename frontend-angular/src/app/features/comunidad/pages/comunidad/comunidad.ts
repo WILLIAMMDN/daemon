@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal , ChangeDetectionStrategy} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { UpperCasePipe } from '@angular/common';
 import { Activos } from '../../../../core/servicios/activos';
@@ -23,6 +23,7 @@ interface ComunidadRespuesta {
 }
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-comunidad',
   imports: [RouterLink, Cargando, UpperCasePipe, EstadoVacio, NzTagModule],
   templateUrl: './comunidad.html',

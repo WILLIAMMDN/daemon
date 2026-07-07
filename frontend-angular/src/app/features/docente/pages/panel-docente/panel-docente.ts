@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal , ChangeDetectionStrategy} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -31,6 +31,7 @@ interface PanelDocenteData {
 }
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-panel-docente',
   imports: [RouterLink, NzAlertModule, NzButtonModule, NzTagModule, EstadoVacio],
   templateUrl: './panel-docente.html',

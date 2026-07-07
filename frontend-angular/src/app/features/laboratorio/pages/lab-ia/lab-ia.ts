@@ -1,5 +1,5 @@
 import { JsonPipe } from '@angular/common';
-import { Component, signal } from '@angular/core';
+import { Component, signal , ChangeDetectionStrategy} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Chatbot } from '../../../chatbot/services/chatbot';
@@ -7,6 +7,7 @@ import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-lab-ia',
   imports: [FormsModule, JsonPipe, RouterLink, Cargando],
   templateUrl: './lab-ia.html',

@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal , ChangeDetectionStrategy} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
@@ -13,6 +13,7 @@ import { MediaUploader } from '../../../../shared/componentes/media-uploader/med
 import { Alumno } from '../../services/alumno';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-editar-perfil',
   imports: [
     FormsModule,

@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal , ChangeDetectionStrategy} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Activos } from '../../../../core/servicios/activos';
@@ -17,6 +17,7 @@ interface MensajeChat {
 }
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-chatbot-alumno',
   imports: [FormsModule, RouterLink],
   templateUrl: './chatbot-alumno.html',

@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal , ChangeDetectionStrategy} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
@@ -35,6 +35,7 @@ interface PanelAlumnoData {
 }
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-panel-alumno',
   imports: [RouterLink, FontAwesomeModule, NzAlertModule, NzButtonModule, Cargando, MonedaDaemon],
   templateUrl: './panel-alumno.html',

@@ -1,10 +1,11 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal , ChangeDetectionStrategy} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CertificadoService } from '../../services/certificado';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-imprimir-carnet',
   imports: [Cargando],
   templateUrl: './imprimir-carnet.html',

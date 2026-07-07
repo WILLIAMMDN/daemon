@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, computed, OnDestroy, OnInit, signal , ChangeDetectionStrategy} from '@angular/core';
 import { Autenticacion } from '../../../core/servicios/autenticacion';
 import { Sesion } from '../../../core/servicios/sesion';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-email-verification-banner',
   standalone: true,
   imports: [CommonModule],

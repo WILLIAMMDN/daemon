@@ -1,9 +1,10 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal , ChangeDetectionStrategy} from '@angular/core';
 import { Evaluacion } from '../../services/evaluacion';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-resultados-examen',
   imports: [Cargando],
   templateUrl: './resultados-examen.html',

@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component , ChangeDetectionStrategy} from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-entrenamiento-mascota',
   imports: [RouterLink],
   templateUrl: './entrenamiento-mascota.html',

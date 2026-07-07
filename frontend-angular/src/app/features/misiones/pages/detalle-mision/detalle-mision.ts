@@ -1,10 +1,11 @@
-﻿import { Component, signal } from '@angular/core';
+﻿import { Component, signal , ChangeDetectionStrategy} from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Mision } from '../../services/mision';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-detalle-mision',
   imports: [RouterLink, Cargando],
   templateUrl: './detalle-mision.html',

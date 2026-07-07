@@ -1,9 +1,10 @@
-import { Component, OnDestroy, signal } from '@angular/core';
+import { Component, OnDestroy, signal , ChangeDetectionStrategy} from '@angular/core';
 import { Competencia } from '../../services/competencia';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-tv',
   imports: [Cargando],
   templateUrl: './tv.html',

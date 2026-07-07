@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input , ChangeDetectionStrategy} from '@angular/core';
 
 type ShapeType = 'cross' | 'triangle' | 'circle' | 'sun' | 'airplane' | 'dots' | 'pencil' | 'book' | 'rocket';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-floating-shape',
   standalone: true,
   imports: [CommonModule],

@@ -1,8 +1,9 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal , ChangeDetectionStrategy} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Autenticacion } from '../../../../core/servicios/autenticacion';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-registro-docente',
   imports: [FormsModule],
   templateUrl: './registro-docente.html',

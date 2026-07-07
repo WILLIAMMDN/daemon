@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal , ChangeDetectionStrategy} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Tienda } from '../../../tienda/services/tienda';
 import { CommonModule } from '@angular/common';
@@ -11,6 +11,7 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-gestionar-tienda',
   imports: [FormsModule, CommonModule, Cargando, NzTableModule, NzPopconfirmModule, NzModalModule, NzTagModule, NzButtonModule],
   templateUrl: './gestionar-tienda.html',

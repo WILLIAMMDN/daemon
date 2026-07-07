@@ -1,9 +1,10 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal , ChangeDetectionStrategy} from '@angular/core';
 import { Docente } from '../../services/docente';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-historial-tokens',
   imports: [Cargando],
   templateUrl: './historial-tokens.html',

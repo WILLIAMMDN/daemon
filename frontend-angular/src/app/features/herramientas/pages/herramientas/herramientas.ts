@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component , ChangeDetectionStrategy} from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 interface Herramienta {
@@ -11,6 +11,7 @@ interface Herramienta {
 }
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-herramientas',
   imports: [RouterLink],
   templateUrl: './herramientas.html',

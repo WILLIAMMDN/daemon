@@ -1,9 +1,10 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges , ChangeDetectionStrategy} from '@angular/core';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzUploadFile, NzUploadListType, NzUploadModule, NzUploadType } from 'ng-zorro-antd/upload';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-media-uploader',
   imports: [NzAlertModule, NzButtonModule, NzUploadModule],
   templateUrl: './media-uploader.html',

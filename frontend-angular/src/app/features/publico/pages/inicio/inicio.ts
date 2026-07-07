@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, signal , ChangeDetectionStrategy} from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faCloud, faPaperPlane, faPlane, faStar } from '@fortawesome/free-solid-svg-icons';
 import { Router, RouterLink } from '@angular/router';
@@ -11,6 +11,7 @@ import { Sesion } from '../../../../core/servicios/sesion';
 import { FloatingShape } from '../../../../shared/componentes/floating-shape/floating-shape';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-inicio',
   standalone: true,
   imports: [

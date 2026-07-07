@@ -1,5 +1,5 @@
 import { CommonModule, DecimalPipe } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input , ChangeDetectionStrategy} from '@angular/core';
 
 /**
  * Moneda oficial de la academia DAEMON.
@@ -24,6 +24,7 @@ import { Component, Input } from '@angular/core';
  * circular con la letra "D" para que nunca quede un cuadro vacío.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-moneda-daemon',
   standalone: true,
   imports: [CommonModule, DecimalPipe],
