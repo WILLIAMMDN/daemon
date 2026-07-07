@@ -16,8 +16,9 @@ class AulaCrudTest extends TestCase
     {
         return Usuario::create([
             'nombre_completo' => 'Admin Aulas',
-            'correo' => 'admin.aulas@example.com',
-            'clave' => bcrypt('secret-123'),
+            'usuario' => 'admin.aulas',
+            'email' => 'admin.aulas@example.com',
+            'password_hash' => bcrypt('secret-123'),
             'rol' => 'admin',
             'nivel' => 'TEENS',
         ]);
@@ -33,8 +34,9 @@ class AulaCrudTest extends TestCase
         ]);
         $docente = Usuario::create([
             'nombre_completo' => 'Docente Aula',
-            'correo' => 'docente.aulas@example.com',
-            'clave' => bcrypt('secret-123'),
+            'usuario' => 'docente.aulas',
+            'email' => 'docente.aulas@example.com',
+            'password_hash' => bcrypt('secret-123'),
             'rol' => 'docente',
             'nivel' => 'TEENS',
             'id_aula' => $aula->id,
@@ -88,8 +90,9 @@ class AulaCrudTest extends TestCase
         [$docente, $aula, $institucion] = $this->docente();
         Usuario::create([
             'nombre_completo' => 'Alumno',
-            'correo' => 'alumno.aulas@example.com',
-            'clave' => bcrypt('secret-123'),
+            'usuario' => 'alumno.aulas',
+            'email' => 'alumno.aulas@example.com',
+            'password_hash' => bcrypt('secret-123'),
             'rol' => 'alumno',
             'nivel' => 'TEENS',
             'id_aula' => $aula->id,
