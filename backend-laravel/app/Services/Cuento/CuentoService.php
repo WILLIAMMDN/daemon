@@ -67,7 +67,7 @@ class CuentoService
         $cuento->delete();
     }
 
-    public function adminPublicar(Cuento $cuento, bool $publicado): Cuento
+public function adminPublicar(Cuento $cuento, bool $publicado): Cuento
     {
         $cuento->publicado = $publicado;
         $cuento->save();
@@ -75,7 +75,23 @@ class CuentoService
         return $cuento;
     }
 
-    private function cuentoConUrls(object $cuento): object
+    /**
+     * Elimina el cuento del alumno autenticado. Solo el dueno puede borrar
+     * su propio cuento. Devuelve true si existia y se elimino.
+     */
+    public function eliminarPropio(Usuario $alumno): bool
+    {
+        $cuento = Cuento::where('id_alumno', $alumno->id)->first();
+        if (! $cuento) {
+            return false;
+        }
+
+        $cuento->delete();
+
+        return true;
+    }
+
+private function cuentoConUrls(object $cuento): object
     {
         $cuento->avatar = $this->archivos->url($cuento->avatar ?? null);
 

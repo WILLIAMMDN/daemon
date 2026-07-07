@@ -29,7 +29,6 @@ Route::prefix('v1')->group(function (): void {
     Route::post('/auth/confirmar-verificar', [AutenticacionController::class, 'confirmarVerificacion'])->middleware('throttle:10,1');
     Route::post('/auth/firebase', [AutenticacionController::class, 'firebase'])->middleware('throttle:10,1');
     Route::post('/auth/google', [AutenticacionController::class, 'google'])->middleware('throttle:10,1');
-    Route::post('/login-google', [AutenticacionController::class, 'google'])->middleware('throttle:10,1');
     Route::get('/ranking', [RankingController::class, 'index']);
     Route::get('/cuentos', [CuentoController::class, 'index']);
     Route::get('/cuentos/{cuento}', [CuentoController::class, 'show']);
@@ -57,6 +56,7 @@ Route::prefix('v1')->group(function (): void {
             Route::post('/competencia/votar', [CompetenciaController::class, 'votar']);
             Route::get('/cuentos/mio/actual', [CuentoController::class, 'mio']);
             Route::post('/cuentos', [CuentoController::class, 'guardar']);
+            Route::delete('/cuentos/mio', [CuentoController::class, 'eliminarPropio']);
             Route::get('/chatbot/bot', [ChatbotController::class, 'bot']);
             Route::post('/chatbot/bot', [ChatbotController::class, 'guardarBot']);
             Route::get('/chatbot/mensajes', [ChatbotController::class, 'mensajes']);
@@ -110,8 +110,8 @@ Route::prefix('v1')->group(function (): void {
                 Route::post('/', [IaModeloAdminController::class, 'store']);
                 Route::get('/{modelo}', [IaModeloAdminController::class, 'show']);
                 Route::put('/{modelo}', [IaModeloAdminController::class, 'update']);
-                Route::delete('/{modelo}', [IaModeloAdminController::class, 'destroy']);
                 Route::delete('/bulk', [IaModeloAdminController::class, 'destroyBulk']);
+                Route::delete('/{modelo}', [IaModeloAdminController::class, 'destroy']);
             });
 
             Route::get('/chatbot/admin/bots', [ChatbotController::class, 'adminIndex']);

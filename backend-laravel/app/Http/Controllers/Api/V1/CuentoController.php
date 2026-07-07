@@ -33,6 +33,17 @@ class CuentoController extends Controller
         return $this->cuentos->guardar($request->user(), $request->validated());
     }
 
+    public function eliminarPropio(Request $request)
+    {
+        $eliminado = $this->cuentos->eliminarPropio($request->user());
+
+        if (! $eliminado) {
+            return response()->json(['message' => 'No tienes un cuento propio para eliminar.'], 404);
+        }
+
+        return response()->noContent();
+    }
+
     public function adminIndex()
     {
         return $this->cuentos->adminListar();
