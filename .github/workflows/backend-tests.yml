@@ -1,0 +1,43 @@
+name: Backend Tests
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'backend-laravel/**'
+  pull_request:
+    paths:
+      - 'backend-laravel/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend-laravel
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3' # Project uses 8.3/8.2
+          extensions: pdo, sqlite, pdo_sqlite
+          coverage: none
+
+      - name: Copy .env
+        run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+
+      - name: Install Dependencies
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+      - name: Generate key
+        run: php artisan key:generate
+
+      - name: Set permissions
+        run: chmod -R 777 storage bootstrap/cache
+
+      - name: Execute tests
+        run: php artisan test
