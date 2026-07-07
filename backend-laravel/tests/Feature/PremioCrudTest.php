@@ -24,8 +24,9 @@ class PremioCrudTest extends TestCase
 
         return Usuario::create([
             'nombre_completo' => 'Docente Tienda',
-            'correo' => 'docente.tienda@example.com',
-            'clave' => bcrypt('secret-123'),
+            'usuario' => 'docente.tienda',
+            'email' => 'docente.tienda@example.com',
+            'password_hash' => bcrypt('secret-123'),
             'rol' => 'docente',
             'nivel' => 'TEENS',
             'id_aula' => $aula->id,
@@ -60,7 +61,6 @@ class PremioCrudTest extends TestCase
             'stock' => 10,
             'categoria' => 'GENERAL',
             'tipo_entrega' => 'fisico',
-            'imagen' => null,
         ]);
 
         $this->actingAs($docente)->putJson("/api/v1/tienda/premios/{$premio->id}", [
