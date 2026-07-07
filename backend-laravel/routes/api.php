@@ -84,6 +84,7 @@ Route::prefix('v1')->group(function (): void {
             Route::get('/misiones/entregas', [MisionController::class, 'entregas']);
             Route::put('/misiones/{mision}', [MisionController::class, 'update']);
             Route::delete('/misiones/{mision}', [MisionController::class, 'destroy']);
+            Route::post('/misiones/bulk-destroy', [MisionController::class, 'bulkDestroy']);
             Route::post('/misiones/entregas/{entrega}/revisar', [MisionController::class, 'revisar']);
 
             Route::get('/tienda/administrar', [TiendaController::class, 'administrar']);

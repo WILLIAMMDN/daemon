@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\V1\Mision\BulkDestroyMisionRequest;
 use App\Http\Requests\Api\V1\Mision\EntregarMisionRequest;
 use App\Http\Requests\Api\V1\Mision\MisionStoreRequest;
 use App\Http\Requests\Api\V1\Mision\MisionUpdateRequest;
@@ -62,6 +63,27 @@ class MisionController extends Controller
         });
 
         return response()->noContent();
+    }
+
+    public function bulkDestroy(BulkDestroyMisionRequest $request)
+    {
+        $ids = array_values(array_unique(array_map('intval', $request->validated()['ids'])));
+        $eliminadas = 0;
+        $entregasEliminadas = 0;
+
+        DB::transaction(function () use ($ids, &$eliminadas, &$entregasEliminadas) {
+            foreach (Mision::whereIn('id', $ids)->get() as $mision) {
+                $entregasEliminadas += Entrega::where('id_desafio', $mision->id)->delete();
+                $mision->delete();
+                $eliminadas++;
+            }
+        });
+
+        return [
+            'eliminadas' => $eliminadas,
+            'entregas_eliminadas' => $entregasEliminadas,
+            'ids' => $ids,
+        ];
     }
 
     public function entregar(EntregarMisionRequest $request, Mision $mision)
