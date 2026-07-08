@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component, signal , ChangeDetectionStrategy} from '@angular/core';
 import { Ranking as RankingService } from '../../services/ranking';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';

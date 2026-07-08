@@ -26,7 +26,7 @@ interface ComunidadRespuesta {
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-comunidad',
-  imports: [RouterLink, Cargando, UpperCasePipe, EstadoVacio, NzTagModule],
+  imports: [RouterLink, Cargando, UpperCasePipe, EstadoVacio, NzTagModule, MonedaDaemon],
   templateUrl: './comunidad.html',
   styleUrl: './comunidad.scss',
 })

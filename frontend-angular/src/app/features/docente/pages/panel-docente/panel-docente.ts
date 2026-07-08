@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component, signal , ChangeDetectionStrategy} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NzAlertModule } from 'ng-zorro-antd/alert';

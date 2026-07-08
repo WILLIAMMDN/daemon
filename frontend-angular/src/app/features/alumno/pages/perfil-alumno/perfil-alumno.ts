@@ -46,6 +46,7 @@ interface PerfilData {
     NzTagModule,
     Cargando,
     EstadoVacio,
+    MonedaDaemon,
   ],
   templateUrl: './perfil-alumno.html',
   styleUrl: './perfil-alumno.scss',

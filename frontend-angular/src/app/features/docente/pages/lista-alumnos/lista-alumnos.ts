@@ -31,7 +31,7 @@ interface AlcanceAcademico {
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-lista-alumnos',
-  imports: [FormsModule, RouterLink, NzAlertModule, NzButtonModule, NzTagModule, NzTableModule, NzModalModule, Cargando, EstadoVacio, BotonAccion],
+  imports: [CommonModule, FormsModule, RouterLink, NzAlertModule, NzButtonModule, NzTagModule, NzTableModule, NzModalModule, Cargando, EstadoVacio, BotonAccion, MonedaDaemon],
   templateUrl: './lista-alumnos.html',
   styleUrl: './lista-alumnos.scss',
 })
