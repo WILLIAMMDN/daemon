@@ -76,7 +76,8 @@
               "src/styles.scss"
             ],
             "allowedCommonJsDependencies": [
-              "@rive-app/canvas"
+              "@rive-app/canvas",
+              "pusher-js"
             ]
           },
           "configurations": {

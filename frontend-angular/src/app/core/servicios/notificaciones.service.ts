@@ -1,7 +1,12 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { Observable, tap } from 'rxjs';
+import { Sesion } from './sesion';
+import Echo from 'laravel-echo';
+import Pusher from 'pusher-js';
+
+(window as any).Pusher = Pusher;
 
 export interface Notificacion {
   id: number;
@@ -19,11 +24,10 @@ export interface Notificacion {
 })
 export class NotificacionesService {
   private readonly baseUrl = `${environment.apiUrl}/notificaciones`;
+  private echo: Echo<any> | null = null;
+  private readonly sesion = inject(Sesion);
   
-  // State signal to hold notifications for components
   readonly notificaciones = signal<Notificacion[]>([]);
-  
-  // Computed signal for unread count
   readonly noLeidas = signal<number>(0);
 
   constructor(private http: HttpClient) {}
@@ -33,8 +37,51 @@ export class NotificacionesService {
       tap((data) => {
         this.notificaciones.set(data);
         this.actualizarConteoNoLeidas(data);
+        this.conectarWebSockets();
       })
     );
+  }
+
+  private conectarWebSockets(): void {
+    const usuario = this.sesion.usuario();
+    if (!usuario || this.echo) return;
+
+    this.echo = new Echo({
+      broadcaster: 'pusher',
+      key: environment.pusher.key,
+      cluster: environment.pusher.cluster,
+      forceTLS: true,
+      authorizer: (channel: any) => {
+        return {
+          authorize: (socketId: string, callback: Function) => {
+            const authUrl = environment.apiUrl.replace('/api/v1', '') + '/broadcasting/auth';
+            this.http.post(authUrl, {
+              socket_id: socketId,
+              channel_name: channel.name
+            }, { withCredentials: true }).subscribe({
+              next: (data) => callback(false, data),
+              error: (error) => callback(true, error)
+            });
+          }
+        };
+      }
+    });
+
+    this.echo.private(`App.Models.Usuario.${usuario.id}`)
+      .listen('NuevaNotificacion', (e: any) => {
+        // Al recibir una notificacion, la agregamos al inicio de la lista
+        const nuevaNotificacion = e as Notificacion;
+        this.notificaciones.update(actuales => [nuevaNotificacion, ...actuales]);
+        this.noLeidas.update(conteo => conteo + 1);
+      });
+  }
+
+  desconectarWebSockets(): void {
+    if (this.echo && this.sesion.usuario()) {
+      this.echo.leaveChannel(`App.Models.Usuario.${this.sesion.usuario()!.id}`);
+      this.echo.disconnect();
+      this.echo = null;
+    }
   }
 
   marcarTodasComoLeidas(): Observable<any> {

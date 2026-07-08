@@ -10,4 +10,8 @@ export const environment = {
     messagingSenderId: '516236234992',
     appId: '1:516236234992:web:7811801e0441ee2d46f235',
   },
+  pusher: {
+    key: '921d28612ceab3864425',
+    cluster: 'sa1',
+  },
 };

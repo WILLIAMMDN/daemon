@@ -24,6 +24,10 @@ class Notificacion extends ModeloBase
         'leida' => 'boolean',
     ];
 
+    protected $dispatchesEvents = [
+        'created' => \App\Events\NuevaNotificacion::class,
+    ];
+
     /**
      * @return BelongsTo<Usuario, Notificacion>
      */
