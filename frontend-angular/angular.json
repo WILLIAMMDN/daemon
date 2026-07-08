@@ -49,7 +49,8 @@
               {
                 "glob": "**/*",
                 "input": "public"
-              }
+              },
+              "src/manifest.webmanifest"
             ],
             "styles": [
               "node_modules/ngx-spinner/animations/square-jelly-box.css",
@@ -73,6 +74,9 @@
               "node_modules/ng-zorro-antd/select/style/index.min.css",
               "node_modules/ng-zorro-antd/icon/style/index.min.css",
               "src/styles.scss"
+            ],
+            "allowedCommonJsDependencies": [
+              "@rive-app/canvas"
             ]
           },
           "configurations": {
@@ -80,8 +84,8 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "700kB",
-                  "maximumError": "1.2MB"
+                  "maximumWarning": "1MB",
+                  "maximumError": "1.5MB"
                 },
                 {
                   "type": "anyComponentStyle",

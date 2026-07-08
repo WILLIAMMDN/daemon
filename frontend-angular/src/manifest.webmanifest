@@ -1,0 +1,17 @@
+{
+  "name": "DAEMON Academia",
+  "short_name": "DAEMON",
+  "theme_color": "#0f172a",
+  "background_color": "#f8fafc",
+  "display": "standalone",
+  "scope": "/",
+  "start_url": "/",
+  "icons": [
+    {
+      "src": "img/brand/daemon-transparent.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
