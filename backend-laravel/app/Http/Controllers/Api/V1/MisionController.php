@@ -93,6 +93,15 @@ class MisionController extends Controller
             $evidencia = $this->archivos->guardarRuta($request->user(), $request->file('archivo'), $this->archivos->directorioEntrega($request->user()));
         }
 
+        $entregaExistente = Entrega::where('id_desafio', $mision->id)
+            ->where('id_alumno', $request->user()->id)
+            ->whereIn('estado', ['pendiente', 'aprobado'])
+            ->first();
+
+        if ($entregaExistente) {
+            return response()->json(['message' => 'Ya tienes una entrega en revisión o aprobada para esta misión.'], 422);
+        }
+
         return response()->json($this->entregaConUrl(Entrega::create(['id_desafio' => $mision->id, 'id_alumno' => $request->user()->id, 'archivo_url' => $evidencia, 'estado' => 'pendiente'])), 201);
     }
 

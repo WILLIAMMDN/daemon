@@ -37,7 +37,12 @@ class TiendaController extends Controller
 
     public function canjear(Request $request, Premio $premio)
     {
-        return $this->canjesService->canjear($request->user(), $premio);
+        $usuario = $request->user();
+        if ($premio->categoria !== 'GENERAL' && $premio->categoria !== $usuario->nivel) {
+            return response()->json(['message' => 'No puedes canjear premios de otra categoría o nivel.'], 422);
+        }
+
+        return $this->canjesService->canjear($usuario, $premio);
     }
 
     public function canjes(Request $request)
