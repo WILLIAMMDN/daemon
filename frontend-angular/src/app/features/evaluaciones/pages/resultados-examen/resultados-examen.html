@@ -1,41 +1,55 @@
-<section class="page">
-  <header class="page-header">
-    <div>
-      <p class="kicker">Resultados</p>
-      <h1>Mis evaluaciones enviadas</h1>
-      <p>Puntajes registrados en tu historial.</p>
+<main class="w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-6 md:gap-8 font-inter">
+  <!-- Cabecera -->
+  <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+    <div class="flex flex-col gap-1">
+      <span class="text-sm font-semibold uppercase tracking-wider text-blue-600">Resultados</span>
+      <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 leading-tight">Mis evaluaciones enviadas</h1>
+      <p class="text-sm text-slate-600">Puntajes registrados en tu historial.</p>
     </div>
-    <button type="button" (click)="cargar()">Actualizar</button>
+    <app-boton-accion tipo="actualizar" (accion)="cargar()" [cargando]="cargando()" [deshabilitado]="cargando()"></app-boton-accion>
   </header>
 
-  @if (cargando()) {
-    <app-cargando class="state" texto="Cargando resultados..."></app-cargando>
-  } @else if (error()) {
-    <p class="error">{{ error() }}</p>
-  } @else if (resultados().length) {
-    <section class="panel table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Evaluación</th>
-            <th>Puntaje</th>
-            <th>Nivel</th>
-            <th>Fecha</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (resultado of resultados(); track resultado.id) {
-            <tr>
-              <td>{{ resultado.titulo }}</td>
-              <td><strong>{{ resultado.puntaje }}</strong></td>
-              <td><span class="badge">{{ resultado.nivel }}</span></td>
-              <td>{{ resultado.fecha_envio }}</td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    </section>
-  } @else {
-    <p class="empty">Todavía no tienes resultados registrados.</p>
+  @if (error()) {
+    <nz-alert nzType="error" nzShowIcon [nzMessage]="error()"></nz-alert>
   }
-</section>
+
+  <!-- Contenido Principal -->
+  <section class="w-full">
+    @if (cargando()) {
+      <div class="py-12 bg-white rounded-2xl shadow-sm border border-slate-100">
+        <app-cargando texto="Cargando resultados..."></app-cargando>
+      </div>
+    } @else if (resultados().length) {
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+        <div class="overflow-x-auto p-0">
+          <nz-table #tablaResultados [nzData]="resultados()" [nzShowPagination]="true" [nzPageSize]="10" nzSize="middle" class="w-full whitespace-nowrap">
+            <thead>
+              <tr class="bg-slate-50">
+                <th class="text-slate-500 font-semibold text-sm">Evaluación</th>
+                <th class="text-slate-500 font-semibold text-sm">Puntaje</th>
+                <th class="text-slate-500 font-semibold text-sm">Nivel</th>
+                <th class="text-slate-500 font-semibold text-sm">Fecha</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              @for (resultado of tablaResultados.data; track resultado.id) {
+                <tr class="hover:bg-slate-50 transition-colors">
+                  <td class="font-medium text-slate-900">{{ resultado.titulo }}</td>
+                  <td class="font-bold text-yellow-600">{{ resultado.puntaje }} ptos</td>
+                  <td>
+                    <nz-tag nzColor="blue" class="font-bold border-0 rounded-md">{{ resultado.nivel }}</nz-tag>
+                  </td>
+                  <td class="text-slate-600 text-sm">{{ resultado.fecha_envio }}</td>
+                </tr>
+              }
+            </tbody>
+          </nz-table>
+        </div>
+      </div>
+    } @else {
+      <div class="py-12 bg-white rounded-2xl shadow-sm border border-slate-100">
+        <app-estado-vacio titulo="Sin resultados" descripcion="Todavía no tienes resultados registrados de ninguna evaluación."></app-estado-vacio>
+      </div>
+    }
+  </section>
+</main>

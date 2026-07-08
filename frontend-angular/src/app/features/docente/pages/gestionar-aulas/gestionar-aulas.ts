@@ -26,7 +26,8 @@ export class GestionarAulas {
   mensaje = signal('');
   error = signal('');
   
-  modalVisible = signal(false);
+  modalCrearVisible = signal(false);
+  modalEditVisible = signal(false);
   aulaEditando: any = null;
 
   nueva = {
@@ -53,19 +54,28 @@ export class GestionarAulas {
     });
   }
 
+  abrirCrear(): void {
+    this.nueva = { nombre: '', nivel: 'KIDS' };
+    this.modalCrearVisible.set(true);
+  }
+
+  cerrarCrear(): void {
+    this.modalCrearVisible.set(false);
+  }
+
   crear(): void {
     this.guardando.set(true);
     this.mensaje.set('');
     this.error.set('');
     this.docente.crearAula(this.nueva).subscribe({
       next: () => {
-        this.mensaje.set('Aula creada exitosamente.');
-        this.nueva = { nombre: '', nivel: 'KIDS' };
+        this.message.success('Aula creada exitosamente.');
         this.guardando.set(false);
+        this.cerrarCrear();
         this.cargar();
       },
       error: (e) => {
-        this.error.set(e.error?.message ?? 'No se pudo crear el aula.');
+        this.message.error(e.error?.message ?? 'No se pudo crear el aula.');
         this.guardando.set(false);
       },
     });
@@ -73,11 +83,11 @@ export class GestionarAulas {
 
   abrirEditar(a: any): void {
     this.aulaEditando = { ...a };
-    this.modalVisible.set(true);
+    this.modalEditVisible.set(true);
   }
 
   cerrarEditar(): void {
-    this.modalVisible.set(false);
+    this.modalEditVisible.set(false);
     this.aulaEditando = null;
   }
 

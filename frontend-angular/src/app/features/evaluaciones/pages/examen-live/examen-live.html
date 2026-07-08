@@ -1,48 +1,77 @@
-﻿<section class="page">
-  <header class="page-header">
-    <div>
-      <p class="kicker">Evaluaciones</p>
-      <h1>Exámenes activos</h1>
-      <p>Responde las evaluaciones disponibles para tu nivel.</p>
+<main class="w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-6 md:gap-8 font-inter">
+  <!-- Cabecera -->
+  <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+    <div class="flex flex-col gap-1">
+      <span class="text-sm font-semibold uppercase tracking-wider text-blue-600">Evaluaciones</span>
+      <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 leading-tight">Exámenes activos</h1>
+      <p class="text-sm text-slate-600">Responde las evaluaciones disponibles para tu nivel.</p>
     </div>
-    <button type="button" (click)="cargar()">Actualizar</button>
+    <app-boton-accion tipo="actualizar" (accion)="cargar()" [cargando]="cargando()" [deshabilitado]="cargando()"></app-boton-accion>
   </header>
 
-  @if (mensaje()) { <p class="success">{{ mensaje() }}</p> }
-  @if (error()) { <p class="error">{{ error() }}</p> }
-
-  @if (cargando()) {
-    <app-cargando class="state" texto="Cargando evaluaciones..."></app-cargando>
-  } @else if (examenes().length) {
-    @for (examen of examenes(); track examen.id) {
-      <form class="panel" (ngSubmit)="responder(examen)">
-        <h2>{{ examen.titulo }}</h2>
-        <p><span class="badge">{{ examen.nivel }}</span> {{ examen.estado }}</p>
-        @if (examen.preguntas?.length) {
-          <div class="grid">
-            @for (pregunta of examen.preguntas; track pregunta.id) {
-              <label class="field">
-                {{ pregunta.enunciado }}
-                @if (pregunta.opciones?.length) {
-                  <select [name]="'p_' + pregunta.id" [(ngModel)]="respuestas[pregunta.id]" required>
-                    <option value="">Selecciona</option>
-                    @for (opcion of pregunta.opciones; track opcion) {
-                      <option [value]="opcion">{{ opcion }}</option>
-                    }
-                  </select>
-                } @else {
-                  <input [name]="'p_' + pregunta.id" [(ngModel)]="respuestas[pregunta.id]" required>
-                }
-              </label>
-            }
-          </div>
-          <button type="submit" [disabled]="enviando() === examen.id">Enviar respuestas</button>
-        } @else {
-          <p class="empty">Esta evaluación no tiene preguntas registradas.</p>
-        }
-      </form>
-    }
-  } @else {
-    <p class="empty">No hay evaluaciones activas para tu nivel.</p>
+  @if (mensaje()) {
+    <nz-alert nzType="success" nzShowIcon [nzMessage]="mensaje()"></nz-alert>
   }
-</section>
+  @if (error()) {
+    <nz-alert nzType="error" nzShowIcon [nzMessage]="error()"></nz-alert>
+  }
+
+  <!-- Contenido Principal -->
+  <section class="w-full flex flex-col gap-6">
+    @if (cargando()) {
+      <div class="py-12 bg-white rounded-2xl shadow-sm border border-slate-100">
+        <app-cargando texto="Cargando evaluaciones..."></app-cargando>
+      </div>
+    } @else if (examenes().length) {
+      @for (examen of examenes(); track examen.id) {
+        <form (ngSubmit)="responder(examen)" class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 md:p-8 flex flex-col gap-6">
+          <div class="flex flex-col gap-2 border-b border-slate-100 pb-4">
+            <h2 class="text-xl md:text-2xl font-bold text-slate-900">{{ examen.titulo }}</h2>
+            <div class="flex items-center gap-2">
+              <nz-tag nzColor="blue" class="font-bold border-0 rounded-md">{{ examen.nivel }}</nz-tag>
+              <span class="text-sm text-slate-500 font-medium">{{ examen.estado | uppercase }}</span>
+            </div>
+          </div>
+          
+          @if (examen.preguntas?.length) {
+            <div class="flex flex-col gap-6">
+              @for (pregunta of examen.preguntas; track pregunta.id; let i = $index) {
+                <label class="flex flex-col gap-2 bg-slate-50 p-5 rounded-xl border border-slate-200">
+                  <span class="text-base font-semibold text-slate-800">
+                    <span class="text-blue-600 mr-1">{{ i + 1 }}.</span> {{ pregunta.enunciado }}
+                  </span>
+                  
+                  @if (pregunta.opciones?.length) {
+                    <select [name]="'p_' + pregunta.id" [(ngModel)]="respuestas[pregunta.id]" required
+                            class="px-4 py-3 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors w-full text-slate-700 font-medium">
+                      <option value="" disabled selected>Selecciona una opción</option>
+                      @for (opcion of pregunta.opciones; track opcion) {
+                        <option [value]="opcion">{{ opcion }}</option>
+                      }
+                    </select>
+                  } @else {
+                    <input [name]="'p_' + pregunta.id" [(ngModel)]="respuestas[pregunta.id]" required
+                           placeholder="Escribe tu respuesta aquí"
+                           class="px-4 py-3 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors w-full text-slate-700">
+                  }
+                </label>
+              }
+            </div>
+            
+            <div class="pt-4 border-t border-slate-100 flex justify-end">
+              <app-boton-accion tipo="guardar" [texto]="enviando() === examen.id ? 'Enviando...' : 'Enviar respuestas'" [esSubmit]="true" [deshabilitado]="enviando() === examen.id" [cargando]="enviando() === examen.id"></app-boton-accion>
+            </div>
+          } @else {
+            <div class="py-8">
+              <app-estado-vacio titulo="Sin preguntas" descripcion="Esta evaluación no tiene preguntas registradas."></app-estado-vacio>
+            </div>
+          }
+        </form>
+      }
+    } @else {
+      <div class="py-12 bg-white rounded-2xl shadow-sm border border-slate-100">
+        <app-estado-vacio titulo="Sin evaluaciones" descripcion="No hay evaluaciones activas para tu nivel en este momento."></app-estado-vacio>
+      </div>
+    }
+  </section>
+</main>

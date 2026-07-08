@@ -8,11 +8,12 @@ import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
+import { BotonAccion } from '../../../../shared/componentes/boton-accion/boton-accion';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-historial-rondas',
-  imports: [Cargando, NzTableModule, NzAlertModule, NzTagModule, NzButtonModule, EstadoVacio],
+  imports: [Cargando, NzTableModule, NzAlertModule, NzTagModule, NzButtonModule, EstadoVacio, BotonAccion],
   templateUrl: './historial-rondas.html',
   styleUrl: './historial-rondas.scss',
 })

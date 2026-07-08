@@ -46,7 +46,10 @@ export class GestionarInsignias {
   asignacion = { id_alumno: null as number | null, id_insignia: null as number | null, asignar: true };
   private archivoImagen: File | null = null;
 
-  modalVisible = signal(false);
+  modalCrearVisible = signal(false);
+  modalAsignarVisible = signal(false);
+  modalEditVisible = signal(false);
+  
   insigniaEditando: any = null;
   imagenEditPreview = signal('');
   archivoEditImagen: File | null = null;
@@ -110,6 +113,18 @@ export class GestionarInsignias {
     lector.readAsDataURL(archivo);
   }
 
+  abrirCrear(): void {
+    this.nueva = { nombre: '', descripcion: '', imagen: '' };
+    this.archivoImagen = null;
+    this.imagenPreview.set('');
+    this.uploadResetKey.update((v) => v + 1);
+    this.modalCrearVisible.set(true);
+  }
+
+  cerrarCrear(): void {
+    this.modalCrearVisible.set(false);
+  }
+
   crear(): void {
     this.guardando.set(true);
     this.mensaje.set('');
@@ -131,8 +146,9 @@ export class GestionarInsignias {
         this.archivoImagen = null;
         this.imagenPreview.set('');
         this.uploadResetKey.update((valor) => valor + 1);
-        this.mensaje.set('Insignia creada.');
+        this.message.success('Insignia creada exitosamente.');
         this.guardando.set(false);
+        this.cerrarCrear();
         this.cargar();
       },
       error: (e) => {
@@ -146,14 +162,24 @@ export class GestionarInsignias {
     return Boolean(this.nueva.nombre.trim() && (this.archivoImagen || this.nueva.imagen.trim()));
   }
 
+  abrirAsignar(): void {
+    this.asignacion = { id_alumno: null, id_insignia: null, asignar: true };
+    this.modalAsignarVisible.set(true);
+  }
+
+  cerrarAsignar(): void {
+    this.modalAsignarVisible.set(false);
+  }
+
   asignar(): void {
     this.guardando.set(true);
     this.mensaje.set('');
     this.error.set('');
     this.docente.asignarInsignia(this.asignacion).subscribe({
       next: () => {
-        this.mensaje.set('Asignacion actualizada.');
+        this.message.success('Insignia asignada correctamente.');
         this.guardando.set(false);
+        this.cerrarAsignar();
       },
       error: (e) => {
         this.error.set(e.error?.message ?? 'No se pudo asignar la insignia.');
@@ -175,11 +201,11 @@ export class GestionarInsignias {
     this.imagenEditPreview.set('');
     this.archivoEditImagen = null;
     this.uploadEditResetKey.update((v) => v + 1);
-    this.modalVisible.set(true);
+    this.modalEditVisible.set(true);
   }
 
   cerrarEditar(): void {
-    this.modalVisible.set(false);
+    this.modalEditVisible.set(false);
     this.insigniaEditando = null;
   }
 

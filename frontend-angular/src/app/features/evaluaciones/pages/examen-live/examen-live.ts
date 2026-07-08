@@ -1,13 +1,17 @@
-﻿import { Component, signal , ChangeDetectionStrategy} from '@angular/core';
+import { Component, signal , ChangeDetectionStrategy} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Evaluacion } from '../../services/evaluacion';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
-
+import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { NzTagModule } from 'ng-zorro-antd/tag';
+import { CommonModule } from '@angular/common';
+import { BotonAccion } from '../../../../shared/componentes/boton-accion/boton-accion';
+import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-examen-live',
-  imports: [FormsModule, Cargando],
+  imports: [CommonModule, FormsModule, Cargando, NzAlertModule, NzTagModule, BotonAccion, EstadoVacio],
   templateUrl: './examen-live.html',
   styleUrl: './examen-live.scss',
 })

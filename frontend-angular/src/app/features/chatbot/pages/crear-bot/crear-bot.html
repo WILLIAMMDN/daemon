@@ -1,112 +1,135 @@
-<section class="page bot-config">
-  <header class="page-header">
-    <div>
-      <p class="kicker">Personalidad y conocimiento</p>
-      <h1>Configura tu bot</h1>
-      <p>Esta informacion alimenta el asistente conectado a Gemma mediante el backend.</p>
+<main class="w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-6 md:gap-8 font-inter">
+  <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+    <div class="flex flex-col gap-1">
+      <span class="text-sm font-semibold uppercase tracking-wider text-blue-600">Personalidad y conocimiento</span>
+      <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 leading-tight">Configura tu bot</h1>
+      <p class="text-sm text-slate-600">Esta información alimenta el asistente conectado a Gemma mediante el backend.</p>
     </div>
     <div class="actions">
-      <a nz-button nzType="default" class="daemon-btn" routerLink="/alumno/herramientas/chatbot">Volver al chat</a>
+      <a routerLink="/alumno/herramientas/chatbot" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium rounded-lg transition-colors whitespace-nowrap text-sm cursor-pointer">Volver al chat</a>
     </div>
   </header>
 
   @if (cargando()) {
-    <app-cargando class="state" texto="Cargando configuracion..."></app-cargando>
+    <div class="py-12 bg-white rounded-2xl shadow-sm border border-slate-100">
+      <app-cargando texto="Cargando configuración..."></app-cargando>
+    </div>
   } @else {
-    <section class="split">
-      <form class="panel bot-form" (ngSubmit)="guardar()">
-        <div class="section-title">
-          <h2>Datos del asistente</h2>
-          <nz-tag class="daemon-tag" nzColor="purple">IA personal</nz-tag>
-        </div>
-
-        <div class="bot-preview">
-          <nz-avatar class="daemon-avatar bot-avatar" [nzSize]="86" [nzSrc]="avatarVisible()" nzText="AI"></nz-avatar>
-          <div>
-            <span class="muted">Vista en chat</span>
-            <strong>{{ datos.nombre_bot || 'Asistente DAEMON' }}</strong>
-            <small>{{ datos.system_prompt.trim() ? 'Personalidad configurada' : 'Personalidad pendiente' }}</small>
+    <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div class="lg:col-span-2">
+        <form (ngSubmit)="guardar()" class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-100 flex flex-col gap-6">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+            <h2 class="text-xl font-bold text-slate-900">Datos del asistente</h2>
+            <nz-tag nzColor="purple" class="font-bold border-0 rounded-md">IA personal</nz-tag>
           </div>
-        </div>
 
-        <app-media-uploader
-          titulo="Avatar del bot"
-          descripcion="Selecciona una imagen para que aparezca en el chat del estudiante."
-          accept="image/*"
-          [maxMb]="4"
-          [resetKey]="uploadResetKey()"
-          lista="picture"
-          (archivoChange)="seleccionarAvatar($event)"
-        />
+          <div class="flex items-center gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200">
+            <nz-avatar class="shadow-sm" [nzSize]="86" [nzSrc]="avatarVisible()" nzText="AI"></nz-avatar>
+            <div class="flex flex-col">
+              <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Vista en chat</span>
+              <strong class="text-lg text-slate-900">{{ datos.nombre_bot || 'Asistente DAEMON' }}</strong>
+              <small class="text-sm text-slate-600">{{ datos.system_prompt.trim() ? 'Personalidad configurada' : 'Personalidad pendiente' }}</small>
+            </div>
+          </div>
 
-        <label class="field">
-          Nombre
-          <input name="nombre" [(ngModel)]="datos.nombre_bot" required>
-        </label>
+          <div class="pt-2">
+            <app-media-uploader
+              titulo="Avatar del bot"
+              descripcion="Selecciona una imagen para que aparezca en el chat del estudiante."
+              accept="image/*"
+              [maxMb]="4"
+              [resetKey]="uploadResetKey()"
+              lista="picture"
+              (archivoChange)="seleccionarAvatar($event)"
+            />
+          </div>
 
-        <label class="field">
-          Personalidad
-          <textarea
-            name="prompt"
-            [(ngModel)]="datos.system_prompt"
-            rows="6"
-            placeholder="Ejemplo: Eres un tutor paciente que explica paso a paso."
-          ></textarea>
-        </label>
+          <label class="flex flex-col gap-1.5">
+            <span class="text-sm font-semibold text-slate-700">Nombre</span>
+            <input name="nombre" [(ngModel)]="datos.nombre_bot" required
+                   class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors w-full text-slate-900">
+          </label>
 
-        <label class="field">
-          Conocimiento especializado
-          <textarea
-            name="conocimiento"
-            [(ngModel)]="datos.conocimiento"
-            rows="10"
-            placeholder="Temas, reglas de clase, contexto de la academia o instrucciones propias."
-          ></textarea>
-        </label>
+          <label class="flex flex-col gap-1.5">
+            <span class="text-sm font-semibold text-slate-700">Personalidad</span>
+            <textarea
+              name="prompt"
+              [(ngModel)]="datos.system_prompt"
+              rows="4"
+              placeholder="Ejemplo: Eres un tutor paciente que explica paso a paso."
+              class="px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors w-full text-slate-900 resize-y"
+            ></textarea>
+          </label>
 
-        <div class="actions">
-          <button nz-button nzType="primary" class="daemon-btn" type="submit" [disabled]="guardando() || !datos.nombre_bot.trim()">
-            @if (guardando()) { Guardando... } @else { Guardar bot }
-          </button>
-          <a nz-button nzType="default" class="daemon-btn" routerLink="/alumno/herramientas/chatbot">Probar en chat</a>
-        </div>
+          <label class="flex flex-col gap-1.5">
+            <span class="text-sm font-semibold text-slate-700">Conocimiento especializado</span>
+            <textarea
+              name="conocimiento"
+              [(ngModel)]="datos.conocimiento"
+              rows="6"
+              placeholder="Temas, reglas de clase, contexto de la academia o instrucciones propias."
+              class="px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors w-full text-slate-900 resize-y"
+            ></textarea>
+          </label>
 
-        @if (mensaje()) {
-          <nz-alert class="daemon-alert" nzType="success" nzShowIcon [nzMessage]="mensaje()"></nz-alert>
-        }
-        @if (error()) {
-          <nz-alert class="daemon-alert" nzType="error" nzShowIcon [nzMessage]="error()"></nz-alert>
-        }
-      </form>
+          <div class="flex flex-col sm:flex-row gap-3 pt-4 border-t border-slate-100">
+            <app-boton-accion tipo="guardar" [texto]="guardando() ? 'Guardando...' : 'Guardar bot'" [esSubmit]="true" [deshabilitado]="guardando() || !datos.nombre_bot.trim()" [cargando]="guardando()" [anchoCompleto]="true"></app-boton-accion>
+            <a routerLink="/alumno/herramientas/chatbot" class="flex-1 text-center bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-medium py-3 px-4 rounded-xl transition-colors cursor-pointer flex justify-center items-center">
+              Probar en chat
+            </a>
+          </div>
 
-      <aside class="panel guide">
-        <h2>Estado del bot</h2>
-        <p>La configuracion guardada se aplica a las conversaciones del estudiante.</p>
+          @if (mensaje()) {
+            <nz-alert nzType="success" nzShowIcon [nzMessage]="mensaje()"></nz-alert>
+          }
+          @if (error()) {
+            <nz-alert nzType="error" nzShowIcon [nzMessage]="error()"></nz-alert>
+          }
+        </form>
+      </div>
 
-        <div class="bot-score">
-          <span>Configuracion completa</span>
-          <strong>{{ progresoBot() }}%</strong>
-          <nz-progress [nzPercent]="progresoBot()" [nzStatus]="estadoProgreso()" [nzStrokeWidth]="8"></nz-progress>
-        </div>
+      <aside class="lg:col-span-1">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 sticky top-6 flex flex-col gap-6">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900">Estado del bot</h2>
+            <p class="text-sm text-slate-600 mt-1">La configuración guardada se aplica a las conversaciones del estudiante.</p>
+          </div>
 
-        <div>
-          <nz-tag class="daemon-tag" nzColor="blue">Perfil</nz-tag>
-          <strong>{{ datos.nombre_bot || 'Sin nombre' }}</strong>
-          <small>Nombre visible del asistente.</small>
-        </div>
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col gap-2">
+            <div class="flex justify-between items-center">
+              <span class="text-sm font-semibold text-slate-700">Configuración completa</span>
+              <strong class="text-slate-900">{{ progresoBot() }}%</strong>
+            </div>
+            <nz-progress [nzPercent]="progresoBot()" [nzStatus]="estadoProgreso()" [nzStrokeWidth]="8" class="m-0"></nz-progress>
+          </div>
 
-        <div>
-          <nz-tag class="daemon-tag" [nzColor]="datos.system_prompt.trim() ? 'green' : 'gold'">Prompt</nz-tag>
-          <strong>{{ datos.system_prompt.trim() ? 'Configurado' : 'Pendiente' }}</strong>
-          <small>Personalidad base del bot.</small>
-        </div>
+          <div class="flex flex-col gap-4">
+            <div class="flex flex-col gap-1">
+              <div class="flex items-center gap-2">
+                <nz-tag nzColor="blue" class="border-0 rounded m-0 font-semibold">Perfil</nz-tag>
+                <strong class="text-slate-900">{{ datos.nombre_bot || 'Sin nombre' }}</strong>
+              </div>
+              <small class="text-slate-500 text-xs">Nombre visible del asistente.</small>
+            </div>
 
-        <div>
-          <nz-tag class="daemon-tag" [nzColor]="datos.conocimiento.trim() ? 'green' : 'gold'">Conocimiento</nz-tag>
-          <strong>{{ datos.conocimiento.trim() ? 'Configurado' : 'Pendiente' }}</strong>
-          <small>Contexto propio de la academia.</small>
+            <div class="flex flex-col gap-1">
+              <div class="flex items-center gap-2">
+                <nz-tag [nzColor]="datos.system_prompt.trim() ? 'green' : 'gold'" class="border-0 rounded m-0 font-semibold">Prompt</nz-tag>
+                <strong class="text-slate-900">{{ datos.system_prompt.trim() ? 'Configurado' : 'Pendiente' }}</strong>
+              </div>
+              <small class="text-slate-500 text-xs">Personalidad base del bot.</small>
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <div class="flex items-center gap-2">
+                <nz-tag [nzColor]="datos.conocimiento.trim() ? 'green' : 'gold'" class="border-0 rounded m-0 font-semibold">Conocimiento</nz-tag>
+                <strong class="text-slate-900">{{ datos.conocimiento.trim() ? 'Configurado' : 'Pendiente' }}</strong>
+              </div>
+              <small class="text-slate-500 text-xs">Contexto propio de la academia.</small>
+            </div>
+          </div>
         </div>
       </aside>
     </section>
   }
-</section>
+</main>

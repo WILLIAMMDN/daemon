@@ -1,12 +1,15 @@
 <main class="w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-6 md:gap-8 font-inter">
   <!-- Cabecera -->
-  <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+  <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
     <div class="flex flex-col gap-1">
       <span class="text-sm font-semibold uppercase tracking-wider text-blue-600">Docente</span>
-      <h1 class="text-2xl md:text-3xl font-bold text-gray-900">Gestionar aulas</h1>
-      <p class="text-base text-gray-600">Administra los grupos y niveles de tus estudiantes.</p>
+      <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 leading-tight">Gestionar aulas</h1>
+      <p class="text-sm text-slate-600">Administra los grupos y niveles de tus estudiantes de forma centralizada.</p>
     </div>
-    <app-boton-accion tipo="actualizar" (accion)="cargar()" [cargando]="cargando()"></app-boton-accion>
+    <div class="flex gap-2">
+      <app-boton-accion tipo="actualizar" (accion)="cargar()" [cargando]="cargando()" [deshabilitado]="cargando()"></app-boton-accion>
+      <app-boton-accion tipo="crear" texto="Nueva aula" (accion)="abrirCrear()"></app-boton-accion>
+    </div>
   </header>
 
   <!-- Alertas -->
@@ -17,58 +20,38 @@
     <nz-alert nzType="error" nzShowIcon [nzMessage]="error()"></nz-alert>
   }
 
-  <!-- Layout Principal -->
-  <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-    <!-- Panel Izquierdo: Formulario -->
-    <div class="lg:col-span-1">
-      <form (ngSubmit)="crear()" class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col gap-4">
-        <h2 class="text-lg font-bold text-gray-900 border-b border-gray-100 pb-2">Nueva aula</h2>
-        
-        <label class="flex flex-col gap-1">
-          <span class="text-sm font-medium text-gray-700">Nombre del grupo</span>
-          <input name="nombre" [(ngModel)]="nueva.nombre" required placeholder="Ej: Grupo A, Avanzados..." 
-                 class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
-        </label>
-        
-        <label class="flex flex-col gap-1">
-          <span class="text-sm font-medium text-gray-700">Nivel Educativo</span>
-          <select name="nivel" [(ngModel)]="nueva.nivel"
-                  class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
-            <option value="KIDS">KIDS</option>
-            <option value="TEENS">TEENS</option>
-            <option value="PRO">PRO</option>
-          </select>
-        </label>
-        
-        <app-boton-accion tipo="crear" texto="Crear aula" [anchoCompleto]="true" [esSubmit]="true" [deshabilitado]="guardando() || !nueva.nombre.trim()" [cargando]="guardando()" claseExtra="mt-2"></app-boton-accion>
-      </form>
-    </div>
-
-    <!-- Panel Derecho: Tabla -->
-    <div class="lg:col-span-2">
-      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-        @if (cargando()) {
-          <div class="p-8">
-            <app-cargando texto="Cargando aulas..."></app-cargando>
-          </div>
-        } @else if (aulas().length) {
-          <nz-table #tablaAulas [nzData]="aulas()" [nzShowPagination]="true" [nzPageSize]="10" nzSize="middle" class="w-full">
+  <!-- Layout Principal (Full Width) -->
+  <section class="w-full">
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+      @if (cargando()) {
+        <div class="p-12">
+          <app-cargando texto="Cargando aulas..."></app-cargando>
+        </div>
+      } @else if (aulas().length) {
+        <div class="overflow-x-auto w-full">
+          <nz-table #tablaAulas [nzData]="aulas()" [nzShowPagination]="true" [nzPageSize]="10" nzSize="middle" class="w-full whitespace-nowrap">
             <thead>
-              <tr>
-                <th>Nombre</th>
-                <th>Nivel</th>
-                <th>Alumnos asignados</th>
-                <th>Acciones</th>
+              <tr class="bg-slate-50">
+                <th class="text-slate-500 font-semibold text-sm">Nombre del grupo</th>
+                <th class="text-slate-500 font-semibold text-sm">Nivel Educativo</th>
+                <th class="text-slate-500 font-semibold text-sm">Estudiantes</th>
+                <th class="text-slate-500 font-semibold text-sm text-right">Acciones</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody class="divide-y divide-slate-100">
               @for (aula of tablaAulas.data; track aula.id) {
-                <tr>
-                  <td class="font-medium text-gray-900">{{ aula.nombre }}</td>
-                  <td><nz-tag nzColor="blue">{{ aula.nivel }}</nz-tag></td>
-                  <td class="text-gray-600">{{ aula.usuarios_count ?? 0 }}</td>
+                <tr class="hover:bg-slate-50 transition-colors">
+                  <td class="font-bold text-slate-900">{{ aula.nombre }}</td>
                   <td>
-                    <div class="flex items-center gap-2">
+                    <nz-tag [nzColor]="aula.nivel === 'PRO' ? 'purple' : aula.nivel === 'TEENS' ? 'cyan' : 'blue'" class="font-bold rounded-md">
+                      {{ aula.nivel }}
+                    </nz-tag>
+                  </td>
+                  <td class="text-slate-600 font-medium">
+                    {{ aula.usuarios_count ?? 0 }} <span class="text-xs text-slate-400 font-normal">alumnos</span>
+                  </td>
+                  <td>
+                    <div class="flex items-center justify-end gap-2">
                       <app-boton-accion tipo="editar" (accion)="abrirEditar(aula)"></app-boton-accion>
                       <app-boton-accion tipo="eliminar" confirmacion="¿Seguro que deseas eliminar esta aula?" (accion)="eliminar(aula.id)"></app-boton-accion>
                     </div>
@@ -77,34 +60,57 @@
               }
             </tbody>
           </nz-table>
-        } @else {
-          <div class="p-8">
-            <app-estado-vacio titulo="Sin aulas creadas" descripcion="Crea tu primera aula para comenzar a agrupar a tus estudiantes."></app-estado-vacio>
-          </div>
-        }
-      </div>
+        </div>
+      } @else {
+        <div class="p-12">
+          <app-estado-vacio titulo="Sin aulas creadas" descripcion="Crea tu primera aula para comenzar a agrupar a tus estudiantes."></app-estado-vacio>
+        </div>
+      }
     </div>
   </section>
 </main>
 
+<!-- Modal de Creación -->
+<nz-modal [(nzVisible)]="modalCrearVisible" nzTitle="Crear nueva aula" (nzOnCancel)="cerrarCrear()" (nzOnOk)="crear()" [nzOkLoading]="guardando()" [nzOkDisabled]="!nueva.nombre.trim()" nzOkText="Crear aula" nzCancelText="Cancelar" nzCentered>
+  <ng-container *nzModalContent>
+    <div class="flex flex-col gap-5 pt-2">
+      <label class="flex flex-col gap-1.5">
+        <span class="text-sm font-semibold text-slate-700">Nombre del grupo</span>
+        <input name="nombre" [(ngModel)]="nueva.nombre" required placeholder="Ej: Grupo A, Avanzados..." 
+               class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all">
+      </label>
+      
+      <label class="flex flex-col gap-1.5">
+        <span class="text-sm font-semibold text-slate-700">Nivel Educativo</span>
+        <select name="nivel" [(ngModel)]="nueva.nivel"
+                class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all cursor-pointer">
+          <option value="KIDS">Nivel KIDS</option>
+          <option value="TEENS">Nivel TEENS</option>
+          <option value="PRO">Nivel PRO</option>
+        </select>
+      </label>
+    </div>
+  </ng-container>
+</nz-modal>
+
 <!-- Modal de Edición -->
-<nz-modal [(nzVisible)]="modalVisible" nzTitle="Editar Aula" (nzOnCancel)="cerrarEditar()" (nzOnOk)="guardarEdicion()" [nzOkLoading]="guardando()">
+<nz-modal [(nzVisible)]="modalEditVisible" nzTitle="Editar Aula" (nzOnCancel)="cerrarEditar()" (nzOnOk)="guardarEdicion()" [nzOkLoading]="guardando()" [nzOkDisabled]="!aulaEditando?.nombre?.trim()" nzOkText="Guardar cambios" nzCancelText="Cancelar" nzCentered>
   <ng-container *nzModalContent>
     @if (aulaEditando) {
-      <div class="flex flex-col gap-4">
-        <label class="flex flex-col gap-1">
-          <span class="text-sm font-medium text-gray-700">Nombre del grupo</span>
+      <div class="flex flex-col gap-5 pt-2">
+        <label class="flex flex-col gap-1.5">
+          <span class="text-sm font-semibold text-slate-700">Nombre del grupo</span>
           <input name="edit_nombre" [(ngModel)]="aulaEditando.nombre" required
-                 class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
+                 class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all">
         </label>
         
-        <label class="flex flex-col gap-1">
-          <span class="text-sm font-medium text-gray-700">Nivel Educativo</span>
+        <label class="flex flex-col gap-1.5">
+          <span class="text-sm font-semibold text-slate-700">Nivel Educativo</span>
           <select name="edit_nivel" [(ngModel)]="aulaEditando.nivel"
-                  class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
-            <option value="KIDS">KIDS</option>
-            <option value="TEENS">TEENS</option>
-            <option value="PRO">PRO</option>
+                  class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all cursor-pointer">
+            <option value="KIDS">Nivel KIDS</option>
+            <option value="TEENS">Nivel TEENS</option>
+            <option value="PRO">Nivel PRO</option>
           </select>
         </label>
       </div>

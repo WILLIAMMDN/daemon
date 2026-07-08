@@ -1,12 +1,17 @@
 import { Component, signal , ChangeDetectionStrategy} from '@angular/core';
 import { Evaluacion } from '../../services/evaluacion';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
-
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { NzTagModule } from 'ng-zorro-antd/tag';
+import { CommonModule } from '@angular/common';
+import { BotonAccion } from '../../../../shared/componentes/boton-accion/boton-accion';
+import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-resultados-examen',
-  imports: [Cargando],
+  imports: [CommonModule, Cargando, NzTableModule, NzAlertModule, NzTagModule, BotonAccion, EstadoVacio],
   templateUrl: './resultados-examen.html',
   styleUrl: './resultados-examen.scss',
 })

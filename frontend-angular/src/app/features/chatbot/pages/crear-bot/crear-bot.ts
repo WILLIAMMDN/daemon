@@ -10,6 +10,8 @@ import { Activos } from '../../../../core/servicios/activos';
 import { Api } from '../../../../core/servicios/api';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 import { MediaUploader } from '../../../../shared/componentes/media-uploader/media-uploader';
+import { BotonAccion } from '../../../../shared/componentes/boton-accion/boton-accion';
+import { CommonModule } from '@angular/common';
 
 interface BotConfig {
   nombre_bot?: string | null;
@@ -31,6 +33,8 @@ interface BotConfig {
     NzTagModule,
     Cargando,
     MediaUploader,
+    BotonAccion,
+    CommonModule,
   ],
   templateUrl: './crear-bot.html',
   styleUrl: './crear-bot.scss',

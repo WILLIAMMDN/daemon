@@ -1,36 +1,53 @@
-@if (cargando()) {
-  <app-cargando class="state" texto="Cargando cuento..."></app-cargando>
-} @else {
-  <section class="page">
-    <header class="page-header">
-      <div>
-        <p class="kicker">Cuento</p>
-        <h1>Mi historia</h1>
-        <p>auarda o actualiza tu cuento personal.</p>
+<main class="w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-6 md:gap-8 font-inter">
+  @if (cargando()) {
+    <div class="py-12 bg-white rounded-2xl shadow-sm border border-slate-100">
+      <app-cargando texto="Cargando cuento..."></app-cargando>
+    </div>
+  } @else {
+    <!-- Cabecera -->
+    <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+      <div class="flex flex-col gap-1">
+        <span class="text-sm font-semibold uppercase tracking-wider text-blue-600">Cuento</span>
+        <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 leading-tight">Mi historia</h1>
+        <p class="text-sm text-slate-600">Guarda o actualiza tu cuento personal.</p>
       </div>
-      <a class="ghost-btn" routerLink="/alumno/cuentos">aaleria</a>
+      <a routerLink="/alumno/cuentos" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium rounded-lg transition-colors whitespace-nowrap text-sm cursor-pointer">
+        Galería
+      </a>
     </header>
 
-    <form class="panel" (ngSubmit)="guardar()">
-      <label class="field">
-        Título
-        <input name="titulo" [(ngModel)]="cuento['titulo']" required>
-      </label>
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 md:p-8">
+      <form (ngSubmit)="guardar()" class="flex flex-col gap-6">
+        <label class="flex flex-col gap-1.5">
+          <span class="text-sm font-semibold text-slate-700">Título</span>
+          <input name="titulo" [(ngModel)]="cuento['titulo']" required placeholder="Escribe un título épico"
+                 class="px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors w-full text-slate-900 text-lg font-bold">
+        </label>
 
-      <div class="form-grid">
-        @for (numero of [1, 2, 3, 4, 5, 6]; track numero) {
-          <label>
-            Escena {{ numero }}
-            <textarea [name]="'data_' + numero" [(ngModel)]="cuento['data_' + numero]" rows="5"></textarea>
-          </label>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          @for (numero of [1, 2, 3, 4, 5, 6]; track numero) {
+            <label class="flex flex-col gap-1.5">
+              <span class="text-sm font-semibold text-slate-700">Escena {{ numero }}</span>
+              <textarea [name]="'data_' + numero" [(ngModel)]="cuento['data_' + numero]" rows="5"
+                        placeholder="Narra lo que sucede..."
+                        class="px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors w-full text-slate-900 resize-y leading-relaxed"></textarea>
+            </label>
+          }
+        </div>
+
+        <div class="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-end">
+          <div class="w-full sm:w-auto">
+            <app-boton-accion tipo="guardar" [texto]="guardando() ? 'Guardando...' : 'Guardar cuento'" [esSubmit]="true" [deshabilitado]="guardando() || !cuento['titulo'].trim()" [cargando]="guardando()"></app-boton-accion>
+          </div>
+        </div>
+
+        @if (mensaje()) {
+          <nz-alert nzType="success" nzShowIcon [nzMessage]="mensaje()"></nz-alert>
         }
-      </div>
-
-      <div class="actions">
-        <button type="submit" [disabled]="guardando() || !cuento['titulo'].trim()">auardar cuento</button>
-      </div>
-      @if (mensaje()) { <p class="success">{{ mensaje() }}</p> }
-      @if (error()) { <p class="error">{{ error() }}</p> }
-    </form>
-  </section>
-}
+        @if (error()) {
+          <nz-alert nzType="error" nzShowIcon [nzMessage]="error()"></nz-alert>
+        }
+      </form>
+    </div>
+  }
+</main>

@@ -1,12 +1,16 @@
 <main class="w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-6 md:gap-8 font-inter">
   <!-- Cabecera -->
-  <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+  <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
     <div class="flex flex-col gap-1">
       <span class="text-sm font-semibold uppercase tracking-wider text-blue-600">Docente</span>
-      <h1 class="text-2xl md:text-3xl font-bold text-gray-900">Insignias</h1>
-      <p class="text-base text-gray-600">Catálogo y asignación de reconocimientos para los estudiantes.</p>
+      <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 leading-tight">Insignias</h1>
+      <p class="text-sm text-slate-600">Catálogo y asignación de reconocimientos para los estudiantes.</p>
     </div>
-    <app-boton-accion tipo="actualizar" (accion)="cargar()" [cargando]="cargando()" [deshabilitado]="cargando()"></app-boton-accion>
+    <div class="flex flex-wrap gap-2">
+      <app-boton-accion tipo="actualizar" (accion)="cargar()" [cargando]="cargando()" [deshabilitado]="cargando()"></app-boton-accion>
+      <app-boton-accion tipo="crear" texto="Nueva insignia" (accion)="abrirCrear()"></app-boton-accion>
+      <app-boton-accion tipo="editar" texto="Asignar insignia" (accion)="abrirAsignar()"></app-boton-accion>
+    </div>
   </header>
 
   <!-- Alertas -->
@@ -17,41 +21,71 @@
     <nz-alert nzType="error" nzShowIcon [nzMessage]="error()"></nz-alert>
   }
 
-  <!-- Formularios Principales -->
-  <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-    <!-- Formulario Crear -->
-    <form (ngSubmit)="crear()" class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col gap-6">
-      <div class="flex items-center justify-between border-b border-gray-100 pb-2">
-        <h2 class="text-lg font-bold text-gray-900">Nueva insignia</h2>
-        <nz-tag nzColor="gold">Reconocimiento</nz-tag>
+  <!-- Catálogo -->
+  <section class="w-full">
+    @if (cargando()) {
+      <div class="py-12 bg-white rounded-2xl shadow-sm border border-slate-100">
+        <app-cargando texto="Cargando catálogo de insignias..."></app-cargando>
       </div>
+    } @else if (insignias().length) {
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
+        @for (insignia of insignias(); track insignia.id) {
+          <article class="bg-white rounded-2xl shadow-sm border border-slate-100 flex flex-col items-center p-6 text-center hover:shadow-md transition-shadow relative overflow-hidden group">
+            <div class="absolute inset-0 bg-gradient-to-b from-blue-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+            
+            <img [src]="imagenInsignia(insignia.imagen)" [alt]="'Insignia ' + insignia.nombre" class="w-24 h-24 object-contain mb-4 filter drop-shadow-md z-10 transition-transform group-hover:scale-105">
+            
+            <h3 class="font-extrabold text-slate-900 text-lg mb-2 z-10 leading-tight">{{ insignia.nombre }}</h3>
+            <p class="text-sm text-slate-500 mb-6 flex-grow z-10 leading-relaxed">{{ insignia.descripcion || 'Sin descripción.' }}</p>
+            
+            <div class="flex gap-2 w-full pt-4 border-t border-slate-100 justify-center mt-auto z-10 bg-white">
+              <app-boton-accion tipo="editar" (accion)="abrirEditar(insignia)"></app-boton-accion>
+              <app-boton-accion tipo="eliminar" confirmacion="¿Borrar insignia?" (accion)="eliminar(insignia.id)"></app-boton-accion>
+            </div>
+          </article>
+        }
+      </div>
+    } @else {
+      <div class="py-12 bg-white rounded-2xl border border-slate-100">
+        <app-estado-vacio
+          titulo="Sin insignias todavía"
+          descripcion="Crea el primer reconocimiento para empezar a premiar avances de los estudiantes."
+        ></app-estado-vacio>
+      </div>
+    }
+  </section>
+</main>
 
-      <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-xl border border-gray-100">
-        <nz-avatar nzShape="square" [nzSize]="74" [nzSrc]="imagenNuevaVisible() || undefined" nzText="DA" class="flex-shrink-0"></nz-avatar>
+<!-- Modal de Creación -->
+<nz-modal [(nzVisible)]="modalCrearVisible" nzTitle="Crear nueva insignia" (nzOnCancel)="cerrarCrear()" (nzOnOk)="crear()" [nzOkLoading]="guardando()" [nzOkDisabled]="!puedeCrear()" nzOkText="Crear insignia" nzCancelText="Cancelar" nzCentered nzWidth="550px">
+  <ng-container *nzModalContent>
+    <div class="flex flex-col gap-6 pt-2">
+      <div class="flex items-center gap-4 p-4 bg-slate-50 rounded-xl border border-slate-200">
+        <nz-avatar nzShape="square" [nzSize]="74" [nzSrc]="imagenNuevaVisible() || undefined" nzText="DA" class="flex-shrink-0 !rounded-xl shadow-sm"></nz-avatar>
         <div class="flex flex-col">
-          <span class="text-xs text-gray-500 uppercase font-semibold">Vista previa</span>
-          <strong class="text-gray-900 text-base">{{ nueva.nombre || 'Nueva insignia' }}</strong>
-          <small class="text-gray-600 line-clamp-1">{{ nueva.descripcion || 'Descripción pendiente' }}</small>
+          <span class="text-[10px] text-slate-400 uppercase font-extrabold tracking-wider">Vista previa</span>
+          <strong class="text-slate-900 text-base font-bold">{{ nueva.nombre || 'Nueva insignia' }}</strong>
+          <small class="text-slate-500 line-clamp-1 font-medium">{{ nueva.descripcion || 'Descripción pendiente' }}</small>
         </div>
       </div>
 
       <div class="flex flex-col gap-4">
-        <label class="flex flex-col gap-1">
-          <span class="text-sm font-medium text-gray-700">Nombre</span>
+        <label class="flex flex-col gap-1.5">
+          <span class="text-sm font-semibold text-slate-700">Nombre</span>
           <input name="nombre" [(ngModel)]="nueva.nombre" required placeholder="Ej. Cerebro de Oro"
-                 class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
+                 class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all">
         </label>
         
-        <label class="flex flex-col gap-1">
-          <span class="text-sm font-medium text-gray-700">URL existente</span>
+        <label class="flex flex-col gap-1.5">
+          <span class="text-sm font-semibold text-slate-700">URL existente (Opcional si sube archivo)</span>
           <input name="imagen" [(ngModel)]="nueva.imagen" placeholder="https://... o uploads/insignias/..."
-                 class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
+                 class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all">
         </label>
         
-        <label class="flex flex-col gap-1">
-          <span class="text-sm font-medium text-gray-700">Descripción</span>
+        <label class="flex flex-col gap-1.5">
+          <span class="text-sm font-semibold text-slate-700">Descripción</span>
           <textarea name="descripcion" [(ngModel)]="nueva.descripcion" rows="3" placeholder="Por qué se otorga este reconocimiento"
-                    class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"></textarea>
+                    class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all resize-none"></textarea>
         </label>
       </div>
 
@@ -64,97 +98,57 @@
         lista="picture"
         (archivoChange)="seleccionarImagen($event)"
       />
+    </div>
+  </ng-container>
+</nz-modal>
 
-      <app-boton-accion tipo="crear" texto="Crear insignia" [esSubmit]="true" [deshabilitado]="guardando() || !puedeCrear()" [cargando]="guardando()" [anchoCompleto]="true"></app-boton-accion>
-    </form>
-
-    <!-- Formulario Asignar -->
-    <form (ngSubmit)="asignar()" class="bg-blue-50/50 p-6 rounded-2xl shadow-sm border border-blue-100 flex flex-col gap-6">
-      <div class="flex items-center justify-between border-b border-blue-200 pb-2">
-        <h2 class="text-lg font-bold text-gray-900">Asignar a alumno</h2>
-        <nz-tag nzColor="cyan">Progreso</nz-tag>
-      </div>
-
-      <div class="flex flex-col gap-4">
-        <label class="flex flex-col gap-1">
-          <span class="text-sm font-medium text-gray-700">Alumno</span>
-          <select name="id_alumno" [(ngModel)]="asignacion.id_alumno" required
-                  class="px-3 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
-            <option [ngValue]="null" disabled selected>Selecciona un alumno...</option>
-            @for (alumno of alumnos(); track alumno.id) {
-              <option [ngValue]="alumno.id">{{ alumno.nombre_completo }}</option>
-            }
-          </select>
-        </label>
-        
-        <label class="flex flex-col gap-1">
-          <span class="text-sm font-medium text-gray-700">Insignia</span>
-          <select name="id_insignia" [(ngModel)]="asignacion.id_insignia" required
-                  class="px-3 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
-            <option [ngValue]="null" disabled selected>Selecciona una insignia...</option>
-            @for (insignia of insignias(); track insignia.id) {
-              <option [ngValue]="insignia.id">{{ insignia.nombre }}</option>
-            }
-          </select>
-        </label>
-      </div>
+<!-- Modal de Asignación -->
+<nz-modal [(nzVisible)]="modalAsignarVisible" nzTitle="Asignar Insignia" (nzOnCancel)="cerrarAsignar()" (nzOnOk)="asignar()" [nzOkLoading]="guardando()" [nzOkDisabled]="!asignacion.id_alumno || !asignacion.id_insignia" nzOkText="Asignar" nzCancelText="Cancelar" nzCentered>
+  <ng-container *nzModalContent>
+    <div class="flex flex-col gap-5 pt-2">
+      <label class="flex flex-col gap-1.5">
+        <span class="text-sm font-semibold text-slate-700">Alumno</span>
+        <select name="id_alumno" [(ngModel)]="asignacion.id_alumno" required
+                class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all cursor-pointer">
+          <option [ngValue]="null" disabled selected>Selecciona un alumno...</option>
+          @for (alumno of alumnos(); track alumno.id) {
+            <option [ngValue]="alumno.id">{{ alumno.nombre_completo }}</option>
+          }
+        </select>
+      </label>
       
-      <app-boton-accion tipo="guardar" [texto]="guardando() ? 'Asignando...' : 'Asignar'" [esSubmit]="true" [deshabilitado]="guardando() || !asignacion.id_alumno || !asignacion.id_insignia" [cargando]="guardando()" [anchoCompleto]="true"></app-boton-accion>
-    </form>
-  </section>
-
-  <!-- Catálogo -->
-  <section class="mt-4">
-    <h2 class="text-xl font-bold text-gray-900 mb-6">Catálogo de Insignias</h2>
-    
-    @if (cargando()) {
-      <div class="py-12">
-        <app-cargando texto="Cargando catálogo de insignias..."></app-cargando>
-      </div>
-    } @else if (insignias().length) {
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
-        @for (insignia of insignias(); track insignia.id) {
-          <article class="bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center p-6 text-center">
-            <img [src]="imagenInsignia(insignia.imagen)" [alt]="'Insignia ' + insignia.nombre" class="w-24 h-24 object-contain mb-4 filter drop-shadow-md">
-            <h3 class="font-bold text-gray-900 text-lg mb-2">{{ insignia.nombre }}</h3>
-            <p class="text-sm text-gray-600 mb-6 flex-grow">{{ insignia.descripcion || 'Sin descripción.' }}</p>
-            
-            <div class="flex gap-2 w-full pt-4 border-t border-gray-100 justify-center mt-auto">
-              <app-boton-accion tipo="editar" (accion)="abrirEditar(insignia)"></app-boton-accion>
-              <app-boton-accion tipo="eliminar" confirmacion="¿Borrar insignia?" (accion)="eliminar(insignia.id)"></app-boton-accion>
-            </div>
-          </article>
-        }
-      </div>
-    } @else {
-      <div class="py-12 bg-white rounded-2xl border border-gray-100">
-        <app-estado-vacio
-          titulo="Sin insignias todavía"
-          descripcion="Crea el primer reconocimiento para empezar a premiar avances de los estudiantes."
-        ></app-estado-vacio>
-      </div>
-    }
-  </section>
-</main>
+      <label class="flex flex-col gap-1.5">
+        <span class="text-sm font-semibold text-slate-700">Insignia</span>
+        <select name="id_insignia" [(ngModel)]="asignacion.id_insignia" required
+                class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all cursor-pointer">
+          <option [ngValue]="null" disabled selected>Selecciona una insignia...</option>
+          @for (insignia of insignias(); track insignia.id) {
+            <option [ngValue]="insignia.id">{{ insignia.nombre }}</option>
+          }
+        </select>
+      </label>
+    </div>
+  </ng-container>
+</nz-modal>
 
 <!-- Modal de Edición -->
-<nz-modal [(nzVisible)]="modalVisible" nzTitle="Editar Insignia" (nzOnCancel)="cerrarEditar()" (nzOnOk)="guardarEdicion()" [nzOkLoading]="guardando()" nzWidth="500px">
+<nz-modal [(nzVisible)]="modalEditVisible" nzTitle="Editar Insignia" (nzOnCancel)="cerrarEditar()" (nzOnOk)="guardarEdicion()" [nzOkLoading]="guardando()" [nzOkDisabled]="!insigniaEditando?.nombre?.trim()" nzOkText="Guardar cambios" nzCancelText="Cancelar" nzCentered nzWidth="550px">
   <ng-container *nzModalContent>
     @if (insigniaEditando) {
-      <div class="flex flex-col gap-4">
-        <div class="flex justify-center mb-4">
-          <nz-avatar nzShape="square" [nzSize]="96" [nzSrc]="imagenEditVisible() || undefined" nzText="DA"></nz-avatar>
+      <div class="flex flex-col gap-5 pt-2">
+        <div class="flex justify-center mb-2">
+          <nz-avatar nzShape="square" [nzSize]="96" [nzSrc]="imagenEditVisible() || undefined" nzText="DA" class="!rounded-2xl shadow-sm"></nz-avatar>
         </div>
         
-        <label class="flex flex-col gap-1">
-          <span class="text-sm font-medium text-gray-700">Nombre</span>
-          <input class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full" 
+        <label class="flex flex-col gap-1.5">
+          <span class="text-sm font-semibold text-slate-700">Nombre</span>
+          <input class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all" 
                  name="edit_nombre" [(ngModel)]="insigniaEditando.nombre" required>
         </label>
         
-        <label class="flex flex-col gap-1">
-          <span class="text-sm font-medium text-gray-700">Descripción</span>
-          <textarea class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full" 
+        <label class="flex flex-col gap-1.5">
+          <span class="text-sm font-semibold text-slate-700">Descripción</span>
+          <textarea class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all resize-none" 
                     name="edit_descripcion" rows="3" [(ngModel)]="insigniaEditando.descripcion"></textarea>
         </label>
         

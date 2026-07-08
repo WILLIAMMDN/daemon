@@ -1,164 +1,209 @@
-<section class="page">
-  <header class="page-header">
-    <div>
-      <p class="kicker">Docente</p>
-      <h1>Evaluaciones</h1>
-      <p>Exámenes, estados y banco de preguntas.</p>
+<main class="w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-6 md:gap-8 font-inter">
+  <!-- Cabecera -->
+  <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+    <div class="flex flex-col gap-1">
+      <span class="text-sm font-semibold uppercase tracking-wider text-blue-600">Docente</span>
+      <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 leading-tight">Evaluaciones</h1>
+      <p class="text-sm text-slate-600">Exámenes, estados y banco de preguntas.</p>
     </div>
-    <app-boton-accion tipo="actualizar" (accion)="cargar()" [cargando]="cargando()" claseExtra="daemon-btn"></app-boton-accion>
+    <div class="flex flex-wrap gap-2">
+      <app-boton-accion tipo="actualizar" (accion)="cargar()" [cargando]="cargando()" [deshabilitado]="cargando()"></app-boton-accion>
+      <app-boton-accion tipo="crear" texto="Nueva evaluación" (accion)="abrirCrear()"></app-boton-accion>
+      <app-boton-accion tipo="editar" texto="Agregar pregunta" (accion)="abrirAgregarPregunta()"></app-boton-accion>
+    </div>
   </header>
 
+  <!-- Alertas -->
   @if (mensaje()) {
-    <nz-alert class="daemon-alert" nzType="success" nzShowIcon [nzMessage]="mensaje()"></nz-alert>
+    <nz-alert nzType="success" nzShowIcon [nzMessage]="mensaje()"></nz-alert>
   }
   @if (error()) {
-    <nz-alert class="daemon-alert" nzType="error" nzShowIcon [nzMessage]="error()"></nz-alert>
+    <nz-alert nzType="error" nzShowIcon [nzMessage]="error()"></nz-alert>
   }
 
-  <section class="split">
-    <form class="panel insignia-form" (ngSubmit)="crear()">
-      <div class="section-title">
-        <h2>Nueva evaluación</h2>
-        <nz-tag class="daemon-tag" nzColor="blue">General</nz-tag>
+  <!-- Contenido Principal -->
+  <section class="w-full">
+    @if (cargando()) {
+      <div class="py-12 bg-white rounded-2xl shadow-sm border border-slate-100">
+        <app-cargando texto="Cargando evaluaciones..."></app-cargando>
       </div>
-      <div class="form-grid">
-        <label>
-          Título
-          <input name="titulo" [(ngModel)]="nueva.titulo" required>
-        </label>
-        <label>
-          Nivel
-          <select name="nivel" [(ngModel)]="nueva.nivel">
-            <option value="KIDS">KIDS</option>
-            <option value="TEENS">TEENS</option>
-            <option value="PRO">PRO</option>
-          </select>
-        </label>
-        <label>
-          Estado
-          <select name="estado" [(ngModel)]="nueva.estado">
-            <option value="borrador">borrador</option>
-            <option value="activo">activo</option>
-            <option value="finalizado">finalizado</option>
-          </select>
-        </label>
+    } @else if (evaluaciones().length) {
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden flex flex-col">
+        <div class="overflow-x-auto p-0">
+          <nz-table #tablaEvaluaciones [nzData]="evaluaciones()" [nzShowPagination]="true" [nzPageSize]="10" nzSize="middle" class="w-full whitespace-nowrap">
+            <thead>
+              <tr class="bg-slate-50">
+                <th class="text-slate-500 font-semibold text-sm">Evaluación</th>
+                <th class="text-slate-500 font-semibold text-sm">Nivel</th>
+                <th class="text-slate-500 font-semibold text-sm">Estado</th>
+                <th class="text-slate-500 font-semibold text-sm text-center">Preguntas</th>
+                <th class="text-slate-500 font-semibold text-sm text-right">Acciones</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              @for (examen of tablaEvaluaciones.data; track examen.id) {
+                <tr class="hover:bg-slate-50 transition-colors">
+                  <td class="font-bold text-slate-900">{{ examen.titulo }}</td>
+                  <td>
+                    <nz-tag [nzColor]="examen.nivel === 'PRO' ? 'purple' : examen.nivel === 'TEENS' ? 'cyan' : 'blue'" class="font-bold rounded-md border-0">{{ examen.nivel }}</nz-tag>
+                  </td>
+                  <td>
+                    <nz-tag [nzColor]="examen.estado === 'activo' ? 'green' : (examen.estado === 'borrador' ? 'default' : 'red')" class="font-bold rounded-md border-0">
+                      {{ examen.estado | uppercase }}
+                    </nz-tag>
+                  </td>
+                  <td class="text-center font-mono font-bold text-slate-700 bg-slate-50 rounded-md">
+                    {{ examen.preguntas?.length || 0 }}
+                  </td>
+                  <td class="text-right">
+                    <div class="flex justify-end gap-2">
+                      <button class="px-4 py-2 rounded-xl text-xs font-bold transition-colors border-none cursor-pointer"
+                              [class.bg-yellow-100]="examen.estado === 'activo'"
+                              [class.text-yellow-700]="examen.estado === 'activo'"
+                              [class.hover:bg-yellow-200]="examen.estado === 'activo'"
+                              [class.bg-green-100]="examen.estado !== 'activo'"
+                              [class.text-green-700]="examen.estado !== 'activo'"
+                              [class.hover:bg-green-200]="examen.estado !== 'activo'"
+                              (click)="alternarPublicacion(examen)">
+                        {{ examen.estado === 'activo' ? 'Despublicar' : 'Publicar' }}
+                      </button>
+                      <app-boton-accion tipo="editar" (accion)="abrirEditar(examen)"></app-boton-accion>
+                      <app-boton-accion tipo="eliminar" confirmacion="¿Eliminar evaluación completa?" (accion)="eliminar(examen.id)"></app-boton-accion>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </nz-table>
+        </div>
       </div>
-      <app-boton-accion tipo="crear" texto="Crear evaluación" [esSubmit]="true" [deshabilitado]="guardando() || !nueva.titulo.trim()" [cargando]="guardando()" claseExtra="daemon-btn"></app-boton-accion>
-    </form>
+    } @else {
+      <div class="py-12 bg-white rounded-2xl border border-slate-100">
+        <app-estado-vacio titulo="Sin evaluaciones" descripcion="Crea una evaluación para empezar." />
+      </div>
+    }
+  </section>
+</main>
 
-    <form class="panel highlight-panel assign-form" (ngSubmit)="agregarPregunta()">
-      <div class="section-title">
-        <h2>Agregar pregunta</h2>
-        <nz-tag class="daemon-tag" nzColor="cyan">Contenido</nz-tag>
+<!-- Modal Nueva Evaluación -->
+<nz-modal [(nzVisible)]="modalCrearVisible" nzTitle="Crear nueva evaluación" (nzOnCancel)="cerrarCrear()" (nzOnOk)="crear()" [nzOkLoading]="guardando()" [nzOkDisabled]="!nueva.titulo.trim()" nzOkText="Crear evaluación" nzCancelText="Cancelar" nzCentered>
+  <ng-container *nzModalContent>
+    <div class="flex flex-col gap-5 pt-2">
+      <label class="flex flex-col gap-1.5">
+        <span class="text-sm font-semibold text-slate-700">Título</span>
+        <input name="titulo" [(ngModel)]="nueva.titulo" required placeholder="Ej: Examen Final"
+               class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all">
+      </label>
+      
+      <label class="flex flex-col gap-1.5">
+        <span class="text-sm font-semibold text-slate-700">Nivel</span>
+        <select name="nivel" [(ngModel)]="nueva.nivel"
+                class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all cursor-pointer">
+          <option value="KIDS">KIDS</option>
+          <option value="TEENS">TEENS</option>
+          <option value="PRO">PRO</option>
+        </select>
+      </label>
+      
+      <label class="flex flex-col gap-1.5">
+        <span class="text-sm font-semibold text-slate-700">Estado Inicial</span>
+        <select name="estado" [(ngModel)]="nueva.estado"
+                class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all cursor-pointer">
+          <option value="borrador">Borrador</option>
+          <option value="activo">Activo</option>
+          <option value="finalizado">Finalizado</option>
+        </select>
+      </label>
+    </div>
+  </ng-container>
+</nz-modal>
+
+<!-- Modal Agregar Pregunta -->
+<nz-modal [(nzVisible)]="modalAgregarPreguntaVisible" nzTitle="Agregar pregunta" (nzOnCancel)="cerrarAgregarPregunta()" (nzOnOk)="agregarPregunta()" [nzOkLoading]="guardando()" [nzOkDisabled]="!pregunta.examen_id || !pregunta.enunciado.trim()" nzOkText="Guardar pregunta" nzCancelText="Cancelar" nzCentered nzWidth="600px">
+  <ng-container *nzModalContent>
+    <div class="flex flex-col gap-5 pt-2">
+      <div class="bg-cyan-50 p-4 rounded-xl border border-cyan-100 flex gap-3 items-start">
+        <div class="text-cyan-500 mt-0.5">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+          </svg>
+        </div>
+        <p class="text-sm text-cyan-800 font-medium leading-relaxed">Selecciona la evaluación y define el tipo de pregunta. Para opción múltiple, separa las opciones por comas.</p>
       </div>
-      <div class="form-grid">
-        <label>
-          Evaluación
-          <select name="examen_id" [(ngModel)]="pregunta.examen_id" required>
-            <option [ngValue]="null" disabled selected>Selecciona</option>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <label class="flex flex-col gap-1.5">
+          <span class="text-sm font-semibold text-slate-700">Evaluación Destino</span>
+          <select name="examen_id" [(ngModel)]="pregunta.examen_id" required
+                  class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all cursor-pointer">
+            <option [ngValue]="null" disabled selected>Selecciona evaluación</option>
             @for (examen of evaluaciones(); track examen.id) {
               <option [ngValue]="examen.id">{{ examen.titulo }}</option>
             }
           </select>
         </label>
-        <label>
-          Tipo
-          <select name="tipo" [(ngModel)]="pregunta.tipo">
-            <option value="opcion_multiple">opcion_multiple</option>
-            <option value="verdadero_falso">verdadero_falso</option>
-            <option value="texto">texto</option>
+        
+        <label class="flex flex-col gap-1.5">
+          <span class="text-sm font-semibold text-slate-700">Tipo de Pregunta</span>
+          <select name="tipo" [(ngModel)]="pregunta.tipo"
+                  class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all cursor-pointer">
+            <option value="opcion_multiple">Opción Múltiple</option>
+            <option value="verdadero_falso">Verdadero / Falso</option>
+            <option value="texto">Texto Libre</option>
           </select>
         </label>
-        <label class="field-wide">
-          Enunciado
-          <textarea name="enunciado" [(ngModel)]="pregunta.enunciado" rows="3" required></textarea>
-        </label>
-        <label>
-          Opciones (separadas por coma)
-          <input name="opciones" [(ngModel)]="pregunta.opciones">
-        </label>
-        <label>
-          Respuesta correcta
-          <input name="respuesta_correcta" [(ngModel)]="pregunta.respuesta_correcta" required>
-        </label>
       </div>
-      <app-boton-accion tipo="guardar" texto="Guardar pregunta" [esSubmit]="true" [deshabilitado]="guardando() || !pregunta.examen_id || !pregunta.enunciado.trim()" claseExtra="daemon-btn"></app-boton-accion>
-    </form>
-  </section>
+      
+      <label class="flex flex-col gap-1.5">
+        <span class="text-sm font-semibold text-slate-700">Enunciado</span>
+        <textarea name="enunciado" [(ngModel)]="pregunta.enunciado" rows="3" required placeholder="Pregunta que se le hará al alumno..."
+                  class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all resize-none"></textarea>
+      </label>
+      
+      <label class="flex flex-col gap-1.5">
+        <span class="text-sm font-semibold text-slate-700">Opciones (separadas por coma)</span>
+        <input name="opciones" [(ngModel)]="pregunta.opciones" placeholder="Ej: Opción 1, Opción 2, Opción 3"
+               class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all"
+               [disabled]="pregunta.tipo !== 'opcion_multiple'" [class.opacity-50]="pregunta.tipo !== 'opcion_multiple'">
+      </label>
+      
+      <label class="flex flex-col gap-1.5">
+        <span class="text-sm font-semibold text-slate-700">Respuesta Correcta</span>
+        <input name="respuesta_correcta" [(ngModel)]="pregunta.respuesta_correcta" required placeholder="Debe coincidir exactamente con una opción"
+               class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all">
+      </label>
+    </div>
+  </ng-container>
+</nz-modal>
 
-  @if (cargando()) {
-    <app-cargando class="state" texto="Cargando evaluaciones..."></app-cargando>
-  } @else if (evaluaciones().length) {
-    <section class="panel table-wrap mt-8 p-0">
-      <nz-table #tablaEvaluaciones [nzData]="evaluaciones()" [nzShowPagination]="true" [nzPageSize]="10" nzSize="middle" nzOuterBordered>
-        <thead>
-          <tr>
-            <th>Evaluación</th>
-            <th>Nivel</th>
-            <th>Estado</th>
-            <th class="text-center">Preguntas</th>
-            <th class="text-right">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (examen of tablaEvaluaciones.data; track examen.id) {
-            <tr>
-              <td class="font-bold">{{ examen.titulo }}</td>
-              <td><nz-tag nzColor="blue">{{ examen.nivel }}</nz-tag></td>
-              <td>
-                <nz-tag [nzColor]="examen.estado === 'activo' ? 'green' : (examen.estado === 'borrador' ? 'default' : 'red')">
-                  {{ examen.estado | uppercase }}
-                </nz-tag>
-              </td>
-              <td class="text-center font-mono">{{ examen.preguntas?.length || 0 }}</td>
-              <td class="text-right flex justify-end gap-2">
-                <button class="px-3 py-1 rounded-md text-xs font-semibold transition-colors border-none cursor-pointer"
-                        [class.bg-yellow-100]="examen.estado === 'activo'"
-                        [class.text-yellow-700]="examen.estado === 'activo'"
-                        [class.hover:bg-yellow-200]="examen.estado === 'activo'"
-                        [class.bg-green-100]="examen.estado !== 'activo'"
-                        [class.text-green-700]="examen.estado !== 'activo'"
-                        [class.hover:bg-green-200]="examen.estado !== 'activo'"
-                        (click)="alternarPublicacion(examen)">
-                  {{ examen.estado === 'activo' ? 'Despublicar' : 'Publicar' }}
-                </button>
-                <app-boton-accion tipo="editar" (accion)="abrirEditar(examen)"></app-boton-accion>
-                <app-boton-accion tipo="eliminar" confirmacion="¿Eliminar evaluación completa?" (accion)="eliminar(examen.id)"></app-boton-accion>
-              </td>
-            </tr>
-          }
-        </tbody>
-      </nz-table>
-    </section>
-  } @else {
-    <app-estado-vacio titulo="Sin evaluaciones" descripcion="Crea una evaluación para empezar." />
-  }
-</section>
-
-<nz-modal [(nzVisible)]="modalVisible" nzTitle="Editar Evaluación" (nzOnCancel)="cerrarEditar()" (nzOnOk)="guardarEdicion()" [nzOkLoading]="guardando()" nzWidth="500px">
+<!-- Modal Editar Evaluación -->
+<nz-modal [(nzVisible)]="modalEditVisible" nzTitle="Editar Evaluación" (nzOnCancel)="cerrarEditar()" (nzOnOk)="guardarEdicion()" [nzOkLoading]="guardando()" nzOkText="Guardar cambios" nzCancelText="Cancelar" nzCentered>
   <ng-container *nzModalContent>
     @if (evaluacionEditando) {
-      <div class="flex flex-col gap-4">
-        <label class="flex flex-col gap-1">
-          <span class="text-sm font-semibold">Título</span>
-          <input class="input input-bordered w-full" name="edit_titulo" [(ngModel)]="evaluacionEditando.titulo" required>
+      <div class="flex flex-col gap-5 pt-2">
+        <label class="flex flex-col gap-1.5">
+          <span class="text-sm font-semibold text-slate-700">Título</span>
+          <input name="edit_titulo" [(ngModel)]="evaluacionEditando.titulo" required
+                 class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all">
         </label>
         
-        <label class="flex flex-col gap-1">
-          <span class="text-sm font-semibold">Nivel</span>
-          <select class="select select-bordered w-full" name="edit_nivel" [(ngModel)]="evaluacionEditando.nivel">
+        <label class="flex flex-col gap-1.5">
+          <span class="text-sm font-semibold text-slate-700">Nivel</span>
+          <select name="edit_nivel" [(ngModel)]="evaluacionEditando.nivel"
+                  class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all cursor-pointer">
             <option value="KIDS">KIDS</option>
             <option value="TEENS">TEENS</option>
             <option value="PRO">PRO</option>
           </select>
         </label>
         
-        <label class="flex flex-col gap-1">
-          <span class="text-sm font-semibold">Estado manual</span>
-          <select class="select select-bordered w-full" name="edit_estado" [(ngModel)]="evaluacionEditando.estado">
-            <option value="borrador">borrador</option>
-            <option value="activo">activo</option>
-            <option value="finalizado">finalizado</option>
+        <label class="flex flex-col gap-1.5">
+          <span class="text-sm font-semibold text-slate-700">Estado</span>
+          <select name="edit_estado" [(ngModel)]="evaluacionEditando.estado"
+                  class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all cursor-pointer">
+            <option value="borrador">Borrador</option>
+            <option value="activo">Activo</option>
+            <option value="finalizado">Finalizado</option>
           </select>
         </label>
       </div>

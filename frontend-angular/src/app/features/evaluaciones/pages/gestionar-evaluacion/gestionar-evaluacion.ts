@@ -42,7 +42,9 @@ export class GestionarEvaluacion {
   nueva = { titulo: '', nivel: 'TEENS', estado: 'borrador' };
   pregunta = { examen_id: null as number | null, enunciado: '', tipo: 'opcion_multiple', opciones: '', respuesta_correcta: '' };
 
-  modalVisible = signal(false);
+  modalCrearVisible = signal(false);
+  modalAgregarPreguntaVisible = signal(false);
+  modalEditVisible = signal(false);
   evaluacionEditando: any = null;
 
   constructor(private evaluacion: Evaluacion, private message: NzMessageService) {
@@ -64,6 +66,15 @@ export class GestionarEvaluacion {
     });
   }
 
+  abrirCrear(): void {
+    this.nueva = { titulo: '', nivel: 'TEENS', estado: 'borrador' };
+    this.modalCrearVisible.set(true);
+  }
+
+  cerrarCrear(): void {
+    this.modalCrearVisible.set(false);
+  }
+
   crear(): void {
     this.guardando.set(true);
     this.mensaje.set('');
@@ -71,8 +82,9 @@ export class GestionarEvaluacion {
     this.evaluacion.crear(this.nueva).subscribe({
       next: () => {
         this.nueva = { titulo: '', nivel: 'TEENS', estado: 'borrador' };
-        this.mensaje.set('Evaluación creada exitosamente.');
+        this.message.success('Evaluación creada exitosamente.');
         this.guardando.set(false);
+        this.cerrarCrear();
         this.cargar();
       },
       error: (e) => {
@@ -80,6 +92,15 @@ export class GestionarEvaluacion {
         this.guardando.set(false);
       },
     });
+  }
+
+  abrirAgregarPregunta(): void {
+    this.pregunta = { examen_id: null, enunciado: '', tipo: 'opcion_multiple', opciones: '', respuesta_correcta: '' };
+    this.modalAgregarPreguntaVisible.set(true);
+  }
+
+  cerrarAgregarPregunta(): void {
+    this.modalAgregarPreguntaVisible.set(false);
   }
 
   agregarPregunta(): void {
@@ -102,8 +123,9 @@ export class GestionarEvaluacion {
     this.evaluacion.guardarPreguntas(examen.id, preguntas).subscribe({
       next: () => {
         this.pregunta = { examen_id: examen.id, enunciado: '', tipo: 'opcion_multiple', opciones: '', respuesta_correcta: '' };
-        this.mensaje.set('Pregunta agregada.');
+        this.message.success('Pregunta agregada.');
         this.guardando.set(false);
+        this.cerrarAgregarPregunta();
         this.cargar();
       },
       error: (e) => {
@@ -115,11 +137,11 @@ export class GestionarEvaluacion {
 
   abrirEditar(ev: any): void {
     this.evaluacionEditando = { ...ev };
-    this.modalVisible.set(true);
+    this.modalEditVisible.set(true);
   }
 
   cerrarEditar(): void {
-    this.modalVisible.set(false);
+    this.modalEditVisible.set(false);
     this.evaluacionEditando = null;
   }
 

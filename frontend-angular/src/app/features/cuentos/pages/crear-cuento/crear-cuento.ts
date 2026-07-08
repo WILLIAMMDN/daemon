@@ -3,12 +3,14 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Cuento } from '../../services/cuento';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
-
+import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { CommonModule } from '@angular/common';
+import { BotonAccion } from '../../../../shared/componentes/boton-accion/boton-accion';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-crear-cuento',
-  imports: [FormsModule, RouterLink, Cargando],
+  imports: [CommonModule, FormsModule, RouterLink, Cargando, NzAlertModule, BotonAccion],
   templateUrl: './crear-cuento.html',
   styleUrl: './crear-cuento.scss',
 })
