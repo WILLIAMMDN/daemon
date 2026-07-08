@@ -1,82 +1,52 @@
-<section class="chat-page">
-  <header class="page-header">
-    <div class="bot-heading">
-      <img [src]="botAvatar()" [alt]="bot()?.nombre_bot || 'Avatar del bot'">
+<section class="w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-6 md:gap-8 font-inter h-[calc(100vh-100px)]">
+  <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div class="flex items-center gap-4">
+      <img [src]="botAvatar()" [alt]="bot()?.nombre_bot || 'Avatar del bot'" class="w-16 h-16 rounded-full shadow-md object-cover bg-white">
       <div>
-        <p class="kicker">Asistente local con Ollama</p>
-        <h1>{{ bot()?.nombre_bot || 'Mi bot educativo' }}</h1>
-        <p>Conversación conectada al bot personal del estudiante.</p>
+        <span class="text-sm font-semibold uppercase tracking-wider text-blue-600">Asistente local con IA</span>
+        <h1 class="text-2xl md:text-3xl font-bold text-gray-900">{{ bot()?.nombre_bot || 'Mi bot educativo' }}</h1>
+        <p class="text-base text-gray-600">Conversación conectada al bot personal del estudiante.</p>
       </div>
     </div>
-    <div class="actions">
-      <a class="ghost-btn" routerLink="/alumno/herramientas/bot">Configurar bot</a>
-      <button type="button" (click)="limpiar()" [disabled]="!mensajes().length">Limpiar chat</button>
+    <div class="flex items-center gap-3">
+      <a routerLink="/alumno/herramientas/bot" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium rounded-lg transition-colors text-sm">
+        Configurar bot
+      </a>
+      <button type="button" (click)="limpiar()" [disabled]="!mensajesFormateados().length" class="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 font-medium rounded-lg transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed">
+        Limpiar chat
+      </button>
     </div>
   </header>
 
   @if (!bot()) {
-    <article class="notice setup-notice">
+    <article class="bg-yellow-50 border border-yellow-200 rounded-xl p-6 flex items-center justify-between shadow-sm">
       <div>
-        <strong>El bot aún no está configurado</strong>
-        <p>Guarda nombre, personalidad, avatar y conocimiento para habilitar el chat.</p>
+        <strong class="text-yellow-800 text-lg">El bot aún no está configurado</strong>
+        <p class="text-yellow-700">Guarda nombre, personalidad, avatar y conocimiento para habilitar el chat.</p>
       </div>
-      <a class="btn" routerLink="/alumno/herramientas/bot">Configurar ahora</a>
+      <a class="px-6 py-3 bg-yellow-500 hover:bg-yellow-600 text-white font-bold rounded-lg transition-colors shadow-md" routerLink="/alumno/herramientas/bot">Configurar ahora</a>
     </article>
   }
 
   @if (error()) {
-    <p class="error">{{ error() }}</p>
+    <p class="p-4 bg-red-50 text-red-600 border border-red-200 rounded-lg">{{ error() }}</p>
   }
 
-  <section class="chat-shell">
-    <aside class="bot-context">
-      <img class="context-avatar" [src]="botAvatar()" [alt]="bot()?.nombre_bot || 'Avatar del bot'">
-      <span class="badge" [class.warn]="!bot()">{{ bot() ? 'Activo' : 'Pendiente' }}</span>
-      <h2>Base del asistente</h2>
-      <p>{{ bot()?.system_prompt || 'Sin personalidad guardada.' }}</p>
-      <h3>Conocimiento</h3>
-      <p>{{ bot()?.conocimiento || 'Aún no hay conocimiento especializado.' }}</p>
-    </aside>
-
-    <section class="conversation" aria-label="Conversación con el bot">
-      @if (mensajes().length) {
-        @for (mensaje of mensajes(); track $index) {
-          <article class="message" [class.user]="mensaje.role === 'user'">
-            @if (mensaje.role !== 'user') {
-              <img class="message-avatar" [src]="botAvatar()" [alt]="bot()?.nombre_bot || 'Bot'">
-            }
-            <div>
-              <strong>{{ mensaje.role === 'user' ? 'Tú' : bot()?.nombre_bot || 'Bot' }}</strong>
-              <p>{{ mensaje.content }}</p>
-            </div>
-          </article>
-        }
-      } @else {
-        <article class="empty">
-          Aún no hay mensajes. Escribe una pregunta cuando el bot esté configurado.
-        </article>
-      }
-
-      @if (enviando()) {
-        <article class="message">
-          <img class="message-avatar" [src]="botAvatar()" [alt]="bot()?.nombre_bot || 'Bot'">
-          <div>
-            <strong>{{ bot()?.nombre_bot || 'Bot' }}</strong>
-            <p>Generando respuesta con Gemma...</p>
-          </div>
-        </article>
-      }
-    </section>
+  <section class="flex-1 w-full bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col overflow-hidden relative">
+    @if (bot()) {
+      <deep-chat
+        [request]="requestConfig"
+        [history]="mensajesFormateados()"
+        [textToSpeech]="true"
+        [speechToText]="true"
+        [style]="chatStyle"
+        [messageStyles]="messageStyles"
+        [avatars]="{ ai: { src: botAvatar() } }"
+      ></deep-chat>
+    } @else {
+      <div class="w-full h-[650px] flex items-center justify-center bg-slate-50">
+        <p class="text-slate-400 font-medium text-lg">Debes configurar tu bot primero.</p>
+      </div>
+    }
   </section>
-
-  <form class="composer" (ngSubmit)="enviar()">
-    <textarea
-      name="texto"
-      [(ngModel)]="texto"
-      placeholder="Escribe tu pregunta..."
-      rows="3"
-      [disabled]="!bot() || enviando()"
-    ></textarea>
-    <button type="submit" [disabled]="!bot() || enviando() || !texto.trim()">Enviar</button>
-  </form>
 </section>
