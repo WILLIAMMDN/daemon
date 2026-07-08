@@ -1,33 +1,59 @@
-<section class="page">
-  <header class="page-header">
-    <div>
-      <p class="kicker">Laboratorio IA</p>
-      <h1>Cerebro del bot</h1>
-      <p>Matriz neural guardada para el entrenamiento del estudiante.</p>
+<main class="w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-6 md:gap-8 font-inter">
+  <!-- Cabecera -->
+  <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+    <div class="flex flex-col gap-1">
+      <span class="text-sm font-semibold uppercase tracking-wider text-blue-600">Laboratorio IA</span>
+      <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 leading-tight">Cerebro del bot</h1>
+      <p class="text-sm text-slate-600">Matriz neural guardada para el entrenamiento del estudiante.</p>
     </div>
-    <div class="actions">
-      <button type="button" (click)="cargar()">Actualizar</button>
-      <a class="ghost-btn" routerLink="/alumno/herramientas/entrenamiento">Entrenamiento</a>
+    <div class="flex items-center gap-3 w-full md:w-auto">
+      <a routerLink="/alumno/herramientas/entrenamiento" class="flex-1 md:flex-none text-center bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium py-2 px-4 rounded-lg transition-colors text-sm cursor-pointer whitespace-nowrap">
+        Entrenamiento
+      </a>
+      <div class="flex-1 md:flex-none">
+        <app-boton-accion tipo="actualizar" (accion)="cargar()" [cargando]="cargando()" [deshabilitado]="cargando()"></app-boton-accion>
+      </div>
     </div>
   </header>
 
-  @if (mensaje()) { <p class="success">{{ mensaje() }}</p> }
-  @if (error()) { <p class="error">{{ error() }}</p> }
-
-  @if (cargando()) {
-    <app-cargando class="state" texto="Cargando cerebro..."></app-cargando>
-  } @else {
-    <section class="split">
-      <form class="panel" (ngSubmit)="guardar()">
-        <h2>Matriz neural</h2>
-        <textarea name="matriz" [(ngModel)]="matrizTexto" rows="16"></textarea>
-        <button type="submit" [disabled]="guardando()">Guardar matriz</button>
-      </form>
-
-      <article class="panel">
-        <h2>Estado actual</h2>
-        <pre>{{ cerebro() | json }}</pre>
-      </article>
-    </section>
+  @if (mensaje()) {
+    <nz-alert nzType="success" nzShowIcon [nzMessage]="mensaje()"></nz-alert>
   }
-</section>
+  @if (error()) {
+    <nz-alert nzType="error" nzShowIcon [nzMessage]="error()"></nz-alert>
+  }
+
+  <!-- Contenido Principal -->
+  <section class="w-full">
+    @if (cargando()) {
+      <div class="py-12 bg-white rounded-2xl shadow-sm border border-slate-100">
+        <app-cargando texto="Cargando cerebro..."></app-cargando>
+      </div>
+    } @else {
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <form (ngSubmit)="guardar()" class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 md:p-8 flex flex-col gap-6">
+          <div class="flex flex-col gap-1 border-b border-slate-100 pb-4">
+            <h2 class="text-xl font-bold text-slate-900">Editar matriz neural</h2>
+            <p class="text-sm text-slate-500">Configura los parámetros del modelo manualmente.</p>
+          </div>
+          
+          <textarea name="matriz" [(ngModel)]="matrizTexto" rows="16"
+                    class="font-mono text-sm px-4 py-3 bg-slate-800 text-green-400 border border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 w-full resize-y shadow-inner"></textarea>
+          
+          <div class="pt-2 flex justify-end">
+            <app-boton-accion tipo="guardar" [texto]="guardando() ? 'Guardando...' : 'Guardar matriz'" [esSubmit]="true" [deshabilitado]="guardando()" [cargando]="guardando()"></app-boton-accion>
+          </div>
+        </form>
+
+        <article class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 md:p-8 flex flex-col gap-6">
+          <div class="flex flex-col gap-1 border-b border-slate-100 pb-4">
+            <h2 class="text-xl font-bold text-slate-900">Estado actual</h2>
+            <p class="text-sm text-slate-500">JSON parseado y activo en el backend.</p>
+          </div>
+          
+          <pre class="bg-slate-50 p-4 rounded-xl border border-slate-200 overflow-x-auto text-sm font-mono text-slate-700 shadow-inner h-full max-h-[500px] overflow-y-auto">{{ cerebro() | json }}</pre>
+        </article>
+      </div>
+    }
+  </section>
+</main>

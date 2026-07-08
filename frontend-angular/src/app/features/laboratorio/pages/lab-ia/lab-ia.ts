@@ -4,12 +4,14 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Chatbot } from '../../../chatbot/services/chatbot';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
-
+import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { CommonModule } from '@angular/common';
+import { BotonAccion } from '../../../../shared/componentes/boton-accion/boton-accion';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-lab-ia',
-  imports: [FormsModule, JsonPipe, RouterLink, Cargando],
+  imports: [CommonModule, FormsModule, JsonPipe, RouterLink, Cargando, NzAlertModule, BotonAccion],
   templateUrl: './lab-ia.html',
   styleUrl: './lab-ia.scss',
 })

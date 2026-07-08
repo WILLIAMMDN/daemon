@@ -1,39 +1,65 @@
-<section class="page lab-module">
-  <header class="page-header">
-    <div>
-      <p class="kicker">Neuro Maze</p>
-      <h1>Motor de laberinto</h1>
-      <p>Módulo heredado conservado para la integración interactiva del laboratorio.</p>
+<main class="w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-6 md:gap-8 font-inter">
+  <!-- Cabecera -->
+  <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+    <div class="flex flex-col gap-1">
+      <span class="text-sm font-semibold uppercase tracking-wider text-blue-600">Neuro Maze</span>
+      <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 leading-tight">Motor de laberinto</h1>
+      <p class="text-sm text-slate-600">Módulo heredado conservado para la integración interactiva del laboratorio.</p>
     </div>
-    <div class="actions">
-      <a class="ghost-btn" routerLink="/alumno/herramientas/laboratorio">Cerebro IA</a>
-      <a class="ghost-btn" routerLink="/alumno/herramientas/entrenamiento">Entrenamiento</a>
+    <div class="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+      <a routerLink="/alumno/herramientas/laboratorio" class="w-full sm:w-auto text-center bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium py-2.5 px-4 rounded-xl transition-colors text-sm cursor-pointer whitespace-nowrap">
+        Cerebro IA
+      </a>
+      <a routerLink="/alumno/herramientas/entrenamiento" class="w-full sm:w-auto text-center bg-blue-50 hover:bg-blue-100 text-blue-700 font-medium py-2.5 px-4 rounded-xl transition-colors text-sm cursor-pointer whitespace-nowrap border border-blue-200">
+        Entrenamiento
+      </a>
     </div>
   </header>
 
-  <section class="split">
-    <article class="panel status-panel">
-      <span class="badge warn">Motor heredado</span>
-      <h2>Base técnica disponible</h2>
-      <p>Los archivos del laberinto y el agente de aprendizaje estan en `public/legacy` para conectarlos después a una escena Angular real.</p>
+  <!-- Contenido Principal -->
+  <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <article class="bg-white rounded-2xl shadow-sm border border-amber-200 p-6 md:p-8 flex flex-col gap-6 relative overflow-hidden">
+      <!-- Indicador visual superior -->
+      <div class="absolute top-0 left-0 w-full h-1 bg-amber-400"></div>
+      
+      <div class="flex flex-col gap-3 items-start">
+        <nz-tag nzColor="orange" class="font-bold border-0 rounded-md">Motor heredado</nz-tag>
+        <h2 class="text-xl md:text-2xl font-bold text-slate-900">Base técnica disponible</h2>
+        <p class="text-slate-600 leading-relaxed">
+          Los archivos del laberinto y el agente de aprendizaje están en <code class="bg-slate-100 text-slate-800 px-1.5 py-0.5 rounded text-sm">public/legacy</code> para conectarlos después a una escena Angular real.
+        </p>
+      </div>
 
-      <div class="actions">
-        @for (enlace of enlaces; track enlace.ruta) {
-          <a class="ghost-btn" [routerLink]="enlace.ruta">{{ enlace.etiqueta }}</a>
-        }
+      <div class="flex flex-col gap-3 mt-auto pt-6 border-t border-slate-100">
+        <span class="text-sm font-semibold text-slate-500 uppercase tracking-wider">Enlaces rápidos</span>
+        <div class="flex flex-wrap gap-2">
+          @for (enlace of enlaces; track enlace.ruta) {
+            <a [routerLink]="enlace.ruta" class="bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-medium py-2 px-3 rounded-lg transition-colors text-sm cursor-pointer flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-slate-300"></span>
+              {{ enlace.etiqueta }}
+            </a>
+          }
+        </div>
       </div>
     </article>
 
-    <article class="panel">
-      <h2>Activos detectados</h2>
-      <div class="asset-list">
+    <article class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 md:p-8 flex flex-col gap-6">
+      <div class="flex flex-col gap-1 border-b border-slate-100 pb-4">
+        <h2 class="text-xl font-bold text-slate-900">Activos detectados</h2>
+        <p class="text-sm text-slate-500">Archivos disponibles en el sistema.</p>
+      </div>
+      
+      <div class="flex flex-col gap-3">
         @for (archivo of archivos; track archivo.ruta) {
-          <a [href]="archivo.ruta" target="_blank">
-            <span>{{ archivo.tipo }}</span>
-            <strong>{{ archivo.nombre }}</strong>
+          <a [href]="archivo.ruta" target="_blank" class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-200 p-4 rounded-xl transition-all cursor-pointer group">
+            <div class="flex flex-col gap-1">
+              <span class="text-xs font-bold text-slate-500 uppercase tracking-wider group-hover:text-blue-500 transition-colors">{{ archivo.tipo }}</span>
+              <strong class="text-slate-900 group-hover:text-blue-700 transition-colors">{{ archivo.nombre }}</strong>
+            </div>
+            <span class="text-xs text-slate-400 bg-white px-2 py-1 rounded border border-slate-100 hidden sm:block">Abrir</span>
           </a>
         }
       </div>
     </article>
   </section>
-</section>
+</main>

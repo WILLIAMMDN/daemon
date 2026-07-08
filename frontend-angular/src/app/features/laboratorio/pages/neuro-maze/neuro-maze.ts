@@ -1,10 +1,12 @@
 import { Component , ChangeDetectionStrategy} from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { NzTagModule } from 'ng-zorro-antd/tag';
+import { CommonModule } from '@angular/common';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-neuro-maze',
-  imports: [RouterLink],
+  imports: [CommonModule, RouterLink, NzTagModule],
   templateUrl: './neuro-maze.html',
   styleUrl: './neuro-maze.scss',
 })
