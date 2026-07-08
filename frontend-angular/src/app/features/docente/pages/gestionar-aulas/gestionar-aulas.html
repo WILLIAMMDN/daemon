@@ -3,12 +3,10 @@
   <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
     <div class="flex flex-col gap-1">
       <span class="text-sm font-semibold uppercase tracking-wider text-blue-600">Docente</span>
-      <h1 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Gestionar aulas</h1>
-      <p class="text-base text-gray-600 dark:text-gray-400">Administra los grupos y niveles de tus estudiantes.</p>
+      <h1 class="text-2xl md:text-3xl font-bold text-gray-900">Gestionar aulas</h1>
+      <p class="text-base text-gray-600">Administra los grupos y niveles de tus estudiantes.</p>
     </div>
-    <button nz-button nzType="default" (click)="cargar()" [nzLoading]="cargando()" class="flex items-center gap-2">
-      Actualizar
-    </button>
+    <app-boton-accion tipo="actualizar" (accion)="cargar()" [cargando]="cargando()"></app-boton-accion>
   </header>
 
   <!-- Alertas -->
@@ -23,34 +21,32 @@
   <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
     <!-- Panel Izquierdo: Formulario -->
     <div class="lg:col-span-1">
-      <form (ngSubmit)="crear()" class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col gap-4">
-        <h2 class="text-lg font-bold text-gray-900 dark:text-white border-b border-gray-100 dark:border-gray-700 pb-2">Nueva aula</h2>
+      <form (ngSubmit)="crear()" class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col gap-4">
+        <h2 class="text-lg font-bold text-gray-900 border-b border-gray-100 pb-2">Nueva aula</h2>
         
         <label class="flex flex-col gap-1">
-          <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Nombre del grupo</span>
+          <span class="text-sm font-medium text-gray-700">Nombre del grupo</span>
           <input name="nombre" [(ngModel)]="nueva.nombre" required placeholder="Ej: Grupo A, Avanzados..." 
-                 class="px-3 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
+                 class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
         </label>
         
         <label class="flex flex-col gap-1">
-          <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Nivel Educativo</span>
+          <span class="text-sm font-medium text-gray-700">Nivel Educativo</span>
           <select name="nivel" [(ngModel)]="nueva.nivel"
-                  class="px-3 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
+                  class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
             <option value="KIDS">KIDS</option>
             <option value="TEENS">TEENS</option>
             <option value="PRO">PRO</option>
           </select>
         </label>
         
-        <button nz-button nzType="primary" type="submit" [nzLoading]="guardando()" [disabled]="guardando() || !nueva.nombre.trim()" class="mt-2 w-full">
-          Crear aula
-        </button>
+        <app-boton-accion tipo="crear" texto="Crear aula" [anchoCompleto]="true" [esSubmit]="true" [deshabilitado]="guardando() || !nueva.nombre.trim()" [cargando]="guardando()" claseExtra="mt-2"></app-boton-accion>
       </form>
     </div>
 
     <!-- Panel Derecho: Tabla -->
     <div class="lg:col-span-2">
-      <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         @if (cargando()) {
           <div class="p-8">
             <app-cargando texto="Cargando aulas..."></app-cargando>
@@ -68,13 +64,13 @@
             <tbody>
               @for (aula of tablaAulas.data; track aula.id) {
                 <tr>
-                  <td class="font-medium text-gray-900 dark:text-white">{{ aula.nombre }}</td>
+                  <td class="font-medium text-gray-900">{{ aula.nombre }}</td>
                   <td><nz-tag nzColor="blue">{{ aula.nivel }}</nz-tag></td>
-                  <td class="text-gray-600 dark:text-gray-400">{{ aula.usuarios_count ?? 0 }}</td>
+                  <td class="text-gray-600">{{ aula.usuarios_count ?? 0 }}</td>
                   <td>
                     <div class="flex items-center gap-2">
-                      <button nz-button nzType="default" nzSize="small" (click)="abrirEditar(aula)">Editar</button>
-                      <button nz-button nzDanger nzSize="small" nz-popconfirm nzPopconfirmTitle="¿Seguro que deseas eliminar esta aula?" nzPopconfirmPlacement="left" (nzOnConfirm)="eliminar(aula.id)">Eliminar</button>
+                      <app-boton-accion tipo="editar" (accion)="abrirEditar(aula)"></app-boton-accion>
+                      <app-boton-accion tipo="eliminar" confirmacion="¿Seguro que deseas eliminar esta aula?" (accion)="eliminar(aula.id)"></app-boton-accion>
                     </div>
                   </td>
                 </tr>
@@ -97,15 +93,15 @@
     @if (aulaEditando) {
       <div class="flex flex-col gap-4">
         <label class="flex flex-col gap-1">
-          <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Nombre del grupo</span>
+          <span class="text-sm font-medium text-gray-700">Nombre del grupo</span>
           <input name="edit_nombre" [(ngModel)]="aulaEditando.nombre" required
-                 class="px-3 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
+                 class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
         </label>
         
         <label class="flex flex-col gap-1">
-          <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Nivel Educativo</span>
+          <span class="text-sm font-medium text-gray-700">Nivel Educativo</span>
           <select name="edit_nivel" [(ngModel)]="aulaEditando.nivel"
-                  class="px-3 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
+                  class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
             <option value="KIDS">KIDS</option>
             <option value="TEENS">TEENS</option>
             <option value="PRO">PRO</option>

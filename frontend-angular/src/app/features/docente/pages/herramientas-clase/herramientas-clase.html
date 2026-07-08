@@ -3,12 +3,10 @@
   <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
     <div class="flex flex-col gap-1">
       <span class="text-sm font-semibold uppercase tracking-wider text-blue-600">Docente</span>
-      <h1 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Revisar Entregas</h1>
-      <p class="text-base text-gray-600 dark:text-gray-400">Evalúa las evidencias de misiones enviadas por tus estudiantes.</p>
+      <h1 class="text-2xl md:text-3xl font-bold text-gray-900">Revisar Entregas</h1>
+      <p class="text-base text-gray-600">Evalúa las evidencias de misiones enviadas por tus estudiantes.</p>
     </div>
-    <button nz-button nzType="default" (click)="cargar()" [nzLoading]="cargando()" class="flex items-center gap-2">
-      Actualizar
-    </button>
+    <app-boton-accion tipo="actualizar" (accion)="cargar()" [cargando]="cargando()"></app-boton-accion>
   </header>
 
   <!-- Alertas -->
@@ -23,49 +21,47 @@
   <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
     <!-- Panel Izquierdo: Formulario de Revisión -->
     <div class="lg:col-span-1">
-      <form (ngSubmit)="revisar()" class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col gap-4">
-        <h2 class="text-lg font-bold text-gray-900 dark:text-white border-b border-gray-100 dark:border-gray-700 pb-2 flex items-center justify-between">
+      <form (ngSubmit)="revisar()" class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col gap-4">
+        <h2 class="text-lg font-bold text-gray-900 border-b border-gray-100 pb-2 flex items-center justify-between">
           Calificar
           @if (revision.id) { <nz-tag nzColor="blue">#{{ revision.id }}</nz-tag> }
         </h2>
         
         @if (!revision.id) {
-          <div class="p-4 bg-blue-50 dark:bg-blue-900/20 text-blue-800 dark:text-blue-300 rounded-lg text-sm border border-blue-100 dark:border-blue-900 text-center">
+          <div class="p-4 bg-blue-50 text-blue-800 rounded-lg text-sm border border-blue-100 text-center">
             Selecciona una entrega de la tabla para evaluarla.
           </div>
         }
         
         <label class="flex flex-col gap-1">
-          <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Veredicto</span>
+          <span class="text-sm font-medium text-gray-700">Veredicto</span>
           <select name="estado" [(ngModel)]="revision.estado" [disabled]="!revision.id"
-                  class="px-3 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full disabled:opacity-50">
+                  class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full disabled:opacity-50">
             <option value="aprobado">Aprobar</option>
             <option value="rechazado">Rechazar / Rehacer</option>
           </select>
         </label>
         
         <label class="flex flex-col gap-1">
-          <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Tokens asignados</span>
+          <span class="text-sm font-medium text-gray-700">Tokens asignados</span>
           <input name="calificacion" type="number" min="0" [(ngModel)]="revision.calificacion" [disabled]="!revision.id"
-                 class="px-3 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full disabled:opacity-50">
+                 class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full disabled:opacity-50">
         </label>
         
         <label class="flex flex-col gap-1">
-          <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Comentario de feedback</span>
+          <span class="text-sm font-medium text-gray-700">Comentario de feedback</span>
           <textarea name="comentario_docente" rows="4" [(ngModel)]="revision.comentario_docente" [disabled]="!revision.id"
                     placeholder="Excelente trabajo... o faltó mejorar..."
-                    class="px-3 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full disabled:opacity-50"></textarea>
+                    class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full disabled:opacity-50"></textarea>
         </label>
         
-        <button nz-button nzType="primary" type="submit" [nzLoading]="guardando()" [disabled]="guardando() || !revision.id" class="mt-2 w-full">
-          Guardar evaluación
-        </button>
+        <app-boton-accion tipo="guardar" texto="Guardar evaluación" [anchoCompleto]="true" [esSubmit]="true" [deshabilitado]="guardando() || !revision.id" [cargando]="guardando()" claseExtra="mt-2"></app-boton-accion>
       </form>
     </div>
 
     <!-- Panel Derecho: Tabla -->
     <div class="lg:col-span-2">
-      <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden h-full flex flex-col">
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden h-full flex flex-col">
         @if (cargando()) {
           <div class="p-8 m-auto">
             <app-cargando texto="Cargando entregas pendientes..."></app-cargando>
@@ -84,12 +80,12 @@
               </thead>
               <tbody>
                 @for (entrega of tablaEntregas.data; track entrega.id) {
-                  <tr [class.bg-blue-50]="revision.id === entrega.id" [class.dark:bg-blue-900]="revision.id === entrega.id">
+                  <tr [class.bg-blue-50]="revision.id === entrega.id">
                     <td>
-                      <div class="font-medium text-gray-900 dark:text-white">{{ entrega.alumno }}</div>
+                      <div class="font-medium text-gray-900">{{ entrega.alumno }}</div>
                       <div class="text-xs text-gray-500">{{ entrega.nivel }}</div>
                     </td>
-                    <td class="text-gray-700 dark:text-gray-300">{{ entrega.mision }}</td>
+                    <td class="text-gray-700">{{ entrega.mision }}</td>
                     <td>
                       <nz-tag [nzColor]="entrega.estado === 'pendiente' ? 'gold' : (entrega.estado === 'aprobado' ? 'success' : 'error')">
                         {{ entrega.estado | uppercase }}
@@ -97,7 +93,7 @@
                     </td>
                     <td>
                       @if (entrega.archivo_url) {
-                        <a [href]="entrega.archivo_url" target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1 text-sm">
+                        <a [href]="entrega.archivo_url" target="_blank" class="text-blue-600 hover:underline flex items-center gap-1 text-sm">
                           Ver archivo ↗
                         </a>
                       } @else {
@@ -105,9 +101,7 @@
                       }
                     </td>
                     <td>
-                      <button nz-button nzType="default" nzSize="small" (click)="seleccionar(entrega)" [disabled]="revision.id === entrega.id">
-                        {{ revision.id === entrega.id ? 'Revisando' : 'Revisar' }}
-                      </button>
+                      <app-boton-accion tipo="revisar" [texto]="revision.id === entrega.id ? 'Revisando' : 'Revisar'" (accion)="seleccionar(entrega)" [deshabilitado]="revision.id === entrega.id"></app-boton-accion>
                     </td>
                   </tr>
                 }

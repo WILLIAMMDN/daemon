@@ -11,11 +11,12 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 
 import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { BotonAccion } from '../../../../shared/componentes/boton-accion/boton-accion';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-gestionar-tienda',
-  imports: [FormsModule, CommonModule, Cargando, NzTableModule, NzPopconfirmModule, NzModalModule, NzTagModule, NzButtonModule, NzAlertModule],
+  imports: [FormsModule, CommonModule, Cargando, NzTableModule, NzPopconfirmModule, NzModalModule, NzTagModule, NzButtonModule, NzAlertModule, BotonAccion],
   templateUrl: './gestionar-tienda.html',
   styleUrl: './gestionar-tienda.scss',
 })

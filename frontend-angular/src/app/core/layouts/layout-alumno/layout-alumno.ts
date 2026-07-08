@@ -1,5 +1,7 @@
-import { Component , ChangeDetectionStrategy} from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, OnInit } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
+import { Title } from '@angular/platform-browser';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faBell, faChevronDown, faMagnifyingGlass, faShieldHalved } from '@fortawesome/free-solid-svg-icons';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
@@ -12,6 +14,7 @@ import { Activos } from '../../servicios/activos';
 import { Autenticacion } from '../../servicios/autenticacion';
 import { CargaGlobal } from '../../servicios/carga-global';
 import { Sesion } from '../../servicios/sesion';
+import { NotificacionesService } from '../../servicios/notificaciones.service';
 import { alumnoSidebarSections } from '../portal-sidebar.config';
 
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
@@ -20,11 +23,19 @@ import { faUser, faGear, faArrowRightFromBracket } from '@fortawesome/free-solid
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-layout-alumno',
-  imports: [RouterOutlet, RouterLink, FontAwesomeModule, NzAvatarModule, NzBadgeModule, NzButtonModule, NzDropDownModule, EmailVerificationBanner, MonedaDaemon, SidebarPortal],
+  imports: [RouterOutlet, RouterLink, FontAwesomeModule, NzAvatarModule, NzBadgeModule, NzButtonModule, NzDropDownModule, EmailVerificationBanner, MonedaDaemon, SidebarPortal, DatePipe],
   templateUrl: './layout-alumno.html',
   styleUrl: './layout-alumno.scss',
 })
-export class LayoutAlumno {
+export class LayoutAlumno implements OnInit {
+  public readonly sesion = inject(Sesion);
+  private readonly autenticacion = inject(Autenticacion);
+  private readonly notificacionesService = inject(NotificacionesService);
+  private readonly router = inject(Router);
+  private readonly activos = inject(Activos);
+  private readonly cargaGlobal = inject(CargaGlobal);
+  private readonly titleService = inject(Title);
+
   readonly seccionesSidebar = alumnoSidebarSections;
   readonly iconos = {
     buscar: faMagnifyingGlass,
@@ -36,28 +47,23 @@ export class LayoutAlumno {
     salir: faArrowRightFromBracket
   };
 
-  // Mock notifications to show a functional dropdown
-  notificaciones = [
-    { id: 1, titulo: 'Insignia ganada', mensaje: '¡Felicidades! Has ganado la insignia "Primeros Pasos".', leida: false, tiempo: 'Hace 10 min' },
-    { id: 2, titulo: 'Misión revisada', mensaje: 'Tu profesor ha revisado tu entrega. ¡Revisa tu feedback!', leida: false, tiempo: 'Hace 2 horas' },
-    { id: 3, titulo: 'Nueva misión', mensaje: 'Hay una nueva misión disponible en tu aula.', leida: true, tiempo: 'Hace 1 día' }
-  ];
+  // Servicio de Notificaciones
+  notificaciones = this.notificacionesService.notificaciones;
+  notificacionesNoLeidas = this.notificacionesService.noLeidas;
 
-  get notificacionesNoLeidas(): number {
-    return this.notificaciones.filter(n => !n.leida).length;
+  constructor() {
+    this.titleService.setTitle('Portal Alumno | DAEMON');
+  }
+
+  ngOnInit(): void {
+    this.notificacionesService.cargarNotificaciones().subscribe();
   }
 
   marcarComoLeidas(): void {
-    this.notificaciones = this.notificaciones.map(n => ({ ...n, leida: true }));
+    if (this.notificacionesNoLeidas() > 0) {
+      this.notificacionesService.marcarTodasComoLeidas().subscribe();
+    }
   }
-
-  constructor(
-    public sesion: Sesion,
-    private auth: Autenticacion,
-    private router: Router,
-    private activos: Activos,
-    private cargaGlobal: CargaGlobal,
-  ) {}
 
   perfilDetalle(): string {
     const usuario = this.sesion.usuario();
@@ -94,7 +100,7 @@ export class LayoutAlumno {
   salir(): void {
     const carga = this.cargaGlobal.mostrar('Cerrando sesion...');
 
-    this.auth.logout().subscribe({
+    this.autenticacion.logout().subscribe({
       next: () => this.volverAlLogin(carga),
       error: () => {
         this.sesion.limpiar();

@@ -11,6 +11,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { Evaluacion } from '../../services/evaluacion';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
+import { BotonAccion } from '../../../../shared/componentes/boton-accion/boton-accion';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -25,7 +26,8 @@ import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-
     NzModalModule,
     NzTableModule,
     NzTagModule,
-    NzPopconfirmModule
+    NzPopconfirmModule,
+    BotonAccion
   ],
   templateUrl: './gestionar-evaluacion.html',
   styleUrl: './gestionar-evaluacion.scss',

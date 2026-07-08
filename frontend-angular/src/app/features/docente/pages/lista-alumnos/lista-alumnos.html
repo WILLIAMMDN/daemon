@@ -3,26 +3,24 @@
   <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
     <div class="flex flex-col gap-1">
       <span class="text-sm font-semibold uppercase tracking-wider text-blue-600">Docente</span>
-      <h1 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Alumnos y aulas</h1>
-      <p class="text-base text-gray-600 dark:text-gray-400">Gestiona estudiantes, tokens y separación académica por aula.</p>
+      <h1 class="text-2xl md:text-3xl font-bold text-gray-900">Alumnos y aulas</h1>
+      <p class="text-base text-gray-600">Gestiona estudiantes, tokens y separación académica por aula.</p>
     </div>
-    <button nz-button nzType="default" (click)="cargar()" [nzLoading]="cargando()" class="flex items-center gap-2">
-      Actualizar
-    </button>
+    <app-boton-accion tipo="actualizar" (accion)="cargar()" [cargando]="cargando()"></app-boton-accion>
   </header>
 
   <!-- Panel de Alcance Académico -->
   @if (alcance(); as scope) {
     <section class="p-6 rounded-2xl border"
              [class]="scope.tipo === 'sin_aula' 
-                      ? 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800' 
-                      : 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800'">
+                      ? 'bg-yellow-50 border-yellow-200' 
+                      : 'bg-blue-50 border-blue-200'">
       <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <p class="text-sm font-semibold uppercase tracking-wider"
              [class]="scope.tipo === 'sin_aula' ? 'text-yellow-600' : 'text-blue-600'">Alcance académico</p>
-          <h2 class="text-xl font-bold text-gray-900 dark:text-white">{{ scope.titulo }}</h2>
-          <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ scope.descripcion }}</p>
+          <h2 class="text-xl font-bold text-gray-900">{{ scope.titulo }}</h2>
+          <p class="text-sm text-gray-600 mt-1">{{ scope.descripcion }}</p>
         </div>
         <div class="flex gap-2">
           <nz-tag [nzColor]="scope.tipo === 'global' ? 'purple' : scope.tipo === 'sin_aula' ? 'gold' : 'green'">
@@ -51,38 +49,38 @@
       
       @if (esAdmin()) {
         <!-- Formulario Crear Aula -->
-        <form (ngSubmit)="crearAula()" class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col gap-4">
-          <h2 class="text-lg font-bold text-gray-900 dark:text-white border-b border-gray-100 dark:border-gray-700 pb-2">Nueva aula</h2>
+        <form (ngSubmit)="crearAula()" class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col gap-4">
+          <h2 class="text-lg font-bold text-gray-900 border-b border-gray-100 pb-2">Nueva aula</h2>
           
           <label class="flex flex-col gap-1">
-            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Nombre</span>
+            <span class="text-sm font-medium text-gray-700">Nombre</span>
             <input name="nombre_aula" [(ngModel)]="nuevaAula.nombre" required placeholder="Ej. Teens Sabado 10 AM"
-                   class="px-3 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
+                   class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
           </label>
           
           <label class="flex flex-col gap-1">
-            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Nivel</span>
+            <span class="text-sm font-medium text-gray-700">Nivel</span>
             <input name="nivel_aula" [(ngModel)]="nuevaAula.nivel" placeholder="KIDS, TEENS, PRO o TODOS"
-                   class="px-3 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
+                   class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
           </label>
           
           <label class="flex flex-col gap-1">
-            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Código</span>
+            <span class="text-sm font-medium text-gray-700">Código</span>
             <input name="codigo_aula" [(ngModel)]="nuevaAula.codigo" placeholder="TEENS-SAB-10"
-                   class="px-3 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
+                   class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
           </label>
           
-          <button nz-button nzType="primary" type="submit" [nzLoading]="guardando()" [disabled]="guardando() || !puedeCrearAula()" class="mt-2 w-full">Crear aula</button>
+          <app-boton-accion tipo="crear" texto="Crear aula" [anchoCompleto]="true" [esSubmit]="true" [deshabilitado]="guardando() || !puedeCrearAula()" [cargando]="guardando()" claseExtra="mt-2"></app-boton-accion>
         </form>
 
         <!-- Aulas Activas Resumen -->
-        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
-          <h2 class="text-lg font-bold text-gray-900 dark:text-white border-b border-gray-100 dark:border-gray-700 pb-2 mb-4">Aulas activas</h2>
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+          <h2 class="text-lg font-bold text-gray-900 border-b border-gray-100 pb-2 mb-4">Aulas activas</h2>
           @if (aulas().length) {
             <div class="flex flex-col gap-3 max-h-64 overflow-y-auto pr-2">
               @for (aula of aulas(); track aula.id) {
-                <div class="flex flex-col bg-gray-50 dark:bg-gray-900 p-3 rounded-lg border border-gray-200 dark:border-gray-700">
-                  <strong class="text-gray-900 dark:text-white">{{ aula.nombre }}</strong>
+                <div class="flex flex-col bg-gray-50 p-3 rounded-lg border border-gray-200">
+                  <strong class="text-gray-900">{{ aula.nombre }}</strong>
                   <div class="flex justify-between items-center mt-1">
                     <span class="text-xs text-gray-500">{{ aula.codigo || 'Sin código' }} - {{ aula.nivel || 'Sin nivel' }}</span>
                     <span class="text-xs font-semibold text-blue-600">{{ aula.alumnos_count || 0 }} alum | {{ aula.docentes_count || 0 }} doc</span>
@@ -97,13 +95,13 @@
       }
 
       <!-- Formulario Ajustar Tokens -->
-      <form (ngSubmit)="asignarTokens()" class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col gap-4">
-        <h2 class="text-lg font-bold text-gray-900 dark:text-white border-b border-gray-100 dark:border-gray-700 pb-2">Ajustar tokens</h2>
+      <form (ngSubmit)="asignarTokens()" class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col gap-4">
+        <h2 class="text-lg font-bold text-gray-900 border-b border-gray-100 pb-2">Ajustar tokens</h2>
         
         <label class="flex flex-col gap-1">
-          <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Alumno</span>
+          <span class="text-sm font-medium text-gray-700">Alumno</span>
           <select name="id_alumno" [(ngModel)]="ajuste.id_alumno" required
-                  class="px-3 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
+                  class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
             <option [ngValue]="null">Selecciona</option>
             @for (alumno of alumnos(); track alumno.id) {
               <option [ngValue]="alumno.id">{{ alumno.nombre_completo }}</option>
@@ -112,18 +110,18 @@
         </label>
         
         <label class="flex flex-col gap-1">
-          <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Cantidad</span>
+          <span class="text-sm font-medium text-gray-700">Cantidad</span>
           <input name="cantidad" type="number" [(ngModel)]="ajuste.cantidad" required
-                 class="px-3 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
+                 class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
         </label>
         
         <label class="flex flex-col gap-1">
-          <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Motivo</span>
+          <span class="text-sm font-medium text-gray-700">Motivo</span>
           <input name="motivo" [(ngModel)]="ajuste.motivo" placeholder="Ej. Recompensa extra"
-                 class="px-3 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
+                 class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
         </label>
         
-        <button nz-button nzType="primary" type="submit" [nzLoading]="guardando()" [disabled]="guardando() || !ajuste.id_alumno" class="mt-2 w-full">Aplicar</button>
+        <app-boton-accion tipo="guardar" texto="Aplicar" [anchoCompleto]="true" [esSubmit]="true" [deshabilitado]="guardando() || !ajuste.id_alumno" [cargando]="guardando()" claseExtra="mt-2"></app-boton-accion>
       </form>
     </div>
 
@@ -132,8 +130,8 @@
       
       @if (esAdmin()) {
         <!-- Tabla Docentes -->
-        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
-          <h2 class="text-lg font-bold text-gray-900 dark:text-white p-6 pb-4 border-b border-gray-100 dark:border-gray-700">Docentes asignados</h2>
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+          <h2 class="text-lg font-bold text-gray-900 p-6 pb-4 border-b border-gray-100">Docentes asignados</h2>
           @if (docentes().length) {
             <div class="overflow-x-auto p-4">
               <nz-table #tablaDocentes [nzData]="docentes()" [nzShowPagination]="true" [nzPageSize]="5" nzSize="small" class="w-full">
@@ -148,11 +146,11 @@
                 <tbody>
                   @for (docente of tablaDocentes.data; track docente.id) {
                     <tr>
-                      <td class="font-medium text-gray-900 dark:text-white">{{ docente.nombre_completo }}</td>
-                      <td class="text-sm text-gray-600 dark:text-gray-400">{{ docente.usuario }}</td>
+                      <td class="font-medium text-gray-900">{{ docente.nombre_completo }}</td>
+                      <td class="text-sm text-gray-600">{{ docente.usuario }}</td>
                       <td><nz-tag [nzColor]="docente.id_aula ? 'green' : 'gold'">{{ aulaNombre(docente) }}</nz-tag></td>
                       <td>
-                        <select class="px-2 py-1 text-sm bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded focus:outline-none focus:ring-1 focus:ring-blue-500" 
+                        <select class="px-2 py-1 text-sm bg-gray-50 border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-blue-500" 
                                 [ngModel]="docente.id_aula" [ngModelOptions]="{ standalone: true }" (ngModelChange)="asignarAula(docente, $event)" [disabled]="asignando() === docente.id">
                           <option [ngValue]="null">Sin aula</option>
                           @for (aula of aulas(); track aula.id) {
@@ -174,8 +172,8 @@
       }
 
       <!-- Tabla Alumnos -->
-      <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden flex-grow flex flex-col">
-        <h2 class="text-lg font-bold text-gray-900 dark:text-white p-6 pb-4 border-b border-gray-100 dark:border-gray-700">Alumnos del alcance actual</h2>
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex-grow flex flex-col">
+        <h2 class="text-lg font-bold text-gray-900 p-6 pb-4 border-b border-gray-100">Alumnos del alcance actual</h2>
         
         @if (cargando()) {
           <div class="p-12">
@@ -199,15 +197,15 @@
               <tbody>
                 @for (alumno of tablaAlumnos.data; track alumno.id) {
                   <tr>
-                    <td class="font-medium text-gray-900 dark:text-white">{{ alumno.nombre_completo }}</td>
-                    <td class="text-sm text-gray-600 dark:text-gray-400">{{ alumno.usuario }}</td>
+                    <td class="font-medium text-gray-900">{{ alumno.nombre_completo }}</td>
+                    <td class="text-sm text-gray-600">{{ alumno.usuario }}</td>
                     <td><nz-tag nzColor="blue">{{ alumno.nivel }}</nz-tag></td>
                     <td><nz-tag [nzColor]="alumno.id_aula ? 'green' : 'gold'">{{ aulaNombre(alumno) }}</nz-tag></td>
                     <td>{{ alumno.rango || '-' }}</td>
-                    <td class="font-bold text-yellow-600 dark:text-yellow-500">{{ alumno.tokens }}</td>
+                    <td class="font-bold text-yellow-600">{{ alumno.tokens }}</td>
                     @if (esAdmin()) {
                       <td>
-                        <select class="px-2 py-1 text-sm bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded focus:outline-none focus:ring-1 focus:ring-blue-500" 
+                        <select class="px-2 py-1 text-sm bg-gray-50 border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-blue-500" 
                                 [ngModel]="alumno.id_aula" [ngModelOptions]="{ standalone: true }" (ngModelChange)="asignarAula(alumno, $event)" [disabled]="asignando() === alumno.id">
                           <option [ngValue]="null">Sin aula</option>
                           @for (aula of aulas(); track aula.id) {
@@ -217,7 +215,7 @@
                       </td>
                     }
                     <td>
-                      <a nz-button nzType="default" nzSize="small" [routerLink]="['/docente/carnets', alumno.id]">Carnet</a>
+                      <a class="px-3 py-1 rounded-md text-xs font-semibold bg-green-100 text-green-700 hover:bg-green-200 transition-colors inline-block cursor-pointer" [routerLink]="['/docente/carnets', alumno.id]">Carnet</a>
                     </td>
                   </tr>
                 }

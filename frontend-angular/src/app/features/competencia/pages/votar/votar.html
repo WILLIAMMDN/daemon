@@ -1,62 +1,77 @@
-﻿<section class="page">
-  <header class="page-header">
-    <div>
-      <p class="kicker">Competencia</p>
-      <h1>Votación en vivo</h1>
-      <p>Estado de la ronda y voto del estudiante.</p>
+<main class="w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-6 md:gap-8 font-inter">
+  <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div class="flex flex-col gap-1">
+      <span class="text-sm font-semibold uppercase tracking-wider text-blue-600">Competencia</span>
+      <h1 class="text-2xl md:text-3xl font-bold text-gray-900">Votación en vivo</h1>
+      <p class="text-base text-gray-600">Estado de la ronda y voto del estudiante.</p>
     </div>
-    <button type="button" (click)="cargar()">Actualizar</button>
+    <button nz-button nzType="default" (click)="cargar()" class="!bg-gray-100 !text-gray-700 !border-none hover:!bg-gray-200 transition-colors flex items-center gap-2">
+      Actualizar
+    </button>
   </header>
 
-  @if (mensaje()) { <p class="success">{{ mensaje() }}</p> }
-  @if (error()) { <p class="error">{{ error() }}</p> }
+  @if (mensaje()) { <nz-alert nzType="success" nzShowIcon [nzMessage]="mensaje()"></nz-alert> }
+  @if (error()) { <nz-alert nzType="error" nzShowIcon [nzMessage]="error()"></nz-alert> }
 
   @if (cargando()) {
-    <app-cargando class="state" texto="Cargando competencia..."></app-cargando>
+    <div class="p-12"><app-cargando texto="Cargando competencia..."></app-cargando></div>
   } @else if (estado(); as data) {
-    <section class="stats">
-      <article class="stat">
-        <span>Estado</span>
-        <strong>{{ data.ronda.estado }}</strong>
-      </article>
-      <article class="stat">
-        <span>Promedio</span>
-        <strong>{{ data.promedio || data.ronda.promedio_alumnos || 0 }}</strong>
-      </article>
-      <article class="stat">
-        <span>Duración</span>
-        <strong>{{ data.ronda.duracion || 0 }}</strong>
-      </article>
-    </section>
+    <!-- Contenedores tipo tarjetas -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+       <!-- stats -->
+       <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col gap-2">
+         <span class="text-sm text-gray-500 font-medium">Estado</span>
+         <strong class="text-2xl text-gray-900 font-bold capitalize">{{ data.ronda.estado }}</strong>
+       </div>
+       <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col gap-2">
+         <span class="text-sm text-gray-500 font-medium">Promedio</span>
+         <strong class="text-2xl text-gray-900 font-bold">{{ data.promedio || data.ronda.promedio_alumnos || 0 }}</strong>
+       </div>
+       <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col gap-2">
+         <span class="text-sm text-gray-500 font-medium">Duración (seg)</span>
+         <strong class="text-2xl text-gray-900 font-bold">{{ data.ronda.duracion || 0 }}</strong>
+       </div>
+    </div>
 
-    <section class="split">
-      <article class="panel">
-        <h2>Candidato</h2>
-        @if (data.candidato) {
-          <p><strong>{{ data.candidato.nombre_completo }}</strong></p>
-          <p>{{ data.candidato.usuario }} - {{ data.candidato.nivel }}</p>
-        } @else {
-          <p class="empty">No hay alumno en tarima.</p>
-        }
-      </article>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
+        <h2 class="text-lg font-bold text-gray-900 p-6 pb-4 border-b border-gray-100 uppercase tracking-wider">Alumno en tarima</h2>
+        <div class="p-6 flex flex-col justify-center h-full">
+          @if (data.candidato) {
+            <p class="text-2xl font-bold text-gray-900 mb-2">{{ data.candidato.nombre_completo }}</p>
+            <p class="text-gray-500">{{ data.candidato.usuario }} <nz-tag nzColor="blue" class="ml-2">{{ data.candidato.nivel }}</nz-tag></p>
+          } @else {
+            <p class="text-gray-500 text-center py-8">No hay alumno en tarima.</p>
+          }
+        </div>
+      </div>
 
-      <form class="panel" (ngSubmit)="enviar()">
-        <h2>Mi voto</h2>
-        @if (data.mi_voto) {
-          <p class="notice">Ya registraste {{ data.mi_voto.puntuacion }}/10.</p>
-        }
-        <div class="form-grid">
-          <label>
-            Puntuación
-            <input name="puntuacion" type="number" min="1" max="10" [(ngModel)]="voto.puntuacion" required>
+      <form class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col" (ngSubmit)="enviar()">
+        <h2 class="text-lg font-bold text-gray-900 p-6 pb-4 border-b border-gray-100">Mi voto</h2>
+        <div class="p-6 flex flex-col gap-4">
+          @if (data.mi_voto) {
+            <div class="p-4 bg-blue-50 text-blue-800 rounded-lg text-sm border border-blue-100 text-center font-medium">
+              Ya registraste {{ data.mi_voto.puntuacion }}/10.
+            </div>
+          }
+          
+          <label class="flex flex-col gap-1">
+            <span class="text-sm font-medium text-gray-700">Puntuación (1-10)</span>
+            <input name="puntuacion" type="number" min="1" max="10" [(ngModel)]="voto.puntuacion" required
+                   class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
           </label>
-          <label class="field-wide">
-            Comentario
-            <textarea name="comentario" rows="3" maxlength="200" [(ngModel)]="voto.comentario"></textarea>
+          <label class="flex flex-col gap-1">
+            <span class="text-sm font-medium text-gray-700">Comentario (opcional)</span>
+            <textarea name="comentario" rows="3" maxlength="200" [(ngModel)]="voto.comentario"
+                      class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"></textarea>
           </label>
         </div>
-        <button type="submit" [disabled]="enviando() || data.ronda.estado !== 'votacion' || !data.candidato">Enviar voto</button>
+        <div class="p-6 pt-0 flex justify-end">
+          <button type="submit" nz-button [disabled]="enviando() || data.ronda.estado !== 'votacion' || !data.candidato" class="!bg-[#00b4d8] !border-none !text-white !shadow-sm hover:!bg-cyan-600 transition-colors">
+            Enviar voto
+          </button>
+        </div>
       </form>
-    </section>
+    </div>
   }
-</section>
+</main>

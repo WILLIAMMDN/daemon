@@ -1,0 +1,66 @@
+@if (tipo === 'eliminar') {
+  <button nz-button nzDanger nzSize="small" 
+          nz-popconfirm [nzPopconfirmTitle]="confirmacion" nzPopconfirmPlacement="left" (nzOnConfirm)="ejecutar()"
+          [type]="esSubmit ? 'submit' : 'button'"
+          [disabled]="deshabilitado" [nzLoading]="cargando"
+          class="!bg-[#ed1c24] !border-none !text-white !shadow-sm hover:!bg-red-600 transition-colors flex items-center gap-1.5 {{ claseExtra }}"
+          [class.w-full]="anchoCompleto">
+    <fa-icon [icon]="iconos.eliminar"></fa-icon> <span>{{ texto || 'Eliminar' }}</span>
+  </button>
+} @else if (tipo === 'editar') {
+  <button nz-button nzSize="small" (click)="ejecutar()" 
+          [type]="esSubmit ? 'submit' : 'button'"
+          [disabled]="deshabilitado" [nzLoading]="cargando"
+          class="!bg-[#f58220] !border-none !text-white !shadow-sm hover:!bg-orange-600 transition-colors flex items-center gap-1.5 {{ claseExtra }}"
+          [class.w-full]="anchoCompleto">
+    <fa-icon [icon]="iconos.editar"></fa-icon> <span>{{ texto || 'Editar' }}</span>
+  </button>
+} @else if (tipo === 'detalles' || tipo === 'revisar') {
+  <button nz-button nzSize="small" (click)="ejecutar()" 
+          [type]="esSubmit ? 'submit' : 'button'"
+          [disabled]="deshabilitado" [nzLoading]="cargando"
+          class="!bg-[#00b4d8] !border-none !text-white !shadow-sm hover:!bg-cyan-600 transition-colors flex items-center gap-1.5 {{ claseExtra }}"
+          [class.w-full]="anchoCompleto">
+    <fa-icon [icon]="iconos.detalles"></fa-icon> <span>{{ texto || (tipo === 'detalles' ? 'Detalles' : 'Revisar') }}</span>
+  </button>
+} @else if (tipo === 'crear') {
+  <button nz-button nzType="primary" (click)="ejecutar()" 
+          [type]="esSubmit ? 'submit' : 'button'"
+          [disabled]="deshabilitado" [nzLoading]="cargando"
+          class="!bg-[#8dc63f] !border-none !text-white !shadow-sm hover:!bg-green-600 transition-colors flex items-center gap-1.5 {{ claseExtra }}"
+          [class.w-full]="anchoCompleto">
+    <fa-icon [icon]="iconos.crear"></fa-icon> <span>{{ texto || 'Crear' }}</span>
+  </button>
+} @else if (tipo === 'agregar_usuario') {
+  <button nz-button nzType="primary" (click)="ejecutar()" 
+          [type]="esSubmit ? 'submit' : 'button'"
+          [disabled]="deshabilitado" [nzLoading]="cargando"
+          class="!bg-white !border !border-blue-500 !text-blue-600 !shadow-sm hover:!bg-blue-50 transition-colors flex items-center gap-1.5 {{ claseExtra }}"
+          [class.w-full]="anchoCompleto">
+    <fa-icon [icon]="iconos.agregar_usuario"></fa-icon> <span>{{ texto || 'Nuevo Alumno' }}</span>
+  </button>
+} @else if (tipo === 'entregar') {
+  <button nz-button nzType="primary" nzSize="small" (click)="ejecutar()" 
+          [type]="esSubmit ? 'submit' : 'button'"
+          [disabled]="deshabilitado" [nzLoading]="cargando"
+          class="!bg-[#00b4d8] !border-none !text-white !shadow-sm hover:!bg-cyan-600 transition-colors flex items-center gap-1.5 {{ claseExtra }}"
+          [class.w-full]="anchoCompleto">
+    <fa-icon [icon]="iconos.entregar"></fa-icon> <span>{{ texto || 'Entregar' }}</span>
+  </button>
+} @else if (tipo === 'guardar') {
+  <button nz-button nzType="primary" (click)="ejecutar()" 
+          [type]="esSubmit ? 'submit' : 'button'"
+          [disabled]="deshabilitado" [nzLoading]="cargando"
+          class="!bg-[#8dc63f] !border-none !text-white !shadow-sm hover:!bg-green-600 transition-colors flex items-center gap-1.5 {{ claseExtra }}"
+          [class.w-full]="anchoCompleto">
+    <fa-icon [icon]="iconos.guardar"></fa-icon> <span>{{ texto || 'Guardar' }}</span>
+  </button>
+} @else if (tipo === 'actualizar') {
+  <button nz-button nzType="default" (click)="ejecutar()" 
+          [type]="esSubmit ? 'submit' : 'button'"
+          [disabled]="deshabilitado" [nzLoading]="cargando"
+          class="!bg-gray-100 !text-gray-700 !border-none hover:!bg-gray-200 transition-colors flex items-center gap-1.5 {{ claseExtra }}"
+          [class.w-full]="anchoCompleto">
+    <fa-icon [icon]="iconos.actualizar"></fa-icon> <span>{{ texto || 'Actualizar' }}</span>
+  </button>
+}

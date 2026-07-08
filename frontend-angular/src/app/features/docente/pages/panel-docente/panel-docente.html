@@ -1,6 +1,6 @@
 <main class="w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-6 md:gap-8 font-inter">
   @if (error()) {
-    <section class="flex flex-col items-center justify-center p-12 bg-red-50 dark:bg-red-900/10 rounded-2xl border border-red-100 dark:border-red-900 gap-4">
+    <section class="flex flex-col items-center justify-center p-12 bg-red-50 rounded-2xl border border-red-100 gap-4">
       <nz-alert nzType="error" nzShowIcon nzMessage="No pudimos cargar el panel docente" [nzDescription]="error()"></nz-alert>
       <button nz-button nzType="primary" nzDanger (click)="cargar()">Reintentar</button>
     </section>
@@ -11,8 +11,8 @@
       <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div class="flex flex-col gap-1">
           <span class="text-sm font-semibold uppercase tracking-wider text-blue-600">Portal Docente</span>
-          <h1 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Control del aula DAEMON</h1>
-          <p class="text-base text-gray-600 dark:text-gray-400">Monitorea actividad, economía escolar, entregas y estudiantes con mejor avance.</p>
+          <h1 class="text-2xl md:text-3xl font-bold text-gray-900">Control del aula DAEMON</h1>
+          <p class="text-base text-gray-600">Monitorea actividad, economía escolar, entregas y estudiantes con mejor avance.</p>
         </div>
         <a nz-button nzType="primary" nzSize="large" routerLink="/docente/alumnos" class="flex items-center gap-2">
           Gestionar alumnos
@@ -23,13 +23,13 @@
       @if (panel(); as datos) {
         <section class="p-6 rounded-2xl border flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
                  [class]="datos.alcance.tipo === 'sin_aula' 
-                          ? 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800' 
-                          : 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800'">
+                          ? 'bg-yellow-50 border-yellow-200' 
+                          : 'bg-blue-50 border-blue-200'">
           <div>
             <p class="text-sm font-semibold uppercase tracking-wider"
                [class]="datos.alcance.tipo === 'sin_aula' ? 'text-yellow-600' : 'text-blue-600'">Alcance académico</p>
-            <h2 class="text-xl font-bold text-gray-900 dark:text-white">{{ datos.alcance.titulo }}</h2>
-            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ datos.alcance.descripcion }}</p>
+            <h2 class="text-xl font-bold text-gray-900">{{ datos.alcance.titulo }}</h2>
+            <p class="text-sm text-gray-600 mt-1">{{ datos.alcance.descripcion }}</p>
           </div>
           <div class="flex gap-2">
             <nz-tag [nzColor]="datos.alcance.tipo === 'global' ? 'purple' : datos.alcance.tipo === 'sin_aula' ? 'gold' : 'green'">
@@ -54,25 +54,25 @@
       <!-- Métricas Principales -->
       <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         @if (panel(); as datos) {
-          <article class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col items-center text-center gap-2">
+          <article class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center text-center gap-2">
             <span class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Alumnos</span>
-            <strong class="text-4xl font-black text-gray-900 dark:text-white">{{ datos.alumnos }}</strong>
+            <strong class="text-4xl font-black text-gray-900">{{ datos.alumnos }}</strong>
           </article>
-          <article class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col items-center text-center gap-2">
+          <article class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center text-center gap-2">
             <span class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Tokens circulando</span>
             <strong class="text-4xl font-black text-yellow-500">{{ datos.tokens_circulacion }}</strong>
           </article>
-          <article class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col items-center text-center gap-2">
+          <article class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center text-center gap-2">
             <span class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Entregas pend.</span>
             <strong class="text-4xl font-black text-blue-600">{{ datos.entregas_pendientes }}</strong>
           </article>
-          <article class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col items-center text-center gap-2">
+          <article class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center text-center gap-2">
             <span class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Canjes pend.</span>
             <strong class="text-4xl font-black text-green-600">{{ datos.canjes_pendientes }}</strong>
           </article>
         } @else {
           @for (item of [1, 2, 3, 4]; track item) {
-            <div class="bg-gray-100 dark:bg-gray-800 p-6 rounded-2xl h-32 animate-pulse"></div>
+            <div class="bg-gray-100 p-6 rounded-2xl h-32 animate-pulse"></div>
           }
         }
       </section>
@@ -81,10 +81,10 @@
       <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         <!-- Ranking Top Estudiantes -->
-        <article class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col">
-          <div class="p-6 border-b border-gray-100 dark:border-gray-700">
+        <article class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col">
+          <div class="p-6 border-b border-gray-100">
             <p class="text-sm font-semibold text-blue-600 uppercase tracking-wider">Ranking actual</p>
-            <h2 class="text-xl font-bold text-gray-900 dark:text-white mt-1">Top estudiantes</h2>
+            <h2 class="text-xl font-bold text-gray-900 mt-1">Top estudiantes</h2>
           </div>
           
           <div class="p-6">
@@ -92,15 +92,15 @@
               @if (datos.ranking.length) {
                 <div class="flex flex-col gap-3">
                   @for (alumno of datos.ranking; track alumno.id; let i = $index) {
-                    <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-700">
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-100">
                       <div class="flex items-center gap-4">
                         <span class="text-lg font-black text-gray-400 w-6 text-center">{{ i + 1 }}</span>
                         <div class="flex flex-col">
-                          <strong class="text-gray-900 dark:text-white font-semibold">{{ alumno.nombre_completo }}</strong>
+                          <strong class="text-gray-900 font-semibold">{{ alumno.nombre_completo }}</strong>
                           <span class="text-xs text-gray-500">{{ alumno.nivel }} - {{ alumno.rango || alumno.usuario }}</span>
                         </div>
                       </div>
-                      <b class="text-yellow-600 dark:text-yellow-500 font-bold">{{ alumno.tokens }} Tk</b>
+                      <b class="text-yellow-600 font-bold">{{ alumno.tokens }} Tk</b>
                     </div>
                   }
                 </div>
@@ -110,7 +110,7 @@
             } @else {
               <div class="flex flex-col gap-3 animate-pulse">
                 @for (item of [1, 2, 3, 4, 5]; track item) {
-                  <div class="h-16 bg-gray-100 dark:bg-gray-900 rounded-xl"></div>
+                  <div class="h-16 bg-gray-100 rounded-xl"></div>
                 }
               </div>
             }
@@ -118,10 +118,10 @@
         </article>
 
         <!-- Acciones Rápidas -->
-        <article class="lg:col-span-1 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col">
-          <div class="p-6 border-b border-gray-100 dark:border-gray-700">
+        <article class="lg:col-span-1 bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col">
+          <div class="p-6 border-b border-gray-100">
             <p class="text-sm font-semibold text-blue-600 uppercase tracking-wider">Gestión rápida</p>
-            <h2 class="text-xl font-bold text-gray-900 dark:text-white mt-1">Acciones de clase</h2>
+            <h2 class="text-xl font-bold text-gray-900 mt-1">Acciones de clase</h2>
           </div>
           <div class="p-6 flex flex-col gap-3">
             <a nz-button nzType="default" nzSize="large" routerLink="/docente/misiones" class="w-full !justify-start">Crear misiones</a>

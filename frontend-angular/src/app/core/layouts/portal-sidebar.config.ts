@@ -94,7 +94,7 @@ export const docenteSidebarSections: PortalSidebarSection[] = [
         icono: faRocket,
         abierto: true,
         hijos: [
-          { id: 'docente-misiones-lista', etiqueta: 'Gestionar misiones', ruta: '/docente/misiones', detalle: 'Crear desafios', icono: faRocket },
+          { id: 'docente-misiones-lista', etiqueta: 'Gestionar misiones', ruta: '/docente/misiones', detalle: 'Crear desafios', icono: faRocket, exacto: true },
           { id: 'docente-entregas', etiqueta: 'Entregas', ruta: '/docente/entregas', detalle: 'Revisar evidencias', icono: faClipboardCheck },
         ],
       },
@@ -104,7 +104,7 @@ export const docenteSidebarSections: PortalSidebarSection[] = [
         detalle: 'Examenes y resultados',
         icono: faClipboardQuestion,
         hijos: [
-          { id: 'docente-evaluaciones-lista', etiqueta: 'Gestionar evaluaciones', ruta: '/docente/evaluaciones', detalle: 'Banco de preguntas', icono: faClipboardQuestion },
+          { id: 'docente-evaluaciones-lista', etiqueta: 'Gestionar evaluaciones', ruta: '/docente/evaluaciones', detalle: 'Banco de preguntas', icono: faClipboardQuestion, exacto: true },
           { id: 'docente-resultados', etiqueta: 'Resultados', ruta: '/docente/evaluaciones/resultados', detalle: 'Seguimiento', icono: faChartSimple },
         ],
       },
@@ -129,12 +129,12 @@ export const docenteSidebarSections: PortalSidebarSection[] = [
         detalle: 'Rondas y pantalla publica',
         icono: faMedal,
         hijos: [
-          { id: 'docente-control', etiqueta: 'Control de ronda', ruta: '/docente/competencia', detalle: 'Iniciar y cerrar votos', icono: faChalkboardUser },
+          { id: 'docente-control', etiqueta: 'Control de ronda', ruta: '/docente/competencia', detalle: 'Iniciar y cerrar votos', icono: faChalkboardUser, exacto: true },
           { id: 'docente-tv', etiqueta: 'Pantalla TV', ruta: '/docente/competencia/tv', detalle: 'Vista publica', icono: faTv },
           { id: 'docente-rondas', etiqueta: 'Historial rondas', ruta: '/docente/rondas', detalle: 'Resultados anteriores', icono: faTrophy },
         ],
       },
-      { id: 'docente-alertas', etiqueta: 'Actividad', ruta: '/docente/tokens', detalle: 'Movimientos recientes', icono: faBullhorn },
+      { id: 'docente-alertas', etiqueta: 'Notificaciones', ruta: '/docente/notificaciones', detalle: 'Alertas recientes', icono: faBullhorn },
     ],
   },
 ];

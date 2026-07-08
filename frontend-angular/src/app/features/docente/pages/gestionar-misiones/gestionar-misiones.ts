@@ -10,11 +10,12 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { Mision } from '../../../misiones/services/mision';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
+import { BotonAccion } from '../../../../shared/componentes/boton-accion/boton-accion';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-gestionar-misiones',
-  imports: [FormsModule, NzAlertModule, NzButtonModule, NzTagModule, NzTableModule, NzPopconfirmModule, NzModalModule, Cargando, EstadoVacio],
+  imports: [FormsModule, NzAlertModule, NzButtonModule, NzTagModule, NzTableModule, NzPopconfirmModule, NzModalModule, Cargando, EstadoVacio, BotonAccion],
   templateUrl: './gestionar-misiones.html',
   styleUrl: './gestionar-misiones.scss',
 })

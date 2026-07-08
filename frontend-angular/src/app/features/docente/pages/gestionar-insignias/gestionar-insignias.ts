@@ -12,6 +12,7 @@ import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
 import { MediaUploader } from '../../../../shared/componentes/media-uploader/media-uploader';
 import { Docente } from '../../services/docente';
+import { BotonAccion } from '../../../../shared/componentes/boton-accion/boton-accion';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -27,6 +28,7 @@ import { Docente } from '../../services/docente';
     Cargando,
     EstadoVacio,
     MediaUploader,
+    BotonAccion,
   ],
   templateUrl: './gestionar-insignias.html',
   styleUrl: './gestionar-insignias.scss',

@@ -11,11 +11,12 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { CommonModule } from '@angular/common';
 import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
+import { BotonAccion } from '../../../../shared/componentes/boton-accion/boton-accion';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-herramientas-clase',
-  imports: [CommonModule, FormsModule, Cargando, NzTableModule, NzAlertModule, NzTagModule, NzButtonModule, NzModalModule, EstadoVacio],
+  imports: [CommonModule, FormsModule, Cargando, NzTableModule, NzAlertModule, NzTagModule, NzButtonModule, NzModalModule, EstadoVacio, BotonAccion],
   templateUrl: './herramientas-clase.html',
   styleUrl: './herramientas-clase.scss',
 })

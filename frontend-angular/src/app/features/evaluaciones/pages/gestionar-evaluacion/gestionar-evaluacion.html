@@ -5,9 +5,7 @@
       <h1>Evaluaciones</h1>
       <p>Exámenes, estados y banco de preguntas.</p>
     </div>
-    <button nz-button nzType="default" class="daemon-btn" type="button" (click)="cargar()" [disabled]="cargando()">
-      @if (cargando()) { Actualizando... } @else { Actualizar }
-    </button>
+    <app-boton-accion tipo="actualizar" (accion)="cargar()" [cargando]="cargando()" claseExtra="daemon-btn"></app-boton-accion>
   </header>
 
   @if (mensaje()) {
@@ -45,9 +43,7 @@
           </select>
         </label>
       </div>
-      <button nz-button nzType="primary" class="daemon-btn" type="submit" [disabled]="guardando() || !nueva.titulo.trim()" [nzLoading]="guardando()">
-        Crear evaluación
-      </button>
+      <app-boton-accion tipo="crear" texto="Crear evaluación" [esSubmit]="true" [deshabilitado]="guardando() || !nueva.titulo.trim()" [cargando]="guardando()" claseExtra="daemon-btn"></app-boton-accion>
     </form>
 
     <form class="panel highlight-panel assign-form" (ngSubmit)="agregarPregunta()">
@@ -86,9 +82,7 @@
           <input name="respuesta_correcta" [(ngModel)]="pregunta.respuesta_correcta" required>
         </label>
       </div>
-      <button nz-button nzType="primary" class="daemon-btn" type="submit" [disabled]="guardando() || !pregunta.examen_id || !pregunta.enunciado.trim()">
-        Guardar pregunta
-      </button>
+      <app-boton-accion tipo="guardar" texto="Guardar pregunta" [esSubmit]="true" [deshabilitado]="guardando() || !pregunta.examen_id || !pregunta.enunciado.trim()" claseExtra="daemon-btn"></app-boton-accion>
     </form>
   </section>
 
@@ -117,12 +111,19 @@
                 </nz-tag>
               </td>
               <td class="text-center font-mono">{{ examen.preguntas?.length || 0 }}</td>
-              <td class="text-right">
-                <button nz-button nzType="link" nzSize="small" (click)="alternarPublicacion(examen)">
+              <td class="text-right flex justify-end gap-2">
+                <button class="px-3 py-1 rounded-md text-xs font-semibold transition-colors border-none cursor-pointer"
+                        [class.bg-yellow-100]="examen.estado === 'activo'"
+                        [class.text-yellow-700]="examen.estado === 'activo'"
+                        [class.hover:bg-yellow-200]="examen.estado === 'activo'"
+                        [class.bg-green-100]="examen.estado !== 'activo'"
+                        [class.text-green-700]="examen.estado !== 'activo'"
+                        [class.hover:bg-green-200]="examen.estado !== 'activo'"
+                        (click)="alternarPublicacion(examen)">
                   {{ examen.estado === 'activo' ? 'Despublicar' : 'Publicar' }}
                 </button>
-                <button nz-button nzType="link" nzSize="small" (click)="abrirEditar(examen)">Editar</button>
-                <button nz-button nzType="link" nzSize="small" nzDanger nz-popconfirm nzPopconfirmTitle="¿Eliminar evaluación completa?" nzPopconfirmPlacement="left" (nzOnConfirm)="eliminar(examen.id)">Eliminar</button>
+                <app-boton-accion tipo="editar" (accion)="abrirEditar(examen)"></app-boton-accion>
+                <app-boton-accion tipo="eliminar" confirmacion="¿Eliminar evaluación completa?" (accion)="eliminar(examen.id)"></app-boton-accion>
               </td>
             </tr>
           }

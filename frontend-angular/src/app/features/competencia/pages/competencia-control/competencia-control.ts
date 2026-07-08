@@ -3,12 +3,15 @@ import { FormsModule } from '@angular/forms';
 import { Competencia } from '../../services/competencia';
 import { Docente } from '../../../docente/services/docente';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { NzTagModule } from 'ng-zorro-antd/tag';
 
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-competencia-control',
-  imports: [FormsModule, Cargando],
+  imports: [FormsModule, Cargando, NzButtonModule, NzAlertModule, NzTagModule],
   templateUrl: './competencia-control.html',
   styleUrl: './competencia-control.scss',
 })

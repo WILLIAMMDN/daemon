@@ -2,12 +2,15 @@ import { Component, signal , ChangeDetectionStrategy} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Competencia } from '../../services/competencia';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { NzTagModule } from 'ng-zorro-antd/tag';
 
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-votar',
-  imports: [FormsModule, Cargando],
+  imports: [FormsModule, Cargando, NzButtonModule, NzAlertModule, NzTagModule],
   templateUrl: './votar.html',
   styleUrl: './votar.scss',
 })

@@ -3,8 +3,8 @@
   <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
     <div class="flex flex-col gap-1">
       <span class="text-sm font-semibold uppercase tracking-wider text-blue-600">Docente</span>
-      <h1 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Flujo de Tokens</h1>
-      <p class="text-base text-gray-600 dark:text-gray-400">Auditoría global de economía escolar: ingresos y gastos de estudiantes.</p>
+      <h1 class="text-2xl md:text-3xl font-bold text-gray-900">Flujo de Tokens</h1>
+      <p class="text-base text-gray-600">Auditoría global de economía escolar: ingresos y gastos de estudiantes.</p>
     </div>
     <button nz-button nzType="default" (click)="cargar()" [nzLoading]="cargando()" class="flex items-center gap-2">
       Actualizar
@@ -16,7 +16,7 @@
   }
 
   <!-- Contenido Principal -->
-  <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+  <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
     @if (cargando()) {
       <div class="p-12">
         <app-cargando texto="Cargando historial de economía..."></app-cargando>
@@ -36,15 +36,15 @@
           <tbody>
             @for (mov of tablaMovimientos.data; track mov.id) {
               <tr>
-                <td class="text-gray-600 dark:text-gray-400 text-sm">{{ mov.fecha }}</td>
-                <td class="font-medium text-gray-900 dark:text-white">{{ mov.alumno_nombre }}</td>
+                <td class="text-gray-600 text-sm">{{ mov.fecha }}</td>
+                <td class="font-medium text-gray-900">{{ mov.alumno_nombre }}</td>
                 <td>
                   <nz-tag [nzColor]="mov.tipo === 'ingreso' ? 'success' : 'error'">{{ mov.tipo | uppercase }}</nz-tag>
                 </td>
-                <td class="font-bold font-mono" [class]="mov.tipo === 'ingreso' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'">
+                <td class="font-bold font-mono" [class]="mov.tipo === 'ingreso' ? 'text-green-600' : 'text-red-600'">
                   {{ mov.tipo === 'ingreso' ? '+' : '-' }}{{ mov.cantidad }} Tk
                 </td>
-                <td class="text-gray-700 dark:text-gray-300">{{ mov.concepto }}</td>
+                <td class="text-gray-700">{{ mov.concepto }}</td>
               </tr>
             }
           </tbody>

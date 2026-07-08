@@ -3,10 +3,10 @@
   <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
     <div class="flex flex-col gap-1">
       <span class="text-sm font-semibold uppercase tracking-wider text-blue-600">Docente</span>
-      <h1 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Historial de rondas</h1>
-      <p class="text-base text-gray-600 dark:text-gray-400">Ganadores y promedios de competencias cerradas.</p>
+      <h1 class="text-2xl md:text-3xl font-bold text-gray-900">Historial de rondas</h1>
+      <p class="text-base text-gray-600">Ganadores y promedios de competencias cerradas.</p>
     </div>
-    <button nz-button nzType="default" (click)="cargar()" [nzLoading]="cargando()" class="flex items-center gap-2">
+    <button nz-button nzType="default" (click)="cargar()" [nzLoading]="cargando()" class="!bg-gray-100 !text-gray-700 !border-none hover:!bg-gray-200 transition-colors flex items-center gap-2">
       Actualizar
     </button>
   </header>
@@ -16,7 +16,7 @@
   }
 
   <!-- Contenido Principal -->
-  <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+  <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
     @if (cargando()) {
       <div class="p-12">
         <app-cargando texto="Cargando historial de rondas..."></app-cargando>
@@ -35,10 +35,10 @@
           <tbody>
             @for (ronda of tablaRondas.data; track ronda.id) {
               <tr>
-                <td class="text-gray-600 dark:text-gray-400">{{ ronda.fecha }}</td>
+                <td class="text-gray-600">{{ ronda.fecha }}</td>
                 <td><nz-tag nzColor="blue">{{ ronda.nivel }}</nz-tag></td>
-                <td class="font-medium text-gray-900 dark:text-white">{{ ronda.ganador_nombre }}</td>
-                <td class="font-bold text-yellow-600 dark:text-yellow-500">{{ ronda.ganador_promedio }} ptos</td>
+                <td class="font-medium text-gray-900">{{ ronda.ganador_nombre }}</td>
+                <td class="font-bold text-yellow-600">{{ ronda.ganador_promedio }} ptos</td>
               </tr>
             }
           </tbody>

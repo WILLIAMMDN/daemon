@@ -1,0 +1,43 @@
+<div class="bg-white rounded-xl shadow-sm border border-gray-200">
+  <div class="px-6 py-5 border-b border-gray-200 flex justify-between items-center bg-gray-50 rounded-t-xl">
+    <div class="flex items-center gap-3">
+      <fa-icon [icon]="iconos.bell" class="text-blue-500 text-xl"></fa-icon>
+      <h2 class="text-xl font-bold text-gray-800 m-0">Tus Notificaciones</h2>
+    </div>
+    <button (click)="marcarTodasComoLeidas()" class="text-sm font-semibold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-4 py-2 rounded-lg transition-colors">
+      Marcar todas como leídas
+    </button>
+  </div>
+
+  <div class="p-0">
+    @if (notificaciones().length === 0) {
+      <div class="p-12 text-center text-gray-500">
+        <p class="text-lg">No tienes notificaciones en este momento.</p>
+      </div>
+    } @else {
+      <div class="divide-y divide-gray-100">
+        @for (notif of notificaciones(); track notif.id) {
+          <div class="p-5 flex gap-4 transition-colors hover:bg-gray-50" [class.bg-blue-50]="!notif.leida">
+            <div class="mt-1">
+              @if (notif.leida) {
+                <fa-icon [icon]="iconos.check" class="text-gray-400 text-lg"></fa-icon>
+              } @else {
+                <fa-icon [icon]="iconos.uncheck" class="text-blue-500 text-lg cursor-pointer hover:text-blue-600" (click)="marcarComoLeida(notif.id)"></fa-icon>
+              }
+            </div>
+            <div class="flex-1">
+              <div class="flex justify-between items-start mb-1">
+                <h3 class="font-bold text-gray-900 m-0 text-base" [class.text-blue-800]="!notif.leida">{{ notif.titulo }}</h3>
+                <span class="text-xs font-semibold text-gray-500 bg-gray-100 px-2 py-1 rounded-md">{{ notif.created_at | date:'short' }}</span>
+              </div>
+              <p class="text-gray-600 text-sm mb-2">{{ notif.mensaje }}</p>
+              @if (notif.url_accion) {
+                <a [href]="notif.url_accion" class="text-sm font-medium text-blue-600 hover:underline">Ver detalles &rarr;</a>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>

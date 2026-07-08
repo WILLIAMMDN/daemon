@@ -7,6 +7,7 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
+import { BotonAccion } from '../../../../shared/componentes/boton-accion/boton-accion';
 import { Docente } from '../../services/docente';
 
 interface AulaResumen {
@@ -28,7 +29,7 @@ interface AlcanceAcademico {
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-lista-alumnos',
-  imports: [FormsModule, RouterLink, NzAlertModule, NzButtonModule, NzTagModule, NzTableModule, Cargando, EstadoVacio],
+  imports: [FormsModule, RouterLink, NzAlertModule, NzButtonModule, NzTagModule, NzTableModule, Cargando, EstadoVacio, BotonAccion],
   templateUrl: './lista-alumnos.html',
   styleUrl: './lista-alumnos.scss',
 })

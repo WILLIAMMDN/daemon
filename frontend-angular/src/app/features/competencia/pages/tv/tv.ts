@@ -1,12 +1,15 @@
 import { Component, OnDestroy, signal , ChangeDetectionStrategy} from '@angular/core';
 import { Competencia } from '../../services/competencia';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { NzTagModule } from 'ng-zorro-antd/tag';
 
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-tv',
-  imports: [Cargando],
+  imports: [Cargando, NzButtonModule, NzAlertModule, NzTagModule],
   templateUrl: './tv.html',
   styleUrl: './tv.scss',
 })
