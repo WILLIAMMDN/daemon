@@ -1,40 +1,47 @@
-<main class="w-full min-h-screen flex items-center justify-center p-4 md:p-8 font-inter bg-slate-50 relative">
-  <a routerLink="/" class="absolute top-6 left-6 flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors">
+<main class="daemon-login min-h-screen px-4 py-8 sm:px-6">
+  <a routerLink="/" class="home-link" aria-label="Volver al inicio">
     <span aria-hidden="true">&larr;</span>
     <span>Inicio</span>
   </a>
 
-  <div class="w-full max-w-md bg-white border border-slate-200 rounded-3xl p-6 md:p-8 shadow-sm flex flex-col relative z-10">
-    
-    <header class="flex flex-col items-center text-center mb-6">
-      <img class="h-12 mb-4" src="/img/brand/daemon-transparent.png" alt="Academia Daemon">
-      <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Portal estudiante</p>
-      <h1 class="text-2xl font-extrabold text-slate-900 mt-1">Iniciar sesión</h1>
-      
-      <div class="flex bg-slate-100 rounded-full p-1 mt-4" aria-label="Tipo de portal">
-        <span class="px-4 py-1.5 bg-white shadow-sm rounded-full text-xs font-bold text-slate-900">Estudiante</span>
-        <a routerLink="/login-docente" class="px-4 py-1.5 rounded-full text-xs font-bold text-slate-500 hover:text-slate-900 transition-colors">Docente</a>
-      </div>
+  <section class="login-stage">
+    <header class="login-brand" aria-label="Academia Daemon">
+      <img class="brand-logo" src="/img/brand/daemon-transparent.png" alt="Academia Daemon">
     </header>
 
-    <div class="flex justify-center mb-6 h-[160px]" [class.opacity-100]="riveDisponible()" [class.opacity-0]="!riveDisponible()" [class.hidden]="riveError()">
-      <canvas
-        #riveCanvas
-        class="w-[200px] h-[180px] -mt-4 object-contain"
-        aria-label="Mascota interactiva de DAEMON"
-      ></canvas>
-    </div>
+    <article class="login-card">
+      <div class="card-accent" aria-hidden="true"></div>
 
-    <form #loginForm="ngForm" (ngSubmit)="entrar(loginForm)" class="flex flex-col gap-4" novalidate>
-      <div class="flex flex-col gap-1">
-        <label class="relative flex items-center w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-1 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100 transition-all">
-          <span class="text-slate-400 shrink-0" aria-hidden="true">
-            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+      <div class="login-card-head">
+        <div>
+          <p class="eyebrow">Portal estudiante</p>
+          <h1>Iniciar sesi&oacute;n</h1>
+        </div>
+
+        <div class="portal-switch" aria-label="Tipo de portal">
+          <span class="is-active">Estudiante</span>
+          <a routerLink="/login-docente">Docente</a>
+        </div>
+      </div>
+
+      <div class="rive-medallion" [class.is-ready]="riveDisponible()" [class.has-error]="riveError()">
+        <canvas
+          #riveCanvas
+          class="rive-mascot"
+          width="320"
+          height="280"
+          aria-label="Mascota interactiva de DAEMON"
+        ></canvas>
+      </div>
+
+      <form #loginForm="ngForm" (ngSubmit)="entrar(loginForm)" class="login-form" novalidate>
+        <label class="classic-field" for="usuario">
+          <span class="field-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
               <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Zm0 2c-4.42 0-8 2.24-8 5v1h16v-1c0-2.76-3.58-5-8-5Z" />
             </svg>
           </span>
           <input
-            class="w-full bg-transparent border-none focus:ring-0 text-sm font-medium text-slate-900 px-3 py-2 outline-none"
             id="usuario"
             name="usuario"
             [ngModel]="usuario"
@@ -48,20 +55,17 @@
             (focusout)="desactivarCampo('usuario')"
           >
         </label>
-        @if (usuarioModel.invalid && (usuarioModel.dirty || usuarioModel.touched)) {
-          <p class="text-xs font-bold text-red-500 px-1">El usuario es obligatorio (min 4 chars).</p>
-        }
-      </div>
+        <p *ngIf="usuarioModel.invalid && (usuarioModel.dirty || usuarioModel.touched)" class="field-error">
+          El usuario es obligatorio y debe tener al menos 4 caracteres.
+        </p>
 
-      <div class="flex flex-col gap-1">
-        <label class="relative flex items-center w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-1 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100 transition-all">
-          <span class="text-slate-400 shrink-0" aria-hidden="true">
-            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+        <label class="classic-field" for="password">
+          <span class="field-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
               <path d="M17 9h-1V7a4 4 0 0 0-8 0v2H7a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2Zm-7-2a2 2 0 0 1 4 0v2h-4Zm3 9.73V18h-2v-1.27a2 2 0 1 1 2 0Z" />
             </svg>
           </span>
           <input
-            class="w-full bg-transparent border-none focus:ring-0 text-sm font-medium text-slate-900 px-3 py-2 outline-none"
             [type]="passwordVisible() ? 'text' : 'password'"
             id="password"
             name="password"
@@ -70,65 +74,66 @@
             minlength="3"
             #passwordModel="ngModel"
             autocomplete="current-password"
-            placeholder="Contraseña"
+            placeholder="Contrase&ntilde;a"
             (focusin)="activarCampo('password')"
             (focusout)="desactivarCampo('password')"
           >
           <button
             type="button"
-            class="p-1 text-slate-400 hover:text-slate-600 transition-colors"
+            class="field-action"
             (mousedown)="$event.preventDefault()"
             (click)="alternarPassword()"
             [attr.aria-label]="passwordVisible() ? 'Ocultar clave' : 'Mostrar clave'"
           >
-            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
               <path d="M12 5c-5 0-9 4.5-10 7 1 2.5 5 7 10 7s9-4.5 10-7c-1-2.5-5-7-10-7Zm0 11a4 4 0 1 1 4-4 4 4 0 0 1-4 4Zm0-6.2A2.2 2.2 0 1 0 14.2 12 2.2 2.2 0 0 0 12 9.8Z" />
             </svg>
           </button>
         </label>
-        @if (passwordModel.invalid && (passwordModel.dirty || passwordModel.touched)) {
-          <p class="text-xs font-bold text-red-500 px-1">La contraseña es obligatoria.</p>
+        <p *ngIf="passwordModel.invalid && (passwordModel.dirty || passwordModel.touched)" class="field-error">
+          La contrase&ntilde;a es obligatoria.
+        </p>
+
+        <a routerLink="/recuperar-clave" class="forgot-password" style="font-size: 0.75rem; font-weight: bold; color: #2563eb; text-decoration: none; margin-top: -0.5rem; align-self: flex-start;">&iquest;Problemas para iniciar sesi&oacute;n?</a>
+
+        @if (error()) {
+          <div class="form-alert" role="alert">
+            {{ error() }}
+          </div>
         }
+
+        <button type="submit" [disabled]="enviando() || loginForm.invalid" class="submit-button">
+          {{ enviando() ? 'Ingresando...' : 'Ingresar al portal' }}
+        </button>
+      </form>
+
+      <div class="google-block">
+        <div class="divider">
+          <span>o contin&uacute;a con Google</span>
+        </div>
+        <button type="button" class="firebase-google-button" (click)="continuarConGoogle()" [disabled]="enviando()">
+          <svg class="google-logo" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+            <path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/>
+            <path fill="#FF3D00" d="m6.306 14.691 6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z"/>
+            <path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238A11.91 11.91 0 0 1 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"/>
+            <path fill="#1976D2" d="M43.611 20.083 43.595 20H24v8h11.303a12.04 12.04 0 0 1-4.087 5.571l.003-.002 6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"/>
+          </svg>
+          <span class="firebase-google-button__text">Continuar con Google</span>
+        </button>
       </div>
 
-      <a routerLink="/recuperar-clave" class="text-xs font-bold text-blue-600 hover:underline w-fit">¿Problemas para iniciar sesión?</a>
+      <footer class="login-footer">
+        <p>&iquest;A&uacute;n no tienes cuenta? <a routerLink="/registro">Reg&iacute;strate aqu&iacute;</a></p>
+      </footer>
+    </article>
 
-      @if (error()) {
-        <div class="bg-red-50 border border-red-200 rounded-xl p-3 text-center" role="alert">
-          <p class="text-sm font-bold text-red-600">{{ error() }}</p>
-        </div>
-      }
-
-      <button type="submit" [disabled]="enviando() || loginForm.invalid" class="w-full bg-slate-900 text-white font-bold text-sm py-3 rounded-xl mt-2 hover:bg-slate-800 disabled:opacity-50 transition-colors">
-        {{ enviando() ? 'Ingresando...' : 'Ingresar al portal' }}
-      </button>
-    </form>
-
-    <div class="relative flex items-center justify-center my-6">
-      <div class="absolute w-full border-t border-slate-200"></div>
-      <span class="relative bg-white px-4 text-xs font-bold text-slate-400 uppercase">o continúa con</span>
-    </div>
-
-    <button type="button" class="w-full flex items-center justify-center gap-3 bg-white border border-slate-200 text-slate-700 font-bold text-sm py-3 rounded-xl hover:bg-slate-50 transition-colors shadow-sm disabled:opacity-50" (click)="continuarConGoogle()" [disabled]="enviando()">
-      <svg class="w-5 h-5" viewBox="0 0 48 48" aria-hidden="true">
-        <path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/>
-        <path fill="#FF3D00" d="m6.306 14.691 6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z"/>
-        <path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238A11.91 11.91 0 0 1 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"/>
-        <path fill="#1976D2" d="M43.611 20.083 43.595 20H24v8h11.303a12.04 12.04 0 0 1-4.087 5.571l.003-.002 6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"/>
-      </svg>
-      Google
-    </button>
-
-    <footer class="mt-6 text-center text-sm text-slate-500 font-medium">
-      <p>¿Aún no tienes cuenta? <a routerLink="/registro" class="text-blue-600 font-bold hover:underline">Regístrate aquí</a></p>
-    </footer>
-  </div>
-
-  <!-- Note Badge -->
-  <aside class="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex items-center gap-2 bg-slate-200/50 rounded-full px-4 py-2 pointer-events-none">
-    <svg class="w-4 h-4 text-slate-500" fill="currentColor" viewBox="0 0 24 24">
-      <path d="M17 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2Zm-5 18.3a1.1 1.1 0 1 1 1.1-1.1 1.1 1.1 0 0 1-1.1 1.1ZM17 17H7V5h10Z" />
-    </svg>
-    <p class="text-xs font-bold text-slate-600">Optimizado para todos tus dispositivos.</p>
-  </aside>
+    <aside class="login-note">
+      <span class="note-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" focusable="false">
+          <path d="M17 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2Zm-5 18.3a1.1 1.1 0 1 1 1.1-1.1 1.1 1.1 0 0 1-1.1 1.1ZM17 17H7V5h10Z" />
+        </svg>
+      </span>
+      <p>Accede a tu portal desde cualquier dispositivo con una experiencia optimizada.</p>
+    </aside>
+  </section>
 </main>
