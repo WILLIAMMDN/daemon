@@ -60,7 +60,9 @@
           </article>
           <article class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center text-center gap-2">
             <span class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Tokens circulando</span>
-            <strong class="text-4xl font-black text-yellow-500">{{ datos.tokens_circulacion }}</strong>
+            <strong class="text-4xl font-black text-yellow-500 flex items-center">
+              <app-moneda-daemon [cantidad]="datos.tokens_circulacion" [size]="28" [soloNumero]="true"></app-moneda-daemon>
+            </strong>
           </article>
           <article class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center text-center gap-2">
             <span class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Entregas pend.</span>
@@ -100,7 +102,9 @@
                           <span class="text-xs text-gray-500">{{ alumno.nivel }} - {{ alumno.rango || alumno.usuario }}</span>
                         </div>
                       </div>
-                      <b class="text-yellow-600 font-bold">{{ alumno.tokens }} Tk</b>
+                      <b class="text-yellow-600 font-bold flex items-center">
+                        <app-moneda-daemon [cantidad]="alumno.tokens" [size]="16"></app-moneda-daemon>
+                      </b>
                     </div>
                   }
                 </div>

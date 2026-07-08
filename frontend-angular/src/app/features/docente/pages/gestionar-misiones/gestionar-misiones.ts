@@ -1,4 +1,5 @@
 import { Component, signal , ChangeDetectionStrategy} from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -11,11 +12,12 @@ import { Mision } from '../../../misiones/services/mision';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
 import { BotonAccion } from '../../../../shared/componentes/boton-accion/boton-accion';
+import { MonedaDaemon } from '../../../../shared/componentes/moneda-daemon/moneda-daemon';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-gestionar-misiones',
-  imports: [FormsModule, NzAlertModule, NzButtonModule, NzTagModule, NzTableModule, NzPopconfirmModule, NzModalModule, Cargando, EstadoVacio, BotonAccion],
+  imports: [CommonModule, FormsModule, NzAlertModule, NzButtonModule, NzTagModule, NzTableModule, NzPopconfirmModule, NzModalModule, Cargando, EstadoVacio, BotonAccion, MonedaDaemon],
   templateUrl: './gestionar-misiones.html',
   styleUrl: './gestionar-misiones.scss',
 })
@@ -26,8 +28,9 @@ export class GestionarMisiones {
   mensaje = signal('');
   error = signal('');
   
-  // Modal de edición
-  modalVisible = signal(false);
+  // Modales
+  modalCrearVisible = signal(false);
+  modalEditVisible = signal(false);
   misionEditando: any = null;
 
   nueva = {
@@ -59,19 +62,28 @@ export class GestionarMisiones {
     });
   }
 
+  abrirCrear(): void {
+    this.nueva = { titulo: '', descripcion: '', recompensa: 0, tipo_evidencia: 'texto', nivel_requerido: 'TODOS', estado: 'activo', es_mision_nivel: false };
+    this.modalCrearVisible.set(true);
+  }
+
+  cerrarCrear(): void {
+    this.modalCrearVisible.set(false);
+  }
+
   crear(): void {
     this.guardando.set(true);
     this.mensaje.set('');
     this.error.set('');
     this.mision.crear(this.nueva).subscribe({
       next: () => {
-        this.mensaje.set('Misión creada exitosamente.');
-        this.nueva = { titulo: '', descripcion: '', recompensa: 0, tipo_evidencia: 'texto', nivel_requerido: 'TODOS', estado: 'activo', es_mision_nivel: false };
+        this.message.success('Misión creada exitosamente.');
         this.guardando.set(false);
+        this.cerrarCrear();
         this.cargar();
       },
       error: (e) => {
-        this.error.set(e.error?.message ?? 'No se pudo crear la misión.');
+        this.message.error(e.error?.message ?? 'No se pudo crear la misión.');
         this.guardando.set(false);
       },
     });
@@ -79,11 +91,11 @@ export class GestionarMisiones {
 
   abrirEditar(m: any): void {
     this.misionEditando = { ...m };
-    this.modalVisible.set(true);
+    this.modalEditVisible.set(true);
   }
 
   cerrarEditar(): void {
-    this.modalVisible.set(false);
+    this.modalEditVisible.set(false);
     this.misionEditando = null;
   }
 

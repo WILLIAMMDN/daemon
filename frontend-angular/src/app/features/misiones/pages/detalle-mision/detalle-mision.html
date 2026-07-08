@@ -1,54 +1,83 @@
-@if (cargando()) {
-  <app-cargando class="state" texto="Cargando misión..."></app-cargando>
-} @else if (error()) {
-  <section class="error">{{ error() }}</section>
-} @else if (detalle(); as datos) {
-  <section class="page">
-    <header class="page-header">
-      <div>
-        <p class="kicker">Detalle de misión</p>
-        <h1>{{ datos.mision.titulo }}</h1>
-        <p>{{ datos.mision.descripcion || 'Sin descripción registrada.' }}</p>
+<main class="w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-6 md:gap-8 font-inter">
+  @if (cargando()) {
+    <div class="py-12 bg-white rounded-2xl shadow-sm border border-slate-100">
+      <app-cargando texto="Cargando detalle de la misión..."></app-cargando>
+    </div>
+  } @else if (error()) {
+    <nz-alert nzType="error" nzShowIcon [nzMessage]="error()"></nz-alert>
+  } @else if (detalle(); as datos) {
+    <!-- Cabecera -->
+    <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+      <div class="flex flex-col gap-1">
+        <span class="text-sm font-semibold uppercase tracking-wider text-blue-600">Detalle de Misión</span>
+        <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 leading-tight">{{ datos.mision.titulo }}</h1>
+        <p class="text-sm text-slate-600">{{ datos.mision.descripcion || 'Sin descripción registrada.' }}</p>
       </div>
-      <a class="ghost-btn" routerLink="/alumno/misiones">Volver</a>
+      <a routerLink="/alumno/misiones" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium rounded-lg transition-colors whitespace-nowrap text-sm cursor-pointer">
+        Volver
+      </a>
     </header>
 
-    <section class="stats">
-      <article class="stat">
-        <span>Recompensa</span>
-        <strong>{{ datos.mision.recompensa }}</strong>
-      </article>
-      <article class="stat">
-        <span>Nivel</span>
-        <strong>{{ datos.mision.nivel_requerido }}</strong>
-      </article>
-      <article class="stat">
-        <span>Evidencia</span>
-        <strong>{{ datos.mision.tipo_evidencia }}</strong>
-      </article>
-    </section>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex flex-col items-center justify-center text-center">
+        <span class="text-sm text-slate-500 font-medium uppercase tracking-wide">Recompensa</span>
+        <strong class="text-2xl text-yellow-600 font-bold mt-1 flex items-center">
+          <app-moneda-daemon [cantidad]="datos.mision.recompensa" [size]="24"></app-moneda-daemon>
+        </strong>
+      </div>
+      <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex flex-col items-center justify-center text-center">
+        <span class="text-sm text-slate-500 font-medium uppercase tracking-wide">Nivel</span>
+        <strong class="text-2xl text-blue-600 font-bold mt-1">{{ datos.mision.nivel_requerido }}</strong>
+      </div>
+      <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex flex-col items-center justify-center text-center">
+        <span class="text-sm text-slate-500 font-medium uppercase tracking-wide">Evidencia</span>
+        <strong class="text-lg text-slate-800 font-bold mt-1 max-w-full truncate" [title]="datos.mision.tipo_evidencia">{{ datos.mision.tipo_evidencia }}</strong>
+      </div>
+    </div>
 
-    <section class="split">
-      <article class="panel">
-        <h2>Estado de entrega</h2>
+    <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <article class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 flex flex-col gap-4">
+        <h2 class="text-lg font-bold text-slate-900 border-b border-slate-100 pb-2">Estado de entrega</h2>
         @if (datos.entrega) {
-          <p><span class="badge" [class.warn]="datos.entrega.estado === 'pendiente'">{{ datos.entrega.estado }}</span></p>
-          <p class="content">{{ datos.entrega.archivo_url }}</p>
+          <div class="flex items-center">
+            <nz-tag [nzColor]="datos.entrega.estado === 'pendiente' ? 'gold' : (datos.entrega.estado === 'aprobado' ? 'success' : 'error')" class="font-bold border-0 rounded-md text-sm">
+              {{ datos.entrega.estado | uppercase }}
+            </nz-tag>
+          </div>
+          @if (datos.entrega.archivo_url) {
+            <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 text-sm overflow-hidden text-ellipsis whitespace-nowrap">
+              <a [href]="datos.entrega.archivo_url" target="_blank" class="text-blue-600 hover:underline flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                Ver evidencia entregada
+              </a>
+            </div>
+          }
           @if (datos.entrega.comentario_docente) {
-            <p><strong>Comentario:</strong> {{ datos.entrega.comentario_docente }}</p>
+            <div class="bg-blue-50 p-4 rounded-xl border border-blue-100">
+              <p class="text-xs font-semibold text-blue-800 uppercase tracking-wide mb-1">Feedback del docente</p>
+              <p class="text-sm text-blue-900 italic">{{ datos.entrega.comentario_docente }}</p>
+            </div>
           }
         } @else {
-          <p class="empty">Todavía no registraste entrega para esta misión.</p>
+          <div class="py-8 text-center text-slate-500">
+            <svg class="w-12 h-12 mx-auto text-slate-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+            <p>Todavía no registraste entrega para esta misión.</p>
+          </div>
         }
       </article>
 
-      <article class="panel">
-        <h2>Acciónes</h2>
-        <div class="actions">
-          <a class="btn" [routerLink]="['/alumno/misiones', datos.mision.id, 'entregar']">Entregar evidencia</a>
-          <a class="ghost-btn" routerLink="/alumno/desafios">Ver desafíos</a>
+      <article class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 flex flex-col gap-4">
+        <h2 class="text-lg font-bold text-slate-900 border-b border-slate-100 pb-2">Acciones</h2>
+        <div class="flex flex-col sm:flex-row gap-3">
+          <a [routerLink]="['/alumno/misiones', datos.mision.id, 'entregar']" class="flex-1 text-center bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-xl transition-colors cursor-pointer shadow-sm flex justify-center items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+            Entregar evidencia
+          </a>
+          <a routerLink="/alumno/desafios" class="flex-1 text-center bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-medium py-3 px-4 rounded-xl transition-colors cursor-pointer flex justify-center items-center gap-2">
+            Ver desafíos
+          </a>
         </div>
       </article>
     </section>
-  </section>
-}
+  }
+</main>

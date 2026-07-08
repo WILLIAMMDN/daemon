@@ -34,7 +34,9 @@
               <app-moneda-daemon [size]="24" titulo="Tokens DAEMON" />
             </span>
             <div class="flex flex-col">
-              <strong class="text-lg font-bold leading-none text-slate-900">{{ datos.usuario.tokens }}</strong>
+              <strong class="text-lg font-bold leading-none text-slate-900 flex items-center">
+                <app-moneda-daemon [cantidad]="datos.usuario.tokens" [size]="18" [soloNumero]="true"></app-moneda-daemon>
+              </strong>
               <span class="text-xs text-slate-500">DAEMONS vivos</span>
             </div>
           </article>

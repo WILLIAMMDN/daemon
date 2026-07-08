@@ -6,9 +6,7 @@
       <h1 class="text-2xl md:text-3xl font-bold text-gray-900">Flujo de Tokens</h1>
       <p class="text-base text-gray-600">Auditoría global de economía escolar: ingresos y gastos de estudiantes.</p>
     </div>
-    <button nz-button nzType="default" (click)="cargar()" [nzLoading]="cargando()" class="flex items-center gap-2">
-      Actualizar
-    </button>
+    <app-boton-accion tipo="actualizar" (accion)="cargar()" [cargando]="cargando()" [deshabilitado]="cargando()"></app-boton-accion>
   </header>
 
   @if (error()) {
@@ -41,8 +39,9 @@
                 <td>
                   <nz-tag [nzColor]="mov.tipo === 'ingreso' ? 'success' : 'error'">{{ mov.tipo | uppercase }}</nz-tag>
                 </td>
-                <td class="font-bold font-mono" [class]="mov.tipo === 'ingreso' ? 'text-green-600' : 'text-red-600'">
-                  {{ mov.tipo === 'ingreso' ? '+' : '-' }}{{ mov.cantidad }} Tk
+                <td class="font-bold font-mono flex items-center gap-1" [class]="mov.tipo === 'ingreso' ? 'text-green-600' : 'text-red-600'">
+                  {{ mov.tipo === 'ingreso' ? '+' : '-' }}
+                  <app-moneda-daemon [cantidad]="mov.cantidad" [size]="16"></app-moneda-daemon>
                 </td>
                 <td class="text-gray-700">{{ mov.concepto }}</td>
               </tr>

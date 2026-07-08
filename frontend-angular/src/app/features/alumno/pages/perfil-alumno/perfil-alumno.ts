@@ -11,6 +11,7 @@ import { Activos } from '../../../../core/servicios/activos';
 import { Sesion } from '../../../../core/servicios/sesion';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
+import { MonedaDaemon } from '../../../../shared/componentes/moneda-daemon/moneda-daemon';
 import { Alumno } from '../../services/alumno';
 
 interface UsuarioPerfil {

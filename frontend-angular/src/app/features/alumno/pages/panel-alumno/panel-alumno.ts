@@ -1,5 +1,6 @@
 import { Component, signal , ChangeDetectionStrategy} from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { CommonModule } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
   faBolt,
@@ -13,9 +14,11 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzButtonModule } from 'ng-zorro-antd/button';
+import { BotonAccion } from '../../../../shared/componentes/boton-accion/boton-accion';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 import { MonedaDaemon } from '../../../../shared/componentes/moneda-daemon/moneda-daemon';
 import { Alumno } from '../../services/alumno';
+import { AlumnoCore } from '../../services/alumno.core';
 
 interface UsuarioPanel {
   id: number;

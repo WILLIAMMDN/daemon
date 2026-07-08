@@ -5,6 +5,7 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
 import { Docente } from '../../services/docente';
+import { MonedaDaemon } from '../../../../shared/componentes/moneda-daemon/moneda-daemon';
 
 interface AlumnoRanking {
   id: number;
@@ -33,7 +34,7 @@ interface PanelDocenteData {
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-panel-docente',
-  imports: [RouterLink, NzAlertModule, NzButtonModule, NzTagModule, EstadoVacio],
+  imports: [CommonModule, RouterLink, NzAlertModule, NzButtonModule, NzTagModule, EstadoVacio, MonedaDaemon],
   templateUrl: './panel-docente.html',
   styleUrl: './panel-docente.scss',
 })

@@ -1,12 +1,15 @@
 <main class="w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-6 md:gap-8 font-inter">
   <!-- Cabecera -->
-  <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+  <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
     <div class="flex flex-col gap-1">
       <span class="text-sm font-semibold uppercase tracking-wider text-blue-600">Docente</span>
-      <h1 class="text-2xl md:text-3xl font-bold text-gray-900">Gestionar misiones</h1>
-      <p class="text-base text-gray-600">Crea desafíos y revisa su disponibilidad.</p>
+      <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 leading-tight">Gestionar misiones</h1>
+      <p class="text-sm text-slate-600">Crea desafíos para tus estudiantes y fomenta la participación.</p>
     </div>
-    <app-boton-accion tipo="actualizar" (accion)="cargar()" [cargando]="cargando()"></app-boton-accion>
+    <div class="flex gap-2">
+      <app-boton-accion tipo="actualizar" (accion)="cargar()" [cargando]="cargando()" [deshabilitado]="cargando()"></app-boton-accion>
+      <app-boton-accion tipo="crear" texto="Nueva misión" (accion)="abrirCrear()"></app-boton-accion>
+    </div>
   </header>
 
   <!-- Alertas -->
@@ -17,169 +20,172 @@
     <nz-alert nzType="error" nzShowIcon [nzMessage]="error()"></nz-alert>
   }
 
-  <!-- Layout Principal -->
-  <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-    <!-- Panel Izquierdo: Formulario -->
-    <div class="lg:col-span-1">
-      <form (ngSubmit)="crear()" class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col gap-4">
-        <h2 class="text-lg font-bold text-gray-900 border-b border-gray-100 pb-2">Nueva misión</h2>
-        
-        <label class="flex flex-col gap-1">
-          <span class="text-sm font-medium text-gray-700">Título</span>
-          <input name="titulo" [(ngModel)]="nueva.titulo" required
-                 class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
-        </label>
-        
-        <label class="flex flex-col gap-1">
-          <span class="text-sm font-medium text-gray-700">Recompensa (Tokens)</span>
-          <input name="recompensa" type="number" min="0" [(ngModel)]="nueva.recompensa" required
-                 class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
-        </label>
-        
-        <label class="flex flex-col gap-1">
-          <span class="text-sm font-medium text-gray-700">Evidencia requerida</span>
-          <select name="tipo_evidencia" [(ngModel)]="nueva.tipo_evidencia"
-                  class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
-            <option value="texto">Texto</option>
-            <option value="archivo">Archivo adjunto</option>
-            <option value="imagen">Imagen</option>
-            <option value="video">Video</option>
-          </select>
-        </label>
-
-        <label class="flex flex-col gap-1">
-          <span class="text-sm font-medium text-gray-700">Nivel de la misión</span>
-          <select name="nivel_requerido" [(ngModel)]="nueva.nivel_requerido"
-                  class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
-            <option value="TODOS">TODOS</option>
-            <option value="KIDS">KIDS</option>
-            <option value="TEENS">TEENS</option>
-            <option value="PRO">PRO</option>
-          </select>
-        </label>
-
-        <label class="flex flex-col gap-1">
-          <span class="text-sm font-medium text-gray-700">Estado</span>
-          <select name="estado" [(ngModel)]="nueva.estado"
-                  class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
-            <option value="activo">Activa</option>
-            <option value="inactivo">Inactiva (Borrador)</option>
-          </select>
-        </label>
-
-        <label class="flex flex-col gap-1">
-          <span class="text-sm font-medium text-gray-700">Descripción detallada</span>
-          <textarea name="descripcion" [(ngModel)]="nueva.descripcion" rows="4"
-                    class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"></textarea>
-        </label>
-        
-        <app-boton-accion tipo="crear" texto="Crear misión" [anchoCompleto]="true" [esSubmit]="true" [deshabilitado]="guardando() || !nueva.titulo.trim()" [cargando]="guardando()" claseExtra="mt-2"></app-boton-accion>
-      </form>
-    </div>
-
-    <!-- Panel Derecho: Tabla -->
-    <div class="lg:col-span-2">
-      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-        @if (cargando()) {
-          <div class="p-8">
-            <app-cargando texto="Cargando misiones..."></app-cargando>
-          </div>
-        } @else if (misiones().length) {
-          <div class="overflow-x-auto w-full">
-            <nz-table #tablaMisiones [nzData]="misiones()" [nzShowPagination]="true" [nzPageSize]="10" nzSize="middle" class="w-full whitespace-nowrap">
-              <thead>
-                <tr>
-                  <th>Misión</th>
-                  <th>Nivel</th>
-                  <th>Recompensa</th>
-                  <th>Estado</th>
-                  <th>Evidencia</th>
-                  <th>Acciones</th>
+  <!-- Layout Principal (Full Width) -->
+  <section class="w-full">
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+      @if (cargando()) {
+        <div class="p-12">
+          <app-cargando texto="Cargando misiones..."></app-cargando>
+        </div>
+      } @else if (misiones().length) {
+        <div class="overflow-x-auto w-full">
+          <nz-table #tablaMisiones [nzData]="misiones()" [nzShowPagination]="true" [nzPageSize]="10" nzSize="middle" class="w-full whitespace-nowrap">
+            <thead>
+              <tr class="bg-slate-50">
+                <th class="text-slate-500 font-semibold text-sm">Misión</th>
+                <th class="text-slate-500 font-semibold text-sm">Nivel</th>
+                <th class="text-slate-500 font-semibold text-sm">Recompensa</th>
+                <th class="text-slate-500 font-semibold text-sm">Estado</th>
+                <th class="text-slate-500 font-semibold text-sm">Evidencia</th>
+                <th class="text-slate-500 font-semibold text-sm text-right">Acciones</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              @for (mision of tablaMisiones.data; track mision.id) {
+                <tr class="hover:bg-slate-50 transition-colors">
+                  <td class="font-bold text-slate-900">{{ mision.titulo }}</td>
+                  <td>
+                    <nz-tag [nzColor]="mision.nivel_requerido === 'TODOS' ? 'default' : mision.nivel_requerido === 'PRO' ? 'purple' : mision.nivel_requerido === 'TEENS' ? 'cyan' : 'blue'" class="font-bold rounded-md">
+                      {{ mision.nivel_requerido }}
+                    </nz-tag>
+                  </td>
+                  <td class="font-bold text-yellow-500">
+                    <app-moneda-daemon [cantidad]="mision.recompensa" [size]="16"></app-moneda-daemon>
+                  </td>
+                  <td>
+                    <nz-tag [nzColor]="mision.estado === 'activo' ? 'green' : 'default'" class="rounded-md border-0 uppercase text-[10px] tracking-wider font-bold">
+                      {{ mision.estado }}
+                    </nz-tag>
+                  </td>
+                  <td class="text-sm text-slate-600 capitalize font-medium">{{ mision.tipo_evidencia }}</td>
+                  <td>
+                    <div class="flex items-center justify-end gap-2">
+                      <app-boton-accion tipo="editar" (accion)="abrirEditar(mision)"></app-boton-accion>
+                      <app-boton-accion tipo="eliminar" confirmacion="¿Seguro que deseas eliminar esta misión? Se borrarán también sus entregas." (accion)="eliminar(mision.id)"></app-boton-accion>
+                    </div>
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                @for (mision of tablaMisiones.data; track mision.id) {
-                  <tr>
-                    <td class="font-medium text-gray-900">{{ mision.titulo }}</td>
-                    <td><nz-tag nzColor="blue">{{ mision.nivel_requerido }}</nz-tag></td>
-                    <td class="font-bold text-yellow-600">{{ mision.recompensa }} Tk</td>
-                    <td>
-                      <nz-tag [nzColor]="mision.estado === 'activo' ? 'green' : 'default'">{{ mision.estado }}</nz-tag>
-                    </td>
-                    <td class="text-sm text-gray-600 capitalize">{{ mision.tipo_evidencia }}</td>
-                    <td>
-                      <div class="flex items-center gap-2">
-                        <app-boton-accion tipo="editar" (accion)="abrirEditar(mision)"></app-boton-accion>
-                        <app-boton-accion tipo="eliminar" confirmacion="¿Seguro que deseas eliminar esta misión? Se borrarán también sus entregas." (accion)="eliminar(mision.id)"></app-boton-accion>
-                      </div>
-                    </td>
-                  </tr>
-                }
-              </tbody>
-            </nz-table>
-          </div>
-        } @else {
-          <div class="p-8">
-            <app-estado-vacio titulo="Sin misiones creadas" descripcion="Crea la primera misión para que tus estudiantes tengan un reto activo."></app-estado-vacio>
-          </div>
-        }
-      </div>
+              }
+            </tbody>
+          </nz-table>
+        </div>
+      } @else {
+        <div class="p-12">
+          <app-estado-vacio titulo="Sin misiones creadas" descripcion="Crea la primera misión para que tus estudiantes tengan un reto activo."></app-estado-vacio>
+        </div>
+      }
     </div>
   </section>
 </main>
 
+<!-- Modal de Creación -->
+<nz-modal [(nzVisible)]="modalCrearVisible" nzTitle="Crear nueva misión" (nzOnCancel)="cerrarCrear()" (nzOnOk)="crear()" [nzOkLoading]="guardando()" [nzOkDisabled]="!nueva.titulo.trim()" nzOkText="Crear misión" nzCancelText="Cancelar" nzCentered nzWidth="600px">
+  <ng-container *nzModalContent>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
+      <label class="flex flex-col gap-1.5 md:col-span-2">
+        <span class="text-sm font-semibold text-slate-700">Título de la misión</span>
+        <input name="titulo" [(ngModel)]="nueva.titulo" required placeholder="Ej: Leer el primer capítulo de..."
+               class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all">
+      </label>
+      
+      <label class="flex flex-col gap-1.5">
+        <span class="text-sm font-semibold text-slate-700">Recompensa (Tokens)</span>
+        <input name="recompensa" type="number" min="0" [(ngModel)]="nueva.recompensa" required
+               class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all">
+      </label>
+      
+      <label class="flex flex-col gap-1.5">
+        <span class="text-sm font-semibold text-slate-700">Evidencia requerida</span>
+        <select name="tipo_evidencia" [(ngModel)]="nueva.tipo_evidencia"
+                class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all cursor-pointer">
+          <option value="texto">Solo texto</option>
+          <option value="archivo">Archivo adjunto</option>
+          <option value="imagen">Imagen / Foto</option>
+          <option value="video">Video</option>
+        </select>
+      </label>
+
+      <label class="flex flex-col gap-1.5">
+        <span class="text-sm font-semibold text-slate-700">Nivel de la misión</span>
+        <select name="nivel_requerido" [(ngModel)]="nueva.nivel_requerido"
+                class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all cursor-pointer">
+          <option value="TODOS">Todos los niveles</option>
+          <option value="KIDS">Solo KIDS</option>
+          <option value="TEENS">Solo TEENS</option>
+          <option value="PRO">Solo PRO</option>
+        </select>
+      </label>
+
+      <label class="flex flex-col gap-1.5">
+        <span class="text-sm font-semibold text-slate-700">Estado inicial</span>
+        <select name="estado" [(ngModel)]="nueva.estado"
+                class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all cursor-pointer">
+          <option value="activo">Activa (Pública)</option>
+          <option value="inactivo">Inactiva (Borrador)</option>
+        </select>
+      </label>
+
+      <label class="flex flex-col gap-1.5 md:col-span-2">
+        <span class="text-sm font-semibold text-slate-700">Descripción detallada</span>
+        <textarea name="descripcion" [(ngModel)]="nueva.descripcion" rows="4" placeholder="Instrucciones paso a paso para el estudiante..."
+                  class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all resize-none"></textarea>
+      </label>
+    </div>
+  </ng-container>
+</nz-modal>
+
 <!-- Modal de Edición -->
-<nz-modal [(nzVisible)]="modalVisible" nzTitle="Editar Misión" (nzOnCancel)="cerrarEditar()" (nzOnOk)="guardarEdicion()" [nzOkLoading]="guardando()" nzWidth="600px">
+<nz-modal [(nzVisible)]="modalEditVisible" nzTitle="Editar Misión" (nzOnCancel)="cerrarEditar()" (nzOnOk)="guardarEdicion()" [nzOkLoading]="guardando()" [nzOkDisabled]="!misionEditando?.titulo?.trim()" nzOkText="Guardar cambios" nzCancelText="Cancelar" nzCentered nzWidth="600px">
   <ng-container *nzModalContent>
     @if (misionEditando) {
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <label class="flex flex-col gap-1 md:col-span-2">
-          <span class="text-sm font-medium text-gray-700">Título</span>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
+        <label class="flex flex-col gap-1.5 md:col-span-2">
+          <span class="text-sm font-semibold text-slate-700">Título de la misión</span>
           <input name="edit_titulo" [(ngModel)]="misionEditando.titulo" required
-                 class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
+                 class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all">
         </label>
         
-        <label class="flex flex-col gap-1">
-          <span class="text-sm font-medium text-gray-700">Recompensa</span>
+        <label class="flex flex-col gap-1.5">
+          <span class="text-sm font-semibold text-slate-700">Recompensa (Tokens)</span>
           <input name="edit_recompensa" type="number" min="0" [(ngModel)]="misionEditando.recompensa" required
-                 class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
+                 class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all">
         </label>
         
-        <label class="flex flex-col gap-1">
-          <span class="text-sm font-medium text-gray-700">Evidencia</span>
+        <label class="flex flex-col gap-1.5">
+          <span class="text-sm font-semibold text-slate-700">Evidencia requerida</span>
           <select name="edit_tipo_evidencia" [(ngModel)]="misionEditando.tipo_evidencia"
-                  class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
-            <option value="texto">Texto</option>
-            <option value="archivo">Archivo</option>
-            <option value="imagen">Imagen</option>
+                  class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all cursor-pointer">
+            <option value="texto">Solo texto</option>
+            <option value="archivo">Archivo adjunto</option>
+            <option value="imagen">Imagen / Foto</option>
             <option value="video">Video</option>
           </select>
         </label>
 
-        <label class="flex flex-col gap-1">
-          <span class="text-sm font-medium text-gray-700">Nivel</span>
+        <label class="flex flex-col gap-1.5">
+          <span class="text-sm font-semibold text-slate-700">Nivel de la misión</span>
           <select name="edit_nivel_requerido" [(ngModel)]="misionEditando.nivel_requerido"
-                  class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
-            <option value="TODOS">TODOS</option>
-            <option value="KIDS">KIDS</option>
-            <option value="TEENS">TEENS</option>
-            <option value="PRO">PRO</option>
+                  class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all cursor-pointer">
+            <option value="TODOS">Todos los niveles</option>
+            <option value="KIDS">Solo KIDS</option>
+            <option value="TEENS">Solo TEENS</option>
+            <option value="PRO">Solo PRO</option>
           </select>
         </label>
         
-        <label class="flex flex-col gap-1">
-          <span class="text-sm font-medium text-gray-700">Estado</span>
+        <label class="flex flex-col gap-1.5">
+          <span class="text-sm font-semibold text-slate-700">Estado</span>
           <select name="edit_estado" [(ngModel)]="misionEditando.estado"
-                  class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
-            <option value="activo">Activa</option>
-            <option value="inactivo">Inactiva</option>
+                  class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all cursor-pointer">
+            <option value="activo">Activa (Pública)</option>
+            <option value="inactivo">Inactiva (Borrador)</option>
           </select>
         </label>
         
-        <label class="flex flex-col gap-1 md:col-span-2">
-          <span class="text-sm font-medium text-gray-700">Descripción</span>
+        <label class="flex flex-col gap-1.5 md:col-span-2">
+          <span class="text-sm font-semibold text-slate-700">Descripción detallada</span>
           <textarea name="edit_descripcion" [(ngModel)]="misionEditando.descripcion" rows="4"
-                    class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"></textarea>
+                    class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all resize-none"></textarea>
         </label>
       </div>
     }

@@ -7,12 +7,13 @@ import { Activos } from '../../../../core/servicios/activos';
 import { Tienda } from '../../services/tienda';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
+import { MonedaDaemon } from '../../../../shared/componentes/moneda-daemon/moneda-daemon';
 
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-tienda-alumno',
-  imports: [RouterLink, NzAlertModule, NzButtonModule, NzTagModule, Cargando, EstadoVacio],
+  imports: [RouterLink, NzAlertModule, NzButtonModule, NzTagModule, Cargando, EstadoVacio, MonedaDaemon],
   templateUrl: './tienda-alumno.html',
   styleUrl: './tienda-alumno.scss',
 })

@@ -1,13 +1,16 @@
-﻿import { Component, signal , ChangeDetectionStrategy} from '@angular/core';
+import { Component, signal , ChangeDetectionStrategy} from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Mision } from '../../services/mision';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
-
+import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { NzTagModule } from 'ng-zorro-antd/tag';
+import { CommonModule } from '@angular/common';
+import { MonedaDaemon } from '../../../../shared/componentes/moneda-daemon/moneda-daemon';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-detalle-mision',
-  imports: [RouterLink, Cargando],
+  imports: [CommonModule, RouterLink, Cargando, NzAlertModule, NzTagModule, MonedaDaemon],
   templateUrl: './detalle-mision.html',
   styleUrl: './detalle-mision.scss',
 })

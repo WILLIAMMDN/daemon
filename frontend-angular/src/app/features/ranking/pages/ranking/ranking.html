@@ -48,7 +48,9 @@
 
             <!-- Tokens (Móvil y Desktop) -->
             <div class="md:col-span-2 flex items-center justify-end w-full">
-              <strong class="text-base md:text-lg font-extrabold text-blue-600">{{ alumno.tokens }} <span class="text-xs text-slate-500 font-bold ml-1">DAEMONS</span></strong>
+              <strong class="text-base md:text-lg font-extrabold text-blue-600 flex items-center justify-end md:justify-center">
+                <app-moneda-daemon [cantidad]="alumno.tokens" [size]="18"></app-moneda-daemon>
+              </strong>
             </div>
           </article>
         }

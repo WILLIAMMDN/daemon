@@ -9,11 +9,13 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { CommonModule } from '@angular/common';
 import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
+import { BotonAccion } from '../../../../shared/componentes/boton-accion/boton-accion';
+import { MonedaDaemon } from '../../../../shared/componentes/moneda-daemon/moneda-daemon';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-historial-tokens',
-  imports: [CommonModule, Cargando, NzTableModule, NzAlertModule, NzTagModule, NzButtonModule, EstadoVacio],
+  imports: [CommonModule, Cargando, NzTableModule, NzAlertModule, NzTagModule, NzButtonModule, EstadoVacio, BotonAccion, MonedaDaemon],
   templateUrl: './historial-tokens.html',
   styleUrl: './historial-tokens.scss',
 })

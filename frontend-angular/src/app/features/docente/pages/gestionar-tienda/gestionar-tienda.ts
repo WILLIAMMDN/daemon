@@ -5,18 +5,20 @@ import { CommonModule } from '@angular/common';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
-import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { BotonAccion } from '../../../../shared/componentes/boton-accion/boton-accion';
+import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
+import { MonedaDaemon } from '../../../../shared/componentes/moneda-daemon/moneda-daemon';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-gestionar-tienda',
-  imports: [FormsModule, CommonModule, Cargando, NzTableModule, NzPopconfirmModule, NzModalModule, NzTagModule, NzButtonModule, NzAlertModule, BotonAccion],
+  imports: [FormsModule, CommonModule, Cargando, EstadoVacio, NzTableModule, NzPopconfirmModule, NzModalModule, NzTagModule, NzButtonModule, NzAlertModule, BotonAccion, MonedaDaemon],
   templateUrl: './gestionar-tienda.html',
   styleUrl: './gestionar-tienda.scss',
 })
@@ -28,7 +30,8 @@ export class GestionarTienda {
   mensaje = signal('');
   error = signal('');
   
-  modalVisible = signal(false);
+  modalCrearVisible = signal(false);
+  modalEditVisible = signal(false);
   premioEditando: any = null;
 
   nuevo = { nombre: '', descripcion: '', precio: 0, stock: 0, imagen: '', categoria: 'GENERAL', tipo_entrega: 'fisico' };
@@ -53,15 +56,24 @@ export class GestionarTienda {
     });
   }
 
+  abrirCrear(): void {
+    this.nuevo = { nombre: '', descripcion: '', precio: 0, stock: 0, imagen: '', categoria: 'GENERAL', tipo_entrega: 'fisico' };
+    this.modalCrearVisible.set(true);
+  }
+
+  cerrarCrear(): void {
+    this.modalCrearVisible.set(false);
+  }
+
   crear(): void {
     this.guardando.set(true);
     this.mensaje.set('');
     this.error.set('');
     this.tienda.crearPremio(this.nuevo).subscribe({
       next: () => {
-        this.nuevo = { nombre: '', descripcion: '', precio: 0, stock: 0, imagen: '', categoria: 'GENERAL', tipo_entrega: 'fisico' };
-        this.mensaje.set('Premio creado exitosamente.');
+        this.message.success('Premio creado exitosamente.');
         this.guardando.set(false);
+        this.cerrarCrear();
         this.cargar();
       },
       error: (e) => {
@@ -88,11 +100,11 @@ export class GestionarTienda {
 
   abrirEditar(p: any): void {
     this.premioEditando = { ...p };
-    this.modalVisible.set(true);
+    this.modalEditVisible.set(true);
   }
 
   cerrarEditar(): void {
-    this.modalVisible.set(false);
+    this.modalEditVisible.set(false);
     this.premioEditando = null;
   }
 

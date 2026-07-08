@@ -13,7 +13,7 @@
         <nz-avatar class="daemon-avatar ring-4 ring-slate-50 shadow-sm" [nzSize]="104" [nzSrc]="avatar(datos.usuario) || undefined" [nzText]="iniciales(datos.usuario)"></nz-avatar>
         <div class="flex flex-col gap-2 mt-2">
           <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">{{ perfilPropio() ? 'Mi perfil' : 'Perfil de compañero' }}</p>
-          <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 leading-tight">{{ datos.usuario.nombre_completo }}</h1>
+          <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 leading-tight">{{ datos.usuario.nombre_completo || 'Usuario Nuevo' }}</h1>
           <div class="flex flex-wrap items-center justify-center md:justify-start gap-2 mt-1">
             <nz-tag class="daemon-tag m-0" nzColor="blue">Nivel {{ datos.usuario.nivel }}</nz-tag>
             <nz-tag class="daemon-tag m-0" nzColor="green">{{ datos.usuario.rango || 'Rango en progreso' }}</nz-tag>
@@ -41,7 +41,12 @@
     <!-- ESTADÍSTICAS (GRID RESPONSIVO) -->
     <section class="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 w-full">
       <article class="bg-white border border-slate-200 shadow-sm rounded-2xl p-6 flex flex-col items-center md:items-start">
-        <nz-statistic class="daemon-stat" nzTitle="Tokens Acumulados" [nzValue]="datos.usuario.tokens"></nz-statistic>
+        <div class="flex flex-col">
+          <span class="text-sm font-semibold uppercase tracking-wider text-slate-500 mb-2">Tokens Acumulados</span>
+          <strong class="text-3xl font-black text-blue-600 flex items-center">
+            <app-moneda-daemon [cantidad]="datos.usuario.tokens" [size]="24" [soloNumero]="true"></app-moneda-daemon>
+          </strong>
+        </div>
       </article>
       <article class="bg-white border border-slate-200 shadow-sm rounded-2xl p-6 flex flex-col items-center md:items-start">
         <nz-statistic class="daemon-stat" nzTitle="Insignias Ganadas" [nzValue]="datos.insignias.length"></nz-statistic>

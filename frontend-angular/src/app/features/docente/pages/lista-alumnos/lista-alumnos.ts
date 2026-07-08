@@ -1,13 +1,15 @@
-import { Component, signal , ChangeDetectionStrategy} from '@angular/core';
+import { Component, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzModalModule } from 'ng-zorro-antd/modal';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
 import { BotonAccion } from '../../../../shared/componentes/boton-accion/boton-accion';
+import { MonedaDaemon } from '../../../../shared/componentes/moneda-daemon/moneda-daemon';
 import { Docente } from '../../services/docente';
 
 interface AulaResumen {
@@ -29,7 +31,7 @@ interface AlcanceAcademico {
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-lista-alumnos',
-  imports: [FormsModule, RouterLink, NzAlertModule, NzButtonModule, NzTagModule, NzTableModule, Cargando, EstadoVacio, BotonAccion],
+  imports: [FormsModule, RouterLink, NzAlertModule, NzButtonModule, NzTagModule, NzTableModule, NzModalModule, Cargando, EstadoVacio, BotonAccion],
   templateUrl: './lista-alumnos.html',
   styleUrl: './lista-alumnos.scss',
 })
@@ -45,6 +47,9 @@ export class ListaAlumnos {
   error = signal('');
   ajuste = { id_alumno: null as number | null, cantidad: 0, motivo: '' };
   nuevaAula = { nombre: '', nivel: '', codigo: '' };
+
+  modalCrearAulaVisible = signal(false);
+  modalAjustarTokensVisible = signal(false);
 
   constructor(private docente: Docente) {
     this.cargar();
@@ -92,6 +97,15 @@ export class ListaAlumnos {
     });
   }
 
+  abrirAjustarTokens(): void {
+    this.ajuste = { id_alumno: null, cantidad: 0, motivo: '' };
+    this.modalAjustarTokensVisible.set(true);
+  }
+
+  cerrarAjustarTokens(): void {
+    this.modalAjustarTokensVisible.set(false);
+  }
+
   asignarTokens(): void {
     this.guardando.set(true);
     this.mensaje.set('');
@@ -102,6 +116,7 @@ export class ListaAlumnos {
         this.mensaje.set('Tokens actualizados.');
         this.ajuste = { id_alumno: null, cantidad: 0, motivo: '' };
         this.guardando.set(false);
+        this.cerrarAjustarTokens();
         this.cargar();
       },
       error: (e) => {
@@ -109,6 +124,15 @@ export class ListaAlumnos {
         this.guardando.set(false);
       },
     });
+  }
+
+  abrirCrearAula(): void {
+    this.nuevaAula = { nombre: '', nivel: '', codigo: '' };
+    this.modalCrearAulaVisible.set(true);
+  }
+
+  cerrarCrearAula(): void {
+    this.modalCrearAulaVisible.set(false);
   }
 
   crearAula(): void {
@@ -127,6 +151,7 @@ export class ListaAlumnos {
         this.mensaje.set('Aula creada.');
         this.nuevaAula = { nombre: '', nivel: '', codigo: '' };
         this.guardando.set(false);
+        this.cerrarCrearAula();
         this.cargarAulas();
       },
       error: (e) => {

@@ -6,12 +6,14 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
 import { Mision } from '../../services/mision';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
-
+import { BotonAccion } from '../../../../shared/componentes/boton-accion/boton-accion';
+import { CommonModule } from '@angular/common';
+import { MonedaDaemon } from '../../../../shared/componentes/moneda-daemon/moneda-daemon';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-lista-misiones',
-  imports: [RouterLink, NzAlertModule, NzButtonModule, NzTagModule, Cargando, EstadoVacio],
+  imports: [CommonModule, RouterLink, NzAlertModule, NzButtonModule, NzTagModule, Cargando, EstadoVacio, BotonAccion, MonedaDaemon],
   templateUrl: './lista-misiones.html',
   styleUrl: './lista-misiones.scss',
 })

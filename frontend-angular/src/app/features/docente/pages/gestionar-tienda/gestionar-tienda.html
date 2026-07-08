@@ -1,12 +1,15 @@
 <main class="w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-6 md:gap-8 font-inter">
   <!-- Cabecera -->
-  <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+  <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
     <div class="flex flex-col gap-1">
       <span class="text-sm font-semibold uppercase tracking-wider text-blue-600">Docente</span>
-      <h1 class="text-2xl md:text-3xl font-bold text-gray-900">Gestionar Tienda</h1>
-      <p class="text-base text-gray-600">Administración de premios, control de existencias y entrega de canjes.</p>
+      <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 leading-tight">Gestionar Tienda</h1>
+      <p class="text-sm text-slate-600">Administración de premios, control de existencias y entrega de canjes.</p>
     </div>
-    <app-boton-accion tipo="actualizar" (accion)="cargar()" [cargando]="cargando()"></app-boton-accion>
+    <div class="flex gap-2">
+      <app-boton-accion tipo="actualizar" (accion)="cargar()" [cargando]="cargando()" [deshabilitado]="cargando()"></app-boton-accion>
+      <app-boton-accion tipo="crear" texto="Nuevo premio" (accion)="abrirCrear()"></app-boton-accion>
+    </div>
   </header>
 
   <!-- Alertas -->
@@ -17,109 +20,53 @@
     <nz-alert nzType="error" nzShowIcon [nzMessage]="error()"></nz-alert>
   }
 
-  <!-- Formulario de Creación Arriba -->
-  <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-    <h2 class="text-lg font-bold text-gray-900 border-b border-gray-100 pb-2 mb-4">Nuevo premio</h2>
-    <form (ngSubmit)="crear()" class="flex flex-col gap-4">
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <label class="flex flex-col gap-1">
-          <span class="text-sm font-medium text-gray-700">Nombre</span>
-          <input name="nombre" [(ngModel)]="nuevo.nombre" required placeholder="Ej. Lápiz 3D"
-                 class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
-        </label>
-        
-        <label class="flex flex-col gap-1">
-          <span class="text-sm font-medium text-gray-700">Precio (Tokens)</span>
-          <input name="precio" type="number" min="0" [(ngModel)]="nuevo.precio" required
-                 class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
-        </label>
-        
-        <label class="flex flex-col gap-1">
-          <span class="text-sm font-medium text-gray-700">Stock</span>
-          <input name="stock" type="number" min="0" [(ngModel)]="nuevo.stock" required
-                 class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
-        </label>
-        
-        <label class="flex flex-col gap-1">
-          <span class="text-sm font-medium text-gray-700">Categoría</span>
-          <select name="categoria" [(ngModel)]="nuevo.categoria"
-                  class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
-            <option value="GENERAL">GENERAL</option>
-            <option value="KIDS">KIDS</option>
-            <option value="TEENS">TEENS</option>
-            <option value="PRO">PRO</option>
-          </select>
-        </label>
-        
-        <label class="flex flex-col gap-1">
-          <span class="text-sm font-medium text-gray-700">Entrega</span>
-          <select name="tipo_entrega" [(ngModel)]="nuevo.tipo_entrega"
-                  class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
-            <option value="fisico">Físico</option>
-            <option value="digital">Digital</option>
-          </select>
-        </label>
-        
-        <label class="flex flex-col gap-1">
-          <span class="text-sm font-medium text-gray-700">Ruta de la Imagen</span>
-          <input name="imagen" [(ngModel)]="nuevo.imagen" placeholder="Ej: img/premios/premio.png"
-                 class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
-        </label>
-        
-        <label class="flex flex-col gap-1 md:col-span-2 lg:col-span-3">
-          <span class="text-sm font-medium text-gray-700">Descripción</span>
-          <textarea name="descripcion" rows="2" [(ngModel)]="nuevo.descripcion" placeholder="Detalles del premio..."
-                    class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"></textarea>
-        </label>
-      </div>
-      <div class="flex justify-end mt-2">
-        <app-boton-accion tipo="crear" texto="Crear premio" [esSubmit]="true" [deshabilitado]="guardando() || !nuevo.nombre.trim()" [cargando]="guardando()"></app-boton-accion>
-      </div>
-    </form>
-  </div>
-
   @if (cargando()) {
-    <div class="p-12">
+    <div class="p-12 bg-white rounded-2xl shadow-sm border border-slate-100">
       <app-cargando texto="Cargando datos de la tienda..."></app-cargando>
     </div>
   } @else {
     <!-- Tablas Split -->
-    <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
       
       <!-- Premios con NzTable -->
-      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
-        <h2 class="text-lg font-bold text-gray-900 p-6 pb-4 border-b border-gray-100">Premios Disponibles</h2>
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden flex flex-col">
+        <h2 class="text-lg font-extrabold text-slate-900 p-6 pb-4 border-b border-slate-100">Premios Disponibles</h2>
         @if (premios().length) {
-          <div class="overflow-x-auto p-4">
-            <nz-table #tablaPremios [nzData]="premios()" [nzShowPagination]="true" [nzPageSize]="5" nzSize="small" class="w-full">
+          <div class="overflow-x-auto p-0">
+            <nz-table #tablaPremios [nzData]="premios()" [nzShowPagination]="true" [nzPageSize]="5" nzSize="middle" class="w-full whitespace-nowrap">
               <thead>
-                <tr>
-                  <th>Img</th>
-                  <th>Premio</th>
-                  <th>Stock/Precio</th>
-                  <th>Acciones</th>
+                <tr class="bg-slate-50">
+                  <th class="text-slate-500 font-semibold text-sm">Premio</th>
+                  <th class="text-slate-500 font-semibold text-sm">Stock/Precio</th>
+                  <th class="text-slate-500 font-semibold text-sm text-right">Acciones</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody class="divide-y divide-slate-100">
                 @for (premio of tablaPremios.data; track premio.id) {
-                  <tr>
+                  <tr class="hover:bg-slate-50 transition-colors">
                     <td>
-                      @if (premio.imagen) {
-                        <img [src]="premio.imagen" [alt]="premio.nombre" class="w-10 h-10 rounded-md object-cover border border-gray-200" />
-                      } @else {
-                        <div class="w-10 h-10 rounded-md bg-gray-100 flex items-center justify-center text-xs text-gray-500">N/A</div>
-                      }
+                      <div class="flex items-center gap-3">
+                        @if (premio.imagen) {
+                          <img [src]="premio.imagen" [alt]="premio.nombre" class="w-10 h-10 rounded-xl object-cover shadow-sm bg-white" />
+                        } @else {
+                          <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-400">N/A</div>
+                        }
+                        <div class="flex flex-col">
+                          <span class="font-bold text-slate-900">{{ premio.nombre }}</span>
+                          <span class="text-[10px] uppercase tracking-wider font-bold text-blue-500">{{ premio.categoria }}</span>
+                        </div>
+                      </div>
                     </td>
                     <td>
-                      <div class="font-semibold text-gray-900">{{ premio.nombre }}</div>
-                      <nz-tag nzColor="blue">{{ premio.categoria }}</nz-tag>
+                      <div class="flex flex-col gap-1">
+                        <div><nz-tag [nzColor]="premio.stock > 0 ? 'green' : 'red'" class="font-bold border-0 rounded-md">Stock: {{ premio.stock }}</nz-tag></div>
+                        <div class="text-xs text-slate-500 font-bold ml-1 flex items-center">
+                          <app-moneda-daemon [cantidad]="premio.precio" [size]="14"></app-moneda-daemon>
+                        </div>
+                      </div>
                     </td>
                     <td>
-                      <div><nz-tag [nzColor]="premio.stock > 0 ? 'green' : 'red'">Stock: {{ premio.stock }}</nz-tag></div>
-                      <div class="text-xs text-gray-500 mt-1 font-mono">{{ premio.precio }} Tk</div>
-                    </td>
-                    <td>
-                      <div class="flex flex-col sm:flex-row gap-2">
+                      <div class="flex items-center justify-end gap-2">
                         <app-boton-accion tipo="editar" (accion)="abrirEditar(premio)"></app-boton-accion>
                         <app-boton-accion tipo="eliminar" confirmacion="¿Borrar premio permanentemente?" (accion)="eliminar(premio.id)"></app-boton-accion>
                       </div>
@@ -130,37 +77,42 @@
             </nz-table>
           </div>
         } @else {
-          <div class="p-8 text-center text-gray-500">No hay premios registrados.</div>
+          <div class="p-12 text-center">
+            <app-estado-vacio titulo="Sin premios registrados" descripcion="Crea tu primer premio para inaugurar la tienda de la clase."></app-estado-vacio>
+          </div>
         }
       </div>
 
       <!-- Canjes con NzTable -->
-      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
-        <h2 class="text-lg font-bold text-gray-900 p-6 pb-4 border-b border-gray-100">Historial de Canjes</h2>
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden flex flex-col">
+        <h2 class="text-lg font-extrabold text-slate-900 p-6 pb-4 border-b border-slate-100">Historial de Canjes</h2>
         @if (canjes().length) {
-          <div class="overflow-x-auto p-4">
-            <nz-table #tablaCanjes [nzData]="canjes()" [nzShowPagination]="true" [nzPageSize]="5" nzSize="small" class="w-full">
+          <div class="overflow-x-auto p-0">
+            <nz-table #tablaCanjes [nzData]="canjes()" [nzShowPagination]="true" [nzPageSize]="5" nzSize="middle" class="w-full whitespace-nowrap">
               <thead>
-                <tr>
-                  <th>Alumno</th>
-                  <th>Premio</th>
-                  <th>Estado</th>
-                  <th>Acción</th>
+                <tr class="bg-slate-50">
+                  <th class="text-slate-500 font-semibold text-sm">Alumno</th>
+                  <th class="text-slate-500 font-semibold text-sm">Premio</th>
+                  <th class="text-slate-500 font-semibold text-sm">Estado</th>
+                  <th class="text-slate-500 font-semibold text-sm text-right">Acción</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody class="divide-y divide-slate-100">
                 @for (canje of tablaCanjes.data; track canje.id) {
-                  <tr>
-                    <td class="font-medium text-gray-900">{{ canje.alumno }}</td>
-                    <td class="text-sm text-gray-600">{{ canje.premio }}</td>
+                  <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="font-bold text-slate-900">{{ canje.alumno }}</td>
+                    <td class="text-sm font-medium text-slate-600">{{ canje.premio }}</td>
                     <td>
-                      <nz-tag [nzColor]="canje.estado === 'entregado' ? 'success' : 'warning'">{{ canje.estado | uppercase }}</nz-tag>
+                      <nz-tag [nzColor]="canje.estado === 'entregado' ? 'success' : 'warning'" class="font-bold rounded-md border-0">{{ canje.estado | uppercase }}</nz-tag>
                     </td>
-                    <td>
+                    <td class="text-right">
                       @if (canje.estado !== 'entregado') {
                         <app-boton-accion tipo="entregar" (accion)="entregar(canje.id)" [cargando]="guardando()"></app-boton-accion>
                       } @else {
-                        <span class="text-green-600 text-xs font-bold">✓ Listo</span>
+                        <span class="text-green-500 text-sm font-extrabold flex justify-end items-center gap-1">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+                          Listo
+                        </span>
                       }
                     </td>
                   </tr>
@@ -169,7 +121,9 @@
             </nz-table>
           </div>
         } @else {
-          <div class="p-8 text-center text-gray-500">No hay canjes registrados.</div>
+          <div class="p-12 text-center">
+            <app-estado-vacio titulo="No hay canjes" descripcion="Aún no se han registrado canjes de estudiantes."></app-estado-vacio>
+          </div>
         }
       </div>
 
@@ -177,59 +131,116 @@
   }
 </main>
 
+<!-- Modal de Creación -->
+<nz-modal [(nzVisible)]="modalCrearVisible" nzTitle="Crear nuevo premio" (nzOnCancel)="cerrarCrear()" (nzOnOk)="crear()" [nzOkLoading]="guardando()" [nzOkDisabled]="!nuevo.nombre.trim()" nzOkText="Crear premio" nzCancelText="Cancelar" nzCentered nzWidth="600px">
+  <ng-container *nzModalContent>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
+      <label class="flex flex-col gap-1.5 md:col-span-2">
+        <span class="text-sm font-semibold text-slate-700">Nombre del premio</span>
+        <input name="nombre" [(ngModel)]="nuevo.nombre" required placeholder="Ej. Lápiz 3D"
+               class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all">
+      </label>
+      
+      <label class="flex flex-col gap-1.5">
+        <span class="text-sm font-semibold text-slate-700">Precio (Tokens)</span>
+        <input name="precio" type="number" min="0" [(ngModel)]="nuevo.precio" required
+               class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all">
+      </label>
+      
+      <label class="flex flex-col gap-1.5">
+        <span class="text-sm font-semibold text-slate-700">Unidades disponibles (Stock)</span>
+        <input name="stock" type="number" min="0" [(ngModel)]="nuevo.stock" required
+               class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all">
+      </label>
+      
+      <label class="flex flex-col gap-1.5">
+        <span class="text-sm font-semibold text-slate-700">Categoría</span>
+        <select name="categoria" [(ngModel)]="nuevo.categoria"
+                class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all cursor-pointer">
+          <option value="GENERAL">GENERAL</option>
+          <option value="KIDS">Nivel KIDS</option>
+          <option value="TEENS">Nivel TEENS</option>
+          <option value="PRO">Nivel PRO</option>
+        </select>
+      </label>
+      
+      <label class="flex flex-col gap-1.5">
+        <span class="text-sm font-semibold text-slate-700">Tipo de Entrega</span>
+        <select name="tipo_entrega" [(ngModel)]="nuevo.tipo_entrega"
+                class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all cursor-pointer">
+          <option value="fisico">Físico</option>
+          <option value="digital">Digital</option>
+        </select>
+      </label>
+      
+      <label class="flex flex-col gap-1.5 md:col-span-2">
+        <span class="text-sm font-semibold text-slate-700">Ruta de la Imagen (URL)</span>
+        <input name="imagen" [(ngModel)]="nuevo.imagen" placeholder="Ej: img/premios/premio.png"
+               class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all">
+      </label>
+      
+      <label class="flex flex-col gap-1.5 md:col-span-2">
+        <span class="text-sm font-semibold text-slate-700">Descripción detallada</span>
+        <textarea name="descripcion" rows="3" [(ngModel)]="nuevo.descripcion" placeholder="Detalles del premio..."
+                  class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all resize-none"></textarea>
+      </label>
+    </div>
+  </ng-container>
+</nz-modal>
+
 <!-- Modal de Edición -->
-<nz-modal [(nzVisible)]="modalVisible" nzTitle="Editar Premio" (nzOnCancel)="cerrarEditar()" (nzOnOk)="guardarEdicion()" [nzOkLoading]="guardando()" nzWidth="600px">
+<nz-modal [(nzVisible)]="modalEditVisible" nzTitle="Editar Premio" (nzOnCancel)="cerrarEditar()" (nzOnOk)="guardarEdicion()" [nzOkLoading]="guardando()" [nzOkDisabled]="!premioEditando?.nombre?.trim()" nzOkText="Guardar cambios" nzCancelText="Cancelar" nzCentered nzWidth="600px">
   <ng-container *nzModalContent>
     @if (premioEditando) {
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <label class="flex flex-col gap-1 w-full">
-          <span class="text-sm font-medium text-gray-700">Nombre</span>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
+        <label class="flex flex-col gap-1.5 md:col-span-2">
+          <span class="text-sm font-semibold text-slate-700">Nombre del premio</span>
           <input name="edit_nombre" [(ngModel)]="premioEditando.nombre" required
-                 class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
+                 class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all">
         </label>
         
-        <label class="flex flex-col gap-1 w-full">
-          <span class="text-sm font-medium text-gray-700">Precio (Tokens)</span>
+        <label class="flex flex-col gap-1.5">
+          <span class="text-sm font-semibold text-slate-700">Precio (Tokens)</span>
           <input name="edit_precio" type="number" min="0" [(ngModel)]="premioEditando.precio" required
-                 class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
+                 class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all">
         </label>
         
-        <label class="flex flex-col gap-1 w-full">
-          <span class="text-sm font-medium text-gray-700">Stock</span>
+        <label class="flex flex-col gap-1.5">
+          <span class="text-sm font-semibold text-slate-700">Unidades (Stock)</span>
           <input name="edit_stock" type="number" min="0" [(ngModel)]="premioEditando.stock" required
-                 class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
+                 class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all">
         </label>
         
-        <label class="flex flex-col gap-1 w-full">
-          <span class="text-sm font-medium text-gray-700">Categoría</span>
+        <label class="flex flex-col gap-1.5">
+          <span class="text-sm font-semibold text-slate-700">Categoría</span>
           <select name="edit_categoria" [(ngModel)]="premioEditando.categoria"
-                  class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
+                  class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all cursor-pointer">
             <option value="GENERAL">GENERAL</option>
-            <option value="KIDS">KIDS</option>
-            <option value="TEENS">TEENS</option>
-            <option value="PRO">PRO</option>
+            <option value="KIDS">Nivel KIDS</option>
+            <option value="TEENS">Nivel TEENS</option>
+            <option value="PRO">Nivel PRO</option>
           </select>
         </label>
         
-        <label class="flex flex-col gap-1 w-full">
-          <span class="text-sm font-medium text-gray-700">Entrega</span>
+        <label class="flex flex-col gap-1.5">
+          <span class="text-sm font-semibold text-slate-700">Tipo de Entrega</span>
           <select name="edit_tipo_entrega" [(ngModel)]="premioEditando.tipo_entrega"
-                  class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
+                  class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all cursor-pointer">
             <option value="fisico">Físico</option>
             <option value="digital">Digital</option>
           </select>
         </label>
         
-        <label class="flex flex-col gap-1 w-full">
-          <span class="text-sm font-medium text-gray-700">Imagen</span>
+        <label class="flex flex-col gap-1.5 md:col-span-2">
+          <span class="text-sm font-semibold text-slate-700">Ruta de la Imagen (URL)</span>
           <input name="edit_imagen" [(ngModel)]="premioEditando.imagen"
-                 class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
+                 class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all">
         </label>
         
-        <label class="flex flex-col gap-1 w-full md:col-span-2">
-          <span class="text-sm font-medium text-gray-700">Descripción</span>
-          <textarea name="edit_descripcion" rows="2" [(ngModel)]="premioEditando.descripcion"
-                    class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"></textarea>
+        <label class="flex flex-col gap-1.5 md:col-span-2">
+          <span class="text-sm font-semibold text-slate-700">Descripción detallada</span>
+          <textarea name="edit_descripcion" rows="3" [(ngModel)]="premioEditando.descripcion"
+                    class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all resize-none"></textarea>
         </label>
       </div>
     }

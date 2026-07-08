@@ -1,34 +1,66 @@
-﻿<section class="page">
-  <header class="page-header">
-    <div>
-      <p class="kicker">Misiones</p>
-      <h1>Retos del aula</h1>
-      <p>Misiones activas y entregas asociadas a tu cuenta.</p>
+<main class="w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-6 md:gap-8 font-inter">
+  <!-- Cabecera -->
+  <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+    <div class="flex flex-col gap-1">
+      <span class="text-sm font-semibold uppercase tracking-wider text-blue-600">Misiones</span>
+      <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 leading-tight">Retos del aula</h1>
+      <p class="text-sm text-slate-600">Misiones activas y entregas asociadas a tu cuenta.</p>
     </div>
-    <button nz-button nzType="default" class="daemon-btn" type="button" [nzLoading]="cargando()" (click)="cargar()">Actualizar</button>
+    <app-boton-accion tipo="actualizar" (accion)="cargar()" [cargando]="cargando()" [deshabilitado]="cargando()"></app-boton-accion>
   </header>
 
-  @if (cargando()) {
-    <app-cargando class="state" texto="Cargando misiones..."></app-cargando>
-  } @else if (error()) {
-    <nz-alert class="daemon-alert" nzType="error" nzShowIcon [nzMessage]="error()"></nz-alert>
-  } @else if (misiones().length) {
-    <div class="card-list">
-      @for (mision of misiones(); track mision.id) {
-        <article class="data-card">
-          <nz-tag class="daemon-tag" [nzColor]="mision.entrega?.estado === 'pendiente' ? 'gold' : 'blue'">{{ mision.entrega?.estado || mision.estado }}</nz-tag>
-          <h2>{{ mision.titulo }}</h2>
-          <p>{{ mision.descripcion || 'Sin descripción registrada.' }}</p>
-          <p><strong>Recompensa:</strong> {{ mision.recompensa }} tokens</p>
-          <p><strong>Evidencia:</strong> {{ mision.tipo_evidencia }}</p>
-          <div class="actions">
-            <a nz-button nzType="primary" class="daemon-btn" [routerLink]="['/alumno/misiones', mision.id]">Detalle</a>
-            <a nz-button nzType="default" class="daemon-btn" [routerLink]="['/alumno/misiones', mision.id, 'entregar']">Entregar</a>
-          </div>
-        </article>
-      }
-    </div>
-  } @else {
-    <app-estado-vacio titulo="Sin misiones disponibles" descripcion="Cuando tu docente publique retos para tu nivel, los verás aquí."></app-estado-vacio>
+  @if (error()) {
+    <nz-alert nzType="error" nzShowIcon [nzMessage]="error()"></nz-alert>
   }
-</section>
+
+  <!-- Contenido Principal -->
+  <section class="w-full">
+    @if (cargando()) {
+      <div class="py-12 bg-white rounded-2xl shadow-sm border border-slate-100">
+        <app-cargando texto="Cargando misiones..."></app-cargando>
+      </div>
+    } @else if (misiones().length) {
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        @for (mision of misiones(); track mision.id) {
+          <article class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 flex flex-col gap-4 hover:shadow-md transition-shadow relative overflow-hidden group">
+            <div class="absolute top-0 left-0 w-full h-1" [class.bg-blue-500]="mision.entrega?.estado !== 'pendiente'" [class.bg-yellow-400]="mision.entrega?.estado === 'pendiente'"></div>
+            <div class="flex justify-between items-start">
+              <h2 class="text-xl font-bold text-slate-900">{{ mision.titulo }}</h2>
+              <nz-tag [nzColor]="mision.entrega?.estado === 'pendiente' ? 'gold' : 'blue'" class="rounded-md border-0 m-0 font-semibold">{{ mision.entrega?.estado || mision.estado | uppercase }}</nz-tag>
+            </div>
+            
+            <p class="text-slate-600 text-sm flex-1">{{ mision.descripcion || 'Sin descripción registrada.' }}</p>
+            
+            <div class="bg-slate-50 p-4 rounded-xl flex flex-col gap-2">
+              <div class="flex justify-between items-center text-sm">
+                <span class="text-slate-500">Recompensa</span>
+                <strong class="text-slate-900 flex items-center gap-1">
+                  <app-moneda-daemon [cantidad]="mision.recompensa" [size]="16"></app-moneda-daemon>
+                </strong>
+              </div>
+              <div class="flex justify-between items-center text-sm">
+                <span class="text-slate-500">Evidencia</span>
+                <strong class="text-slate-900 truncate max-w-[120px] text-right" [title]="mision.tipo_evidencia">{{ mision.tipo_evidencia }}</strong>
+              </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-2 mt-2">
+              <a [routerLink]="['/alumno/misiones', mision.id, 'entregar']"
+                 class="flex-1 text-center bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-xl font-semibold text-sm transition-colors shadow-sm cursor-pointer">
+                Entregar
+              </a>
+              <a [routerLink]="['/alumno/misiones', mision.id]"
+                 class="flex-1 text-center bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 py-2.5 rounded-xl font-semibold text-sm transition-colors cursor-pointer">
+                Detalle
+              </a>
+            </div>
+          </article>
+        }
+      </div>
+    } @else {
+      <div class="py-12 bg-white rounded-2xl border border-slate-100">
+        <app-estado-vacio titulo="Sin misiones disponibles" descripcion="Cuando tu docente publique retos para tu nivel, los verás aquí."></app-estado-vacio>
+      </div>
+    }
+  </section>
+</main>

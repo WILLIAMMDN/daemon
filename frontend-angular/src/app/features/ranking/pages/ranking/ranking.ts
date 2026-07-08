@@ -3,6 +3,7 @@ import { Ranking as RankingService } from '../../services/ranking';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
 import { NzTagModule } from 'ng-zorro-antd/tag';
+import { MonedaDaemon } from '../../../../shared/componentes/moneda-daemon/moneda-daemon';
 
 interface AlumnoRanking {
   id: number;
@@ -18,7 +19,7 @@ interface AlumnoRanking {
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-ranking',
-  imports: [Cargando, EstadoVacio, NzTagModule],
+  imports: [CommonModule, Cargando, EstadoVacio, NzTagModule, MonedaDaemon],
   templateUrl: './ranking.html',
   styleUrl: './ranking.scss',
 })
