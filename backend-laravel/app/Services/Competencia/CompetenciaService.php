@@ -9,6 +9,7 @@ use App\Models\Usuario;
 use App\Models\VotoLive;
 use App\Services\Academico\AcademicScopeService;
 use App\Services\Archivo\ArchivoUrlService;
+use App\Events\CompetenciaActualizada;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -45,6 +46,23 @@ class CompetenciaService
         ];
     }
 
+    public function publicEstado(): array
+    {
+        $ronda = $this->ronda();
+        $candidato = $ronda->id_alumno_en_tarima ? Usuario::find($ronda->id_alumno_en_tarima) : null;
+        $promedio = $candidato ? VotoLive::where('id_alumno_candidato', $candidato->id)->avg('puntuacion') : null;
+        if ($candidato) {
+            $candidato->avatar = $this->archivos->url($candidato->avatar);
+        }
+
+        return [
+            'ronda' => $ronda,
+            'candidato' => $candidato,
+            'promedio' => $promedio,
+            'servidor' => now()->toIso8601String(),
+        ];
+    }
+
     public function chat(): Collection
     {
         return ChatLive::latest('id')->limit(50)->get()->reverse()->values();
@@ -71,11 +89,13 @@ class CompetenciaService
             'id_alumno_juez' => $usuario->id,
             'id_alumno_candidato' => $ronda->id_alumno_en_tarima,
         ], $datos);
+
+        CompetenciaActualizada::dispatch($this->publicEstado());
     }
 
     public function controlar(Usuario $docente, array $datos): CompetenciaLive
     {
-        return DB::transaction(function () use ($docente, $datos) {
+        $ronda = DB::transaction(function () use ($docente, $datos) {
             $this->ronda();
             $ronda = CompetenciaLive::lockForUpdate()->findOrFail(1);
 
@@ -87,6 +107,10 @@ class CompetenciaService
                 default => $this->reiniciar($ronda),
             };
         });
+
+        CompetenciaActualizada::dispatch($this->publicEstado());
+
+        return $ronda;
     }
 
     public function historial(): Collection

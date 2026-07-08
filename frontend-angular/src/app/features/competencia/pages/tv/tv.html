@@ -1,47 +1,96 @@
-<main class="w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-6 md:gap-8 font-inter">
-  <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-    <div class="flex flex-col gap-1">
-      <span class="text-sm font-semibold uppercase tracking-wider text-blue-600">Competencia TV</span>
-      <h1 class="text-2xl md:text-3xl font-bold text-gray-900">Ronda en vivo</h1>
-      <p class="text-base text-gray-600">Vista de proyección para el aula.</p>
-    </div>
-    <button nz-button nzType="default" (click)="cargar()" class="!bg-gray-100 !text-gray-700 !border-none hover:!bg-gray-200 transition-colors flex items-center gap-2">
-      Actualizar
-    </button>
-  </header>
-
-  @if (error()) { <nz-alert nzType="error" nzShowIcon [nzMessage]="error()"></nz-alert> }
-
-  @if (estado(); as data) {
-    <!-- Contenedores tipo tarjetas -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-       <!-- stats -->
-       <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col gap-2">
-         <span class="text-sm text-gray-500 font-medium">Estado</span>
-         <strong class="text-2xl text-gray-900 font-bold capitalize">{{ data.ronda.estado }}</strong>
-       </div>
-       <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col gap-2">
-         <span class="text-sm text-gray-500 font-medium">Promedio</span>
-         <strong class="text-2xl text-gray-900 font-bold">{{ data.promedio || data.ronda.promedio_alumnos || 0 }}</strong>
-       </div>
-       <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col gap-2">
-         <span class="text-sm text-gray-500 font-medium">Fin</span>
-         <strong class="text-2xl text-gray-900 font-bold">{{ data.ronda.fin_votacion || '-' }}</strong>
-       </div>
-    </div>
-
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col mt-4">
-      <h2 class="text-lg font-bold text-gray-900 p-6 pb-4 border-b border-gray-100 uppercase tracking-wider">Alumno en tarima</h2>
-      <div class="p-12 text-center flex flex-col items-center justify-center min-h-[300px]">
-        @if (data.candidato) {
-          <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4">{{ data.candidato.nombre_completo }}</h2>
-          <p class="text-xl text-gray-600 font-medium">{{ data.candidato.usuario }} <nz-tag nzColor="blue" class="ml-2 !text-lg !px-3 !py-1">{{ data.candidato.nivel }}</nz-tag> <nz-tag nzColor="gold" class="ml-2 !text-lg !px-3 !py-1">{{ data.candidato.tokens }} tokens</nz-tag></p>
-        } @else {
-          <p class="text-2xl text-gray-400 font-medium">Esperando candidato...</p>
-        }
+<main class="w-full min-h-screen bg-slate-50 flex flex-col font-inter">
+  <header class="p-6 md:p-8 flex justify-between items-center bg-white shadow-sm z-10 relative">
+    <div class="flex items-center gap-4">
+      <div class="w-12 h-12 bg-blue-600 text-white rounded-xl flex items-center justify-center font-bold text-2xl shadow-lg shadow-blue-600/30">
+        TV
+      </div>
+      <div>
+        <h1 class="text-2xl md:text-3xl font-extrabold text-gray-900 tracking-tight">Competencia en Vivo</h1>
+        <p class="text-blue-600 font-medium tracking-wider uppercase text-sm">Transmisión del Aula</p>
       </div>
     </div>
-  } @else {
-    <div class="p-12 text-center"><app-cargando texto="Cargando ronda..."></app-cargando></div>
-  }
+    <div class="flex items-center gap-3">
+      @if (estado(); as data) {
+        <div class="px-4 py-2 rounded-full font-bold text-sm" 
+             [ngClass]="{
+               'bg-yellow-100 text-yellow-700': data.ronda.estado === 'espera',
+               'bg-green-100 text-green-700 daemon-shimmer': data.ronda.estado === 'votacion',
+               'bg-blue-100 text-blue-700': data.ronda.estado === 'cerrado'
+             }">
+          ESTADO: {{ data.ronda.estado | uppercase }}
+        </div>
+      }
+    </div>
+  </header>
+
+  <section class="flex-1 p-6 md:p-12 flex flex-col items-center justify-center relative overflow-hidden">
+    @if (error()) { <nz-alert nzType="error" nzShowIcon [nzMessage]="error()" class="mb-8 w-full max-w-2xl"></nz-alert> }
+
+    @if (estado(); as data) {
+      <div class="w-full max-w-5xl bg-white rounded-[2rem] shadow-2xl border border-slate-100 overflow-hidden relative flex flex-col transform transition-all duration-500 hover:scale-[1.01]">
+        
+        @if (data.ronda.estado === 'votacion') {
+          <div class="absolute inset-0 border-4 border-green-500 rounded-[2rem] pointer-events-none opacity-50 pulse-border"></div>
+        }
+
+        <div class="p-12 text-center flex flex-col items-center">
+          @if (data.candidato) {
+            
+            <div class="relative w-48 h-48 md:w-64 md:h-64 mb-8">
+              @if (data.candidato.avatar) {
+                <img [src]="data.candidato.avatar" class="w-full h-full object-cover rounded-full shadow-xl border-8 border-white z-10 relative" alt="Avatar">
+              } @else {
+                <div class="w-full h-full bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full shadow-xl flex items-center justify-center text-white text-7xl font-bold border-8 border-white z-10 relative">
+                  {{ data.candidato.nombre_completo.charAt(0) }}
+                </div>
+              }
+              
+              @if (data.ronda.estado === 'votacion') {
+                <div class="absolute inset-0 bg-green-400 rounded-full animate-ping opacity-20"></div>
+                <div class="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-green-500 text-white px-6 py-2 rounded-full font-bold text-lg shadow-lg z-20 uppercase tracking-widest daemon-shimmer">
+                  ¡Votando!
+                </div>
+              }
+            </div>
+
+            <h2 class="text-5xl md:text-6xl font-black text-gray-900 mb-4 tracking-tight">{{ data.candidato.nombre_completo }}</h2>
+            <div class="flex items-center gap-4 text-xl font-medium text-gray-500 mb-12">
+              <span>{{ data.candidato.usuario }}</span>
+              <span class="w-2 h-2 rounded-full bg-gray-300"></span>
+              <nz-tag nzColor="blue" class="!text-lg !px-4 !py-1 !rounded-full !border-none !bg-blue-50 !text-blue-600 font-bold">{{ data.candidato.nivel }}</nz-tag>
+            </div>
+
+            <!-- Barra de Progreso Promedio -->
+            <div class="w-full max-w-3xl mt-4">
+              <div class="flex justify-between items-end mb-4">
+                <span class="text-2xl font-bold text-slate-400">Puntaje Actual</span>
+                <span class="text-6xl font-black" 
+                      [ngClass]="{'text-green-500': data.ronda.estado === 'votacion', 'text-blue-600': data.ronda.estado === 'cerrado', 'text-slate-300': data.ronda.estado === 'espera'}">
+                  {{ (data.promedio || data.ronda.promedio_alumnos || 0) | number:'1.1-1' }}
+                </span>
+              </div>
+              <div class="h-8 bg-slate-100 rounded-full overflow-hidden shadow-inner relative">
+                <div class="h-full rounded-full transition-all duration-1000 ease-out"
+                     [ngClass]="{'bg-green-500 daemon-shimmer': data.ronda.estado === 'votacion', 'bg-blue-500': data.ronda.estado === 'cerrado', 'bg-slate-300': data.ronda.estado === 'espera'}"
+                     [style.width.%]="((data.promedio || data.ronda.promedio_alumnos || 0) / 100) * 100">
+                </div>
+              </div>
+            </div>
+
+          } @else {
+            <div class="py-24 flex flex-col items-center">
+              <div class="w-32 h-32 mb-8 bg-slate-100 rounded-full flex items-center justify-center animate-pulse">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+              </div>
+              <h2 class="text-4xl font-bold text-slate-400">Esperando al próximo candidato...</h2>
+            </div>
+          }
+        </div>
+      </div>
+    } @else {
+      <div class="p-12 text-center scale-150"><app-cargando texto="Sintonizando..."></app-cargando></div>
+    }
+  </section>
 </main>

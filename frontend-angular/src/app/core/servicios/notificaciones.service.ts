@@ -24,7 +24,7 @@ export interface Notificacion {
 })
 export class NotificacionesService {
   private readonly baseUrl = `${environment.apiUrl}/notificaciones`;
-  private echo: Echo<any> | null = null;
+  public echo: Echo<any> | null = null;
   private readonly sesion = inject(Sesion);
   
   readonly notificaciones = signal<Notificacion[]>([]);
