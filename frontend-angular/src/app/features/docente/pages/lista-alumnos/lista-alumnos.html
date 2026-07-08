@@ -11,6 +11,12 @@
       @if (esAdmin()) {
         <app-boton-accion tipo="crear" texto="Nueva aula" (accion)="abrirCrearAula()"></app-boton-accion>
       }
+      <button (click)="exportarCSV()" class="px-4 py-2 bg-slate-900 text-white font-bold rounded-xl text-sm hover:bg-slate-800 transition-colors flex items-center gap-2 shadow-sm h-10">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+        </svg>
+        Exportar CSV
+      </button>
       <app-boton-accion tipo="editar" texto="Ajustar tokens" (accion)="abrirAjustarTokens()"></app-boton-accion>
     </div>
   </header>

@@ -9,6 +9,7 @@ import { provideSpinnerConfig } from 'ngx-spinner';
 
 import { routes } from './app.routes';
 import { tokenInterceptor } from './core/interceptores/token-interceptor';
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 
 registerLocaleData(es);
 
@@ -31,5 +32,6 @@ export const appConfig: ApplicationConfig = {
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000'
     }),
+    provideCharts(withDefaultRegisterables()),
   ],
 };

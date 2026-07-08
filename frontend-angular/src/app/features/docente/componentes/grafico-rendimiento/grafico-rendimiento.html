@@ -1,0 +1,24 @@
+<div class="bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col h-full w-full font-inter">
+  <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50 rounded-t-2xl">
+    <div class="flex flex-col">
+      <p class="text-xs font-bold text-blue-600 uppercase tracking-wider">Analíticas</p>
+      <h3 class="text-base font-bold text-slate-900 m-0">{{ titulo }}</h3>
+    </div>
+  </div>
+  <div class="p-6 flex-grow min-h-[300px] relative w-full">
+    @if (datos.length > 0) {
+      <canvas baseChart
+        [data]="chartData"
+        [options]="chartOptions"
+        [type]="tipo">
+      </canvas>
+    } @else {
+      <div class="absolute inset-0 flex flex-col items-center justify-center text-slate-400 gap-3">
+        <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 13h2.243a2 2 0 011.897 1.368l1.371 4.104A2 2 0 0010.408 20h3.184a2 2 0 001.897-1.528l1.371-4.104A2 2 0 0118.757 13H21M12 4v4m0 0l-2-2m2 2l2-2" />
+        </svg>
+        <span class="text-sm font-semibold">Cargando datos del servidor...</span>
+      </div>
+    }
+  </div>
+</div>

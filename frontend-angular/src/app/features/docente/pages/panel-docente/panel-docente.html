@@ -79,6 +79,23 @@
         }
       </section>
 
+      <!-- Gráficos de Rendimiento -->
+      <section class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+        <app-grafico-rendimiento 
+          titulo="Generación de Tokens (Última semana)" 
+          [etiquetas]="['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom']" 
+          [datos]="[120, 250, 180, 300, 200, 400, 350]" 
+          tipo="bar">
+        </app-grafico-rendimiento>
+
+        <app-grafico-rendimiento 
+          titulo="Progreso de nivel promedio" 
+          [etiquetas]="['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4']" 
+          [datos]="[25, 45, 60, 85]" 
+          tipo="line">
+        </app-grafico-rendimiento>
+      </section>
+
       <!-- Contenido Secundario -->
       <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         

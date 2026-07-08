@@ -181,6 +181,35 @@ export class ListaAlumnos {
     });
   }
 
+  exportarCSV(): void {
+    if (!this.alumnos().length) return;
+    
+    const cabeceras = ['Nombre', 'Usuario', 'Nivel', 'Rango', 'Aula', 'Tokens'];
+    const filas = this.alumnos().map(a => [
+      a.nombre_completo,
+      a.usuario,
+      a.nivel || 'Sin nivel',
+      a.rango || 'Sin rango',
+      this.aulaNombre(a),
+      a.tokens
+    ]);
+
+    const contenidoCSV = [
+      cabeceras.join(','),
+      ...filas.map(fila => fila.map(celda => `"${celda}"`).join(','))
+    ].join('\n');
+
+    const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), contenidoCSV], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Alumnos_DAEMON_${new Date().getTime()}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
   puedeCrearAula(): boolean {
     return this.nuevaAula.nombre.trim().length > 0;
   }
