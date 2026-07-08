@@ -2,23 +2,11 @@ import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, NgZone, OnDestroy, ViewChild, signal , ChangeDetectionStrategy} from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import {
-  Alignment,
-  Fit,
-  Layout,
-  RuntimeLoader,
-  Rive as RiveCanvas,
-  type Rive,
-  type StateMachineInput,
-} from '@rive-app/canvas';
+import type { Rive, StateMachineInput } from '@rive-app/canvas';
 import { Autenticacion } from '../../../../core/servicios/autenticacion';
 import { CargaGlobal } from '../../../../core/servicios/carga-global';
 import { Sesion } from '../../../../core/servicios/sesion';
 import { validarCredenciales } from '../../../../shared/validadores/auth-validadores';
-
-RuntimeLoader.setWasmUrl('/rive/rive.wasm');
-RuntimeLoader.setWasmFallbackUrl('/rive/rive_fallback.wasm');
-const riveRuntimeReady = RuntimeLoader.awaitInstance().catch(() => undefined);
 
 type TeddyInputs = {
   isChecking?: StateMachineInput;
@@ -160,68 +148,71 @@ export class LoginDocente implements AfterViewInit, OnDestroy {
     this.dispararFallo();
   }
 
-  private cargarRive(): void {
+  private async cargarRive(): Promise<void> {
     const canvas = this.riveCanvas?.nativeElement;
     if (!canvas) {
       this.riveError.set(true);
       return;
     }
 
-    this.zone.runOutsideAngular(() => {
-      void riveRuntimeReady
-        .then(() => {
-          const layout = new Layout({
-            fit: Fit.Contain,
-            alignment: Alignment.Center,
+    try {
+      const RiveLib = await import('@rive-app/canvas');
+      RiveLib.RuntimeLoader.setWasmUrl('/rive/rive.wasm');
+      RiveLib.RuntimeLoader.setWasmFallbackUrl('/rive/rive_fallback.wasm');
+      await RiveLib.RuntimeLoader.awaitInstance();
+
+      this.zone.runOutsideAngular(() => {
+        const layout = new RiveLib.Layout({
+          fit: RiveLib.Fit.Contain,
+          alignment: RiveLib.Alignment.Center,
+        });
+
+        const marcarListo = () => {
+          this.rive?.resizeDrawingSurfaceToCanvas();
+          this.configurarInputsRive();
+          this.actualizarMascota();
+          window.addEventListener('resize', this.reajustarRive);
+          this.zone.run(() => {
+            this.riveDisponible.set(true);
+            this.riveError.set(false);
           });
+        };
 
-          const marcarListo = () => {
-            this.rive?.resizeDrawingSurfaceToCanvas();
-            this.configurarInputsRive();
-            this.actualizarMascota();
-            window.addEventListener('resize', this.reajustarRive);
-            this.zone.run(() => {
-              this.riveDisponible.set(true);
-              this.riveError.set(false);
-            });
-          };
-
-          const marcarError = () => {
-            this.zone.run(() => {
-              this.riveDisponible.set(false);
-              this.riveError.set(true);
-            });
-          };
-
-          const cargar = (interactivo: boolean) => {
-            this.rive = new RiveCanvas({
-              src: '/rive/login-teddy.riv',
-              canvas,
-              ...(interactivo ? { artboard: 'Teddy', stateMachines: this.maquinaLogin } : {}),
-              autoplay: true,
-              layout,
-              onLoad: marcarListo,
-              onLoadError: () => {
-                if (interactivo) {
-                  this.rive?.cleanup();
-                  cargar(false);
-                  return;
-                }
-
-                marcarError();
-              },
-            });
-          };
-
-          cargar(true);
-        })
-        .catch(() => {
+        const marcarError = () => {
           this.zone.run(() => {
             this.riveDisponible.set(false);
             this.riveError.set(true);
           });
-        });
-    });
+        };
+
+        const cargar = (interactivo: boolean) => {
+          this.rive = new RiveLib.Rive({
+            src: '/rive/login-teddy.riv',
+            canvas,
+            ...(interactivo ? { artboard: 'Teddy', stateMachines: this.maquinaLogin } : {}),
+            autoplay: true,
+            layout,
+            onLoad: marcarListo,
+            onLoadError: () => {
+              if (interactivo) {
+                this.rive?.cleanup();
+                cargar(false);
+                return;
+              }
+
+              marcarError();
+            },
+          });
+        };
+
+        cargar(true);
+      });
+    } catch (error) {
+      this.zone.run(() => {
+        this.riveDisponible.set(false);
+        this.riveError.set(true);
+      });
+    }
   }
 
   private configurarInputsRive(): void {

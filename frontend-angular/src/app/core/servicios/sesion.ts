@@ -19,6 +19,7 @@ export interface UsuarioSesion {
   heroe?: string | null;
   genero?: string | null;
   perfil_completo?: boolean;
+  tour_completado?: boolean;
   id_institucion?: number | null;
   id_aula?: number | null;
 }

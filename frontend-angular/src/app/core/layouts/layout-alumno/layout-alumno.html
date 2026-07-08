@@ -35,7 +35,7 @@
       <div class="flex items-center gap-3 md:gap-4 ml-auto">
         
         <!-- Rango / Monedas (solo mobile hidden) -->
-        <a routerLink="/alumno/perfil" class="hidden md:flex items-center gap-3 bg-gray-50 border border-gray-200 px-3 py-1.5 rounded-full hover:bg-gray-100:bg-gray-800 transition-colors">
+        <a id="topbar-tokens" routerLink="/alumno/perfil" class="hidden md:flex items-center gap-3 bg-gray-50 border border-gray-200 px-3 py-1.5 rounded-full hover:bg-gray-100:bg-gray-800 transition-colors">
           <div class="flex items-center gap-2 text-blue-600 text-sm font-bold">
             <fa-icon [icon]="iconos.rango"></fa-icon>
             <span>{{ sesion.usuario()?.rango || 'Explorador' }}</span>

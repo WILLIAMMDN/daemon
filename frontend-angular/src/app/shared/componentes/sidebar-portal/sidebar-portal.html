@@ -267,6 +267,7 @@
           } @else {
             <a
               class="nav-item"
+              id="sidebar-{{item.id}}"
               [routerLink]="item.ruta"
               routerLinkActive="active"
               [routerLinkActiveOptions]="{ exact: item.exacto ?? false }"

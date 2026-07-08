@@ -73,6 +73,7 @@
               "node_modules/ng-zorro-antd/input/style/index.min.css",
               "node_modules/ng-zorro-antd/select/style/index.min.css",
               "node_modules/ng-zorro-antd/icon/style/index.min.css",
+              "node_modules/driver.js/dist/driver.css",
               "src/styles.scss"
             ],
             "allowedCommonJsDependencies": [

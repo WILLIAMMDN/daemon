@@ -13,6 +13,7 @@ import { CargaGlobal } from '../../servicios/carga-global';
 import { Sesion } from '../../servicios/sesion';
 import { docenteSidebarSections } from '../portal-sidebar.config';
 import { NotificacionesService } from '../../servicios/notificaciones.service';
+import { TourService } from '../../servicios/tour.service';
 
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -33,6 +34,7 @@ export class LayoutDocente implements OnInit {
   private readonly cargaGlobal = inject(CargaGlobal);
   private readonly titleService = inject(Title);
   private readonly notificacionesService = inject(NotificacionesService);
+  private readonly tourService = inject(TourService);
 
   readonly seccionesSidebar = docenteSidebarSections;
   readonly iconos = {
@@ -54,6 +56,7 @@ export class LayoutDocente implements OnInit {
 
   ngOnInit(): void {
     this.notificacionesService.cargarNotificaciones().subscribe();
+    this.tourService.iniciarTourDocente();
   }
 
   marcarComoLeidas(): void {

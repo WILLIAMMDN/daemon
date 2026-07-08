@@ -281,6 +281,15 @@ class AutenticacionController extends Controller
         return UsuarioResource::make($request->user());
     }
 
+    public function completarTour(Request $request)
+    {
+        $usuario = $request->user();
+        $usuario->tour_completado = true;
+        $usuario->save();
+
+        return response()->json(['usuario' => UsuarioResource::make($usuario)]);
+    }
+
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()?->delete();

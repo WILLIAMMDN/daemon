@@ -17,6 +17,7 @@ import { Sesion } from '../../servicios/sesion';
 import { NotificacionesService } from '../../servicios/notificaciones.service';
 import { alumnoSidebarSections } from '../portal-sidebar.config';
 
+import { TourService } from '../../servicios/tour.service';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { faUser, faGear, faArrowRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 
@@ -31,6 +32,7 @@ export class LayoutAlumno implements OnInit {
   public readonly sesion = inject(Sesion);
   private readonly autenticacion = inject(Autenticacion);
   private readonly notificacionesService = inject(NotificacionesService);
+  private readonly tourService = inject(TourService);
   private readonly router = inject(Router);
   private readonly activos = inject(Activos);
   private readonly cargaGlobal = inject(CargaGlobal);
@@ -57,6 +59,7 @@ export class LayoutAlumno implements OnInit {
 
   ngOnInit(): void {
     this.notificacionesService.cargarNotificaciones().subscribe();
+    this.tourService.iniciarTourAlumno();
   }
 
   marcarComoLeidas(): void {

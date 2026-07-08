@@ -40,6 +40,7 @@ class Usuario extends Authenticatable
         'fondo',
         'heroe',
         'genero',
+        'tour_completado',
     ];
 
     protected $hidden = ['password_hash'];
@@ -53,6 +54,7 @@ class Usuario extends Authenticatable
             'id_institucion' => 'integer',
             'id_aula' => 'integer',
             'perfil_completo' => 'boolean',
+            'tour_completado' => 'boolean',
             'fecha_registro' => 'datetime',
             'email_verified_at' => 'datetime',
         ];
