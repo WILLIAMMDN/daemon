@@ -18,7 +18,7 @@ import { BotonAccion } from '../../../../shared/componentes/boton-accion/boton-a
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 import { MonedaDaemon } from '../../../../shared/componentes/moneda-daemon/moneda-daemon';
 import { Alumno } from '../../services/alumno';
-import { AlumnoCore } from '../../services/alumno.core';
+
 
 interface UsuarioPanel {
   id: number;
