@@ -1,4 +1,4 @@
-<section class="w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-4 md:gap-6 font-inter min-h-[calc(100vh-100px)] md:h-[calc(100vh-100px)]">
+<section class="w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-4 md:gap-6 font-inter h-[calc(100vh-80px)] md:h-[calc(100vh-100px)]">
   <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shrink-0">
     <div class="flex items-center gap-4">
       <img [src]="botAvatar()" [alt]="bot()?.nombre_bot || 'Avatar del bot'" class="w-14 h-14 md:w-16 md:h-16 rounded-full shadow-md object-cover bg-white">
@@ -32,34 +32,34 @@
     <p class="p-4 bg-red-50 text-red-600 border border-red-200 rounded-lg shrink-0">{{ error() }}</p>
   }
 
-  <section class="flex-1 w-full flex flex-col md:flex-row gap-4 md:gap-6 md:overflow-hidden relative h-full">
+  <section class="flex-1 w-full flex flex-col md:flex-row gap-4 md:gap-6 overflow-hidden relative h-full">
     @if (bot() === undefined || !mensajesCargados()) {
-      <div class="w-full h-[60vh] md:h-full flex items-center justify-center bg-white rounded-2xl shadow-sm border border-slate-200">
+      <div class="w-full h-full flex items-center justify-center bg-white rounded-2xl shadow-sm border border-slate-200">
         <div class="w-12 h-12 md:w-16 md:h-16 border-4 border-slate-200 border-t-blue-600 rounded-full animate-spin"></div>
       </div>
     } @else if (bot() === null) {
-      <div class="w-full h-[60vh] md:h-full flex items-center justify-center bg-white rounded-2xl shadow-sm border border-slate-200">
+      <div class="w-full h-full flex items-center justify-center bg-white rounded-2xl shadow-sm border border-slate-200">
         <p class="text-slate-400 font-medium text-base md:text-lg">Debes configurar tu bot primero.</p>
       </div>
     } @else {
-      <aside class="w-full md:w-80 bg-white rounded-2xl shadow-sm border border-slate-200 p-4 md:p-6 flex flex-col gap-4 overflow-y-auto shrink-0 md:shrink">
-        <img class="w-24 h-24 md:w-32 md:h-32 rounded-2xl object-cover mx-auto shadow-md" [src]="botAvatar()" [alt]="bot()?.nombre_bot || 'Avatar del bot'">
+      <aside class="hidden md:flex w-80 bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex-col gap-4 overflow-y-auto shrink-0">
+        <img class="w-32 h-32 rounded-2xl object-cover mx-auto shadow-md" [src]="botAvatar()" [alt]="bot()?.nombre_bot || 'Avatar del bot'">
         <div class="flex justify-center">
           <span class="px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-full bg-green-100 text-green-800">Activo</span>
         </div>
         
         <div class="mt-2">
-          <h2 class="text-xs font-bold uppercase text-slate-400 tracking-wider border-b border-slate-200 pb-2 mb-2 md:mb-3">Base del asistente</h2>
+          <h2 class="text-xs font-bold uppercase text-slate-400 tracking-wider border-b border-slate-200 pb-2 mb-3">Base del asistente</h2>
           <p class="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">{{ bot()?.system_prompt || 'Sin personalidad guardada.' }}</p>
         </div>
         
         <div class="mt-2">
-          <h3 class="text-xs font-bold uppercase text-slate-400 tracking-wider border-b border-slate-200 pb-2 mb-2 md:mb-3">Conocimiento</h3>
+          <h3 class="text-xs font-bold uppercase text-slate-400 tracking-wider border-b border-slate-200 pb-2 mb-3">Conocimiento</h3>
           <p class="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">{{ bot()?.conocimiento || 'Aún no hay conocimiento especializado.' }}</p>
         </div>
       </aside>
 
-      <div class="flex-1 w-full bg-white rounded-2xl shadow-sm border border-slate-200 h-[600px] md:h-full overflow-hidden flex flex-col">
+      <div class="flex-1 w-full bg-white rounded-2xl shadow-sm border border-slate-200 h-full overflow-hidden flex flex-col">
         <deep-chat
           [connect]="requestConfig"
           [history]="mensajesFormateados()"
