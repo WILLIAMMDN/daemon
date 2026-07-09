@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, signal , ChangeDetectionStrategy} from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { finalize } from 'rxjs';
 import { Autenticacion, CompletarPerfilGoogleDatos } from '../../../../core/servicios/autenticacion';
 import { CargaGlobal } from '../../../../core/servicios/carga-global';
 import { Sesion } from '../../../../core/servicios/sesion';
@@ -77,17 +78,28 @@ export class Bienvenida implements OnInit {
     this.guardando.set(true);
     this.error.set('');
     const carga = this.cargaGlobal.mostrar('Guardando perfil...');
+    let navegando = false;
 
-    this.auth.completarPerfil(payload).subscribe({
+    this.auth.completarPerfil(payload).pipe(
+      finalize(() => {
+        if (!navegando) {
+          this.guardando.set(false);
+          this.cargaGlobal.ocultar(carga);
+        }
+      }),
+    ).subscribe({
       next: () => {
-        void this.router.navigateByUrl('/alumno').finally(() => this.cargaGlobal.ocultar(carga));
+        navegando = true;
+        this.cargaGlobal.cambiarMensaje('Entrando a tu portal...');
+        void this.router.navigateByUrl('/alumno').finally(() => {
+          this.guardando.set(false);
+          this.cargaGlobal.ocultar(carga);
+        });
       },
       error: (error) => {
         const errores = error.error?.errors;
         const primerError = errores ? Object.values(errores).flat()[0] : null;
         this.error.set(String(primerError ?? error.error?.message ?? 'No se pudo completar tu perfil.'));
-        this.guardando.set(false);
-        this.cargaGlobal.ocultar(carga);
       },
     });
   }

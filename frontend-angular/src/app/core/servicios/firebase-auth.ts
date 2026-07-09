@@ -103,6 +103,18 @@ export class FirebaseAuth {
     return usuario.getIdToken(true);
   }
 
+  async idTokenActual(emailEsperado?: string | null): Promise<string | null> {
+    const usuario = await this.usuarioActual();
+
+    if (!this.emailCoincide(usuario, emailEsperado)) {
+      return null;
+    }
+
+    await usuario.reload();
+
+    return usuario.getIdToken(true);
+  }
+
   async recuperarPassword(email: string): Promise<void> {
     const auth = this.requerirAuth();
     auth.languageCode = 'es';

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Auth\ActualizarPerfilRequest;
 use App\Http\Requests\Api\V1\Auth\CambiarClaveRequest;
+use App\Http\Requests\Api\V1\Auth\CompletarPerfilFirebaseRequest;
 use App\Http\Requests\Api\V1\Auth\CompletarPerfilGoogleRequest;
 use App\Http\Requests\Api\V1\Auth\ConfirmarResetClaveRequest;
 use App\Http\Requests\Api\V1\Auth\ConfirmarVerificacionRequest;
@@ -21,6 +22,9 @@ use App\Services\Auth\EmailVerificationService;
 use App\Services\Auth\FirebaseTokenVerifier;
 use App\Services\Auth\RecuperacionClaveService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use InvalidArgumentException;
 use Laravel\Socialite\Facades\Socialite;
 use RuntimeException;
@@ -256,12 +260,49 @@ class AutenticacionController extends Controller
         return response()->json(['usuario' => UsuarioResource::make($usuario)]);
     }
 
-    public function completarPerfilFirebase(CompletarPerfilGoogleRequest $request)
+    public function completarPerfilFirebase(CompletarPerfilFirebaseRequest $request)
     {
-        // Reusamos el handler de Google porque ambos flujos (Google y Firebase)
-        // terminan con un usuario ya autenticado en DAEMON y pendiente de
-        // completar nombre, usuario y nivel. Las reglas de validacion son las mismas.
-        return $this->completarPerfilGoogle($request);
+        $datos = $request->validated();
+
+        try {
+            $claims = $this->firebase->verify($datos['id_token']);
+            $usuario = $this->autenticacion->autenticarConFirebase($claims, true);
+
+            if (! $usuario) {
+                return response()->json([
+                    'message' => 'No encontramos una cuenta DAEMON activa para completar el perfil.',
+                    'requires_registration' => true,
+                ], 404);
+            }
+
+            $perfil = Arr::only($datos, ['nombre_completo', 'usuario', 'nivel']);
+            $validador = Validator::make($perfil, [
+                'usuario' => [
+                    Rule::unique('usuarios', 'usuario')->ignore($usuario->id),
+                ],
+            ], [
+                'usuario.unique' => 'Ese nombre de usuario ya esta en uso.',
+            ]);
+
+            if ($validador->fails()) {
+                return response()->json([
+                    'message' => $validador->errors()->first(),
+                    'errors' => $validador->errors(),
+                ], 422);
+            }
+
+            $usuario = $this->autenticacion->completarPerfil($usuario, $perfil);
+
+            return $this->respuestaAutenticada($usuario);
+        } catch (InvalidArgumentException|RuntimeException|UnexpectedValueException $exception) {
+            report($exception);
+
+            return response()->json(['message' => $exception->getMessage()], 422);
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return response()->json(['message' => 'No se pudo validar la cuenta de Firebase.'], 422);
+        }
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 use App\Http\Requests\Api\V1\Auth\CambiarClaveRequest;
+use App\Http\Requests\Api\V1\Auth\CompletarPerfilFirebaseRequest;
 use App\Http\Requests\Api\V1\Auth\RecuperarClaveRequest;
 use App\Http\Requests\Api\V1\Auth\RegistroAlumnoRequest;
 use Tests\TestCase;
@@ -33,5 +34,15 @@ class AuthRequestRulesTest extends TestCase
 
         $this->assertContains('required_without:email', $rules['usuario']);
         $this->assertContains('required_without:usuario', $rules['email']);
+    }
+
+    public function test_firebase_profile_completion_requires_token_and_profile_fields(): void
+    {
+        $rules = (new CompletarPerfilFirebaseRequest)->rules();
+
+        $this->assertContains('required', $rules['id_token']);
+        $this->assertContains('max:8192', $rules['id_token']);
+        $this->assertContains('alpha_dash', $rules['usuario']);
+        $this->assertContains('in:KIDS,TEENS,PRO', $rules['nivel']);
     }
 }

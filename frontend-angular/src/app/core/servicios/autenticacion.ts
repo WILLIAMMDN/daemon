@@ -34,6 +34,7 @@ type RespuestaYo = UsuarioSesion | { data: UsuarioSesion };
 })
 export class Autenticacion {
   private readonly registroTimeoutMs = 60000;
+  private readonly sinSesionFirebasePerfil = 'SinSesionFirebasePerfil';
 
   constructor(
     private api: Api,
@@ -117,8 +118,48 @@ export class Autenticacion {
   }
 
   completarPerfil(datos: CompletarPerfilGoogleDatos) {
+    return this.completarPerfilFirebaseActual(datos).pipe(
+      catchError((error) => {
+        if (this.debeUsarSesionParaCompletarPerfil(error)) {
+          return this.completarPerfilConSesion(datos);
+        }
+
+        return throwError(() => error);
+      }),
+    );
+  }
+
+  private completarPerfilFirebaseActual(datos: CompletarPerfilGoogleDatos) {
+    const usuario = this.sesion.usuario();
+
+    return from(this.firebaseAuth.idTokenActual(usuario?.email)).pipe(
+      switchMap((idToken) => {
+        if (!idToken) {
+          const error = new Error('No encontramos una sesion activa de Firebase para completar tu perfil.');
+          error.name = this.sinSesionFirebasePerfil;
+
+          return throwError(() => error);
+        }
+
+        return this.api.post<AuthRespuesta>('/auth/firebase/perfil', {
+          ...datos,
+          id_token: idToken,
+        });
+      }),
+      tap((respuesta) => this.sesion.guardar(respuesta.usuario)),
+    );
+  }
+
+  private completarPerfilConSesion(datos: CompletarPerfilGoogleDatos) {
     return this.api.patch<{ usuario: UsuarioSesion }>('/auth/me/perfil', datos)
       .pipe(tap((respuesta) => this.sesion.actualizarUsuario(respuesta.usuario)));
+  }
+
+  private debeUsarSesionParaCompletarPerfil(error: unknown): boolean {
+    const posibleError = error as { name?: string; message?: string };
+
+    return posibleError?.name === this.sinSesionFirebasePerfil
+      || posibleError?.message === 'Firebase Auth todavia no esta configurado.';
   }
 
   completarPerfilGoogle(datos: CompletarPerfilGoogleDatos) {
