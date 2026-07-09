@@ -24,7 +24,7 @@ class OpenRouterProvider implements AiProviderInterface
         $respuesta = Http::withToken($apiKey)
             ->timeout(120)
             ->post('https://openrouter.ai/api/v1/chat/completions', [
-                'model' => $bot->modelo_ia ?: 'google/gemma-2-9b-it:free',
+                'model' => $bot->modelo_ia ?: 'meta-llama/llama-3.3-70b-instruct:free',
                 'messages' => $mensajes,
             ])->throw()->json('choices.0.message.content');
 
@@ -37,13 +37,13 @@ class OpenRouterProvider implements AiProviderInterface
 
     public function obtenerModelos(): array
     {
-        // Modelos gratuitos recomendados de OpenRouter
+        // Modelos gratuitos activos de OpenRouter
         return [
-            ['id' => 'google/gemma-2-9b-it:free', 'nombre' => 'Gemma 2 9B (Google)'],
-            ['id' => 'meta-llama/llama-3-8b-instruct:free', 'nombre' => 'Llama 3 8B (Meta)'],
-            ['id' => 'microsoft/phi-3-mini-128k-instruct:free', 'nombre' => 'Phi-3 Mini (Microsoft)'],
-            ['id' => 'huggingfaceh4/zephyr-7b-beta:free', 'nombre' => 'Zephyr 7B (HuggingFace)'],
-            ['id' => 'openchat/openchat-7b:free', 'nombre' => 'OpenChat 7B'],
+            ['id' => 'meta-llama/llama-3.3-70b-instruct:free', 'nombre' => 'Llama 3.3 70B (Meta)'],
+            ['id' => 'meta-llama/llama-3.2-3b-instruct:free', 'nombre' => 'Llama 3.2 3B (Meta)'],
+            ['id' => 'google/gemma-4-31b-it:free', 'nombre' => 'Gemma 4 31B (Google)'],
+            ['id' => 'google/gemma-4-26b-a4b-it:free', 'nombre' => 'Gemma 4 26B (Google)'],
+            ['id' => 'nousresearch/hermes-3-llama-3.1-405b:free', 'nombre' => 'Hermes 3 405B'],
         ];
     }
 }

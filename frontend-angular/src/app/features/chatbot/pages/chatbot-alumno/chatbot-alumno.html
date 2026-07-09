@@ -59,8 +59,9 @@
         </div>
       </aside>
 
-      <div class="flex-1 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden min-h-[500px]">
+      <div class="flex-1 w-full bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden min-h-[500px] flex">
         <deep-chat
+          class="w-full"
           [connect]="requestConfig"
           [history]="mensajesFormateados()"
           [textToSpeech]="true"
