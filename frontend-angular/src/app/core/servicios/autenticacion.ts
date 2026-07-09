@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { catchError, from, map, Observable, of, switchMap, tap, throwError } from 'rxjs';
+import { catchError, from, map, Observable, of, switchMap, tap, throwError, timeout, TimeoutError } from 'rxjs';
 import { Api } from './api';
 import { FirebaseAuth } from './firebase-auth';
 import { Sesion, UsuarioSesion } from './sesion';
@@ -33,6 +33,8 @@ type RespuestaYo = UsuarioSesion | { data: UsuarioSesion };
   providedIn: 'root',
 })
 export class Autenticacion {
+  private readonly registroTimeoutMs = 60000;
+
   constructor(
     private api: Api,
     private sesion: Sesion,
@@ -87,6 +89,8 @@ export class Autenticacion {
     // creamos la cuenta.
     return from(this.loginORegistroFirebase(datos)).pipe(
       switchMap((idToken) => this.loginFirebase(idToken, true)),
+      timeout({ first: this.registroTimeoutMs }),
+      catchError((error) => throwError(() => this.normalizarErrorRegistro(error))),
     );
   }
 
@@ -283,6 +287,14 @@ export class Autenticacion {
       password,
       password_confirmation: password,
     });
+  }
+
+  private normalizarErrorRegistro(error: unknown): unknown {
+    if (error instanceof TimeoutError) {
+      return new Error('El registro tardo demasiado en responder. Si el correo fue creado, vuelve a intentar con el mismo email y contrasena para terminar la cuenta.');
+    }
+
+    return error;
   }
 
   cambiarClave(datos: { password_actual: string; password: string; password_confirmation: string }) {
