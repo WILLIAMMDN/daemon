@@ -65,6 +65,7 @@ Route::prefix('v1')->group(function (): void {
             Route::get('/chatbot/bot', [ChatbotController::class, 'bot']);
             Route::post('/chatbot/bot', [ChatbotController::class, 'guardarBot']);
             Route::get('/chatbot/mensajes', [ChatbotController::class, 'mensajes']);
+            Route::get('/chatbot/modelos', [ChatbotController::class, 'modelos']);
             Route::post('/chatbot/mensajes', [ChatbotController::class, 'chat']);
             Route::delete('/chatbot/mensajes', [ChatbotController::class, 'limpiar']);
             Route::get('/chatbot/cerebro', [ChatbotController::class, 'cargarCerebro']);

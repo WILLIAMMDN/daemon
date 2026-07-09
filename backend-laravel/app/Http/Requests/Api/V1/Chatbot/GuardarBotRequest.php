@@ -18,6 +18,8 @@ class GuardarBotRequest extends FormRequest
             'system_prompt' => ['nullable', 'string'],
             'conocimiento' => ['nullable', 'string'],
             'avatar' => ['nullable', 'image', 'max:4096'],
+            'proveedor' => ['required', 'string', 'in:ollama,openrouter'],
+            'modelo_ia' => ['required', 'string', 'max:100'],
         ];
     }
 }

@@ -25,22 +25,15 @@ interface MensajeChat {
   styleUrl: './chatbot-alumno.scss',
 })
 export class ChatbotAlumno {
-  bot = signal<BotAlumno | null>(null);
+  bot = signal<BotAlumno | null | undefined>(undefined);
   error = signal('');
   mensajesFormateados = signal<any[]>([]);
+  mensajesCargados = signal(false);
 
   // Binder para el handler de Deep Chat
   requestHandler = this.procesarMensaje.bind(this);
   requestConfig = { handler: this.requestHandler };
 
-  // Estilos de la burbuja (basados en la UI anterior)
-  chatStyle = {
-    borderRadius: '1rem',
-    border: '1px solid #e2e8f0',
-    width: '100%',
-    height: '650px',
-    backgroundColor: '#ffffff'
-  };
 
   messageStyles = {
     default: {
@@ -69,6 +62,7 @@ export class ChatbotAlumno {
           text: m.content
         }))
       );
+      this.mensajesCargados.set(true);
     });
   }
 

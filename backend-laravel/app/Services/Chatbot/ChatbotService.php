@@ -7,6 +7,9 @@ use App\Models\ChatMensaje;
 use App\Models\Usuario;
 use App\Services\Archivo\ArchivoUrlService;
 use App\Services\Academico\AcademicScopeService;
+use App\Services\Chatbot\Providers\OllamaProvider;
+use App\Services\Chatbot\Providers\OpenRouterProvider;
+use App\Services\Chatbot\Contracts\AiProviderInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -15,7 +18,6 @@ use Illuminate\Support\Facades\DB;
 class ChatbotService
 {
     public function __construct(
-        private readonly OllamaService $ollama,
         private readonly ArchivoUrlService $archivos,
         private readonly AcademicScopeService $alcance,
     ) {}
@@ -35,6 +37,15 @@ class ChatbotService
         return ChatMensaje::where('id_alumno', $alumno->id)->orderBy('created_at')->get();
     }
 
+    private function getProvider(string $providerName): AiProviderInterface
+    {
+        if ($providerName === 'openrouter') {
+            return new OpenRouterProvider();
+        }
+        
+        return new OllamaProvider();
+    }
+
     public function responder(Usuario $alumno, string $contenido): ChatMensaje
     {
         $bot = $this->bot($alumno);
@@ -51,9 +62,21 @@ class ChatbotService
             ->map(fn ($mensaje) => ['role' => $mensaje->role, 'content' => $mensaje->content])
             ->all();
 
-        $respuesta = $this->ollama->responder($bot, $historial);
+        $provider = $this->getProvider($bot->proveedor ?: 'ollama');
+        $respuesta = $provider->responder($bot, $historial);
 
         return ChatMensaje::create(['id_alumno' => $alumno->id, 'role' => 'assistant', 'content' => $respuesta]);
+    }
+
+    public function obtenerModelos(): array
+    {
+        $ollama = new OllamaProvider();
+        $openrouter = new OpenRouterProvider();
+
+        return [
+            'ollama' => $ollama->obtenerModelos(),
+            'openrouter' => $openrouter->obtenerModelos(),
+        ];
     }
 
     public function limpiar(Usuario $alumno): void

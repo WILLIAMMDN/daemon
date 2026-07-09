@@ -33,7 +33,15 @@
   }
 
   <section class="flex-1 w-full flex flex-col md:flex-row gap-6 overflow-hidden relative">
-    @if (bot()) {
+    @if (bot() === undefined || !mensajesCargados()) {
+      <div class="w-full h-full min-h-[500px] flex items-center justify-center bg-white rounded-2xl shadow-sm border border-slate-200">
+        <div class="w-16 h-16 border-4 border-slate-200 border-t-blue-600 rounded-full animate-spin"></div>
+      </div>
+    } @else if (bot() === null) {
+      <div class="w-full h-full min-h-[500px] flex items-center justify-center bg-white rounded-2xl shadow-sm border border-slate-200">
+        <p class="text-slate-400 font-medium text-lg">Debes configurar tu bot primero.</p>
+      </div>
+    } @else {
       <aside class="w-full md:w-80 bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col gap-4 overflow-y-auto">
         <img class="w-32 h-32 rounded-2xl object-cover mx-auto shadow-md" [src]="botAvatar()" [alt]="bot()?.nombre_bot || 'Avatar del bot'">
         <div class="flex justify-center">
@@ -51,20 +59,16 @@
         </div>
       </aside>
 
-      <div class="flex-1 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+      <div class="flex-1 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden min-h-[500px]">
         <deep-chat
-          [request]="requestConfig"
+          [connect]="requestConfig"
           [history]="mensajesFormateados()"
           [textToSpeech]="true"
           [speechToText]="true"
-          [style]="chatStyle"
           [messageStyles]="messageStyles"
           [avatars]="{ ai: { src: botAvatar() } }"
+          style="width: 100%; height: 100%; border: none; min-height: 500px;"
         ></deep-chat>
-      </div>
-    } @else {
-      <div class="w-full h-full min-h-[500px] flex items-center justify-center bg-white rounded-2xl shadow-sm border border-slate-200">
-        <p class="text-slate-400 font-medium text-lg">Debes configurar tu bot primero.</p>
       </div>
     }
   </section>

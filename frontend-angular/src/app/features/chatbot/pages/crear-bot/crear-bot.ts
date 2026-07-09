@@ -18,6 +18,18 @@ interface BotConfig {
   system_prompt?: string | null;
   conocimiento?: string | null;
   avatar?: string | null;
+  proveedor?: string | null;
+  modelo_ia?: string | null;
+}
+
+interface ModeloIa {
+  id: string;
+  nombre: string;
+}
+
+interface ModelosDisponibles {
+  ollama: ModeloIa[];
+  openrouter: ModeloIa[];
 }
 
 @Component({
@@ -40,7 +52,8 @@ interface BotConfig {
   styleUrl: './crear-bot.scss',
 })
 export class CrearBot {
-  datos = { nombre_bot: '', system_prompt: '', conocimiento: '' };
+  datos = { nombre_bot: '', system_prompt: '', conocimiento: '', proveedor: 'ollama', modelo_ia: 'gemma2:9b' };
+  modelos = signal<ModelosDisponibles>({ ollama: [], openrouter: [] });
   avatarActual = signal('');
   avatarPreview = signal('');
   mensaje = signal('');
@@ -51,6 +64,8 @@ export class CrearBot {
   private archivoAvatar: File | null = null;
 
   constructor(private api: Api, private activos: Activos) {
+    this.api.get<ModelosDisponibles>('/chatbot/modelos').subscribe((modelos) => this.modelos.set(modelos));
+
     this.api.get<BotConfig | null>('/chatbot/bot').subscribe({
       next: (bot) => {
         if (bot) {
@@ -58,6 +73,8 @@ export class CrearBot {
             nombre_bot: bot.nombre_bot ?? '',
             system_prompt: bot.system_prompt ?? '',
             conocimiento: bot.conocimiento ?? '',
+            proveedor: bot.proveedor ?? 'ollama',
+            modelo_ia: bot.modelo_ia ?? 'gemma2:9b',
           };
           this.avatarActual.set(bot.avatar ?? '');
         }
@@ -92,6 +109,8 @@ export class CrearBot {
     formData.append('nombre_bot', this.datos.nombre_bot);
     formData.append('system_prompt', this.datos.system_prompt);
     formData.append('conocimiento', this.datos.conocimiento);
+    formData.append('proveedor', this.datos.proveedor);
+    formData.append('modelo_ia', this.datos.modelo_ia);
     if (this.archivoAvatar) {
       formData.append('avatar', this.archivoAvatar);
     }

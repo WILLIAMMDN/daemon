@@ -50,6 +50,34 @@
                    class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors w-full text-slate-900">
           </label>
 
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <label class="flex flex-col gap-1.5">
+              <span class="text-sm font-semibold text-slate-700">Proveedor de IA</span>
+              <select name="proveedor" [(ngModel)]="datos.proveedor" class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors w-full text-slate-900">
+                <option value="ollama">Local (Ollama)</option>
+                <option value="openrouter">Nube Gratis (OpenRouter)</option>
+              </select>
+            </label>
+
+            <label class="flex flex-col gap-1.5">
+              <span class="text-sm font-semibold text-slate-700">Modelo</span>
+              <select name="modelo_ia" [(ngModel)]="datos.modelo_ia" class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors w-full text-slate-900">
+                @if (datos.proveedor === 'ollama') {
+                  @for (mod of modelos().ollama; track mod.id) {
+                    <option [value]="mod.id">{{ mod.nombre }}</option>
+                  }
+                  @if (modelos().ollama.length === 0) {
+                    <option value="gemma2:9b" selected>gemma2:9b (No se detectaron modelos)</option>
+                  }
+                } @else {
+                  @for (mod of modelos().openrouter; track mod.id) {
+                    <option [value]="mod.id">{{ mod.nombre }}</option>
+                  }
+                }
+              </select>
+            </label>
+          </div>
+
           <label class="flex flex-col gap-1.5">
             <span class="text-sm font-semibold text-slate-700">Personalidad</span>
             <textarea

@@ -42,6 +42,11 @@ class ChatbotController extends Controller
         return $this->chatbot->mensajes($request->user());
     }
 
+    public function modelos()
+    {
+        return $this->chatbot->obtenerModelos();
+    }
+
     public function chat(EnviarMensajeRequest $request)
     {
         try {
