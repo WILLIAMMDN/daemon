@@ -37,14 +37,52 @@ class OpenRouterProvider implements AiProviderInterface
 
     public function obtenerModelos(): array
     {
-        // Modelos gratuitos activos de OpenRouter
+        return \Illuminate\Support\Facades\Cache::remember('openrouter_free_models', now()->addHours(12), function () {
+            try {
+                $response = Http::timeout(10)->get('https://openrouter.ai/api/v1/models')->json('data');
+                if (!is_array($response)) {
+                    return $this->defaultModels();
+                }
+
+                $freeModels = [];
+                // Siempre añadir openrouter/free como primera opción recomendada
+                $freeModels[] = ['id' => 'openrouter/free', 'nombre' => 'Automático (Siempre Gratis)'];
+
+                foreach ($response as $model) {
+                    $isFree = false;
+                    if (isset($model['pricing']['prompt']) && isset($model['pricing']['completion'])) {
+                        if (floatval($model['pricing']['prompt']) === 0.0 && floatval($model['pricing']['completion']) === 0.0) {
+                            $isFree = true;
+                        }
+                    } elseif (str_ends_with($model['id'], ':free')) {
+                        $isFree = true;
+                    }
+
+                    // Evitar duplicar el openrouter/free y filtrar el auto de pago
+                    if ($isFree && $model['id'] !== 'openrouter/free' && $model['id'] !== 'openrouter/auto') {
+                        $nombre = $model['name'] ?? $model['id'];
+                        // Limpiar nombres largos si es necesario
+                        $freeModels[] = [
+                            'id' => $model['id'],
+                            'nombre' => $nombre,
+                        ];
+                    }
+                }
+
+                return count($freeModels) > 1 ? $freeModels : $this->defaultModels();
+            } catch (\Exception $e) {
+                return $this->defaultModels();
+            }
+        });
+    }
+
+    private function defaultModels(): array
+    {
         return [
             ['id' => 'openrouter/free', 'nombre' => 'Automático (Siempre Gratis)'],
             ['id' => 'meta-llama/llama-3.3-70b-instruct:free', 'nombre' => 'Llama 3.3 70B (Meta)'],
             ['id' => 'meta-llama/llama-3.2-3b-instruct:free', 'nombre' => 'Llama 3.2 3B (Meta)'],
-            ['id' => 'google/gemma-4-31b-it:free', 'nombre' => 'Gemma 4 31B (Google)'],
-            ['id' => 'google/gemma-4-26b-a4b-it:free', 'nombre' => 'Gemma 4 26B (Google)'],
-            ['id' => 'nousresearch/hermes-3-llama-3.1-405b:free', 'nombre' => 'Hermes 3 405B'],
+            ['id' => 'google/gemma-2-9b-it:free', 'nombre' => 'Gemma 2 9B (Google)'],
         ];
     }
 }
