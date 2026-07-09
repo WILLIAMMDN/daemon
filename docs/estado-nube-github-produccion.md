@@ -83,6 +83,9 @@ Variables importantes de produccion:
 APP_URL=https://daemon-5vo1.onrender.com
 FRONTEND_URL=https://daemonestudiante.web.app
 FRONTEND_PRODUCTION_URL=https://daemonestudiante.web.app
+CORS_SUPPORTS_CREDENTIALS=true
+AUTH_COOKIE_SAME_SITE=none
+AUTH_COOKIE_SECURE=true
 DB_CONNECTION=pgsql
 DB_SSLMODE=require
 ASSET_PUBLIC_URL=https://daemonestudiante.web.app

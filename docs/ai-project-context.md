@@ -103,7 +103,7 @@ backend-laravel/app/Services/Auth/FirebaseTokenVerifier.php
 backend-laravel/app/Http/Controllers/Api/V1/AutenticacionController.php
 backend-laravel/app/Http/Middleware/EnsureRole.php
 backend-laravel/app/Http/Middleware/AuthCookieToken.php
-backend-laravel/app/Services/ArchivoUrlService.php
+backend-laravel/app/Services/Archivo/ArchivoUrlService.php
 backend-laravel/config/filesystems.php
 backend-laravel/config/services.php
 backend-laravel/config/mail.php
