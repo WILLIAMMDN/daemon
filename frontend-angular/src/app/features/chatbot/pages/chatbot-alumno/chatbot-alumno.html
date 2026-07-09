@@ -63,8 +63,7 @@
         <deep-chat
           [connect]="requestConfig"
           [history]="mensajesFormateados()"
-          [textToSpeech]="true"
-          [speechToText]="true"
+          [speechToText]="speechConfig"
           [messageStyles]="messageStyles"
           [avatars]="{ ai: { src: botAvatar() } }"
           style="width: 100%; height: 100%; border: none;"

@@ -34,6 +34,10 @@ export class ChatbotAlumno {
   requestHandler = this.procesarMensaje.bind(this);
   requestConfig = { handler: this.requestHandler };
 
+  speechConfig = {
+    webSpeech: { language: 'es-ES' }
+  };
+
 
   messageStyles = {
     default: {
