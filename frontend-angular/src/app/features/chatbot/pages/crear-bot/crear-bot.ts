@@ -52,7 +52,7 @@ interface ModelosDisponibles {
   styleUrl: './crear-bot.scss',
 })
 export class CrearBot {
-  datos = { nombre_bot: '', system_prompt: '', conocimiento: '', proveedor: 'openrouter', modelo_ia: 'meta-llama/llama-3.3-70b-instruct:free' };
+  datos = { nombre_bot: '', system_prompt: '', conocimiento: '', proveedor: 'openrouter', modelo_ia: 'openrouter/free' };
   modelos = signal<ModelosDisponibles>({ ollama: [], openrouter: [] });
   avatarActual = signal('');
   avatarPreview = signal('');
@@ -74,7 +74,7 @@ export class CrearBot {
             system_prompt: bot.system_prompt ?? '',
             conocimiento: bot.conocimiento ?? '',
             proveedor: bot.proveedor ?? 'openrouter',
-            modelo_ia: bot.modelo_ia ?? 'meta-llama/llama-3.3-70b-instruct:free',
+            modelo_ia: bot.modelo_ia ?? 'openrouter/free',
           };
           this.avatarActual.set(bot.avatar ?? '');
         }

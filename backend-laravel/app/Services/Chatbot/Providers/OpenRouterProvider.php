@@ -39,6 +39,7 @@ class OpenRouterProvider implements AiProviderInterface
     {
         // Modelos gratuitos activos de OpenRouter
         return [
+            ['id' => 'openrouter/free', 'nombre' => 'Automático (Siempre Gratis)'],
             ['id' => 'meta-llama/llama-3.3-70b-instruct:free', 'nombre' => 'Llama 3.3 70B (Meta)'],
             ['id' => 'meta-llama/llama-3.2-3b-instruct:free', 'nombre' => 'Llama 3.2 3B (Meta)'],
             ['id' => 'google/gemma-4-31b-it:free', 'nombre' => 'Gemma 4 31B (Google)'],

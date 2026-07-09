@@ -59,16 +59,15 @@
         </div>
       </aside>
 
-      <div class="flex-1 w-full bg-white rounded-2xl shadow-sm border border-slate-200 relative h-[600px] md:h-auto overflow-hidden">
+      <div class="flex-1 w-full bg-white rounded-2xl shadow-sm border border-slate-200 h-[600px] md:h-full overflow-hidden flex flex-col">
         <deep-chat
-          class="absolute inset-0 w-full h-full"
           [connect]="requestConfig"
           [history]="mensajesFormateados()"
           [textToSpeech]="true"
           [speechToText]="true"
           [messageStyles]="messageStyles"
           [avatars]="{ ai: { src: botAvatar() } }"
-          style="border: none;"
+          style="width: 100%; height: 100%; border: none;"
         ></deep-chat>
       </div>
     }
