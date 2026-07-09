@@ -45,6 +45,10 @@ jobs:
           fi
         working-directory: frontend-angular
 
+      - name: Test frontend
+        run: npm test -- --runInBand
+        working-directory: frontend-angular
+
       - name: Build frontend
         run: npm run build
         working-directory: frontend-angular
