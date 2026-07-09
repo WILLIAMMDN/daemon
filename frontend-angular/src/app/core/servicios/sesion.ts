@@ -20,6 +20,7 @@ export interface UsuarioSesion {
   genero?: string | null;
   perfil_completo?: boolean;
   tour_completado?: boolean;
+  fecha_registro?: string | null;
   id_institucion?: number | null;
   id_aula?: number | null;
 }

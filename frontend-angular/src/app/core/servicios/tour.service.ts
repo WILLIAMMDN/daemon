@@ -20,6 +20,13 @@ export class TourService {
       return;
     }
 
+    // No mostrar el tour a cuentas antiguas creadas antes de la implementación
+    const fechaImplementacionTour = new Date('2026-07-08T00:00:00Z');
+    const fechaRegistro = usuario.fecha_registro ? new Date(usuario.fecha_registro) : new Date();
+    if (fechaRegistro < fechaImplementacionTour) {
+      return;
+    }
+
     const steps: DriveStep[] = [
       {
         element: '#sidebar-perfil',
@@ -84,6 +91,13 @@ export class TourService {
     const usuario = this.sesion.usuario();
     
     if (!usuario || usuario.tour_completado) {
+      return;
+    }
+
+    // No mostrar el tour a cuentas antiguas creadas antes de la implementación
+    const fechaImplementacionTour = new Date('2026-07-08T00:00:00Z');
+    const fechaRegistro = usuario.fecha_registro ? new Date(usuario.fecha_registro) : new Date();
+    if (fechaRegistro < fechaImplementacionTour) {
       return;
     }
 

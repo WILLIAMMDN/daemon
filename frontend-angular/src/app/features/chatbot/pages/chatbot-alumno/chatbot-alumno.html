@@ -32,19 +32,38 @@
     <p class="p-4 bg-red-50 text-red-600 border border-red-200 rounded-lg">{{ error() }}</p>
   }
 
-  <section class="flex-1 w-full bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col overflow-hidden relative">
+  <section class="flex-1 w-full flex flex-col md:flex-row gap-6 overflow-hidden relative">
     @if (bot()) {
-      <deep-chat
-        [request]="requestConfig"
-        [history]="mensajesFormateados()"
-        [textToSpeech]="true"
-        [speechToText]="true"
-        [style]="chatStyle"
-        [messageStyles]="messageStyles"
-        [avatars]="{ ai: { src: botAvatar() } }"
-      ></deep-chat>
+      <aside class="w-full md:w-80 bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col gap-4 overflow-y-auto">
+        <img class="w-32 h-32 rounded-2xl object-cover mx-auto shadow-md" [src]="botAvatar()" [alt]="bot()?.nombre_bot || 'Avatar del bot'">
+        <div class="flex justify-center">
+          <span class="px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-full bg-green-100 text-green-800">Activo</span>
+        </div>
+        
+        <div class="mt-2">
+          <h2 class="text-xs font-bold uppercase text-slate-400 tracking-wider border-b border-slate-200 pb-2 mb-3">Base del asistente</h2>
+          <p class="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">{{ bot()?.system_prompt || 'Sin personalidad guardada.' }}</p>
+        </div>
+        
+        <div class="mt-2">
+          <h3 class="text-xs font-bold uppercase text-slate-400 tracking-wider border-b border-slate-200 pb-2 mb-3">Conocimiento</h3>
+          <p class="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">{{ bot()?.conocimiento || 'Aún no hay conocimiento especializado.' }}</p>
+        </div>
+      </aside>
+
+      <div class="flex-1 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <deep-chat
+          [request]="requestConfig"
+          [history]="mensajesFormateados()"
+          [textToSpeech]="true"
+          [speechToText]="true"
+          [style]="chatStyle"
+          [messageStyles]="messageStyles"
+          [avatars]="{ ai: { src: botAvatar() } }"
+        ></deep-chat>
+      </div>
     } @else {
-      <div class="w-full h-[650px] flex items-center justify-center bg-slate-50">
+      <div class="w-full h-full min-h-[500px] flex items-center justify-center bg-white rounded-2xl shadow-sm border border-slate-200">
         <p class="text-slate-400 font-medium text-lg">Debes configurar tu bot primero.</p>
       </div>
     }
