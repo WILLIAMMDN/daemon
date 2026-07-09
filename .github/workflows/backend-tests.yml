@@ -62,6 +62,7 @@ jobs:
           DB_DATABASE: daemon_test
           DB_USERNAME: daemon
           DB_PASSWORD: password
+          DB_SSLMODE: prefer
         run: php artisan migrate --env=testing --force
 
       - name: Execute tests via Artisan
@@ -72,4 +73,5 @@ jobs:
           DB_DATABASE: daemon_test
           DB_USERNAME: daemon
           DB_PASSWORD: password
+          DB_SSLMODE: prefer
         run: php artisan test
