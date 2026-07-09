@@ -8,7 +8,7 @@ $frontendUrls = array_filter(array_map(
 ));
 
 return [
-    'paths' => ['api/*', 'sanctum/csrf-cookie', 'storage/*'],
+    'paths' => ['api/*', 'sanctum/csrf-cookie', 'storage/*', 'broadcasting/*'],
     'allowed_methods' => ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     'allowed_origins' => array_values(array_unique([
         ...$frontendUrls,
