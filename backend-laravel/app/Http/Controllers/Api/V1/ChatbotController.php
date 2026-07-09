@@ -53,8 +53,15 @@ class ChatbotController extends Controller
             $mensaje = $this->chatbot->responder($request->user(), $request->validated()['content']);
         } catch (ConnectionException|RequestException|RuntimeException $e) {
             report($e);
+            $errorMsg = $e->getMessage();
+            if ($e instanceof RequestException && $e->response) {
+                $errorMsg = $e->response->json('error.message') ?? $errorMsg;
+            }
+            if (empty($errorMsg) || str_contains($errorMsg, 'cURL error')) {
+                $errorMsg = 'No se pudo conectar con la Inteligencia Artificial.';
+            }
 
-            return response()->json(['message' => 'Ollama no esta disponible. Inicia Ollama y descarga el modelo configurado.'], 503);
+            return response()->json(['message' => 'Error de IA: ' . $errorMsg], 503);
         }
 
         return response()->json($mensaje, 201);

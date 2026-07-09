@@ -1,74 +1,74 @@
-<section class="w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-6 md:gap-8 font-inter h-[calc(100vh-100px)]">
-  <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+<section class="w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-4 md:gap-6 font-inter min-h-[calc(100vh-100px)] md:h-[calc(100vh-100px)]">
+  <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shrink-0">
     <div class="flex items-center gap-4">
-      <img [src]="botAvatar()" [alt]="bot()?.nombre_bot || 'Avatar del bot'" class="w-16 h-16 rounded-full shadow-md object-cover bg-white">
+      <img [src]="botAvatar()" [alt]="bot()?.nombre_bot || 'Avatar del bot'" class="w-14 h-14 md:w-16 md:h-16 rounded-full shadow-md object-cover bg-white">
       <div>
-        <span class="text-sm font-semibold uppercase tracking-wider text-blue-600">Asistente local con IA</span>
-        <h1 class="text-2xl md:text-3xl font-bold text-gray-900">{{ bot()?.nombre_bot || 'Mi bot educativo' }}</h1>
-        <p class="text-base text-gray-600">Conversación conectada al bot personal del estudiante.</p>
+        <span class="text-xs md:text-sm font-semibold uppercase tracking-wider text-blue-600">Asistente local con IA</span>
+        <h1 class="text-xl md:text-3xl font-bold text-gray-900">{{ bot()?.nombre_bot || 'Mi bot educativo' }}</h1>
+        <p class="text-sm md:text-base text-gray-600 hidden md:block">Conversación conectada al bot personal del estudiante.</p>
       </div>
     </div>
-    <div class="flex items-center gap-3">
-      <a routerLink="/alumno/herramientas/bot" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium rounded-lg transition-colors text-sm">
+    <div class="flex items-center gap-2 w-full md:w-auto justify-end">
+      <a routerLink="/alumno/herramientas/bot" class="px-3 py-2 md:px-4 md:py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium rounded-lg transition-colors text-sm">
         Configurar bot
       </a>
-      <button type="button" (click)="limpiar()" [disabled]="!mensajesFormateados().length" class="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 font-medium rounded-lg transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed">
+      <button type="button" (click)="limpiar()" [disabled]="!mensajesFormateados().length" class="px-3 py-2 md:px-4 md:py-2 bg-red-50 hover:bg-red-100 text-red-600 font-medium rounded-lg transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed">
         Limpiar chat
       </button>
     </div>
   </header>
 
   @if (!bot()) {
-    <article class="bg-yellow-50 border border-yellow-200 rounded-xl p-6 flex items-center justify-between shadow-sm">
+    <article class="bg-yellow-50 border border-yellow-200 rounded-xl p-6 flex flex-col md:flex-row items-start md:items-center justify-between shadow-sm gap-4 shrink-0">
       <div>
         <strong class="text-yellow-800 text-lg">El bot aún no está configurado</strong>
         <p class="text-yellow-700">Guarda nombre, personalidad, avatar y conocimiento para habilitar el chat.</p>
       </div>
-      <a class="px-6 py-3 bg-yellow-500 hover:bg-yellow-600 text-white font-bold rounded-lg transition-colors shadow-md" routerLink="/alumno/herramientas/bot">Configurar ahora</a>
+      <a class="px-6 py-3 bg-yellow-500 hover:bg-yellow-600 text-white font-bold rounded-lg transition-colors shadow-md text-center w-full md:w-auto" routerLink="/alumno/herramientas/bot">Configurar ahora</a>
     </article>
   }
 
   @if (error()) {
-    <p class="p-4 bg-red-50 text-red-600 border border-red-200 rounded-lg">{{ error() }}</p>
+    <p class="p-4 bg-red-50 text-red-600 border border-red-200 rounded-lg shrink-0">{{ error() }}</p>
   }
 
-  <section class="flex-1 w-full flex flex-col md:flex-row gap-6 overflow-hidden relative">
+  <section class="flex-1 w-full flex flex-col md:flex-row gap-4 md:gap-6 md:overflow-hidden relative h-full">
     @if (bot() === undefined || !mensajesCargados()) {
-      <div class="w-full h-full min-h-[500px] flex items-center justify-center bg-white rounded-2xl shadow-sm border border-slate-200">
-        <div class="w-16 h-16 border-4 border-slate-200 border-t-blue-600 rounded-full animate-spin"></div>
+      <div class="w-full h-[60vh] md:h-full flex items-center justify-center bg-white rounded-2xl shadow-sm border border-slate-200">
+        <div class="w-12 h-12 md:w-16 md:h-16 border-4 border-slate-200 border-t-blue-600 rounded-full animate-spin"></div>
       </div>
     } @else if (bot() === null) {
-      <div class="w-full h-full min-h-[500px] flex items-center justify-center bg-white rounded-2xl shadow-sm border border-slate-200">
-        <p class="text-slate-400 font-medium text-lg">Debes configurar tu bot primero.</p>
+      <div class="w-full h-[60vh] md:h-full flex items-center justify-center bg-white rounded-2xl shadow-sm border border-slate-200">
+        <p class="text-slate-400 font-medium text-base md:text-lg">Debes configurar tu bot primero.</p>
       </div>
     } @else {
-      <aside class="w-full md:w-80 bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col gap-4 overflow-y-auto">
-        <img class="w-32 h-32 rounded-2xl object-cover mx-auto shadow-md" [src]="botAvatar()" [alt]="bot()?.nombre_bot || 'Avatar del bot'">
+      <aside class="w-full md:w-80 bg-white rounded-2xl shadow-sm border border-slate-200 p-4 md:p-6 flex flex-col gap-4 overflow-y-auto shrink-0 md:shrink">
+        <img class="w-24 h-24 md:w-32 md:h-32 rounded-2xl object-cover mx-auto shadow-md" [src]="botAvatar()" [alt]="bot()?.nombre_bot || 'Avatar del bot'">
         <div class="flex justify-center">
           <span class="px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-full bg-green-100 text-green-800">Activo</span>
         </div>
         
         <div class="mt-2">
-          <h2 class="text-xs font-bold uppercase text-slate-400 tracking-wider border-b border-slate-200 pb-2 mb-3">Base del asistente</h2>
+          <h2 class="text-xs font-bold uppercase text-slate-400 tracking-wider border-b border-slate-200 pb-2 mb-2 md:mb-3">Base del asistente</h2>
           <p class="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">{{ bot()?.system_prompt || 'Sin personalidad guardada.' }}</p>
         </div>
         
         <div class="mt-2">
-          <h3 class="text-xs font-bold uppercase text-slate-400 tracking-wider border-b border-slate-200 pb-2 mb-3">Conocimiento</h3>
+          <h3 class="text-xs font-bold uppercase text-slate-400 tracking-wider border-b border-slate-200 pb-2 mb-2 md:mb-3">Conocimiento</h3>
           <p class="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">{{ bot()?.conocimiento || 'Aún no hay conocimiento especializado.' }}</p>
         </div>
       </aside>
 
-      <div class="flex-1 w-full bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden min-h-[500px] flex">
+      <div class="flex-1 w-full bg-white rounded-2xl shadow-sm border border-slate-200 relative h-[600px] md:h-auto overflow-hidden">
         <deep-chat
-          class="w-full"
+          class="absolute inset-0 w-full h-full"
           [connect]="requestConfig"
           [history]="mensajesFormateados()"
           [textToSpeech]="true"
           [speechToText]="true"
           [messageStyles]="messageStyles"
           [avatars]="{ ai: { src: botAvatar() } }"
-          style="width: 100%; height: 100%; border: none; min-height: 500px;"
+          style="border: none;"
         ></deep-chat>
       </div>
     }
