@@ -6,11 +6,13 @@ on:
       - main
     paths:
       - 'backend-laravel/**'
+      - '.github/workflows/backend-tests.yml'
   pull_request:
     branches:
       - main
     paths:
       - 'backend-laravel/**'
+      - '.github/workflows/backend-tests.yml'
 
 jobs:
   test:
