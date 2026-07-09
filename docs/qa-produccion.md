@@ -6,6 +6,9 @@ No guardar contrasenas reales en este archivo.
 ## Verificacion automatica
 
 ```powershell
+cd C:\laragon\www\daemon
+.\scripts\smoke-produccion.ps1
+
 cd C:\laragon\www\daemon\frontend-angular
 npm test -- --runInBand
 npm run build
@@ -14,17 +17,17 @@ cd C:\laragon\www\daemon\backend-laravel
 php artisan test
 
 cd C:\laragon\www\daemon
-Invoke-WebRequest -Uri 'https://daemon-5vo1.onrender.com/api/v1/salud' -UseBasicParsing
-Invoke-WebRequest -Uri 'https://daemonestudiante.web.app/ngsw-worker.js' -UseBasicParsing
-Invoke-WebRequest -Uri 'https://daemonestudiante.web.app/ngsw.json' -UseBasicParsing
 ```
 
 Resultado esperado:
 
+- `smoke-produccion.ps1` termina con `Production smoke test finished successfully`.
 - El build Angular termina sin errores.
 - Las pruebas Jest y Laravel pasan.
 - `/api/v1/salud` responde `ok: true`, base de datos OK y `uploads_disk: supabase`.
 - `ngsw-worker.js` responde JavaScript y `ngsw.json` responde JSON.
+- Los bundles desplegados contienen `verificacion=firebase` y `reset=firebase`.
+- Los bundles desplegados no llaman `/auth/recuperar` ni `/auth/enviar-verificacion`.
 
 ## Flujo alumno
 

@@ -139,10 +139,8 @@ firebase deploy --only hosting:estudiante --project daemon-a41f8
 Verify public bundle:
 
 ```powershell
-$r = Invoke-WebRequest -Uri 'https://daemonestudiante.web.app/login' -UseBasicParsing
-$main = [regex]::Match($r.Content, 'main-[A-Z0-9]+\.js').Value
-$bundle = Invoke-WebRequest -Uri "https://daemonestudiante.web.app/$main" -UseBasicParsing
-$bundle.Content.Contains('verificacion=firebase')
+cd C:\laragon\www\daemon
+.\scripts\smoke-produccion.ps1
 ```
 
 Backend deploy currently goes through Render/GitHub. If backend env vars change,

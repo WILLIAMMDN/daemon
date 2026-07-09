@@ -91,3 +91,7 @@ jobs:
             echo "::error title=Firebase deploy failed::$message"
             exit "$status"
           fi
+
+      - name: Smoke production
+        shell: pwsh
+        run: ./scripts/smoke-produccion.ps1

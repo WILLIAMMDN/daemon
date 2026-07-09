@@ -136,13 +136,8 @@ docs/
 ## Verificacion rapida de produccion
 
 ```powershell
-Invoke-WebRequest -Uri 'https://daemon-5vo1.onrender.com/api/v1/salud' -UseBasicParsing
-
-$r = Invoke-WebRequest -Uri 'https://daemonestudiante.web.app/login' -UseBasicParsing
-$main = [regex]::Match($r.Content, 'main-[A-Z0-9]+\.js').Value
-$bundle = Invoke-WebRequest -Uri "https://daemonestudiante.web.app/$main" -UseBasicParsing
-$bundle.Content.Contains('verificacion=firebase')
-$bundle.Content.Contains('reset=firebase')
+cd C:\laragon\www\daemon
+.\scripts\smoke-produccion.ps1
 ```
 
 ## Pendiente recomendado

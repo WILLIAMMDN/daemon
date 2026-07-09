@@ -338,19 +338,13 @@ git status --short --branch
 Useful production checks:
 
 ```powershell
-Invoke-WebRequest -Uri 'https://daemon-5vo1.onrender.com/api/v1/salud' -UseBasicParsing
-
-$r = Invoke-WebRequest -Uri 'https://daemonestudiante.web.app/login' -UseBasicParsing
-$main = [regex]::Match($r.Content, 'main-[A-Z0-9]+\.js').Value
-$bundle = Invoke-WebRequest -Uri "https://daemonestudiante.web.app/$main" -UseBasicParsing
-$bundle.Content.Contains('verificacion=firebase')
-$bundle.Content.Contains('/auth/recuperar')
-$bundle.Content.Contains('/auth/enviar-verificacion')
+cd C:\laragon\www\daemon
+.\scripts\smoke-produccion.ps1
 ```
 
 Expected current production frontend state:
 
-- Contains `verificacion=firebase` and `reset=firebase`.
+- Deployed bundles contain `verificacion=firebase` and `reset=firebase`.
 - Does not call `/auth/recuperar` from the recovery page.
 - Does not call `/auth/enviar-verificacion` from the verification banner.
 
