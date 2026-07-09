@@ -170,7 +170,7 @@
     </button>
   </header>
 
-  <section class="profile-block" aria-label="Cuenta activa">
+  <section class="profile-block" id="sidebar-perfil" aria-label="Cuenta activa">
     <button
       type="button"
       class="profile-trigger"
@@ -225,6 +225,7 @@
             <button
               type="button"
               class="nav-item nav-parent"
+              id="sidebar-{{item.id}}"
               [class.active]="estaActivo(item)"
               [class.open]="estaAbierto(item)"
               [attr.aria-expanded]="estaAbierto(item)"

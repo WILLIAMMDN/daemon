@@ -1109,6 +1109,12 @@ body[data-theme='docente'] .profile-popover .profile-popover-item--accent:hover 
   color: #10172a !important;
 }
 
+.driver-active-element {
+  outline: 3px solid rgba(255, 196, 20, .95) !important;
+  outline-offset: 4px !important;
+  box-shadow: 0 0 0 8px rgba(255, 196, 20, .18), 0 18px 36px rgba(15, 23, 42, .24) !important;
+}
+
 /* ============================================================
    Gamificación y Micro-animaciones
    ============================================================ */
