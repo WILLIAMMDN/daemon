@@ -40,22 +40,32 @@ export class Registro {
     this.enviando.set(true);
     this.error.set('');
     const carga = this.cargaGlobal.mostrar('Creando tu cuenta con Google...');
+    let navegando = false;
 
     this.auth.loginGoogleFirebase(true).pipe(
       finalize(() => {
-        this.enviando.set(false);
-        this.cargaGlobal.ocultar(carga);
+        if (!navegando) {
+          this.enviando.set(false);
+          this.cargaGlobal.ocultar(carga);
+        }
       }),
     ).subscribe({
       next: () => {
         this.cargaGlobal.cambiarMensaje('Preparando tu espacio DAEMON...');
+        navegando = true;
 
         if (!this.sesion.esDocente() && this.sesion.usuario()?.perfil_completo === false) {
-          void this.router.navigateByUrl('/bienvenida');
+          void this.router.navigateByUrl('/bienvenida').finally(() => {
+            this.enviando.set(false);
+            this.cargaGlobal.ocultar(carga);
+          });
           return;
         }
 
-        void this.router.navigateByUrl(this.sesion.esDocente() ? '/docente' : '/alumno');
+        void this.router.navigateByUrl(this.sesion.esDocente() ? '/docente' : '/alumno').finally(() => {
+          this.enviando.set(false);
+          this.cargaGlobal.ocultar(carga);
+        });
       },
       error: (error) => {
         this.error.set(error.error?.message ?? error.message ?? 'No se pudo crear la cuenta con Google.');
@@ -83,18 +93,25 @@ export class Registro {
     this.enviando.set(true);
     this.error.set('');
     const carga = this.cargaGlobal.mostrar('Registrando tu cuenta DAEMON...');
+    let navegando = false;
 
     this.auth.registroFirebase(payload).pipe(
       finalize(() => {
-        this.enviando.set(false);
-        this.cargaGlobal.ocultar(carga);
+        if (!navegando) {
+          this.enviando.set(false);
+          this.cargaGlobal.ocultar(carga);
+        }
       }),
     ).subscribe({
       next: () => {
         this.cargaGlobal.cambiarMensaje('Abriendo tu bienvenida...');
+        navegando = true;
         void this.router.navigateByUrl(
           this.sesion.usuario()?.perfil_completo === false ? '/bienvenida' : '/alumno',
-        );
+        ).finally(() => {
+          this.enviando.set(false);
+          this.cargaGlobal.ocultar(carga);
+        });
       },
       error: (error) => {
         this.error.set(error.error?.message ?? error.message ?? 'No se pudo crear la cuenta en Firebase.');

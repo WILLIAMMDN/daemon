@@ -52,9 +52,13 @@ export class Bienvenida implements OnInit {
 
     this.datos = {
       nombre_completo: usuario.nombre_completo?.trim() ?? '',
-      usuario: usuario.usuario?.trim() ?? '',
+      usuario: this.usuarioInicial(usuario.usuario, usuario.email),
       nivel: this.normalizarNivel(usuario.nivel),
     };
+  }
+
+  actualizarUsuario(valor: string): void {
+    this.datos.usuario = this.normalizarUsuario(valor);
   }
 
   guardar(form: NgForm): void {
@@ -135,5 +139,26 @@ export class Bienvenida implements OnInit {
 
   private normalizarNivel(nivel: string | null | undefined): 'KIDS' | 'TEENS' | 'PRO' {
     return nivel === 'KIDS' || nivel === 'PRO' ? nivel : 'TEENS';
+  }
+
+  private usuarioInicial(usuario: string | null | undefined, email: string | null | undefined): string {
+    const usuarioNormalizado = this.normalizarUsuario(usuario);
+
+    if (usuarioNormalizado.length >= this.usuarioMinLength) {
+      return usuarioNormalizado;
+    }
+
+    return this.normalizarUsuario(email?.split('@')[0] ?? '');
+  }
+
+  private normalizarUsuario(valor: string | null | undefined): string {
+    return (valor ?? '')
+      .trim()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^A-Za-z0-9_-]+/g, '_')
+      .replace(/_+/g, '_')
+      .replace(/^[-_]+|[-_]+$/g, '')
+      .slice(0, 50);
   }
 }

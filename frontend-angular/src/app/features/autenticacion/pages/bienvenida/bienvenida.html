@@ -44,10 +44,14 @@
               [(ngModel)]="datos.nombre_completo"
               required
               [minlength]="nombreMinLength"
+              #nombreModel="ngModel"
               autocomplete="name"
               placeholder="Nombre completo real"
             >
           </label>
+          @if (nombreModel.invalid && (nombreModel.dirty || nombreModel.touched)) {
+            <p class="text-xs font-bold text-red-500 px-1">Ingresa tu nombre con al menos {{ nombreMinLength }} caracteres.</p>
+          }
         </div>
 
         <div class="flex flex-col gap-1">
@@ -61,14 +65,19 @@
               class="w-full bg-transparent border-none focus:ring-0 text-sm font-medium text-slate-900 px-3 py-2 outline-none"
               id="usuario"
               name="usuario"
-              [(ngModel)]="datos.usuario"
+              [ngModel]="datos.usuario"
+              (ngModelChange)="actualizarUsuario($event)"
               required
               [minlength]="usuarioMinLength"
               pattern="[A-Za-z0-9_-]+"
+              #usuarioModel="ngModel"
               autocomplete="username"
               placeholder="Nombre de usuario (nickname)"
             >
           </label>
+          @if (usuarioModel.invalid && (usuarioModel.dirty || usuarioModel.touched)) {
+            <p class="text-xs font-bold text-red-500 px-1">Usa al menos {{ usuarioMinLength }} caracteres: letras, numeros, guion o guion bajo.</p>
+          }
         </div>
 
         <div class="flex flex-col gap-1">
