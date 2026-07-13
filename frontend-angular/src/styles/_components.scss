@@ -1,0 +1,140 @@
+
+.module-shell ul {
+  margin: .6rem 0 0;
+  padding-left: 1.2rem;
+  color: #334155;
+}
+
+.module-shell a {
+  color: #2563eb;
+  font-weight: 700;
+}
+
+.module-status {
+  display: inline-flex;
+  width: fit-content;
+  border-radius: 999px;
+  background: #e7f8ef;
+  color: #047857;
+  font-size: .78rem;
+  font-weight: 800;
+  letter-spacing: .04em;
+  padding: .35rem .65rem;
+  text-transform: uppercase;
+}
+
+.daemon-btn.ant-btn {
+  align-items: center;
+  border-radius: 8px;
+  display: inline-flex;
+  font-weight: 850;
+  justify-content: center;
+  min-height: 40px;
+  @apply transition-all duration-200 active:scale-[0.96] ease-out;
+}
+
+.daemon-btn.ant-btn-primary {
+  @apply bg-primary border-primary text-white shadow-soft;
+}
+
+.daemon-btn.ant-btn-primary:not(:disabled):hover {
+  @apply bg-primary-800 border-primary-800 shadow-md transform -translate-y-[1px];
+}
+
+.daemon-btn.ant-btn-default {
+  background: #eef4ff;
+  border-color: #d8e2f4;
+  color: #17243c;
+}
+
+.daemon-btn.ant-btn-default:not(:disabled):hover {
+  background: #e3edff;
+  border-color: #b9c9e8;
+  color: #0f2350;
+}
+
+.daemon-btn.ant-btn-link {
+  color: #0f766e;
+  font-weight: 850;
+  padding-inline: .2rem;
+}
+
+.daemon-alert.ant-alert {
+  border-radius: 8px;
+  font-weight: 700;
+}
+
+.daemon-empty {
+  background: #fff;
+  border: 1px solid #dfe6f1;
+  border-radius: 8px;
+  display: grid;
+  justify-items: center;
+  padding: 1.35rem;
+}
+
+.daemon-empty h2 {
+  color: #17203a;
+  font-size: 1.05rem;
+  margin: .6rem 0 .2rem;
+}
+
+.daemon-empty p {
+  color: #61708d;
+  margin: 0;
+  max-width: 34rem;
+  text-align: center;
+}
+
+.daemon-tag.ant-tag {
+  border-radius: 999px;
+  font-weight: 850;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.daemon-surface {
+  background: #fff;
+  border: 1px solid #dfe6f1;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px #2030550b;
+}
+
+.daemon-avatar.ant-avatar {
+  background: #17243c;
+  color: #fff;
+  font-weight: 900;
+}
+
+.daemon-descriptions.ant-descriptions {
+  background: #fff;
+}
+
+.daemon-descriptions .ant-descriptions-item-label {
+  color: #52617c;
+  font-weight: 850;
+}
+
+.daemon-stat.ant-statistic .ant-statistic-title {
+  color: #5d6f8d;
+  font-size: .75rem;
+  font-weight: 850;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+
+.daemon-stat.ant-statistic .ant-statistic-content {
+  color: #17203a;
+  font-weight: 900;
+}
+
+.daemon-upload-summary {
+  color: #61708d;
+  font-size: .86rem;
+  margin: .25rem 0 0;
+}
+
+/* Glassmorphism estandarizado */
+.glass {
+  @apply bg-white/70 backdrop-blur-md border border-white/40 shadow-soft;
+}

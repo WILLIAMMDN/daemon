@@ -1,0 +1,124 @@
+/* ============================================================
+   Driver.js Customization (Tour Interactivo)
+   ============================================================ */
+.driver-popover {
+  background: #ffffff !important;
+  border: 1px solid rgba(37, 31, 106, 0.1) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.1), 0 0 20px rgba(0, 0, 0, 0.02) !important;
+  color: #10172a !important;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif !important;
+  padding: 1.25rem !important;
+}
+
+.driver-popover-title {
+  color: #24194f !important;
+  font-size: 1.1rem !important;
+  font-weight: 800 !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.driver-popover-description {
+  color: #64748b !important;
+  font-size: 0.9rem !important;
+  line-height: 1.4 !important;
+}
+
+.driver-popover-progress-text {
+  color: #64748b !important;
+  font-size: 0.8rem !important;
+  font-weight: 600 !important;
+}
+
+.driver-popover-footer button {
+  border-radius: 8px !important;
+  font-weight: 700 !important;
+  padding: 0.5rem 1rem !important;
+  text-transform: none !important;
+  text-shadow: none !important;
+  cursor: pointer;
+  transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease !important;
+}
+
+.driver-popover-next-btn, .driver-popover-done-btn {
+  background: #17243c !important;
+  color: #ffffff !important;
+  border: none !important;
+}
+
+.driver-popover-next-btn:hover, .driver-popover-done-btn:hover {
+  background: #21365e !important;
+}
+
+.driver-popover-prev-btn {
+  background: #eef4ff !important;
+  color: #17243c !important;
+  border: none !important;
+}
+
+.driver-popover-prev-btn:hover {
+  background: #e3edff !important;
+  color: #0f2350 !important;
+}
+
+.driver-popover-close-btn {
+  color: #64748b !important;
+}
+
+.driver-popover-close-btn:hover {
+  color: #10172a !important;
+}
+
+.driver-active-element {
+  outline: 3px solid rgba(255, 196, 20, .95) !important;
+  outline-offset: 4px !important;
+  box-shadow: 0 0 0 8px rgba(255, 196, 20, .18), 0 18px 36px rgba(15, 23, 42, .24) !important;
+}
+
+/* ============================================================
+   Gamificación y Micro-animaciones
+   ============================================================ */
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.daemon-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.daemon-shimmer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.4) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 3s infinite linear;
+  pointer-events: none;
+  z-index: 10;
+}
+
+@keyframes coin-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+.daemon-token-icon:hover {
+  animation: coin-bounce 0.5s ease;
+  color: #facc15; /* Un tono más dorado al pasar el mouse */
+  filter: drop-shadow(0 0 8px rgba(250, 204, 21, 0.5));
+}
