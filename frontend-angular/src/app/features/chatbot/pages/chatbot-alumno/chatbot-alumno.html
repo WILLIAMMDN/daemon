@@ -60,16 +60,23 @@
       </aside>
 
       <div class="flex-1 w-full bg-white rounded-2xl shadow-sm border border-slate-200 h-full overflow-hidden flex flex-col">
-        <deep-chat
-          [connect]="requestConfig"
-          [history]="mensajesFormateados()"
-          [textToSpeech]="true"
-          [speechToText]="true"
-          [messageStyles]="messageStyles"
-          [avatars]="{ ai: { src: botAvatar() } }"
-          [scrollButton]="true"
-          style="width: 100%; height: 100%; border: none;"
-        ></deep-chat>
+        @defer (on idle) {
+          <deep-chat
+            [connect]="requestConfig"
+            [history]="mensajesFormateados()"
+            [textToSpeech]="true"
+            [speechToText]="true"
+            [messageStyles]="messageStyles"
+            [avatars]="{ ai: { src: botAvatar() } }"
+            [scrollButton]="true"
+            style="width: 100%; height: 100%; border: none;"
+          ></deep-chat>
+        } @placeholder {
+          <div class="w-full h-full flex flex-col items-center justify-center bg-slate-50 gap-3">
+            <div class="w-8 h-8 md:w-10 md:h-10 border-4 border-slate-200 border-t-blue-600 rounded-full animate-spin"></div>
+            <span class="text-sm font-medium text-slate-500">Iniciando interfaz de chat...</span>
+          </div>
+        }
       </div>
     }
   </section>

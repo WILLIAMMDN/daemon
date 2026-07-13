@@ -60,7 +60,7 @@ Route::prefix('v1')->group(function (): void {
             Route::post('/evaluaciones/{evaluacion}/responder', [EvaluacionController::class, 'responder']);
             Route::post('/competencia/votar', [CompetenciaController::class, 'votar']);
             Route::get('/cuentos/mio/actual', [CuentoController::class, 'mio']);
-            Route::post('/cuentos', [CuentoController::class, 'guardar']);
+            Route::post('/cuentos', [CuentoController::class, 'guardar'])->middleware('throttle:20,1');
             Route::delete('/cuentos/mio', [CuentoController::class, 'eliminarPropio']);
             Route::get('/chatbot/bot', [ChatbotController::class, 'bot']);
             Route::post('/chatbot/bot', [ChatbotController::class, 'guardarBot']);
@@ -166,8 +166,8 @@ Route::prefix('v1')->group(function (): void {
             Route::delete('/mensajes/bulk', [ComunidadController::class, 'eliminarMensajesBulk']);
             Route::delete('/mensajes/{mensaje}', [ComunidadController::class, 'eliminarMensaje']);
         });
-        Route::post('/misiones/{mision}/entregar', [MisionController::class, 'entregar'])->middleware('role:alumno');
-        Route::post('/archivos', [ArchivoController::class, 'store']);
+        Route::post('/misiones/{mision}/entregar', [MisionController::class, 'entregar'])->middleware(['role:alumno', 'throttle:20,1']);
+        Route::post('/archivos', [ArchivoController::class, 'store'])->middleware('throttle:20,1');
         Route::get('/certificados/{usuario?}', [CertificadoController::class, 'show']);
     });
 });

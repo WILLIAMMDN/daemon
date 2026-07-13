@@ -4,6 +4,9 @@ namespace App\Services\Archivo;
 
 use App\Models\Usuario;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 
 class ArchivoService
 {
@@ -22,7 +25,24 @@ class ArchivoService
 
     public function guardarRuta(Usuario $usuario, UploadedFile $archivo, string $carpeta): string
     {
-        return $archivo->store(trim($carpeta, '/'), $this->disk());
+        $carpeta = trim($carpeta, '/');
+
+        if (str_starts_with($archivo->getMimeType(), 'image/') && $archivo->getMimeType() !== 'image/svg+xml') {
+            $manager = new ImageManager(new Driver());
+            $imagen = $manager->read($archivo);
+            
+            $imagen->scaleDown(1200, 1200);
+            
+            $encoded = $imagen->toWebp(80);
+            $nombre = uniqid() . '.webp';
+            $ruta = $carpeta . '/' . $nombre;
+            
+            Storage::disk($this->disk())->put($ruta, $encoded->toString());
+            
+            return $ruta;
+        }
+
+        return $archivo->store($carpeta, $this->disk());
     }
 
     public function url(?string $ruta): ?string

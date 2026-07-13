@@ -11,23 +11,25 @@ class UsuarioResource extends JsonResource
     public function toArray(Request $request): array
     {
         $archivos = app(ArchivoUrlService::class);
+        $user = $request->user();
+        $isSelfOrPrivileged = !$user || $user->id === $this->id || in_array($user->rol, ['admin', 'docente']);
 
         return [
             'id' => $this->id,
             'nombre_completo' => $this->nombre_completo,
-            'email' => $this->email,
-            'telefono' => $this->telefono,
+            'email' => $this->when($isSelfOrPrivileged, $this->email),
+            'telefono' => $this->when($isSelfOrPrivileged, $this->telefono),
             'usuario' => $this->usuario,
             'nivel' => $this->nivel,
-            'tokens' => $this->tokens,
-            'pro_tokens' => $this->pro_tokens,
+            'tokens' => $this->when($isSelfOrPrivileged, $this->tokens),
+            'pro_tokens' => $this->when($isSelfOrPrivileged, $this->pro_tokens),
             'rango' => $this->rango,
             'biografia' => $this->biografia,
             'avatar' => $archivos->url($this->avatar),
             'perfil_completo' => (bool) ($this->perfil_completo ?? true),
             'tour_completado' => (bool) $this->tour_completado,
-            'email_verificado' => $this->hasVerifiedEmail(),
-            'email_verified_at' => optional($this->email_verified_at)->toIso8601String(),
+            'email_verificado' => $this->when($isSelfOrPrivileged, $this->hasVerifiedEmail()),
+            'email_verified_at' => $this->when($isSelfOrPrivileged, optional($this->email_verified_at)->toIso8601String()),
             'rol' => $this->rol,
             'id_institucion' => $this->id_institucion,
             'id_aula' => $this->id_aula,
