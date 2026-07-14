@@ -4,12 +4,12 @@ This document is written for future AI agents and developers. It summarizes the
 current DAEMON system, the cloud decisions already made, the important files,
 and the traps that caused confusion during the migration.
 
-Last updated: 2026-06-29.
+Last updated: 2026-07-13.
 
 ## 1. What DAEMON is
 
 DAEMON is an academic platform for an AI/technology academy. It has public
-pages, student portal, teacher portal, authentication, tokens, missions,
+pages, student portal, teacher portal, authentication, XP, DAEMONS, missions,
 badges, store/rewards, evaluations, stories, rankings, certificates, chat,
 file uploads, and legacy interactive learning resources.
 
@@ -125,7 +125,7 @@ Current working decision:
   - `sendPasswordResetEmail`
 - Angular then sends Firebase ID tokens to Laravel.
 - Laravel validates the Firebase token and issues a Sanctum session/token.
-- Laravel stores roles, progress, tokens, academic data, and
+- Laravel stores roles, permanent experience, spendable tokens, academic data, and
   `email_verified_at`.
 
 Why this changed:
