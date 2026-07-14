@@ -1,0 +1,21 @@
+/* Ocultar elementos que no deben salir en papel */
+@media print {
+  .print-hidden {
+    display: none !important;
+  }
+  
+  /* Asegurar que la tarjeta mantenga sus colores de fondo en la impresión */
+  .id-card-wrapper {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    box-shadow: none !important;
+    page-break-inside: avoid;
+  }
+
+  body {
+    background: transparent !important;
+    margin: 0;
+    padding: 0;
+  }
+}
