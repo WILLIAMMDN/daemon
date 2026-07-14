@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzTagModule } from 'ng-zorro-antd/tag';
+import { NzCardModule } from 'ng-zorro-antd/card';
 import { Activos } from '../../../../core/servicios/activos';
 import { Tienda } from '../../services/tienda';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
@@ -13,7 +14,7 @@ import { MonedaDaemon } from '../../../../shared/componentes/moneda-daemon/moned
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-tienda-alumno',
-  imports: [RouterLink, NzAlertModule, NzButtonModule, NzTagModule, Cargando, EstadoVacio, MonedaDaemon],
+  imports: [RouterLink, NzAlertModule, NzButtonModule, NzTagModule, NzCardModule, Cargando, EstadoVacio, MonedaDaemon],
   templateUrl: './tienda-alumno.html',
   styleUrl: './tienda-alumno.scss',
 })
