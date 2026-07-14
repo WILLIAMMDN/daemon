@@ -1,5 +1,6 @@
 <div class="portal">
   <app-sidebar-portal
+    #sidebar
     ariaLabel="Navegacion de estudiante"
     brandDetalle="Academy"
     homeLink="/alumno"
@@ -19,16 +20,23 @@
   <section class="workspace">
     <app-email-verification-banner />
 
-    <header class="flex items-center justify-between w-full h-16 px-4 md:px-6 bg-white border-b border-gray-200 z-10 sticky top-0 shadow-sm">
+    <header class="flex items-center justify-between w-full h-16 px-4 md:px-6 bg-white border-b border-gray-200 z-[40] sticky top-0 shadow-sm">
       
-      <!-- Search Bar -->
-      <div class="flex-1 max-w-md hidden sm:flex items-center">
+      <div class="flex items-center gap-3 w-full sm:w-auto">
+        <!-- Hamburger para móvil -->
+        <button type="button" class="md:hidden flex items-center justify-center w-10 h-10 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors" (click)="sidebar.abrirMovil()">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        </button>
+
+        <!-- Search Bar -->
+        <div class="flex-1 max-w-md hidden sm:flex items-center">
         <div class="relative w-full">
           <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
             <fa-icon [icon]="iconos.buscar"></fa-icon>
           </div>
           <input type="search" placeholder="Buscar misiones, proyectos, cursos..." 
                  class="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow">
+        </div>
         </div>
       </div>
       
@@ -112,8 +120,34 @@
       </div>
     </header>
 
-    <main class="content-area">
+    <main class="content-area pb-24 md:pb-0">
       <router-outlet />
     </main>
   </section>
+
+  <!-- Bottom Tab Bar for Mobile -->
+  <nav class="md:hidden fixed bottom-0 w-full bg-white/90 backdrop-blur-xl border-t border-slate-200 shadow-[0_-8px_30px_rgba(0,0,0,0.08)] z-[60] flex justify-around items-end h-16 px-2 pb-safe">
+    <a routerLink="/alumno" routerLinkActive="text-blue-600 scale-110" [routerLinkActiveOptions]="{exact: true}" class="flex flex-col items-center gap-1 text-slate-400 hover:text-blue-500 transition-all duration-300 w-1/5 py-2">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+      <span class="text-[10px] font-bold tracking-wide">Inicio</span>
+    </a>
+    <a routerLink="/alumno/desafios" routerLinkActive="text-blue-600 scale-110" class="flex flex-col items-center gap-1 text-slate-400 hover:text-blue-500 transition-all duration-300 w-1/5 py-2">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+      <span class="text-[10px] font-bold tracking-wide">Misiones</span>
+    </a>
+    <a routerLink="/alumno/tienda" routerLinkActive="text-blue-600" class="flex flex-col items-center gap-1 text-slate-400 hover:text-blue-500 transition-all duration-300 w-1/5 py-2 relative group">
+      <div class="absolute -top-6 bg-blue-600 text-white rounded-full p-3 shadow-premium group-hover:-translate-y-1 transition-transform duration-300">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+      </div>
+      <span class="text-[10px] font-bold tracking-wide mt-6">Tienda</span>
+    </a>
+    <a routerLink="/alumno/comunidad" routerLinkActive="text-blue-600 scale-110" class="flex flex-col items-center gap-1 text-slate-400 hover:text-blue-500 transition-all duration-300 w-1/5 py-2">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+      <span class="text-[10px] font-bold tracking-wide">Comunidad</span>
+    </a>
+    <a routerLink="/alumno/perfil" routerLinkActive="text-blue-600 scale-110" class="flex flex-col items-center gap-1 text-slate-400 hover:text-blue-500 transition-all duration-300 w-1/5 py-2">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+      <span class="text-[10px] font-bold tracking-wide">Perfil</span>
+    </a>
+  </nav>
 </div>
