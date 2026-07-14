@@ -45,8 +45,14 @@ module.exports = {
         heading: ['Outfit', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
       boxShadow: {
-        'soft': '0 8px 24px #2030550b',
-        'popover': '0 24px 70px rgba(21, 24, 48, .18), 0 8px 24px rgba(37, 31, 106, .08)',
+        'sm': '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+        'md': '0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04)',
+        'lg': '0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04)',
+        'xl': '0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+        'soft': '0 2px 10px rgba(23, 36, 60, 0.04)',
+        'popover': '0 12px 32px rgba(0, 0, 0, 0.1)',
+        'premium': '0 4px 6px -1px rgba(0, 0, 0, 0.03), 0 12px 24px -4px rgba(0, 0, 0, 0.05), 0 24px 48px -12px rgba(0, 0, 0, 0.08)',
+        'premium-hover': '0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 20px 30px -5px rgba(0, 0, 0, 0.08), 0 32px 64px -12px rgba(0, 0, 0, 0.12)'
       }
     },
   },
