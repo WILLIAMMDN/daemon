@@ -1,21 +1,19 @@
 :host { display: block; }
 .redemptions-page { display: grid; gap: 1.2rem; }
-.redemptions-hero { align-items: center; background: linear-gradient(135deg, #eef2ff, #faf5ff); border-radius: 2rem; box-shadow: 0 24px 70px -34px rgba(30,64,175,.28); display: flex; justify-content: space-between; min-height: 190px; overflow: hidden; padding: clamp(1.5rem, 3vw, 2.5rem); position: relative; }
-.redemptions-hero::after { background: linear-gradient(145deg, #2563eb, #7c3aed); border-radius: 34%; content: ''; height: 150px; opacity: .11; position: absolute; right: 12%; transform: rotate(18deg); width: 150px; }
-.redemptions-hero > div { max-width: 660px; position: relative; z-index: 2; }
-.redemptions-hero span { color: #6366f1; font-size: .67rem; font-weight: 900; letter-spacing: .11em; text-transform: uppercase; }
-.redemptions-hero h1 { color: #172033; font-size: clamp(2rem, 4vw, 3.4rem); margin: .35rem 0; }
-.redemptions-hero p { color: #6f7b91; line-height: 1.6; margin: 0; }
-:host ::ng-deep .redemptions-card.ant-card { border: 0; border-radius: 2rem; box-shadow: 0 24px 70px -34px rgba(30,64,175,.28); overflow: hidden; }
+.redemptions-hero { align-items: center; background: #eaf5ff; border: 1px solid #d7eaff; border-radius: 16px; display: flex; justify-content: space-between; min-height: 180px; padding: clamp(1.4rem, 3vw, 2.2rem); }
+.redemptions-hero > div { max-width: 680px; }
+.redemptions-hero span { color: #0958d9; font-size: .67rem; font-weight: 700; letter-spacing: .075em; text-transform: uppercase; }
+.redemptions-hero h1 { color: #172033; font-size: clamp(1.8rem, 3.5vw, 2.8rem); margin: .35rem 0; }
+.redemptions-hero p { color: #667085; line-height: 1.6; margin: 0; }
+:host ::ng-deep .redemptions-card.ant-card { border: 1px solid #e4eaf2; border-radius: 14px; box-shadow: none; overflow: hidden; }
 :host ::ng-deep .redemptions-card > .ant-card-body { padding: .6rem 1.2rem 1.2rem; }
 :host ::ng-deep .redemptions-card .ant-table { background: transparent; }
-:host ::ng-deep .redemptions-card .ant-table-thead > tr > th { background: transparent; color: #929bad; font-size: .65rem; font-weight: 900; letter-spacing: .08em; padding-block: 1.1rem; text-transform: uppercase; }
-:host ::ng-deep .redemptions-card .ant-table-tbody > tr > td { border-color: #f0f2f7; color: #637087; padding-block: 1rem; }
-:host ::ng-deep .redemptions-card .ant-table-tbody > tr:hover > td { background: #f8f9ff; }
+:host ::ng-deep .redemptions-card .ant-table-thead > tr > th { background: #f8fafc; color: #7a8699; font-size: .64rem; font-weight: 700; letter-spacing: .07em; padding-block: .9rem; text-transform: uppercase; }
+:host ::ng-deep .redemptions-card .ant-table-tbody > tr > td { border-color: #edf1f5; color: #667085; padding-block: .9rem; }
+:host ::ng-deep .redemptions-card .ant-table-tbody > tr:hover > td { background: #f8fbff; }
 .redemptions-card td:first-child { display: grid; }
-.redemptions-card td strong { color: #1f2937; }
-.redemptions-card td small { color: #929bad; margin-top: .2rem; }
-.redemptions-card code { background: #f3f4f8; border-radius: .5rem; color: #4f46e5; padding: .35rem .5rem; }
-.redemptions-state { background: #fff; border-radius: 2rem; box-shadow: 0 24px 70px -34px rgba(30,64,175,.28); padding: 2rem; }
+.redemptions-card td strong { color: #344054; }
+.redemptions-card td small { color: #8a94a3; margin-top: .2rem; }
+.redemptions-card code { background: #edf5ff; border-radius: 6px; color: #0958d9; padding: .3rem .45rem; }
+.redemptions-state { background: #fff; border: 1px solid #e4eaf2; border-radius: 14px; padding: 2rem; }
 @media (max-width: 700px) { .redemptions-hero { align-items: flex-start; flex-direction: column; gap: 1rem; } :host ::ng-deep .redemptions-card > .ant-card-body { overflow-x: auto; } }
-@media (max-width: 520px) { .redemptions-hero, :host ::ng-deep .redemptions-card.ant-card, .redemptions-state { border-radius: 1.5rem; } }

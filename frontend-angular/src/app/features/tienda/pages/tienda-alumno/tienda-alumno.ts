@@ -25,6 +25,7 @@ export class TiendaAlumno {
 
   readonly saldo = signal(0);
   readonly premios = signal<any[]>([]);
+  readonly imagenesInvalidas = signal<Set<number>>(new Set());
   readonly cargando = signal(true);
   readonly procesando = signal<number | null>(null);
   readonly mensaje = signal('');
@@ -79,6 +80,10 @@ export class TiendaAlumno {
 
   asset(ruta?: string | null): string {
     return this.activos.url(ruta);
+  }
+
+  marcarImagenInvalida(id: number): void {
+    this.imagenesInvalidas.update((actuales) => new Set(actuales).add(id));
   }
 
   private sincronizarSaldo(tokens: number): void {
