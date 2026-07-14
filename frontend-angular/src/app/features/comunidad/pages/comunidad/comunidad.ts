@@ -8,6 +8,8 @@ import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { MonedaDaemon } from '../../../../shared/componentes/moneda-daemon/moneda-daemon';
 
+import { NzCardModule } from 'ng-zorro-antd/card';
+
 interface PersonaComunidad {
   id: number;
   nombre_completo: string;
@@ -26,7 +28,7 @@ interface ComunidadRespuesta {
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-comunidad',
-  imports: [RouterLink, Cargando, UpperCasePipe, EstadoVacio, NzTagModule, MonedaDaemon],
+  imports: [RouterLink, Cargando, UpperCasePipe, EstadoVacio, NzTagModule, MonedaDaemon, NzCardModule],
   templateUrl: './comunidad.html',
   styleUrl: './comunidad.scss',
 })
