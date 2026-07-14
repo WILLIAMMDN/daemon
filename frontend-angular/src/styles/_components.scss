@@ -1,3 +1,7 @@
+/* 
+  DAEMON ENTERPRISE COMPONENTS
+  Diseño sólido, estructurado y profesional usando NG-ZORRO nativo.
+*/
 
 .module-shell ul {
   margin: .6rem 0 0;
@@ -7,103 +11,192 @@
 
 .module-shell a {
   color: #2563eb;
-  font-weight: 700;
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  transition: text-decoration-color 0.2s;
+}
+.module-shell a:hover {
+  text-decoration-color: #2563eb;
 }
 
+/* Badges de Estado (Solid / Enterprise) */
 .module-status {
   display: inline-flex;
   width: fit-content;
-  border-radius: 999px;
-  background: #e7f8ef;
-  color: #047857;
-  font-size: .78rem;
-  font-weight: 800;
-  letter-spacing: .04em;
-  padding: .35rem .65rem;
+  border-radius: 6px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #166534;
+  font-size: .75rem;
+  font-weight: 700;
+  letter-spacing: .02em;
+  padding: .25rem .65rem;
   text-transform: uppercase;
 }
 
+/* Botones Principales Ng-Zorro Modificados */
 .daemon-btn.ant-btn {
   align-items: center;
-  border-radius: 8px;
+  border-radius: 6px;
   display: inline-flex;
-  font-weight: 850;
+  font-weight: 600;
   justify-content: center;
   min-height: 40px;
-  @apply transition-all duration-200 active:scale-[0.96] ease-out;
+  padding: 0 1.25rem;
+  transition: all 0.15s ease-in-out;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 }
 
 .daemon-btn.ant-btn-primary {
-  @apply bg-primary border-primary text-white shadow-soft;
+  background-color: #17243c;
+  border-color: #17243c;
+  color: #ffffff;
 }
 
-.daemon-btn.ant-btn-primary:not(:disabled):hover {
-  @apply bg-primary-800 border-primary-800 shadow-md transform -translate-y-[1px];
+.daemon-btn.ant-btn-primary:not(:disabled):hover,
+.daemon-btn.ant-btn-primary:not(:disabled):focus {
+  background-color: #2d3c5a;
+  border-color: #2d3c5a;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+}
+
+.daemon-btn.ant-btn-primary:not(:disabled):active {
+  transform: translateY(0);
+  box-shadow: none;
+  background-color: #101626;
 }
 
 .daemon-btn.ant-btn-default {
-  background: #eef4ff;
-  border-color: #d8e2f4;
-  color: #17243c;
+  background-color: #ffffff;
+  border-color: #cbd5e1;
+  color: #334155;
 }
 
-.daemon-btn.ant-btn-default:not(:disabled):hover {
-  background: #e3edff;
-  border-color: #b9c9e8;
-  color: #0f2350;
+.daemon-btn.ant-btn-default:not(:disabled):hover,
+.daemon-btn.ant-btn-default:not(:disabled):focus {
+  background-color: #f8fafc;
+  border-color: #94a3b8;
+  color: #0f172a;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
 .daemon-btn.ant-btn-link {
   color: #0f766e;
-  font-weight: 850;
+  font-weight: 600;
   padding-inline: .2rem;
+  box-shadow: none;
+  background: transparent;
 }
 
+/* Alertas de Ng-Zorro */
 .daemon-alert.ant-alert {
-  border-radius: 8px;
-  font-weight: 700;
+  border-radius: 6px;
+  border-width: 1px;
+  font-weight: 500;
+  padding: 12px 16px;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
 }
 
+.daemon-alert.ant-alert-error {
+  background-color: #fef2f2;
+  border-color: #fecaca;
+  color: #991b1b;
+}
+
+.daemon-alert.ant-alert-info {
+  background-color: #eff6ff;
+  border-color: #bfdbfe;
+  color: #1e40af;
+}
+
+/* Contenedores de Estado Vacío (Empty State) */
 .daemon-empty {
-  background: #fff;
-  border: 1px solid #dfe6f1;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
   border-radius: 8px;
   display: grid;
   justify-items: center;
-  padding: 1.35rem;
+  padding: 2rem 1.5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
 }
 
 .daemon-empty h2 {
-  color: #17203a;
-  font-size: 1.05rem;
-  margin: .6rem 0 .2rem;
+  color: #1e293b;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: .75rem 0 .25rem;
 }
 
 .daemon-empty p {
-  color: #61708d;
+  color: #64748b;
   margin: 0;
-  max-width: 34rem;
+  max-width: 32rem;
   text-align: center;
+  font-size: 0.9rem;
 }
 
-.daemon-tag.ant-tag {
-  border-radius: 999px;
-  font-weight: 850;
-  margin: 0;
-  text-transform: uppercase;
+/* Sobrescribir TODOS los tags de Ng-Zorro para que sean SÓLIDOS y PROFESIONALES (Identidad Corporativa) */
+.ant-tag {
+  border-radius: 6px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  font-size: 0.75rem !important;
+  letter-spacing: 0.05em !important;
+  padding: 0.2rem 0.6rem !important;
+  border: none !important; /* SIN bordes pálidos ni efectos de cristal */
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
 }
 
+/* Colores Sólidos para los Tags (Adiós fondos pálidos) */
+.ant-tag-blue {
+  background-color: #2563eb !important; /* Azul sólido */
+  color: #ffffff !important;
+}
+.ant-tag-green, .ant-tag-success {
+  background-color: #16a34a !important; /* Verde sólido */
+  color: #ffffff !important;
+}
+.ant-tag-gold, .ant-tag-warning {
+  background-color: #d97706 !important; /* Naranja/Oro sólido */
+  color: #ffffff !important;
+}
+.ant-tag-red, .ant-tag-error {
+  background-color: #dc2626 !important; /* Rojo sólido */
+  color: #ffffff !important;
+}
+.ant-tag-cyan {
+  background-color: #0891b2 !important; /* Cyan sólido */
+  color: #ffffff !important;
+}
+.ant-tag-purple {
+  background-color: #7c3aed !important; /* Morado sólido */
+  color: #ffffff !important;
+}
+.ant-tag-default, .ant-tag-orange {
+  background-color: #475569 !important; /* Slate sólido */
+  color: #ffffff !important;
+}
+
+/* Superficies Generales (Tarjetas Blancas) */
 .daemon-surface {
-  background: #fff;
-  border: 1px solid #dfe6f1;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
   border-radius: 8px;
-  box-shadow: 0 8px 24px #2030550b;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.03);
+  transition: box-shadow 0.2s ease-in-out;
+}
+
+.daemon-surface:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
 }
 
 .daemon-avatar.ant-avatar {
   background: #17243c;
   color: #fff;
-  font-weight: 900;
+  font-weight: 700;
 }
 
 .daemon-descriptions.ant-descriptions {
@@ -111,30 +204,32 @@
 }
 
 .daemon-descriptions .ant-descriptions-item-label {
-  color: #52617c;
-  font-weight: 850;
+  color: #475569;
+  font-weight: 600;
 }
 
 .daemon-stat.ant-statistic .ant-statistic-title {
-  color: #5d6f8d;
+  color: #64748b;
   font-size: .75rem;
-  font-weight: 850;
-  letter-spacing: .07em;
+  font-weight: 700;
+  letter-spacing: .05em;
   text-transform: uppercase;
 }
 
 .daemon-stat.ant-statistic .ant-statistic-content {
-  color: #17203a;
-  font-weight: 900;
+  color: #0f172a;
+  font-weight: 800;
 }
 
 .daemon-upload-summary {
-  color: #61708d;
-  font-size: .86rem;
-  margin: .25rem 0 0;
+  color: #64748b;
+  font-size: .85rem;
+  margin: .35rem 0 0;
 }
 
-/* Glassmorphism estandarizado */
+/* Eliminando el Glassmorphism y reemplazándolo por Solid Enterprise */
 .glass {
-  @apply bg-white/70 backdrop-blur-md border border-white/40 shadow-soft;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
 }
