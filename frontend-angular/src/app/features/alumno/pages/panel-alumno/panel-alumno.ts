@@ -14,11 +14,13 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzCardModule } from 'ng-zorro-antd/card';
+import { NzProgressModule } from 'ng-zorro-antd/progress';
+import { NzTagModule } from 'ng-zorro-antd/tag';
 import { BotonAccion } from '../../../../shared/componentes/boton-accion/boton-accion';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 import { MonedaDaemon } from '../../../../shared/componentes/moneda-daemon/moneda-daemon';
 import { Alumno } from '../../services/alumno';
-
 
 interface UsuarioPanel {
   id: number;
@@ -40,7 +42,7 @@ interface PanelAlumnoData {
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-panel-alumno',
-  imports: [RouterLink, FontAwesomeModule, NzAlertModule, NzButtonModule, Cargando, MonedaDaemon],
+  imports: [RouterLink, FontAwesomeModule, NzAlertModule, NzButtonModule, NzCardModule, NzProgressModule, NzTagModule, Cargando, MonedaDaemon],
   templateUrl: './panel-alumno.html',
   styleUrl: './panel-alumno.scss',
 })
