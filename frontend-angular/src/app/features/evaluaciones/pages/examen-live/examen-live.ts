@@ -7,11 +7,12 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
 import { CommonModule } from '@angular/common';
 import { BotonAccion } from '../../../../shared/componentes/boton-accion/boton-accion';
 import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
+import { NzCardModule } from 'ng-zorro-antd/card';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-examen-live',
-  imports: [CommonModule, FormsModule, Cargando, NzAlertModule, NzTagModule, BotonAccion, EstadoVacio],
+  imports: [CommonModule, FormsModule, Cargando, NzAlertModule, NzTagModule, BotonAccion, EstadoVacio, NzCardModule],
   templateUrl: './examen-live.html',
   styleUrl: './examen-live.scss',
 })
