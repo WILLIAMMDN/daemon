@@ -20,39 +20,39 @@
         <app-cargando texto="Cargando canjes..."></app-cargando>
       </div>
     } @else if (canjes().length) {
-      <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden flex flex-col">
+      <nz-card class="rounded-2xl shadow-sm border-slate-200 overflow-hidden" [nzBodyStyle]="{'padding': '0'}">
         <div class="overflow-x-auto p-0">
-          <nz-table #tablaCanjes [nzData]="canjes()" [nzShowPagination]="true" [nzPageSize]="10" nzSize="middle" class="w-full whitespace-nowrap">
+          <nz-table #tablaCanjes [nzData]="canjes()" [nzShowPagination]="true" [nzPageSize]="10" nzSize="middle" class="w-full whitespace-nowrap border-0">
             <thead>
-              <tr class="bg-slate-50">
-                <th class="text-slate-500 font-semibold text-sm">Premio</th>
-                <th class="text-slate-500 font-semibold text-sm">Estado</th>
-                <th class="text-slate-500 font-semibold text-sm">Entrega</th>
-                <th class="text-slate-500 font-semibold text-sm">Fecha</th>
-                <th class="text-slate-500 font-semibold text-sm">Código</th>
+              <tr class="bg-slate-50 border-b border-slate-100">
+                <th class="text-slate-500 font-semibold text-sm bg-transparent border-0 py-4">Premio</th>
+                <th class="text-slate-500 font-semibold text-sm bg-transparent border-0 py-4">Estado</th>
+                <th class="text-slate-500 font-semibold text-sm bg-transparent border-0 py-4">Entrega</th>
+                <th class="text-slate-500 font-semibold text-sm bg-transparent border-0 py-4">Fecha</th>
+                <th class="text-slate-500 font-semibold text-sm bg-transparent border-0 py-4">Código</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-slate-100">
+            <tbody class="divide-y divide-slate-100 bg-white">
               @for (canje of tablaCanjes.data; track canje.id) {
-                <tr class="hover:bg-slate-50 transition-colors">
-                  <td>
+                <tr class="hover:bg-slate-50/50 transition-colors">
+                  <td class="border-0 py-4">
                     <strong class="text-slate-900 block">{{ canje.nombre }}</strong>
                     <p class="text-xs text-slate-500 m-0">{{ canje.descripcion }}</p>
                   </td>
-                  <td>
-                    <nz-tag [nzColor]="canje.estado === 'pendiente' ? 'gold' : 'success'" class="font-bold rounded-md border-0">
+                  <td class="border-0 py-4">
+                    <nz-tag [nzColor]="canje.estado === 'pendiente' ? 'gold' : 'success'" class="font-bold rounded-md border-0 m-0">
                       {{ canje.estado | uppercase }}
                     </nz-tag>
                   </td>
-                  <td class="text-slate-700">{{ canje.tipo_entrega }}</td>
-                  <td class="text-slate-600 text-sm">{{ canje.fecha }}</td>
-                  <td class="font-mono text-slate-700">{{ canje.dato_publico || canje.dato_privado || '-' }}</td>
+                  <td class="text-slate-700 border-0 py-4">{{ canje.tipo_entrega }}</td>
+                  <td class="text-slate-600 text-sm border-0 py-4">{{ canje.fecha }}</td>
+                  <td class="font-mono text-slate-700 border-0 py-4">{{ canje.dato_publico || canje.dato_privado || '-' }}</td>
                 </tr>
               }
             </tbody>
           </nz-table>
         </div>
-      </div>
+      </nz-card>
     } @else {
       <div class="py-12 bg-white rounded-2xl border border-slate-100">
         <app-estado-vacio titulo="Sin canjes" descripcion="Todavía no tienes canjes registrados. Ve a la tienda para canjear tokens." />
