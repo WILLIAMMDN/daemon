@@ -8,48 +8,47 @@
 } @else if (panel(); as datos) {
   <main class="w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-6 md:gap-8 font-inter">
     <!-- HERO / BIENVENIDA -->
-    <section class="welcome-card w-full relative overflow-hidden rounded-2xl bg-white border border-slate-200 shadow-sm p-6 md:p-8 flex flex-col md:flex-row gap-6 items-center justify-between">
-      <div class="welcome-copy flex flex-col gap-2 z-10 w-full md:w-2/3">
-        <p class="eyebrow text-xs font-bold text-slate-500 uppercase tracking-wider">Daemon Academy</p>
-        <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 leading-tight">¡Hola, {{ nombreCorto(datos.usuario) }}!</h1>
-        <p class="text-slate-600 text-base max-w-2xl mt-2">Listo para aprender algo increíble hoy. Tus retos, tokens y recompensas viven en una sola ruta.</p>
+    <nz-card class="welcome-card w-full rounded-lg shadow-sm border-slate-200 mb-6">
+      <div class="flex flex-col md:flex-row gap-6 items-center justify-between">
+        <div class="welcome-copy flex flex-col gap-2 z-10 w-full md:w-2/3">
+          <p class="eyebrow text-xs font-bold text-slate-500 uppercase tracking-wider">Daemon Academy</p>
+          <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 leading-tight m-0">¡Hola, {{ nombreCorto(datos.usuario) }}!</h1>
+          <p class="text-slate-600 text-base max-w-2xl mt-2">Listo para aprender algo increíble hoy. Tus retos, tokens y recompensas viven en una sola ruta.</p>
 
-        <div class="hero-stats flex flex-wrap gap-4 mt-6" aria-label="Resumen rápido">
-          <article class="flex items-center gap-3 bg-white border border-slate-200 rounded-xl px-4 py-3 shadow-sm min-w-[160px]">
-            <span class="stat-icon stat-icon--fire w-10 h-10 rounded-lg flex items-center justify-center bg-orange-100 text-orange-500"><fa-icon [icon]="iconos.fuego" /></span>
-            <div class="flex flex-col">
-              <strong class="text-lg font-bold leading-none text-slate-900">{{ racha(datos) }}</strong>
-              <span class="text-xs text-slate-500">Racha diaria</span>
+          <div class="hero-stats flex flex-wrap gap-4 mt-6" aria-label="Resumen rápido">
+            <div class="flex items-center gap-3 bg-slate-50 border border-slate-200 rounded px-4 py-3 min-w-[160px]">
+              <span class="stat-icon stat-icon--fire w-10 h-10 rounded flex items-center justify-center bg-white border border-slate-200 text-orange-600"><fa-icon [icon]="iconos.fuego" /></span>
+              <div class="flex flex-col">
+                <strong class="text-lg font-bold leading-none text-slate-900">{{ racha(datos) }}</strong>
+                <span class="text-xs text-slate-600 font-medium">Racha diaria</span>
+              </div>
             </div>
-          </article>
-          <article class="flex items-center gap-3 bg-white border border-slate-200 rounded-xl px-4 py-3 shadow-sm min-w-[160px]">
-            <span class="stat-icon stat-icon--energy w-10 h-10 rounded-lg flex items-center justify-center bg-amber-100 text-amber-500"><fa-icon [icon]="iconos.energia" /></span>
-            <div class="flex flex-col">
-              <strong class="text-lg font-bold leading-none text-slate-900">{{ xpParaNivel(datos) }} XP</strong>
-              <span class="text-xs text-slate-500">para subir nivel</span>
+            <div class="flex items-center gap-3 bg-slate-50 border border-slate-200 rounded px-4 py-3 min-w-[160px]">
+              <span class="stat-icon stat-icon--energy w-10 h-10 rounded flex items-center justify-center bg-white border border-slate-200 text-amber-600"><fa-icon [icon]="iconos.energia" /></span>
+              <div class="flex flex-col">
+                <strong class="text-lg font-bold leading-none text-slate-900">{{ xpParaNivel(datos) }} XP</strong>
+                <span class="text-xs text-slate-600 font-medium">para subir nivel</span>
+              </div>
             </div>
-          </article>
-          <article class="flex items-center gap-3 bg-white border border-slate-200 rounded-xl px-4 py-3 shadow-sm min-w-[160px]">
-            <span class="stat-icon stat-icon--coin w-10 h-10 rounded-lg flex items-center justify-center bg-blue-50 text-blue-500">
-              <app-moneda-daemon [size]="24" titulo="Tokens DAEMON" />
-            </span>
-            <div class="flex flex-col">
-              <strong class="text-lg font-bold leading-none text-slate-900 flex items-center">
-                <app-moneda-daemon [cantidad]="datos.usuario.tokens" [size]="18" [soloNumero]="true"></app-moneda-daemon>
-              </strong>
-              <span class="text-xs text-slate-500">DAEMONS vivos</span>
+            <div class="flex items-center gap-3 bg-slate-50 border border-slate-200 rounded px-4 py-3 min-w-[160px]">
+              <span class="stat-icon stat-icon--coin w-10 h-10 rounded flex items-center justify-center bg-white border border-slate-200 text-blue-600">
+                <app-moneda-daemon [size]="24" titulo="Tokens DAEMON" />
+              </span>
+              <div class="flex flex-col">
+                <strong class="text-lg font-bold leading-none text-slate-900 flex items-center">
+                  <app-moneda-daemon [cantidad]="datos.usuario.tokens" [size]="18" [soloNumero]="true"></app-moneda-daemon>
+                </strong>
+                <span class="text-xs text-slate-600 font-medium">DAEMONS vivos</span>
+              </div>
             </div>
-          </article>
+          </div>
+        </div>
+
+        <div class="welcome-art relative z-10 hidden md:flex items-end justify-center w-1/3 min-h-[200px]" aria-hidden="true">
+          <img src="/img/bot_default.svg" alt="" class="w-full max-w-[200px]" loading="eager" decoding="async" />
         </div>
       </div>
-
-      <div class="welcome-art relative z-10 hidden md:flex items-end justify-center w-1/3 min-h-[200px]" aria-hidden="true">
-        <span class="spark spark--one absolute w-3 h-3 bg-yellow-400 rounded-full top-8 left-4 rotate-12"></span>
-        <span class="spark spark--two absolute w-4 h-4 bg-indigo-500 rounded-full top-24 left-16"></span>
-        <span class="spark spark--three absolute w-3 h-3 bg-teal-400 rounded-full top-16 right-8 rotate-45"></span>
-        <img src="/img/bot_default.svg" alt="" class="w-full max-w-[200px] drop-shadow-xl" loading="eager" decoding="async" />
-      </div>
-    </section>
+    </nz-card>
 
     <!-- CONTENT GRID (12 Cols) -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 w-full">
@@ -58,55 +57,52 @@
       <div class="lg:col-span-8 flex flex-col gap-6">
         
         <!-- Progreso -->
-        <section class="progress-card w-full bg-white border border-slate-200 rounded-2xl p-6 shadow-sm flex flex-col gap-6" [style.--progress]="progreso(datos) + '%'">
-          <header class="flex justify-between items-center w-full">
-            <h2 class="text-lg font-bold text-slate-900">Tu progreso general</h2>
-            <a routerLink="/alumno/resultados" class="flex items-center gap-2 text-blue-600 font-semibold text-sm hover:underline">
+        <nz-card class="progress-card w-full rounded-lg shadow-sm border-slate-200" [nzExtra]="extraLink">
+          <ng-template #extraLink>
+            <a routerLink="/alumno/resultados" class="flex items-center gap-2 text-blue-700 font-bold text-sm hover:underline">
               Ver detalles <fa-icon [icon]="iconos.flecha" />
             </a>
-          </header>
+          </ng-template>
+          <nz-card-meta nzTitle="Tu progreso general"></nz-card-meta>
 
-          <div class="progress-content flex flex-col sm:flex-row items-center sm:items-start gap-6 sm:gap-8 w-full">
-            <div class="progress-ring relative flex items-center justify-center w-32 h-32 rounded-full shrink-0" aria-label="Progreso general">
-              <div class="absolute inset-2 bg-white rounded-full flex flex-col items-center justify-center z-10">
-                <strong class="text-3xl font-extrabold text-slate-900">{{ progreso(datos) }}%</strong>
-                <small class="text-xs font-bold text-slate-500">Completado</small>
-              </div>
+          <div class="progress-content flex flex-col sm:flex-row items-center sm:items-start gap-6 sm:gap-8 w-full mt-4">
+            <div class="progress-ring relative flex items-center justify-center shrink-0">
+              <nz-progress [nzPercent]="progreso(datos)" nzType="circle" [nzWidth]="100" nzStrokeColor="#1d4ed8"></nz-progress>
             </div>
 
-            <div class="progress-copy flex flex-col justify-center gap-3 w-full mt-2 sm:mt-4">
-              <strong class="text-base text-slate-800">Sigue así, vas por excelente camino.</strong>
-              <div class="progress-line w-full h-3 bg-slate-100 rounded-full overflow-hidden">
-                <div class="h-full bg-gradient-to-r from-teal-400 to-cyan-500 rounded-full" [style.width]="progreso(datos) + '%'"></div>
-              </div>
-              <p class="text-sm text-slate-500">{{ misionesCompletadas(datos) }} de {{ objetivoMisiones(datos) }} misiones completadas</p>
+            <div class="progress-copy flex flex-col justify-center gap-3 w-full sm:mt-2">
+              <strong class="text-base text-slate-900 font-bold">Sigue así, vas por excelente camino.</strong>
+              <nz-progress [nzPercent]="progreso(datos)" nzStrokeColor="#1d4ed8" [nzShowInfo]="false"></nz-progress>
+              <p class="text-sm text-slate-600 font-medium m-0">{{ misionesCompletadas(datos) }} de {{ objetivoMisiones(datos) }} misiones completadas</p>
             </div>
           </div>
-        </section>
+        </nz-card>
 
         <!-- Spotlight Grid (Auto-fit/Responsive Grid) -->
         <section class="spotlight-grid grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 w-full" aria-label="Siguientes acciones">
-          <article class="spotlight-card flex flex-col gap-3 bg-white border border-slate-200 rounded-2xl p-5 shadow-sm h-full">
-            <span class="card-icon card-icon--target w-10 h-10 rounded-lg flex items-center justify-center bg-orange-50 text-orange-500 mb-2"><fa-icon [icon]="iconos.reto" /></span>
-            <p class="text-xs font-bold text-slate-500 uppercase tracking-wide">Reto activo</p>
-            <h3 class="text-base font-bold text-slate-900 leading-tight">{{ datos.misiones_pendientes || 1 }} misiones por completar</h3>
-            <span class="text-sm text-slate-500 mb-4 flex-grow">Resuelve retos, sube evidencia y gana DAEMONS para canjear.</span>
-            <footer class="flex items-center justify-between w-full mt-auto pt-4 border-t border-slate-100">
-              <a routerLink="/alumno/desafios" class="text-blue-600 font-semibold text-sm hover:underline">Ver retos</a>
-              <small class="text-xs font-bold text-slate-400">Hoy</small>
-            </footer>
-          </article>
+          <nz-card nzHoverable class="spotlight-card rounded-lg shadow-sm border-slate-200">
+            <div class="flex flex-col gap-2 h-full">
+              <p class="text-xs font-bold text-slate-500 uppercase tracking-wide">Reto activo</p>
+              <h3 class="text-base font-bold text-slate-900 leading-tight m-0">{{ datos.misiones_pendientes || 1 }} misiones por completar</h3>
+              <span class="text-sm text-slate-600 font-medium mb-4 flex-grow">Resuelve retos, sube evidencia y gana DAEMONS para canjear.</span>
+              <footer class="flex items-center justify-between w-full mt-auto pt-4 border-t border-slate-200">
+                <a routerLink="/alumno/desafios" class="text-blue-700 font-bold text-sm hover:underline">Ver retos</a>
+                <small class="text-xs font-bold text-slate-500">Hoy</small>
+              </footer>
+            </div>
+          </nz-card>
 
-          <article class="spotlight-card reward-card flex flex-col gap-3 bg-white border border-slate-200 rounded-2xl p-5 shadow-sm h-full">
-            <span class="card-icon card-icon--gift w-10 h-10 rounded-lg flex items-center justify-center bg-purple-50 text-purple-600 mb-2"><fa-icon [icon]="iconos.regalo" /></span>
-            <p class="text-xs font-bold text-slate-500 uppercase tracking-wide">Última recompensa</p>
-            <h3 class="text-base font-bold text-slate-900 leading-tight">Pensador lógico</h3>
-            <span class="text-sm text-slate-500 mb-4 flex-grow">{{ datos.canjes_pendientes }} canjes pendientes en tu mochila.</span>
-            <footer class="flex items-center justify-between w-full mt-auto pt-4 border-t border-slate-100">
-              <a routerLink="/alumno/tienda" class="text-blue-600 font-semibold text-sm hover:underline">Ver recompensas</a>
-              <small class="text-xs font-bold text-slate-400">DAEMON</small>
-            </footer>
-          </article>
+          <nz-card nzHoverable class="spotlight-card rounded-lg shadow-sm border-slate-200">
+            <div class="flex flex-col gap-2 h-full">
+              <p class="text-xs font-bold text-slate-500 uppercase tracking-wide">Última recompensa</p>
+              <h3 class="text-base font-bold text-slate-900 leading-tight m-0">Pensador lógico</h3>
+              <span class="text-sm text-slate-600 font-medium mb-4 flex-grow">{{ datos.canjes_pendientes }} canjes pendientes en tu mochila.</span>
+              <footer class="flex items-center justify-between w-full mt-auto pt-4 border-t border-slate-200">
+                <a routerLink="/alumno/tienda" class="text-blue-700 font-bold text-sm hover:underline">Ver recompensas</a>
+                <small class="text-xs font-bold text-slate-500">DAEMON</small>
+              </footer>
+            </div>
+          </nz-card>
         </section>
 
       </div>
@@ -114,24 +110,24 @@
       <!-- SIDE COLUMN (4 cols) -->
       <aside class="lg:col-span-4 flex flex-col gap-6 w-full">
         
-        <section class="activity-card flex flex-col gap-4 bg-white border border-slate-200 rounded-2xl p-5 shadow-sm w-full">
-          <header class="flex justify-between items-center w-full mb-2">
-            <h2 class="text-base font-bold text-slate-900">Actividad reciente</h2>
-            <a routerLink="/alumno/misiones" class="text-blue-600 font-semibold text-xs hover:underline">Ver misiones</a>
-          </header>
+        <nz-card class="activity-card w-full rounded-lg shadow-sm border-slate-200" [nzExtra]="extraMisiones">
+          <ng-template #extraMisiones>
+            <a routerLink="/alumno/misiones" class="text-blue-700 font-bold text-xs hover:underline">Ver misiones</a>
+          </ng-template>
+          <nz-card-meta nzTitle="Actividad reciente"></nz-card-meta>
 
-          <article class="activity-row flex items-start gap-3 w-full bg-slate-50 rounded-xl p-3 border border-slate-100">
-            <span class="activity-avatar w-10 h-10 rounded-full flex shrink-0 items-center justify-center bg-blue-100 text-blue-600"><fa-icon [icon]="iconos.cohete" /></span>
+          <div class="activity-row flex items-start gap-3 w-full bg-slate-50 rounded p-3 border border-slate-200 mt-4">
+            <span class="activity-avatar w-10 h-10 rounded bg-white border border-slate-200 flex shrink-0 items-center justify-center text-blue-700"><fa-icon [icon]="iconos.cohete" /></span>
             <div class="flex flex-col flex-grow">
               <strong class="text-sm font-bold text-slate-900">Tu ruta DAEMON está activa</strong>
-              <p class="text-xs text-slate-500 mt-1">Puesto #{{ datos.posicion }} en tu nivel, {{ datos.insignias }} insignias ganadas.</p>
+              <p class="text-xs text-slate-600 font-medium m-0 mt-1">Puesto #{{ datos.posicion }} en tu nivel, {{ datos.insignias }} insignias ganadas.</p>
             </div>
-            <span class="activity-reward shrink-0 flex items-center gap-1 bg-white border border-slate-200 rounded-lg px-2 py-1 text-xs font-bold text-blue-600 shadow-sm">
-              <fa-icon [icon]="iconos.estrella" class="text-amber-500" />
+            <nz-tag nzColor="blue" class="shrink-0 font-bold text-xs">
+              <fa-icon [icon]="iconos.estrella" class="text-amber-500 mr-1" />
               +{{ xpActividad(datos) }} XP
-            </span>
-          </article>
-        </section>
+            </nz-tag>
+          </div>
+        </nz-card>
 
       </aside>
       
