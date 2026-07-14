@@ -35,6 +35,7 @@ class AlumnoAdminService
                 'u.nivel',
                 'u.rol',
                 'u.tokens',
+                'u.experiencia',
                 'u.pro_tokens',
                 'u.rango',
                 'u.avatar',
@@ -248,6 +249,7 @@ class AlumnoAdminService
             'con_perfil_completo' => DB::table('usuarios')->where('perfil_completo', true)->count(),
             'sin_aula' => DB::table('usuarios')->where('rol', 'alumno')->whereNull('id_aula')->count(),
             'tokens_totales' => (int) DB::table('usuarios')->where('rol', 'alumno')->sum('tokens'),
+            'experiencia_total' => (int) DB::table('usuarios')->where('rol', 'alumno')->sum('experiencia'),
         ];
     }
 

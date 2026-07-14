@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Api\V1;
 
 use App\Services\Archivo\ArchivoUrlService;
+use App\Services\Gamificacion\GamificacionService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -11,8 +12,11 @@ class UsuarioResource extends JsonResource
     public function toArray(Request $request): array
     {
         $archivos = app(ArchivoUrlService::class);
+        $gamificacion = app(GamificacionService::class);
         $user = $request->user();
         $isSelfOrPrivileged = !$user || $user->id === $this->id || in_array($user->rol, ['admin', 'docente']);
+        $experiencia = (int) ($this->experiencia ?? 0);
+        $progreso = $gamificacion->progreso($experiencia);
 
         return [
             'id' => $this->id,
@@ -22,6 +26,9 @@ class UsuarioResource extends JsonResource
             'usuario' => $this->usuario,
             'nivel' => $this->nivel,
             'tokens' => $this->when($isSelfOrPrivileged, $this->tokens),
+            'experiencia' => $experiencia,
+            'nivel_gamificacion' => $progreso['nivel'],
+            'progreso_nivel' => $progreso,
             'pro_tokens' => $this->when($isSelfOrPrivileged, $this->pro_tokens),
             'rango' => $this->rango,
             'biografia' => $this->biografia,

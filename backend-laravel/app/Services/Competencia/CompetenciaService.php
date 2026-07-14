@@ -9,6 +9,7 @@ use App\Models\Usuario;
 use App\Models\VotoLive;
 use App\Services\Academico\AcademicScopeService;
 use App\Services\Archivo\ArchivoUrlService;
+use App\Services\Gamificacion\GamificacionService;
 use App\Events\CompetenciaActualizada;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -18,6 +19,7 @@ class CompetenciaService
     public function __construct(
         private readonly ArchivoUrlService $archivos,
         private readonly AcademicScopeService $alcance,
+        private readonly GamificacionService $gamificacion,
     ) {}
 
     public function ronda(): CompetenciaLive
@@ -155,7 +157,7 @@ class CompetenciaService
         $alumno = $this->alcance->alumnoGestionable($docente, (int) $ronda->id_alumno_en_tarima);
         $puntos = $datos['puntos'] ?? (int) round(((float) $ronda->promedio_alumnos) * 10);
 
-        $alumno->increment('tokens', $puntos);
+        $this->gamificacion->otorgarRecompensa($alumno, $puntos);
         DB::table('historial_movimientos')->insert([
             'id_docente' => $docente->id,
             'id_alumno' => $alumno->id,

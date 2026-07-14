@@ -7,12 +7,16 @@ use App\Models\Pregunta;
 use App\Models\RespuestaEvaluacion;
 use App\Models\Usuario;
 use App\Services\Academico\AcademicScopeService;
+use App\Services\Gamificacion\GamificacionService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class EvaluacionService
 {
-    public function __construct(private readonly AcademicScopeService $alcance) {}
+    public function __construct(
+        private readonly AcademicScopeService $alcance,
+        private readonly GamificacionService $gamificacion,
+    ) {}
 
     public function listadoDocente(): Collection
     {
@@ -122,7 +126,7 @@ class EvaluacionService
         );
 
         if (! $anterior && $puntaje >= 70) {
-            Usuario::whereKey($alumno->id)->increment('tokens', 100);
+            $this->gamificacion->otorgarRecompensa($alumno, 100);
         }
 
         return ['resultado' => $registro, 'correctas' => $correctas, 'total' => $preguntas->count()];

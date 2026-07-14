@@ -41,7 +41,7 @@ class DocenteService
 
     public function ranking(?Usuario $docente = null): Collection
     {
-        return $this->alumnosQuery($docente)->orderByDesc('tokens')->limit(10)->get();
+        return $this->alumnosQuery($docente)->orderByDesc('experiencia')->limit(10)->get();
     }
 
     public function alumnos(?Usuario $docente = null): Collection
