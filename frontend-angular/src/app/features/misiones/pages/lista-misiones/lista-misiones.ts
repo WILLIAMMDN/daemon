@@ -9,11 +9,12 @@ import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-
 import { BotonAccion } from '../../../../shared/componentes/boton-accion/boton-accion';
 import { CommonModule } from '@angular/common';
 import { MonedaDaemon } from '../../../../shared/componentes/moneda-daemon/moneda-daemon';
+import { NzCardModule } from 'ng-zorro-antd/card';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-lista-misiones',
-  imports: [CommonModule, RouterLink, NzAlertModule, NzButtonModule, NzTagModule, Cargando, EstadoVacio, BotonAccion, MonedaDaemon],
+  imports: [CommonModule, RouterLink, NzAlertModule, NzButtonModule, NzTagModule, NzCardModule, Cargando, EstadoVacio, BotonAccion, MonedaDaemon],
   templateUrl: './lista-misiones.html',
   styleUrl: './lista-misiones.scss',
 })
