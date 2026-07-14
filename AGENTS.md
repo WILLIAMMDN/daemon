@@ -82,6 +82,12 @@ scripts/              Local automation helpers
   syncs DAEMON when returning with `?verificacion=firebase`.
 - Password recovery page uses Firebase `sendPasswordResetEmail`, not the
   Laravel/Resend endpoint.
+- The student portal uses Inter, solid colors, white cards and a compact header.
+- Do not reintroduce gradients or Outfit in the main student modules.
+- The existing purple sidebar is intentionally preserved; its IDs are also
+  used by the onboarding tour.
+- Read `docs/sistema-visual-portal-alumno.md` and `docs/portal-alumno.md` before
+  changing the student layout or modules.
 
 ## Backend facts
 
@@ -94,6 +100,11 @@ scripts/              Local automation helpers
 - `email_verified_at` is synchronized from Firebase claims after verified login.
 - Backend email services still exist for custom future email flows, but current
   frontend verification/recovery does not depend on Resend.
+- `usuarios.experiencia` is permanent XP for level and ranking.
+- `usuarios.tokens` is the spendable DAEMONS balance.
+- Academic rewards go through `GamificacionService`; store redemptions never
+  subtract XP.
+- Ranking queries order by `experiencia`, not tokens.
 
 ## Storage and assets
 
@@ -164,3 +175,8 @@ verify Render separately.
 - Supabase DB/storage: `docs/supabase-postgres.md`
 - Cloud/GitHub/deploy state: `docs/estado-nube-github-produccion.md`
 - Test data: `docs/datos-prueba.txt`
+- Student portal behavior: `docs/portal-alumno.md`
+- Student visual system: `docs/sistema-visual-portal-alumno.md`
+- XP and DAEMONS architecture: `docs/gamificacion-xp-daemons.md`
+- Production QA: `docs/qa-produccion.md`
+- July 2026 release evidence: `docs/release-2026-07-14-portal-alumno.md`

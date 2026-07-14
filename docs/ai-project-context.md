@@ -4,7 +4,7 @@ This document is written for future AI agents and developers. It summarizes the
 current DAEMON system, the cloud decisions already made, the important files,
 and the traps that caused confusion during the migration.
 
-Last updated: 2026-07-13.
+Last updated: 2026-07-14.
 
 ## 1. What DAEMON is
 
@@ -73,6 +73,29 @@ frontend-angular/src/app/features/autenticacion/pages/restablecer-clave/
 frontend-angular/src/app/features/autenticacion/pages/bienvenida/
 ```
 
+Student portal documentation:
+
+```text
+docs/sistema-visual-portal-alumno.md
+docs/portal-alumno.md
+docs/gamificacion-xp-daemons.md
+docs/release-2026-07-14-portal-alumno.md
+```
+
+Current student visual direction:
+
+- Inter only.
+- Solid colors; no gradients in the main student modules.
+- Canvas `#f4f7fb`, white surfaces, light borders and restrained shadows.
+- Blue `#1677ff` for primary actions and XP progress.
+- Amber for DAEMONS balance.
+- Existing purple sidebar preserved.
+- Compact header that displays XP level and DAEMONS separately.
+- Dashboard, profile, missions, ranking and store share one visual language.
+
+The earlier experimental Bento/glass implementation was corrected. Do not use
+that first iteration as the target for new student screens.
+
 Production frontend env currently points to:
 
 ```text
@@ -100,7 +123,9 @@ backend-laravel/routes/api.php
 backend-laravel/app/Models/Usuario.php
 backend-laravel/app/Services/Auth/AutenticacionService.php
 backend-laravel/app/Services/Auth/FirebaseTokenVerifier.php
+backend-laravel/app/Services/Gamificacion/GamificacionService.php
 backend-laravel/app/Http/Controllers/Api/V1/AutenticacionController.php
+backend-laravel/app/Http/Controllers/Api/V1/RankingController.php
 backend-laravel/app/Http/Middleware/EnsureRole.php
 backend-laravel/app/Http/Middleware/AuthCookieToken.php
 backend-laravel/app/Services/Archivo/ArchivoUrlService.php
@@ -111,6 +136,14 @@ backend-laravel/config/mail.php
 
 The canonical user table is `usuarios`. Do not introduce Laravel's default
 `users` table as the app authority.
+
+Gamification uses two independent fields:
+
+- `experiencia`: permanent XP for level and ranking;
+- `tokens`: spendable DAEMONS balance.
+
+Do not order ranking by tokens or subtract experience during store redemptions.
+Read `docs/gamificacion-xp-daemons.md` before changing rewards.
 
 ## 6. Authentication decisions
 
@@ -286,6 +319,10 @@ Remote: WILLIAMMDN/daemon
 Branch: main
 ```
 
+The student redesign was merged through PR 2 at commit `c611bc8` and deployed
+by the Firebase merge workflow. The verified production main bundle for that
+release was `main-COHOQPBW.js`.
+
 Render:
 
 ```text
@@ -309,6 +346,17 @@ Backend health: https://daemon-5vo1.onrender.com/api/v1/salud
 - Tried custom DAEMON email verification/recovery through Laravel/Resend.
 - Found Resend testing restriction and changed active frontend flow back to
   Firebase email delivery for real students.
+- Added permanent `experiencia` and kept `tokens` as spendable DAEMONS.
+- Centralized dual academic rewards and level calculation in
+  `GamificacionService`.
+- Changed public, student and teacher rankings to use XP.
+- Added feature tests proving that a redemption preserves XP.
+- Rebuilt student header, dashboard, profile, missions, ranking, store and
+  redemptions with a solid, consistent visual system.
+- Preserved the existing sidebar and its onboarding IDs.
+- Added responsive visual QA at desktop and mobile breakpoints.
+- Added a safe fallback for missing reward images.
+- Made Firebase merge deploy run Jest, Angular build and production smoke.
 
 ## 14. Known warnings and non-blockers
 
@@ -342,6 +390,8 @@ cd C:\laragon\www\daemon
 .\scripts\smoke-produccion.ps1
 ```
 
+For visual QA and deployed-bundle parity, follow `docs/qa-produccion.md`.
+
 Expected current production frontend state:
 
 - Deployed bundles contain `verificacion=firebase` and `reset=firebase`.
@@ -369,3 +419,5 @@ Prioritize:
 4. Reducing bundle size only after functional flows are stable.
 5. Buying/verifying a domain later if branded transactional emails become a
    product requirement.
+6. Following the solid student visual system instead of adding a new theme per
+   module.

@@ -21,6 +21,49 @@ Este documento resume el estado operativo de DAEMON en nube.
 - Firebase Hosting `retainedReleaseCount` reducido a `5` para evitar bloqueo
   por cuota de storage.
 - GitHub Actions preparado para despliegue de Firebase Hosting desde `main`.
+- El workflow de Firebase ejecuta pruebas Jest, build, deploy y smoke de
+  produccion en ese orden.
+- Portal alumno con XP y DAEMONS separados desplegado en produccion.
+- Rediseño visual solido del alumno desplegado en produccion.
+
+## Release portal alumno del 14 de julio de 2026
+
+Estado publicado:
+
+```text
+Pull request: https://github.com/WILLIAMMDN/daemon/pull/2
+Merge commit: c611bc8addd6c8cbcf3482972193a69017ef4259
+Firebase run: https://github.com/WILLIAMMDN/daemon/actions/runs/29303236499
+Bundle main:  main-COHOQPBW.js
+```
+
+Commits conservados dentro del merge:
+
+```text
+4efed1d refactor(ui): definir sistema visual solido del alumno
+7951cac refactor(profile): reconstruir perfil del estudiante
+329d635 refactor(dashboard): reconstruir panel del estudiante
+39476fd refactor(modules): unificar misiones ranking y tienda
+```
+
+El PR se fusionó con merge convencional, no squash, para conservar el alcance
+de cada cambio. La rama remota se eliminó después del merge.
+
+Verificaciones aprobadas:
+
+- preview de Firebase del PR;
+- 5 pruebas Jest del frontend;
+- build Angular de producción;
+- deploy de Firebase Hosting;
+- smoke automático del workflow;
+- smoke independiente desde Windows;
+- bundle local y bundle público idénticos;
+- health de Render con base de datos y storage en estado OK;
+- CORS y cabeceras de seguridad correctas;
+- service worker y `ngsw.json` disponibles.
+
+El rediseño correctivo fue solo frontend. Render no necesitó un despliegue de
+código en ese PR, pero el backend público sí fue incluido en el smoke.
 
 ## Decision actual de correos
 
@@ -65,6 +108,24 @@ FIREBASE_SERVICE_ACCOUNT_DAEMON_A41F8
 
 Debe contener el JSON de la service account con permisos de Firebase Hosting.
 No guardar ese JSON en el repositorio.
+
+El workflow de merge está en:
+
+```text
+.github/workflows/firebase-hosting-merge.yml
+```
+
+Pasos relevantes:
+
+1. instalar dependencias con `npm ci`;
+2. ejecutar `npm test -- --runInBand`;
+3. ejecutar `npm run build`;
+4. configurar credenciales desde el secret;
+5. desplegar el target `hosting:estudiante`;
+6. ejecutar `scripts/smoke-produccion.ps1`.
+
+Si Firebase informa que la versión ya es la activa, el workflow trata el
+deploy como no-op correcto y continúa con el smoke.
 
 Roles que fueron usados para la service account:
 
