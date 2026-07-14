@@ -6,11 +6,12 @@ import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { CommonModule } from '@angular/common';
 import { MonedaDaemon } from '../../../../shared/componentes/moneda-daemon/moneda-daemon';
+import { NzCardModule } from 'ng-zorro-antd/card';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-detalle-mision',
-  imports: [CommonModule, RouterLink, Cargando, NzAlertModule, NzTagModule, MonedaDaemon],
+  imports: [CommonModule, RouterLink, Cargando, NzAlertModule, NzTagModule, NzCardModule, MonedaDaemon],
   templateUrl: './detalle-mision.html',
   styleUrl: './detalle-mision.scss',
 })
