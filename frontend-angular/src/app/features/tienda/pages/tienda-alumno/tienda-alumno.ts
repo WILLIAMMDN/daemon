@@ -1,32 +1,37 @@
-import { Component, signal , ChangeDetectionStrategy} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faArrowRight, faBagShopping, faCheck, faLock, faRotateRight, faShieldHeart, faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons';
 import { NzButtonModule } from 'ng-zorro-antd/button';
-import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { Activos } from '../../../../core/servicios/activos';
-import { Tienda } from '../../services/tienda';
+import { Sesion } from '../../../../core/servicios/sesion';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
 import { MonedaDaemon } from '../../../../shared/componentes/moneda-daemon/moneda-daemon';
-
+import { Tienda } from '../../services/tienda';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-tienda-alumno',
-  imports: [RouterLink, NzAlertModule, NzButtonModule, NzTagModule, NzCardModule, Cargando, EstadoVacio, MonedaDaemon],
+  imports: [RouterLink, FontAwesomeModule, NzButtonModule, NzCardModule, Cargando, EstadoVacio, MonedaDaemon],
   templateUrl: './tienda-alumno.html',
   styleUrl: './tienda-alumno.scss',
 })
 export class TiendaAlumno {
-  saldo = signal(0);
-  premios = signal<any[]>([]);
-  cargando = signal(true);
-  procesando = signal<number | null>(null);
-  mensaje = signal('');
-  error = signal('');
+  private readonly tienda = inject(Tienda);
+  private readonly activos = inject(Activos);
+  private readonly sesion = inject(Sesion);
 
-  constructor(private tienda: Tienda, private activos: Activos) {
+  readonly saldo = signal(0);
+  readonly premios = signal<any[]>([]);
+  readonly cargando = signal(true);
+  readonly procesando = signal<number | null>(null);
+  readonly mensaje = signal('');
+  readonly error = signal('');
+  readonly iconos = { bolsa: faBagShopping, flecha: faArrowRight, check: faCheck, candado: faLock, actualizar: faRotateRight, escudo: faShieldHeart, brillo: faWandMagicSparkles };
+
+  constructor() {
     this.cargar();
   }
 
@@ -35,8 +40,10 @@ export class TiendaAlumno {
     this.error.set('');
     this.tienda.premios().subscribe({
       next: (datos: any) => {
-        this.saldo.set(datos.saldo ?? 0);
+        const saldo = Number(datos.saldo ?? 0);
+        this.saldo.set(saldo);
         this.premios.set(datos.premios ?? []);
+        this.sincronizarSaldo(saldo);
         this.cargando.set(false);
       },
       error: (e) => {
@@ -52,8 +59,10 @@ export class TiendaAlumno {
     this.error.set('');
     this.tienda.canjear(id).subscribe({
       next: (respuesta: any) => {
-        this.saldo.set(respuesta.saldo ?? this.saldo());
-        this.mensaje.set(respuesta.codigo ? `Canje realizado. Código: ${respuesta.codigo}` : 'Canje registrado.');
+        const saldo = Number(respuesta.saldo ?? this.saldo());
+        this.saldo.set(saldo);
+        this.sincronizarSaldo(saldo);
+        this.mensaje.set(respuesta.codigo ? `Premio desbloqueado. Código: ${respuesta.codigo}` : 'Premio canjeado. Ya aparece en Mis canjes.');
         this.procesando.set(null);
         this.cargar();
       },
@@ -64,7 +73,16 @@ export class TiendaAlumno {
     });
   }
 
+  puedeCanjear(premio: any): boolean {
+    return this.saldo() >= Number(premio.precio ?? 0) && Number(premio.stock ?? 0) > 0;
+  }
+
   asset(ruta?: string | null): string {
     return this.activos.url(ruta);
+  }
+
+  private sincronizarSaldo(tokens: number): void {
+    const usuario = this.sesion.usuario();
+    if (usuario) this.sesion.actualizarUsuario({ ...usuario, tokens });
   }
 }
