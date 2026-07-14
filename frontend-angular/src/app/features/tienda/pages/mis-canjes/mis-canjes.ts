@@ -8,11 +8,13 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { CommonModule } from '@angular/common';
 import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
 import { BotonAccion } from '../../../../shared/componentes/boton-accion/boton-accion';
+import { NzCardModule } from 'ng-zorro-antd/card';
+import { UpperCasePipe } from '@angular/common';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-mis-canjes',
-  imports: [CommonModule, Cargando, NzTableModule, NzAlertModule, NzTagModule, NzButtonModule, EstadoVacio, BotonAccion],
+  imports: [NzTableModule, NzTagModule, NzAlertModule, Cargando, EstadoVacio, BotonAccion, NzCardModule, UpperCasePipe],
   templateUrl: './mis-canjes.html',
   styleUrl: './mis-canjes.scss',
 })
