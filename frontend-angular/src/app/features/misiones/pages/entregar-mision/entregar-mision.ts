@@ -8,6 +8,8 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 import { MediaUploader } from '../../../../shared/componentes/media-uploader/media-uploader';
 import { Mision } from '../../services/mision';
+import { NzCardModule } from 'ng-zorro-antd/card';
+import { UpperCasePipe } from '@angular/common';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -18,9 +20,11 @@ import { Mision } from '../../services/mision';
     NzAlertModule,
     NzButtonModule,
     NzDescriptionsModule,
+    NzCardModule,
     NzTagModule,
     Cargando,
     MediaUploader,
+    UpperCasePipe,
   ],
   templateUrl: './entregar-mision.html',
   styleUrl: './entregar-mision.scss',
