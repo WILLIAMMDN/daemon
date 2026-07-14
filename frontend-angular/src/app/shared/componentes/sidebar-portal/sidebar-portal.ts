@@ -1,4 +1,4 @@
-import { Component, EventEmitter, HostBinding, HostListener, Input, OnChanges, OnInit, Output , ChangeDetectionStrategy} from '@angular/core';
+import { Component, EventEmitter, HostBinding, HostListener, Input, OnChanges, OnInit, Output, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { DecimalPipe, TitleCasePipe } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -124,7 +124,7 @@ export class SidebarPortal implements OnInit, OnChanges {
 
   private readonly gruposAbiertos = new Set<string>();
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private cdr: ChangeDetectorRef) {}
 
   get isMobile(): boolean {
     return typeof window !== 'undefined' && window.innerWidth <= 980;
@@ -205,11 +205,13 @@ export class SidebarPortal implements OnInit, OnChanges {
 
   abrirMovil(): void {
     this.mobileOpen = true;
+    this.cdr.markForCheck();
   }
 
   cerrarMovil(): void {
     this.mobileOpen = false;
     this.profilePopoverOpen = false;
+    this.cdr.markForCheck();
   }
 
   cerrarProfilePopover(event?: Event): void {

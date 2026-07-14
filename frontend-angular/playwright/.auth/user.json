@@ -1,0 +1,25 @@
+{
+  "cookies": [
+    {
+      "name": "daemon_access",
+      "value": "MTY2fHZQb2NYeHhUWmpIU3l0c3BIa1FiQWJFbUNoNFJtWkVpampJTWU1b3gwMzllYTg1Ng",
+      "domain": "localhost",
+      "path": "/",
+      "expires": 1784012788.333613,
+      "httpOnly": true,
+      "secure": false,
+      "sameSite": "Lax"
+    }
+  ],
+  "origins": [
+    {
+      "origin": "http://localhost:4200",
+      "localStorage": [
+        {
+          "name": "daemon_usuario",
+          "value": "{\"id\":41,\"nombre_completo\":\"Jose Gutierrez Medina\",\"email\":null,\"telefono\":null,\"usuario\":\"jose123\",\"nivel\":\"KIDS\",\"tokens\":300,\"pro_tokens\":0,\"rango\":\"Novato\",\"biografia\":\"Hola, me llamo José, me encanta jugar al fútbol, soy muy buen  en las matemáticas y me gustan las matemáticas\",\"avatar\":\"https://lbxdcvsrmkkynttgwblc.supabase.co/storage/v1/object/public/daemon-assets/uploads/perfiles/41/avatar/avatar_41_1770451953.gif\",\"perfil_completo\":true,\"tour_completado\":false,\"email_verificado\":false,\"email_verified_at\":null,\"rol\":\"alumno\",\"id_institucion\":1,\"id_aula\":1,\"insignia\":\"img/insignias/insignia.png\",\"mision_actual\":1,\"fondo\":\"https://lbxdcvsrmkkynttgwblc.supabase.co/storage/v1/object/public/daemon-assets/uploads/perfiles/41/fondos/bg_41_1770595447.gif\",\"heroe\":\"https://lbxdcvsrmkkynttgwblc.supabase.co/storage/v1/object/public/daemon-assets/uploads/perfiles/41/heroes/heroe_41_1770595457.gif\",\"genero\":\"hombre\",\"fecha_registro\":\"2026-02-05T21:32:11.000000Z\"}"
+        }
+      ]
+    }
+  ]
+}

@@ -1,13 +1,6 @@
 :host {
-  align-items: center;
-  display: flex;
-  gap: .8rem;
-  justify-content: center;
-}
-
-span {
-  color: inherit;
-  font-weight: 700;
+  display: block;
+  width: 100%;
 }
 
 :host ::ng-deep .p-progressspinner {
