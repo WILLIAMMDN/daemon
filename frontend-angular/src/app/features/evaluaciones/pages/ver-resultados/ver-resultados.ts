@@ -7,11 +7,12 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
 import { CommonModule } from '@angular/common';
 import { BotonAccion } from '../../../../shared/componentes/boton-accion/boton-accion';
 import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
+import { NzCardModule } from 'ng-zorro-antd/card';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-ver-resultados',
-  imports: [CommonModule, Cargando, NzTableModule, NzAlertModule, NzTagModule, BotonAccion, EstadoVacio],
+  imports: [CommonModule, Cargando, NzTableModule, NzAlertModule, NzTagModule, BotonAccion, EstadoVacio, NzCardModule],
   templateUrl: './ver-resultados.html',
   styleUrl: './ver-resultados.scss',
 })
