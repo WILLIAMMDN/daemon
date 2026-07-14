@@ -11,6 +11,17 @@ export interface UsuarioSesion {
   rol: 'alumno' | 'docente' | 'admin';
   nivel?: string | null;
   tokens: number;
+  experiencia?: number;
+  nivel_gamificacion?: number;
+  progreso_nivel?: {
+    nivel: number;
+    nivel_maximo: number;
+    experiencia_total: number;
+    experiencia_nivel: number;
+    experiencia_meta: number;
+    experiencia_restante: number;
+    progreso_porcentaje: number;
+  };
   pro_tokens?: number | null;
   rango?: string | null;
   biografia?: string | null;

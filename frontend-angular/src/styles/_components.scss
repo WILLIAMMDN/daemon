@@ -229,7 +229,44 @@
 
 /* Eliminando el Glassmorphism y reemplazándolo por Solid Enterprise */
 .glass {
-  background-color: #ffffff;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, .78);
+  border: 1px solid rgba(255, 255, 255, .72);
+  box-shadow: 0 18px 60px -28px rgba(15, 23, 42, .28);
+}
+
+/* Student premium language: NG-ZORRO behavior with DAEMON surfaces. */
+.student-premium .ant-card {
+  background: #ffffff;
+  border: 0;
+  border-radius: 2rem;
+  box-shadow: 0 24px 70px -34px rgba(30, 64, 175, .28);
+  overflow: hidden;
+  transition: box-shadow .3s ease, transform .3s ease;
+}
+
+.student-premium .ant-card-hoverable:hover {
+  border-color: transparent;
+  box-shadow: 0 32px 78px -30px rgba(30, 64, 175, .34);
+  transform: translateY(-4px);
+}
+
+.student-premium .daemon-btn.ant-btn {
+  border-radius: 999px;
+  box-shadow: none;
+  font-weight: 800;
+  min-height: 44px;
+}
+
+.student-premium .daemon-btn.ant-btn-primary {
+  background: linear-gradient(135deg, #2563eb, #6366f1 55%, #7c3aed);
+  border: 0;
+  box-shadow: 0 14px 30px -15px rgba(79, 70, 229, .8);
+}
+
+.student-premium .daemon-btn.ant-btn-primary:not(:disabled):hover,
+.student-premium .daemon-btn.ant-btn-primary:not(:disabled):focus {
+  background: linear-gradient(135deg, #1d4ed8, #4f46e5 55%, #7e22ce);
+  border: 0;
+  box-shadow: 0 18px 34px -15px rgba(79, 70, 229, .88);
 }
