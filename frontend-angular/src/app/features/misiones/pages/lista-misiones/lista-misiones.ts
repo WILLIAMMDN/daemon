@@ -1,27 +1,27 @@
-import { Component, signal , ChangeDetectionStrategy} from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faArrowRight, faBolt, faCheck, faClock, faRocket, faRotateRight, faStar } from '@fortawesome/free-solid-svg-icons';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzButtonModule } from 'ng-zorro-antd/button';
-import { NzTagModule } from 'ng-zorro-antd/tag';
-import { Mision } from '../../services/mision';
+import { NzCardModule } from 'ng-zorro-antd/card';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
-import { BotonAccion } from '../../../../shared/componentes/boton-accion/boton-accion';
-import { CommonModule } from '@angular/common';
 import { MonedaDaemon } from '../../../../shared/componentes/moneda-daemon/moneda-daemon';
-import { NzCardModule } from 'ng-zorro-antd/card';
+import { Mision } from '../../services/mision';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-lista-misiones',
-  imports: [CommonModule, RouterLink, NzAlertModule, NzButtonModule, NzTagModule, NzCardModule, Cargando, EstadoVacio, BotonAccion, MonedaDaemon],
+  imports: [RouterLink, FontAwesomeModule, NzAlertModule, NzButtonModule, NzCardModule, Cargando, EstadoVacio, MonedaDaemon],
   templateUrl: './lista-misiones.html',
   styleUrl: './lista-misiones.scss',
 })
 export class ListaMisiones {
-  misiones = signal<any[]>([]);
-  cargando = signal(true);
-  error = signal('');
+  readonly misiones = signal<any[]>([]);
+  readonly cargando = signal(true);
+  readonly error = signal('');
+  readonly iconos = { flecha: faArrowRight, energia: faBolt, check: faCheck, reloj: faClock, cohete: faRocket, actualizar: faRotateRight, estrella: faStar };
 
   constructor(private mision: Mision) {
     this.cargar();
@@ -40,5 +40,15 @@ export class ListaMisiones {
         this.cargando.set(false);
       },
     });
+  }
+
+  estado(mision: any): 'approved' | 'pending' | 'available' {
+    if (mision.entrega?.estado === 'aprobado') return 'approved';
+    if (mision.entrega?.estado === 'pendiente') return 'pending';
+    return 'available';
+  }
+
+  estadoLabel(mision: any): string {
+    return this.estado(mision) === 'approved' ? 'Completada' : this.estado(mision) === 'pending' ? 'En revisión' : 'Disponible';
   }
 }

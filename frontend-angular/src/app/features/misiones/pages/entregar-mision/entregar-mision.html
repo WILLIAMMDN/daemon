@@ -1,15 +1,15 @@
-<main class="w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-6 md:gap-8 font-inter">
+<main class="delivery-page w-full flex flex-col gap-6 md:gap-8 font-inter">
   @if (cargando()) {
     <div class="py-12 bg-white rounded-2xl shadow-sm border border-slate-100">
       <app-cargando texto="Cargando misión..."></app-cargando>
     </div>
   } @else if (detalle(); as datos) {
     <!-- Cabecera -->
-    <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+    <header class="delivery-hero flex flex-col md:flex-row justify-between items-start md:items-center gap-4 p-6">
       <div class="flex flex-col gap-1">
-        <span class="text-sm font-semibold uppercase tracking-wider text-blue-600">Entrega de Evidencia</span>
-        <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 leading-tight m-0">{{ datos.mision.titulo }}</h1>
-        <p class="text-sm text-slate-600 m-0">{{ datos.mision.descripcion || 'Sin descripción registrada.' }}</p>
+        <span class="text-sm font-semibold uppercase tracking-wider text-indigo-200">Entrega de evidencia</span>
+        <h1 class="text-2xl md:text-4xl font-extrabold text-white leading-tight m-0">{{ datos.mision.titulo }}</h1>
+        <p class="text-sm text-indigo-100/80 m-0">{{ datos.mision.descripcion || 'Prepara la evidencia de tu proceso y resultado.' }}</p>
       </div>
       <a nz-button nzType="default" class="daemon-btn" [routerLink]="['/alumno/misiones', id]">Volver al Detalle</a>
     </header>
@@ -18,7 +18,7 @@
       
       <!-- Columna Principal: Formulario -->
       <div class="lg:col-span-8 flex flex-col gap-6">
-        <nz-card class="rounded-2xl shadow-sm border-slate-200" [nzBodyStyle]="{'padding': '24px'}">
+        <nz-card class="delivery-card rounded-2xl" [nzBodyStyle]="{'padding': '24px'}">
           <form class="flex flex-col gap-6" (ngSubmit)="entregar()">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
               <h2 class="text-xl font-bold text-slate-900 m-0">Nueva evidencia</h2>
@@ -71,8 +71,13 @@
 
       <!-- Columna Secundaria: Resumen -->
       <div class="lg:col-span-4 flex flex-col gap-6">
-        <nz-card class="rounded-2xl shadow-sm border-slate-200" [nzBodyStyle]="{'padding': '24px'}">
+        <nz-card class="delivery-card rounded-2xl" [nzBodyStyle]="{'padding': '24px'}">
           <h2 class="text-lg font-bold text-slate-900 border-b border-slate-100 pb-3 mb-4 mt-0">Resumen</h2>
+          <div class="delivery-reward">
+            <span><strong>+{{ datos.mision.recompensa }}</strong><small>XP permanente</small></span>
+            <i></i>
+            <span><strong>+{{ datos.mision.recompensa }}</strong><small>DAEMONS</small></span>
+          </div>
           <nz-descriptions nzBordered [nzColumn]="1" nzSize="small" class="bg-white">
             <nz-descriptions-item nzTitle="Título"><span class="font-medium">{{ datos.mision.titulo }}</span></nz-descriptions-item>
             <nz-descriptions-item nzTitle="Estado">
