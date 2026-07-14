@@ -1,18 +1,21 @@
-import { CommonModule } from '@angular/common';
-import { Component, signal , ChangeDetectionStrategy} from '@angular/core';
-import { Ranking as RankingService } from '../../services/ranking';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faArrowRotateRight, faBolt, faCrown, faMedal, faTrophy } from '@fortawesome/free-solid-svg-icons';
+import { NzAvatarModule } from 'ng-zorro-antd/avatar';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzProgressModule } from 'ng-zorro-antd/progress';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
-import { NzTagModule } from 'ng-zorro-antd/tag';
-import { NzCardModule } from 'ng-zorro-antd/card';
-import { MonedaDaemon } from '../../../../shared/componentes/moneda-daemon/moneda-daemon';
+import { Ranking as RankingService } from '../../services/ranking';
 
 interface AlumnoRanking {
   id: number;
   nombre_completo: string;
   usuario: string;
   nivel: string;
-  tokens: number;
+  experiencia: number;
+  nivel_gamificacion: number;
+  progreso_nivel?: { progreso_porcentaje: number };
   rango?: string | null;
   avatar?: string | null;
   posicion?: number;
@@ -21,14 +24,15 @@ interface AlumnoRanking {
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-ranking',
-  imports: [CommonModule, Cargando, EstadoVacio, NzTagModule, MonedaDaemon, NzCardModule],
+  imports: [FontAwesomeModule, NzAvatarModule, NzButtonModule, NzProgressModule, Cargando, EstadoVacio],
   templateUrl: './ranking.html',
   styleUrl: './ranking.scss',
 })
 export class Ranking {
-  alumnos = signal<AlumnoRanking[]>([]);
-  cargando = signal(true);
-  error = signal('');
+  readonly alumnos = signal<AlumnoRanking[]>([]);
+  readonly cargando = signal(true);
+  readonly error = signal('');
+  readonly iconos = { actualizar: faArrowRotateRight, energia: faBolt, corona: faCrown, medalla: faMedal, trofeo: faTrophy };
 
   constructor(private ranking: RankingService) {
     this.cargar();
@@ -49,30 +53,39 @@ export class Ranking {
     });
   }
 
+  podio(): AlumnoRanking[] {
+    return this.alumnos().slice(0, 3);
+  }
+
+  resto(): AlumnoRanking[] {
+    return this.alumnos().slice(3);
+  }
+
+  iniciales(alumno: AlumnoRanking): string {
+    return (alumno.nombre_completo || alumno.usuario || 'D')
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((parte) => parte[0]?.toUpperCase())
+      .join('') || 'D';
+  }
+
   private normalizar(datos: unknown): AlumnoRanking[] {
     const lista = Array.isArray(datos)
       ? (datos as AlumnoRanking[])
       : Object.entries((datos ?? {}) as Record<string, AlumnoRanking[]>).flatMap(([nivel, alumnos]) =>
-          (Array.isArray(alumnos) ? alumnos : []).map((alumno) => ({
-            ...alumno,
-            nivel: alumno.nivel || nivel,
-          })),
+          (Array.isArray(alumnos) ? alumnos : []).map((alumno) => ({ ...alumno, nivel: alumno.nivel || nivel })),
         );
 
     return lista
       .sort((a, b) => {
-        const tokens = Number(b.tokens ?? 0) - Number(a.tokens ?? 0);
-        if (tokens !== 0) {
-          return tokens;
-        }
-
-        const nombreA = a.nombre_completo || a.usuario || '';
-        const nombreB = b.nombre_completo || b.usuario || '';
-        return nombreA.localeCompare(nombreB);
+        const xp = Number(b.experiencia ?? 0) - Number(a.experiencia ?? 0);
+        return xp !== 0 ? xp : (a.nombre_completo || a.usuario || '').localeCompare(b.nombre_completo || b.usuario || '');
       })
       .map((alumno, index) => ({
         ...alumno,
-        tokens: Number(alumno.tokens ?? 0),
+        experiencia: Number(alumno.experiencia ?? 0),
+        nivel_gamificacion: Number(alumno.nivel_gamificacion ?? 1),
         posicion: index + 1,
       }));
   }

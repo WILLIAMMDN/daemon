@@ -119,14 +119,14 @@
                           <span class="text-xs text-gray-500">{{ alumno.nivel }} - {{ alumno.rango || alumno.usuario }}</span>
                         </div>
                       </div>
-                      <b class="text-yellow-600 font-bold flex items-center">
-                        <app-moneda-daemon [cantidad]="alumno.tokens" [size]="16"></app-moneda-daemon>
+                      <b class="text-indigo-600 font-black flex items-center gap-1">
+                        {{ alumno.experiencia }} XP
                       </b>
                     </div>
                   }
                 </div>
               } @else {
-                <app-estado-vacio titulo="Sin ranking todavía" descripcion="Cuando los estudiantes acumulen tokens, aparecerán aquí."></app-estado-vacio>
+                <app-estado-vacio titulo="Sin ranking todavía" descripcion="Cuando los estudiantes acumulen XP, aparecerán aquí."></app-estado-vacio>
               }
             } @else {
               <div class="flex flex-col gap-3 animate-pulse">
