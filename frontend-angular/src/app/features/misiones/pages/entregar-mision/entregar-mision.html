@@ -1,86 +1,106 @@
-@if (cargando()) {
-  <app-cargando class="state" texto="Cargando mision..."></app-cargando>
-} @else if (detalle(); as datos) {
-  <section class="page deliver-page">
-    <header class="page-header">
-      <div>
-        <p class="kicker">Entrega</p>
-        <h1>{{ datos.mision.titulo }}</h1>
-        <p>{{ datos.mision.descripcion || 'Sin descripcion registrada.' }}</p>
+<main class="w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-6 md:gap-8 font-inter">
+  @if (cargando()) {
+    <div class="py-12 bg-white rounded-2xl shadow-sm border border-slate-100">
+      <app-cargando texto="Cargando misión..."></app-cargando>
+    </div>
+  } @else if (detalle(); as datos) {
+    <!-- Cabecera -->
+    <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+      <div class="flex flex-col gap-1">
+        <span class="text-sm font-semibold uppercase tracking-wider text-blue-600">Entrega de Evidencia</span>
+        <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 leading-tight m-0">{{ datos.mision.titulo }}</h1>
+        <p class="text-sm text-slate-600 m-0">{{ datos.mision.descripcion || 'Sin descripción registrada.' }}</p>
       </div>
-      <a nz-button nzType="default" class="daemon-btn" [routerLink]="['/alumno/misiones', id]">Ver detalle</a>
+      <a nz-button nzType="default" class="daemon-btn" [routerLink]="['/alumno/misiones', id]">Volver al Detalle</a>
     </header>
 
-    <section class="split deliver-grid">
-      <form class="panel deliver-form" (ngSubmit)="entregar()">
-        <div class="section-title">
-          <h2>Nueva evidencia</h2>
-          <nz-tag class="daemon-tag" nzColor="cyan">Texto + archivo</nz-tag>
-        </div>
+    <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      
+      <!-- Columna Principal: Formulario -->
+      <div class="lg:col-span-8 flex flex-col gap-6">
+        <nz-card class="rounded-2xl shadow-sm border-slate-200" [nzBodyStyle]="{'padding': '24px'}">
+          <form class="flex flex-col gap-6" (ngSubmit)="entregar()">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+              <h2 class="text-xl font-bold text-slate-900 m-0">Nueva evidencia</h2>
+              <nz-tag class="m-0 border-0 font-bold" nzColor="cyan">Texto + archivo</nz-tag>
+            </div>
 
-        <label class="field">
-          Evidencia escrita
-          <textarea
-            name="texto"
-            [(ngModel)]="texto"
-            rows="8"
-            placeholder="Explica lo que hiciste, pega enlaces o describe tu solucion."
-          ></textarea>
-        </label>
+            <label class="flex flex-col gap-2">
+              <span class="text-sm font-semibold text-slate-800">Evidencia escrita</span>
+              <textarea
+                name="texto"
+                [(ngModel)]="texto"
+                rows="8"
+                class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-slate-700 resize-y"
+                placeholder="Explica lo que hiciste, pega enlaces o describe tu solución."
+              ></textarea>
+            </label>
 
-        <app-media-uploader
-          titulo="Archivo de evidencia"
-          descripcion="Puedes adjuntar imagen, PDF, documento, audio o video segun la mision."
-          accept=".jpg,.jpeg,.png,.gif,.webp,.pdf,.doc,.docx,.ppt,.pptx,.txt,.csv,.mp3,.wav,.mp4,.webm"
-          [maxMb]="20"
-          [resetKey]="uploadResetKey()"
-          (archivoChange)="seleccionarArchivo($event)"
-        />
+            <app-media-uploader
+              titulo="Archivo de evidencia"
+              descripcion="Puedes adjuntar imagen, PDF, documento, audio o video según la misión."
+              accept=".jpg,.jpeg,.png,.gif,.webp,.pdf,.doc,.docx,.ppt,.pptx,.txt,.csv,.mp3,.wav,.mp4,.webm"
+              [maxMb]="20"
+              [resetKey]="uploadResetKey()"
+              (archivoChange)="seleccionarArchivo($event)"
+            />
 
-        @if (archivoNombre()) {
-          <p class="daemon-upload-summary">Archivo listo: <strong>{{ archivoNombre() }}</strong></p>
-        }
-
-        <div class="actions">
-          <button nz-button nzType="primary" class="daemon-btn" type="submit" [disabled]="enviando() || !puedeEntregar()">
-            @if (enviando()) { Enviando... } @else { Registrar entrega }
-          </button>
-          <button nz-button nzType="default" class="daemon-btn" type="button" (click)="limpiar()" [disabled]="enviando()">Limpiar</button>
-        </div>
-
-        @if (mensaje()) {
-          <nz-alert class="daemon-alert" nzType="success" nzShowIcon [nzMessage]="mensaje()"></nz-alert>
-        }
-        @if (error()) {
-          <nz-alert class="daemon-alert" nzType="error" nzShowIcon [nzMessage]="error()"></nz-alert>
-        }
-      </form>
-
-      <aside class="panel mission-summary">
-        <h2>Resumen de la mision</h2>
-        <nz-descriptions class="daemon-descriptions" nzBordered [nzColumn]="1">
-          <nz-descriptions-item nzTitle="Titulo">{{ datos.mision.titulo }}</nz-descriptions-item>
-          <nz-descriptions-item nzTitle="Estado">
-            <nz-tag class="daemon-tag" [nzColor]="datos.entrega?.estado === 'aprobada' ? 'green' : 'gold'">
-              {{ datos.entrega?.estado || 'Sin entrega' }}
-            </nz-tag>
-          </nz-descriptions-item>
-          <nz-descriptions-item nzTitle="Descripcion">{{ datos.mision.descripcion || 'Sin descripcion registrada.' }}</nz-descriptions-item>
-        </nz-descriptions>
-
-        @if (datos.entrega) {
-          <div class="current-delivery">
-            <h3>Entrega actual</h3>
-            @if (datos.entrega.archivo_url) {
-              <a class="evidence-link" [href]="datos.entrega.archivo_url" target="_blank" rel="noopener">Abrir archivo enviado</a>
-            } @else {
-              <p class="muted">Entrega registrada sin archivo adjunto.</p>
+            @if (archivoNombre()) {
+              <div class="bg-blue-50 border border-blue-100 text-blue-800 p-3 rounded-lg text-sm flex items-center gap-2">
+                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                <span>Archivo listo: <strong>{{ archivoNombre() }}</strong></span>
+              </div>
             }
-          </div>
-        }
-      </aside>
+
+            <div class="flex flex-col sm:flex-row justify-end gap-3 pt-4 border-t border-slate-100">
+              <button nz-button nzType="default" class="daemon-btn px-6" type="button" (click)="limpiar()" [disabled]="enviando()">Limpiar</button>
+              <button nz-button nzType="primary" class="daemon-btn px-8" type="submit" [nzLoading]="enviando()" [disabled]="enviando() || !puedeEntregar()">
+                Registrar entrega
+              </button>
+            </div>
+
+            @if (mensaje()) {
+              <nz-alert nzType="success" nzShowIcon [nzMessage]="mensaje()"></nz-alert>
+            }
+            @if (error()) {
+              <nz-alert nzType="error" nzShowIcon [nzMessage]="error()"></nz-alert>
+            }
+          </form>
+        </nz-card>
+      </div>
+
+      <!-- Columna Secundaria: Resumen -->
+      <div class="lg:col-span-4 flex flex-col gap-6">
+        <nz-card class="rounded-2xl shadow-sm border-slate-200" [nzBodyStyle]="{'padding': '24px'}">
+          <h2 class="text-lg font-bold text-slate-900 border-b border-slate-100 pb-3 mb-4 mt-0">Resumen</h2>
+          <nz-descriptions nzBordered [nzColumn]="1" nzSize="small" class="bg-white">
+            <nz-descriptions-item nzTitle="Título"><span class="font-medium">{{ datos.mision.titulo }}</span></nz-descriptions-item>
+            <nz-descriptions-item nzTitle="Estado">
+              <nz-tag class="m-0 border-0 font-bold" [nzColor]="datos.entrega?.estado === 'aprobada' ? 'green' : 'gold'">
+                {{ datos.entrega?.estado || 'Sin entrega' | uppercase }}
+              </nz-tag>
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="Descripción"><span class="text-slate-600 text-sm">{{ datos.mision.descripcion || 'Sin descripción registrada.' }}</span></nz-descriptions-item>
+          </nz-descriptions>
+
+          @if (datos.entrega) {
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 mt-6">
+              <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wide mb-2 mt-0">Entrega actual</h3>
+              @if (datos.entrega.archivo_url) {
+                <a [href]="datos.entrega.archivo_url" target="_blank" rel="noopener" class="text-blue-600 hover:text-blue-800 font-bold flex items-center gap-2 no-underline text-sm">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                  Abrir archivo enviado
+                </a>
+              } @else {
+                <p class="text-slate-500 text-sm italic m-0">Entrega registrada sin archivo adjunto.</p>
+              }
+            </div>
+          }
+        </nz-card>
+      </div>
+
     </section>
-  </section>
-} @else if (error()) {
-  <section class="error">{{ error() }}</section>
-}
+  } @else if (error()) {
+    <nz-alert nzType="error" nzShowIcon [nzMessage]="error()"></nz-alert>
+  }
+</main>
