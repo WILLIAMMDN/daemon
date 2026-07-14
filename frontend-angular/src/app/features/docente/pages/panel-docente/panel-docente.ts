@@ -15,6 +15,8 @@ interface AlumnoRanking {
   usuario: string;
   nivel: string;
   tokens: number;
+  experiencia: number;
+  nivel_gamificacion?: number;
   rango?: string | null;
 }
 

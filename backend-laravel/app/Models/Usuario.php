@@ -28,6 +28,7 @@ class Usuario extends Authenticatable
         'biografia',
         'fecha_registro',
         'tokens',
+        'experiencia',
         'avatar',
         'google_id',
         'firebase_uid',
@@ -49,6 +50,7 @@ class Usuario extends Authenticatable
     {
         return [
             'tokens' => 'integer',
+            'experiencia' => 'integer',
             'pro_tokens' => 'integer',
             'mision_actual' => 'integer',
             'id_institucion' => 'integer',

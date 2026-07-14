@@ -12,6 +12,7 @@ use App\Models\Entrega;
 use App\Models\Mision;
 use App\Services\Academico\AcademicScopeService;
 use App\Services\Archivo\ArchivoService;
+use App\Services\Gamificacion\GamificacionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -20,6 +21,7 @@ class MisionController extends Controller
     public function __construct(
         private readonly ArchivoService $archivos,
         private readonly AcademicScopeService $alcance,
+        private readonly GamificacionService $gamificacion,
     ) {}
 
     public function index(Request $request)
@@ -130,7 +132,7 @@ class MisionController extends Controller
 
             $entrega->update([...$datos, 'calificacion' => $puntos]);
             if ($datos['estado'] === 'aprobado' && ! $yaAprobada) {
-                $alumno->increment('tokens', $puntos);
+                $this->gamificacion->otorgarRecompensa($alumno, $puntos);
                 if ($mision->es_mision_nivel) {
                     $alumno->increment('mision_actual');
                 }

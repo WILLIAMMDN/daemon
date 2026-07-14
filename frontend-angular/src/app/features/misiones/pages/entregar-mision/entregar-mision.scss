@@ -1,1 +1,11 @@
-/* SCSS limpiado. Ahora se utilizan utilidades de Tailwind CSS. */
+:host { display: block; }
+.delivery-page { max-width: none; }
+.delivery-hero { background: linear-gradient(125deg, #1d4ed8, #4f46e5 58%, #7e22ce); border-radius: 2rem; box-shadow: 0 30px 75px -36px rgba(49,46,129,.7); min-height: 210px; padding: clamp(1.5rem, 3vw, 2.5rem); }
+:host ::ng-deep .delivery-card.ant-card { border: 0; border-radius: 2rem; box-shadow: 0 24px 70px -34px rgba(30,64,175,.28); overflow: hidden; }
+.delivery-reward { background: linear-gradient(135deg, #eef2ff, #fff7ed); border-radius: 1.2rem; display: grid; gap: .7rem; grid-template-columns: 1fr 1px 1fr; margin-bottom: 1rem; padding: 1rem; }
+.delivery-reward span { display: grid; }
+.delivery-reward strong { color: #4338ca; font-family: Outfit, sans-serif; font-size: 1.15rem; font-weight: 900; }
+.delivery-reward small { color: #7b879b; font-size: .65rem; font-weight: 800; }
+.delivery-reward i { background: #dfe3ed; }
+:host ::ng-deep textarea { border-radius: 1rem !important; }
+@media (max-width: 520px) { .delivery-hero, :host ::ng-deep .delivery-card.ant-card { border-radius: 1.5rem; } }

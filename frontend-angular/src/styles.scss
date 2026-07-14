@@ -8,8 +8,27 @@
 @import './styles/gamification';
 
 @layer base {
+  :root {
+    --daemon-canvas: #f6f8fc;
+    --daemon-ink: #111827;
+    --daemon-electric: #2563eb;
+    --daemon-indigo: #6366f1;
+    --daemon-purple: #9333ea;
+    --daemon-gold: #fbbf24;
+  }
+
+  html {
+    background: var(--daemon-canvas);
+    color: var(--daemon-ink);
+  }
+
+  body {
+    background: var(--daemon-canvas);
+    color: var(--daemon-ink);
+  }
+
   h1, h2, h3, h4, h5, h6 {
-    @apply font-heading tracking-tight;
+    @apply font-heading font-extrabold tracking-tight;
   }
 }
 
@@ -21,6 +40,18 @@
   
   /* Contenedores fijos premium */
   .card-premium {
-    @apply shadow-premium rounded-2xl border border-slate-200 bg-white;
+    @apply rounded-4xl border-0 bg-white shadow-bento;
+  }
+
+  .daemon-glass {
+    @apply border border-white/70 bg-white/80 shadow-glass backdrop-blur-xl;
+  }
+
+  .daemon-bento {
+    @apply rounded-4xl border-0 bg-white shadow-bento transition-all duration-300 hover:-translate-y-1 hover:shadow-bento-hover;
+  }
+
+  .text-gradient-daemon {
+    @apply bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600 bg-clip-text text-transparent;
   }
 }

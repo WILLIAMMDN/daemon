@@ -6,6 +6,15 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        daemon: {
+          ink: '#111827',
+          canvas: '#f6f8fc',
+          electric: '#2563eb',
+          indigo: '#6366f1',
+          purple: '#9333ea',
+          gold: '#fbbf24',
+          mint: '#2dd4bf',
+        },
         primary: {
           DEFAULT: '#17243c',
           50: '#f4f6f9',
@@ -37,12 +46,16 @@ module.exports = {
         success: '#047857',
         danger: '#9f1239',
         warning: '#6d4b00',
-        background: '#f3f6fb',
+        background: '#f6f8fc',
         surface: '#ffffff',
       },
       fontFamily: {
         sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        heading: ['Outfit', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        heading: ['Outfit', 'Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+      },
+      borderRadius: {
+        '4xl': '2rem',
+        '5xl': '2.5rem',
       },
       boxShadow: {
         'sm': '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
@@ -52,7 +65,10 @@ module.exports = {
         'soft': '0 2px 10px rgba(23, 36, 60, 0.04)',
         'popover': '0 12px 32px rgba(0, 0, 0, 0.1)',
         'premium': '0 4px 6px -1px rgba(0, 0, 0, 0.03), 0 12px 24px -4px rgba(0, 0, 0, 0.05), 0 24px 48px -12px rgba(0, 0, 0, 0.08)',
-        'premium-hover': '0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 20px 30px -5px rgba(0, 0, 0, 0.08), 0 32px 64px -12px rgba(0, 0, 0, 0.12)'
+        'premium-hover': '0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 20px 30px -5px rgba(0, 0, 0, 0.08), 0 32px 64px -12px rgba(0, 0, 0, 0.12)',
+        'bento': '0 24px 70px -34px rgba(30, 64, 175, .28)',
+        'bento-hover': '0 32px 78px -30px rgba(30, 64, 175, .34)',
+        'glass': '0 18px 60px -28px rgba(15, 23, 42, .28)'
       }
     },
   },

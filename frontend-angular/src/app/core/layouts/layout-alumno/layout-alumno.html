@@ -1,7 +1,7 @@
-<div class="portal">
+<div class="portal student-premium">
   <app-sidebar-portal
     #sidebar
-    ariaLabel="Navegacion de estudiante"
+    ariaLabel="Navegación de estudiante"
     brandDetalle="Academy"
     homeLink="/alumno"
     modo="alumno"
@@ -20,134 +20,121 @@
   <section class="workspace">
     <app-email-verification-banner />
 
-    <header class="flex items-center justify-between w-full h-16 px-4 md:px-6 bg-white border-b border-gray-200 z-[40] sticky top-0 shadow-sm">
-      
-      <div class="flex items-center gap-3 w-full sm:w-auto">
-        <!-- Hamburger para móvil -->
-        <button type="button" class="md:hidden flex items-center justify-center w-10 h-10 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors" (click)="sidebar.abrirMovil()">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+    <div class="topbar-shell">
+      <header class="student-topbar">
+        <button type="button" class="mobile-menu-trigger" aria-label="Abrir navegación" (click)="sidebar.abrirMovil()">
+          <span></span><span></span><span></span>
         </button>
 
-        <!-- Search Bar -->
-        <div class="flex-1 max-w-md hidden sm:flex items-center">
-        <div class="relative w-full">
-          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-            <fa-icon [icon]="iconos.buscar"></fa-icon>
-          </div>
-          <input type="search" placeholder="Buscar misiones, proyectos, cursos..." 
-                 class="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow">
+        <a routerLink="/alumno/resultados" class="level-capsule" aria-label="Ver progreso de nivel">
+          <nz-progress
+            nzType="circle"
+            [nzPercent]="progresoNivel()"
+            [nzWidth]="52"
+            [nzStrokeWidth]="10"
+            nzStrokeColor="#6366f1"
+            [nzFormat]="formatoNivel"
+          />
+          <span class="level-copy">
+            <small>Nivel {{ nivelGamificacion() }}</small>
+            <strong>{{ xpRestante() }} XP para subir</strong>
+          </span>
+        </a>
+
+        <div class="topbar-message">
+          <span>Tu ruta de hoy</span>
+          <strong>Aprende. Sube. Desbloquea.</strong>
         </div>
+
+        <div class="topbar-actions">
+          <a id="topbar-tokens" routerLink="/alumno/tienda" class="token-capsule" aria-label="Abrir tienda">
+            <span class="token-glyph"><app-moneda-daemon [size]="24" titulo="DAEMONS" /></span>
+            <span class="token-copy">
+              <small>Saldo DAEMONS</small>
+              <strong>{{ perfilTokens() || 0 }}</strong>
+            </span>
+          </a>
+
+          <a
+            nz-dropdown
+            [nzDropdownMenu]="notifMenu"
+            nzPlacement="bottomRight"
+            nzTrigger="click"
+            (nzVisibleChange)="marcarComoLeidas()"
+            class="icon-capsule"
+            aria-label="Notificaciones"
+          >
+            <nz-badge [nzCount]="notificacionesNoLeidas()">
+              <fa-icon [icon]="iconos.campana" />
+            </nz-badge>
+          </a>
+
+          <a nz-dropdown nzTrigger="click" [nzDropdownMenu]="userMenu" nzPlacement="bottomRight" class="profile-capsule">
+            <nz-badge [nzDot]="sesion.usuario()?.email_verificado === false" nzStatus="warning" [nzOffset]="[-4, 4]">
+              <nz-avatar [nzSize]="42" [nzSrc]="avatarUrl() || undefined" [nzText]="iniciales()" />
+            </nz-badge>
+            <span class="profile-copy">
+              <strong>{{ sesion.usuario()?.nombre_completo || sesion.usuario()?.usuario }}</strong>
+              <small>{{ sesion.usuario()?.rango || 'Explorador' }}</small>
+            </span>
+            <fa-icon [icon]="iconos.desplegar" class="profile-chevron" />
+          </a>
         </div>
-      </div>
-      
-      <div class="flex items-center gap-3 md:gap-4 ml-auto">
-        
-        <!-- Rango / Monedas (solo mobile hidden) -->
-        <a id="topbar-tokens" routerLink="/alumno/perfil" class="hidden md:flex items-center gap-3 bg-gray-50 border border-gray-200 px-3 py-1.5 rounded-full hover:bg-gray-100:bg-gray-800 transition-colors">
-          <div class="flex items-center gap-2 text-blue-600 text-sm font-bold">
-            <fa-icon [icon]="iconos.rango"></fa-icon>
-            <span>{{ sesion.usuario()?.rango || 'Explorador' }}</span>
-          </div>
-          <div class="w-px h-4 bg-gray-300"></div>
-          <app-moneda-daemon [size]="18" [cantidad]="perfilTokens()" titulo="Tokens DAEMON" />
-        </a>
+      </header>
+    </div>
 
-        <!-- Notification Bell -->
-        <a nz-dropdown [nzDropdownMenu]="notifMenu" nzPlacement="bottomRight" nzTrigger="click" (nzVisibleChange)="marcarComoLeidas()" class="relative p-2 text-gray-500 hover:bg-gray-100 rounded-full transition-colors flex items-center justify-center cursor-pointer">
-          <nz-badge [nzCount]="notificacionesNoLeidas()">
-            <fa-icon [icon]="iconos.campana" class="text-xl"></fa-icon>
-          </nz-badge>
-        </a>
-        
-        <nz-dropdown-menu #notifMenu="nzDropdownMenu">
-          <div class="w-80 bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
-            <div class="px-4 py-3 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
-              <span class="font-bold text-gray-900">Notificaciones</span>
-              <span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-semibold">{{ notificaciones().length }} nuevas</span>
-            </div>
-            <div class="max-h-72 overflow-y-auto">
-              @for (notif of notificaciones(); track notif.id) {
-                <div class="px-4 py-3 border-b border-gray-100 hover:bg-gray-50 cursor-pointer flex flex-col gap-1 transition-colors" [class.bg-blue-50]="!notif.leida">
-                  <div class="flex justify-between items-start gap-2">
-                    <strong class="text-sm text-gray-900">{{ notif.titulo }}</strong>
-                    <span class="text-xs text-gray-500 whitespace-nowrap">{{ notif.created_at | date:'shortTime' }}</span>
-                  </div>
-                  <p class="text-sm text-gray-600 line-clamp-2">{{ notif.mensaje }}</p>
-                </div>
-              }
-            </div>
-            <div class="px-4 py-2 text-center border-t border-gray-100 hover:bg-gray-50 cursor-pointer">
-              <a routerLink="/alumno/notificaciones" class="text-sm text-blue-600 font-semibold block w-full">Ver todas</a>
-            </div>
-          </div>
-        </nz-dropdown-menu>
+    <nz-dropdown-menu #notifMenu="nzDropdownMenu">
+      <section class="notification-popover">
+        <header>
+          <div><small>Centro de actividad</small><strong>Notificaciones</strong></div>
+          <span>{{ notificacionesNoLeidas() }} nuevas</span>
+        </header>
+        <div class="notification-list">
+          @for (notif of notificaciones(); track notif.id) {
+            <article [class.unread]="!notif.leida">
+              <div><strong>{{ notif.titulo }}</strong><time>{{ notif.created_at | date:'shortTime' }}</time></div>
+              <p>{{ notif.mensaje }}</p>
+            </article>
+          } @empty {
+            <p class="notification-empty">Todo al día. Aquí aparecerán tus novedades.</p>
+          }
+        </div>
+        <a routerLink="/alumno/notificaciones">Ver todas las notificaciones</a>
+      </section>
+    </nz-dropdown-menu>
 
-        <!-- Separator -->
-        <div class="h-6 w-px bg-gray-200 hidden md:block"></div>
-        
-        <!-- User Profile Dropdown -->
-        <a nz-dropdown nzTrigger="click" [nzDropdownMenu]="userMenu" nzPlacement="bottomRight" class="flex items-center gap-3 cursor-pointer hover:bg-gray-50:bg-gray-700/50 p-1 md:pr-3 rounded-full transition-colors">
-          <nz-badge [nzDot]="sesion.usuario()?.email_verificado === false" nzStatus="warning" [nzOffset]="[-5, 5]">
-            <nz-avatar [nzSize]="40" [nzSrc]="avatarUrl() || undefined" [nzText]="iniciales()" class="bg-blue-600 flex-shrink-0 shadow-sm"></nz-avatar>
-          </nz-badge>
-          <div class="hidden md:flex flex-col text-left">
-            <span class="text-sm font-bold text-gray-900 leading-none">{{ sesion.usuario()?.usuario || sesion.usuario()?.nombre_completo }}</span>
-            <span class="text-xs text-gray-500 leading-none mt-1">{{ perfilNivel() || 'Cargando...' }}</span>
-          </div>
-          <fa-icon [icon]="iconos.desplegar" class="text-xs text-gray-400 hidden md:block"></fa-icon>
-        </a>
-        
-        <nz-dropdown-menu #userMenu="nzDropdownMenu">
-          <ul nz-menu class="w-56 rounded-xl shadow-lg border border-gray-100 p-2">
-            <div class="px-3 py-2 border-b border-gray-100 mb-2 md:hidden">
-              <div class="flex flex-col">
-                <span class="font-bold text-gray-900">{{ sesion.usuario()?.usuario }}</span>
-                <span class="text-xs text-gray-500 mb-2">{{ perfilNivel() }}</span>
-                <app-moneda-daemon [size]="16" [cantidad]="perfilTokens()" titulo="Tokens DAEMON" />
-              </div>
-            </div>
-            
-            <li nz-menu-item routerLink="/alumno/perfil" class="rounded-lg mb-1 flex items-center gap-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600">
-              <fa-icon [icon]="iconos.perfil" class="text-gray-400"></fa-icon> Mi Perfil
-            </li>
-            <li nz-menu-divider></li>
-            <li nz-menu-item (click)="salir()" class="rounded-lg mt-1 flex items-center gap-3 text-red-600 hover:bg-red-50">
-              <fa-icon [icon]="iconos.salir" class="text-red-400"></fa-icon> Cerrar sesión
-            </li>
-          </ul>
-        </nz-dropdown-menu>
-
-      </div>
-    </header>
+    <nz-dropdown-menu #userMenu="nzDropdownMenu">
+      <ul nz-menu class="profile-menu">
+        <li class="profile-menu-summary">
+          <strong>{{ sesion.usuario()?.usuario }}</strong>
+          <span>{{ perfilNivel() }}</span>
+        </li>
+        <li nz-menu-item routerLink="/alumno/perfil"><fa-icon [icon]="iconos.perfil" /> Mi perfil</li>
+        <li nz-menu-divider></li>
+        <li nz-menu-item class="logout-item" (click)="salir()"><fa-icon [icon]="iconos.salir" /> Cerrar sesión</li>
+      </ul>
+    </nz-dropdown-menu>
 
     <main class="content-area pb-24 md:pb-0">
       <router-outlet />
     </main>
   </section>
 
-  <!-- Bottom Tab Bar for Mobile -->
-  <nav class="md:hidden fixed bottom-0 w-full bg-white/90 backdrop-blur-xl border-t border-slate-200 shadow-[0_-8px_30px_rgba(0,0,0,0.08)] z-[60] flex justify-around items-end h-16 px-2 pb-safe">
-    <a routerLink="/alumno" routerLinkActive="text-blue-600 scale-110" [routerLinkActiveOptions]="{exact: true}" class="flex flex-col items-center gap-1 text-slate-400 hover:text-blue-500 transition-all duration-300 w-1/5 py-2">
-      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-      <span class="text-[10px] font-bold tracking-wide">Inicio</span>
+  <nav class="mobile-tabbar" aria-label="Navegación rápida">
+    <a routerLink="/alumno" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 12 12 3l9 9M5 10v10h5v-6h4v6h5V10" /></svg><span>Inicio</span>
     </a>
-    <a routerLink="/alumno/desafios" routerLinkActive="text-blue-600 scale-110" class="flex flex-col items-center gap-1 text-slate-400 hover:text-blue-500 transition-all duration-300 w-1/5 py-2">
-      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-      <span class="text-[10px] font-bold tracking-wide">Misiones</span>
+    <a routerLink="/alumno/desafios" routerLinkActive="active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M13 2 4 14h7v8l9-12h-7V2Z" /></svg><span>Misiones</span>
     </a>
-    <a routerLink="/alumno/tienda" routerLinkActive="text-blue-600" class="flex flex-col items-center gap-1 text-slate-400 hover:text-blue-500 transition-all duration-300 w-1/5 py-2 relative group">
-      <div class="absolute -top-6 bg-blue-600 text-white rounded-full p-3 shadow-premium group-hover:-translate-y-1 transition-transform duration-300">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-      </div>
-      <span class="text-[10px] font-bold tracking-wide mt-6">Tienda</span>
+    <a routerLink="/alumno/tienda" routerLinkActive="active" class="store-tab">
+      <span class="store-tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 8h12l1 13H5L6 8Zm3 1V6a3 3 0 0 1 6 0v3" /></svg></span><span>Tienda</span>
     </a>
-    <a routerLink="/alumno/comunidad" routerLinkActive="text-blue-600 scale-110" class="flex flex-col items-center gap-1 text-slate-400 hover:text-blue-500 transition-all duration-300 w-1/5 py-2">
-      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-      <span class="text-[10px] font-bold tracking-wide">Comunidad</span>
+    <a routerLink="/alumno/ranking" routerLinkActive="active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8 21v-7H4v7m16 0V10h-4v11m-2 0V3h-4v18" /></svg><span>Ranking</span>
     </a>
-    <a routerLink="/alumno/perfil" routerLinkActive="text-blue-600 scale-110" class="flex flex-col items-center gap-1 text-slate-400 hover:text-blue-500 transition-all duration-300 w-1/5 py-2">
-      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-      <span class="text-[10px] font-bold tracking-wide">Perfil</span>
+    <a routerLink="/alumno/perfil" routerLinkActive="active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm7 9a7 7 0 0 0-14 0" /></svg><span>Perfil</span>
     </a>
   </nav>
 </div>

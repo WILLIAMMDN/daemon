@@ -1,70 +1,58 @@
-<main class="w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-6 md:gap-8 font-inter">
-  <!-- Cabecera -->
-  <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-    <div class="flex flex-col gap-1">
-      <span class="text-sm font-semibold uppercase tracking-wider text-blue-600">Misiones</span>
-      <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 leading-tight">Retos del aula</h1>
-      <p class="text-sm text-slate-600">Misiones activas y entregas asociadas a tu cuenta.</p>
+<main class="missions-page">
+  <header class="missions-hero">
+    <div>
+      <span class="page-kicker"><fa-icon [icon]="iconos.cohete" /> Centro de misiones</span>
+      <h1>Convierte retos<br><span>en progreso real.</span></h1>
+      <p>Cada misión aprobada suma la misma recompensa a tu XP permanente y a tu saldo de DAEMONS.</p>
     </div>
-    <app-boton-accion tipo="actualizar" (accion)="cargar()" [cargando]="cargando()" [deshabilitado]="cargando()"></app-boton-accion>
+    <button nz-button class="refresh-button" type="button" (click)="cargar()" [disabled]="cargando()">
+      <fa-icon [icon]="iconos.actualizar" /> Actualizar ruta
+    </button>
+    <div class="hero-geometry" aria-hidden="true"><span></span><span></span><span><fa-icon [icon]="iconos.estrella" /></span></div>
   </header>
 
   @if (error()) {
-    <nz-alert nzType="error" nzShowIcon [nzMessage]="error()"></nz-alert>
+    <nz-alert class="daemon-alert" nzType="error" nzShowIcon [nzMessage]="error()" />
   }
 
-  <!-- Contenido Principal -->
-  <section class="w-full">
-    @if (cargando()) {
-      <div class="py-12 bg-white rounded-2xl shadow-sm border border-slate-100">
-        <app-cargando texto="Cargando misiones..."></app-cargando>
-      </div>
-    } @else if (misiones().length) {
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        @for (mision of misiones(); track mision.id) {
-          <nz-card nzHoverable class="rounded-2xl shadow-sm border-slate-200 h-full flex flex-col hover-premium relative overflow-hidden group p-0">
-            <!-- Barra superior de estado -->
-            <div class="absolute top-0 left-0 w-full h-1" [class.bg-blue-500]="mision.entrega?.estado !== 'pendiente'" [class.bg-yellow-400]="mision.entrega?.estado === 'pendiente'"></div>
-            
-            <div class="flex flex-col h-full gap-4">
-              <div class="flex justify-between items-start">
-                <h2 class="text-xl font-bold text-slate-900 m-0 leading-tight">{{ mision.titulo }}</h2>
-                <nz-tag [nzColor]="mision.entrega?.estado === 'pendiente' ? 'gold' : 'blue'" class="m-0 font-semibold border-0">{{ mision.entrega?.estado || mision.estado | uppercase }}</nz-tag>
-              </div>
-              
-              <p class="text-slate-600 text-sm flex-1 m-0">{{ mision.descripcion || 'Sin descripción registrada.' }}</p>
-              
-              <div class="bg-slate-50 p-4 rounded-xl flex flex-col gap-2 border border-slate-100">
-                <div class="flex justify-between items-center text-sm">
-                  <span class="text-slate-500 font-semibold">Recompensa</span>
-                  <strong class="text-slate-900 flex items-center gap-1">
-                    <app-moneda-daemon [cantidad]="mision.recompensa" [size]="16"></app-moneda-daemon>
-                  </strong>
-                </div>
-                <div class="flex justify-between items-center text-sm">
-                  <span class="text-slate-500 font-semibold">Evidencia</span>
-                  <strong class="text-slate-900 truncate max-w-[120px] text-right" [title]="mision.tipo_evidencia">{{ mision.tipo_evidencia }}</strong>
-                </div>
-              </div>
+  @if (cargando()) {
+    <app-cargando class="missions-state" texto="Sincronizando tus misiones..."></app-cargando>
+  } @else if (misiones().length) {
+    <section class="missions-grid" aria-label="Misiones disponibles">
+      @for (mision of misiones(); track mision.id; let index = $index) {
+        <nz-card nzHoverable class="mission-card" [class.mission-card--approved]="estado(mision) === 'approved'" [class.mission-card--pending]="estado(mision) === 'pending'">
+          <header>
+            <span class="mission-index">{{ (index + 1).toString().padStart(2, '0') }}</span>
+            <span class="status-pill" [attr.data-state]="estado(mision)">
+              <fa-icon [icon]="estado(mision) === 'approved' ? iconos.check : (estado(mision) === 'pending' ? iconos.reloj : iconos.energia)" />
+              {{ estadoLabel(mision) }}
+            </span>
+          </header>
 
-              <div class="flex flex-col sm:flex-row gap-2 mt-2">
-                <a [routerLink]="['/alumno/misiones', mision.id, 'entregar']"
-                   class="flex-1 text-center bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-xl font-semibold text-sm transition-colors shadow-sm cursor-pointer no-underline">
-                  Entregar
-                </a>
-                <a [routerLink]="['/alumno/misiones', mision.id]"
-                   class="flex-1 text-center bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 py-2.5 rounded-xl font-semibold text-sm transition-colors cursor-pointer no-underline">
-                  Detalle
-                </a>
-              </div>
-            </div>
-          </nz-card>
-        }
-      </div>
-    } @else {
-      <div class="py-12 bg-white rounded-2xl border border-slate-100">
-        <app-estado-vacio titulo="Sin misiones disponibles" descripcion="Cuando tu docente publique retos para tu nivel, los verás aquí."></app-estado-vacio>
-      </div>
-    }
-  </section>
+          <div class="mission-copy">
+            <small>{{ mision.nivel_requerido }} · {{ mision.tipo_evidencia }}</small>
+            <h2>{{ mision.titulo }}</h2>
+            <p>{{ mision.descripcion || 'Tu docente preparó un desafío para poner a prueba lo que aprendiste.' }}</p>
+          </div>
+
+          <div class="dual-reward" aria-label="Recompensa dual">
+            <span><fa-icon [icon]="iconos.energia" /><strong>+{{ mision.recompensa }}</strong><small>XP</small></span>
+            <i></i>
+            <span><app-moneda-daemon [size]="20" /><strong>+{{ mision.recompensa }}</strong><small>DAEMONS</small></span>
+          </div>
+
+          <footer>
+            @if (estado(mision) === 'available') {
+              <a nz-button nzType="primary" class="daemon-btn" [routerLink]="['/alumno/misiones', mision.id, 'entregar']">Comenzar misión <fa-icon [icon]="iconos.flecha" /></a>
+            } @else {
+              <a nz-button nzType="default" class="daemon-btn" [routerLink]="['/alumno/misiones', mision.id]">Ver progreso <fa-icon [icon]="iconos.flecha" /></a>
+            }
+            <a class="detail-link" [routerLink]="['/alumno/misiones', mision.id]" aria-label="Ver detalle"><fa-icon [icon]="iconos.flecha" /></a>
+          </footer>
+        </nz-card>
+      }
+    </section>
+  } @else {
+    <section class="missions-state"><app-estado-vacio titulo="Ruta completada" descripcion="No tienes misiones pendientes. Vuelve pronto para descubrir nuevos retos." /></section>
+  }
 </main>
