@@ -1,136 +1,120 @@
 @if (cargando()) {
-  <app-cargando class="estado" texto="Cargando tu academia..."></app-cargando>
+  <app-cargando class="panel-state" texto="Preparando tu ruta DAEMON..."></app-cargando>
 } @else if (error()) {
-  <section class="estado error">
-    <nz-alert class="daemon-alert" nzType="error" nzShowIcon nzMessage="No pudimos cargar tu panel" [nzDescription]="error()"></nz-alert>
+  <section class="panel-state panel-state--error">
+    <nz-alert nzType="error" nzShowIcon nzMessage="No pudimos cargar tu panel" [nzDescription]="error()" />
     <button nz-button nzType="primary" class="daemon-btn" type="button" (click)="cargar()">Reintentar</button>
   </section>
 } @else if (panel(); as datos) {
-  <main class="w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-6 md:gap-8 font-inter">
-    <!-- HERO / BIENVENIDA -->
-    <nz-card class="welcome-card w-full rounded-lg shadow-sm border-slate-200 mb-6">
-      <div class="flex flex-col md:flex-row gap-6 items-center justify-between">
-        <div class="welcome-copy flex flex-col gap-2 z-10 w-full md:w-2/3">
-          <p class="eyebrow text-xs font-bold text-slate-500 uppercase tracking-wider">Daemon Academy</p>
-          <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 leading-tight m-0">¡Hola, {{ nombreCorto(datos.usuario) }}!</h1>
-          <p class="text-slate-600 text-base max-w-2xl mt-2">Listo para aprender algo increíble hoy. Tus retos, tokens y recompensas viven en una sola ruta.</p>
-
-          <div class="hero-stats flex flex-wrap gap-4 mt-6" aria-label="Resumen rápido">
-            <div class="flex items-center gap-3 bg-slate-50 border border-slate-200 rounded px-4 py-3 min-w-[160px]">
-              <span class="stat-icon stat-icon--fire w-10 h-10 rounded flex items-center justify-center bg-white border border-slate-200 text-orange-600"><fa-icon [icon]="iconos.fuego" /></span>
-              <div class="flex flex-col">
-                <strong class="text-lg font-bold leading-none text-slate-900">{{ racha(datos) }}</strong>
-                <span class="text-xs text-slate-600 font-medium">Racha diaria</span>
-              </div>
-            </div>
-            <div class="flex items-center gap-3 bg-slate-50 border border-slate-200 rounded px-4 py-3 min-w-[160px]">
-              <span class="stat-icon stat-icon--energy w-10 h-10 rounded flex items-center justify-center bg-white border border-slate-200 text-amber-600"><fa-icon [icon]="iconos.energia" /></span>
-              <div class="flex flex-col">
-                <strong class="text-lg font-bold leading-none text-slate-900">{{ xpParaNivel(datos) }} XP</strong>
-                <span class="text-xs text-slate-600 font-medium">para subir nivel</span>
-              </div>
-            </div>
-            <div class="flex items-center gap-3 bg-slate-50 border border-slate-200 rounded px-4 py-3 min-w-[160px]">
-              <span class="stat-icon stat-icon--coin w-10 h-10 rounded flex items-center justify-center bg-white border border-slate-200 text-blue-600">
-                <app-moneda-daemon [size]="24" titulo="Tokens DAEMON" />
-              </span>
-              <div class="flex flex-col">
-                <strong class="text-lg font-bold leading-none text-slate-900 flex items-center">
-                  <app-moneda-daemon [cantidad]="datos.usuario.tokens" [size]="18" [soloNumero]="true"></app-moneda-daemon>
-                </strong>
-                <span class="text-xs text-slate-600 font-medium">DAEMONS vivos</span>
-              </div>
-            </div>
-          </div>
+  <main class="academy-bento" aria-label="Panel del estudiante">
+    <nz-card class="bento-card hero-card">
+      <div class="hero-copy">
+        <span class="hero-kicker"><fa-icon [icon]="iconos.brillo" /> DAEMON Academy</span>
+        <h1>Hola, {{ nombreCorto(datos.usuario) }}.<br><span>Tu siguiente gran idea empieza aquí.</span></h1>
+        <p>Completa misiones para ganar XP permanente y DAEMONS que puedes usar sin perder tu lugar en el ranking.</p>
+        <div class="hero-actions">
+          <a nz-button nzType="primary" class="daemon-btn hero-primary" routerLink="/alumno/misiones">
+            Continuar mi ruta <fa-icon [icon]="iconos.flecha" />
+          </a>
+          <span class="hero-rank"><fa-icon [icon]="iconos.ranking" /> Puesto #{{ datos.posicion }} de {{ datos.usuario.nivel }}</span>
         </div>
+      </div>
 
-        <div class="welcome-art relative z-10 hidden md:flex items-end justify-center w-1/3 min-h-[200px]" aria-hidden="true">
-          <img src="/img/bot_default.svg" alt="" class="w-full max-w-[200px]" loading="eager" decoding="async" />
-        </div>
+      <div class="hero-orbit" aria-hidden="true">
+        <span class="orbit orbit--one"></span>
+        <span class="orbit orbit--two"></span>
+        <span class="hero-core"><strong>D</strong></span>
+        <span class="orbit-node orbit-node--xp">XP</span>
+        <span class="orbit-node orbit-node--spark"><fa-icon [icon]="iconos.brillo" /></span>
       </div>
     </nz-card>
 
-    <!-- CONTENT GRID (12 Cols) -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 w-full">
-      
-      <!-- MAIN COLUMN (8 cols) -->
-      <div class="lg:col-span-8 flex flex-col gap-6">
-        
-        <!-- Progreso -->
-        <nz-card class="progress-card w-full rounded-lg shadow-sm border-slate-200" [nzExtra]="extraLink">
-          <ng-template #extraLink>
-            <a routerLink="/alumno/resultados" class="flex items-center gap-2 text-blue-700 font-bold text-sm hover:underline">
-              Ver detalles <fa-icon [icon]="iconos.flecha" />
-            </a>
-          </ng-template>
-          <nz-card-meta nzTitle="Tu progreso general"></nz-card-meta>
+    <section class="bento-grid">
+      <nz-card class="bento-card level-card">
+        <header class="card-heading">
+          <span class="card-icon card-icon--indigo"><fa-icon [icon]="iconos.energia" /></span>
+          <div><small>Progreso permanente</small><h2>Nivel {{ progreso(datos).nivel }}</h2></div>
+          <span class="micro-label">XP</span>
+        </header>
 
-          <div class="progress-content flex flex-col sm:flex-row items-center sm:items-start gap-6 sm:gap-8 w-full mt-4">
-            <div class="progress-ring relative flex items-center justify-center shrink-0">
-              <nz-progress [nzPercent]="progreso(datos)" nzType="circle" [nzWidth]="100" nzStrokeColor="#1d4ed8"></nz-progress>
-            </div>
-
-            <div class="progress-copy flex flex-col justify-center gap-3 w-full sm:mt-2">
-              <strong class="text-base text-slate-900 font-bold">Sigue así, vas por excelente camino.</strong>
-              <nz-progress [nzPercent]="progreso(datos)" nzStrokeColor="#1d4ed8" [nzShowInfo]="false"></nz-progress>
-              <p class="text-sm text-slate-600 font-medium m-0">{{ misionesCompletadas(datos) }} de {{ objetivoMisiones(datos) }} misiones completadas</p>
-            </div>
+        <div class="level-body">
+          <nz-progress
+            nzType="circle"
+            [nzPercent]="progreso(datos).progreso_porcentaje"
+            [nzWidth]="150"
+            [nzStrokeWidth]="10"
+            nzStrokeColor="#6366f1"
+            [nzFormat]="formatoNivel"
+          />
+          <div class="level-numbers">
+            <strong>{{ progreso(datos).experiencia_total }} <small>XP total</small></strong>
+            <p>{{ progreso(datos).experiencia_restante }} XP para alcanzar el nivel {{ progreso(datos).nivel + 1 }}</p>
+            <nz-progress [nzPercent]="progreso(datos).progreso_porcentaje" [nzShowInfo]="false" nzStrokeColor="#6366f1" />
           </div>
-        </nz-card>
+        </div>
+        <footer><fa-icon [icon]="iconos.check" /> Tu XP nunca disminuye.</footer>
+      </nz-card>
 
-        <!-- Spotlight Grid (Auto-fit/Responsive Grid) -->
-        <section class="spotlight-grid grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 w-full" aria-label="Siguientes acciones">
-          <nz-card nzHoverable class="spotlight-card rounded-lg shadow-sm border-slate-200">
-            <div class="flex flex-col gap-2 h-full">
-              <p class="text-xs font-bold text-slate-500 uppercase tracking-wide">Reto activo</p>
-              <h3 class="text-base font-bold text-slate-900 leading-tight m-0">{{ datos.misiones_pendientes || 1 }} misiones por completar</h3>
-              <span class="text-sm text-slate-600 font-medium mb-4 flex-grow">Resuelve retos, sube evidencia y gana DAEMONS para canjear.</span>
-              <footer class="flex items-center justify-between w-full mt-auto pt-4 border-t border-slate-200">
-                <a routerLink="/alumno/desafios" class="text-blue-700 font-bold text-sm hover:underline">Ver retos</a>
-                <small class="text-xs font-bold text-slate-500">Hoy</small>
-              </footer>
+      <nz-card class="bento-card token-card">
+        <span class="token-shine" aria-hidden="true"></span>
+        <header class="card-heading card-heading--light">
+          <span class="card-icon card-icon--gold"><app-moneda-daemon [size]="25" titulo="DAEMONS" /></span>
+          <div><small>Moneda para la tienda</small><h2>DAEMONS</h2></div>
+        </header>
+        <strong class="token-balance">{{ datos.usuario.tokens }}</strong>
+        <p>Úsalos en recompensas. Tu XP y posición se mantienen intactos.</p>
+        <a routerLink="/alumno/tienda">Explorar tienda <fa-icon [icon]="iconos.flecha" /></a>
+      </nz-card>
+
+      <nz-card class="bento-card streak-card">
+        <header class="card-heading">
+          <span class="card-icon card-icon--orange"><fa-icon [icon]="iconos.fuego" /></span>
+          <div><small>Constancia</small><h2>Racha activa</h2></div>
+        </header>
+        <div class="streak-number"><strong>{{ datos.racha }}</strong><span>días</span></div>
+        <p>{{ mensajeRacha(datos.racha) }}</p>
+        <div class="week-dots" aria-label="Actividad semanal">
+          @for (dia of [1, 2, 3, 4, 5, 6, 7]; track dia) {
+            <span [class.active]="dia <= datos.racha"><fa-icon [icon]="iconos.check" /></span>
+          }
+        </div>
+      </nz-card>
+
+      <nz-card class="bento-card mission-card">
+        <div class="mission-copy">
+          <span class="mission-kicker"><fa-icon [icon]="iconos.cohete" /> Próxima misión</span>
+          @if (datos.proxima_mision; as mision) {
+            <h2>{{ mision.titulo }}</h2>
+            <p>{{ mision.descripcion || 'Tu docente preparó un nuevo reto para seguir avanzando.' }}</p>
+            <div class="reward-row">
+              <span><strong>+{{ mision.recompensa }}</strong> XP</span>
+              <span><app-moneda-daemon [size]="18" /> <strong>+{{ mision.recompensa }}</strong> DAEMONS</span>
             </div>
-          </nz-card>
+            <a nz-button nzType="primary" class="daemon-btn" [routerLink]="['/alumno/misiones', mision.id]">Abrir misión <fa-icon [icon]="iconos.flecha" /></a>
+          } @else {
+            <h2>Ruta completada por ahora</h2>
+            <p>No tienes misiones pendientes. Disfruta el logro y vuelve pronto.</p>
+            <a nz-button nzType="primary" class="daemon-btn" routerLink="/alumno/misiones">Ver mis misiones</a>
+          }
+        </div>
+        <div class="mission-geometry" aria-hidden="true"><span></span><span></span><span></span></div>
+      </nz-card>
 
-          <nz-card nzHoverable class="spotlight-card rounded-lg shadow-sm border-slate-200">
-            <div class="flex flex-col gap-2 h-full">
-              <p class="text-xs font-bold text-slate-500 uppercase tracking-wide">Última recompensa</p>
-              <h3 class="text-base font-bold text-slate-900 leading-tight m-0">Pensador lógico</h3>
-              <span class="text-sm text-slate-600 font-medium mb-4 flex-grow">{{ datos.canjes_pendientes }} canjes pendientes en tu mochila.</span>
-              <footer class="flex items-center justify-between w-full mt-auto pt-4 border-t border-slate-200">
-                <a routerLink="/alumno/tienda" class="text-blue-700 font-bold text-sm hover:underline">Ver recompensas</a>
-                <small class="text-xs font-bold text-slate-500">DAEMON</small>
-              </footer>
-            </div>
-          </nz-card>
-        </section>
+      <nz-card class="bento-card rank-card">
+        <header class="card-heading">
+          <span class="card-icon card-icon--purple"><fa-icon [icon]="iconos.medalla" /></span>
+          <div><small>Clasificación por XP</small><h2>Tu posición</h2></div>
+        </header>
+        <strong class="rank-number">#{{ datos.posicion }}</strong>
+        <p>{{ datos.insignias }} insignias · {{ datos.misiones_completadas }} misiones completadas</p>
+        <a routerLink="/alumno/ranking">Ver leaderboard <fa-icon [icon]="iconos.flecha" /></a>
+      </nz-card>
 
-      </div>
-
-      <!-- SIDE COLUMN (4 cols) -->
-      <aside class="lg:col-span-4 flex flex-col gap-6 w-full">
-        
-        <nz-card class="activity-card w-full rounded-lg shadow-sm border-slate-200" [nzExtra]="extraMisiones">
-          <ng-template #extraMisiones>
-            <a routerLink="/alumno/misiones" class="text-blue-700 font-bold text-xs hover:underline">Ver misiones</a>
-          </ng-template>
-          <nz-card-meta nzTitle="Actividad reciente"></nz-card-meta>
-
-          <div class="activity-row flex items-start gap-3 w-full bg-slate-50 rounded p-3 border border-slate-200 mt-4">
-            <span class="activity-avatar w-10 h-10 rounded bg-white border border-slate-200 flex shrink-0 items-center justify-center text-blue-700"><fa-icon [icon]="iconos.cohete" /></span>
-            <div class="flex flex-col flex-grow">
-              <strong class="text-sm font-bold text-slate-900">Tu ruta DAEMON está activa</strong>
-              <p class="text-xs text-slate-600 font-medium m-0 mt-1">Puesto #{{ datos.posicion }} en tu nivel, {{ datos.insignias }} insignias ganadas.</p>
-            </div>
-            <nz-tag nzColor="blue" class="shrink-0 font-bold text-xs">
-              <fa-icon [icon]="iconos.estrella" class="text-amber-500 mr-1" />
-              +{{ xpActividad(datos) }} XP
-            </nz-tag>
-          </div>
-        </nz-card>
-
-      </aside>
-      
-    </div>
+      <nz-card class="bento-card stats-card">
+        <article><span class="card-icon card-icon--mint"><fa-icon [icon]="iconos.check" /></span><div><strong>{{ datos.misiones_completadas }}</strong><small>Misiones superadas</small></div></article>
+        <article><span class="card-icon card-icon--pink"><fa-icon [icon]="iconos.regalo" /></span><div><strong>{{ datos.canjes_pendientes }}</strong><small>Premios en camino</small></div></article>
+        <article><span class="card-icon card-icon--indigo"><fa-icon [icon]="iconos.medalla" /></span><div><strong>{{ datos.insignias }}</strong><small>Insignias ganadas</small></div></article>
+      </nz-card>
+    </section>
   </main>
 }

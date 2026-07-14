@@ -1,26 +1,35 @@
-import { Component, signal , ChangeDetectionStrategy} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { CommonModule } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
+  faArrowRight,
   faBolt,
-  faBookOpenReader,
-  faBullseye,
-  faChevronRight,
+  faCheck,
   faFire,
   faGift,
+  faMedal,
+  faRankingStar,
   faRocket,
-  faStar,
+  faWandMagicSparkles,
 } from '@fortawesome/free-solid-svg-icons';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzProgressModule } from 'ng-zorro-antd/progress';
-import { NzTagModule } from 'ng-zorro-antd/tag';
-import { BotonAccion } from '../../../../shared/componentes/boton-accion/boton-accion';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 import { MonedaDaemon } from '../../../../shared/componentes/moneda-daemon/moneda-daemon';
+import { Sesion } from '../../../../core/servicios/sesion';
 import { Alumno } from '../../services/alumno';
+
+interface ProgresoNivel {
+  nivel: number;
+  nivel_maximo: number;
+  experiencia_total: number;
+  experiencia_nivel: number;
+  experiencia_meta: number;
+  experiencia_restante: number;
+  progreso_porcentaje: number;
+}
 
 interface UsuarioPanel {
   id: number;
@@ -28,41 +37,61 @@ interface UsuarioPanel {
   usuario: string;
   nivel: string;
   tokens: number;
+  experiencia: number;
+  nivel_gamificacion: number;
+  progreso_nivel: ProgresoNivel;
   rango?: string | null;
+}
+
+interface ProximaMision {
+  id: number;
+  titulo: string;
+  descripcion?: string | null;
+  recompensa: number;
+  tipo_evidencia: string;
+  nivel_requerido: string;
 }
 
 interface PanelAlumnoData {
   usuario: UsuarioPanel;
   posicion: number;
   misiones_pendientes: number;
+  misiones_completadas: number;
   insignias: number;
   canjes_pendientes: number;
+  racha: number;
+  proxima_mision?: ProximaMision | null;
+  progreso_nivel: ProgresoNivel;
 }
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-panel-alumno',
-  imports: [RouterLink, FontAwesomeModule, NzAlertModule, NzButtonModule, NzCardModule, NzProgressModule, NzTagModule, Cargando, MonedaDaemon],
+  imports: [RouterLink, FontAwesomeModule, NzAlertModule, NzButtonModule, NzCardModule, NzProgressModule, Cargando, MonedaDaemon],
   templateUrl: './panel-alumno.html',
   styleUrl: './panel-alumno.scss',
 })
 export class PanelAlumno {
-  panel = signal<PanelAlumnoData | null>(null);
-  cargando = signal(true);
-  error = signal('');
+  private readonly alumno = inject(Alumno);
+  private readonly sesion = inject(Sesion);
+
+  readonly panel = signal<PanelAlumnoData | null>(null);
+  readonly cargando = signal(true);
+  readonly error = signal('');
 
   readonly iconos = {
-    fuego: faFire,
+    flecha: faArrowRight,
     energia: faBolt,
-    curso: faBookOpenReader,
-    reto: faBullseye,
+    check: faCheck,
+    fuego: faFire,
     regalo: faGift,
-    estrella: faStar,
-    flecha: faChevronRight,
+    medalla: faMedal,
+    ranking: faRankingStar,
     cohete: faRocket,
+    brillo: faWandMagicSparkles,
   };
 
-  constructor(private alumno: Alumno) {
+  constructor() {
     this.cargar();
   }
 
@@ -72,7 +101,10 @@ export class PanelAlumno {
 
     this.alumno.panel().subscribe({
       next: (panel) => {
-        this.panel.set(panel as PanelAlumnoData);
+        const datos = panel as PanelAlumnoData;
+        this.panel.set(datos);
+        const usuarioActual = this.sesion.usuario();
+        if (usuarioActual) this.sesion.actualizarUsuario({ ...usuarioActual, ...datos.usuario });
         this.cargando.set(false);
       },
       error: (e) => {
@@ -86,42 +118,15 @@ export class PanelAlumno {
     return (usuario.nombre_completo || usuario.usuario || 'explorador').split(/\s+/).filter(Boolean)[0] ?? 'explorador';
   }
 
-  nivel(usuario: UsuarioPanel): string {
-    const nivel = usuario.nivel || 'Ruta inicial';
-    return nivel.toLowerCase().startsWith('nivel') ? nivel : `Nivel ${nivel}`;
+  progreso(datos: PanelAlumnoData): ProgresoNivel {
+    return datos.progreso_nivel ?? datos.usuario.progreso_nivel;
   }
 
-  rango(usuario: UsuarioPanel): string {
-    return usuario.rango || 'Explorador';
-  }
+  formatoNivel = (): string => `${this.panel()?.progreso_nivel?.nivel ?? 1}`;
 
-  progreso(datos: PanelAlumnoData): number {
-    const base = 58 + Math.min(datos.insignias * 6, 24) - Math.min(datos.misiones_pendientes * 4, 22);
-    const bonusTokens = Math.min(Math.floor((datos.usuario.tokens || 0) / 250), 10);
-    return Math.max(22, Math.min(94, base + bonusTokens));
-  }
-
-  progresoCurso(datos: PanelAlumnoData): number {
-    return Math.max(24, Math.min(88, this.progreso(datos) - 8));
-  }
-
-  racha(datos: PanelAlumnoData): number {
-    return Math.max(3, 12 - datos.misiones_pendientes + Math.min(datos.insignias, 5));
-  }
-
-  xpParaNivel(datos: PanelAlumnoData): number {
-    return Math.max(80, 320 - Math.min(datos.usuario.tokens || 0, 260));
-  }
-
-  objetivoMisiones(datos: PanelAlumnoData): number {
-    return Math.max(8, datos.misiones_pendientes + datos.insignias + 5);
-  }
-
-  misionesCompletadas(datos: PanelAlumnoData): number {
-    return Math.max(0, this.objetivoMisiones(datos) - datos.misiones_pendientes);
-  }
-
-  xpActividad(datos: PanelAlumnoData): number {
-    return Math.max(50, datos.insignias * 25);
+  mensajeRacha(racha: number): string {
+    if (racha === 0) return 'Tu primera misión enciende la racha.';
+    if (racha === 1) return 'Ya empezaste. Vuelve mañana para mantenerla.';
+    return `${racha} días seguidos construyendo algo increíble.`;
   }
 }
