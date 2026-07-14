@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, inject, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { Router, RouterLink, RouterOutlet } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faBell, faChevronDown, faMagnifyingGlass, faShieldHalved } from '@fortawesome/free-solid-svg-icons';
@@ -24,7 +24,7 @@ import { faUser, faGear, faArrowRightFromBracket } from '@fortawesome/free-solid
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-layout-alumno',
-  imports: [RouterOutlet, RouterLink, FontAwesomeModule, NzAvatarModule, NzBadgeModule, NzButtonModule, NzDropDownModule, EmailVerificationBanner, MonedaDaemon, SidebarPortal, DatePipe],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, FontAwesomeModule, NzAvatarModule, NzBadgeModule, NzButtonModule, NzDropDownModule, EmailVerificationBanner, MonedaDaemon, SidebarPortal, DatePipe],
   templateUrl: './layout-alumno.html',
   styleUrl: './layout-alumno.scss',
 })
