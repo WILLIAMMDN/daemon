@@ -4,10 +4,18 @@ import { CertificadoService } from '../../services/certificado';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 
 
+import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzCardModule } from 'ng-zorro-antd/card';
+import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
+import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { NzTagModule } from 'ng-zorro-antd/tag';
+import { DatePipe, UpperCasePipe } from '@angular/common';
+
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-imprimir-carnet',
-  imports: [Cargando],
+  imports: [Cargando, NzAlertModule, NzButtonModule, NzCardModule, NzDescriptionsModule, NzDividerModule, NzTagModule, DatePipe, UpperCasePipe],
   templateUrl: './imprimir-carnet.html',
   styleUrl: './imprimir-carnet.scss',
 })
