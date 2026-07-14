@@ -31,28 +31,30 @@
 
         <!-- Filas del ranking -->
         @for (alumno of alumnos(); track alumno.id; let i = $index) {
-          <article class="flex flex-col md:grid md:grid-cols-12 md:items-center gap-4 bg-slate-50 hover:bg-slate-100 border border-slate-100 rounded-xl p-4 transition-colors duration-200">
-            <!-- Posición y Nombre (Móvil y Desktop) -->
-            <div class="md:col-span-6 flex items-center gap-4">
-              <div class="flex items-center justify-center w-8 h-8 rounded-full bg-white border border-slate-200 font-extrabold text-slate-900 shrink-0 shadow-sm">
-                {{ alumno.posicion ?? i + 1 }}
+          <nz-card nzHoverable class="rounded-xl shadow-sm border-slate-200 mb-3" [nzBodyStyle]="{'padding': '16px'}">
+            <div class="flex flex-col md:grid md:grid-cols-12 md:items-center gap-4">
+              <!-- Posición y Nombre (Móvil y Desktop) -->
+              <div class="md:col-span-6 flex items-center gap-4">
+                <div class="flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 border border-slate-200 font-extrabold text-slate-900 shrink-0 shadow-sm">
+                  {{ alumno.posicion ?? i + 1 }}
+                </div>
+                <strong class="text-base font-bold text-slate-900 truncate">{{ alumno.nombre_completo }}</strong>
               </div>
-              <strong class="text-base font-bold text-slate-900 truncate">{{ alumno.nombre_completo }}</strong>
-            </div>
 
-            <!-- Datos Secundarios (Móvil agrupado, Desktop separado) -->
-            <div class="md:col-span-4 flex items-center justify-start md:justify-start gap-4">
-              <nz-tag class="daemon-tag m-0" nzColor="blue">{{ alumno.nivel }}</nz-tag>
-              <span class="text-sm text-slate-600">{{ alumno.rango || 'Sin rango' }}</span>
-            </div>
+              <!-- Datos Secundarios (Móvil agrupado, Desktop separado) -->
+              <div class="md:col-span-4 flex items-center justify-start md:justify-start gap-4">
+                <nz-tag class="m-0" nzColor="blue">{{ alumno.nivel }}</nz-tag>
+                <span class="text-sm text-slate-600 font-medium">{{ alumno.rango || 'Sin rango' }}</span>
+              </div>
 
-            <!-- Tokens (Móvil y Desktop) -->
-            <div class="md:col-span-2 flex items-center justify-end w-full">
-              <strong class="text-base md:text-lg font-extrabold text-blue-600 flex items-center justify-end md:justify-center">
-                <app-moneda-daemon [cantidad]="alumno.tokens" [size]="18"></app-moneda-daemon>
-              </strong>
+              <!-- Tokens (Móvil y Desktop) -->
+              <div class="md:col-span-2 flex items-center justify-end w-full">
+                <strong class="text-base md:text-lg font-extrabold text-blue-600 flex items-center justify-end md:justify-center">
+                  <app-moneda-daemon [cantidad]="alumno.tokens" [size]="18"></app-moneda-daemon>
+                </strong>
+              </div>
             </div>
-          </article>
+          </nz-card>
         }
       </div>
     </section>
