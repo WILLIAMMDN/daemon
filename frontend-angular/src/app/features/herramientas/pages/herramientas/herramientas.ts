@@ -1,5 +1,10 @@
 import { Component , ChangeDetectionStrategy} from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faCheck } from '@fortawesome/free-solid-svg-icons';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzCardModule } from 'ng-zorro-antd/card';
+import { NzTagModule } from 'ng-zorro-antd/tag';
 
 interface Herramienta {
   titulo: string;
@@ -13,7 +18,7 @@ interface Herramienta {
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-herramientas',
-  imports: [RouterLink],
+  imports: [RouterLink, NzCardModule, NzTagModule, NzButtonModule, FontAwesomeModule],
   templateUrl: './herramientas.html',
   styleUrl: './herramientas.scss',
 })
