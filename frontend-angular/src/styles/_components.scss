@@ -238,35 +238,35 @@
 /* Student premium language: NG-ZORRO behavior with DAEMON surfaces. */
 .student-premium .ant-card {
   background: #ffffff;
-  border: 0;
-  border-radius: 2rem;
-  box-shadow: 0 24px 70px -34px rgba(30, 64, 175, .28);
+  border: 1px solid #e4eaf2;
+  border-radius: 14px;
+  box-shadow: none;
   overflow: hidden;
-  transition: box-shadow .3s ease, transform .3s ease;
+  transition: border-color .18s ease, box-shadow .18s ease;
 }
 
 .student-premium .ant-card-hoverable:hover {
-  border-color: transparent;
-  box-shadow: 0 32px 78px -30px rgba(30, 64, 175, .34);
-  transform: translateY(-4px);
+  border-color: #b8d8ff;
+  box-shadow: 0 8px 22px rgba(25, 55, 95, .08);
+  transform: none;
 }
 
 .student-premium .daemon-btn.ant-btn {
-  border-radius: 999px;
+  border-radius: 8px;
   box-shadow: none;
-  font-weight: 800;
-  min-height: 44px;
+  font-weight: 600;
+  min-height: 40px;
 }
 
 .student-premium .daemon-btn.ant-btn-primary {
-  background: linear-gradient(135deg, #2563eb, #6366f1 55%, #7c3aed);
-  border: 0;
-  box-shadow: 0 14px 30px -15px rgba(79, 70, 229, .8);
+  background: #1677ff;
+  border-color: #1677ff;
+  box-shadow: none;
 }
 
 .student-premium .daemon-btn.ant-btn-primary:not(:disabled):hover,
 .student-premium .daemon-btn.ant-btn-primary:not(:disabled):focus {
-  background: linear-gradient(135deg, #1d4ed8, #4f46e5 55%, #7e22ce);
-  border: 0;
-  box-shadow: 0 18px 34px -15px rgba(79, 70, 229, .88);
+  background: #0958d9;
+  border-color: #0958d9;
+  box-shadow: none;
 }
