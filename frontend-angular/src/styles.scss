@@ -12,3 +12,15 @@
     @apply font-heading tracking-tight;
   }
 }
+
+@layer utilities {
+  /* Efecto Premium magnético para tarjetas interactuables */
+  .hover-premium {
+    @apply transition-all duration-300 shadow-premium hover:shadow-premium-hover hover:-translate-y-1;
+  }
+  
+  /* Contenedores fijos premium */
+  .card-premium {
+    @apply shadow-premium rounded-2xl border border-slate-200 bg-white;
+  }
+}
