@@ -24,8 +24,8 @@
       @for (premio of premios(); track premio.id) {
         <nz-card nzHoverable class="reward-card" [class.reward-card--locked]="!puedeCanjear(premio)">
           <div class="reward-visual">
-            @if (premio.imagen) {
-              <img [src]="asset(premio.imagen)" [alt]="premio.nombre" loading="lazy">
+            @if (premio.imagen && !imagenesInvalidas().has(premio.id)) {
+              <img [src]="asset(premio.imagen)" [alt]="premio.nombre" loading="lazy" (error)="marcarImagenInvalida(premio.id)">
             } @else {
               <span><fa-icon [icon]="iconos.bolsa" /></span>
             }

@@ -22,6 +22,8 @@ interface UsuarioPerfil {
   email?: string | null;
   nivel: string;
   tokens: number;
+  experiencia?: number;
+  nivel_gamificacion?: number;
   rango?: string | null;
   biografia?: string | null;
   avatar?: string | null;

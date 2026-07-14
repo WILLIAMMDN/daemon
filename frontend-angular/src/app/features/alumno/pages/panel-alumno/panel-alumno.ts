@@ -13,12 +13,14 @@ import {
   faWandMagicSparkles,
 } from '@fortawesome/free-solid-svg-icons';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzProgressModule } from 'ng-zorro-antd/progress';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 import { MonedaDaemon } from '../../../../shared/componentes/moneda-daemon/moneda-daemon';
 import { Sesion } from '../../../../core/servicios/sesion';
+import { Activos } from '../../../../core/servicios/activos';
 import { Alumno } from '../../services/alumno';
 
 interface ProgresoNivel {
@@ -41,6 +43,7 @@ interface UsuarioPanel {
   nivel_gamificacion: number;
   progreso_nivel: ProgresoNivel;
   rango?: string | null;
+  avatar?: string | null;
 }
 
 interface ProximaMision {
@@ -67,13 +70,14 @@ interface PanelAlumnoData {
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-panel-alumno',
-  imports: [RouterLink, FontAwesomeModule, NzAlertModule, NzButtonModule, NzCardModule, NzProgressModule, Cargando, MonedaDaemon],
+  imports: [RouterLink, FontAwesomeModule, NzAlertModule, NzAvatarModule, NzButtonModule, NzCardModule, NzProgressModule, Cargando, MonedaDaemon],
   templateUrl: './panel-alumno.html',
   styleUrl: './panel-alumno.scss',
 })
 export class PanelAlumno {
   private readonly alumno = inject(Alumno);
   private readonly sesion = inject(Sesion);
+  private readonly activos = inject(Activos);
 
   readonly panel = signal<PanelAlumnoData | null>(null);
   readonly cargando = signal(true);
@@ -116,6 +120,15 @@ export class PanelAlumno {
 
   nombreCorto(usuario: UsuarioPanel): string {
     return (usuario.nombre_completo || usuario.usuario || 'explorador').split(/\s+/).filter(Boolean)[0] ?? 'explorador';
+  }
+
+  avatarUrl(usuario: UsuarioPanel): string {
+    return this.activos.url(usuario.avatar);
+  }
+
+  iniciales(usuario: UsuarioPanel): string {
+    const base = usuario.nombre_completo || usuario.usuario || 'DAEMON';
+    return base.split(/\s+/).filter(Boolean).slice(0, 2).map((parte) => parte[0]?.toUpperCase()).join('') || 'D';
   }
 
   progreso(datos: PanelAlumnoData): ProgresoNivel {

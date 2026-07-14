@@ -9,12 +9,16 @@
 
 @layer base {
   :root {
-    --daemon-canvas: #f6f8fc;
-    --daemon-ink: #111827;
-    --daemon-electric: #2563eb;
-    --daemon-indigo: #6366f1;
-    --daemon-purple: #9333ea;
-    --daemon-gold: #fbbf24;
+    --daemon-canvas: #f4f7fb;
+    --daemon-surface: #ffffff;
+    --daemon-surface-muted: #f8fafc;
+    --daemon-border: #e4eaf2;
+    --daemon-ink: #172033;
+    --daemon-muted: #667085;
+    --daemon-primary: #1677ff;
+    --daemon-primary-dark: #0958d9;
+    --daemon-success: #12a150;
+    --daemon-warning: #f5a000;
   }
 
   html {
@@ -25,10 +29,13 @@
   body {
     background: var(--daemon-canvas);
     color: var(--daemon-ink);
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-heading font-extrabold tracking-tight;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+    font-weight: 700;
+    letter-spacing: -.025em;
   }
 }
 
@@ -52,6 +59,6 @@
   }
 
   .text-gradient-daemon {
-    @apply bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600 bg-clip-text text-transparent;
+    color: var(--daemon-primary);
   }
 }
