@@ -1,47 +1,58 @@
-@if (cargando()) {
-  <app-cargando class="state" texto="Cargando certificado..."></app-cargando>
-} @else if (error()) {
-  <section class="error">{{ error() }}</section>
-} @else if (datos(); as certificado) {
-  <section class="page">
-    <header class="page-header">
-      <div>
-        <p class="kicker">Certificado</p>
-        <h1>{{ certificado.usuario.nombre_completo }}</h1>
-        <p>Emitido: {{ certificado.emitido_en }}</p>
+<main class="w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-6 md:gap-8 font-inter">
+  @if (cargando()) {
+    <app-cargando class="w-full bg-white border border-slate-200 shadow-sm rounded-2xl p-8" texto="Cargando certificado..."></app-cargando>
+  } @else if (error()) {
+    <nz-alert class="daemon-alert" nzType="error" nzShowIcon nzMessage="Error" [nzDescription]="error()"></nz-alert>
+  } @else if (datos(); as certificado) {
+    
+    <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white border border-slate-200 shadow-sm rounded-2xl p-6">
+      <div class="flex flex-col gap-1">
+        <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Certificado Académico</p>
+        <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 leading-tight">{{ certificado.usuario.nombre_completo || certificado.usuario.usuario }}</h1>
+        <p class="text-sm text-slate-600 font-medium">Emitido: {{ certificado.emitido_en }}</p>
       </div>
-      <a class="btn" routerLink="/alumno/certificado/imprimir">Imprimir carnet</a>
+      <div class="flex gap-2">
+        <a nz-button nzType="primary" class="daemon-btn" routerLink="/alumno/certificado/imprimir">Imprimir carnet</a>
+      </div>
     </header>
 
-    <section class="stats">
-      <article class="stat">
-        <span>Nivel</span>
-        <strong>{{ certificado.usuario.nivel }}</strong>
-      </article>
-      <article class="stat">
-        <span>ookens</span>
-        <strong>{{ certificado.usuario.tokens }}</strong>
-      </article>
-      <article class="stat">
-        <span>Insignias</span>
-        <strong>{{ certificado.insignias.length }}</strong>
-      </article>
-    </section>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 w-full">
+      <nz-card nzHoverable class="rounded-lg shadow-sm border-slate-200 text-center">
+        <nz-statistic [nzValue]="certificado.usuario.nivel" nzTitle="Nivel Académico" class="daemon-stat"></nz-statistic>
+      </nz-card>
+      
+      <nz-card nzHoverable class="rounded-lg shadow-sm border-slate-200 text-center">
+        <div class="flex flex-col items-center gap-1">
+          <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Tokens</span>
+          <strong class="text-2xl font-extrabold text-blue-600 flex items-center justify-center">
+            <app-moneda-daemon [cantidad]="certificado.usuario.tokens" [size]="20"></app-moneda-daemon>
+          </strong>
+        </div>
+      </nz-card>
 
-    <section class="panel">
-      <h2>Insignias certificadas</h2>
+      <nz-card nzHoverable class="rounded-lg shadow-sm border-slate-200 text-center">
+        <nz-statistic [nzValue]="certificado.insignias.length" nzTitle="Insignias ganadas" class="daemon-stat"></nz-statistic>
+      </nz-card>
+    </div>
+
+    <section class="flex flex-col gap-4">
+      <h2 class="text-lg font-bold text-slate-900">Insignias certificadas</h2>
       @if (certificado.insignias.length) {
-        <div class="card-list">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full">
           @for (insignia of certificado.insignias; track insignia.id) {
-            <article class="data-card">
-              <strong>{{ insignia.nombre }}</strong>
-              <span class="muted">{{ insignia.descripcion }}</span>
-            </article>
+            <nz-card nzHoverable class="rounded-lg shadow-sm border-slate-200 flex flex-col h-full">
+              <div class="flex flex-col gap-2">
+                <nz-tag class="w-fit m-0" nzColor="purple">Logro</nz-tag>
+                <strong class="text-base font-bold text-slate-900 leading-tight mt-1">{{ insignia.nombre }}</strong>
+                <p class="text-sm text-slate-600 m-0">{{ insignia.descripcion }}</p>
+              </div>
+            </nz-card>
           }
         </div>
       } @else {
-        <p class="empty">Todavía no hay insignias para certificar.</p>
+        <app-estado-vacio titulo="Sin insignias" descripcion="Todavía no hay insignias oficiales certificadas en tu registro."></app-estado-vacio>
       }
     </section>
-  </section>
-}
+
+  }
+</main>
