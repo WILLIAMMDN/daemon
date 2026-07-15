@@ -15,6 +15,7 @@ class UseSanctumCookieToken
 
             if ($token !== null) {
                 $request->headers->set('Authorization', 'Bearer '.$token);
+                $request->attributes->set('daemon_auth_via_cookie', true);
             }
         }
 

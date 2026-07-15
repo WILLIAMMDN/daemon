@@ -6,6 +6,9 @@ return [
         'ASSET_PUBLIC_URL',
         env('FRONTEND_PRODUCTION_URL', env('FRONTEND_URL', '')),
     ),
+    'private_uploads_disk' => env('PRIVATE_UPLOADS_DISK', 'supabase_private'),
+    'private_upload_url_minutes' => (int) env('PRIVATE_UPLOAD_URL_MINUTES', 10),
+    'private_upload_prefixes' => ['uploads/entregas/'],
     'auth_cookie' => [
         'name' => env('AUTH_COOKIE_NAME', 'daemon_access'),
         'minutes' => (int) env('SANCTUM_TOKEN_EXPIRATION', 480),

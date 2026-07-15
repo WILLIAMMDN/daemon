@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\EnsureRole;
+use App\Http\Middleware\EnsureCookieRequestIsFromAllowedOrigin;
 use App\Http\Middleware\SecurityHeaders;
 use App\Http\Middleware\UseSanctumCookieToken;
 use Illuminate\Foundation\Application;
@@ -21,7 +22,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->api(
             prepend: [UseSanctumCookieToken::class],
-            append: [SecurityHeaders::class],
+            append: [SecurityHeaders::class, EnsureCookieRequestIsFromAllowedOrigin::class],
         );
 
         $middleware->alias([

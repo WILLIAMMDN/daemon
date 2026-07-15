@@ -20,6 +20,7 @@ class AuthCookieTokenMiddlewareTest extends TestCase
         (new UseSanctumCookieToken)->handle($request, fn () => new Response);
 
         $this->assertSame($token, $request->bearerToken());
+        $this->assertTrue($request->attributes->get('daemon_auth_via_cookie'));
     }
 
     public function test_existing_bearer_header_wins_over_cookie_token(): void
@@ -35,5 +36,6 @@ class AuthCookieTokenMiddlewareTest extends TestCase
         (new UseSanctumCookieToken)->handle($request, fn () => new Response);
 
         $this->assertSame('1|header-token', $request->bearerToken());
+        $this->assertNull($request->attributes->get('daemon_auth_via_cookie'));
     }
 }
