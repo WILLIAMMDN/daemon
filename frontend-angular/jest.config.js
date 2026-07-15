@@ -8,5 +8,13 @@ module.exports = {
     '^@shared/(.*)$': '<rootDir>/src/app/shared/$1',
     '^@features/(.*)$': '<rootDir>/src/app/features/$1',
     '^@env/(.*)$': '<rootDir>/src/environments/$1'
+  },
+  coverageThreshold: {
+    global: {
+      branches: 30,
+      functions: 35,
+      lines: 55,
+      statements: 55
+    }
   }
 };

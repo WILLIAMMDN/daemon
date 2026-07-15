@@ -5,6 +5,12 @@ import * as fs from 'fs';
 const authFile = path.join(__dirname, '../playwright/.auth/user.json');
 
 setup('autenticar', async ({ page }) => {
+  const username = process.env['E2E_STUDENT_USERNAME'];
+  const password = process.env['E2E_STUDENT_PASSWORD'];
+  if (!username || !password) {
+    throw new Error('E2E_STUDENT_USERNAME y E2E_STUDENT_PASSWORD son obligatorios para pruebas autenticadas.');
+  }
+
   // Ir a la página de login
   await page.goto('/login');
 
@@ -16,14 +22,10 @@ setup('autenticar', async ({ page }) => {
   const passInput = page.locator('input[name="password"]');
   const submitBtn = page.locator('button[type="submit"]');
 
-  await userInput.first().fill('jose123');
-  await passInput.first().fill('1234'); 
+  await userInput.first().fill(username);
+  await passInput.first().fill(password);
 
   await submitBtn.first().click();
-
-  // Esperar 3 segundos para que aparezca cualquier error en UI y tomar foto
-  await page.waitForTimeout(3000);
-  await page.screenshot({ path: 'login-debug.png' });
 
   // Esperar a ser redirigido al panel principal
   await page.waitForURL('**/alumno', { timeout: 15000 });

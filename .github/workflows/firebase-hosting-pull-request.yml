@@ -9,44 +9,25 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      checks: write
-      pull-requests: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 24
           cache: npm
           cache-dependency-path: frontend-angular/package-lock.json
 
       - name: Install frontend dependencies
-        shell: bash
-        run: |
-          set +e
-          npm ci --ignore-scripts --no-audit --no-fund 2>&1 | tee npm-install.log
-          status=${PIPESTATUS[0]}
+        run: npm ci --ignore-scripts --no-audit --no-fund
+        working-directory: frontend-angular
 
-          if [ "$status" -ne 0 ]; then
-            echo "npm ci failed; retrying with npm install for this CI runner." | tee -a npm-install.log
-            npm install --ignore-scripts --no-audit --no-fund 2>&1 | tee -a npm-install.log
-            status=${PIPESTATUS[0]}
-          fi
-
-          if [ "$status" -ne 0 ]; then
-            tail -n 120 npm-install.log \
-              | perl -pe 's/\e\[[0-9;]*[mK]//g' \
-              | sed -E 's/[A-Za-z0-9_\/+=-]{120,}/[redacted]/g' \
-              > npm-install-tail.log
-
-            message=$(tr '\n' ' ' < npm-install-tail.log | cut -c1-6000)
-            echo "::error title=NPM install failed::$message"
-            exit "$status"
-          fi
+      - name: Audit frontend dependencies
+        run: npm audit --omit=dev --audit-level=high
         working-directory: frontend-angular
 
       - name: Test frontend
-        run: npm test -- --runInBand
+        run: npm run test:ci
         working-directory: frontend-angular
 
       - name: Build frontend
@@ -64,7 +45,7 @@ jobs:
         shell: bash
         run: |
           set +e
-          npx firebase-tools@latest hosting:channel:deploy pr-${{ github.event.pull_request.number }} --project daemon-a41f8 --only estudiante --expires 7d --non-interactive 2>&1 | tee firebase-deploy.log
+          npx firebase-tools@15.22.3 hosting:channel:deploy pr-${{ github.event.pull_request.number }} --project daemon-a41f8 --only estudiante --expires 7d --non-interactive 2>&1 | tee firebase-deploy.log
           status=${PIPESTATUS[0]}
 
           if [ "$status" -ne 0 ]; then
