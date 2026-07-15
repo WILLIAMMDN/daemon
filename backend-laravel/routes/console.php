@@ -15,3 +15,7 @@ Schedule::command('sanctum:prune-expired --hours=24')
 Schedule::command('queue:prune-failed --hours=168')
     ->dailyAt('03:30')
     ->withoutOverlapping();
+
+Schedule::command('daemon:aplicar-retencion --confirm')
+    ->weeklyOn(1, '04:00')
+    ->withoutOverlapping();

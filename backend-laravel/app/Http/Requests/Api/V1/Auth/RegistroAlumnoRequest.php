@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Api\V1\Auth;
 
 use App\Enums\NivelAlumno;
+use App\Http\Requests\Api\V1\Auth\Concerns\ValidaConsentimientoPrivacidad;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -21,6 +22,8 @@ use Illuminate\Validation\Rule;
  */
 class RegistroAlumnoRequest extends FormRequest
 {
+    use ValidaConsentimientoPrivacidad;
+
     public function authorize(): bool
     {
         return true;
@@ -39,6 +42,9 @@ class RegistroAlumnoRequest extends FormRequest
             'telefono' => ['nullable', 'string', 'max:30', 'unique:usuarios,telefono'],
             'usuario' => ['nullable', 'alpha_dash', 'max:50', 'unique:usuarios,usuario'],
             'nivel' => ['nullable', Rule::in(NivelAlumno::values())],
+            'acepta_privacidad' => ['nullable', 'accepted'],
+            'email_tutor' => ['nullable', 'email', 'max:100'],
+            'autorizacion_tutor_declarada' => ['nullable', 'accepted'],
         ];
     }
 
@@ -50,6 +56,7 @@ class RegistroAlumnoRequest extends FormRequest
             'email.unique' => 'Ya existe una cuenta registrada con ese correo.',
             'password.required' => 'Define una clave para proteger tu cuenta.',
             'password.min' => 'La clave debe tener al menos 8 caracteres.',
+            ...$this->mensajesConsentimientoPrivacidad(),
         ];
     }
 }

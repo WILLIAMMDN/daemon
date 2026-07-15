@@ -54,7 +54,10 @@ class AutenticacionController extends Controller
 
     public function registro(RegistroAlumnoRequest $request)
     {
-        $usuario = $this->autenticacion->registrarAlumno($request->validated());
+        $usuario = $this->autenticacion->registrarAlumno(
+            $request->validated(),
+            $this->contextoPrivacidad($request),
+        );
 
         return $this->respuestaAutenticada($usuario, 201);
     }
@@ -255,7 +258,11 @@ class AutenticacionController extends Controller
 
     public function completarPerfilGoogle(CompletarPerfilGoogleRequest $request)
     {
-        $usuario = $this->autenticacion->completarPerfil($request->user(), $request->validated());
+        $usuario = $this->autenticacion->completarPerfil(
+            $request->user(),
+            $request->validated(),
+            $this->contextoPrivacidad($request),
+        );
 
         return response()->json(['usuario' => UsuarioResource::make($usuario)]);
     }
@@ -275,7 +282,14 @@ class AutenticacionController extends Controller
                 ], 404);
             }
 
-            $perfil = Arr::only($datos, ['nombre_completo', 'usuario', 'nivel']);
+            $perfil = Arr::only($datos, [
+                'nombre_completo',
+                'usuario',
+                'nivel',
+                'acepta_privacidad',
+                'email_tutor',
+                'autorizacion_tutor_declarada',
+            ]);
             $validador = Validator::make($perfil, [
                 'usuario' => [
                     Rule::unique('usuarios', 'usuario')->ignore($usuario->id),
@@ -291,7 +305,11 @@ class AutenticacionController extends Controller
                 ], 422);
             }
 
-            $usuario = $this->autenticacion->completarPerfil($usuario, $perfil);
+            $usuario = $this->autenticacion->completarPerfil(
+                $usuario,
+                $perfil,
+                $this->contextoPrivacidad($request),
+            );
 
             return $this->respuestaAutenticada($usuario);
         } catch (InvalidArgumentException|RuntimeException|UnexpectedValueException $exception) {
@@ -312,7 +330,11 @@ class AutenticacionController extends Controller
      */
     public function completarPerfil(ActualizarPerfilRequest $request)
     {
-        $usuario = $this->autenticacion->completarPerfil($request->user(), $request->validated());
+        $usuario = $this->autenticacion->completarPerfil(
+            $request->user(),
+            $request->validated(),
+            $this->contextoPrivacidad($request),
+        );
 
         return response()->json(['usuario' => UsuarioResource::make($usuario)]);
     }
@@ -379,5 +401,14 @@ class AutenticacionController extends Controller
     private function encodeCookieToken(string $token): string
     {
         return rtrim(strtr(base64_encode($token), '+/', '-_'), '=');
+    }
+
+    /** @return array{ip: string|null, user_agent: string|null} */
+    private function contextoPrivacidad(Request $request): array
+    {
+        return [
+            'ip' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ];
     }
 }

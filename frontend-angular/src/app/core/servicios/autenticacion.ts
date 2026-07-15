@@ -13,6 +13,9 @@ export interface CompletarPerfilGoogleDatos {
   nombre_completo: string;
   usuario: string;
   nivel: NivelAlumno;
+  acepta_privacidad: boolean;
+  email_tutor?: string;
+  autorizacion_tutor_declarada?: boolean;
 }
 
 export interface RegistroFirebaseDatos {

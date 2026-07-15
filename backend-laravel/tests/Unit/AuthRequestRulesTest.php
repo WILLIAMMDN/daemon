@@ -45,6 +45,8 @@ class AuthRequestRulesTest extends TestCase
         $this->assertContains('required', $rules['id_token']);
         $this->assertContains('max:8192', $rules['id_token']);
         $this->assertContains('alpha_dash', $rules['usuario']);
+        $this->assertContains('accepted', $rules['acepta_privacidad']);
+        $this->assertContains('exclude_unless:nivel,KIDS', $rules['email_tutor']);
         $this->assertSame(['KIDS', 'TEENS'], NivelAlumno::values());
         $this->assertTrue(Validator::make(['nivel' => 'KIDS'], ['nivel' => $rules['nivel']])->passes());
         $this->assertTrue(Validator::make(['nivel' => 'TEENS'], ['nivel' => $rules['nivel']])->passes());

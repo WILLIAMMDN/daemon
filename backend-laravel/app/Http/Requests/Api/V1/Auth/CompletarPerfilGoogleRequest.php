@@ -3,11 +3,14 @@
 namespace App\Http\Requests\Api\V1\Auth;
 
 use App\Enums\NivelAlumno;
+use App\Http\Requests\Api\V1\Auth\Concerns\ValidaConsentimientoPrivacidad;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 class CompletarPerfilGoogleRequest extends FormRequest
 {
+    use ValidaConsentimientoPrivacidad;
+
     public function authorize(): bool
     {
         return (bool) $this->user();
@@ -25,6 +28,12 @@ class CompletarPerfilGoogleRequest extends FormRequest
                 Rule::unique('usuarios', 'usuario')->ignore($this->user()?->id),
             ],
             'nivel' => ['required', Rule::in(NivelAlumno::values())],
+            ...$this->reglasConsentimientoPrivacidad(),
         ];
+    }
+
+    public function messages(): array
+    {
+        return $this->mensajesConsentimientoPrivacidad();
     }
 }
