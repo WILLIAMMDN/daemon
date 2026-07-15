@@ -43,7 +43,7 @@
                 <tr class="hover:bg-slate-50 transition-colors">
                   <td class="font-bold text-slate-900">{{ aula.nombre }}</td>
                   <td>
-                    <nz-tag [nzColor]="aula.nivel === 'PRO' ? 'purple' : aula.nivel === 'TEENS' ? 'cyan' : 'blue'" class="font-bold rounded-md">
+                    <nz-tag [nzColor]="aula.nivel === 'TEENS' ? 'cyan' : 'blue'" class="font-bold rounded-md">
                       {{ aula.nivel }}
                     </nz-tag>
                   </td>
@@ -84,9 +84,9 @@
         <span class="text-sm font-semibold text-slate-700">Nivel Educativo</span>
         <select name="nivel" [(ngModel)]="nueva.nivel"
                 class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all cursor-pointer">
-          <option value="KIDS">Nivel KIDS</option>
-          <option value="TEENS">Nivel TEENS</option>
-          <option value="PRO">Nivel PRO</option>
+          @for (nivel of nivelesAlumno; track nivel.valor) {
+            <option [value]="nivel.valor">Nivel {{ nivel.etiqueta }}</option>
+          }
         </select>
       </label>
     </div>
@@ -108,9 +108,9 @@
           <span class="text-sm font-semibold text-slate-700">Nivel Educativo</span>
           <select name="edit_nivel" [(ngModel)]="aulaEditando.nivel"
                   class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all cursor-pointer">
-            <option value="KIDS">Nivel KIDS</option>
-            <option value="TEENS">Nivel TEENS</option>
-            <option value="PRO">Nivel PRO</option>
+            @for (nivel of nivelesAlumno; track nivel.valor) {
+              <option [value]="nivel.valor">Nivel {{ nivel.etiqueta }}</option>
+            }
           </select>
         </label>
       </div>

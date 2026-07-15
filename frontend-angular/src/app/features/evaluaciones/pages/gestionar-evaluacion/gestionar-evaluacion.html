@@ -45,7 +45,7 @@
                 <tr class="hover:bg-slate-50 transition-colors">
                   <td class="font-bold text-slate-900">{{ examen.titulo }}</td>
                   <td>
-                    <nz-tag [nzColor]="examen.nivel === 'PRO' ? 'purple' : examen.nivel === 'TEENS' ? 'cyan' : 'blue'" class="font-bold rounded-md border-0">{{ examen.nivel }}</nz-tag>
+                    <nz-tag [nzColor]="examen.nivel === 'TEENS' ? 'cyan' : 'blue'" class="font-bold rounded-md border-0">{{ examen.nivel }}</nz-tag>
                   </td>
                   <td>
                     <nz-tag [nzColor]="examen.estado === 'activo' ? 'green' : (examen.estado === 'borrador' ? 'default' : 'red')" class="font-bold rounded-md border-0">
@@ -99,9 +99,9 @@
         <span class="text-sm font-semibold text-slate-700">Nivel</span>
         <select name="nivel" [(ngModel)]="nueva.nivel"
                 class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all cursor-pointer">
-          <option value="KIDS">KIDS</option>
-          <option value="TEENS">TEENS</option>
-          <option value="PRO">PRO</option>
+          @for (nivel of nivelesAlumno; track nivel.valor) {
+            <option [value]="nivel.valor">{{ nivel.etiqueta }}</option>
+          }
         </select>
       </label>
       
@@ -191,9 +191,9 @@
           <span class="text-sm font-semibold text-slate-700">Nivel</span>
           <select name="edit_nivel" [(ngModel)]="evaluacionEditando.nivel"
                   class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all cursor-pointer">
-            <option value="KIDS">KIDS</option>
-            <option value="TEENS">TEENS</option>
-            <option value="PRO">PRO</option>
+            @for (nivel of nivelesAlumno; track nivel.valor) {
+              <option [value]="nivel.valor">{{ nivel.etiqueta }}</option>
+            }
           </select>
         </label>
         

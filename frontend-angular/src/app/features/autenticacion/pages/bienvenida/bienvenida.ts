@@ -3,6 +3,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, signal , ChangeDetectionStra
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
+import { OPCIONES_NIVEL_ALUMNO, normalizarNivelAlumno } from '../../../../core/dominio/nivel-alumno';
 import { Autenticacion, CompletarPerfilGoogleDatos } from '../../../../core/servicios/autenticacion';
 import { CargaGlobal } from '../../../../core/servicios/carga-global';
 import { Sesion } from '../../../../core/servicios/sesion';
@@ -21,6 +22,7 @@ export class Bienvenida implements OnInit {
   readonly nombreMinLength = AuthValidators.NOMBRE_MIN_LENGTH;
   readonly usuarioMinLength = AuthValidators.USUARIO_MIN_LENGTH;
   readonly patronUsuario = /^[A-Za-z0-9_-]+$/;
+  readonly nivelesAlumno = OPCIONES_NIVEL_ALUMNO;
 
   datos: CompletarPerfilGoogleDatos = {
     nombre_completo: '',
@@ -54,7 +56,7 @@ export class Bienvenida implements OnInit {
     this.datos = {
       nombre_completo: usuario.nombre_completo?.trim() ?? '',
       usuario: this.usuarioInicial(usuario.usuario, usuario.email),
-      nivel: this.normalizarNivel(usuario.nivel),
+      nivel: normalizarNivelAlumno(usuario.nivel),
     };
   }
 
@@ -147,10 +149,6 @@ export class Bienvenida implements OnInit {
     }
 
     return null;
-  }
-
-  private normalizarNivel(nivel: string | null | undefined): 'KIDS' | 'TEENS' | 'PRO' {
-    return nivel === 'KIDS' || nivel === 'PRO' ? nivel : 'TEENS';
   }
 
   private usuarioInicial(usuario: string | null | undefined, email: string | null | undefined): string {

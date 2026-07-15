@@ -159,7 +159,7 @@
                     </div>
                   </td>
                   <td>
-                    <nz-tag [nzColor]="alumno.nivel === 'PRO' ? 'purple' : alumno.nivel === 'TEENS' ? 'cyan' : 'blue'" class="font-bold rounded-md border-0">{{ alumno.nivel }}</nz-tag>
+                    <nz-tag [nzColor]="alumno.nivel === 'TEENS' ? 'cyan' : 'blue'" class="font-bold rounded-md border-0">{{ alumno.nivel }}</nz-tag>
                   </td>
                   <td>
                     <nz-tag [nzColor]="alumno.id_aula ? 'green' : 'default'" class="font-bold rounded-md border-0">{{ aulaNombre(alumno) }}</nz-tag>
@@ -211,8 +211,12 @@
         
         <label class="flex flex-col gap-1.5">
           <span class="text-sm font-semibold text-slate-700">Nivel Educativo</span>
-          <input name="nivel_aula" [(ngModel)]="nuevaAula.nivel" placeholder="KIDS, TEENS, PRO o TODOS"
-                 class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all">
+          <select name="nivel_aula" [(ngModel)]="nuevaAula.nivel"
+                  class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all cursor-pointer">
+            @for (nivel of nivelesAlumno; track nivel.valor) {
+              <option [value]="nivel.valor">{{ nivel.etiqueta }}</option>
+            }
+          </select>
         </label>
         
         <label class="flex flex-col gap-1.5">

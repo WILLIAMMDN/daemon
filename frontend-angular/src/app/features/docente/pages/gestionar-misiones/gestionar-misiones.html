@@ -45,7 +45,7 @@
                 <tr class="hover:bg-slate-50 transition-colors">
                   <td class="font-bold text-slate-900">{{ mision.titulo }}</td>
                   <td>
-                    <nz-tag [nzColor]="mision.nivel_requerido === 'TODOS' ? 'default' : mision.nivel_requerido === 'PRO' ? 'purple' : mision.nivel_requerido === 'TEENS' ? 'cyan' : 'blue'" class="font-bold rounded-md">
+                    <nz-tag [nzColor]="mision.nivel_requerido === 'TODOS' ? 'default' : mision.nivel_requerido === 'TEENS' ? 'cyan' : 'blue'" class="font-bold rounded-md">
                       {{ mision.nivel_requerido }}
                     </nz-tag>
                   </td>
@@ -109,10 +109,9 @@
         <span class="text-sm font-semibold text-slate-700">Nivel de la misión</span>
         <select name="nivel_requerido" [(ngModel)]="nueva.nivel_requerido"
                 class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all cursor-pointer">
-          <option value="TODOS">Todos los niveles</option>
-          <option value="KIDS">Solo KIDS</option>
-          <option value="TEENS">Solo TEENS</option>
-          <option value="PRO">Solo PRO</option>
+          @for (nivel of nivelesContenido; track nivel) {
+            <option [value]="nivel">{{ nivel === 'TODOS' ? 'Todos los niveles' : 'Solo ' + nivel }}</option>
+          }
         </select>
       </label>
 
@@ -166,10 +165,9 @@
           <span class="text-sm font-semibold text-slate-700">Nivel de la misión</span>
           <select name="edit_nivel_requerido" [(ngModel)]="misionEditando.nivel_requerido"
                   class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all cursor-pointer">
-            <option value="TODOS">Todos los niveles</option>
-            <option value="KIDS">Solo KIDS</option>
-            <option value="TEENS">Solo TEENS</option>
-            <option value="PRO">Solo PRO</option>
+            @for (nivel of nivelesContenido; track nivel) {
+              <option [value]="nivel">{{ nivel === 'TODOS' ? 'Todos los niveles' : 'Solo ' + nivel }}</option>
+            }
           </select>
         </label>
         

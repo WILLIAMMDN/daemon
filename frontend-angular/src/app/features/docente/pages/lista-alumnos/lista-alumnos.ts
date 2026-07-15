@@ -11,6 +11,7 @@ import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
 import { BotonAccion } from '../../../../shared/componentes/boton-accion/boton-accion';
 import { MonedaDaemon } from '../../../../shared/componentes/moneda-daemon/moneda-daemon';
+import { OPCIONES_NIVEL_ALUMNO } from '../../../../core/dominio/nivel-alumno';
 import { Docente } from '../../services/docente';
 
 interface AulaResumen {
@@ -37,6 +38,7 @@ interface AlcanceAcademico {
   styleUrl: './lista-alumnos.scss',
 })
 export class ListaAlumnos {
+  readonly nivelesAlumno = OPCIONES_NIVEL_ALUMNO;
   alumnos = signal<any[]>([]);
   docentes = signal<any[]>([]);
   aulas = signal<AulaResumen[]>([]);
@@ -47,7 +49,7 @@ export class ListaAlumnos {
   mensaje = signal('');
   error = signal('');
   ajuste = { id_alumno: null as number | null, cantidad: 0, motivo: '' };
-  nuevaAula = { nombre: '', nivel: '', codigo: '' };
+  nuevaAula = { nombre: '', nivel: 'KIDS', codigo: '' };
 
   modalCrearAulaVisible = signal(false);
   modalAjustarTokensVisible = signal(false);
@@ -128,7 +130,7 @@ export class ListaAlumnos {
   }
 
   abrirCrearAula(): void {
-    this.nuevaAula = { nombre: '', nivel: '', codigo: '' };
+    this.nuevaAula = { nombre: '', nivel: 'KIDS', codigo: '' };
     this.modalCrearAulaVisible.set(true);
   }
 
@@ -150,7 +152,7 @@ export class ListaAlumnos {
     this.docente.crearAula(datos).subscribe({
       next: () => {
         this.mensaje.set('Aula creada.');
-        this.nuevaAula = { nombre: '', nivel: '', codigo: '' };
+        this.nuevaAula = { nombre: '', nivel: 'KIDS', codigo: '' };
         this.guardando.set(false);
         this.cerrarCrearAula();
         this.cargarAulas();

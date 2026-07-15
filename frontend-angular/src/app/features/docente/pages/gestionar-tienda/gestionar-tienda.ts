@@ -14,6 +14,7 @@ import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { BotonAccion } from '../../../../shared/componentes/boton-accion/boton-accion';
 import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
 import { MonedaDaemon } from '../../../../shared/componentes/moneda-daemon/moneda-daemon';
+import { CATEGORIAS_PREMIO } from '../../../../core/dominio/nivel-alumno';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -23,6 +24,7 @@ import { MonedaDaemon } from '../../../../shared/componentes/moneda-daemon/moned
   styleUrl: './gestionar-tienda.scss',
 })
 export class GestionarTienda {
+  readonly categoriasPremio = CATEGORIAS_PREMIO;
   premios = signal<any[]>([]);
   canjes = signal<any[]>([]);
   cargando = signal(true);

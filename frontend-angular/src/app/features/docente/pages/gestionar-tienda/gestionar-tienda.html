@@ -157,10 +157,9 @@
         <span class="text-sm font-semibold text-slate-700">Categoría</span>
         <select name="categoria" [(ngModel)]="nuevo.categoria"
                 class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all cursor-pointer">
-          <option value="GENERAL">GENERAL</option>
-          <option value="KIDS">Nivel KIDS</option>
-          <option value="TEENS">Nivel TEENS</option>
-          <option value="PRO">Nivel PRO</option>
+          @for (categoria of categoriasPremio; track categoria) {
+            <option [value]="categoria">{{ categoria === 'GENERAL' ? 'GENERAL' : 'Nivel ' + categoria }}</option>
+          }
         </select>
       </label>
       
@@ -215,10 +214,9 @@
           <span class="text-sm font-semibold text-slate-700">Categoría</span>
           <select name="edit_categoria" [(ngModel)]="premioEditando.categoria"
                   class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all cursor-pointer">
-            <option value="GENERAL">GENERAL</option>
-            <option value="KIDS">Nivel KIDS</option>
-            <option value="TEENS">Nivel TEENS</option>
-            <option value="PRO">Nivel PRO</option>
+            @for (categoria of categoriasPremio; track categoria) {
+              <option [value]="categoria">{{ categoria === 'GENERAL' ? 'GENERAL' : 'Nivel ' + categoria }}</option>
+            }
           </select>
         </label>
         

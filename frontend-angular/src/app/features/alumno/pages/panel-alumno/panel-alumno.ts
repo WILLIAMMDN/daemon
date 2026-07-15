@@ -22,6 +22,7 @@ import { MonedaDaemon } from '../../../../shared/componentes/moneda-daemon/moned
 import { Sesion } from '../../../../core/servicios/sesion';
 import { Activos } from '../../../../core/servicios/activos';
 import { Alumno } from '../../services/alumno';
+import { NivelAlumno } from '../../../../core/dominio/nivel-alumno';
 
 interface ProgresoNivel {
   nivel: number;
@@ -37,7 +38,7 @@ interface UsuarioPanel {
   id: number;
   nombre_completo: string;
   usuario: string;
-  nivel: string;
+  nivel: NivelAlumno;
   tokens: number;
   experiencia: number;
   nivel_gamificacion: number;

@@ -1,5 +1,6 @@
 import { Component, signal , ChangeDetectionStrategy} from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { OPCIONES_NIVEL_ALUMNO } from '../../../../core/dominio/nivel-alumno';
 import { Autenticacion } from '../../../../core/servicios/autenticacion';
 
 @Component({
@@ -10,6 +11,7 @@ import { Autenticacion } from '../../../../core/servicios/autenticacion';
   styleUrl: './registro-docente.scss',
 })
 export class RegistroDocente {
+  readonly nivelesAlumno = OPCIONES_NIVEL_ALUMNO;
   guardando = signal(false);
   mensaje = signal('');
   error = signal('');

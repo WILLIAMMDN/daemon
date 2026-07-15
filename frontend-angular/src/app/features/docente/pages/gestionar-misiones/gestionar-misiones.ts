@@ -13,6 +13,7 @@ import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
 import { BotonAccion } from '../../../../shared/componentes/boton-accion/boton-accion';
 import { MonedaDaemon } from '../../../../shared/componentes/moneda-daemon/moneda-daemon';
+import { NIVELES_CONTENIDO } from '../../../../core/dominio/nivel-alumno';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -22,6 +23,7 @@ import { MonedaDaemon } from '../../../../shared/componentes/moneda-daemon/moned
   styleUrl: './gestionar-misiones.scss',
 })
 export class GestionarMisiones {
+  readonly nivelesContenido = NIVELES_CONTENIDO;
   misiones = signal<any[]>([]);
   cargando = signal(true);
   guardando = signal(false);

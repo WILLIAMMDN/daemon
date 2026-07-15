@@ -1,4 +1,5 @@
 import { Injectable, computed, signal } from '@angular/core';
+import { NivelAlumno } from '../dominio/nivel-alumno';
 
 export interface UsuarioSesion {
   id: number;
@@ -9,7 +10,7 @@ export interface UsuarioSesion {
   telefono?: string | null;
   usuario?: string | null;
   rol: 'alumno' | 'docente' | 'admin';
-  nivel?: string | null;
+  nivel?: NivelAlumno | null;
   tokens: number;
   experiencia?: number;
   nivel_gamificacion?: number;

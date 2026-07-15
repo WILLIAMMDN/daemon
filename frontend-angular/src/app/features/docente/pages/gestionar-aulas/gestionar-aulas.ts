@@ -11,6 +11,7 @@ import { Docente } from '../../services/docente';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
 import { BotonAccion } from '../../../../shared/componentes/boton-accion/boton-accion';
+import { OPCIONES_NIVEL_ALUMNO } from '../../../../core/dominio/nivel-alumno';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -20,6 +21,7 @@ import { BotonAccion } from '../../../../shared/componentes/boton-accion/boton-a
   styleUrl: './gestionar-aulas.scss',
 })
 export class GestionarAulas {
+  readonly nivelesAlumno = OPCIONES_NIVEL_ALUMNO;
   aulas = signal<any[]>([]);
   cargando = signal(true);
   guardando = signal(false);

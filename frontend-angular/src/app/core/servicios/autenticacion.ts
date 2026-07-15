@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { catchError, from, map, Observable, of, switchMap, tap, throwError, timeout, TimeoutError } from 'rxjs';
+import { NivelAlumno } from '../dominio/nivel-alumno';
 import { Api } from './api';
 import { FirebaseAuth } from './firebase-auth';
 import { Sesion, UsuarioSesion } from './sesion';
@@ -11,7 +12,7 @@ export interface AuthRespuesta {
 export interface CompletarPerfilGoogleDatos {
   nombre_completo: string;
   usuario: string;
-  nivel: 'KIDS' | 'TEENS' | 'PRO';
+  nivel: NivelAlumno;
 }
 
 export interface RegistroFirebaseDatos {

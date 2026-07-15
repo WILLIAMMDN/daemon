@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, signal , ChangeDetectionStrategy} from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
+import { OPCIONES_NIVEL_ALUMNO, normalizarNivelAlumno } from '../../../../core/dominio/nivel-alumno';
 import { Autenticacion, CompletarPerfilGoogleDatos } from '../../../../core/servicios/autenticacion';
 import { UsuarioSesion } from '../../../../core/servicios/sesion';
 import { AuthValidators } from '../../../../shared/validadores/auth-validadores';
@@ -21,6 +22,7 @@ export class CompletarPerfilGoogle implements OnChanges {
   readonly nombreMinLength = AuthValidators.NOMBRE_MIN_LENGTH;
   readonly usuarioMinLength = AuthValidators.USUARIO_MIN_LENGTH;
   readonly patronUsuario = /^[A-Za-z0-9_-]+$/;
+  readonly nivelesAlumno = OPCIONES_NIVEL_ALUMNO;
 
   datos: CompletarPerfilGoogleDatos = {
     nombre_completo: '',
@@ -45,7 +47,7 @@ export class CompletarPerfilGoogle implements OnChanges {
     this.datos = {
       nombre_completo: '',
       usuario: '',
-      nivel: this.normalizarNivel(this.usuario?.nivel),
+      nivel: normalizarNivelAlumno(this.usuario?.nivel),
     };
   }
 
@@ -107,7 +109,4 @@ export class CompletarPerfilGoogle implements OnChanges {
     return null;
   }
 
-  private normalizarNivel(nivel: string | null | undefined): 'KIDS' | 'TEENS' | 'PRO' {
-    return nivel === 'KIDS' || nivel === 'PRO' ? nivel : 'TEENS';
-  }
 }

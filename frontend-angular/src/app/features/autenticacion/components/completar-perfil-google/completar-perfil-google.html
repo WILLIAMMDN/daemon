@@ -72,9 +72,9 @@
           </svg>
         </span>
         <select id="google_nivel" name="nivel" [(ngModel)]="datos.nivel" required>
-          <option value="KIDS">KIDS</option>
-          <option value="TEENS">TEENS</option>
-          <option value="PRO">PRO</option>
+          @for (nivel of nivelesAlumno; track nivel.valor) {
+            <option [value]="nivel.valor">{{ nivel.etiqueta }}</option>
+          }
         </select>
       </label>
 
