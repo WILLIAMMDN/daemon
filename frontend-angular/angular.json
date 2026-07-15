@@ -98,6 +98,17 @@
               ],
               "outputHashing": "all"
             },
+            "cloud": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.cloud.ts"
+                }
+              ]
+            },
             "development": {
               "optimization": false,
               "extractLicenses": false,
@@ -117,6 +128,9 @@
           "configurations": {
             "production": {
               "buildTarget": "frontend-angular:build:production"
+            },
+            "cloud": {
+              "buildTarget": "frontend-angular:build:cloud"
             },
             "development": {
               "buildTarget": "frontend-angular:build:development"

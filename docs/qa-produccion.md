@@ -29,6 +29,28 @@ Resultado esperado:
 - Los bundles desplegados contienen `verificacion=firebase` y `reset=firebase`.
 - Los bundles desplegados no llaman `/auth/recuperar` ni `/auth/enviar-verificacion`.
 
+## Modos de ejecucion local
+
+El modo local predeterminado usa la infraestructura cloud de DAEMON:
+
+```powershell
+cd C:\laragon\www\daemon\frontend-angular
+npm run start
+```
+
+Este comando inicia Angular con `environment.cloud.ts` y conecta con Render,
+Supabase Storage y Firebase. No necesita Laravel en `localhost:8000`.
+
+Para trabajar intencionalmente con un backend Laravel local:
+
+```powershell
+npm run start:local
+```
+
+`start:local` usa `environment.development.ts` y requiere la API en
+`http://localhost:8000/api/v1`. Como `npm run start` consume servicios reales,
+no ejecutar canjes, entregas, eliminaciones ni cambios destructivos durante QA.
+
 ## QA visual del portal alumno
 
 El rediseño del portal se validó con un backend Laravel local aislado y una
