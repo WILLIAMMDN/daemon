@@ -179,4 +179,6 @@ verify Render separately.
 - Student visual system: `docs/sistema-visual-portal-alumno.md`
 - XP and DAEMONS architecture: `docs/gamificacion-xp-daemons.md`
 - Production QA: `docs/qa-produccion.md`
+- Runtime, staging, backups and rollback: `docs/infraestructura-operativa.md`
+- KIDS/TEENS privacy and retention: `docs/privacidad-kids-teens.md`
 - July 2026 release evidence: `docs/release-2026-07-14-portal-alumno.md`

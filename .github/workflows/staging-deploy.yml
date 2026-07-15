@@ -1,0 +1,92 @@
+name: Deploy isolated staging
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy_staging:
+    runs-on: ubuntu-latest
+    environment: staging
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: frontend-angular/package-lock.json
+
+      - name: Validate isolated staging variables
+        env:
+          STAGING_FIREBASE_PROJECT_ID: ${{ vars.STAGING_FIREBASE_PROJECT_ID }}
+          STAGING_FIREBASE_SITE_ID: ${{ vars.STAGING_FIREBASE_SITE_ID }}
+          STAGING_FRONTEND_URL: ${{ vars.STAGING_FRONTEND_URL }}
+          STAGING_API_URL: ${{ vars.STAGING_API_URL }}
+        run: |
+          for name in STAGING_FIREBASE_PROJECT_ID STAGING_FIREBASE_SITE_ID STAGING_FRONTEND_URL STAGING_API_URL; do
+            test -n "${!name}" || { echo "Missing environment variable: $name"; exit 1; }
+          done
+          case "$STAGING_FIREBASE_PROJECT_ID|$STAGING_FRONTEND_URL|$STAGING_API_URL" in
+            *daemon-a41f8*|*daemonestudiante.web.app*|*daemon-5vo1.onrender.com*)
+              echo 'Staging cannot reuse production resources.'
+              exit 1
+              ;;
+          esac
+
+      - name: Install frontend dependencies
+        run: npm ci --ignore-scripts --no-audit --no-fund
+        working-directory: frontend-angular
+
+      - name: Test frontend
+        run: npm run test:ci
+        working-directory: frontend-angular
+
+      - name: Generate staging environment and build
+        run: npm run build:staging
+        working-directory: frontend-angular
+        env:
+          STAGING_API_URL: ${{ vars.STAGING_API_URL }}
+          STAGING_ASSET_BASE_URL: ${{ vars.STAGING_ASSET_BASE_URL }}
+          STAGING_PUSHER_KEY: ${{ vars.STAGING_PUSHER_KEY }}
+          STAGING_PUSHER_CLUSTER: ${{ vars.STAGING_PUSHER_CLUSTER }}
+          STAGING_FIREBASE_CONFIG_JSON: ${{ secrets.STAGING_FIREBASE_CONFIG_JSON }}
+          STAGING_SENTRY_DSN: ${{ secrets.STAGING_SENTRY_DSN }}
+
+      - name: Authenticate to Google Cloud with OIDC
+        if: ${{ vars.GCP_WIF_PROVIDER != '' && vars.GCP_DEPLOY_SERVICE_ACCOUNT != '' }}
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3
+        with:
+          workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER }}
+          service_account: ${{ vars.GCP_DEPLOY_SERVICE_ACCOUNT }}
+
+      - name: Configure staging JSON credentials fallback
+        if: ${{ vars.GCP_WIF_PROVIDER == '' || vars.GCP_DEPLOY_SERVICE_ACCOUNT == '' }}
+        env:
+          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.STAGING_FIREBASE_SERVICE_ACCOUNT_JSON }}
+        run: |
+          test -n "$FIREBASE_SERVICE_ACCOUNT_JSON" || { echo 'Missing staging Firebase credentials'; exit 1; }
+          printf '%s' "$FIREBASE_SERVICE_ACCOUNT_JSON" > "$RUNNER_TEMP/firebase-service-account.json"
+          echo "GOOGLE_APPLICATION_CREDENTIALS=$RUNNER_TEMP/firebase-service-account.json" >> "$GITHUB_ENV"
+
+      - name: Deploy staging site
+        env:
+          PROJECT_ID: ${{ vars.STAGING_FIREBASE_PROJECT_ID }}
+          SITE_ID: ${{ vars.STAGING_FIREBASE_SITE_ID }}
+        run: |
+          npx firebase-tools@15.22.3 target:apply hosting staging "$SITE_ID" --project "$PROJECT_ID"
+          jq '.hosting.target = "staging"' firebase.json > firebase.staging.json
+          npx firebase-tools@15.22.3 deploy --only hosting:staging --project "$PROJECT_ID" --config firebase.staging.json --non-interactive
+
+      - name: Smoke isolated staging
+        shell: pwsh
+        env:
+          FRONTEND_URL: ${{ vars.STAGING_FRONTEND_URL }}
+          API_URL: ${{ vars.STAGING_API_URL }}
+        run: |
+          $frontend = Invoke-WebRequest -Uri $env:FRONTEND_URL -UseBasicParsing -TimeoutSec 30
+          if ($frontend.StatusCode -ne 200) { throw "Staging frontend returned $($frontend.StatusCode)" }
+          $health = Invoke-RestMethod -Uri "$($env:API_URL.TrimEnd('/'))/salud" -TimeoutSec 60
+          if (-not $health.ok) { throw 'Staging API is not healthy' }

@@ -109,6 +109,28 @@
                 }
               ]
             },
+            "staging": {
+              "serviceWorker": "ngsw-config.json",
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "1MB",
+                  "maximumError": "1.5MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "32kB",
+                  "maximumError": "48kB"
+                }
+              ],
+              "outputHashing": "all",
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.staging.ts"
+                }
+              ]
+            },
             "development": {
               "optimization": false,
               "extractLicenses": false,
@@ -131,6 +153,9 @@
             },
             "cloud": {
               "buildTarget": "frontend-angular:build:cloud"
+            },
+            "staging": {
+              "buildTarget": "frontend-angular:build:staging"
             },
             "development": {
               "buildTarget": "frontend-angular:build:development"

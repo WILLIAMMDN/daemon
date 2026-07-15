@@ -10,6 +10,7 @@ a la tarea.
 | `ai-project-context.md` | Arquitectura completa, decisiones y archivos clave. |
 | `estado-nube-github-produccion.md` | Firebase, Render, Supabase, GitHub y despliegues. |
 | `qa-produccion.md` | Pruebas, QA visual, smoke y verificación de bundles. |
+| `infraestructura-operativa.md` | Runtime, staging, backups, restauracion y rollback. |
 
 ## Portal alumno
 
