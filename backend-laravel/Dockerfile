@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     libicu-dev \
     libonig-dev \
+    supervisor \
     unzip \
     git \
     && docker-php-ext-install pdo_pgsql pgsql intl zip bcmath \
@@ -61,6 +62,7 @@ RUN mkdir -p \
 # Crea un entrypoint que cachea config/rutas con las ENV vars reales ya presentes
 # antes de arrancar Apache. Asi Laravel ve los valores correctos en cada deploy.
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
+COPY docker/supervisord.conf /etc/supervisor/conf.d/daemon.conf
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 # Expone el puerto 80 (Render lo mapea automaticamente a su $PORT)

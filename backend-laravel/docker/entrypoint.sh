@@ -24,7 +24,7 @@ fi
 # Sin esto, un cambio SOLO de env vars (sin commit nuevo) deja la cache
 # apuntando a valores viejos (p.ej. MAIL_MAILER=smtp viejo).
 ENV_HASH_FILE=bootstrap/cache/.env-hash
-ENV_HASH_INPUT="${MAIL_MAILER:-}|${RESEND_API_KEY:-}|${MAIL_FROM_ADDRESS:-}|${FIREBASE_SERVICE_ACCOUNT_BASE64:-}|${DB_PASSWORD:-}|${APP_KEY:-}"
+ENV_HASH_INPUT="${APP_ENV:-}|${APP_KEY:-}|${APP_URL:-}|${DB_HOST:-}|${DB_PORT:-}|${DB_DATABASE:-}|${DB_USERNAME:-}|${DB_PASSWORD:-}|${FRONTEND_URL:-}|${AUTH_COOKIE_SAME_SITE:-}|${AUTH_COOKIE_SECURE:-}|${MAIL_MAILER:-}|${RESEND_API_KEY:-}|${MAIL_FROM_ADDRESS:-}|${FIREBASE_PROJECT_ID:-}|${FIREBASE_SERVICE_ACCOUNT_BASE64:-}|${SUPABASE_STORAGE_BUCKET:-}|${SUPABASE_PRIVATE_STORAGE_BUCKET:-}|${SUPABASE_STORAGE_ACCESS_KEY_ID:-}|${SUPABASE_STORAGE_SECRET_ACCESS_KEY:-}|${QUEUE_CONNECTION:-}|${CACHE_STORE:-}|${PUSHER_APP_ID:-}|${PUSHER_APP_KEY:-}|${PUSHER_APP_SECRET:-}"
 CURRENT_ENV_HASH=$(printf '%s' "$ENV_HASH_INPUT" | md5sum | cut -d' ' -f1)
 if [ -f "$ENV_HASH_FILE" ]; then
     CACHED_ENV_HASH=$(cat "$ENV_HASH_FILE")
@@ -45,5 +45,11 @@ if [ "$NEED_CACHE" = "1" ]; then
     echo "[entrypoint] Cache listo."
 fi
 
-# Arrancar Apache en primer plano (esto es lo que mantiene vivo el contenedor)
-exec apache2-foreground
+if [ "${RUN_MIGRATIONS:-true}" = "true" ]; then
+    echo "[entrypoint] Ejecutando migraciones controladas..."
+    php artisan migrate --force --no-interaction
+fi
+
+# Apache, la cola y el scheduler quedan bajo un unico PID 1 que propaga
+# correctamente señales y reinicia procesos fallidos.
+exec /usr/bin/supervisord -c /etc/supervisor/conf.d/daemon.conf

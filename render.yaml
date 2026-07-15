@@ -1,0 +1,87 @@
+services:
+  - type: web
+    name: daemon
+    runtime: docker
+    plan: free
+    branch: main
+    autoDeployTrigger: checksPass
+    dockerfilePath: ./backend-laravel/Dockerfile
+    dockerContext: ./backend-laravel
+    healthCheckPath: /api/v1/salud
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: 'false'
+      - key: APP_URL
+        value: https://daemon-5vo1.onrender.com
+      - key: APP_VERSION
+        value: '2026.07'
+      - key: RUN_MIGRATIONS
+        value: 'true'
+      - key: FRONTEND_URL
+        value: https://daemonestudiante.web.app
+      - key: FRONTEND_PRODUCTION_URL
+        value: https://daemonestudiante.web.app
+      - key: CORS_SUPPORTS_CREDENTIALS
+        value: 'true'
+      - key: AUTH_COOKIE_SAME_SITE
+        value: none
+      - key: AUTH_COOKIE_SECURE
+        value: 'true'
+      - key: AUTH_EXPOSE_BEARER_TOKEN
+        value: 'false'
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_SSLMODE
+        value: require
+      - key: UPLOADS_DISK
+        value: supabase
+      - key: PRIVATE_UPLOADS_DISK
+        value: supabase_private
+      - key: SUPABASE_STORAGE_BUCKET
+        value: daemon-assets
+      - key: SUPABASE_PRIVATE_STORAGE_BUCKET
+        value: daemon-private
+      - key: SUPABASE_STORAGE_REGION
+        value: sa-east-1
+      - key: QUEUE_CONNECTION
+        value: database
+      - key: CACHE_STORE
+        value: database
+      - key: SESSION_DRIVER
+        value: database
+      - key: APP_KEY
+        sync: false
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        sync: false
+      - key: DB_DATABASE
+        sync: false
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: FIREBASE_PROJECT_ID
+        sync: false
+      - key: FIREBASE_SERVICE_ACCOUNT_BASE64
+        sync: false
+      - key: SUPABASE_STORAGE_ENDPOINT
+        sync: false
+      - key: SUPABASE_STORAGE_PUBLIC_URL
+        sync: false
+      - key: SUPABASE_STORAGE_ACCESS_KEY_ID
+        sync: false
+      - key: SUPABASE_STORAGE_SECRET_ACCESS_KEY
+        sync: false
+      - key: PUSHER_APP_ID
+        sync: false
+      - key: PUSHER_APP_KEY
+        sync: false
+      - key: PUSHER_APP_SECRET
+        sync: false
+      - key: PUSHER_APP_CLUSTER
+        sync: false
+      - key: OPENROUTER_API_KEY
+        sync: false
