@@ -1,43 +1,83 @@
-<main class="w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-6 md:gap-8 font-inter">
-  <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white border border-slate-200 shadow-sm rounded-2xl p-6">
-    <div class="flex flex-col gap-1">
-      <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Herramientas</p>
-      <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 leading-tight">Super Lab</h1>
-      <p class="text-sm text-slate-600">Elige qué módulo abrir sin necesidad de navegar por el menú lateral.</p>
+<main class="super-lab" aria-labelledby="super-lab-title">
+  <section class="lab-hero" aria-label="Introducción al laboratorio">
+    <div class="lab-hero__signal" aria-hidden="true">
+      <span></span><span></span><span></span>
+      <small>DAEMON LAB / ONLINE</small>
     </div>
-    <div class="flex items-center gap-3">
-      <nz-tag class="m-0" nzColor="blue">Nivel actual: 1</nz-tag>
-    </div>
-  </header>
 
-  <section class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 w-full" aria-label="Herramientas disponibles">
-    @for (herramienta of herramientas; track herramienta.ruta) {
-      <nz-card nzHoverable class="rounded-lg shadow-sm border-slate-200 flex flex-col h-full">
-        <div class="flex flex-col h-full gap-4">
-          <header class="flex justify-between items-start w-full">
-            <nz-tag class="m-0" [nzColor]="herramienta.tono === 'verde' ? 'green' : (herramienta.tono === 'coral' ? 'red' : (herramienta.tono === 'morado' ? 'purple' : 'blue'))">
-              {{ herramienta.estado }}
-            </nz-tag>
+    <div class="lab-hero__copy">
+      <span class="lab-kicker"><fa-icon [icon]="iconos.laboratorio" /> Ecosistema de inteligencia artificial</span>
+      <h1 id="super-lab-title">Super <span>Lab</span></h1>
+      <p>Tu espacio para crear, entrenar y poner a prueba agentes inteligentes. Cada estación abre una capacidad real de la plataforma.</p>
+
+      <div class="lab-hero__actions">
+        <a class="lab-action lab-action--primary" routerLink="/alumno/herramientas/chatbot">
+          Continuar con mi bot <fa-icon [icon]="iconos.flecha" />
+        </a>
+        <a class="lab-action lab-action--secondary" routerLink="/alumno/herramientas/laboratorio">Explorar el cerebro IA</a>
+      </div>
+    </div>
+
+    <aside class="lab-console" aria-label="Estado del laboratorio">
+      <div class="lab-console__orb" aria-hidden="true">
+        <span><fa-icon [icon]="iconos.robot" /></span>
+      </div>
+      <div class="lab-console__status"><i></i> Ruta de exploración activa</div>
+      <div class="lab-console__metrics">
+        <div class="lab-metric"><small>Nivel actual</small><strong>{{ nivelActual() }}</strong></div>
+        <div class="lab-metric"><small>Estaciones</small><strong>{{ herramientas.length }}</strong></div>
+        <div class="lab-metric"><small>Modalidad</small><strong>IA + creación</strong></div>
+      </div>
+    </aside>
+  </section>
+
+  <section class="lab-route" aria-labelledby="lab-route-title">
+    <header class="lab-route__heading">
+      <div>
+        <span class="lab-route__eyebrow">Mapa del laboratorio</span>
+        <h2 id="lab-route-title">Elige tu próxima estación</h2>
+      </div>
+      <p>No son accesos de relleno: cada tarjeta conduce a un módulo operativo de DAEMON.</p>
+    </header>
+
+    <div class="lab-grid">
+      @for (herramienta of herramientas; track herramienta.ruta) {
+        <article
+          class="lab-card"
+          [class.lab-card--featured]="herramienta.destacada"
+          [attr.data-tone]="herramienta.tono"
+        >
+          <header class="lab-card__topline">
+            <span>Estación {{ herramienta.numero }}</span>
+            <strong><i></i>{{ herramienta.estado }}</strong>
           </header>
 
-          <div class="flex flex-col gap-1 flex-grow">
-            <h2 class="text-lg font-bold text-slate-900 leading-tight m-0">{{ herramienta.titulo }}</h2>
-            <p class="text-sm text-slate-600 mb-0 flex-grow">{{ herramienta.detalle }}</p>
+          <div class="lab-card__identity">
+            <span class="lab-card__icon" aria-hidden="true"><fa-icon [icon]="herramienta.icono" /></span>
+            <div>
+              <small>{{ herramienta.categoria }}</small>
+              <h3>{{ herramienta.titulo }}</h3>
+            </div>
           </div>
 
-          <ul class="flex flex-col gap-2 list-none p-0 m-0 border-t border-slate-100 pt-3">
+          <p class="lab-card__description">{{ herramienta.detalle }}</p>
+
+          <ul class="lab-card__capabilities" aria-label="Capacidades">
             @for (accion of herramienta.acciones; track accion) {
-              <li class="flex items-center gap-2 text-sm text-slate-600 font-medium">
-                <span class="text-blue-600 font-bold">✓</span> {{ accion }}
-              </li>
+              <li><span aria-hidden="true">✓</span>{{ accion }}</li>
             }
           </ul>
 
-          <div class="mt-2">
-            <a nz-button nzType="primary" class="daemon-btn w-full text-center" [routerLink]="herramienta.ruta">Abrir</a>
-          </div>
-        </div>
-      </nz-card>
-    }
+          <a
+            class="lab-card__action"
+            [routerLink]="herramienta.ruta"
+            [attr.aria-label]="herramienta.llamada + ': ' + herramienta.titulo"
+            data-lab-route
+          >
+            {{ herramienta.llamada }} <fa-icon [icon]="iconos.flecha" />
+          </a>
+        </article>
+      }
+    </div>
   </section>
 </main>

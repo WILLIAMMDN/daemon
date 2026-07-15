@@ -1,84 +1,138 @@
-import { Component , ChangeDetectionStrategy} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faCheck } from '@fortawesome/free-solid-svg-icons';
-import { NzButtonModule } from 'ng-zorro-antd/button';
-import { NzCardModule } from 'ng-zorro-antd/card';
-import { NzTagModule } from 'ng-zorro-antd/tag';
+import {
+  faArrowRight,
+  faBookOpen,
+  faBrain,
+  faComments,
+  faGamepad,
+  faRobot,
+  faRoute,
+  faShieldHalved,
+  faWandMagicSparkles,
+} from '@fortawesome/free-solid-svg-icons';
+import { Sesion } from '../../../../core/servicios/sesion';
+
+type TonoHerramienta = 'coral' | 'azul' | 'verde' | 'morado' | 'ambar';
 
 interface Herramienta {
+  numero: string;
   titulo: string;
   detalle: string;
   estado: string;
+  categoria: string;
   ruta: string;
-  tono: 'coral' | 'azul' | 'verde' | 'morado';
+  tono: TonoHerramienta;
   acciones: string[];
+  llamada: string;
+  icono: IconDefinition;
+  destacada?: boolean;
 }
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-herramientas',
-  imports: [RouterLink, NzCardModule, NzTagModule, NzButtonModule, FontAwesomeModule],
+  imports: [RouterLink, FontAwesomeModule],
   templateUrl: './herramientas.html',
   styleUrl: './herramientas.scss',
 })
 export class Herramientas {
+  private readonly sesion = inject(Sesion);
+
+  readonly nivelActual = computed(() => this.sesion.usuario()?.nivel_gamificacion ?? 1);
+  readonly iconos = {
+    flecha: faArrowRight,
+    laboratorio: faWandMagicSparkles,
+    robot: faRobot,
+  };
+
   readonly herramientas: Herramienta[] = [
     {
+      numero: '01',
       titulo: 'Chatbot',
-      detalle: 'Conversación con tu bot personal y memoria de mensajes.',
-      estado: 'Conectado',
+      detalle: 'Conversa con tu agente personal y continúa desde su memoria de aprendizaje.',
+      estado: 'En vivo',
+      categoria: 'Comando central',
       ruta: '/alumno/herramientas/chatbot',
       tono: 'coral',
-      acciones: ['Chat', 'Memoria'],
+      acciones: ['Chat inteligente', 'Memoria personal'],
+      llamada: 'Conversar ahora',
+      icono: faComments,
+      destacada: true,
     },
     {
+      numero: '02',
       titulo: 'Configurar bot',
-      detalle: 'Nombre, personalidad, avatar y datos expertos del asistente.',
+      detalle: 'Construye la identidad, personalidad y apariencia de tu asistente.',
       estado: 'Editable',
+      categoria: 'Génesis',
       ruta: '/alumno/herramientas/bot',
       tono: 'azul',
-      acciones: ['Avatar', 'Cerebro'],
+      acciones: ['Identidad', 'Avatar y cerebro'],
+      llamada: 'Crear identidad',
+      icono: faRobot,
     },
     {
+      numero: '03',
       titulo: 'Neuro Maze',
-      detalle: 'Laberinto y agente de aprendizaje heredado del laboratorio.',
-      estado: 'Motor legacy',
+      detalle: 'Observa cómo un agente aprende a recorrer un laberinto y mejora con cada intento.',
+      estado: 'Interactivo',
+      categoria: 'Simulación',
       ruta: '/alumno/herramientas/neuro-maze',
       tono: 'verde',
-      acciones: ['Juego', 'IA'],
+      acciones: ['Agente Q-learning', 'Laberinto jugable'],
+      llamada: 'Abrir laberinto',
+      icono: faRoute,
     },
     {
+      numero: '04',
       titulo: 'Entrenamiento',
-      detalle: 'Selector de motores, cerebro guardado y ejercicios del bot.',
+      detalle: 'Elige un motor y ejecuta rutinas para desarrollar las capacidades de tu bot.',
       estado: 'Laboratorio',
+      categoria: 'Práctica',
       ruta: '/alumno/herramientas/entrenamiento',
       tono: 'morado',
-      acciones: ['Nivel', 'Motores'],
+      acciones: ['Selector de motores', 'Rutinas del agente'],
+      llamada: 'Entrenar agente',
+      icono: faGamepad,
     },
     {
+      numero: '05',
       titulo: 'Cerebro IA',
-      detalle: 'Matriz neural conectada al backend del chatbot.',
+      detalle: 'Inspecciona y guarda la matriz neural que conecta el aprendizaje con DAEMON.',
       estado: 'Avanzado',
+      categoria: 'Núcleo IA',
       ruta: '/alumno/herramientas/laboratorio',
       tono: 'azul',
-      acciones: ['JSON', 'Guardar'],
+      acciones: ['Matriz neural', 'Guardado en backend'],
+      llamada: 'Editar cerebro',
+      icono: faBrain,
     },
     {
+      numero: '06',
       titulo: 'Defensa IA',
-      detalle: 'Módulo heredado para visión, modelo local y experimentos.',
-      estado: 'Motor legacy',
+      detalle: 'Experimenta con visión y modelos locales en un entorno de pruebas controlado.',
+      estado: 'Experimental',
+      categoria: 'Pruebas',
       ruta: '/alumno/herramientas/defensa-ia',
-      tono: 'verde',
-      acciones: ['Visión', 'Modelo'],
+      tono: 'ambar',
+      acciones: ['Visión local', 'Modelo de defensa'],
+      llamada: 'Abrir defensa',
+      icono: faShieldHalved,
     },
     {
+      numero: '07',
       titulo: 'Cuentos',
-      detalle: 'Galería y creación de historias de la comunidad.',
+      detalle: 'Convierte tus ideas en historias y compártelas con la comunidad creativa.',
       estado: 'Creativo',
+      categoria: 'Proyecto',
       ruta: '/alumno/cuentos',
       tono: 'coral',
-      acciones: ['Crear', 'Galería'],
+      acciones: ['Editor de historias', 'Galería comunitaria'],
+      llamada: 'Crear historia',
+      icono: faBookOpen,
     },
   ];
 }
