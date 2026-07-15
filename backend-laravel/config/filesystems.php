@@ -73,6 +73,18 @@ return [
             'report' => true,
         ],
 
+        'supabase_private' => [
+            'driver' => 's3',
+            'key' => env('SUPABASE_STORAGE_ACCESS_KEY_ID'),
+            'secret' => env('SUPABASE_STORAGE_SECRET_ACCESS_KEY'),
+            'region' => env('SUPABASE_STORAGE_REGION', 'sa-east-1'),
+            'bucket' => env('SUPABASE_PRIVATE_STORAGE_BUCKET', 'daemon-private'),
+            'endpoint' => env('SUPABASE_STORAGE_ENDPOINT'),
+            'use_path_style_endpoint' => true,
+            'throw' => true,
+            'report' => true,
+        ],
+
     ],
 
     /*

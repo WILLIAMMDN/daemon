@@ -5,6 +5,7 @@ namespace App\Services\Archivo;
 use App\Models\Usuario;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
 
@@ -19,13 +20,15 @@ class ArchivoService
         return [
             'ruta' => $ruta,
             'url' => $this->urls->url($ruta),
-            'disk' => $this->disk(),
+            'disk' => $this->diskParaRuta($ruta),
+            'privado' => $this->urls->esRutaPrivada($ruta),
         ];
     }
 
     public function guardarRuta(Usuario $usuario, UploadedFile $archivo, string $carpeta): string
     {
         $carpeta = trim($carpeta, '/');
+        $disk = $this->diskParaRuta($carpeta.'/');
 
         if (str_starts_with($archivo->getMimeType(), 'image/') && $archivo->getMimeType() !== 'image/svg+xml') {
             $manager = new ImageManager(new Driver());
@@ -34,15 +37,19 @@ class ArchivoService
             $imagen->scaleDown(1200, 1200);
             
             $encoded = $imagen->toWebp(80);
-            $nombre = uniqid() . '.webp';
+            $nombre = Str::uuid().'.webp';
             $ruta = $carpeta . '/' . $nombre;
             
-            Storage::disk($this->disk())->put($ruta, $encoded->toString());
+            Storage::disk($disk)->put($ruta, $encoded->toString());
             
             return $ruta;
         }
 
-        return $archivo->store($carpeta, $this->disk());
+        return $archivo->storeAs(
+            $carpeta,
+            Str::uuid().'.'.strtolower($archivo->getClientOriginalExtension()),
+            $disk,
+        );
     }
 
     public function url(?string $ruta): ?string
@@ -53,6 +60,13 @@ class ArchivoService
     private function disk(): string
     {
         return env('UPLOADS_DISK', 'public') ?: 'public';
+    }
+
+    private function diskParaRuta(string $ruta): string
+    {
+        return $this->urls->esRutaPrivada($ruta)
+            ? (string) config('daemon.private_uploads_disk', 'supabase_private')
+            : $this->disk();
     }
 
     public function directorioPerfil(Usuario $usuario, string $tipo): string
