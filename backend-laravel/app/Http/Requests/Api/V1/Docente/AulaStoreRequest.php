@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Api\V1\Docente;
 
+use App\Enums\NivelAlumno;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class AulaStoreRequest extends FormRequest
 {
@@ -16,7 +18,7 @@ class AulaStoreRequest extends FormRequest
         return [
             'id_institucion' => ['nullable', 'exists:instituciones,id'],
             'nombre' => ['required', 'string', 'max:120'],
-            'nivel' => ['nullable', 'string', 'max:20'],
+            'nivel' => ['nullable', 'string', Rule::in(NivelAlumno::values())],
             'codigo' => ['nullable', 'string', 'max:40', 'unique:aulas,codigo'],
         ];
     }

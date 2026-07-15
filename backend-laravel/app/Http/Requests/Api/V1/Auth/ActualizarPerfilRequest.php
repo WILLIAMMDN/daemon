@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Api\V1\Auth;
 
+use App\Enums\NivelAlumno;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -35,7 +36,7 @@ class ActualizarPerfilRequest extends FormRequest
                 'max:50',
                 Rule::unique('usuarios', 'usuario')->ignore($usuario?->id),
             ],
-            'nivel' => ['required', 'in:KIDS,TEENS,PRO'],
+            'nivel' => ['required', Rule::in(NivelAlumno::values())],
         ];
     }
 

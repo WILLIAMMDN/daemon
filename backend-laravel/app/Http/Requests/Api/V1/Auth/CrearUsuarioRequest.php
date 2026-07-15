@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Api\V1\Auth;
 
+use App\Enums\NivelAlumno;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class CrearUsuarioRequest extends FormRequest
 {
@@ -19,7 +21,7 @@ class CrearUsuarioRequest extends FormRequest
             'telefono' => ['nullable', 'string', 'max:30', 'unique:usuarios,telefono'],
             'usuario' => ['required', 'alpha_dash', 'max:50', 'unique:usuarios,usuario'],
             'password' => ['required', 'string', 'min:8'],
-            'nivel' => ['nullable', 'in:KIDS,TEENS,PRO,DOCENTE'],
+            'nivel' => ['nullable', Rule::in(NivelAlumno::values())],
             'rol' => ['required', 'in:alumno,docente,admin'],
         ];
     }

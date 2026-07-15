@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Api\V1\Auth;
 
+use App\Enums\NivelAlumno;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class CompletarPerfilFirebaseRequest extends FormRequest
 {
@@ -17,7 +19,7 @@ class CompletarPerfilFirebaseRequest extends FormRequest
             'id_token' => ['required', 'string', 'max:8192'],
             'nombre_completo' => ['required', 'string', 'min:3', 'max:100'],
             'usuario' => ['required', 'alpha_dash', 'min:4', 'max:50'],
-            'nivel' => ['required', 'in:KIDS,TEENS,PRO'],
+            'nivel' => ['required', Rule::in(NivelAlumno::values())],
         ];
     }
 }

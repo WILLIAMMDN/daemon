@@ -207,7 +207,7 @@ class AutenticacionService
             'telefono' => $datos['telefono'] ?? null,
             'usuario' => $datos['usuario'],
             'password_hash' => Hash::make($datos['password']),
-            'nivel' => $rol === 'docente' ? 'DOCENTE' : ($datos['nivel'] ?? 'TEENS'),
+            'nivel' => $datos['nivel'] ?? 'TEENS',
             'perfil_completo' => true,
             'rol' => $rol,
             'tokens' => $rol === 'alumno' ? 100 : 0,

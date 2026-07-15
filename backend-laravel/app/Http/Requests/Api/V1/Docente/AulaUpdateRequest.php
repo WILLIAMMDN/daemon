@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Api\V1\Docente;
 
+use App\Enums\NivelAlumno;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -18,7 +19,7 @@ class AulaUpdateRequest extends FormRequest
 
         return [
             'nombre' => ['sometimes', 'required', 'string', 'max:120'],
-            'nivel' => ['sometimes', 'nullable', 'string', 'max:20'],
+            'nivel' => ['sometimes', 'nullable', 'string', Rule::in(NivelAlumno::values())],
             'codigo' => [
                 'sometimes',
                 'nullable',

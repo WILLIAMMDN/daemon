@@ -96,12 +96,27 @@ class PremioCrudTest extends TestCase
         $docente = $this->docente();
         Premio::create(['nombre' => 'Cuaderno rojo', 'descripcion' => 'Para notas', 'precio' => 10, 'stock' => 5, 'categoria' => 'TEENS', 'tipo_entrega' => 'fisico']);
         Premio::create(['nombre' => 'Cuaderno azul', 'descripcion' => 'Para apuntes', 'precio' => 10, 'stock' => 0, 'categoria' => 'KIDS', 'tipo_entrega' => 'fisico']);
-        Premio::create(['nombre' => 'Curso IA', 'descripcion' => 'Curso online', 'precio' => 999, 'stock' => 10, 'categoria' => 'PRO', 'tipo_entrega' => 'digital']);
+        Premio::create(['nombre' => 'Curso IA', 'descripcion' => 'Curso online', 'precio' => 999, 'stock' => 10, 'categoria' => 'TEENS', 'tipo_entrega' => 'digital']);
 
         $respuesta = $this->actingAs($docente)->getJson('/api/v1/tienda/administrar?q=cuaderno&solo_con_stock=1')
             ->assertOk();
 
         $nombres = collect($respuesta->json('premios'))->pluck('nombre')->all();
         $this->assertEqualsCanonicalizing(['Cuaderno rojo'], $nombres);
+    }
+
+    public function test_categoria_pro_legacy_no_puede_crearse(): void
+    {
+        $docente = $this->docente();
+
+        $this->actingAs($docente)->postJson('/api/v1/tienda/premios', [
+            'nombre' => 'Premio Legacy',
+            'descripcion' => 'No debe persistirse',
+            'precio' => 20,
+            'stock' => 1,
+            'categoria' => 'PRO',
+            'tipo_entrega' => 'digital',
+        ])->assertUnprocessable()
+            ->assertJsonValidationErrors('categoria');
     }
 }

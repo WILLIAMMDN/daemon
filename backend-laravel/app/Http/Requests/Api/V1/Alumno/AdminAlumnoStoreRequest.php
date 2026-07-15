@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Api\V1\Alumno;
 
+use App\Enums\NivelAlumno;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -19,7 +20,7 @@ class AdminAlumnoStoreRequest extends FormRequest
             'email' => ['nullable', 'email', 'max:100', 'unique:usuarios,email'],
             'usuario' => ['required', 'string', 'max:50', 'unique:usuarios,usuario', 'regex:/^[a-z0-9._-]+$/i'],
             'password' => ['required', 'string', 'min:6', 'max:255'],
-            'nivel' => ['required', 'string', 'in:KIDS,TEENS,PRO,GENERAL'],
+            'nivel' => ['required', 'string', Rule::in(NivelAlumno::values())],
             'rol' => ['required', 'string', 'in:alumno,docente,admin'],
             'id_aula' => ['nullable', 'integer', 'exists:aulas,id'],
             'id_institucion' => ['nullable', 'integer', 'exists:instituciones,id'],

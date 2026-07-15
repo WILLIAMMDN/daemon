@@ -59,12 +59,23 @@ class AulaCrudTest extends TestCase
 
         $this->actingAs($admin)->putJson("/api/v1/docente/aulas/{$id}", [
             'nombre' => 'Aula Renombrada',
-            'nivel' => 'PRO',
+            'nivel' => 'TEENS',
         ])->assertOk()
             ->assertJsonPath('nombre', 'Aula Renombrada')
-            ->assertJsonPath('nivel', 'PRO');
+            ->assertJsonPath('nivel', 'TEENS');
 
-        $this->assertDatabaseHas('aulas', ['id' => $id, 'nombre' => 'Aula Renombrada', 'nivel' => 'PRO']);
+        $this->assertDatabaseHas('aulas', ['id' => $id, 'nombre' => 'Aula Renombrada', 'nivel' => 'TEENS']);
+    }
+
+    public function test_nivel_pro_legacy_no_puede_crearse(): void
+    {
+        $admin = $this->admin();
+
+        $this->actingAs($admin)->postJson('/api/v1/docente/aulas', [
+            'nombre' => 'Aula Legacy',
+            'nivel' => 'PRO',
+        ])->assertUnprocessable()
+            ->assertJsonValidationErrors('nivel');
     }
 
     public function test_docente_puede_actualizar_su_aula_pero_no_otra(): void

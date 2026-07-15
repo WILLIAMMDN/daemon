@@ -119,7 +119,7 @@ class AcademicScopeServiceTest extends TestCase
             'nombre_completo' => $nombre,
             'usuario' => $usuario,
             'password_hash' => bcrypt('secret'),
-            'nivel' => $rol === 'docente' ? 'DOCENTE' : 'TEENS',
+            'nivel' => 'TEENS',
             'tokens' => $tokens,
             'rol' => $rol,
             'id_institucion' => $aula?->id_institucion,

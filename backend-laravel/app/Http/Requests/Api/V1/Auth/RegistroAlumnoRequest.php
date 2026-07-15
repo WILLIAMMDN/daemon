@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Api\V1\Auth;
 
+use App\Enums\NivelAlumno;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 /**
  * Registro de alumno con friction minima: solo email + password
@@ -36,7 +38,7 @@ class RegistroAlumnoRequest extends FormRequest
             'nombre_completo' => ['nullable', 'string', 'max:100'],
             'telefono' => ['nullable', 'string', 'max:30', 'unique:usuarios,telefono'],
             'usuario' => ['nullable', 'alpha_dash', 'max:50', 'unique:usuarios,usuario'],
-            'nivel' => ['nullable', 'in:KIDS,TEENS,PRO'],
+            'nivel' => ['nullable', Rule::in(NivelAlumno::values())],
         ];
     }
 

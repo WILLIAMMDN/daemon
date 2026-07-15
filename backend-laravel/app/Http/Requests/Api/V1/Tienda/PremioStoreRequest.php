@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Api\V1\Tienda;
 
+use App\Enums\NivelAlumno;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class PremioStoreRequest extends FormRequest
 {
@@ -19,7 +21,7 @@ class PremioStoreRequest extends FormRequest
             'precio' => ['required', 'integer', 'min:0'],
             'stock' => ['required', 'integer', 'min:0'],
             'imagen' => ['nullable', 'string', 'max:255'],
-            'categoria' => ['required', 'in:TEENS,KIDS,PRO,GENERAL'],
+            'categoria' => ['required', Rule::in(NivelAlumno::conAlcanceGeneral('GENERAL'))],
             'tipo_entrega' => ['required', 'in:fisico,digital'],
             'codigos' => ['nullable', 'array'],
             'codigos.*.publico' => ['nullable', 'string', 'max:255'],

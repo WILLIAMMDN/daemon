@@ -7,6 +7,7 @@ use App\Http\Requests\Api\V1\Evaluacion\GuardarPreguntasRequest;
 use App\Http\Requests\Api\V1\Mision\EntregarMisionRequest;
 use App\Http\Requests\Api\V1\Mision\MisionStoreRequest;
 use App\Http\Requests\Api\V1\Tienda\PremioStoreRequest;
+use Illuminate\Support\Facades\Validator;
 use Tests\TestCase;
 
 class ModuleRequestRulesTest extends TestCase
@@ -25,7 +26,11 @@ class ModuleRequestRulesTest extends TestCase
 
         $this->assertContains('required', $rules['titulo']);
         $this->assertContains('required', $rules['recompensa']);
-        $this->assertContains('in:TODOS,KIDS,TEENS,PRO', $rules['nivel_requerido']);
+        $nivelRules = ['nivel_requerido' => $rules['nivel_requerido']];
+        $this->assertTrue(Validator::make(['nivel_requerido' => 'TODOS'], $nivelRules)->passes());
+        $this->assertTrue(Validator::make(['nivel_requerido' => 'KIDS'], $nivelRules)->passes());
+        $this->assertTrue(Validator::make(['nivel_requerido' => 'TEENS'], $nivelRules)->passes());
+        $this->assertFalse(Validator::make(['nivel_requerido' => 'PRO'], $nivelRules)->passes());
     }
 
     public function test_mission_delivery_blocks_script_like_extensions_by_mime_allowlist(): void
@@ -45,6 +50,10 @@ class ModuleRequestRulesTest extends TestCase
         $this->assertContains('min:0', $rules['precio']);
         $this->assertContains('min:0', $rules['stock']);
         $this->assertContains('in:fisico,digital', $rules['tipo_entrega']);
+        $this->assertFalse(Validator::make(
+            ['categoria' => 'PRO'],
+            ['categoria' => $rules['categoria']],
+        )->passes());
     }
 
     public function test_question_bank_requires_correct_answer(): void

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Api\V1\Alumno;
 
+use App\Enums\NivelAlumno;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -32,7 +33,7 @@ class AdminAlumnoUpdateRequest extends FormRequest
                 Rule::unique('usuarios', 'usuario')->ignore($usuarioId),
             ],
             'password' => ['nullable', 'string', 'min:6', 'max:255'],
-            'nivel' => ['nullable', 'string', 'in:KIDS,TEENS,PRO,GENERAL'],
+            'nivel' => ['nullable', 'string', Rule::in(NivelAlumno::values())],
             'rol' => ['nullable', 'string', 'in:alumno,docente,admin'],
             'id_aula' => ['nullable', 'integer', 'exists:aulas,id'],
             'id_institucion' => ['nullable', 'integer', 'exists:instituciones,id'],

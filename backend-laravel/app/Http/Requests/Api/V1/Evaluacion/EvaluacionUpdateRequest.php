@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Api\V1\Evaluacion;
 
+use App\Enums\NivelAlumno;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class EvaluacionUpdateRequest extends FormRequest
 {
@@ -15,7 +17,7 @@ class EvaluacionUpdateRequest extends FormRequest
     {
         return [
             'titulo' => ['sometimes', 'string', 'max:100'],
-            'nivel' => ['sometimes', 'in:KIDS,TEENS,PRO'],
+            'nivel' => ['sometimes', Rule::in(NivelAlumno::values())],
             'estado' => ['sometimes', 'in:borrador,activo,finalizado'],
         ];
     }
