@@ -9,8 +9,10 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "jest",
+    "test:ci": "jest --runInBand --coverage",
     "test:watch": "jest --watch",
-    "e2e": "playwright test"
+    "e2e": "playwright test",
+    "e2e:public": "playwright test --project=public"
   },
   "private": true,
   "packageManager": "npm@11.12.1",

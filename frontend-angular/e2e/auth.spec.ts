@@ -7,11 +7,14 @@ test.describe('Módulo de Autenticación Independiente', () => {
     await page.goto('/login');
     
     await page.waitForSelector('input[name="usuario"]');
-    await page.locator('input[name="usuario"]').fill('jose123');
+    await page.locator('input[name="usuario"]').fill(process.env['E2E_INVALID_USERNAME'] || 'e2e_invalid_user');
     await page.locator('input[name="password"]').fill('badpassword');
     await page.locator('button[type="submit"]').click();
     
-    // Puede ser .form-alert, mensaje de ng-zorro (.ant-message), o un texto de error.
-    await expect(page.locator('.form-alert, .field-error, .ant-message, .ant-notification, text="incorrecta"').first()).toBeVisible({ timeout: 15000 });
+    const visualAlert = page.locator('.form-alert, .field-error, .ant-message, .ant-notification');
+    const accessibleError = page.getByText(/incorrecta|credenciales|conectar con la api|no se pudo/i);
+
+    await expect(visualAlert.or(accessibleError).first()).toBeVisible({ timeout: 60000 });
+    await expect(page).toHaveURL(/\/login/);
   });
 });

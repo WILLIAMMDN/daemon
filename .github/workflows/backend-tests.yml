@@ -4,18 +4,15 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'backend-laravel/**'
-      - '.github/workflows/backend-tests.yml'
   pull_request:
     branches:
       - main
-    paths:
-      - 'backend-laravel/**'
-      - '.github/workflows/backend-tests.yml'
+
+permissions:
+  contents: read
 
 jobs:
-  test:
+  backend:
     runs-on: ubuntu-latest
 
     defaults:
@@ -39,17 +36,20 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@accd6127cb78bee3e8082180cb391013d204ef9f # 2.37.0
         with:
           php-version: '8.3'
           extensions: mbstring, xml, ctype, iconv, intl, pdo, pdo_pgsql, pgsql, pdo_sqlite, sqlite3
-          coverage: none
+          coverage: pcov
 
       - name: Install dependencies
         run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+      - name: Audit Composer dependencies
+        run: composer audit --locked
 
       - name: Prepare environment
         run: |
@@ -72,4 +72,4 @@ jobs:
           DB_CONNECTION: sqlite
           DB_DATABASE: ':memory:'
           DB_URL: ''
-        run: php artisan test
+        run: php artisan test --coverage --min=20
