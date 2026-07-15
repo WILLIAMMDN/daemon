@@ -15,6 +15,10 @@ return [
 
     'name' => env('APP_NAME', 'Laravel'),
 
+    'version' => env('APP_VERSION', 'development'),
+
+    'commit' => env('RENDER_GIT_COMMIT', env('APP_COMMIT', 'unknown')),
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment
