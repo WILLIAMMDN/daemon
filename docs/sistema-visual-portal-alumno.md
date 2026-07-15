@@ -48,8 +48,28 @@ Interpretación:
 - `success`: estados completados.
 - `warning`: saldo, DAEMONS y atención moderada.
 
-No introducir una segunda paleta por módulo. Misiones, ranking, perfil y tienda
-deben sentirse como partes del mismo producto.
+No introducir una paleta completa y desconectada por módulo. Misiones, ranking,
+perfil y tienda deben sentirse como partes del mismo producto. Las experiencias
+insignia pueden usar acentos sólidos controlados cuando expresen una categoría,
+un estado o una acción y conserven la misma tipografía, estructura e interacción.
+
+## Identidad por experiencia
+
+Coherencia no significa que todas las páginas deban parecer la misma tarjeta
+administrativa. Las experiencias centrales de DAEMON pueden construir un
+escenario propio con estas reglas:
+
+- usar un hero sólido dentro de la familia azul o azul marino de DAEMON;
+- limitar coral, verde, violeta y ámbar a iconos, estado, CTA y bordes de acento;
+- mantener Inter, la cuadrícula, la escala de espacios y los radios compartidos;
+- permitir profundidad física corta de hasta 5 px en controles lúdicos;
+- usar composición, jerarquía e iconografía antes que ilustraciones de relleno;
+- representar solo estados reales de sesión o backend, nunca niveles o bloqueos
+  ficticios.
+
+`Super Lab` es el primer piloto de esta dirección. Recupera la sensación de
+laboratorio y progresión de la arquitectura anterior sin copiar sus degradados,
+animaciones constantes ni dependencias visuales rígidas.
 
 ## Tipografía
 
@@ -160,6 +180,7 @@ frontend-angular/src/app/features/alumno/pages/editar-perfil/
 frontend-angular/src/app/features/misiones/pages/
 frontend-angular/src/app/features/ranking/pages/ranking/
 frontend-angular/src/app/features/tienda/pages/
+frontend-angular/src/app/features/herramientas/pages/herramientas/
 ```
 
 ## Verificación rápida
