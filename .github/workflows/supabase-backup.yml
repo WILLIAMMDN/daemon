@@ -48,6 +48,8 @@ jobs:
             --dbname=daemon_restore \
             --no-owner \
             --no-privileges \
+            --clean \
+            --if-exists \
             --exit-on-error \
             backup/daemon-postgres.dump
           psql --host=restore-db --username=postgres --dbname=daemon_restore \
