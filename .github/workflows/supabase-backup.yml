@@ -11,6 +11,7 @@ permissions:
 jobs:
   database-backup:
     runs-on: ubuntu-latest
+    environment: production
     container: postgres:17-bookworm
     services:
       restore-db:
@@ -63,6 +64,7 @@ jobs:
 
   private-storage-backup:
     runs-on: ubuntu-latest
+    environment: production
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.SUPABASE_STORAGE_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.SUPABASE_STORAGE_SECRET_ACCESS_KEY }}
@@ -90,4 +92,3 @@ jobs:
           path: backup
           retention-days: 14
           if-no-files-found: error
-
