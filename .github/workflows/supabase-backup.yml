@@ -36,6 +36,7 @@ jobs:
           mkdir -p backup
           pg_dump "$SUPABASE_BACKUP_DATABASE_URL" \
             --format=custom \
+            --schema=public \
             --no-owner \
             --no-privileges \
             --file=backup/daemon-postgres.dump
@@ -62,7 +63,7 @@ jobs:
           retention-days: 14
           if-no-files-found: error
 
-  private-storage-backup:
+  storage-backup:
     runs-on: ubuntu-latest
     environment: production
     env:
@@ -73,22 +74,32 @@ jobs:
     steps:
       - name: Validate storage secrets
         run: test -n "$AWS_ACCESS_KEY_ID" && test -n "$AWS_SECRET_ACCESS_KEY"
-      - name: Install S3 client
-        run: sudo apt-get update && sudo apt-get install -y awscli
-      - name: Copy private evidence bucket
+      - name: Verify preinstalled S3 client
+        run: aws --version
+      - name: Copy public and private storage buckets
         run: |
-          mkdir -p backup/daemon-private
-          aws s3 sync s3://daemon-private backup/daemon-private \
-            --endpoint-url "$ENDPOINT" \
-            --no-progress
-          tar -czf backup/daemon-private-storage.tar.gz -C backup daemon-private
-          tar -tzf backup/daemon-private-storage.tar.gz >/dev/null
-          sha256sum backup/daemon-private-storage.tar.gz > backup/daemon-private-storage.tar.gz.sha256
-          rm -rf backup/daemon-private
-      - name: Upload private storage backup
+          mkdir -p backup/daemon-assets backup/daemon-private
+          for bucket in daemon-assets daemon-private; do
+            if aws s3api head-bucket --bucket "$bucket" --endpoint-url "$ENDPOINT" >/dev/null 2>&1; then
+              aws s3 sync "s3://$bucket" "backup/$bucket" \
+                --endpoint-url "$ENDPOINT" \
+                --no-progress
+            elif [ "$bucket" = "daemon-private" ]; then
+              echo "Private bucket does not exist yet; recording an empty pre-migration snapshot."
+              touch "backup/$bucket/.bucket-not-created"
+            else
+              echo "Required public bucket $bucket is not accessible."
+              exit 1
+            fi
+          done
+          tar -czf backup/daemon-storage.tar.gz -C backup daemon-assets daemon-private
+          tar -tzf backup/daemon-storage.tar.gz >/dev/null
+          sha256sum backup/daemon-storage.tar.gz > backup/daemon-storage.tar.gz.sha256
+          rm -rf backup/daemon-assets backup/daemon-private
+      - name: Upload verified storage backup
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: daemon-private-storage-${{ github.run_id }}
+          name: daemon-storage-${{ github.run_id }}
           path: backup
           retention-days: 14
           if-no-files-found: error

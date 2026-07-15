@@ -39,7 +39,7 @@ No existe una ruta HTTP para ejecutar migraciones.
 1. `pg_dump` custom de PostgreSQL;
 2. restauracion completa en un PostgreSQL 17 aislado;
 3. checksum SHA-256;
-4. copia del bucket privado y verificacion del tar;
+4. copia de los buckets publico y privado, con verificacion del tar;
 5. artefactos independientes de Supabase con retencion limitada.
 
 Secretos requeridos en GitHub:
