@@ -7,6 +7,7 @@
     "start:cloud": "ng serve --configuration cloud",
     "start:local": "ng serve --configuration development",
     "build": "ng build",
+    "build:staging": "node scripts/generate-staging-environment.mjs && ng build --configuration staging",
     "watch": "ng build --watch --configuration development",
     "test": "jest",
     "test:ci": "jest --runInBand --coverage",
