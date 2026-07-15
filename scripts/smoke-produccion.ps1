@@ -88,6 +88,18 @@ Assert-Ok ((Get-HeaderValue $login.Headers 'Cache-Control') -match 'no-store') '
 Assert-Ok ($login.Content -match 'main-[A-Za-z0-9]+\.js') 'Frontend HTML references an Angular main bundle.'
 Assert-Ok ((Get-HeaderValue $login.Headers 'X-Content-Type-Options') -eq 'nosniff') 'Frontend sends X-Content-Type-Options nosniff.'
 
+$contentSecurityPolicy = Get-HeaderValue $login.Headers 'Content-Security-Policy'
+Assert-Ok ($contentSecurityPolicy -match "script-src[^;]*'wasm-unsafe-eval'") 'Frontend CSP allows WebAssembly compilation required by Rive.'
+Assert-Ok ($contentSecurityPolicy -match 'script-src[^;]*https://apis\.google\.com') 'Frontend CSP allows the official Google authentication script.'
+
+$riveRuntime = Invoke-CheckedGet -Uri (Join-WebUrl $frontend '/rive/rive.wasm')
+Assert-Ok ($riveRuntime.StatusCode -eq 200) 'Rive WebAssembly runtime responds with HTTP 200.'
+Assert-Ok ((Get-HeaderValue $riveRuntime.Headers 'Content-Type') -match 'application/wasm') 'Rive runtime is served with the WebAssembly content type.'
+
+$riveMascot = Invoke-CheckedGet -Uri (Join-WebUrl $frontend '/rive/login-teddy.riv')
+Assert-Ok ($riveMascot.StatusCode -eq 200) 'Login teddy Rive asset responds with HTTP 200.'
+Assert-Ok ($riveMascot.Content.Length -gt 0) 'Login teddy Rive asset is not empty.'
+
 $health = Invoke-CheckedGet -Uri $BackendHealthUrl -Headers @{ Origin = $frontend }
 Assert-Ok ($health.StatusCode -eq 200) 'Backend health responds with HTTP 200.'
 Assert-Ok ((Get-HeaderValue $health.Headers 'Access-Control-Allow-Origin') -eq $frontend) 'Backend CORS allows the production frontend origin.'
