@@ -16,7 +16,7 @@
     "e2e:public": "playwright test --project=public"
   },
   "private": true,
-  "packageManager": "npm@11.12.1",
+  "packageManager": "npm@11.16.0",
   "overrides": {
     "@babel/core": "7.29.7",
     "@angular/build": {
@@ -57,6 +57,9 @@
     "@angular/cli": "^21.2.18",
     "@angular/compiler-cli": "^21.2.18",
     "@angular/platform-browser-dynamic": "^21.2.18",
+    "@emnapi/core": "1.11.2",
+    "@emnapi/runtime": "1.11.2",
+    "@emnapi/wasi-threads": "1.2.2",
     "@playwright/test": "^1.42.1",
     "@types/jest": "^30.0.0",
     "autoprefixer": "^10.5.0",
