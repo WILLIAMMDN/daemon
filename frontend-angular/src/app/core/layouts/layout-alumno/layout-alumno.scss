@@ -7,6 +7,8 @@
   --student-muted: #667085;
   --student-primary: #1677ff;
   --student-primary-dark: #0958d9;
+  --student-primary-soft: #edf5ff;
+  --student-primary-border: #cfe3ff;
   display: block;
   min-height: 100vh;
 }
@@ -69,7 +71,7 @@
 }
 
 :host ::ng-deep .level-capsule .ant-progress-text {
-  color: #174ea6;
+  color: var(--student-primary-dark);
   font-family: Inter, sans-serif;
   font-size: .85rem;
   font-weight: 700;
@@ -167,8 +169,8 @@
 }
 
 .icon-capsule:hover {
-  background: #edf5ff;
-  border-color: #cfe3ff;
+  background: var(--student-primary-soft);
+  border-color: var(--student-primary-border);
   color: var(--student-primary);
 }
 
@@ -203,8 +205,8 @@
 
 .mobile-menu-trigger {
   align-items: center;
-  background: #edf5ff;
-  border: 1px solid #d8e9ff;
+  background: var(--student-primary-soft);
+  border: 1px solid var(--student-primary-border);
   border-radius: 10px;
   display: none;
   flex-direction: column;
@@ -251,7 +253,7 @@
 .notification-popover > header div { display: grid; }
 .notification-popover > header small { color: var(--student-primary); font-size: .64rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; }
 .notification-popover > header strong { font-size: .95rem; }
-.notification-popover > header > span { background: #edf5ff; border-radius: 8px; color: #0958d9; font-size: .7rem; font-weight: 700; padding: .35rem .55rem; }
+.notification-popover > header > span { background: var(--student-primary-soft); border-radius: 8px; color: var(--student-primary-dark); font-size: .7rem; font-weight: 700; padding: .35rem .55rem; }
 .notification-list { max-height: 310px; overflow: auto; }
 .notification-list article { border-bottom: 1px solid #eef1f5; padding: .9rem 1.15rem; }
 .notification-list article.unread { background: #f6faff; }

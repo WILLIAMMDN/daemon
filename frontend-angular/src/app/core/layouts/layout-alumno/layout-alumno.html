@@ -1,4 +1,11 @@
-<div class="portal student-premium">
+<div
+  class="portal student-premium"
+  [attr.data-nivel-alumno]="temaPortal().atributo"
+  [style.--student-primary]="temaPortal().colorPrincipal"
+  [style.--student-primary-dark]="temaPortal().colorPrincipalOscuro"
+  [style.--student-primary-soft]="temaPortal().colorSuave"
+  [style.--student-primary-border]="temaPortal().colorBorde"
+>
   <app-sidebar-portal
     #sidebar
     ariaLabel="Navegación de estudiante"
@@ -32,7 +39,7 @@
             [nzPercent]="progresoNivel()"
             [nzWidth]="44"
             [nzStrokeWidth]="9"
-            nzStrokeColor="#1677ff"
+            [nzStrokeColor]="temaPortal().colorPrincipal"
             [nzFormat]="formatoNivel"
           />
           <span class="level-copy">

@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, computed, inject, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { Title } from '@angular/platform-browser';
@@ -17,6 +17,7 @@ import { CargaGlobal } from '../../servicios/carga-global';
 import { Sesion } from '../../servicios/sesion';
 import { NotificacionesService } from '../../servicios/notificaciones.service';
 import { alumnoSidebarSections } from '../portal-sidebar.config';
+import { temaPortalAlumno } from '../../dominio/tema-portal-alumno';
 
 import { TourService } from '../../servicios/tour.service';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
@@ -40,6 +41,7 @@ export class LayoutAlumno implements OnInit {
   private readonly titleService = inject(Title);
 
   readonly seccionesSidebar = alumnoSidebarSections;
+  readonly temaPortal = computed(() => temaPortalAlumno(this.sesion.usuario()?.nivel));
   readonly iconos = {
     buscar: faMagnifyingGlass,
     campana: faBell,

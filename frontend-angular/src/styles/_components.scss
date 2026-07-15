@@ -259,14 +259,14 @@
 }
 
 .student-premium .daemon-btn.ant-btn-primary {
-  background: #1677ff;
-  border-color: #1677ff;
+  background: var(--student-primary, #1677ff);
+  border-color: var(--student-primary, #1677ff);
   box-shadow: none;
 }
 
 .student-premium .daemon-btn.ant-btn-primary:not(:disabled):hover,
 .student-premium .daemon-btn.ant-btn-primary:not(:disabled):focus {
-  background: #0958d9;
-  border-color: #0958d9;
+  background: var(--student-primary-dark, #0958d9);
+  border-color: var(--student-primary-dark, #0958d9);
   box-shadow: none;
 }
