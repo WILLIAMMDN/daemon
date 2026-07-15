@@ -1,0 +1,32 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /frontend-angular
+    schedule:
+      interval: weekly
+      day: monday
+      time: '09:00'
+      timezone: America/Lima
+    groups:
+      angular-and-tooling:
+        patterns: ['@angular/*', 'typescript', 'rxjs', 'zone.js']
+      frontend-minor-patch:
+        update-types: ['minor', 'patch']
+  - package-ecosystem: composer
+    directory: /backend-laravel
+    schedule:
+      interval: weekly
+      day: monday
+      time: '09:15'
+      timezone: America/Lima
+    groups:
+      backend-minor-patch:
+        update-types: ['minor', 'patch']
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '09:30'
+      timezone: America/Lima
+

@@ -1,0 +1,93 @@
+name: Supabase Backup and Restore Drill
+
+on:
+  schedule:
+    - cron: '17 7 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  database-backup:
+    runs-on: ubuntu-latest
+    container: postgres:17-bookworm
+    services:
+      restore-db:
+        image: postgres:17-bookworm
+        env:
+          POSTGRES_DB: daemon_restore
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: restore-only
+        options: >-
+          --health-cmd "pg_isready -U postgres -d daemon_restore"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      SUPABASE_BACKUP_DATABASE_URL: ${{ secrets.SUPABASE_BACKUP_DATABASE_URL }}
+      PGPASSWORD: restore-only
+    steps:
+      - name: Validate backup secret
+        run: test -n "$SUPABASE_BACKUP_DATABASE_URL"
+      - name: Create PostgreSQL custom-format backup
+        run: |
+          mkdir -p backup
+          pg_dump "$SUPABASE_BACKUP_DATABASE_URL" \
+            --format=custom \
+            --no-owner \
+            --no-privileges \
+            --file=backup/daemon-postgres.dump
+      - name: Verify restore into isolated PostgreSQL
+        run: |
+          pg_restore \
+            --host=restore-db \
+            --username=postgres \
+            --dbname=daemon_restore \
+            --no-owner \
+            --no-privileges \
+            --exit-on-error \
+            backup/daemon-postgres.dump
+          psql --host=restore-db --username=postgres --dbname=daemon_restore \
+            --set=ON_ERROR_STOP=1 \
+            --command="select count(*) >= 1 as schema_restored from information_schema.tables where table_schema = 'public';"
+      - name: Generate checksum
+        run: sha256sum backup/daemon-postgres.dump > backup/daemon-postgres.dump.sha256
+      - name: Upload verified database backup
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: daemon-postgres-${{ github.run_id }}
+          path: backup
+          retention-days: 14
+          if-no-files-found: error
+
+  private-storage-backup:
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.SUPABASE_STORAGE_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.SUPABASE_STORAGE_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: sa-east-1
+      ENDPOINT: https://lbxdcvsrmkkynttgwblc.storage.supabase.co/storage/v1/s3
+    steps:
+      - name: Validate storage secrets
+        run: test -n "$AWS_ACCESS_KEY_ID" && test -n "$AWS_SECRET_ACCESS_KEY"
+      - name: Install S3 client
+        run: sudo apt-get update && sudo apt-get install -y awscli
+      - name: Copy private evidence bucket
+        run: |
+          mkdir -p backup/daemon-private
+          aws s3 sync s3://daemon-private backup/daemon-private \
+            --endpoint-url "$ENDPOINT" \
+            --no-progress
+          tar -czf backup/daemon-private-storage.tar.gz -C backup daemon-private
+          tar -tzf backup/daemon-private-storage.tar.gz >/dev/null
+          sha256sum backup/daemon-private-storage.tar.gz > backup/daemon-private-storage.tar.gz.sha256
+          rm -rf backup/daemon-private
+      - name: Upload private storage backup
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: daemon-private-storage-${{ github.run_id }}
+          path: backup
+          retention-days: 14
+          if-no-files-found: error
+
