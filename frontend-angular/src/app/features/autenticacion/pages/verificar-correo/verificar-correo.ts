@@ -126,7 +126,7 @@ export class VerificarCorreo implements OnInit {
         // logueado, lo mandamos al login para que entre con la cuenta
         // recien verificada.
         const destino = this.sesion.autenticado()
-          ? (this.sesion.usuario()?.rol === 'docente' ? '/docente' : '/alumno')
+          ? this.sesion.rutaInicio()
           : '/login';
 
         setTimeout(() => this.router.navigateByUrl(destino), 1800);

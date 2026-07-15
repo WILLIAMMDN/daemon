@@ -86,6 +86,13 @@ scripts/              Local automation helpers
 - Do not reintroduce gradients or Outfit in the main student modules.
 - The existing purple sidebar is intentionally preserved; its IDs are also
   used by the onboarding tour.
+- The family portal lives at `/familias`, uses the dedicated `tutor` role and
+  requires verified email plus explicit invitation acceptance before exposing
+  a minor's progress.
+- Family reports may show the student's contextual ranking position. Do not
+  hide or remove the ranking from the student portal.
+- Screen-time tracking stores daily aggregate seconds only. Do not introduce
+  browsing, keystroke, chat or surveillance telemetry.
 - Read `docs/sistema-visual-portal-alumno.md` and `docs/portal-alumno.md` before
   changing the student layout or modules.
 
@@ -105,6 +112,10 @@ scripts/              Local automation helpers
 - Academic rewards go through `GamificacionService`; store redemptions never
   subtract XP.
 - Ranking queries order by `experiencia`, not tokens.
+- Tutor accounts must authenticate through `/auth/tutor/firebase`; never
+  silently convert an existing student, teacher or admin account into a tutor.
+- DAEMON must not receive or store payment-card details. Family checkout links
+  are provider-hosted HTTPS URLs configured outside source control.
 
 ## Storage and assets
 
@@ -130,13 +141,8 @@ cd C:\laragon\www\daemon
 git status --short --branch
 ```
 
-Known frontend warnings:
-
-- Initial Angular bundle exceeds the 700 kB budget.
-- `@rive-app/canvas` is CommonJS and causes an optimization warning.
-
-These warnings are known and not blockers unless the user asks to optimize
-bundle size.
+The initial bundle stays under the configured 1 MB warning budget. Treat any
+new build warning as a regression to review instead of accepting it by default.
 
 ## Deploy commands
 
@@ -181,4 +187,5 @@ verify Render separately.
 - Production QA: `docs/qa-produccion.md`
 - Runtime, staging, backups and rollback: `docs/infraestructura-operativa.md`
 - KIDS/TEENS privacy and retention: `docs/privacidad-kids-teens.md`
+- Family/guardian portal: `docs/portal-familias.md`
 - July 2026 release evidence: `docs/release-2026-07-14-portal-alumno.md`

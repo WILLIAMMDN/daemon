@@ -112,8 +112,8 @@ export class Login implements AfterViewInit, OnDestroy {
 
     acceso.subscribe({
       next: () => {
-        if (this.sesion.esDocente()) {
-          this.error.set('Este acceso es solo para estudiantes. Usa el login docente si eres profesor.');
+        if (!this.sesion.esAlumno()) {
+          this.error.set('Este acceso es solo para estudiantes. Usa el portal correspondiente a tu cuenta.');
           this.sesion.limpiar();
           this.enviando.set(false);
           this.cargaGlobal.ocultar(carga);
@@ -145,8 +145,8 @@ export class Login implements AfterViewInit, OnDestroy {
 
     this.auth.loginGoogleFirebase(true).subscribe({
       next: () => {
-        if (this.sesion.esDocente()) {
-          this.error.set('Este acceso es solo para estudiantes. Usa el login docente si eres profesor.');
+        if (!this.sesion.esAlumno()) {
+          this.error.set('Este acceso es solo para estudiantes. Usa el portal correspondiente a tu cuenta.');
           this.sesion.limpiar();
           this.enviando.set(false);
           this.cargaGlobal.ocultar(carga);

@@ -1,12 +1,42 @@
 @if (cargando()) {
-  <app-cargando class="dashboard-state" texto="Preparando tu campus..."></app-cargando>
+  <app-cargando class="dashboard-state" tipo="dashboard" texto="Preparando tu campus..."></app-cargando>
 } @else if (error()) {
-  <section class="dashboard-state dashboard-state--error">
-    <nz-alert nzType="error" nzShowIcon nzMessage="No pudimos cargar tu panel" [nzDescription]="error()" />
-    <button nz-button nzType="primary" class="daemon-btn" type="button" (click)="cargar()">Reintentar</button>
+  <section class="dashboard-state dashboard-state--error" role="alert" aria-live="assertive">
+    <nz-alert nzType="error" nzShowIcon nzMessage="DAEMON tuvo un tropiezo" [nzDescription]="error()" />
+    <button nz-button nzType="primary" class="daemon-btn" type="button" [disabled]="actualizando()" (click)="cargar()">
+      {{ actualizando() ? 'Reconectando...' : 'Reintentar' }}
+    </button>
   </section>
 } @else if (panel(); as datos) {
-  <main class="student-dashboard" aria-label="Panel del estudiante">
+  <section class="student-dashboard" aria-labelledby="dashboard-title">
+    @if (estado(); as estadoActual) {
+      @if (estadoActual.kind === 'ready' && estadoActual.stale) {
+        <aside class="offline-notice" role="status" aria-live="polite">
+          <span>{{ estadoActual.message }}</span>
+          <button type="button" [disabled]="actualizando()" (click)="cargar()">
+            {{ actualizando() ? 'Actualizando...' : 'Volver a conectar' }}
+          </button>
+        </aside>
+      }
+    }
+
+    @if (celebracion(); as premio) {
+      <aside class="reward-reveal" role="status" aria-live="polite" aria-label="Nueva recompensa confirmada">
+        <span class="reward-spark reward-spark--one" aria-hidden="true"></span>
+        <span class="reward-spark reward-spark--two" aria-hidden="true"></span>
+        <span class="reward-spark reward-spark--three" aria-hidden="true"></span>
+        <span class="reward-icon" aria-hidden="true"><fa-icon [icon]="iconos.brillo" /></span>
+        <div>
+          <small>Recompensa confirmada</small>
+          <strong>Tu Núcleo DAEMON evolucionó</strong>
+          <p>Sumaste +{{ premio.xp }} XP por aprendizaje real.</p>
+        </div>
+        <button type="button" class="reward-close" aria-label="Cerrar celebración" (click)="cerrarCelebracion()">
+          <fa-icon [icon]="iconos.cerrar" />
+        </button>
+      </aside>
+    }
+
     <section class="welcome-panel">
       <div class="welcome-identity">
         <nz-avatar
@@ -17,21 +47,32 @@
         />
         <div>
           <span class="section-label">Resumen de aprendizaje</span>
-          <h1>Hola, {{ nombreCorto(datos.usuario) }}</h1>
+          <h1 id="dashboard-title">Hola, {{ nombreCorto(datos.usuario) }}</h1>
           <p>Continúa tu ruta y convierte cada misión en progreso permanente.</p>
           <a nz-button nzType="default" class="profile-link" routerLink="/alumno/perfil">Ver mi perfil</a>
         </div>
       </div>
 
       <div class="level-summary">
-        <nz-progress
-          nzType="circle"
-          [nzPercent]="progreso(datos).progreso_porcentaje"
-          [nzWidth]="92"
-          [nzStrokeWidth]="8"
-          nzStrokeColor="#1677ff"
-          [nzFormat]="formatoNivel"
-        />
+        <div
+          class="level-progress-a11y"
+          role="progressbar"
+          aria-label="Progreso al siguiente nivel"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          [attr.aria-valuenow]="progreso(datos).progreso_porcentaje"
+          [attr.aria-valuetext]="progreso(datos).progreso_porcentaje + '%; nivel ' + progreso(datos).nivel"
+        >
+          <nz-progress
+            aria-hidden="true"
+            nzType="circle"
+            [nzPercent]="progreso(datos).progreso_porcentaje"
+            [nzWidth]="92"
+            [nzStrokeWidth]="8"
+            nzStrokeColor="#1677ff"
+            [nzFormat]="formatoNivel"
+          />
+        </div>
         <div>
           <span>Nivel {{ progreso(datos).nivel }}</span>
           <strong>{{ progreso(datos).experiencia_total }} XP</strong>
@@ -42,24 +83,24 @@
 
     <section class="dashboard-stats" aria-label="Indicadores principales">
       <article class="summary-tile summary-tile--blue">
-        <span class="summary-icon"><fa-icon [icon]="iconos.energia" /></span>
+        <span class="summary-icon" aria-hidden="true"><fa-icon [icon]="iconos.energia" /></span>
         <div><strong>{{ progreso(datos).experiencia_total }}</strong><small>Experiencia XP</small></div>
       </article>
       <article class="summary-tile summary-tile--amber">
-        <span class="summary-icon"><app-moneda-daemon [size]="22" /></span>
+        <span class="summary-icon" aria-hidden="true"><app-moneda-daemon [size]="22" /></span>
         <div><strong>{{ datos.usuario.tokens }}</strong><small>Saldo DAEMONS</small></div>
       </article>
       <article class="summary-tile summary-tile--green">
-        <span class="summary-icon"><fa-icon [icon]="iconos.check" /></span>
+        <span class="summary-icon" aria-hidden="true"><fa-icon [icon]="iconos.check" /></span>
         <div><strong>{{ datos.misiones_completadas }}</strong><small>Misiones superadas</small></div>
       </article>
       <article class="summary-tile summary-tile--violet">
-        <span class="summary-icon"><fa-icon [icon]="iconos.ranking" /></span>
-        <div><strong>#{{ datos.posicion }}</strong><small>Posición actual</small></div>
+        <span class="summary-icon" aria-hidden="true"><fa-icon [icon]="iconos.ranking" /></span>
+        <div><strong>#{{ datos.posicion }}</strong><small>{{ datos.posicion_scope_label }}</small></div>
       </article>
     </section>
 
-    <section class="dashboard-grid">
+    <section class="priority-grid" aria-label="Prioridades de aprendizaje">
       <article class="dashboard-card next-mission-card">
         <header class="card-heading">
           <div><span>Ruta de hoy</span><h2>Próxima misión</h2></div>
@@ -68,12 +109,12 @@
 
         @if (datos.proxima_mision; as mision) {
           <div class="mission-summary">
-            <span class="mission-mark"><fa-icon [icon]="iconos.cohete" /></span>
+            <span class="mission-mark" aria-hidden="true"><fa-icon [icon]="iconos.cohete" /></span>
             <div class="mission-copy">
               <small>{{ mision.nivel_requerido }} · {{ mision.tipo_evidencia }}</small>
               <h3>{{ mision.titulo }}</h3>
               <p>{{ mision.descripcion || 'Tu docente preparó un nuevo reto para seguir avanzando.' }}</p>
-              <div class="reward-pills">
+              <div class="reward-pills" aria-label="Recompensas de la misión">
                 <span>+{{ mision.recompensa }} XP</span>
                 <span>+{{ mision.recompensa }} DAEMONS</span>
               </div>
@@ -82,38 +123,52 @@
           </div>
         } @else {
           <div class="completed-route">
-            <span><fa-icon [icon]="iconos.check" /></span>
+            <span aria-hidden="true"><fa-icon [icon]="iconos.check" /></span>
             <div><h3>Ruta completada por ahora</h3><p>No tienes misiones pendientes. Vuelve pronto para descubrir nuevos retos.</p></div>
           </div>
         }
       </article>
 
       <article class="dashboard-card activity-card">
-        <header class="card-heading"><div><span>Constancia</span><h2>Actividad semanal</h2></div></header>
-        <div class="streak-summary"><span><fa-icon [icon]="iconos.fuego" /></span><strong>{{ datos.racha }}</strong><small>días de racha</small></div>
-        <p>{{ mensajeRacha(datos.racha) }}</p>
-        <div class="week-grid" aria-label="Actividad de los últimos siete días">
-          @for (dia of [1, 2, 3, 4, 5, 6, 7]; track dia) {
-            <span [class.active]="dia <= datos.racha"><fa-icon [icon]="iconos.check" /></span>
+        <header class="card-heading"><div><span>Constancia flexible</span><h2>Actividad de misiones</h2></div></header>
+        <div class="streak-summary"><span aria-hidden="true"><fa-icon [icon]="iconos.fuego" /></span><strong>{{ datos.racha }}</strong><small>días de racha</small></div>
+        <p>{{ mensajeRacha(datos) }}</p>
+        <ul class="week-grid" aria-label="Actividad real de los últimos siete días">
+          @for (dia of datos.actividad_semana; track dia.fecha) {
+            <li [class.active]="dia.activo" [attr.aria-label]="descripcionDia(dia)">
+              <span aria-hidden="true"><fa-icon [icon]="iconos.check" /></span>
+              <small aria-hidden="true">{{ dia.etiqueta }}</small>
+            </li>
           }
-        </div>
+        </ul>
       </article>
+    </section>
 
-      <article class="dashboard-card progress-card">
-        <header class="card-heading"><div><span>Progreso</span><h2>Camino al siguiente nivel</h2></div><small>{{ progreso(datos).progreso_porcentaje }}%</small></header>
-        <nz-progress [nzPercent]="progreso(datos).progreso_porcentaje" [nzShowInfo]="false" [nzStrokeWidth]="8" nzStrokeColor="#1677ff" />
+    <section class="secondary-grid" aria-label="Progreso y colección">
+      <article id="progreso-nivel" class="dashboard-card progress-card">
+        <header class="card-heading"><div><span>Núcleo DAEMON</span><h2>Camino al siguiente nivel</h2></div><small>{{ progreso(datos).progreso_porcentaje }}%</small></header>
+        <div
+          class="linear-progress-a11y"
+          role="progressbar"
+          aria-label="Experiencia hacia el siguiente nivel"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          [attr.aria-valuenow]="progreso(datos).progreso_porcentaje"
+        >
+          <nz-progress aria-hidden="true" [nzPercent]="progreso(datos).progreso_porcentaje" [nzShowInfo]="false" [nzStrokeWidth]="8" nzStrokeColor="#1677ff" />
+        </div>
         <div class="progress-numbers"><span>{{ progreso(datos).experiencia_nivel }} XP actuales</span><span>{{ progreso(datos).experiencia_meta }} XP meta</span></div>
-        <footer><fa-icon [icon]="iconos.check" /> Tu XP nunca disminuye.</footer>
+        <footer><fa-icon [icon]="iconos.check" /> Tu Núcleo crece con aprendizaje; tu XP nunca disminuye.</footer>
       </article>
 
       <article class="dashboard-card achievements-card">
         <header class="card-heading"><div><span>Logros</span><h2>Tu colección</h2></div><a routerLink="/alumno/perfil">Abrir perfil</a></header>
         <div class="achievement-list">
-          <div><span class="achievement-icon achievement-icon--blue"><fa-icon [icon]="iconos.medalla" /></span><strong>{{ datos.insignias }}</strong><small>Insignias</small></div>
-          <div><span class="achievement-icon achievement-icon--green"><fa-icon [icon]="iconos.regalo" /></span><strong>{{ datos.canjes_pendientes }}</strong><small>Premios en camino</small></div>
-          <div><span class="achievement-icon achievement-icon--amber"><fa-icon [icon]="iconos.cohete" /></span><strong>{{ datos.misiones_pendientes }}</strong><small>Misiones pendientes</small></div>
+          <div><span class="achievement-icon achievement-icon--blue" aria-hidden="true"><fa-icon [icon]="iconos.medalla" /></span><strong>{{ datos.insignias }}</strong><small>Insignias</small></div>
+          <div><span class="achievement-icon achievement-icon--green" aria-hidden="true"><fa-icon [icon]="iconos.regalo" /></span><strong>{{ datos.canjes_pendientes }}</strong><small>Premios en camino</small></div>
+          <div><span class="achievement-icon achievement-icon--amber" aria-hidden="true"><fa-icon [icon]="iconos.cohete" /></span><strong>{{ datos.misiones_pendientes }}</strong><small>Misiones pendientes</small></div>
         </div>
       </article>
     </section>
-  </main>
+  </section>
 }

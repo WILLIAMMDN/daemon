@@ -59,6 +59,14 @@ services:
         value: '168'
       - key: PRIVACY_RESOLVED_REQUESTS_DAYS
         value: '730'
+      - key: PRIVACY_SCREEN_USAGE_DAYS
+        value: '45'
+      - key: FAMILY_DEFAULT_TIMEZONE
+        value: America/Lima
+      - key: FAMILY_PAYMENTS_PORTAL_URL
+        sync: false
+      - key: FAMILY_SUPPORT_EMAIL
+        sync: false
       - key: APP_KEY
         sync: false
       - key: DB_HOST

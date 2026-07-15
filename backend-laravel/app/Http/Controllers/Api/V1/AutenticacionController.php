@@ -12,6 +12,7 @@ use App\Http\Requests\Api\V1\Auth\ConfirmarVerificacionRequest;
 use App\Http\Requests\Api\V1\Auth\CrearUsuarioRequest;
 use App\Http\Requests\Api\V1\Auth\EnviarVerificacionRequest;
 use App\Http\Requests\Api\V1\Auth\FirebaseLoginRequest;
+use App\Http\Requests\Api\V1\Auth\FirebaseTutorLoginRequest;
 use App\Http\Requests\Api\V1\Auth\LoginRequest;
 use App\Http\Requests\Api\V1\Auth\RecuperarClaveRequest;
 use App\Http\Requests\Api\V1\Auth\RegistroAlumnoRequest;
@@ -21,6 +22,7 @@ use App\Services\Auth\AutenticacionService;
 use App\Services\Auth\EmailVerificationService;
 use App\Services\Auth\FirebaseTokenVerifier;
 use App\Services\Auth\RecuperacionClaveService;
+use App\Services\Privacidad\PrivacidadService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Validator;
@@ -39,6 +41,7 @@ class AutenticacionController extends Controller
         private readonly FirebaseTokenVerifier $firebase,
         private readonly RecuperacionClaveService $recuperacionClave,
         private readonly EmailVerificationService $verificacionCorreo,
+        private readonly PrivacidadService $privacidad,
     ) {}
 
     public function login(LoginRequest $request)
@@ -222,6 +225,43 @@ class AutenticacionController extends Controller
             report($exception);
 
             return response()->json(['message' => 'No se pudo validar la cuenta de Firebase.'], 422);
+        }
+    }
+
+    public function firebaseTutor(FirebaseTutorLoginRequest $request)
+    {
+        $datos = $request->validated();
+
+        try {
+            $claims = $this->firebase->verify($datos['id_token']);
+            $usuario = $this->autenticacion->autenticarTutorConFirebase(
+                $claims,
+                (bool) ($datos['crear_cuenta'] ?? false),
+            );
+
+            if (! $usuario) {
+                return response()->json([
+                    'message' => 'No encontramos una cuenta familiar. Puedes crearla desde este mismo acceso.',
+                    'requires_registration' => true,
+                ], 404);
+            }
+
+            if ((bool) ($datos['crear_cuenta'] ?? false)) {
+                $contexto = $this->contextoPrivacidad($request);
+                $this->privacidad->registrarConsentimientoTutor(
+                    $usuario,
+                    $contexto['ip'],
+                    $contexto['user_agent'],
+                );
+            }
+
+            return $this->respuestaAutenticada($usuario);
+        } catch (InvalidArgumentException|RuntimeException|UnexpectedValueException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return response()->json(['message' => 'No se pudo validar la cuenta familiar.'], 422);
         }
     }
 

@@ -112,12 +112,34 @@ puede marcar `email_verified_at`.
 El login docente usa el mismo proveedor, pero Laravel/Angular verifican el rol
 DAEMON antes de permitir entrada al portal docente.
 
+## Acceso de familias y tutores
+
+El portal familiar usa una cuenta Firebase independiente con rol DAEMON
+`tutor`. Angular envía el ID token a:
+
+```text
+POST /api/v1/auth/tutor/firebase
+```
+
+Laravel no convierte una cuenta existente de alumno, docente o admin a tutor.
+El tutor puede iniciar sesión antes de verificar el correo, pero no puede listar
+ni aceptar invitaciones de menores hasta que Firebase confirme
+`email_verified=true`. El correo de verificación regresa a:
+
+```text
+https://daemonestudiante.web.app/familias?verificacion=firebase
+```
+
+Aceptar una invitación es una acción separada y explícita. Recién entonces el
+API familiar entrega el reporte semanal del estudiante.
+
 ## Endpoints relacionados
 
 Activos en el frontend:
 
 ```text
 POST /api/v1/auth/firebase
+POST /api/v1/auth/tutor/firebase
 PATCH /api/v1/auth/me/perfil
 GET  /api/v1/auth/yo
 POST /api/v1/auth/logout

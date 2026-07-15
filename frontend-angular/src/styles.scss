@@ -1,11 +1,11 @@
+@use './styles/layout';
+@use './styles/components';
+@use './styles/popovers';
+@use './styles/gamification';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@import './styles/layout';
-@import './styles/components';
-@import './styles/popovers';
-@import './styles/gamification';
 
 @layer base {
   :root {

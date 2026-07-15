@@ -117,6 +117,16 @@ class Usuario extends Authenticatable
         return $this->hasMany(SolicitudPrivacidad::class, 'usuario_id');
     }
 
+    public function alumnosTutorizados(): HasMany
+    {
+        return $this->hasMany(TutorAlumno::class, 'tutor_id');
+    }
+
+    public function tutoresVinculados(): HasMany
+    {
+        return $this->hasMany(TutorAlumno::class, 'alumno_id');
+    }
+
     public function institucion(): BelongsTo
     {
         return $this->belongsTo(Institucion::class, 'id_institucion');

@@ -73,6 +73,8 @@ class PrivacidadTest extends TestCase
         $registro = DB::table('consentimientos_privacidad')->first();
         $this->assertSame('tutor_declarado', $registro->estado);
         $this->assertNotSame('tutor@example.com', $registro->email_tutor);
+        $this->assertSame(64, strlen($registro->email_tutor_hash));
+        $this->assertStringNotContainsString('tutor@example.com', $registro->email_tutor_hash);
         $this->assertSame('tutor@example.com', $usuario->consentimientosPrivacidad()->first()->email_tutor);
     }
 

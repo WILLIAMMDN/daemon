@@ -33,7 +33,7 @@
           <span></span><span></span><span></span>
         </button>
 
-        <a routerLink="/alumno/resultados" class="level-capsule" aria-label="Ver progreso de nivel">
+        <a routerLink="/alumno" fragment="progreso-nivel" class="level-capsule" aria-label="Ver progreso hacia el siguiente nivel">
           <nz-progress
             nzType="circle"
             [nzPercent]="progresoNivel()"
@@ -122,26 +122,38 @@
       </ul>
     </nz-dropdown-menu>
 
-    <main class="content-area pb-24 md:pb-0">
-      <router-outlet />
-    </main>
+    @if (bienestar()?.bloqueado) {
+      <main class="content-area pb-24 md:pb-0">
+        <section class="digital-pause" role="alert" aria-live="assertive">
+          <span><fa-icon [icon]="iconos.descanso" /></span>
+          <p>Bienestar digital</p>
+          <h1>Tu Núcleo DAEMON también necesita descansar</h1>
+          <strong>{{ bienestar()?.mensaje }}</strong>
+          <small>Tu XP, misiones y avances están guardados. Podrás continuar cuando termine la pausa familiar.</small>
+        </section>
+      </main>
+    } @else {
+      <main class="content-area pb-24 md:pb-0">
+        <router-outlet />
+      </main>
+    }
   </section>
 
   <nav class="mobile-tabbar" aria-label="Navegación rápida">
     <a routerLink="/alumno" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 12 12 3l9 9M5 10v10h5v-6h4v6h5V10" /></svg><span>Inicio</span>
+      <fa-icon [icon]="iconos.inicio" /><span>Inicio</span>
     </a>
-    <a routerLink="/alumno/desafios" routerLinkActive="active">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M13 2 4 14h7v8l9-12h-7V2Z" /></svg><span>Misiones</span>
+    <a routerLink="/alumno/misiones" routerLinkActive="active">
+      <fa-icon [icon]="iconos.misiones" /><span>Misiones</span>
     </a>
     <a routerLink="/alumno/tienda" routerLinkActive="active" class="store-tab">
-      <span class="store-tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 8h12l1 13H5L6 8Zm3 1V6a3 3 0 0 1 6 0v3" /></svg></span><span>Tienda</span>
+      <span class="store-tab-icon"><fa-icon [icon]="iconos.tienda" /></span><span>Tienda</span>
     </a>
     <a routerLink="/alumno/ranking" routerLinkActive="active">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8 21v-7H4v7m16 0V10h-4v11m-2 0V3h-4v18" /></svg><span>Ranking</span>
+      <fa-icon [icon]="iconos.ranking" /><span>Ranking</span>
     </a>
     <a routerLink="/alumno/perfil" routerLinkActive="active">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm7 9a7 7 0 0 0-14 0" /></svg><span>Perfil</span>
+      <fa-icon [icon]="iconos.perfil" /><span>Perfil</span>
     </a>
   </nav>
 </div>

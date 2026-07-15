@@ -202,5 +202,5 @@ npm run build
 ```
 
 La búsqueda no debe encontrar degradados ni Outfit dentro del alcance del
-portal alumno. Las advertencias conocidas de presupuesto del bundle no cambian
-esta regla visual.
+portal alumno. El build debe permanecer por debajo del presupuesto inicial de
+1 MB; estilos pesados de tablas, cargas y modales pertenecen a los layouts lazy.

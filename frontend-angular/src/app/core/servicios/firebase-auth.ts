@@ -59,17 +59,17 @@ export class FirebaseAuth {
     return credencial.user.getIdToken(true);
   }
 
-  async crearCuentaEmail(email: string, password: string): Promise<string> {
+  async crearCuentaEmail(email: string, password: string, returnUrl = '/alumno?verificacion=firebase'): Promise<string> {
     const credencial = await createUserWithEmailAndPassword(this.requerirAuth(), email, password);
 
     // Firebase se encarga del correo real de verificacion para evitar
     // depender de un dominio propio en Resend durante la etapa gratuita.
-    void this.enviarVerificacionAUsuario(credencial.user).catch(() => {});
+    void this.enviarVerificacionAUsuario(credencial.user, returnUrl).catch(() => {});
 
     return credencial.user.getIdToken();
   }
 
-  async enviarVerificacionCorreo(emailEsperado?: string | null): Promise<'enviado' | 'ya-verificado' | 'sin-sesion'> {
+  async enviarVerificacionCorreo(emailEsperado?: string | null, returnUrl = '/alumno?verificacion=firebase'): Promise<'enviado' | 'ya-verificado' | 'sin-sesion'> {
     const usuario = await this.usuarioActual();
 
     if (!this.emailCoincide(usuario, emailEsperado)) {
@@ -82,7 +82,7 @@ export class FirebaseAuth {
       return 'ya-verificado';
     }
 
-    await this.enviarVerificacionAUsuario(usuario);
+    await this.enviarVerificacionAUsuario(usuario, returnUrl);
 
     return 'enviado';
   }
@@ -197,11 +197,11 @@ export class FirebaseAuth {
     return usuario.email.toLowerCase() === emailEsperado.toLowerCase();
   }
 
-  private async enviarVerificacionAUsuario(usuario: User): Promise<void> {
+  private async enviarVerificacionAUsuario(usuario: User, returnUrl: string): Promise<void> {
     const auth = this.requerirAuth();
     auth.languageCode = 'es';
 
-    await sendEmailVerification(usuario, this.emailVerificationSettings());
+    await sendEmailVerification(usuario, this.emailVerificationSettings(returnUrl));
   }
 
   private actionCodeSettings(): ActionCodeSettings {
@@ -213,11 +213,11 @@ export class FirebaseAuth {
     };
   }
 
-  private emailVerificationSettings(): ActionCodeSettings {
+  private emailVerificationSettings(returnUrl: string): ActionCodeSettings {
     const origin = globalThis.location?.origin ?? 'http://localhost:4200';
 
     return {
-      url: `${origin}/alumno?verificacion=firebase`,
+      url: `${origin}${returnUrl.startsWith('/') ? returnUrl : '/alumno?verificacion=firebase'}`,
       handleCodeInApp: false,
     };
   }

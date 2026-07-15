@@ -112,7 +112,9 @@ export class RestablecerClave implements OnInit {
         this.enviando.set(false);
         this.cargaGlobal.ocultar(carga);
         this.estado.set({ tipo: 'exito' });
-        const destino = respuesta.usuario.rol === 'docente' ? '/docente' : '/alumno';
+        const destino = respuesta.usuario.rol === 'tutor'
+          ? '/familias'
+          : (['docente', 'admin'].includes(respuesta.usuario.rol) ? '/docente' : '/alumno');
         setTimeout(() => this.router.navigateByUrl(destino), 1500);
       },
       error: (err) => {

@@ -22,6 +22,12 @@ a la tarea.
 | `release-2026-07-14-portal-alumno.md` | Historial completo, commits, archivos y evidencia del release. |
 | `frontend-ui-standard.md` | Uso de NG-ZORRO y estándar compartido de componentes. |
 
+## Portal de familias
+
+| Documento | Uso |
+| --- | --- |
+| `portal-familias.md` | Cuenta tutor, vínculo verificable, reporte semanal, bienestar digital y base de pagos. |
+
 ## Autenticación, datos y almacenamiento
 
 | Documento | Uso |
@@ -56,6 +62,12 @@ a la tarea.
 
 1. `firebase-auth.md`
 2. `ai-project-context.md`
+
+### Cambiar tutores, límites o membresías
+
+1. `portal-familias.md`
+2. `privacidad-kids-teens.md`
+3. pruebas `TutorPortalTest`
 
 ### Publicar o diagnosticar producción
 

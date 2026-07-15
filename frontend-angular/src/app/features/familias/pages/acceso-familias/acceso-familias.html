@@ -1,0 +1,63 @@
+<main class="family-access">
+  <a routerLink="/" class="back-link"><fa-icon [icon]="iconos.volver" /> Volver a DAEMON</a>
+
+  <section class="access-card" aria-labelledby="family-access-title">
+    <div class="trust-panel">
+      <span class="trust-icon"><fa-icon [icon]="iconos.escudo" /></span>
+      <p>Portal para familias</p>
+      <h1 id="family-access-title">Acompaña sin invadir.</h1>
+      <span>Consulta aprendizaje, establece pausas saludables y gestiona la membresía sin acceder a chats ni trabajos privados.</span>
+      <ul>
+        <li>Vínculo confirmado con correo de Firebase.</li>
+        <li>Datos del menor solo después de aceptar la invitación.</li>
+        <li>DAEMON nunca almacena datos de tarjeta.</li>
+      </ul>
+    </div>
+
+    <div class="access-form-shell">
+      <img src="/img/brand/daemon-transparent.png" alt="Academia DAEMON" class="family-logo">
+      <div class="mode-switch" aria-label="Tipo de acceso">
+        <button type="button" [class.active]="modo() === 'ingresar'" (click)="cambiarModo('ingresar')">Ingresar</button>
+        <button type="button" [class.active]="modo() === 'crear'" (click)="cambiarModo('crear')">Crear cuenta</button>
+      </div>
+
+      <h2>{{ modo() === 'crear' ? 'Crea tu cuenta familiar' : 'Bienvenido de nuevo' }}</h2>
+      <p class="form-intro">Usa el mismo correo que el estudiante declaró como contacto de su madre, padre o tutor.</p>
+
+      <form #form="ngForm" (ngSubmit)="enviar(form)" novalidate>
+        <label for="family-email">Correo verificado</label>
+        <div class="field-shell">
+          <fa-icon [icon]="iconos.correo" />
+          <input id="family-email" name="email" type="email" autocomplete="email" required email [(ngModel)]="email" placeholder="familia@correo.com">
+        </div>
+
+        <label for="family-password">Contraseña</label>
+        <div class="field-shell">
+          <input id="family-password" name="password" [type]="passwordVisible() ? 'text' : 'password'" autocomplete="current-password" required minlength="8" [(ngModel)]="password" placeholder="Mínimo 8 caracteres">
+          <button type="button" class="password-toggle" (click)="passwordVisible.set(!passwordVisible())" [attr.aria-label]="passwordVisible() ? 'Ocultar contraseña' : 'Mostrar contraseña'">
+            <fa-icon [icon]="passwordVisible() ? iconos.ocultar : iconos.mostrar" />
+          </button>
+        </div>
+
+        @if (modo() === 'crear') {
+          <label class="privacy-check">
+            <input type="checkbox" name="acepta_privacidad" [(ngModel)]="aceptaPrivacidad" required>
+            <span>Acepto la política de privacidad y confirmo que soy una persona adulta responsable del menor.</span>
+          </label>
+        }
+
+        @if (error()) {
+          <p class="access-error" role="alert">{{ error() }}</p>
+        }
+
+        <button type="submit" class="primary-access" [disabled]="enviando()">
+          {{ enviando() ? 'Validando...' : (modo() === 'crear' ? 'Crear acceso familiar' : 'Ingresar al portal') }}
+        </button>
+      </form>
+
+      <div class="divider"><span>o</span></div>
+      <button type="button" class="google-access" (click)="continuarGoogle()" [disabled]="enviando()">Continuar con Google</button>
+      <a routerLink="/recuperar-clave" class="recovery-link">¿Olvidaste tu contraseña?</a>
+    </div>
+  </section>
+</main>

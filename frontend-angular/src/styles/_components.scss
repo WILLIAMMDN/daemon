@@ -255,18 +255,18 @@
   border-radius: 8px;
   box-shadow: none;
   font-weight: 600;
-  min-height: 40px;
+  min-height: 44px;
 }
 
 .student-premium .daemon-btn.ant-btn-primary {
-  background: var(--student-primary, #1677ff);
-  border-color: var(--student-primary, #1677ff);
+  background: var(--student-primary-dark, #0958d9);
+  border-color: var(--student-primary-dark, #0958d9);
   box-shadow: none;
 }
 
 .student-premium .daemon-btn.ant-btn-primary:not(:disabled):hover,
 .student-premium .daemon-btn.ant-btn-primary:not(:disabled):focus {
-  background: var(--student-primary-dark, #0958d9);
-  border-color: var(--student-primary-dark, #0958d9);
+  background: color-mix(in srgb, var(--student-primary-dark, #0958d9), #000 14%);
+  border-color: color-mix(in srgb, var(--student-primary-dark, #0958d9), #000 14%);
   box-shadow: none;
 }

@@ -9,6 +9,11 @@ return [
     'private_uploads_disk' => env('PRIVATE_UPLOADS_DISK', 'supabase_private'),
     'private_upload_url_minutes' => (int) env('PRIVATE_UPLOAD_URL_MINUTES', 10),
     'private_upload_prefixes' => ['uploads/entregas/'],
+    'familias' => [
+        'zona_horaria' => env('FAMILY_DEFAULT_TIMEZONE', 'America/Lima'),
+        'portal_pagos_url' => env('FAMILY_PAYMENTS_PORTAL_URL'),
+        'soporte_email' => env('FAMILY_SUPPORT_EMAIL', env('MAIL_FROM_ADDRESS')),
+    ],
     'auth_cookie' => [
         'name' => env('AUTH_COOKIE_NAME', 'daemon_access'),
         'minutes' => (int) env('SANCTUM_TOKEN_EXPIRATION', 480),

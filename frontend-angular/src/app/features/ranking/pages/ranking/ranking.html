@@ -1,9 +1,9 @@
-<main class="ranking-page">
+<section class="ranking-page" aria-labelledby="ranking-title">
   <header class="ranking-hero">
     <div>
-      <span class="page-kicker"><fa-icon [icon]="iconos.trofeo" /> Leaderboard DAEMON</span>
-      <h1>El progreso real<br><span>se mide en XP.</span></h1>
-      <p>Comprar en la tienda nunca cambia tu posición. Aquí solo cuenta todo lo que aprendiste y superaste.</p>
+      <span class="page-kicker"><fa-icon [icon]="iconos.trofeo" /> {{ scopeLabel() }}</span>
+      <h1 id="ranking-title">El progreso real<br><span>se mide en XP.</span></h1>
+      <p>El ranking sigue visible para impulsarte. Comprar en la tienda nunca cambia tu posición: aquí cuenta lo que aprendiste y superaste.</p>
     </div>
     <button nz-button class="refresh-button" type="button" (click)="cargar()" [disabled]="cargando()">
       <fa-icon [icon]="iconos.actualizar" [class.spinning]="cargando()" /> Actualizar
@@ -14,32 +14,39 @@
   @if (cargando()) {
     <app-cargando class="ranking-state" texto="Calculando posiciones por XP..."></app-cargando>
   } @else if (error()) {
-    <section class="ranking-state ranking-state--error"><strong>{{ error() }}</strong><button type="button" (click)="cargar()">Reintentar</button></section>
+    <section class="ranking-state ranking-state--error" role="alert" aria-live="assertive">
+      <strong>{{ error() }}</strong><button type="button" (click)="cargar()">Reintentar</button>
+    </section>
   } @else if (alumnos().length) {
-    <section class="podium" aria-label="Podio">
+    <section class="podium" aria-label="Podio del grupo">
       @for (alumno of podio(); track alumno.id; let i = $index) {
-        <article class="podium-card" [class.champion]="i === 0" [class.silver]="i === 1" [class.bronze]="i === 2">
+        <article class="podium-card" [class.champion]="i === 0" [class.silver]="i === 1" [class.bronze]="i === 2" [class.is-current]="alumno.es_actual">
           <span class="position-badge">
             @if (i === 0) { <fa-icon [icon]="iconos.corona" /> } @else { <fa-icon [icon]="iconos.medalla" /> }
-            #{{ i + 1 }}
+            #{{ alumno.posicion }} @if (alumno.es_actual) { · Tú }
           </span>
           <nz-avatar [nzSize]="76" [nzSrc]="alumno.avatar || undefined" [nzText]="iniciales(alumno)" />
-          <h2>{{ alumno.nombre_completo || alumno.usuario }}</h2>
+          <h2>{{ alumno.nombre_mostrado }}</h2>
           <p>{{ alumno.rango || 'Explorador' }} · {{ alumno.nivel }}</p>
           <strong class="podium-xp">{{ alumno.experiencia }} <small>XP</small></strong>
-          <div class="level-line"><span>Nivel {{ alumno.nivel_gamificacion }}</span><nz-progress [nzPercent]="alumno.progreso_nivel?.progreso_porcentaje || 0" [nzShowInfo]="false" nzStrokeColor="#6366f1" /></div>
+          <div class="level-line">
+            <span>Nivel {{ alumno.nivel_gamificacion }}</span>
+            <div role="progressbar" aria-label="Progreso de nivel" aria-valuemin="0" aria-valuemax="100" [attr.aria-valuenow]="alumno.progreso_nivel?.progreso_porcentaje || 0">
+              <nz-progress aria-hidden="true" [nzPercent]="alumno.progreso_nivel?.progreso_porcentaje || 0" [nzShowInfo]="false" nzStrokeColor="#1677ff" />
+            </div>
+          </div>
         </article>
       }
     </section>
 
     @if (resto().length) {
       <section class="leaderboard-list">
-        <header><div><span>Clasificación</span><h2>Resto de la comunidad</h2></div><small>{{ alumnos().length }} estudiantes</small></header>
-        <div class="list-head"><span>#</span><span>Estudiante</span><span>Nivel</span><span>Experiencia</span></div>
+        <header><div><span>Clasificación</span><h2>Resto de {{ scopeLabel().toLowerCase() }}</h2></div><small>{{ participantes() }} estudiantes</small></header>
+        <div class="list-head" aria-hidden="true"><span>#</span><span>Estudiante</span><span>Nivel</span><span>Experiencia</span></div>
         @for (alumno of resto(); track alumno.id) {
-          <article class="rank-row">
+          <article class="rank-row" [class.is-current]="alumno.es_actual" [attr.aria-label]="'Posición ' + alumno.posicion + ': ' + alumno.nombre_mostrado + ', ' + alumno.experiencia + ' XP'">
             <strong class="row-position">{{ alumno.posicion }}</strong>
-            <div class="student-cell"><nz-avatar [nzSize]="44" [nzSrc]="alumno.avatar || undefined" [nzText]="iniciales(alumno)" /><span><strong>{{ alumno.nombre_completo || alumno.usuario }}</strong><small>{{ alumno.rango || 'Explorador' }}</small></span></div>
+            <div class="student-cell"><nz-avatar [nzSize]="44" [nzSrc]="alumno.avatar || undefined" [nzText]="iniciales(alumno)" /><span><strong>{{ alumno.nombre_mostrado }} @if (alumno.es_actual) { · Tú }</strong><small>{{ alumno.rango || 'Explorador' }}</small></span></div>
             <span class="level-pill">Nivel {{ alumno.nivel_gamificacion }}</span>
             <strong class="xp-cell"><fa-icon [icon]="iconos.energia" /> {{ alumno.experiencia }} XP</strong>
           </article>
@@ -47,6 +54,6 @@
       </section>
     }
   } @else {
-    <app-estado-vacio titulo="Sin estudiantes" descripcion="Todavía no hay estudiantes en el ranking." />
+    <app-estado-vacio titulo="Tu ranking está por comenzar" descripcion="Cuando otros estudiantes de tu grupo sumen XP, sus posiciones aparecerán aquí." />
   }
-</main>
+</section>

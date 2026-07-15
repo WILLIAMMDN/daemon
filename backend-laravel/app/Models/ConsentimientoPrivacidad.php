@@ -15,6 +15,7 @@ class ConsentimientoPrivacidad extends Model
         'version_politica',
         'estado',
         'email_tutor',
+        'email_tutor_hash',
         'ip_hash',
         'user_agent_hash',
         'aceptado_at',
@@ -22,7 +23,7 @@ class ConsentimientoPrivacidad extends Model
         'revocado_at',
     ];
 
-    protected $hidden = ['ip_hash', 'user_agent_hash'];
+    protected $hidden = ['email_tutor_hash', 'ip_hash', 'user_agent_hash'];
 
     protected function casts(): array
     {

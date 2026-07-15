@@ -25,6 +25,7 @@
 .podium-card.champion { border-top: 4px solid #f5a000; }
 .podium-card.silver { border-top: 4px solid #98a2b3; }
 .podium-card.bronze { border-top: 4px solid #c56a32; }
+.podium-card.is-current { border-color: #1677ff; box-shadow: 0 0 0 2px #d9eaff; }
 .position-badge { align-items: center; background: #f3f6fa; border-radius: 7px; color: #667085; display: inline-flex; font-size: .7rem; font-weight: 700; gap: .35rem; margin-bottom: 1rem; padding: .38rem .55rem; }
 .champion .position-badge { background: #fffbeb; color: #a86500; }
 .silver .position-badge { background: #f3f6fa; color: #667085; }
@@ -48,6 +49,7 @@
 .rank-row { border-bottom: 1px solid #edf1f5; min-height: 72px; padding: .65rem .85rem; transition: background-color .18s ease; }
 .rank-row:last-child { border-bottom: 0; }
 .rank-row:hover { background: #f8fbff; transform: none; }
+.rank-row.is-current { background: #edf6ff; box-shadow: inset 4px 0 #1677ff; }
 .row-position { color: #667085; font-family: Inter, sans-serif; font-size: .95rem; }
 .student-cell { align-items: center; display: flex; gap: .7rem; min-width: 0; }
 :host ::ng-deep .student-cell .ant-avatar { background: #edf5ff; color: #0958d9; flex: 0 0 auto; font-weight: 700; }
@@ -57,7 +59,8 @@
 .level-pill { background: #edf5ff; border-radius: 7px; color: #0958d9; font-size: .7rem; font-weight: 700; padding: .4rem .55rem; text-align: center; }
 .xp-cell { color: #0958d9; font-size: .85rem; text-align: right; }
 .ranking-state { background: #fff; border: 1px solid #e4eaf2; border-radius: 14px; padding: 2rem; }
-.ranking-state--error { color: #b91c1c; display: flex; justify-content: space-between; }
+.ranking-state--error { align-items: center; color: #b91c1c; display: flex; gap: 1rem; justify-content: space-between; }
+.ranking-state--error button { background: #fff; border: 1px solid #b91c1c; border-radius: 9px; color: #991b1b; cursor: pointer; font-weight: 700; min-height: 44px; padding: .55rem .9rem; }
 .spinning { animation: spin .8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 

@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\V1\AlumnoAdminController;
 use App\Http\Controllers\Api\V1\ArchivoAdminController;
 use App\Http\Controllers\Api\V1\ArchivoController;
 use App\Http\Controllers\Api\V1\AutenticacionController;
+use App\Http\Controllers\Api\V1\BienestarDigitalController;
 use App\Http\Controllers\Api\V1\CertificadoController;
 use App\Http\Controllers\Api\V1\ChatbotController;
 use App\Http\Controllers\Api\V1\CompetenciaController;
@@ -19,6 +20,7 @@ use App\Http\Controllers\Api\V1\PrivacidadController;
 use App\Http\Controllers\Api\V1\RankingController;
 use App\Http\Controllers\Api\V1\SaludController;
 use App\Http\Controllers\Api\V1\TiendaController;
+use App\Http\Controllers\Api\V1\TutorPortalController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function (): void {
@@ -29,9 +31,9 @@ Route::prefix('v1')->group(function (): void {
     Route::post('/auth/confirmar-reset', [AutenticacionController::class, 'confirmarReset'])->middleware('throttle:10,1');
     Route::post('/auth/confirmar-verificar', [AutenticacionController::class, 'confirmarVerificacion'])->middleware('throttle:10,1');
     Route::post('/auth/firebase', [AutenticacionController::class, 'firebase'])->middleware('throttle:10,1');
+    Route::post('/auth/tutor/firebase', [AutenticacionController::class, 'firebaseTutor'])->middleware('throttle:10,1');
     Route::post('/auth/firebase/perfil', [AutenticacionController::class, 'completarPerfilFirebase'])->middleware('throttle:10,1');
     Route::post('/auth/google', [AutenticacionController::class, 'google'])->middleware('throttle:10,1');
-    Route::get('/ranking', [RankingController::class, 'index']);
     Route::get('/cuentos', [CuentoController::class, 'index']);
     Route::get('/cuentos/{cuento}', [CuentoController::class, 'show']);
 
@@ -54,6 +56,9 @@ Route::prefix('v1')->group(function (): void {
 
         Route::middleware('role:alumno')->group(function (): void {
             Route::get('/alumno/panel', [AlumnoController::class, 'panel']);
+            Route::get('/ranking', [RankingController::class, 'index']);
+            Route::get('/alumno/bienestar-digital', [BienestarDigitalController::class, 'estado']);
+            Route::post('/alumno/bienestar-digital/latido', [BienestarDigitalController::class, 'latido'])->middleware('throttle:90,1');
             Route::get('/alumno/perfil/{usuario?}', [AlumnoController::class, 'perfil']);
             Route::post('/alumno/perfil', [AlumnoController::class, 'actualizarPerfil']);
             Route::get('/tienda', [TiendaController::class, 'index']);
@@ -73,6 +78,13 @@ Route::prefix('v1')->group(function (): void {
             Route::delete('/chatbot/mensajes', [ChatbotController::class, 'limpiar']);
             Route::get('/chatbot/cerebro', [ChatbotController::class, 'cargarCerebro']);
             Route::post('/chatbot/cerebro', [ChatbotController::class, 'guardarCerebro']);
+        });
+
+        Route::middleware('role:tutor')->prefix('tutor')->group(function (): void {
+            Route::get('/invitaciones', [TutorPortalController::class, 'invitaciones']);
+            Route::post('/invitaciones/{consentimiento}/aceptar', [TutorPortalController::class, 'aceptar'])->middleware('throttle:10,1');
+            Route::get('/panel', [TutorPortalController::class, 'panel']);
+            Route::put('/alumnos/{alumno}/limite-pantalla', [TutorPortalController::class, 'actualizarLimite'])->middleware('throttle:20,1');
         });
 
         Route::middleware('role:docente,admin')->group(function (): void {
@@ -159,23 +171,25 @@ Route::prefix('v1')->group(function (): void {
             Route::get('/competencia/historial', [CompetenciaController::class, 'historial']);
         });
 
-        Route::get('/misiones', [MisionController::class, 'index']);
-        Route::get('/misiones/{mision}', [MisionController::class, 'show']);
-        Route::get('/evaluaciones/resultados', [EvaluacionController::class, 'resultados']);
+        Route::middleware('role:alumno,docente,admin')->group(function (): void {
+            Route::get('/misiones', [MisionController::class, 'index']);
+            Route::get('/misiones/{mision}', [MisionController::class, 'show']);
+            Route::get('/evaluaciones/resultados', [EvaluacionController::class, 'resultados']);
+            Route::get('/competencia/estado', [CompetenciaController::class, 'estado']);
+            Route::get('/competencia/chat', [CompetenciaController::class, 'chat']);
+            Route::post('/competencia/chat', [CompetenciaController::class, 'enviarChat']);
+            Route::get('/comunidad', [AlumnoController::class, 'comunidad']);
+            Route::post('/misiones/{mision}/entregar', [MisionController::class, 'entregar'])->middleware(['role:alumno', 'throttle:20,1']);
+            Route::post('/archivos', [ArchivoController::class, 'store'])->middleware('throttle:20,1');
+            Route::get('/certificados/{usuario?}', [CertificadoController::class, 'show']);
 
-        Route::get('/competencia/estado', [CompetenciaController::class, 'estado']);
-        Route::get('/competencia/chat', [CompetenciaController::class, 'chat']);
-        Route::post('/competencia/chat', [CompetenciaController::class, 'enviarChat']);
-        Route::get('/comunidad', [AlumnoController::class, 'comunidad']);
-        Route::middleware('role:docente,admin')->prefix('comunidad')->group(function (): void {
-            Route::get('/mensajes', [ComunidadController::class, 'mensajes']);
-            Route::get('/mensajes/estadisticas', [ComunidadController::class, 'estadisticas']);
-            Route::post('/mensajes', [ComunidadController::class, 'crearMensaje']);
-            Route::delete('/mensajes/bulk', [ComunidadController::class, 'eliminarMensajesBulk']);
-            Route::delete('/mensajes/{mensaje}', [ComunidadController::class, 'eliminarMensaje']);
+            Route::middleware('role:docente,admin')->prefix('comunidad')->group(function (): void {
+                Route::get('/mensajes', [ComunidadController::class, 'mensajes']);
+                Route::get('/mensajes/estadisticas', [ComunidadController::class, 'estadisticas']);
+                Route::post('/mensajes', [ComunidadController::class, 'crearMensaje']);
+                Route::delete('/mensajes/bulk', [ComunidadController::class, 'eliminarMensajesBulk']);
+                Route::delete('/mensajes/{mensaje}', [ComunidadController::class, 'eliminarMensaje']);
+            });
         });
-        Route::post('/misiones/{mision}/entregar', [MisionController::class, 'entregar'])->middleware(['role:alumno', 'throttle:20,1']);
-        Route::post('/archivos', [ArchivoController::class, 'store'])->middleware('throttle:20,1');
-        Route::get('/certificados/{usuario?}', [CertificadoController::class, 'show']);
     });
 });

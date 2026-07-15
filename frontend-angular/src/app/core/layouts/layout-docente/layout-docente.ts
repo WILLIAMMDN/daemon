@@ -1,4 +1,9 @@
 import { Component, ChangeDetectionStrategy, inject, OnInit, signal } from '@angular/core';
+import '../../../../../node_modules/ng-zorro-antd/message/style/index.min.css';
+import '../../../../../node_modules/ng-zorro-antd/modal/style/index.min.css';
+import '../../../../../node_modules/ng-zorro-antd/popconfirm/style/index.min.css';
+import '../../../../../node_modules/ng-zorro-antd/table/style/index.min.css';
+import '../../../../../node_modules/ng-zorro-antd/upload/style/index.min.css';
 import { DatePipe } from '@angular/common';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { Title } from '@angular/platform-browser';

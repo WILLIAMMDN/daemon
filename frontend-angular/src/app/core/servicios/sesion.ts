@@ -9,7 +9,7 @@ export interface UsuarioSesion {
   email_verified_at?: string | null;
   telefono?: string | null;
   usuario?: string | null;
-  rol: 'alumno' | 'docente' | 'admin';
+  rol: 'alumno' | 'docente' | 'admin' | 'tutor';
   nivel?: NivelAlumno | null;
   tokens: number;
   experiencia?: number;
@@ -47,6 +47,14 @@ export class Sesion {
   readonly usuario = signal<UsuarioSesion | null>(this.leerUsuario());
   readonly autenticado = computed(() => Boolean(this.usuario()));
   readonly esDocente = computed(() => ['docente', 'admin'].includes(this.usuario()?.rol ?? ''));
+  readonly esAlumno = computed(() => this.usuario()?.rol === 'alumno');
+  readonly esTutor = computed(() => this.usuario()?.rol === 'tutor');
+
+  rutaInicio(): '/alumno' | '/docente' | '/familias' {
+    if (this.esTutor()) return '/familias';
+    if (this.esDocente()) return '/docente';
+    return '/alumno';
+  }
 
   guardar(usuario: UsuarioSesion): void {
     localStorage.setItem(this.claveUsuario, JSON.stringify(usuario));

@@ -71,6 +71,7 @@ class FirebaseProfileEndpointTest extends TestCase
             $table->string('version_politica');
             $table->string('estado');
             $table->text('email_tutor')->nullable();
+            $table->char('email_tutor_hash', 64)->nullable()->index();
             $table->char('ip_hash', 64)->nullable();
             $table->char('user_agent_hash', 64)->nullable();
             $table->timestamp('aceptado_at');

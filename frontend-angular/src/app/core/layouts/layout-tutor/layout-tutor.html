@@ -1,0 +1,25 @@
+<div class="family-portal">
+  <header class="family-header">
+    <a routerLink="/familias" class="family-brand" aria-label="Inicio del portal familiar DAEMON">
+      <img src="/img/brand/daemon-transparent.png" alt="Academia DAEMON">
+      <span><small>Portal</small> Familias</span>
+    </a>
+
+    <div class="family-trust"><fa-icon [icon]="iconos.escudo" /> Acceso familiar protegido</div>
+
+    <div class="family-account">
+      <span>{{ sesion.usuario()?.nombre_completo || sesion.usuario()?.email }}</span>
+      <button type="button" (click)="salir()"><fa-icon [icon]="iconos.salir" /> <span>Salir</span></button>
+    </div>
+  </header>
+
+  <app-email-verification-banner returnUrl="/familias?verificacion=firebase" />
+
+  <nav class="family-nav" aria-label="Secciones del reporte familiar">
+    <a routerLink="/familias" fragment="resumen">Resumen</a>
+    <a routerLink="/familias" fragment="bienestar">Bienestar digital</a>
+    <a routerLink="/familias" fragment="membresia">Membresía</a>
+  </nav>
+
+  <main class="family-content"><router-outlet /></main>
+</div>

@@ -5,6 +5,7 @@ namespace Tests\Unit;
 use App\Enums\NivelAlumno;
 use App\Http\Requests\Api\V1\Auth\CambiarClaveRequest;
 use App\Http\Requests\Api\V1\Auth\CompletarPerfilFirebaseRequest;
+use App\Http\Requests\Api\V1\Auth\FirebaseTutorLoginRequest;
 use App\Http\Requests\Api\V1\Auth\RecuperarClaveRequest;
 use App\Http\Requests\Api\V1\Auth\RegistroAlumnoRequest;
 use Illuminate\Support\Facades\Validator;
@@ -51,5 +52,24 @@ class AuthRequestRulesTest extends TestCase
         $this->assertTrue(Validator::make(['nivel' => 'KIDS'], ['nivel' => $rules['nivel']])->passes());
         $this->assertTrue(Validator::make(['nivel' => 'TEENS'], ['nivel' => $rules['nivel']])->passes());
         $this->assertFalse(Validator::make(['nivel' => 'PRO'], ['nivel' => $rules['nivel']])->passes());
+    }
+
+    public function test_tutor_firebase_creation_requires_explicit_privacy_acceptance(): void
+    {
+        $rules = (new FirebaseTutorLoginRequest)->rules();
+
+        $this->assertContains('required', $rules['id_token']);
+        $this->assertContains('boolean', $rules['crear_cuenta']);
+        $this->assertContains('exclude_unless:crear_cuenta,true', $rules['acepta_privacidad']);
+        $this->assertContains('accepted', $rules['acepta_privacidad']);
+        $this->assertFalse(Validator::make([
+            'id_token' => 'firebase-token',
+            'crear_cuenta' => true,
+        ], $rules)->passes());
+        $this->assertTrue(Validator::make([
+            'id_token' => 'firebase-token',
+            'crear_cuenta' => true,
+            'acepta_privacidad' => true,
+        ], $rules)->passes());
     }
 }

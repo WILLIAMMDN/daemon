@@ -3,7 +3,6 @@ import {
   faAward,
   faBookOpenReader,
   faBullhorn,
-  faBullseye,
   faCertificate,
   faChalkboardUser,
   faChartSimple,
@@ -52,7 +51,6 @@ export const alumnoSidebarSections: PortalSidebarSection[] = [
     items: [
       { id: 'alumno-panel', etiqueta: 'Dashboard', ruta: '/alumno', detalle: 'Vista general', icono: faGaugeHigh, exacto: true },
       { id: 'alumno-recursos', etiqueta: 'Cursos', ruta: '/alumno/recursos', detalle: 'Materiales y rutas', icono: faBookOpenReader },
-      { id: 'alumno-desafios', etiqueta: 'Retos', ruta: '/alumno/desafios', detalle: 'Para tu nivel', icono: faBullseye },
       { id: 'alumno-proyectos', etiqueta: 'Proyectos', ruta: '/alumno/cuentos', detalle: 'Cuentos y creatividad', icono: faCode },
       { id: 'alumno-misiones', etiqueta: 'Misiones', ruta: '/alumno/misiones', detalle: 'Retos activos', icono: faRocket },
       { id: 'alumno-ranking', etiqueta: 'Ranking', ruta: '/alumno/ranking', detalle: 'Clasificacion', icono: faRankingStar },

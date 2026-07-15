@@ -28,6 +28,8 @@ Resultado esperado:
 - `ngsw-worker.js` responde JavaScript y `ngsw.json` responde JSON.
 - Los bundles desplegados contienen `verificacion=firebase` y `reset=firebase`.
 - Los bundles desplegados no llaman `/auth/recuperar` ni `/auth/enviar-verificacion`.
+- El grupo `app-shell` de `ngsw.json` precarga solo shell principal; chunks JS y
+  CSS de módulos permanecen en el grupo lazy.
 
 ## Modos de ejecucion local
 
@@ -91,6 +93,8 @@ Comprobar visualmente:
 - header consistente entre módulos;
 - sidebar y navegación inferior sin cambios de ruta;
 - XP y DAEMONS con etiquetas y colores distintos;
+- ranking visible, marcado para el usuario actual y limitado a su grupo;
+- actividad semanal basada en fechas reales, no en siete casillas derivadas de la racha;
 - tarjetas sin texto cortado;
 - cuadrículas apiladas correctamente en móvil;
 - botones táctiles y visibles;
@@ -141,13 +145,29 @@ git diff --name-only -- `
 - Confirmar que un usuario alumno no pueda entrar al portal docente.
 - No borrar alumnos, misiones, premios o archivos reales durante QA.
 
+## Flujo familias
+
+- Abrir `/familias/acceso` y probar email/clave y Google con una cuenta tutor.
+- Confirmar que un correo no verificado no revele nombres, progreso ni vínculos
+  de menores.
+- Verificar el correo y regresar a `/familias?verificacion=firebase`.
+- Aceptar una invitación declarando parentesco y confirmar que el menor aparece
+  recién después de esa aceptación explícita.
+- Revisar XP, misiones, evaluaciones, actividad y posición contextual del
+  ranking; no debe aparecer el saldo de DAEMONS, chats ni evidencias privadas.
+- Guardar límite diario y horario de descanso. En el portal alumno, confirmar
+  la pausa amigable al excederlos y el restablecimiento al siguiente día.
+- Confirmar que membresía/pagos solo enlaza un portal HTTPS externo y que ningún
+  formulario DAEMON solicita tarjeta, CVC o datos bancarios.
+- Probar escritorio `1440 x 900` y móvil `390 x 844`.
+
 ## Auth y correos
 
 - Registro con email debe crear cuenta en Firebase y DAEMON.
 - Verificacion de correo debe volver a `/alumno?verificacion=firebase`.
 - Recuperacion de clave debe usar Firebase y volver a `/login?reset=firebase`.
 - El frontend no debe llamar `/auth/recuperar` ni `/auth/enviar-verificacion` en los flujos activos.
-- Google login debe validar rol: alumno hacia `/alumno`, docente/admin hacia `/docente`.
+- Google login debe validar rol: alumno hacia `/alumno`, docente/admin hacia `/docente` y tutor hacia `/familias`.
 
 ## Archivos y assets
 

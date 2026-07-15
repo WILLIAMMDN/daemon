@@ -19,8 +19,8 @@ import { Component, Input , ChangeDetectionStrategy} from '@angular/core';
  *      <app-moneda-daemon [size]="42" [cantidad]="1250" apilad
  *                          etiqueta="Tokens disponibles" />
  *
- * El icono se sirve desde `/moneda/moneda-daemon.svg` (alojado en `public/moneda/`).
- * Si el navegador no carga el SVG (fallo de red, etc.) se muestra un fallback
+ * El icono se sirve desde `/moneda/moneda-daemon.png` (alojado en `public/moneda/`).
+ * Si el navegador no carga la imagen (fallo de red, etc.) se muestra un fallback
  * circular con la letra "D" para que nunca quede un cuadro vacío.
  */
 @Component({
@@ -61,7 +61,7 @@ export class MonedaDaemon {
   imagenOk = true;
 
   get rutaSvg(): string {
-    return '/moneda/moneda-daemon.svg';
+    return '/moneda/moneda-daemon.png';
   }
 
   get estilosIcono(): { [k: string]: string } {

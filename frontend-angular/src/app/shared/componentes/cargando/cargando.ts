@@ -1,10 +1,9 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
-import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 
 @Component({
   selector: 'app-cargando',
-  imports: [NzSpinModule, NzSkeletonModule],
+  imports: [NzSpinModule],
   templateUrl: './cargando.html',
   styleUrl: './cargando.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -12,4 +11,5 @@ import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 export class Cargando {
   @Input() texto = 'Cargando información...';
   @Input() compacto = false;
+  @Input() tipo: 'generico' | 'dashboard' = 'generico';
 }

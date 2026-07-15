@@ -18,7 +18,7 @@ export const authGuard: CanActivateFn = (_route, state) => {
   }
 
   if (usuario?.perfil_completo !== false && esBienvenida) {
-    return router.createUrlTree([sesion.esDocente() ? '/docente' : '/alumno']);
+    return router.createUrlTree([sesion.rutaInicio()]);
   }
 
   return true;

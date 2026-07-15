@@ -130,7 +130,11 @@ class MisionController extends Controller
             $puntos = $datos['calificacion'] ?? $mision->recompensa;
             $alumno = $this->alcance->alumnoGestionable($request->user(), (int) $entrega->id_alumno, true);
 
-            $entrega->update([...$datos, 'calificacion' => $puntos]);
+            $actualizacion = [...$datos, 'calificacion' => $puntos];
+            if ($entrega->estado !== $datos['estado'] || ! $entrega->fecha_revision) {
+                $actualizacion['fecha_revision'] = now();
+            }
+            $entrega->update($actualizacion);
             if ($datos['estado'] === 'aprobado' && ! $yaAprobada) {
                 $this->gamificacion->otorgarRecompensa($alumno, $puntos);
                 if ($mision->es_mision_nivel) {

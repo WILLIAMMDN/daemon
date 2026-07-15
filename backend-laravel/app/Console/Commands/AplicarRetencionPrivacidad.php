@@ -61,6 +61,11 @@ class AplicarRetencionPrivacidad extends Command
                 ->where('resuelto_at', '<', now()->subDays((int) config('privacy.retention.resolved_requests_days')));
         }
 
+        if (Schema::hasTable('uso_pantalla_diario')) {
+            $consultas['uso de pantalla diario'] = DB::table('uso_pantalla_diario')
+                ->where('fecha_local', '<', now()->subDays((int) config('privacy.retention.screen_usage_days'))->toDateString());
+        }
+
         return $consultas;
     }
 }

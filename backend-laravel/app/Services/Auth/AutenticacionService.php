@@ -214,6 +214,62 @@ class AutenticacionService
         return $usuario->fresh();
     }
 
+    public function autenticarTutorConFirebase(array $claims, bool $crearCuenta = false): ?Usuario
+    {
+        $firebaseUid = (string) ($claims['uid'] ?? '');
+        $email = isset($claims['email']) ? mb_strtolower(trim((string) $claims['email'])) : null;
+
+        if ($firebaseUid === '' || ! $email) {
+            throw new InvalidArgumentException('La cuenta familiar necesita un correo valido en Firebase.');
+        }
+
+        $usuario = Usuario::query()->where('firebase_uid', $firebaseUid)->first()
+            ?? Usuario::query()->whereRaw('LOWER(email) = ?', [$email])->first();
+
+        if ($usuario && $usuario->rol !== 'tutor') {
+            throw new InvalidArgumentException('Este correo ya pertenece a otro tipo de cuenta DAEMON.');
+        }
+
+        if (! $usuario && ! $crearCuenta) {
+            return null;
+        }
+
+        if (! $usuario) {
+            $usuario = Usuario::query()->create([
+                'nombre_completo' => $claims['name'] ?? null,
+                'email' => $email,
+                'usuario' => null,
+                'password_hash' => Hash::make(Str::random(40)),
+                'nivel' => null,
+                'perfil_completo' => true,
+                'rol' => 'tutor',
+                'tokens' => 0,
+                'experiencia' => 0,
+                'avatar' => $claims['picture'] ?? null,
+                'google_id' => $claims['google_id'] ?? null,
+                'firebase_uid' => $firebaseUid,
+                'email_verified_at' => ($claims['email_verified'] ?? false) ? now() : null,
+            ]);
+        } else {
+            $actualizacion = ['firebase_uid' => $firebaseUid];
+            if (($claims['name'] ?? null) && ! $usuario->nombre_completo) {
+                $actualizacion['nombre_completo'] = $claims['name'];
+            }
+            if (($claims['picture'] ?? null) && ! $usuario->avatar) {
+                $actualizacion['avatar'] = $claims['picture'];
+            }
+            $usuario->update($actualizacion);
+
+            if ($claims['email_verified'] ?? false) {
+                $usuario->markEmailAsVerified();
+            }
+        }
+
+        $usuario->tokens()->delete();
+
+        return $usuario->fresh();
+    }
+
     public function crearUsuarioInterno(array $datos): Usuario
     {
         $rol = $datos['rol'];

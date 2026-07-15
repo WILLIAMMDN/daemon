@@ -3,6 +3,18 @@ import { Injectable, inject } from '@angular/core';
 import { catchError, Observable, shareReplay, throwError, timeout, TimeoutError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
+export type ApiErrorKind = 'offline' | 'timeout';
+
+export class ApiError extends Error {
+  constructor(
+    readonly kind: ApiErrorKind,
+    message: string,
+  ) {
+    super(message);
+    this.name = 'ApiError';
+  }
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -14,9 +26,10 @@ export class Api {
   private readonly requestTimeoutMs = 45000;
   readonly baseUrl = environment.apiUrl;
 
-  get<T>(ruta: string): Observable<T> {
+  get<T>(ruta: string, opciones: { fresh?: boolean } = {}): Observable<T> {
     const url = this.url(ruta);
     const ahora = Date.now();
+    if (opciones.fresh) this.cacheGet.delete(url);
     const cache = this.cacheGet.get(url);
 
     if (cache && cache.expira > ahora) {
@@ -73,21 +86,13 @@ export class Api {
 
   private normalizarError(error: unknown): unknown {
     if (error instanceof TimeoutError) {
-      return new Error(this.mensajeConexionApi('La API tardo demasiado en responder'));
+      return new ApiError('timeout', 'La conexion esta tardando mas de lo esperado.');
     }
 
     if (error instanceof HttpErrorResponse && error.status === 0) {
-      return new Error(this.mensajeConexionApi('No se pudo conectar con la API'));
+      return new ApiError('offline', 'No pudimos conectar con DAEMON.');
     }
 
     return error;
-  }
-
-  private mensajeConexionApi(prefijo: string): string {
-    const ayuda = this.baseUrl.includes('localhost')
-      ? ' Si estas usando ng serve, inicia Laravel en backend-laravel con: php artisan serve --host=127.0.0.1 --port=8000.'
-      : ' Revisa tu conexion e intenta nuevamente.';
-
-    return `${prefijo} (${this.baseUrl}).${ayuda}`;
   }
 }

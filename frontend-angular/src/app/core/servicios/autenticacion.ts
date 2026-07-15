@@ -83,6 +83,32 @@ export class Autenticacion {
     );
   }
 
+  loginTutorEmailFirebase(email: string, password: string) {
+    this.sesion.limpiar();
+
+    return from(this.firebaseAuth.loginEmail(email, password)).pipe(
+      switchMap((idToken) => this.autenticarTutorToken(idToken, false)),
+    );
+  }
+
+  loginTutorGoogleFirebase(crearCuenta = false) {
+    this.sesion.limpiar();
+
+    return from(this.firebaseAuth.loginGoogle()).pipe(
+      switchMap((idToken) => this.autenticarTutorToken(idToken, crearCuenta)),
+    );
+  }
+
+  registroTutorFirebase(datos: RegistroFirebaseDatos) {
+    this.sesion.limpiar();
+
+    return from(this.loginORegistroTutorFirebase(datos)).pipe(
+      switchMap((idToken) => this.autenticarTutorToken(idToken, true)),
+      timeout({ first: this.registroTimeoutMs }),
+      catchError((error) => throwError(() => this.normalizarErrorRegistro(error))),
+    );
+  }
+
   registroFirebase(datos: RegistroFirebaseDatos) {
     this.sesion.limpiar();
 
@@ -116,6 +142,18 @@ export class Autenticacion {
       // usuario sepa que ya tiene cuenta con otra clave.
       if (codigo === 'auth/user-not-found' || codigo === 'auth/invalid-credential') {
         return await this.firebaseAuth.crearCuentaEmail(datos.email, datos.password);
+      }
+      throw error;
+    }
+  }
+
+  private async loginORegistroTutorFirebase(datos: RegistroFirebaseDatos): Promise<string> {
+    try {
+      return await this.firebaseAuth.loginEmail(datos.email, datos.password);
+    } catch (error) {
+      const codigo = (error as { code?: string })?.code ?? '';
+      if (codigo === 'auth/user-not-found' || codigo === 'auth/invalid-credential') {
+        return await this.firebaseAuth.crearCuentaEmail(datos.email, datos.password, '/familias?verificacion=firebase');
       }
       throw error;
     }
@@ -261,10 +299,10 @@ export class Autenticacion {
    * personalizable que el mail propio, pero funciona sin dominio de
    * correo verificado y sirve para alumnos reales desde el plan gratis.
    */
-  reenviarVerificacion(): Observable<RespuestaReenvioVerificacion> {
+  reenviarVerificacion(returnUrl = '/alumno?verificacion=firebase'): Observable<RespuestaReenvioVerificacion> {
     const usuario = this.sesion.usuario();
 
-    return from(this.firebaseAuth.enviarVerificacionCorreo(usuario?.email)).pipe(
+    return from(this.firebaseAuth.enviarVerificacionCorreo(usuario?.email, returnUrl)).pipe(
       switchMap((estadoFirebase) => {
         if (estadoFirebase === 'ya-verificado') {
           return this.sincronizarVerificacionFirebase().pipe(
@@ -324,6 +362,15 @@ export class Autenticacion {
     }
 
     return this.api.post<AuthRespuesta>('/auth/firebase', { id_token: idToken, crear_cuenta: crearCuenta })
+      .pipe(tap((respuesta) => this.sesion.guardar(respuesta.usuario)));
+  }
+
+  private autenticarTutorToken(idToken: string, crearCuenta: boolean): Observable<AuthRespuesta> {
+    return this.api.post<AuthRespuesta>('/auth/tutor/firebase', {
+      id_token: idToken,
+      crear_cuenta: crearCuenta,
+      ...(crearCuenta ? { acepta_privacidad: true } : {}),
+    })
       .pipe(tap((respuesta) => this.sesion.guardar(respuesta.usuario)));
   }
 

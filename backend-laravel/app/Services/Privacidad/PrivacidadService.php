@@ -34,6 +34,27 @@ class PrivacidadService
                 'audiencia' => $datos['nivel'],
                 'estado' => $datos['nivel'] === 'KIDS' ? 'tutor_declarado' : 'aceptado',
                 'email_tutor' => $datos['nivel'] === 'KIDS' ? $datos['email_tutor'] : null,
+                'email_tutor_hash' => $datos['nivel'] === 'KIDS' ? $this->hashEmailTutor($datos['email_tutor']) : null,
+                'ip_hash' => $this->hashDato($ip),
+                'user_agent_hash' => $this->hashDato($userAgent),
+                'aceptado_at' => now(),
+                'revocado_at' => null,
+            ],
+        );
+    }
+
+    public function registrarConsentimientoTutor(Usuario $tutor, ?string $ip, ?string $userAgent): ConsentimientoPrivacidad
+    {
+        return ConsentimientoPrivacidad::query()->updateOrCreate(
+            [
+                'usuario_id' => $tutor->id,
+                'version_politica' => (string) config('privacy.policy_version'),
+            ],
+            [
+                'audiencia' => 'TUTOR',
+                'estado' => 'aceptado',
+                'email_tutor' => null,
+                'email_tutor_hash' => null,
                 'ip_hash' => $this->hashDato($ip),
                 'user_agent_hash' => $this->hashDato($userAgent),
                 'aceptado_at' => now(),
@@ -159,5 +180,14 @@ class PrivacidadService
         }
 
         return hash_hmac('sha256', $dato, (string) config('app.key'));
+    }
+
+    public function hashEmailTutor(?string $email): ?string
+    {
+        if ($email === null || trim($email) === '') {
+            return null;
+        }
+
+        return $this->hashDato(mb_strtolower(trim($email)));
     }
 }

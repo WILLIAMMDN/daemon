@@ -46,7 +46,8 @@ Estas reglas son obligatorias:
 
 1. `experiencia` nunca se descuenta.
 2. Un canje solo puede modificar `tokens`.
-3. El ranking público no expone el saldo de DAEMONS.
+3. El ranking visible del alumno exige sesión y no expone el saldo de DAEMONS
+   ni credenciales de acceso.
 4. El nivel se calcula en Laravel, no en cada pantalla Angular.
 5. Una misma aprobación no puede otorgar la recompensa dos veces.
 6. Los valores negativos o iguales a cero no generan recompensa dual.
@@ -74,17 +75,21 @@ No otorgan XP:
 
 ## Ranking
 
-El endpoint público `GET /api/v1/ranking`:
+El endpoint autenticado `GET /api/v1/ranking`:
 
-- filtra usuarios con rol `alumno`;
+- permanece visible como incentivo para el alumno;
+- limita la comparación al aula; si no existe, usa institución y nivel o el
+  nivel académico como respaldo;
 - selecciona `experiencia`, pero no `tokens`;
 - ordena por `experiencia DESC`;
-- usa `nombre_completo ASC` como orden estable;
+- usa nombre e `id` como desempate estable;
+- expone un nombre reducido, no el usuario de login ni el nombre completo;
 - agrega `nivel_gamificacion` y `progreso_nivel`;
 - normaliza la URL del avatar.
 
-Las clasificaciones internas del docente y del panel alumno también usan
-experiencia. No mantener una segunda clasificación basada en tokens.
+El panel y la página de ranking reutilizan `RankingService`, por lo que muestran
+la misma posición, alcance y desempate. No mantener una segunda clasificación
+basada en tokens.
 
 ## Contrato de progreso
 

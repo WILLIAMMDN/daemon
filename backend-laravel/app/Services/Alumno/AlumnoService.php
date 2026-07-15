@@ -5,6 +5,7 @@ namespace App\Services\Alumno;
 use App\Models\Usuario;
 use App\Services\Archivo\ArchivoUrlService;
 use App\Services\Gamificacion\GamificacionService;
+use App\Services\Gamificacion\RankingService;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -14,19 +15,12 @@ class AlumnoService
     public function __construct(
         private readonly ArchivoUrlService $archivos,
         private readonly GamificacionService $gamificacion,
+        private readonly RankingService $ranking,
     ) {}
 
     public function panel(Usuario $usuario): array
     {
         $metricas = DB::query()
-            ->selectSub(
-                DB::table('usuarios')
-                    ->where('nivel', $usuario->nivel)
-                    ->where('rol', 'alumno')
-                    ->where('experiencia', '>', $usuario->experiencia)
-                    ->selectRaw('count(*) + 1'),
-                'posicion',
-            )
             ->selectSub(
                 DB::table('insignias_otorgadas')
                     ->where('id_alumno', $usuario->id)
@@ -65,14 +59,20 @@ class AlumnoService
             ->distinct()
             ->count('id_desafio');
 
+        $alcanceRanking = $this->ranking->alcanceDe($usuario);
+        $actividadSemana = $this->actividadSemana($usuario);
+
         return [
             'usuario' => $usuario,
-            'posicion' => (int) ($metricas->posicion ?? 1),
+            'posicion' => $this->ranking->posicionDe($usuario),
+            'posicion_scope' => $alcanceRanking['codigo'],
+            'posicion_scope_label' => $alcanceRanking['etiqueta'],
             'misiones_pendientes' => (clone $misionesDisponibles)->count(),
             'misiones_completadas' => $misionesCompletadas,
             'insignias' => (int) ($metricas->insignias ?? 0),
             'canjes_pendientes' => (int) ($metricas->canjes_pendientes ?? 0),
             'racha' => $this->rachaActual($usuario),
+            'actividad_semana' => $actividadSemana,
             'proxima_mision' => $proximaMision,
             'progreso_nivel' => $this->gamificacion->progreso((int) $usuario->experiencia),
         ];
@@ -127,8 +127,9 @@ class AlumnoService
         $dias = DB::table('entregas')
             ->where('id_alumno', $usuario->id)
             ->where('estado', 'aprobado')
-            ->orderByDesc('fecha_entrega')
-            ->pluck('fecha_entrega')
+            ->selectRaw('COALESCE(fecha_revision, fecha_entrega) as fecha_actividad')
+            ->orderByDesc('fecha_actividad')
+            ->pluck('fecha_actividad')
             ->map(fn ($fecha) => CarbonImmutable::parse($fecha)->startOfDay())
             ->unique(fn (CarbonImmutable $fecha) => $fecha->toDateString())
             ->values();
@@ -155,5 +156,38 @@ class AlumnoService
         }
 
         return $racha;
+    }
+
+    /** @return array<int, array{fecha: string, etiqueta: string, activo: bool, tipo: string|null}> */
+    private function actividadSemana(Usuario $usuario): array
+    {
+        $hoy = CarbonImmutable::today();
+        $inicio = $hoy->subDays(6)->startOfDay();
+        $fin = $hoy->endOfDay();
+        $etiquetas = ['dom', 'lun', 'mar', 'mie', 'jue', 'vie', 'sab'];
+
+        $fechasActivas = DB::table('entregas')
+            ->where('id_alumno', $usuario->id)
+            ->where('estado', 'aprobado')
+            ->whereBetween(DB::raw('COALESCE(fecha_revision, fecha_entrega)'), [$inicio, $fin])
+            ->selectRaw('COALESCE(fecha_revision, fecha_entrega) as fecha_actividad')
+            ->pluck('fecha_actividad')
+            ->map(fn ($fecha): string => CarbonImmutable::parse($fecha)->toDateString())
+            ->unique()
+            ->flip();
+
+        return collect(range(6, 0))
+            ->map(function (int $diasAtras) use ($hoy, $etiquetas, $fechasActivas): array {
+                $fecha = $hoy->subDays($diasAtras);
+                $activa = $fechasActivas->has($fecha->toDateString());
+
+                return [
+                    'fecha' => $fecha->toDateString(),
+                    'etiqueta' => $etiquetas[$fecha->dayOfWeek],
+                    'activo' => $activa,
+                    'tipo' => $activa ? 'mision' : null,
+                ];
+            })
+            ->all();
     }
 }

@@ -1,0 +1,140 @@
+<section class="family-dashboard" aria-labelledby="family-dashboard-title">
+  @if (estado().kind === 'verification') {
+    <section class="family-state" role="status">
+      <span class="state-icon"><fa-icon [icon]="iconos.escudo" /></span>
+      <div>
+        <p>Un paso de seguridad</p>
+        <h1 id="family-dashboard-title">Verifica tu correo familiar</h1>
+        <span>Solo una cuenta confirmada en Firebase puede aceptar el vínculo con un menor.</span>
+      </div>
+      <button type="button" (click)="cargar()"><fa-icon [icon]="iconos.actualizar" /> Ya verifiqué mi correo</button>
+    </section>
+  } @else if (estado().kind === 'loading') {
+    <app-cargando tipo="dashboard" texto="Preparando el reporte familiar..." />
+  } @else if (estado().kind === 'error') {
+    <section class="family-state family-state--error" role="alert">
+      <h1 id="family-dashboard-title">El reporte no cargó</h1>
+      <p>{{ $any(estado()).message }}</p>
+      <button type="button" (click)="cargar()"><fa-icon [icon]="iconos.actualizar" /> Volver a intentar</button>
+    </section>
+  } @else if (panel(); as datos) {
+    <header class="dashboard-heading" id="resumen">
+      <div>
+        <p>Resumen familiar</p>
+        <h1 id="family-dashboard-title">Hola, {{ datos.tutor.nombre || 'familia DAEMON' }}</h1>
+        <span>Señales claras para acompañar el aprendizaje sin convertirlo en vigilancia.</span>
+      </div>
+      @if (datos.hijos.length > 1) {
+        <label class="child-selector">Estudiante
+          <select [value]="datos.seleccionado?.alumno?.id" (change)="seleccionarHijo($any($event.target).value)">
+            @for (hijo of datos.hijos; track hijo.id) { <option [value]="hijo.id">{{ hijo.nombre }}</option> }
+          </select>
+        </label>
+      }
+    </header>
+
+    @if (mensaje()) { <p class="family-message" role="status" aria-live="polite">{{ mensaje() }}</p> }
+
+    @if (invitaciones().length) {
+      <section class="invitation-card" aria-labelledby="invitation-title">
+        <div class="invitation-heading">
+          <span><fa-icon [icon]="iconos.carta" /></span>
+          <div><p>Acción requerida</p><h2 id="invitation-title">Confirma tu vínculo familiar</h2></div>
+        </div>
+        @for (invitacion of invitaciones(); track invitacion.id) {
+          <article class="invitation-row">
+            <div><strong>{{ invitacion.alumno }}</strong><span>Cuenta {{ invitacion.nivel }} que declaró tu correo</span></div>
+            <select [(ngModel)]="parentesco[invitacion.id]" [attr.aria-label]="'Parentesco con ' + invitacion.alumno">
+              <option value="madre">Madre</option><option value="padre">Padre</option><option value="tutor">Tutor responsable</option>
+            </select>
+            <button type="button" (click)="aceptar(invitacion)" [disabled]="aceptando() === invitacion.id">
+              {{ aceptando() === invitacion.id ? 'Confirmando...' : 'Confirmar vínculo' }}
+            </button>
+          </article>
+        }
+        <small>Al confirmar declaras que eres responsable del menor. La acción queda registrada con fecha, cuenta y versión de privacidad.</small>
+      </section>
+    }
+
+    @if (!datos.seleccionado) {
+      <section class="empty-family">
+        <span><fa-icon [icon]="iconos.carta" /></span>
+        <h2>Aún no hay estudiantes vinculados</h2>
+        <p>El menor debe completar su perfil KIDS usando exactamente el correo verificado de esta cuenta.</p>
+      </section>
+    } @else {
+      <section class="student-overview" aria-label="Progreso de {{ datos.seleccionado.alumno.nombre }}">
+        <div class="student-name">
+          <span class="student-avatar">{{ datos.seleccionado.alumno.nombre.slice(0, 1) }}</span>
+          <div><p>{{ datos.seleccionado.alumno.nivel }} · {{ datos.seleccionado.alumno.posicion_scope_label }}</p><h2>{{ datos.seleccionado.alumno.nombre }}</h2></div>
+        </div>
+        <div class="level-progress">
+          <div><span>Nivel {{ datos.seleccionado.alumno.nivel_gamificacion }}</span><strong>{{ datos.seleccionado.alumno.experiencia }} XP</strong></div>
+          <div class="progress-track" role="progressbar" aria-label="Progreso de nivel" aria-valuemin="0" aria-valuemax="100" [attr.aria-valuenow]="datos.seleccionado.alumno.progreso_nivel.progreso_porcentaje">
+            <span [style.width.%]="datos.seleccionado.alumno.progreso_nivel.progreso_porcentaje"></span>
+          </div>
+          <small>{{ datos.seleccionado.alumno.progreso_nivel.experiencia_restante }} XP para el siguiente nivel</small>
+        </div>
+      </section>
+
+      <section class="family-stats" aria-label="Indicadores semanales">
+        <article><fa-icon [icon]="iconos.xp" /><div><strong>+{{ datos.seleccionado.semana.xp_aprendizaje }}</strong><span>XP aprendido esta semana</span></div></article>
+        <article><fa-icon [icon]="iconos.ranking" /><div><strong>#{{ datos.seleccionado.alumno.posicion }}</strong><span>Posición en {{ datos.seleccionado.alumno.posicion_scope_label.toLowerCase() }}</span></div></article>
+        <article><fa-icon [icon]="iconos.flecha" /><div><strong>{{ datos.seleccionado.semana.misiones_aprobadas }}</strong><span>Misiones aprobadas</span></div></article>
+        <article><fa-icon [icon]="iconos.escudo" /><div><strong>{{ datos.seleccionado.semana.evaluaciones_enviadas }}</strong><span>Evaluaciones enviadas</span></div></article>
+      </section>
+
+      <div class="family-grid">
+        <section class="family-card activity-card" aria-labelledby="week-title">
+          <div class="card-title"><div><p>Últimos 7 días</p><h2 id="week-title">Ritmo de aprendizaje</h2></div><strong>{{ datos.seleccionado.semana.promedio_evaluaciones || 0 }}<small> promedio</small></strong></div>
+          <ul class="week-strip" aria-label="Actividad semanal real">
+            @for (dia of datos.seleccionado.semana.actividad; track dia.fecha) {
+              <li [class.active]="dia.activo" [attr.aria-label]="dia.etiqueta + ': ' + (dia.activo ? 'misión aprobada' : 'sin misión aprobada')"><span></span>{{ dia.etiqueta }}</li>
+            }
+          </ul>
+          <div class="mission-list">
+            @for (mision of datos.seleccionado.semana.ultimas_misiones; track mision.titulo + mision.fecha) {
+              <div><span class="mission-check">✓</span><div><strong>{{ mision.titulo }}</strong><small>{{ fecha(mision.fecha) }}</small></div><b>+{{ mision.xp }} XP</b></div>
+            } @empty { <p class="empty-copy">Todavía no hay misiones aprobadas en esta semana.</p> }
+          </div>
+        </section>
+
+        <section class="family-card wellbeing-card" id="bienestar" aria-labelledby="wellbeing-title">
+          <div class="card-title"><div><p>Equilibrio saludable</p><h2 id="wellbeing-title">Bienestar digital</h2></div><fa-icon [icon]="iconos.reloj" /></div>
+          <div class="usage-summary">
+            <strong>{{ datos.seleccionado.bienestar_digital.minutos_usados }} min</strong>
+            <span>registrados hoy dentro de DAEMON</span>
+          </div>
+          <form (ngSubmit)="guardarLimite()">
+            <label class="toggle-row"><span><strong>Aplicar límite diario</strong><small>El alumno verá una pausa amable al alcanzarlo.</small></span><input type="checkbox" name="activo" [(ngModel)]="limite.activo"></label>
+            <label>Minutos por día<input type="number" name="max_minutos" min="30" max="480" required [(ngModel)]="limite.max_minutos_diarios"></label>
+            <div class="time-grid">
+              <label>Descanso desde<input type="time" name="inicio" [(ngModel)]="limite.hora_silencio_inicio"></label>
+              <label>Hasta<input type="time" name="fin" [(ngModel)]="limite.hora_silencio_fin"></label>
+            </div>
+            <label>Zona horaria<select name="zona" [(ngModel)]="limite.zona_horaria"><option value="America/Lima">Lima, Perú</option></select></label>
+            <button type="submit" [disabled]="guardando()">{{ guardando() ? 'Guardando...' : 'Guardar bienestar digital' }}</button>
+          </form>
+          <small class="privacy-note">Solo se acumulan segundos activos con la pestaña visible. No guardamos páginas visitadas, teclas ni contenido escrito.</small>
+        </section>
+
+        <section class="family-card membership-card" id="membresia" aria-labelledby="membership-title">
+          <div class="card-title"><div><p>Administración</p><h2 id="membership-title">Membresía y pagos</h2></div><fa-icon [icon]="iconos.pago" /></div>
+          <div class="membership-status"><span [class]="'status status--' + datos.seleccionado.membresia.estado">{{ datos.seleccionado.membresia.estado.replace('_', ' ') }}</span><strong>{{ datos.seleccionado.membresia.plan }}</strong></div>
+          <dl>
+            <div><dt>Importe</dt><dd>{{ importe(datos.seleccionado.membresia.importe_centimos, datos.seleccionado.membresia.moneda) }}</dd></div>
+            <div><dt>Próximo pago</dt><dd>{{ fecha(datos.seleccionado.membresia.proximo_pago_at) }}</dd></div>
+          </dl>
+          @if (datos.seleccionado.membresia.portal_pago_url) {
+            <a [href]="datos.seleccionado.membresia.portal_pago_url" target="_blank" rel="noopener noreferrer" class="payment-action">Abrir portal de pago seguro <fa-icon [icon]="iconos.flecha" /></a>
+          } @else if (datos.seleccionado.membresia.soporte_email) {
+            <a [href]="'mailto:' + datos.seleccionado.membresia.soporte_email" class="payment-action payment-action--secondary">Consultar a administración</a>
+          } @else {
+            <p class="empty-copy">La academia todavía no configuró un canal de pagos. Consulta directamente con administración.</p>
+          }
+          <p class="payment-safety"><fa-icon [icon]="iconos.escudo" /> DAEMON muestra el estado, pero no almacena números de tarjeta ni códigos de seguridad.</p>
+        </section>
+      </div>
+    }
+  }
+</section>

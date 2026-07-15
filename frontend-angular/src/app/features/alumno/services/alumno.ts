@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { map } from 'rxjs';
 import { Api } from '../../../core/servicios/api';
 import { UsuarioSesion } from '../../../core/servicios/sesion';
+import { PanelAlumnoDto } from '../models/panel-alumno.model';
 
 type UsuarioResourceRespuesta = UsuarioSesion | { data?: UsuarioSesion; usuario?: UsuarioSesion };
 
@@ -10,7 +11,7 @@ type UsuarioResourceRespuesta = UsuarioSesion | { data?: UsuarioSesion; usuario?
 })
 export class Alumno {
   constructor(private api: Api) {}
-  panel() { return this.api.get('/alumno/panel'); }
+  panel() { return this.api.get<PanelAlumnoDto>('/alumno/panel', { fresh: true }); }
   perfil<T = unknown>(usuarioId?: number | string | null) {
     return this.api.get<T>(usuarioId ? `/alumno/perfil/${usuarioId}` : '/alumno/perfil');
   }

@@ -86,13 +86,21 @@ class GamificacionXpTest extends TestCase
             'nivel' => 'TEENS',
             'tokens' => 900,
             'experiencia' => 150,
+            'id_institucion' => $alumno->id_institucion,
+            'id_aula' => $alumno->id_aula,
         ]);
 
-        $respuesta = $this->getJson('/api/v1/ranking')->assertOk();
+        $this->getJson('/api/v1/ranking')->assertUnauthorized();
 
-        $respuesta->assertJsonPath('0.id', $alumno->id)
-            ->assertJsonPath('1.id', $rival->id)
-            ->assertJsonMissingPath('0.tokens');
+        $respuesta = $this->actingAs($alumno)->getJson('/api/v1/ranking')->assertOk();
+
+        $respuesta->assertJsonPath('scope', 'aula')
+            ->assertJsonPath('alumnos.0.id', $alumno->id)
+            ->assertJsonPath('alumnos.1.id', $rival->id)
+            ->assertJsonPath('alumnos.0.es_actual', true)
+            ->assertJsonMissingPath('alumnos.0.tokens')
+            ->assertJsonMissingPath('alumnos.0.usuario')
+            ->assertJsonMissingPath('alumnos.0.nombre_completo');
     }
 
     /** @return array{Usuario, Usuario} */

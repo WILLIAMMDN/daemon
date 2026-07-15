@@ -4,12 +4,12 @@ This document is written for future AI agents and developers. It summarizes the
 current DAEMON system, the cloud decisions already made, the important files,
 and the traps that caused confusion during the migration.
 
-Last updated: 2026-07-14.
+Last updated: 2026-07-15.
 
 ## 1. What DAEMON is
 
 DAEMON is an academic platform for an AI/technology academy. It has public
-pages, student portal, teacher portal, authentication, XP, DAEMONS, missions,
+pages, student portal, teacher portal, family portal, authentication, XP, DAEMONS, missions,
 badges, store/rewards, evaluations, stories, rankings, certificates, chat,
 file uploads, and legacy interactive learning resources.
 
@@ -104,6 +104,18 @@ Current student visual direction:
 The earlier experimental Bento/glass implementation was corrected. Do not use
 that first iteration as the target for new student screens.
 
+Family portal direction:
+
+- Dedicated Firebase-backed `tutor` role and `/familias` route.
+- A verified guardian email and explicit invitation acceptance are required
+  before any minor progress is returned.
+- The weekly report includes XP, missions, evaluations, activity and the
+  student's contextual ranking position. Ranking remains visible to students.
+- Screen-time telemetry is limited to daily aggregate seconds; no browsing or
+  interaction history is collected.
+- DAEMON never receives payment-card data. A configured HTTPS provider portal
+  may be exposed later for checkout and subscription management.
+
 Production frontend env currently points to:
 
 ```text
@@ -132,6 +144,8 @@ backend-laravel/app/Models/Usuario.php
 backend-laravel/app/Services/Auth/AutenticacionService.php
 backend-laravel/app/Services/Auth/FirebaseTokenVerifier.php
 backend-laravel/app/Services/Gamificacion/GamificacionService.php
+backend-laravel/app/Services/Familias/TutorPortalService.php
+backend-laravel/app/Services/Familias/BienestarDigitalService.php
 backend-laravel/app/Http/Controllers/Api/V1/AutenticacionController.php
 backend-laravel/app/Http/Controllers/Api/V1/RankingController.php
 backend-laravel/app/Http/Middleware/EnsureRole.php
@@ -265,6 +279,12 @@ Important state:
 - `usuarios` stores DAEMON users and links to Firebase through `firebase_uid`.
 - Schema was hardened with indices and foreign keys.
 - Legacy invalid ids were handled with `legacy_*` preservation where needed.
+- `tutores_alumnos` stores verified guardian/student links.
+- `limites_pantalla` stores guardian-configured daily limits and quiet hours.
+- `uso_pantalla_diario` stores only per-day aggregate usage and is retained for
+  45 days by default.
+- `membresias_familiares` stores provider-neutral membership state without card
+  numbers, CVCs or bank credentials.
 
 Read `docs/supabase-postgres.md` before changing DB migration/import/storage
 logic.
@@ -368,13 +388,10 @@ Backend health: https://daemon-5vo1.onrender.com/api/v1/salud
 
 ## 14. Known warnings and non-blockers
 
-`npm run build` currently warns:
-
-- Angular initial bundle exceeds 700 kB.
-- `@rive-app/canvas` is CommonJS.
-
-These are known. Do not treat them as failed build unless the build exits
-non-zero.
+`npm run build` keeps the initial bundle below the configured 1 MB warning
+budget. Heavy NG-ZORRO table, upload and modal styles are loaded with the lazy
+student or teacher layout instead of the public shell. Global Sass partials use
+`@use`, so a clean build should not emit the former deprecation warning.
 
 ## 15. Verification checklist
 

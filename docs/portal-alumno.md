@@ -74,9 +74,9 @@ El panel presenta:
 - XP histórica;
 - saldo gastable de DAEMONS;
 - misiones superadas;
-- posición en ranking;
+- posición en el ranking visible de su aula o grupo académico;
 - próxima misión;
-- actividad semanal;
+- actividad semanal real de misiones aprobadas;
 - colección de insignias y recompensas.
 
 Archivos:
@@ -87,8 +87,17 @@ backend-laravel/app/Services/Alumno/AlumnoService.php
 backend-laravel/app/Http/Controllers/Api/V1/AlumnoController.php
 ```
 
-La próxima misión y el resumen de actividad deben venir del API. Los estados
-vacíos son parte del producto y no deben sustituirse con datos inventados.
+La próxima misión, la posición y los siete días de actividad vienen del API.
+`actividad_semana` usa `fecha_revision` y conserva `fecha_entrega` como respaldo
+para datos históricos. Los estados vacíos son parte del producto y no deben
+sustituirse con datos inventados.
+
+En móvil la prioridad es: bienvenida compacta, próxima misión, actividad,
+indicadores en cuadrícula 2x2 y tarjetas secundarias. Una recarga fallida no
+reemplaza datos ya visibles: el panel los marca como anteriores y ofrece
+reconectar. Los aumentos de XP confirmados por el servidor activan una
+celebración breve del `Núcleo DAEMON`, sin sonido y respetando movimiento
+reducido.
 
 ## Perfil
 
@@ -233,6 +242,18 @@ de una cuenta real.
 - Encabezados semánticos y regiones con nombres accesibles.
 
 Leer `docs/sistema-visual-portal-alumno.md` antes de modificar la apariencia.
+
+## Bienestar digital familiar
+
+Cuando existe un límite activo configurado por un tutor verificado, el layout
+del alumno consulta `/alumno/bienestar-digital` y registra un latido visible por
+minuto. Laravel guarda únicamente segundos agregados por día. Si se supera el
+límite o comienza el horario de descanso, el contenido se reemplaza por una
+pausa amable del Núcleo DAEMON; no se elimina ni se oculta el ranking.
+
+El control falla de forma abierta ante una caída de red para no expulsar a un
+alumno de una clase en vivo. No registra páginas visitadas, teclas, capturas,
+chat ni contenido de la actividad.
 
 ## Límites de responsabilidad
 

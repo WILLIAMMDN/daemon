@@ -210,6 +210,24 @@ progreso_alumno       tokens, rango, mision actual, metricas
 perfiles_docente      datos especificos del docente
 ```
 
+## Tablas del portal familiar
+
+La migración `2026_07_15_030000_create_family_portal_tables.php` añade:
+
+```text
+tutores_alumnos          vínculo explícito y verificable tutor-alumno
+limites_pantalla         minutos diarios y horario de descanso
+uso_pantalla_diario      segundos agregados por alumno y fecha
+membresias_familiares    estado neutral de la membresía y proveedor externo
+```
+
+`consentimientos_privacidad.email_tutor_hash` es un HMAC indexable del correo
+normalizado para encontrar invitaciones sin exponer el correo cifrado. El hash
+no sustituye el dato cifrado ni debe calcularse sin `APP_KEY`.
+
+No crear tablas de tarjetas, CVC ni credenciales bancarias. Un proveedor de
+pagos futuro debe tokenizar y alojar esos datos fuera de DAEMON.
+
 ## Rendimiento en desarrollo
 
 Si Laravel corre en tu PC y la base esta en Supabase, cada consulta viaja por internet. Para desarrollo es normal notar mas latencia que con MySQL local. Para mejorar:

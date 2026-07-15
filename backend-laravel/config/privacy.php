@@ -7,5 +7,6 @@ return [
         'read_notifications_days' => (int) env('PRIVACY_READ_NOTIFICATIONS_DAYS', 180),
         'failed_jobs_hours' => (int) env('PRIVACY_FAILED_JOBS_HOURS', 168),
         'resolved_requests_days' => (int) env('PRIVACY_RESOLVED_REQUESTS_DAYS', 730),
+        'screen_usage_days' => (int) env('PRIVACY_SCREEN_USAGE_DAYS', 45),
     ],
 ];

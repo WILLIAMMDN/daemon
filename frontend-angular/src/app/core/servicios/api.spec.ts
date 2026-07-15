@@ -64,4 +64,12 @@ describe('Api Service', () => {
     const req2 = httpMock.expectOne(`${environment.apiUrl}/cache-test`);
     req2.flush({ data: 'second' });
   });
+
+  it('should bypass cache when fresh data is requested', () => {
+    service.get('/fresh-test').subscribe();
+    httpMock.expectOne(`${environment.apiUrl}/fresh-test`).flush({ version: 1 });
+
+    service.get('/fresh-test', { fresh: true }).subscribe();
+    httpMock.expectOne(`${environment.apiUrl}/fresh-test`).flush({ version: 2 });
+  });
 });

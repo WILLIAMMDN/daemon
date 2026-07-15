@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
@@ -11,67 +12,31 @@ import {
   faRankingStar,
   faRocket,
   faWandMagicSparkles,
+  faXmark,
 } from '@fortawesome/free-solid-svg-icons';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzButtonModule } from 'ng-zorro-antd/button';
-import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzProgressModule } from 'ng-zorro-antd/progress';
+import { ApiError } from '../../../../core/servicios/api';
+import { Activos } from '../../../../core/servicios/activos';
+import { Sesion } from '../../../../core/servicios/sesion';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 import { MonedaDaemon } from '../../../../shared/componentes/moneda-daemon/moneda-daemon';
-import { Sesion } from '../../../../core/servicios/sesion';
-import { Activos } from '../../../../core/servicios/activos';
+import {
+  ActividadDia,
+  EstadoPanelAlumno,
+  MotivoErrorPanel,
+  PanelAlumnoDto,
+  ProgresoNivel,
+  UsuarioPanel,
+} from '../../models/panel-alumno.model';
 import { Alumno } from '../../services/alumno';
-import { NivelAlumno } from '../../../../core/dominio/nivel-alumno';
-
-interface ProgresoNivel {
-  nivel: number;
-  nivel_maximo: number;
-  experiencia_total: number;
-  experiencia_nivel: number;
-  experiencia_meta: number;
-  experiencia_restante: number;
-  progreso_porcentaje: number;
-}
-
-interface UsuarioPanel {
-  id: number;
-  nombre_completo: string;
-  usuario: string;
-  nivel: NivelAlumno;
-  tokens: number;
-  experiencia: number;
-  nivel_gamificacion: number;
-  progreso_nivel: ProgresoNivel;
-  rango?: string | null;
-  avatar?: string | null;
-}
-
-interface ProximaMision {
-  id: number;
-  titulo: string;
-  descripcion?: string | null;
-  recompensa: number;
-  tipo_evidencia: string;
-  nivel_requerido: string;
-}
-
-interface PanelAlumnoData {
-  usuario: UsuarioPanel;
-  posicion: number;
-  misiones_pendientes: number;
-  misiones_completadas: number;
-  insignias: number;
-  canjes_pendientes: number;
-  racha: number;
-  proxima_mision?: ProximaMision | null;
-  progreso_nivel: ProgresoNivel;
-}
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-panel-alumno',
-  imports: [RouterLink, FontAwesomeModule, NzAlertModule, NzAvatarModule, NzButtonModule, NzCardModule, NzProgressModule, Cargando, MonedaDaemon],
+  imports: [RouterLink, FontAwesomeModule, NzAlertModule, NzAvatarModule, NzButtonModule, NzProgressModule, Cargando, MonedaDaemon],
   templateUrl: './panel-alumno.html',
   styleUrl: './panel-alumno.scss',
 })
@@ -80,9 +45,18 @@ export class PanelAlumno {
   private readonly sesion = inject(Sesion);
   private readonly activos = inject(Activos);
 
-  readonly panel = signal<PanelAlumnoData | null>(null);
-  readonly cargando = signal(true);
-  readonly error = signal('');
+  readonly estado = signal<EstadoPanelAlumno>({ kind: 'loading' });
+  readonly panel = computed(() => {
+    const estado = this.estado();
+    return estado.kind === 'ready' ? estado.data : null;
+  });
+  readonly cargando = computed(() => this.estado().kind === 'loading');
+  readonly error = computed(() => {
+    const estado = this.estado();
+    return estado.kind === 'error' ? estado.message : '';
+  });
+  readonly actualizando = signal(false);
+  readonly celebracion = signal<{ xp: number } | null>(null);
 
   readonly iconos = {
     flecha: faArrowRight,
@@ -94,6 +68,7 @@ export class PanelAlumno {
     ranking: faRankingStar,
     cohete: faRocket,
     brillo: faWandMagicSparkles,
+    cerrar: faXmark,
   };
 
   constructor() {
@@ -101,20 +76,35 @@ export class PanelAlumno {
   }
 
   cargar(): void {
-    this.cargando.set(true);
-    this.error.set('');
+    const datosAnteriores = this.panel();
+    if (!datosAnteriores) {
+      this.estado.set({ kind: 'loading' });
+    }
+    this.actualizando.set(true);
 
     this.alumno.panel().subscribe({
-      next: (panel) => {
-        const datos = panel as PanelAlumnoData;
-        this.panel.set(datos);
+      next: (datos) => {
+        this.estado.set({ kind: 'ready', data: datos, stale: false });
         const usuarioActual = this.sesion.usuario();
         if (usuarioActual) this.sesion.actualizarUsuario({ ...usuarioActual, ...datos.usuario });
-        this.cargando.set(false);
+        this.detectarCelebracion(datos);
+        this.actualizando.set(false);
       },
-      error: (e) => {
-        this.error.set(e.error?.message ?? 'No se pudo cargar tu panel.');
-        this.cargando.set(false);
+      error: (e: unknown) => {
+        const error = this.normalizarError(e);
+        if (datosAnteriores) {
+          this.estado.set({
+            kind: 'ready',
+            data: datosAnteriores,
+            stale: true,
+            message: error.reason === 'offline'
+              ? 'Perdimos internet, pero tu progreso sigue aquí.'
+              : 'No pudimos actualizar los datos. Conservamos tu último progreso.',
+          });
+        } else {
+          this.estado.set({ kind: 'error', ...error });
+        }
+        this.actualizando.set(false);
       },
     });
   }
@@ -132,15 +122,63 @@ export class PanelAlumno {
     return base.split(/\s+/).filter(Boolean).slice(0, 2).map((parte) => parte[0]?.toUpperCase()).join('') || 'D';
   }
 
-  progreso(datos: PanelAlumnoData): ProgresoNivel {
+  progreso(datos: PanelAlumnoDto): ProgresoNivel {
     return datos.progreso_nivel ?? datos.usuario.progreso_nivel;
   }
 
   formatoNivel = (): string => `${this.panel()?.progreso_nivel?.nivel ?? 1}`;
 
-  mensajeRacha(racha: number): string {
-    if (racha === 0) return 'Tu primera misión enciende la racha.';
-    if (racha === 1) return 'Ya empezaste. Vuelve mañana para mantenerla.';
-    return `${racha} días seguidos construyendo algo increíble.`;
+  mensajeRacha(datos: PanelAlumnoDto): string {
+    if (datos.racha === 0) return 'Tu primera misión aprobada enciende la racha.';
+
+    const hoy = datos.actividad_semana.at(-1)?.activo ?? false;
+    if (hoy) return 'Hoy ya alimentaste tu Núcleo DAEMON. Buen trabajo.';
+
+    return `Tu racha de ${datos.racha} días sigue viva. Completa una misión hoy para extenderla.`;
+  }
+
+  descripcionDia(dia: ActividadDia): string {
+    return `${dia.etiqueta}, ${dia.fecha}: ${dia.activo ? 'misión aprobada' : 'sin actividad registrada'}`;
+  }
+
+  cerrarCelebracion(): void {
+    this.celebracion.set(null);
+  }
+
+  private detectarCelebracion(datos: PanelAlumnoDto): void {
+    const clave = `daemon_xp_confirmada_${datos.usuario.id}`;
+    const xpActual = datos.progreso_nivel.experiencia_total;
+
+    try {
+      const anteriorGuardada = localStorage.getItem(clave);
+      const xpAnterior = anteriorGuardada === null ? null : Number(anteriorGuardada);
+      if (xpAnterior !== null && Number.isFinite(xpAnterior) && xpActual > xpAnterior) {
+        this.celebracion.set({ xp: xpActual - xpAnterior });
+      }
+      localStorage.setItem(clave, String(xpActual));
+    } catch {
+      // La celebración es progresiva; el panel funciona aunque storage esté bloqueado.
+    }
+  }
+
+  private normalizarError(error: unknown): { reason: MotivoErrorPanel; message: string } {
+    if (error instanceof ApiError) {
+      return {
+        reason: error.kind,
+        message: error.kind === 'timeout'
+          ? 'DAEMON está tardando en responder. Tu progreso está seguro; prueba otra vez.'
+          : 'Parece que no hay conexión. Revisa tu internet y vuelve a intentarlo.',
+      };
+    }
+
+    if (error instanceof HttpErrorResponse && error.status === 401) {
+      return { reason: 'unauthorized', message: 'Tu sesión terminó. Inicia sesión nuevamente para continuar.' };
+    }
+
+    if (typeof navigator !== 'undefined' && !navigator.onLine) {
+      return { reason: 'offline', message: 'Parece que no hay conexión. Revisa tu internet y vuelve a intentarlo.' };
+    }
+
+    return { reason: 'server', message: 'DAEMON tuvo un tropiezo al cargar tu campus. Inténtalo nuevamente.' };
   }
 }

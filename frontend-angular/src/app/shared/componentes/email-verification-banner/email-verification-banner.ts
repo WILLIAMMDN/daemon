@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, OnDestroy, OnInit, signal , ChangeDetectionStrategy} from '@angular/core';
+import { Component, computed, Input, OnDestroy, OnInit, signal , ChangeDetectionStrategy} from '@angular/core';
 import { Autenticacion } from '../../../core/servicios/autenticacion';
 import { Sesion } from '../../../core/servicios/sesion';
 
@@ -12,6 +12,7 @@ import { Sesion } from '../../../core/servicios/sesion';
   styleUrl: './email-verification-banner.scss',
 })
 export class EmailVerificationBanner implements OnInit, OnDestroy {
+  @Input() returnUrl = '/alumno?verificacion=firebase';
   readonly visible = computed(() => {
     const usuario = this.sesion.usuario();
 
@@ -53,7 +54,7 @@ export class EmailVerificationBanner implements OnInit, OnDestroy {
     this.mensaje.set('');
     this.error.set('');
 
-    this.auth.reenviarVerificacion().subscribe({
+    this.auth.reenviarVerificacion(this.returnUrl).subscribe({
       next: (respuesta) => {
         this.reenviando.set(false);
         if (respuesta.estado === 'fallo_envio') {
