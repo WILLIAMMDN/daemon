@@ -8,6 +8,15 @@ Angular -> Laravel API -> Supabase PostgreSQL
 
 Laravel sigue siendo el backend de DAEMON y Supabase queda como base PostgreSQL administrada.
 
+## Niveles académicos vigentes
+
+Desde la migración `2026_07_14_000000_normalize_student_levels.php`, el nivel
+académico de los usuarios se limita funcionalmente a `KIDS` o `TEENS`. La
+migración convierte valores históricos `PRO` y `DOCENTE` a `TEENS`; el rol de
+docente no se pierde porque permanece separado en `usuarios.rol`. También se
+normalizan aulas, desafíos, exámenes y premios que todavía tengan categoría
+`PRO`.
+
 ## 1. Crear el proyecto en Supabase
 
 1. Crea un proyecto en Supabase.

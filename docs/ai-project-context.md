@@ -71,7 +71,15 @@ frontend-angular/src/app/features/autenticacion/pages/registro/
 frontend-angular/src/app/features/autenticacion/pages/recuperar-clave/
 frontend-angular/src/app/features/autenticacion/pages/restablecer-clave/
 frontend-angular/src/app/features/autenticacion/pages/bienvenida/
+frontend-angular/src/app/core/dominio/nivel-alumno.ts
+frontend-angular/src/app/core/dominio/tema-portal-alumno.ts
 ```
+
+Student audiences are `KIDS` and `TEENS` only. Roles remain independent in
+`usuarios.rol`. Angular centralizes selectable levels in `nivel-alumno.ts`, and
+Laravel centralizes validation values in `App\Enums\NivelAlumno`. Legacy `PRO`
+and level-like `DOCENTE` values are normalized to `TEENS` by migration; teacher
+permissions continue to come exclusively from `rol`.
 
 Student portal documentation:
 

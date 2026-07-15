@@ -3,6 +3,30 @@
 Este documento describe el estado actual del portal del estudiante después de
 la separación XP/DAEMONS y del rediseño visual de julio de 2026.
 
+## Audiencias académicas
+
+El dominio académico admite únicamente dos niveles de estudiante:
+
+```text
+KIDS
+TEENS
+```
+
+`rol` y `nivel` son conceptos distintos. `alumno`, `docente` y `admin` viven en
+`usuarios.rol`; KIDS y TEENS viven en `usuarios.nivel`. Los valores históricos
+`PRO` y `DOCENTE` se normalizan a TEENS mediante la migración
+`2026_07_14_000000_normalize_student_levels.php` sin cambiar el rol del usuario.
+
+Las opciones frontend se definen una sola vez en
+`frontend-angular/src/app/core/dominio/nivel-alumno.ts`. Las validaciones Laravel
+usan `App\Enums\NivelAlumno`. Aulas, evaluaciones, misiones y categorías de
+premios reutilizan esas fuentes de verdad y no deben declarar listas propias.
+
+El layout expone `data-nivel-alumno="kids|teens"` y variables CSS semánticas a
+través de `tema-portal-alumno.ts`. Esto permite que un trabajo de diseño futuro
+evolucione cada audiencia sin duplicar lógica, rutas ni componentes funcionales.
+La reestructuración no altera la composición visual de las pantallas actuales.
+
 ## Layout compartido
 
 El portal usa `LayoutAlumno` como contenedor de todas las rutas `/alumno`.
@@ -22,6 +46,8 @@ Archivos:
 frontend-angular/src/app/core/layouts/layout-alumno/layout-alumno.ts
 frontend-angular/src/app/core/layouts/layout-alumno/layout-alumno.html
 frontend-angular/src/app/core/layouts/layout-alumno/layout-alumno.scss
+frontend-angular/src/app/core/dominio/nivel-alumno.ts
+frontend-angular/src/app/core/dominio/tema-portal-alumno.ts
 frontend-angular/src/app/core/layouts/portal-sidebar.config.ts
 frontend-angular/src/app/shared/componentes/sidebar-portal/
 ```
