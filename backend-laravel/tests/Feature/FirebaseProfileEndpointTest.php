@@ -21,6 +21,7 @@ class FirebaseProfileEndpointTest extends TestCase
         ]);
 
         Schema::dropIfExists('personal_access_tokens');
+        Schema::dropIfExists('consentimientos_privacidad');
         Schema::dropIfExists('usuarios');
 
         Schema::create('usuarios', function (Blueprint $table): void {
@@ -62,6 +63,22 @@ class FirebaseProfileEndpointTest extends TestCase
             $table->timestamp('expires_at')->nullable();
             $table->timestamps();
         });
+
+        Schema::create('consentimientos_privacidad', function (Blueprint $table): void {
+            $table->id();
+            $table->foreignId('usuario_id');
+            $table->string('audiencia');
+            $table->string('version_politica');
+            $table->string('estado');
+            $table->text('email_tutor')->nullable();
+            $table->char('ip_hash', 64)->nullable();
+            $table->char('user_agent_hash', 64)->nullable();
+            $table->timestamp('aceptado_at');
+            $table->timestamp('verificado_at')->nullable();
+            $table->timestamp('revocado_at')->nullable();
+            $table->timestamps();
+            $table->unique(['usuario_id', 'version_politica']);
+        });
     }
 
     public function test_completa_perfil_firebase_sin_cookie_sanctum(): void
@@ -84,6 +101,7 @@ class FirebaseProfileEndpointTest extends TestCase
             'nombre_completo' => 'Alumno Nuevo',
             'usuario' => 'alumno_nuevo',
             'nivel' => 'TEENS',
+            'acepta_privacidad' => true,
         ]);
 
         $response
@@ -123,6 +141,7 @@ class FirebaseProfileEndpointTest extends TestCase
             'nombre_completo' => 'Alumno Actual',
             'usuario' => 'ocupado',
             'nivel' => 'TEENS',
+            'acepta_privacidad' => true,
         ]);
 
         $response

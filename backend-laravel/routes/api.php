@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\V1\EvaluacionController;
 use App\Http\Controllers\Api\V1\IaModeloAdminController;
 use App\Http\Controllers\Api\V1\InstitucionController;
 use App\Http\Controllers\Api\V1\MisionController;
+use App\Http\Controllers\Api\V1\PrivacidadController;
 use App\Http\Controllers\Api\V1\RankingController;
 use App\Http\Controllers\Api\V1\SaludController;
 use App\Http\Controllers\Api\V1\TiendaController;
@@ -42,6 +43,8 @@ Route::prefix('v1')->group(function (): void {
         Route::patch('/auth/me/perfil', [AutenticacionController::class, 'completarPerfil'])->middleware('throttle:10,1');
         Route::post('/auth/me/tour', [AutenticacionController::class, 'completarTour'])->middleware('throttle:10,1');
         Route::post('/auth/me/sync-password', [AutenticacionController::class, 'sincronizarClave'])->middleware('throttle:5,1');
+        Route::get('/privacidad/exportar', [PrivacidadController::class, 'exportar'])->middleware('throttle:3,60');
+        Route::post('/privacidad/eliminacion', [PrivacidadController::class, 'solicitarEliminacion'])->middleware('throttle:3,60');
         Route::post('/auth/google/perfil', [AutenticacionController::class, 'completarPerfilGoogle'])->middleware('throttle:10,1');
         Route::post('/auth/usuarios', [AutenticacionController::class, 'crearUsuario'])->middleware('role:admin');
         
@@ -90,6 +93,11 @@ Route::prefix('v1')->group(function (): void {
             Route::apiResource('/docente/insignias', DocenteController::class)->only(['store', 'update', 'destroy']);
             Route::get('/docente/insignias', [DocenteController::class, 'insignias']);
             Route::post('/docente/insignias/asignar', [DocenteController::class, 'asignarInsignia']);
+
+            Route::middleware('role:admin')->prefix('privacidad/admin')->group(function (): void {
+                Route::get('/solicitudes', [PrivacidadController::class, 'solicitudes']);
+                Route::patch('/solicitudes/{solicitud}', [PrivacidadController::class, 'resolver']);
+            });
 
             Route::apiResource('instituciones', InstitucionController::class);
 

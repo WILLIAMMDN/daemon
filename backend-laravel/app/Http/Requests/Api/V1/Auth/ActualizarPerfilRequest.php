@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Api\V1\Auth;
 
 use App\Enums\NivelAlumno;
+use App\Http\Requests\Api\V1\Auth\Concerns\ValidaConsentimientoPrivacidad;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -17,6 +18,8 @@ use Illuminate\Validation\Rule;
  */
 class ActualizarPerfilRequest extends FormRequest
 {
+    use ValidaConsentimientoPrivacidad;
+
     public function authorize(): bool
     {
         return true;
@@ -37,6 +40,7 @@ class ActualizarPerfilRequest extends FormRequest
                 Rule::unique('usuarios', 'usuario')->ignore($usuario?->id),
             ],
             'nivel' => ['required', Rule::in(NivelAlumno::values())],
+            ...$this->reglasConsentimientoPrivacidad(),
         ];
     }
 
@@ -49,6 +53,7 @@ class ActualizarPerfilRequest extends FormRequest
             'usuario.unique' => 'Ese nombre de usuario ya esta en uso.',
             'nivel.required' => 'Selecciona el nivel con el que empezar.',
             'nivel.in' => 'Ese nivel no es valido.',
+            ...$this->mensajesConsentimientoPrivacidad(),
         ];
     }
 }

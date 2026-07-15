@@ -3,6 +3,8 @@
 namespace App\Services\Auth;
 
 use App\Models\Usuario;
+use App\Services\Privacidad\PrivacidadService;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
@@ -10,6 +12,8 @@ use Laravel\Socialite\Two\User as SocialiteUser;
 
 class AutenticacionService
 {
+    public function __construct(private readonly PrivacidadService $privacidad) {}
+
     public function intentarLogin(array $credenciales): ?Usuario
     {
         $usuario = Usuario::where('usuario', $credenciales['usuario'])->first();
@@ -23,7 +27,7 @@ class AutenticacionService
         return $usuario;
     }
 
-    public function registrarAlumno(array $datos): Usuario
+    public function registrarAlumno(array $datos, array $contexto = []): Usuario
     {
         // Flujo minimalista: solo email + password son requeridos. El
         // resto del perfil lo pide /bienvenida despues. Si el cliente
@@ -31,23 +35,36 @@ class AutenticacionService
         // perfil_completo segun corresponda.
         $datosRequeridosCompletos = ! empty($datos['nombre_completo'])
             && ! empty($datos['usuario'])
-            && ! empty($datos['nivel']);
+            && ! empty($datos['nivel'])
+            && ! empty($datos['acepta_privacidad'])
+            && ($datos['nivel'] !== 'KIDS'
+                || (! empty($datos['email_tutor']) && ! empty($datos['autorizacion_tutor_declarada'])));
 
-        $usuario = Usuario::create([
-            'nombre_completo' => $datos['nombre_completo'] ?? null,
-            'email' => $datos['email'] ?? null,
-            'telefono' => $datos['telefono'] ?? null,
-            'usuario' => $datos['usuario'] ?? null,
-            'password_hash' => Hash::make($datos['password']),
-            'nivel' => $datos['nivel'] ?? null,
-            // Si el cliente ya manda todo, lo marcamos completo. Si solo
-            // manda lo minimo, queda incompleto hasta que pase por
-            // /bienvenida (PATCH /auth/me/perfil).
-            'perfil_completo' => $datosRequeridosCompletos,
-            'rol' => 'alumno',
-            'tokens' => 100,
-            'avatar' => null,
-        ]);
+        $usuario = DB::transaction(function () use ($datos, $datosRequeridosCompletos, $contexto): Usuario {
+            $usuario = Usuario::create([
+                'nombre_completo' => $datos['nombre_completo'] ?? null,
+                'email' => $datos['email'] ?? null,
+                'telefono' => $datos['telefono'] ?? null,
+                'usuario' => $datos['usuario'] ?? null,
+                'password_hash' => Hash::make($datos['password']),
+                'nivel' => $datos['nivel'] ?? null,
+                'perfil_completo' => $datosRequeridosCompletos,
+                'rol' => 'alumno',
+                'tokens' => 100,
+                'avatar' => null,
+            ]);
+
+            if ($datosRequeridosCompletos) {
+                $this->privacidad->registrarConsentimiento(
+                    $usuario,
+                    $datos,
+                    $contexto['ip'] ?? null,
+                    $contexto['user_agent'] ?? null,
+                );
+            }
+
+            return $usuario;
+        });
 
         // Disparamos el envio del correo de verificacion en background
         // para no bloquear la respuesta del registro. Si falla (mailer
@@ -237,14 +254,23 @@ class AutenticacionService
         $usuario->update(['password_hash' => Hash::make($passwordNueva)]);
     }
 
-    public function completarPerfil(Usuario $usuario, array $datos): Usuario
+    public function completarPerfil(Usuario $usuario, array $datos, array $contexto = []): Usuario
     {
-        $usuario->update([
-            'nombre_completo' => $datos['nombre_completo'],
-            'usuario' => $datos['usuario'],
-            'nivel' => $datos['nivel'],
-            'perfil_completo' => true,
-        ]);
+        DB::transaction(function () use ($usuario, $datos, $contexto): void {
+            $usuario->update([
+                'nombre_completo' => $datos['nombre_completo'],
+                'usuario' => $datos['usuario'],
+                'nivel' => $datos['nivel'],
+                'perfil_completo' => true,
+            ]);
+
+            $this->privacidad->registrarConsentimiento(
+                $usuario,
+                $datos,
+                $contexto['ip'] ?? null,
+                $contexto['user_agent'] ?? null,
+            );
+        });
 
         return $usuario->fresh();
     }

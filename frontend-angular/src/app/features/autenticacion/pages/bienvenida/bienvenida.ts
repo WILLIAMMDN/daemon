@@ -28,6 +28,9 @@ export class Bienvenida implements OnInit {
     nombre_completo: '',
     usuario: '',
     nivel: 'TEENS',
+    acepta_privacidad: false,
+    email_tutor: '',
+    autorizacion_tutor_declarada: false,
   };
 
   guardando = signal(false);
@@ -57,6 +60,9 @@ export class Bienvenida implements OnInit {
       nombre_completo: usuario.nombre_completo?.trim() ?? '',
       usuario: this.usuarioInicial(usuario.usuario, usuario.email),
       nivel: normalizarNivelAlumno(usuario.nivel),
+      acepta_privacidad: false,
+      email_tutor: '',
+      autorizacion_tutor_declarada: false,
     };
   }
 
@@ -69,6 +75,11 @@ export class Bienvenida implements OnInit {
       nombre_completo: this.datos.nombre_completo.trim(),
       usuario: this.datos.usuario.trim(),
       nivel: this.datos.nivel,
+      acepta_privacidad: this.datos.acepta_privacidad,
+      email_tutor: this.datos.nivel === 'KIDS' ? this.datos.email_tutor?.trim() : undefined,
+      autorizacion_tutor_declarada: this.datos.nivel === 'KIDS'
+        ? this.datos.autorizacion_tutor_declarada
+        : undefined,
     };
 
     const validacion = this.validar(payload, form);
@@ -142,6 +153,14 @@ export class Bienvenida implements OnInit {
 
     if (!this.patronUsuario.test(payload.usuario)) {
       return 'El usuario solo puede usar letras, numeros, guiones y guiones bajos.';
+    }
+
+    if (!payload.acepta_privacidad) {
+      return 'Debes aceptar la politica de privacidad para continuar.';
+    }
+
+    if (payload.nivel === 'KIDS' && (!payload.email_tutor || !payload.autorizacion_tutor_declarada)) {
+      return 'Para KIDS necesitamos el correo y la autorizacion declarada de una madre, padre o tutor.';
     }
 
     if (form.invalid) {

@@ -101,6 +101,46 @@
           </label>
         </div>
 
+        @if (datos.nivel === 'KIDS') {
+          <div class="flex flex-col gap-1">
+            <label for="email_tutor" class="text-xs font-bold text-slate-700">Correo de madre, padre o tutor</label>
+            <input
+              class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              id="email_tutor"
+              name="email_tutor"
+              type="email"
+              [(ngModel)]="datos.email_tutor"
+              required
+              autocomplete="email"
+              placeholder="tutor@correo.com"
+            >
+            <label class="flex items-start gap-2 text-xs text-slate-600 leading-relaxed">
+              <input
+                type="checkbox"
+                name="autorizacion_tutor_declarada"
+                [(ngModel)]="datos.autorizacion_tutor_declarada"
+                required
+                class="mt-0.5"
+              >
+              <span>Declaro que mi madre, padre o tutor conoce la creacion de esta cuenta KIDS.</span>
+            </label>
+          </div>
+        }
+
+        <label class="flex items-start gap-2 text-xs text-slate-600 leading-relaxed">
+          <input
+            type="checkbox"
+            name="acepta_privacidad"
+            [(ngModel)]="datos.acepta_privacidad"
+            required
+            class="mt-0.5"
+          >
+          <span>
+            Acepto la
+            <a href="/legal/privacidad.html" target="_blank" rel="noopener" class="font-bold text-blue-600 underline">politica de privacidad</a>.
+          </span>
+        </label>
+
         @if (error()) {
           <div class="bg-red-50 border border-red-200 rounded-xl p-3 mt-2 text-center" role="alert">
             <p class="text-sm font-bold text-red-600">{{ error() }}</p>

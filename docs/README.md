@@ -27,6 +27,7 @@ a la tarea.
 | --- | --- |
 | `firebase-auth.md` | Google, email/password, verificación y recuperación. |
 | `supabase-postgres.md` | PostgreSQL, storage, migraciones y responsabilidades. |
+| `privacidad-kids-teens.md` | Consentimiento, exportacion, eliminacion y retencion para menores. |
 | `datos-prueba.txt` | Cuentas y datos de prueba autorizados para QA. |
 
 ## API y trabajo pendiente

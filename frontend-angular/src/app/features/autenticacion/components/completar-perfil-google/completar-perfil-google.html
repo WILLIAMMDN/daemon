@@ -78,6 +78,37 @@
         </select>
       </label>
 
+      @if (datos.nivel === 'KIDS') {
+        <label class="classic-field" for="google_email_tutor">
+          <input
+            id="google_email_tutor"
+            name="email_tutor"
+            type="email"
+            [(ngModel)]="datos.email_tutor"
+            required
+            autocomplete="email"
+            placeholder="Correo de madre, padre o tutor"
+          >
+        </label>
+
+        <label class="consent-field">
+          <input
+            type="checkbox"
+            name="autorizacion_tutor_declarada"
+            [(ngModel)]="datos.autorizacion_tutor_declarada"
+            required
+          >
+          <span>Declaro que mi madre, padre o tutor conoce la creacion de esta cuenta KIDS.</span>
+        </label>
+      }
+
+      <label class="consent-field">
+        <input type="checkbox" name="acepta_privacidad" [(ngModel)]="datos.acepta_privacidad" required>
+        <span>
+          Acepto la <a href="/legal/privacidad.html" target="_blank" rel="noopener">politica de privacidad</a>.
+        </span>
+      </label>
+
       @if (error()) {
         <div class="form-alert" role="alert">{{ error() }}</div>
       }

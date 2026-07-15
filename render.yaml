@@ -51,6 +51,14 @@ services:
         value: database
       - key: SESSION_DRIVER
         value: database
+      - key: PRIVACY_POLICY_VERSION
+        value: '2026-07-15'
+      - key: PRIVACY_READ_NOTIFICATIONS_DAYS
+        value: '180'
+      - key: PRIVACY_FAILED_JOBS_HOURS
+        value: '168'
+      - key: PRIVACY_RESOLVED_REQUESTS_DAYS
+        value: '730'
       - key: APP_KEY
         sync: false
       - key: DB_HOST
