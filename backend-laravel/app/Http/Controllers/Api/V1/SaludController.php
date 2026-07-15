@@ -11,16 +11,23 @@ class SaludController extends Controller
 {
     public function __invoke(): JsonResponse
     {
+        $database = $this->estadoBaseDatos();
+        $ok = $database['ok'];
+
         return response()->json([
-            'ok' => true,
+            'ok' => $ok,
             'app' => 'DAEMON API',
-            'database' => $this->estadoBaseDatos(),
+            'version' => config('app.version'),
+            'commit' => config('app.commit'),
+            'database' => $database,
             'assets' => [
                 'public_url_configured' => filled(config('daemon.asset_public_url')),
                 'cloud_url_configured' => filled(config('daemon.asset_cloud_url')),
                 'uploads_disk' => env('UPLOADS_DISK', 'public') ?: 'public',
+                'private_uploads_disk' => config('daemon.private_uploads_disk'),
             ],
-        ]);
+            'checked_at' => now()->toIso8601String(),
+        ], $ok ? 200 : 503);
     }
 
     /**
@@ -35,7 +42,7 @@ class SaludController extends Controller
         } catch (Throwable $e) {
             return [
                 'ok' => false,
-                'error' => class_basename($e),
+                'error' => 'database_unavailable',
             ];
         }
     }

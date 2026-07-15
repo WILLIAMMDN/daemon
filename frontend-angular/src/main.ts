@@ -2,17 +2,17 @@ import { bootstrapApplication } from '@angular/platform-browser';
 import { appConfig } from './app/app.config';
 import { App } from './app/app';
 import * as Sentry from '@sentry/angular';
+import { environment } from './environments/environment';
 
-Sentry.init({
-  dsn: "https://c45a6c36565ea37cf1f0835bb077093a@o4511730124062720.ingest.us.sentry.io/4511730143461376",
-  integrations: [
-    Sentry.browserTracingIntegration(),
-    Sentry.replayIntegration(),
-  ],
-  tracesSampleRate: 1.0, 
-  replaysSessionSampleRate: 0.1,
-  replaysOnErrorSampleRate: 1.0,
-});
+if (environment.observability.sentryEnabled) {
+  Sentry.init({
+    dsn: environment.observability.sentryDsn,
+    environment: environment.production ? 'production' : 'development',
+    integrations: [Sentry.browserTracingIntegration()],
+    tracesSampleRate: environment.observability.tracesSampleRate,
+    sendDefaultPii: false,
+  });
+}
 
 bootstrapApplication(App, appConfig)
   .catch((err) => console.error(err));

@@ -2,6 +2,11 @@ export const environment = {
   production: false,
   apiUrl: 'http://localhost:8000/api/v1',
   assetBaseUrl: '',
+  observability: {
+    sentryEnabled: false,
+    sentryDsn: '',
+    tracesSampleRate: 0,
+  },
   firebase: {
     apiKey: 'AIzaSyCarHu8PP3LR7mcNHLk_FTN2rhfnUf4FD4',
     authDomain: 'daemon-a41f8.firebaseapp.com',
