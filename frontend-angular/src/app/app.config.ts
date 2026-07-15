@@ -29,7 +29,7 @@ export const appConfig: ApplicationConfig = {
     provideSpinnerConfig({ type: 'square-jelly-box' }),
     provideServiceWorker('ngsw-worker.js', {
       enabled: !isDevMode(),
-      registrationStrategy: 'registerWhenStable:30000',
+      registrationStrategy: 'registerImmediately',
     }),
     provideCharts(withDefaultRegisterables()),
   ],

@@ -36,6 +36,10 @@ jobs:
         run: npm run test:ci
         working-directory: frontend-angular
 
+      - name: Stamp app shell release
+        run: node -e 'const fs = require("fs"); const path = "src/index.html"; const html = fs.readFileSync(path, "utf8"); const stamped = html.replace(/(<meta name="daemon-release" content=")[^"]+("[^>]*>)/, `$1${process.env.GITHUB_SHA}$2`); if (stamped === html) throw new Error("daemon-release meta tag not found"); fs.writeFileSync(path, stamped);'
+        working-directory: frontend-angular
+
       - name: Build frontend
         run: npm run build
         working-directory: frontend-angular
