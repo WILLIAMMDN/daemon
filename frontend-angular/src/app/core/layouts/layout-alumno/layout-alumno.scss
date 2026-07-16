@@ -336,7 +336,7 @@
 .mobile-tabbar { display: none; }
 
 @media (max-width: 1160px) {
-  .topbar-message,
+  .message-card,
   .profile-copy { display: none; }
 }
 
@@ -383,18 +383,23 @@
 
 @media (max-width: 680px) {
   .level-copy,
-  .profile-capsule,
+  .profile-card,
   .token-copy small { display: none; }
-  .level-capsule { padding-right: .1rem; }
-  .token-capsule { min-height: 42px; padding-right: .5rem; }
+  .level-card { padding-right: .1rem; }
+  .token-card { min-height: 42px; padding-right: .5rem; }
   .token-glyph { height: 32px; width: 32px; }
   .token-copy strong { margin: 0; }
   .topbar-actions { gap: .3rem; }
+  
+  .student-topbar-cards { gap: 0.5rem; }
+  .topbar-left, .topbar-right { gap: 0.5rem; }
+  .topbar-card { padding: 0.4rem 0.6rem; min-height: 52px; }
+  .level-hexagon { width: 36px; height: 36px; font-size: 1rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .level-capsule,
-  .token-capsule,
-  .profile-capsule,
-  .icon-capsule { transition: none; }
+  .level-card,
+  .token-card,
+  .profile-card,
+  .icon-card { transition: none; }
 }
