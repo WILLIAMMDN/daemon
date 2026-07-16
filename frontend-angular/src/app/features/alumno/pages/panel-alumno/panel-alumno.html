@@ -143,16 +143,16 @@
             </div>
           </div>
         } @else {
-          <div class="flex flex-col sm:flex-row items-center justify-between bg-slate-50 border border-dashed border-slate-300 rounded-2xl p-6 gap-6">
-            <div class="flex flex-col sm:flex-row items-center sm:items-start gap-4 text-center sm:text-left">
-              <span class="bg-green-100 text-green-600 rounded-xl w-14 h-14 flex-none flex items-center justify-center text-xl" aria-hidden="true"><fa-icon [icon]="iconos.bandera" /></span>
+          <div class="bg-slate-50 border border-slate-100 border-dashed rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between mt-6 gap-4 sm:gap-0">
+            <div class="flex gap-4 sm:gap-6 items-center">
+              <span class="bg-green-100 text-green-600 rounded-2xl w-14 h-14 flex items-center justify-center text-2xl flex-none shadow-inner" aria-hidden="true"><fa-icon [icon]="iconos.bandera" /></span>
               <div>
                 <h3 class="text-slate-900 text-lg font-bold mb-1">Ruta completada por ahora</h3>
                 <p class="text-slate-500 text-sm">No tienes misiones pendientes. Vuelve pronto para descubrir nuevos retos.</p>
               </div>
             </div>
-            <div class="flex-none -mr-4 -mb-6 hidden sm:block">
-              <img src="/img/robot-mision.png" alt="Robot DAEMON" class="h-32 object-contain" />
+            <div class="flex-none sm:-mr-4 sm:-mb-6 self-end sm:self-auto opacity-70 sm:opacity-100">
+              <img src="/img/robot-mision.png" alt="Robot DAEMON" class="h-20 sm:h-32 object-contain" />
             </div>
           </div>
         }
