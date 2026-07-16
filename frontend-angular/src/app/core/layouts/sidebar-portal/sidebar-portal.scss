@@ -766,23 +766,10 @@
   opacity: 1;
 }
 
-:host(.theme-alumno) .nav-item.active,
-:host(.theme-alumno) .nav-parent.active,
-:host(.theme-alumno) .submenu-item.active {
-  color: #ffffff;
-}
-
-:host(.theme-alumno) .nav-item.active::before,
-:host(.theme-alumno) .nav-parent.active::before,
-:host(.theme-alumno) .submenu-item.active::before {
-  background: linear-gradient(90deg, #00f2fe, #4facfe);
-  box-shadow: 0 4px 14px rgba(0, 242, 254, 0.4);
-}
-
 :host(.theme-docente) .nav-item.active,
 :host(.theme-docente) .nav-parent.active,
 :host(.theme-docente) .submenu-item.active {
-  background: var(--sb-active-bg);
+  background: transparent; /* Mantenemos transparente para usar ::before igual que los demás */
   color: var(--sb-active-ink);
 }
 
@@ -791,18 +778,6 @@
 .submenu-item.active .nav-icon {
   background: transparent;
   border-color: transparent;
-  color: var(--sb-active-ink);
-}
-
-:host(.theme-alumno) .nav-item.active .nav-icon,
-:host(.theme-alumno) .nav-parent.active .nav-icon,
-:host(.theme-alumno) .submenu-item.active .nav-icon {
-  color: #ffffff;
-}
-
-:host(.theme-docente) .nav-item.active .nav-icon,
-:host(.theme-docente) .nav-parent.active .nav-icon,
-:host(.theme-docente) .submenu-item.active .nav-icon {
   color: var(--sb-active-ink);
 }
 
