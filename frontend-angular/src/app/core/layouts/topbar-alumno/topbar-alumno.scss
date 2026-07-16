@@ -5,28 +5,16 @@
   z-index: 50; /* Z-index mayor que el sidebar para que cubra sus sombras/bordes */
 }
 
-:host-context([data-nivel-alumno="kids"]) .topbar-shell {
-  background: #10105d; /* Mismo color base del Hero Banner Kids y Sidebar */
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-:host-context(.theme-alumno:not([data-nivel-alumno="kids"])) .topbar-shell {
-  background: #110e2f; /* Fondo oscuro espacial Teens */
-  background-image: 
-    radial-gradient(circle at 50% 0%, #2a1b54 0%, transparent 50%),
-    radial-gradient(circle at 100% 100%, #1e1147 0%, transparent 50%);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-/* Fallback general por si no pilla el contexto */
+/* Base Clara para el Topbar */
 .topbar-shell {
-  background: #10105d;
+  background: var(--student-surface, #ffffff);
   padding: 0.8rem clamp(1rem, 2.2vw, 2rem);
   min-height: 70px;
   display: flex;
   position: relative;
-  /* Sin sombras ni márgenes negativos para una fusión perfecta con el sidebar */
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  /* Sombra suave para separar sutilmente del área de contenido claro */
+  box-shadow: 0 4px 20px rgba(25, 42, 70, 0.04);
+  border-bottom: 1px solid var(--student-border, #e4eaf2);
 }
 
 .student-topbar-cards {
@@ -52,14 +40,14 @@
   align-items: center;
   gap: 0.8rem;
   text-decoration: none;
-  transition: transform 0.2s ease, opacity 0.2s ease;
+  transition: transform 0.2s ease, background 0.2s ease;
   padding: 0.4rem;
   border-radius: 12px;
 }
 
 .topbar-card:hover {
   transform: translateY(-2px);
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--student-surface-muted, #f8fafc);
 }
 
 /* Nivel - Sin bordes, solo el hexágono limpio */
@@ -91,7 +79,7 @@
 }
 
 .level-copy small {
-  color: #94a3b8; /* Gris azulado claro */
+  color: var(--student-muted, #667085);
   font-size: 0.65rem;
   font-weight: 800;
   letter-spacing: 0.05em;
@@ -99,13 +87,13 @@
 }
 
 .level-copy strong {
-  color: #ffffff;
+  color: var(--student-text, #172033);
   font-size: 0.9rem;
   font-weight: 800;
 }
 
 .level-mini-bar {
-  background: rgba(255, 255, 255, 0.15);
+  background: #e2e8f0;
   border-radius: 4px;
   height: 6px;
   margin-top: 0.35rem;
@@ -114,7 +102,7 @@
 }
 
 .level-mini-bar .fill {
-  background: #ffc414; /* Barra de progreso amarilla */
+  background: #ffc414;
   height: 100%;
   border-radius: 4px;
 }
@@ -122,9 +110,9 @@
 /* Mensaje - Campus del estudiante */
 .message-icon {
   align-items: center;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.05);
   border-radius: 10px;
-  color: #ffffff;
+  color: #172033;
   display: flex;
   height: 40px;
   justify-content: center;
@@ -138,7 +126,7 @@
 }
 
 .message-copy small {
-  color: #94a3b8;
+  color: var(--student-muted, #667085);
   font-size: 0.65rem;
   font-weight: 800;
   letter-spacing: 0.05em;
@@ -146,7 +134,7 @@
 }
 
 .message-copy strong {
-  color: #ffffff;
+  color: #172033;
   font-size: 0.9rem;
   font-weight: 700;
 }
@@ -180,7 +168,7 @@
 }
 
 .token-copy strong {
-  color: #ffffff;
+  color: var(--student-text, #172033);
   font-size: 1.2rem;
   font-weight: 900;
   line-height: 1;
@@ -193,26 +181,28 @@
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  color: #ffffff;
+  color: var(--student-muted, #667085);
   font-size: 1.25rem;
   cursor: pointer;
-  background: rgba(255, 255, 255, 0.05);
+  background: transparent;
+  border: 1px solid var(--student-border, #e4eaf2);
 }
 
 .icon-card:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: var(--student-surface-muted, #f8fafc);
   color: #ffc414;
 }
 
 .profile-card {
   cursor: pointer;
   padding: 0.4rem 0.8rem 0.4rem 0.4rem;
-  background: rgba(255, 255, 255, 0.05);
+  background: transparent;
+  border: 1px solid var(--student-border, #e4eaf2);
   border-radius: 99px; /* Aspecto de pastilla para el perfil */
 }
 
 .profile-card:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: var(--student-surface-muted, #f8fafc);
 }
 
 .profile-copy {
@@ -222,21 +212,21 @@
 }
 
 .profile-copy strong {
-  color: #ffffff;
+  color: var(--student-text, #172033);
   font-size: 0.9rem;
   font-weight: 800;
   line-height: 1.2;
 }
 
 .profile-copy small {
-  color: #94a3b8;
+  color: var(--student-muted, #667085);
   font-size: 0.7rem;
   font-weight: 800;
   text-transform: uppercase;
 }
 
 .profile-chevron {
-  color: #94a3b8;
+  color: var(--student-muted, #667085);
   font-size: 0.8rem;
   margin-left: auto;
 }
