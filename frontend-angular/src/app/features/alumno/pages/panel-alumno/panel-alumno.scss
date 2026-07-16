@@ -140,9 +140,9 @@
   opacity: 0.85;
 }
 
-/* Ocultar texto por defecto de progress */
+/* Ocultar texto por defecto de progress y mejorar track */
 :host ::ng-deep .hero-progress .ant-progress-circle-trail {
-  stroke: rgba(255, 255, 255, 0.1);
+  stroke: rgba(255, 255, 255, 0.2);
 }
 :host ::ng-deep .hero-progress .ant-progress-text {
   display: none;

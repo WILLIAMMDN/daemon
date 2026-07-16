@@ -64,11 +64,11 @@
       </div>
 
       <div class="relative z-10 flex-none lg:ml-4 mt-12 lg:mt-0 flex flex-col items-center">
-        <div class="relative flex items-center justify-center bg-[#171033] rounded-full w-[136px] h-[136px] shadow-[inset_0_4px_20px_rgba(0,0,0,0.4)]">
-          <nz-progress class="hero-progress absolute inset-0" aria-hidden="true" nzType="circle" [nzPercent]="progreso(datos).progreso_porcentaje" [nzWidth]="136" [nzStrokeWidth]="8" nzStrokeColor="#1677ff" />
+        <div class="relative flex items-center justify-center bg-white/10 backdrop-blur-md border border-white/20 rounded-full w-[136px] h-[136px] shadow-[0_8px_32px_rgba(0,0,0,0.2)]">
+          <nz-progress class="hero-progress absolute inset-0" aria-hidden="true" nzType="circle" [nzPercent]="progreso(datos).progreso_porcentaje" [nzWidth]="136" [nzStrokeWidth]="8" nzStrokeColor="#00f2fe" />
           <div class="absolute flex flex-col items-center justify-center z-10">
-            <small class="text-indigo-300 text-[0.7rem] font-extrabold tracking-widest uppercase">NIVEL</small>
-            <strong class="text-white text-[3.5rem] font-extrabold leading-none">{{ progreso(datos).nivel }}</strong>
+            <small class="text-indigo-200 text-[0.7rem] font-extrabold tracking-widest uppercase drop-shadow-md">NIVEL</small>
+            <strong class="text-white text-[3.5rem] font-extrabold leading-none drop-shadow-lg">{{ progreso(datos).nivel }}</strong>
           </div>
         </div>
         <div class="text-center mt-4">
