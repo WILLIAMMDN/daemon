@@ -302,19 +302,18 @@
 .close-button {
   align-items: center;
   appearance: none;
-  background: transparent;
-  border: none;
+  background: rgba(255, 255, 255, .08);
+  border: 1px solid rgba(255, 255, 255, .12);
   border-radius: 12px;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, .76);
   cursor: pointer;
   display: inline-flex;
   font: inherit;
-  font-size: 1.15rem;
-  height: 42px;
+  height: 38px;
   justify-content: center;
   padding: 0;
-  transition: color .2s ease, background .2s ease, transform .2s ease;
-  width: 42px;
+  transition: color .15s ease, background .15s ease, border-color .15s ease, transform .15s ease;
+  width: 38px;
 }
 
 .pin-button {
@@ -323,18 +322,22 @@
 
 .pin-button:hover,
 .close-button:hover {
-  background: rgba(255, 255, 255, .05);
+  background: rgba(255, 255, 255, .14);
+  border-color: rgba(255, 255, 255, .24);
   color: #ffffff;
+  transform: translateY(-1px);
 }
 
 .pin-button.is-pinned {
-  background: transparent;
-  color: var(--sb-brand-orange); /* Amarillo institucional DAEMON */
+  background: var(--sb-active-bg);
+  border-color: color-mix(in srgb, var(--sb-active-bg) 80%, #ffffff);
+  color: var(--sb-active-ink);
 }
 
 .pin-button.is-pinned:hover {
-  background: rgba(255, 255, 255, .05);
-  color: var(--sb-brand-orange);
+  background: color-mix(in srgb, var(--sb-active-bg) 88%, #ffffff);
+  border-color: color-mix(in srgb, var(--sb-active-bg) 64%, #ffffff);
+  color: var(--sb-active-ink);
 }
 
 /* ============================================================
