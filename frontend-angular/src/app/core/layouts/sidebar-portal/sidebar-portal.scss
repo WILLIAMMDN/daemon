@@ -223,9 +223,11 @@
   gap: .65rem;
   grid-template-columns: minmax(0, 1fr) 38px;
   justify-items: stretch;
-  padding: 1.15rem 1.28rem .82rem;
+  /* Mismo padding vertical que el topbar para alinear centros (0.8rem) */
+  padding: 0.8rem 1.28rem;
   position: relative;
   z-index: 2;
+  min-height: 70px;
 }
 
 .brand-link {
@@ -300,18 +302,19 @@
 .close-button {
   align-items: center;
   appearance: none;
-  background: rgba(255, 255, 255, .08);
-  border: 1px solid rgba(255, 255, 255, .12);
+  background: transparent;
+  border: none;
   border-radius: 12px;
-  color: rgba(255, 255, 255, .76);
+  color: rgba(255, 255, 255, 0.5);
   cursor: pointer;
   display: inline-flex;
   font: inherit;
-  height: 38px;
+  font-size: 1.15rem;
+  height: 42px;
   justify-content: center;
   padding: 0;
-  transition: color .15s ease, background .15s ease, border-color .15s ease, transform .15s ease;
-  width: 38px;
+  transition: color .2s ease, background .2s ease, transform .2s ease;
+  width: 42px;
 }
 
 .pin-button {
@@ -320,22 +323,18 @@
 
 .pin-button:hover,
 .close-button:hover {
-  background: rgba(255, 255, 255, .14);
-  border-color: rgba(255, 255, 255, .24);
+  background: rgba(255, 255, 255, .05);
   color: #ffffff;
-  transform: translateY(-1px);
 }
 
 .pin-button.is-pinned {
-  background: var(--sb-active-bg);
-  border-color: color-mix(in srgb, var(--sb-active-bg) 80%, #ffffff);
-  color: var(--sb-active-ink);
+  background: transparent;
+  color: var(--sb-brand-orange); /* Amarillo institucional DAEMON */
 }
 
 .pin-button.is-pinned:hover {
-  background: color-mix(in srgb, var(--sb-active-bg) 88%, #ffffff);
-  border-color: color-mix(in srgb, var(--sb-active-bg) 64%, #ffffff);
-  color: var(--sb-active-ink);
+  background: rgba(255, 255, 255, .05);
+  color: var(--sb-brand-orange);
 }
 
 /* ============================================================

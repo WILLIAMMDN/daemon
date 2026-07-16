@@ -23,7 +23,9 @@
   background: #10105d;
   /* El margen negativo solapa un posible gap. El z-index de host lo pone por encima. */
   margin-left: -1px;
-  padding: 0.8rem clamp(1rem, 2.2vw, 2rem) 0.8rem calc(clamp(1rem, 2.2vw, 2rem) + 1px);
+  padding: 0.8rem clamp(1rem, 2.2vw, 2rem);
+  min-height: 70px;
+  display: flex;
   position: relative;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
