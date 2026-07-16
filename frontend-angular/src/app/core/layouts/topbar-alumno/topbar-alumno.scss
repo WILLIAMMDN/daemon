@@ -22,30 +22,28 @@
 }
 
 .topbar-card {
-  border-radius: 16px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
   display: flex;
   align-items: center;
   gap: 0.8rem;
   padding: 0.6rem 1rem;
   min-height: 64px;
   text-decoration: none;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 1px solid #e2e8f0;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s;
 }
 
-/* EFECTO PREMIUM GLASS PARA LAS TARJETAS */
-.premium-glass {
-  background: rgba(16, 16, 93, 0.95);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 8px 32px rgba(16, 16, 93, 0.15);
-  color: #ffffff;
-}
-
-.premium-glass:hover {
+.topbar-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 40px rgba(16, 16, 93, 0.25);
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  border-color: #cbd5e1;
+}
+
+/* Tarjeta de Nivel - Índigo Sólido */
+.level-card {
+  border: 2px solid #3730a3;
 }
 
 .level-hexagon {
@@ -55,10 +53,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #00f2fe; /* Cyan brillante para el texto del nivel */
+  color: #3730a3;
   font-weight: 900;
   font-size: 1.2rem;
-  text-shadow: 0 0 10px rgba(0, 242, 254, 0.5);
 }
 
 .level-hexagon .hex-bg {
@@ -66,8 +63,8 @@
   inset: 0;
   width: 100%;
   height: 100%;
-  color: rgba(255, 255, 255, 0.05); /* Fondo oscuro del hexágono */
-  stroke: rgba(0, 242, 254, 0.6); /* Borde cyan */
+  color: #eef2ff; /* Fondo claro */
+  stroke: #3730a3; /* Borde índigo */
   fill: currentColor;
 }
 
@@ -77,40 +74,44 @@
 }
 
 .level-copy small {
-  color: #94a3b8; /* Gris claro */
+  color: #64748b;
   font-size: 0.65rem;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: 0.05em;
   text-transform: uppercase;
 }
 
 .level-copy strong {
-  color: #ffffff;
+  color: #0f172a;
   font-size: 0.85rem;
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .level-mini-bar {
-  background: rgba(255, 255, 255, 0.15);
+  background: #e2e8f0;
   border-radius: 4px;
-  height: 6px;
+  height: 8px;
   margin-top: 0.35rem;
   overflow: hidden;
   width: 100%;
 }
 
 .level-mini-bar .fill {
-  background: linear-gradient(90deg, #00f2fe, #4facfe);
+  background: #3730a3; /* Azul oscuro sólido */
   height: 100%;
   border-radius: 4px;
-  box-shadow: 0 0 8px rgba(0, 242, 254, 0.8);
+}
+
+/* Tarjeta de Mensaje */
+.message-card {
+  border-left: 4px solid #3b82f6;
 }
 
 .message-icon {
   align-items: center;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  color: #00f2fe;
+  background: #eff6ff;
+  border-radius: 10px;
+  color: #3b82f6;
   display: flex;
   height: 40px;
   justify-content: center;
@@ -124,23 +125,28 @@
 }
 
 .message-copy small {
-  color: #94a3b8;
+  color: #64748b;
   font-size: 0.65rem;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: 0.05em;
   text-transform: uppercase;
 }
 
 .message-copy strong {
-  color: #ffffff;
+  color: #0f172a;
   font-size: 0.85rem;
-  font-weight: 600;
+  font-weight: 700;
 }
 
-/* Tarjeta DAEMONS resalta en dorado/amarillo */
+/* Tarjeta DAEMONS - Amarillo Sólido */
 .token-card {
-  border: 1px solid rgba(255, 196, 20, 0.3);
-  box-shadow: 0 0 20px rgba(255, 196, 20, 0.1);
+  background: #ffc414;
+  border: 1px solid #f4a900;
+  box-shadow: 0 4px 14px rgba(255, 196, 20, 0.3);
+}
+
+.token-card:hover {
+  border-color: #d97706;
 }
 
 .token-glyph {
@@ -155,37 +161,43 @@
 }
 
 .token-copy small {
-  color: #fde047; /* Amarillo claro */
+  color: #78350f;
   font-size: 0.65rem;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: 0.05em;
   text-transform: uppercase;
 }
 
 .token-copy strong {
-  color: #ffc414; /* Amarillo DAEMON */
-  font-size: 1.1rem;
+  color: #451a03;
+  font-size: 1.2rem;
   font-weight: 900;
   line-height: 1;
-  text-shadow: 0 0 10px rgba(255, 196, 20, 0.3);
 }
 
+/* Iconos de Campana y Perfil */
 .icon-card {
   justify-content: center;
   padding: 0;
   width: 64px;
-  color: #ffffff;
-  font-size: 1.2rem;
+  color: #475569;
+  font-size: 1.25rem;
   cursor: pointer;
 }
 
 .icon-card:hover {
-  color: #00f2fe;
+  color: #3730a3;
+  background: #eef2ff;
+  border-color: #c7d2fe;
 }
 
 .profile-card {
   cursor: pointer;
   padding: 0.4rem 1rem 0.4rem 0.4rem;
+}
+
+.profile-card:hover {
+  background: #f8fafc;
 }
 
 .profile-copy {
@@ -195,30 +207,30 @@
 }
 
 .profile-copy strong {
-  color: #ffffff;
+  color: #0f172a;
   font-size: 0.9rem;
-  font-weight: 700;
+  font-weight: 800;
   line-height: 1.2;
 }
 
 .profile-copy small {
-  color: #94a3b8;
+  color: #3b82f6;
   font-size: 0.7rem;
-  font-weight: 600;
+  font-weight: 800;
   text-transform: uppercase;
 }
 
 .profile-chevron {
-  color: #94a3b8;
+  color: #64748b;
   font-size: 0.8rem;
   margin-left: auto;
 }
 
 .mobile-menu-trigger {
   align-items: center;
-  background: rgba(16, 16, 93, 0.95);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 12px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 10px;
   cursor: pointer;
   display: none;
   flex-direction: column;
@@ -230,7 +242,7 @@
 }
 
 .mobile-menu-trigger span {
-  background: #ffffff;
+  background: #3b82f6;
   border-radius: 2px;
   height: 2px;
   width: 20px;
@@ -269,9 +281,10 @@
 
 /* POPOVERS */
 ::ng-deep .ant-dropdown-menu {
-  border-radius: 16px;
+  border-radius: 12px;
   box-shadow: 0 10px 40px rgba(15, 23, 42, 0.12);
   padding: 8px;
+  border: 1px solid #e2e8f0;
 }
 
 .notification-popover {
@@ -279,7 +292,7 @@
 }
 
 .notification-popover header {
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid #e2e8f0;
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
@@ -292,9 +305,9 @@
 }
 
 .notification-popover header small {
-  color: #64748b;
+  color: #3730a3;
   font-size: 0.65rem;
-  font-weight: 700;
+  font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -302,7 +315,7 @@
 .notification-popover header strong {
   color: #0f172a;
   font-size: 1.1rem;
-  font-weight: 800;
+  font-weight: 900;
 }
 
 .notification-popover header span {
@@ -310,7 +323,7 @@
   color: #ef4444;
   border-radius: 12px;
   font-size: 0.7rem;
-  font-weight: 700;
+  font-weight: 800;
   padding: 2px 8px;
 }
 
@@ -321,7 +334,7 @@
 }
 
 .notification-list article {
-  border-radius: 12px;
+  border-radius: 8px;
   padding: 12px 16px;
   transition: background 0.2s;
 }
@@ -331,11 +344,11 @@
 }
 
 .notification-list article.unread {
-  background: #f0f9ff;
+  background: #eff6ff;
 }
 
 .notification-list article.unread:hover {
-  background: #e0f2fe;
+  background: #dbeafe;
 }
 
 .notification-list article div {
@@ -347,15 +360,17 @@
 .notification-list article strong {
   color: #0f172a;
   font-size: 0.85rem;
+  font-weight: 700;
 }
 
 .notification-list article time {
-  color: #94a3b8;
+  color: #64748b;
   font-size: 0.7rem;
+  font-weight: 600;
 }
 
 .notification-list article p {
-  color: #475569;
+  color: #334155;
   font-size: 0.8rem;
   margin: 0;
   line-height: 1.4;
@@ -364,23 +379,24 @@
 .notification-empty {
   color: #64748b;
   font-size: 0.85rem;
+  font-weight: 600;
   padding: 32px 16px;
   text-align: center;
 }
 
 .notification-footer {
-  border-top: 1px solid #f1f5f9;
-  color: #2563eb;
+  border-top: 1px solid #e2e8f0;
+  color: #3730a3;
   display: block;
   font-size: 0.8rem;
-  font-weight: 600;
+  font-weight: 800;
   padding: 12px;
   text-align: center;
 }
 
 .notification-footer:hover {
   background: #f8fafc;
-  color: #1d4ed8;
+  color: #312e81;
 }
 
 .profile-popover-menu {
@@ -388,9 +404,9 @@
 }
 
 ::ng-deep .ant-dropdown-menu-item-group-title {
-  color: #94a3b8;
+  color: #64748b;
   font-size: 0.7rem;
-  font-weight: 700;
+  font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   padding: 8px 16px;
@@ -398,7 +414,7 @@
 
 ::ng-deep .ant-dropdown-menu-item {
   border-radius: 8px;
-  font-weight: 600;
+  font-weight: 700;
   margin: 2px 8px;
   padding: 8px 16px;
 }

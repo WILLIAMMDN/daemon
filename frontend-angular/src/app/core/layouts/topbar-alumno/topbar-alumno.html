@@ -5,7 +5,7 @@
     </button>
 
     <div class="topbar-left">
-      <a routerLink="/alumno" fragment="progreso-nivel" class="topbar-card level-card premium-glass" aria-label="Ver progreso hacia el siguiente nivel">
+      <a routerLink="/alumno" fragment="progreso-nivel" class="topbar-card level-card" aria-label="Ver progreso hacia el siguiente nivel">
         <div class="level-hexagon">
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="hex-bg"><path d="M12 2L21 7V17L12 22L3 17V7L12 2Z" stroke="currentColor" stroke-width="2"/></svg>
           <span>{{ nivelGamificacion() }}</span>
@@ -17,7 +17,7 @@
         </div>
       </a>
 
-      <div class="topbar-card message-card premium-glass">
+      <div class="topbar-card message-card">
         <div class="message-icon"><fa-icon [icon]="iconos.inicio" /></div>
         <div class="message-copy">
           <small>CAMPUS DEL ESTUDIANTE</small>
@@ -27,7 +27,7 @@
     </div>
 
     <div class="topbar-right">
-      <a id="topbar-tokens" routerLink="/alumno/tienda" class="topbar-card token-card premium-glass" aria-label="Abrir tienda">
+      <a id="topbar-tokens" routerLink="/alumno/tienda" class="topbar-card token-card" aria-label="Abrir tienda">
         <span class="token-glyph"><app-moneda-daemon [size]="28" titulo="DAEMONS" /></span>
         <span class="token-copy">
           <small>SALDO DAEMONS</small>
@@ -35,13 +35,13 @@
         </span>
       </a>
 
-      <a nz-dropdown [nzDropdownMenu]="notifMenu" nzPlacement="bottomRight" nzTrigger="click" (nzVisibleChange)="marcarComoLeidas()" class="topbar-card icon-card premium-glass" aria-label="Notificaciones">
+      <a nz-dropdown [nzDropdownMenu]="notifMenu" nzPlacement="bottomRight" nzTrigger="click" (nzVisibleChange)="marcarComoLeidas()" class="topbar-card icon-card" aria-label="Notificaciones">
         <nz-badge [nzCount]="notificacionesNoLeidas()">
           <fa-icon [icon]="iconos.campana" />
         </nz-badge>
       </a>
 
-      <a nz-dropdown nzTrigger="click" [nzDropdownMenu]="userMenu" nzPlacement="bottomRight" class="topbar-card profile-card premium-glass">
+      <a nz-dropdown nzTrigger="click" [nzDropdownMenu]="userMenu" nzPlacement="bottomRight" class="topbar-card profile-card">
         <nz-badge [nzDot]="sesion.usuario()?.email_verificado === false" nzStatus="warning" [nzOffset]="[-4, 4]">
           <nz-avatar [nzSize]="42" [nzSrc]="avatarUrl() || undefined" [nzText]="iniciales()" />
         </nz-badge>
