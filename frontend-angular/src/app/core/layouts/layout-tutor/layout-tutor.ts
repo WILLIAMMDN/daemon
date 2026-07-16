@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faArrowRightFromBracket, faShieldHeart } from '@fortawesome/free-solid-svg-icons';
-import { EmailVerificationBanner } from '../../../shared/componentes/email-verification-banner/email-verification-banner';
+import { EmailVerificationBanner } from '../../componentes/email-verification-banner/email-verification-banner';
 import { Autenticacion } from '../../servicios/autenticacion';
 import { CargaGlobal } from '../../servicios/carga-global';
 import { Sesion } from '../../servicios/sesion';

@@ -28,61 +28,55 @@
     <app-email-verification-banner />
 
     <div class="topbar-shell">
-      <header class="student-topbar">
+      <header class="student-topbar-cards">
         <button type="button" class="mobile-menu-trigger" aria-label="Abrir navegación" (click)="sidebar.abrirMovil()">
           <span></span><span></span><span></span>
         </button>
 
-        <a routerLink="/alumno" fragment="progreso-nivel" class="level-capsule" aria-label="Ver progreso hacia el siguiente nivel">
-          <nz-progress
-            nzType="circle"
-            [nzPercent]="progresoNivel()"
-            [nzWidth]="44"
-            [nzStrokeWidth]="9"
-            [nzStrokeColor]="temaPortal().colorPrincipal"
-            [nzFormat]="formatoNivel"
-          />
-          <span class="level-copy">
-            <small>Nivel {{ nivelGamificacion() }}</small>
-            <strong>{{ xpRestante() }} XP para subir</strong>
-          </span>
-        </a>
+        <div class="topbar-left">
+          <a routerLink="/alumno" fragment="progreso-nivel" class="topbar-card level-card" aria-label="Ver progreso hacia el siguiente nivel">
+            <div class="level-hexagon">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="hex-bg"><path d="M12 2L21 7V17L12 22L3 17V7L12 2Z" stroke="currentColor" stroke-width="2"/></svg>
+              <span>{{ nivelGamificacion() }}</span>
+            </div>
+            <div class="level-copy">
+              <small>NIVEL {{ nivelGamificacion() }}</small>
+              <strong>{{ xpRestante() }} XP para subir</strong>
+              <div class="level-mini-bar"><div class="fill" [style.width]="progresoNivel() + '%'"></div></div>
+            </div>
+          </a>
 
-        <div class="topbar-message">
-          <span>Campus del estudiante</span>
-          <strong>Tu aprendizaje, en un solo lugar</strong>
+          <div class="topbar-card message-card">
+            <div class="message-icon"><fa-icon [icon]="iconos.inicio" /></div>
+            <div class="message-copy">
+              <small>CAMPUS DEL ESTUDIANTE</small>
+              <strong>Tu aprendizaje, en un solo lugar</strong>
+            </div>
+          </div>
         </div>
 
-        <div class="topbar-actions">
-          <a id="topbar-tokens" routerLink="/alumno/tienda" class="token-capsule" aria-label="Abrir tienda">
-            <span class="token-glyph"><app-moneda-daemon [size]="24" titulo="DAEMONS" /></span>
+        <div class="topbar-right">
+          <a id="topbar-tokens" routerLink="/alumno/tienda" class="topbar-card token-card" aria-label="Abrir tienda">
+            <span class="token-glyph"><app-moneda-daemon [size]="28" titulo="DAEMONS" /></span>
             <span class="token-copy">
-              <small>Saldo DAEMONS</small>
+              <small>SALDO DAEMONS</small>
               <strong>{{ perfilTokens() || 0 }}</strong>
             </span>
           </a>
 
-          <a
-            nz-dropdown
-            [nzDropdownMenu]="notifMenu"
-            nzPlacement="bottomRight"
-            nzTrigger="click"
-            (nzVisibleChange)="marcarComoLeidas()"
-            class="icon-capsule"
-            aria-label="Notificaciones"
-          >
+          <a nz-dropdown [nzDropdownMenu]="notifMenu" nzPlacement="bottomRight" nzTrigger="click" (nzVisibleChange)="marcarComoLeidas()" class="topbar-card icon-card" aria-label="Notificaciones">
             <nz-badge [nzCount]="notificacionesNoLeidas()">
               <fa-icon [icon]="iconos.campana" />
             </nz-badge>
           </a>
 
-          <a nz-dropdown nzTrigger="click" [nzDropdownMenu]="userMenu" nzPlacement="bottomRight" class="profile-capsule">
+          <a nz-dropdown nzTrigger="click" [nzDropdownMenu]="userMenu" nzPlacement="bottomRight" class="topbar-card profile-card">
             <nz-badge [nzDot]="sesion.usuario()?.email_verificado === false" nzStatus="warning" [nzOffset]="[-4, 4]">
               <nz-avatar [nzSize]="42" [nzSrc]="avatarUrl() || undefined" [nzText]="iniciales()" />
             </nz-badge>
             <span class="profile-copy">
               <strong>{{ sesion.usuario()?.nombre_completo || sesion.usuario()?.usuario }}</strong>
-              <small>{{ sesion.usuario()?.rango || 'Explorador' }}</small>
+              <small>{{ sesion.usuario()?.rango || 'NOVATO' }}</small>
             </span>
             <fa-icon [icon]="iconos.desplegar" class="profile-chevron" />
           </a>

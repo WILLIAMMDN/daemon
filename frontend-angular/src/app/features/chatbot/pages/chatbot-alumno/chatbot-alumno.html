@@ -1,7 +1,7 @@
 <section class="w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-4 md:gap-6 font-inter h-[calc(100vh-80px)] md:h-[calc(100vh-100px)]">
   <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shrink-0">
     <div class="flex items-center gap-4">
-      <img [src]="botAvatar()" [alt]="bot()?.nombre_bot || 'Avatar del bot'" class="w-14 h-14 md:w-16 md:h-16 rounded-full shadow-md object-cover bg-white">
+      <img [src]="botAvatar()" appImageFallback="/img/bot_default.svg" [alt]="bot()?.nombre_bot || 'Avatar del bot'" class="w-14 h-14 md:w-16 md:h-16 rounded-full shadow-md object-cover bg-white">
       <div>
         <span class="text-xs md:text-sm font-semibold uppercase tracking-wider text-blue-600">Asistente local con IA</span>
         <h1 class="text-xl md:text-3xl font-bold text-gray-900">{{ bot()?.nombre_bot || 'Mi bot educativo' }}</h1>
@@ -43,7 +43,7 @@
       </div>
     } @else {
       <aside class="hidden md:flex w-80 bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex-col gap-4 overflow-y-auto shrink-0">
-        <img class="w-32 h-32 rounded-2xl object-cover mx-auto shadow-md" [src]="botAvatar()" [alt]="bot()?.nombre_bot || 'Avatar del bot'">
+        <img class="w-32 h-32 rounded-2xl object-cover mx-auto shadow-md" [src]="botAvatar()" appImageFallback="/img/bot_default.svg" [alt]="bot()?.nombre_bot || 'Avatar del bot'">
         <div class="flex justify-center">
           <span class="px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-full bg-green-100 text-green-800">Activo</span>
         </div>

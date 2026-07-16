@@ -21,9 +21,9 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzPopoverModule } from 'ng-zorro-antd/popover';
 import { NzTagModule } from 'ng-zorro-antd/tag';
-import { MonedaDaemon } from '../moneda-daemon/moneda-daemon';
-import { FloatingShape } from '../floating-shape/floating-shape';
-import { PortalSidebarItem, PortalSidebarSection } from '../../../core/layouts/portal-sidebar.config';
+import { MonedaDaemon } from '../../../shared/componentes/moneda-daemon/moneda-daemon';
+import { FloatingShape } from '../../../shared/componentes/floating-shape/floating-shape';
+import { PortalSidebarItem, PortalSidebarSection } from '../portal-sidebar.config';
 
 const SUFFIJO_PIN = '_pin';
 

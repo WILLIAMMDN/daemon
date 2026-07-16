@@ -123,7 +123,7 @@ También verificar que no se modificó accidentalmente el componente sidebar:
 
 ```powershell
 git diff --name-only -- `
-  frontend-angular/src/app/shared/componentes/sidebar-portal `
+  frontend-angular/src/app/core/layouts/sidebar-portal `
   frontend-angular/src/app/core/layouts/portal-sidebar.config.ts
 ```
 

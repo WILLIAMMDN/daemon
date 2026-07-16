@@ -1,7 +1,11 @@
 <header class="site-header">
   <div class="site-header__inner">
     <a routerLink="/" class="site-header__brand" aria-label="Ir al inicio de DAEMON">
-      <img [src]="activos.url('img/brand/logo.png')" alt="Logo Academia Daemon">
+      <img
+        [src]="activos.url('img/brand/logo.png')"
+        appImageFallback="/img/brand/daemon-transparent.png"
+        alt="Logo Academia Daemon"
+      >
     </a>
 
     <nav class="site-header__nav" aria-label="Navegaci&oacute;n principal">

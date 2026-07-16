@@ -86,6 +86,11 @@ scripts/              Local automation helpers
 - Do not reintroduce gradients or Outfit in the main student modules.
 - The existing purple sidebar is intentionally preserved; its IDs are also
   used by the onboarding tour.
+- App-shell components live in `core`: the portal sidebar is under
+  `core/layouts/sidebar-portal` and the verification banner is under
+  `core/componentes/email-verification-banner`.
+- `shared` must not import `core` or `features`; run
+  `npm run check:architecture` to validate the boundary.
 - The family portal lives at `/familias`, uses the dedicated `tutor` role and
   requires verified email plus explicit invitation acceptance before exposing
   a minor's progress.
@@ -183,6 +188,7 @@ verify Render separately.
 - Test data: `docs/datos-prueba.txt`
 - Student portal behavior: `docs/portal-alumno.md`
 - Student visual system: `docs/sistema-visual-portal-alumno.md`
+- Frontend module boundaries: `docs/frontend-architecture.md`
 - XP and DAEMONS architecture: `docs/gamificacion-xp-daemons.md`
 - Production QA: `docs/qa-produccion.md`
 - Runtime, staging, backups and rollback: `docs/infraestructura-operativa.md`

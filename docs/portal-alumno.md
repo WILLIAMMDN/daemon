@@ -49,7 +49,7 @@ frontend-angular/src/app/core/layouts/layout-alumno/layout-alumno.scss
 frontend-angular/src/app/core/dominio/nivel-alumno.ts
 frontend-angular/src/app/core/dominio/tema-portal-alumno.ts
 frontend-angular/src/app/core/layouts/portal-sidebar.config.ts
-frontend-angular/src/app/shared/componentes/sidebar-portal/
+frontend-angular/src/app/core/layouts/sidebar-portal/
 ```
 
 El header consume `Sesion.usuario()` y usa:

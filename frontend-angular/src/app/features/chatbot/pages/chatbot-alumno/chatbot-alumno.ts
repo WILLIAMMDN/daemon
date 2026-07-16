@@ -2,6 +2,7 @@ import { Component, signal, ChangeDetectionStrategy, CUSTOM_ELEMENTS_SCHEMA } fr
 import { RouterLink } from '@angular/router';
 import { Activos } from '../../../../core/servicios/activos';
 import { Api } from '../../../../core/servicios/api';
+import { ImageFallbackDirective } from '../../../../shared/directivas/image-fallback.directive';
 import 'deep-chat';
 
 interface BotAlumno {
@@ -19,7 +20,7 @@ interface MensajeChat {
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-chatbot-alumno',
-  imports: [RouterLink],
+  imports: [RouterLink, ImageFallbackDirective],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './chatbot-alumno.html',
   styleUrl: './chatbot-alumno.scss',

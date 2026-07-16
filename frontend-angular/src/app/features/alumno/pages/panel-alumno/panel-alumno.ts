@@ -13,6 +13,7 @@ import {
   faRocket,
   faWandMagicSparkles,
   faXmark,
+  faFlag,
 } from '@fortawesome/free-solid-svg-icons';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
@@ -69,6 +70,7 @@ export class PanelAlumno {
     cohete: faRocket,
     brillo: faWandMagicSparkles,
     cerrar: faXmark,
+    bandera: faFlag,
   };
 
   constructor() {

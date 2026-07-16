@@ -126,7 +126,7 @@ Antes de cambiarlo, revisar:
 
 ```text
 frontend-angular/src/app/core/layouts/portal-sidebar.config.ts
-frontend-angular/src/app/shared/componentes/sidebar-portal/
+frontend-angular/src/app/core/layouts/sidebar-portal/
 ```
 
 Los IDs del sidebar también son usados por el tour de onboarding. Un cambio de

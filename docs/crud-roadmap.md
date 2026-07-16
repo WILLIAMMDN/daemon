@@ -91,7 +91,7 @@ Leyenda: ✅ listo · ❌ falta · parcial hay parte pero incompleto.
 frontend-angular/src/app/shared/componentes/cargando/
 frontend-angular/src/app/shared/componentes/estado-vacio/
 frontend-angular/src/app/shared/componentes/media-uploader/
-frontend-angular/src/app/shared/componentes/sidebar-portal/
+frontend-angular/src/app/core/layouts/sidebar-portal/
 ```
 
 Estos componentes ya están probados en producción; cualquier CRUD nuevo los

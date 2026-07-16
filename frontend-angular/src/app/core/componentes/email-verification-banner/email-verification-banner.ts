@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, Input, OnDestroy, OnInit, signal , ChangeDetectionStrategy} from '@angular/core';
-import { Autenticacion } from '../../../core/servicios/autenticacion';
-import { Sesion } from '../../../core/servicios/sesion';
+import { Autenticacion } from '../../servicios/autenticacion';
+import { Sesion } from '../../servicios/sesion';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,

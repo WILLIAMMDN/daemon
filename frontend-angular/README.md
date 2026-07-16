@@ -15,6 +15,10 @@ El proyecto sigue una estructura limpia recomendada para Angular:
 - **`src/app/features/`**: Módulos funcionales (Alumno, Docente, Tienda, Evaluaciones, etc.), cargados de forma diferida (lazy loading).
 - **`src/app/shared/`**: Componentes reutilizables, directivas, validadores, pipes.
 
+Los límites entre capas se validan con `npm run check:architecture` y están
+documentados en `../docs/frontend-architecture.md`. No se crean carpetas vacías
+como marcadores de trabajo futuro.
+
 ## ⚙️ Instalación Local
 
 1. Instala las dependencias de NPM:

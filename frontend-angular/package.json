@@ -9,8 +9,9 @@
     "build": "ng build",
     "build:staging": "node scripts/generate-staging-environment.mjs && ng build --configuration staging",
     "watch": "ng build --watch --configuration development",
+    "check:architecture": "node scripts/check-architecture.mjs",
     "test": "jest",
-    "test:ci": "jest --runInBand --coverage",
+    "test:ci": "npm run check:architecture && jest --runInBand --coverage",
     "test:watch": "jest --watch",
     "e2e": "playwright test",
     "e2e:public": "playwright test --project=public"

@@ -89,133 +89,66 @@
 .reward-spark--three { right: 10%; top: 15%; }
 @keyframes reward-pop { from { opacity: 0; transform: scale(.2) translateY(12px); } to { opacity: 1; transform: scale(1) translateY(0); } }
 
-.welcome-panel {
-  align-items: center;
-  background: #eaf5ff;
-  border: 1px solid #d7eaff;
-  border-radius: var(--dashboard-card-radius);
-  display: grid;
-  gap: 2rem;
-  grid-template-columns: minmax(0, 1fr) auto;
-  min-height: 220px;
-  padding: clamp(1.4rem, 3vw, 2.25rem);
-}
-.welcome-identity { align-items: center; display: flex; gap: 1.3rem; min-width: 0; }
-:host ::ng-deep .welcome-avatar.ant-avatar { background: var(--dashboard-xp); border: 5px solid #fff; box-shadow: 0 8px 22px rgba(40, 80, 130, .13); color: #fff; flex: 0 0 auto; font-size: 1.6rem; font-weight: 700; }
-.section-label,
-.card-heading span,
-.mission-copy > small { color: #667085; font-size: .75rem; font-weight: 700; letter-spacing: .065em; text-transform: uppercase; }
-.welcome-identity h1 { color: #172033; font-size: clamp(1.8rem, 3.4vw, 2.7rem); margin: .35rem 0 .45rem; }
-.welcome-identity p { color: #596579; line-height: 1.55; margin: 0; }
-:host ::ng-deep .profile-link.ant-btn { align-items: center; background: transparent; border-color: #76aee7; border-radius: 9px; color: #064f99; display: inline-flex; font-weight: 700; margin-top: 1rem; min-height: 44px; }
-
-.level-summary { align-items: center; background: #fff; border: 1px solid #dce8f5; border-radius: 12px; display: flex; gap: 1rem; min-width: 260px; padding: 1rem; }
-.level-progress-a11y { display: inline-flex; }
-:host ::ng-deep .level-summary .ant-progress-text { color: #174ea6; font-family: Inter, sans-serif; font-size: 1.4rem; font-weight: 700; }
-:host ::ng-deep .level-summary .ant-progress-circle-trail { stroke: #e8eef8; }
-.level-summary > div:last-child { display: grid; }
-.level-summary span { color: #596579; font-size: .75rem; font-weight: 700; text-transform: uppercase; }
-.level-summary strong { color: #172033; font-size: 1.15rem; margin-top: .25rem; }
-.level-summary small { color: #667085; font-size: .75rem; margin-top: .2rem; }
-
-.dashboard-stats { display: grid; gap: 1rem; grid-template-columns: repeat(4, minmax(0, 1fr)); }
-.summary-tile { align-items: center; border: 1px solid; border-radius: 14px; display: flex; gap: .8rem; min-height: 96px; padding: 1rem; }
-.summary-icon { align-items: center; background: #fff; border: 1px solid rgba(40, 60, 90, .08); border-radius: 10px; display: flex; flex: 0 0 42px; height: 42px; justify-content: center; }
-.summary-tile > div { display: grid; }
-.summary-tile strong { color: #172033; font-size: 1.25rem; }
-.summary-tile small { color: #596579; font-size: .75rem; line-height: 1rem; margin-top: .18rem; }
-.summary-tile--blue { background: #edf6ff; border-color: #d4e9ff; color: var(--dashboard-xp); }
-.summary-tile--amber { background: #fffbeb; border-color: #f5e3a7; color: var(--dashboard-daemons); }
-.summary-tile--green { background: #edf9f1; border-color: #d4eedc; color: #08783a; }
-.summary-tile--violet { background: #f5f1ff; border-color: #e6ddff; color: #6246c5; }
-
-.priority-grid,
-.secondary-grid { display: grid; gap: 1.25rem; grid-template-columns: repeat(12, minmax(0, 1fr)); }
-.dashboard-card { background: #fff; border: 1px solid #e4eaf2; border-radius: var(--dashboard-card-radius); padding: 1.25rem; }
-.next-mission-card { grid-column: span 8; }
-.activity-card { grid-column: span 4; }
-.progress-card { grid-column: span 5; scroll-margin-top: 110px; }
-.achievements-card { grid-column: span 7; }
-.card-heading { align-items: end; border-bottom: 1px solid #edf1f5; display: flex; gap: 1rem; justify-content: space-between; margin-bottom: 1rem; padding-bottom: .85rem; }
-.card-heading h2 { color: #172033; font-size: 1.05rem; margin: .2rem 0 0; }
-.card-heading a { align-items: center; color: #0958d9; display: inline-flex; font-size: .75rem; font-weight: 700; gap: .35rem; min-height: 44px; padding-inline: .75rem; text-decoration: none; }
-.card-heading > small { background: #edf5ff; border-radius: 7px; color: #0958d9; font-size: .75rem; font-weight: 700; padding: .35rem .5rem; }
-
-.mission-summary { align-items: center; display: grid; gap: 1rem; grid-template-columns: 64px minmax(0, 1fr) auto; }
-.mission-mark { align-items: center; background: #0958d9; border-radius: 12px; color: #fff; display: flex; font-size: 1.2rem; height: 64px; justify-content: center; width: 64px; }
-.mission-copy { min-width: 0; }
-.mission-copy h3 { color: #172033; font-size: 1.1rem; margin: .35rem 0; }
-.mission-copy p { color: #596579; font-size: .875rem; line-height: 1.4rem; margin: 0; }
-.reward-pills { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .65rem; }
-.reward-pills span { background: #f3f6fa; border-radius: 7px; color: #475467; font-size: .75rem; font-weight: 700; padding: .35rem .5rem; }
-:host ::ng-deep .mission-button.ant-btn { border-radius: 9px; min-height: 44px; }
-.completed-route { align-items: center; display: flex; gap: 1rem; padding: 1rem 0; }
-.completed-route > span { align-items: center; background: #edf9f1; border-radius: 12px; color: #08783a; display: flex; height: 54px; justify-content: center; width: 54px; }
-.completed-route h3 { margin: 0; }
-.completed-route p { color: #596579; margin: .3rem 0 0; }
-
-.streak-summary { align-items: baseline; display: flex; gap: .55rem; margin-top: 1.25rem; }
-.streak-summary > span { align-items: center; background: #fff3e8; border-radius: 10px; color: #c54d09; display: flex; height: 40px; justify-content: center; width: 40px; }
-.streak-summary strong { color: #172033; font-size: 2.25rem; line-height: 1; }
-.streak-summary small { color: #596579; }
-.activity-card > p { color: #596579; font-size: .875rem; line-height: 1.45; }
-.week-grid { display: grid; gap: .35rem; grid-template-columns: repeat(7, 1fr); list-style: none; margin: 1rem 0 0; padding: 0; }
-.week-grid li { align-items: center; background: #f3f6fa; border-radius: 8px; color: #8a94a3; display: grid; font-size: .65rem; gap: .15rem; justify-items: center; min-height: 44px; padding: .3rem .1rem; }
-.week-grid li.active { background: #e6f6ec; color: #08783a; }
-.week-grid small { font-size: .62rem; font-weight: 700; text-transform: uppercase; }
-
-.linear-progress-a11y { display: block; margin-top: 1.2rem; }
-.linear-progress-a11y nz-progress { display: block; }
-.progress-numbers { color: #596579; display: flex; font-size: .75rem; justify-content: space-between; margin-top: .55rem; }
-.progress-card footer { align-items: center; background: #edf6ff; border-radius: 9px; color: #064f99; display: flex; font-size: .75rem; font-weight: 700; gap: .4rem; margin-top: 1.2rem; padding: .7rem .8rem; }
-
-.achievement-list { display: grid; gap: .75rem; grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.achievement-list > div { align-items: center; background: #f8fafc; border: 1px solid #edf1f5; border-radius: 10px; display: grid; gap: .15rem .65rem; grid-template-columns: 40px 1fr; padding: .8rem; }
-.achievement-icon { align-items: center; border-radius: 9px; display: flex; grid-row: span 2; height: 40px; justify-content: center; width: 40px; }
-.achievement-icon--blue { background: #edf6ff; color: #0958d9; }
-.achievement-icon--green { background: #e6f6ec; color: #08783a; }
-.achievement-icon--amber { background: #fffbeb; color: var(--dashboard-daemons); }
-.achievement-list strong { color: #172033; }
-.achievement-list small { color: #596579; font-size: .75rem; }
-
-@media (max-width: 1040px) {
-  .dashboard-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .next-mission-card,
-  .activity-card,
-  .progress-card,
-  .achievements-card { grid-column: span 12; }
+.student-hero-banner {
+  /* Fondo base y box shadow principal */
+  background: #10105d;
+  box-shadow: 0 12px 32px rgba(16, 16, 93, 0.25);
 }
 
-@media (max-width: 760px) {
-  .student-dashboard { gap: 1rem; }
-  .welcome-panel { gap: 1.25rem; grid-template-columns: 1fr; min-height: 0; }
-  .level-summary { min-width: 0; width: 100%; }
-  .priority-grid { order: 2; }
-  .dashboard-stats { order: 3; }
-  .secondary-grid { order: 4; }
-  .mission-summary { grid-template-columns: 52px minmax(0, 1fr); }
-  .mission-mark { height: 52px; width: 52px; }
-  :host ::ng-deep .mission-button.ant-btn { grid-column: 1 / -1; justify-content: center; width: 100%; }
-  .offline-notice { align-items: stretch; flex-direction: column; }
+.student-hero-banner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: 
+    radial-gradient(1px 1px at 15% 30%, #ffffff 100%, transparent),
+    radial-gradient(1.5px 1.5px at 35% 70%, #ffffff 100%, transparent),
+    radial-gradient(1px 1px at 65% 20%, #ffffff 100%, transparent),
+    radial-gradient(2px 2px at 85% 85%, #ffffff 100%, transparent),
+    radial-gradient(1px 1px at 90% 25%, #ffffff 100%, transparent),
+    radial-gradient(1.5px 1.5px at 50% 85%, #ffffff 100%, transparent),
+    radial-gradient(1px 1px at 75% 55%, #ffffff 100%, transparent),
+    radial-gradient(2px 2px at 25% 15%, #ffffff 100%, transparent),
+    radial-gradient(1px 1px at 45% 15%, #ffffff 100%, transparent),
+    radial-gradient(1.5px 1.5px at 80% 40%, #ffffff 100%, transparent);
+  opacity: 0.3;
+  z-index: 1;
 }
 
-@media (max-width: 560px) {
-  .welcome-panel,
-  .dashboard-card { padding: 1rem; }
-  .welcome-identity { align-items: flex-start; gap: .9rem; }
-  :host ::ng-deep .welcome-avatar.ant-avatar { height: 72px !important; line-height: 72px !important; width: 72px !important; }
-  .welcome-identity h1 { font-size: 1.8rem; }
-  .welcome-identity p { font-size: .875rem; }
-  .dashboard-stats { gap: .75rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .summary-tile { align-items: flex-start; flex-direction: column; min-height: 112px; padding: .875rem; }
-  .summary-icon { flex-basis: 38px; height: 38px; width: 38px; }
-  .summary-tile strong { font-size: 1.15rem; }
-  .card-heading { align-items: center; }
-  .card-heading a { margin-right: -.75rem; }
-  .achievement-list { grid-template-columns: 1fr; }
-  .reward-reveal { align-items: start; grid-template-columns: auto 1fr; }
-  .reward-close { grid-column: 2; justify-self: end; }
+.student-hero-banner::after {
+  content: '';
+  position: absolute;
+  top: 30%; right: 10%;
+  width: 8px; height: 8px;
+  background: transparent;
+  z-index: 1;
+  /* Clusters de cuadraditos morados estilo pixel art */
+  box-shadow: 
+    20px -20px 0 #5b21b6,
+    0px 0px 0 #5b21b6,
+    20px 0px 0 #4c1d95,
+    -20px 20px 0 #5b21b6,
+    0px 20px 0 #5b21b6,
+    20px 20px 0 #6d28d9,
+    -80px -20px 0 #6d28d9,
+    -100px 0px 0 #5b21b6,
+    -100px 20px 0 #4c1d95,
+    -350px -50px 0 #4c1d95,
+    -330px -50px 0 #5b21b6,
+    -330px -30px 0 #6d28d9,
+    -200px 150px 0 #4c1d95,
+    -180px 170px 0 #5b21b6;
+  opacity: 0.85;
 }
+
+/* Ocultar texto por defecto de progress */
+:host ::ng-deep .hero-progress .ant-progress-circle-trail {
+  stroke: rgba(255, 255, 255, 0.1);
+}
+:host ::ng-deep .hero-progress .ant-progress-text {
+  display: none;
+}
+
+/* Estilos migrados a Tailwind CSS. Solo se conservan animaciones globales */
 
 @media (prefers-reduced-motion: reduce) {
   .reward-spark { animation: none; }

@@ -64,7 +64,7 @@ frontend-angular/src/app/core/servicios/autenticacion.ts
 frontend-angular/src/app/core/servicios/firebase-auth.ts
 frontend-angular/src/app/core/servicios/sesion.ts
 frontend-angular/src/app/core/servicios/activos.ts
-frontend-angular/src/app/shared/componentes/email-verification-banner/
+frontend-angular/src/app/core/componentes/email-verification-banner/
 frontend-angular/src/app/features/autenticacion/pages/login/
 frontend-angular/src/app/features/autenticacion/pages/login-docente/
 frontend-angular/src/app/features/autenticacion/pages/registro/
@@ -219,7 +219,7 @@ Files:
 ```text
 frontend-angular/src/app/core/servicios/firebase-auth.ts
 frontend-angular/src/app/core/servicios/autenticacion.ts
-frontend-angular/src/app/shared/componentes/email-verification-banner/
+frontend-angular/src/app/core/componentes/email-verification-banner/
 backend-laravel/app/Services/Auth/AutenticacionService.php
 ```
 
