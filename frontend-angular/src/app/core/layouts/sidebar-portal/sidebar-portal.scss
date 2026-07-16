@@ -1251,7 +1251,7 @@
   .portal-sidebar {
     box-shadow: 18px 0 46px rgba(18, 14, 62, .28);
     border-radius: 0 26px 26px 0;
-    height: 100vh;
+    height: 100dvh;
     left: -340px;
     margin: 0;
     max-width: calc(100vw - 2rem);
@@ -1259,7 +1259,7 @@
     top: 0;
     transition: left .22s ease;
     width: 324px;
-    z-index: 50;
+    z-index: 70;
     overflow-y: auto;
     overflow-x: hidden;
   }
@@ -1274,8 +1274,8 @@
     top: 0;
     left: 0;
     width: 100vw;
-    height: 100vh;
+    height: 100dvh;
     position: fixed;
-    z-index: 45;
+    z-index: 65;
   }
 }
