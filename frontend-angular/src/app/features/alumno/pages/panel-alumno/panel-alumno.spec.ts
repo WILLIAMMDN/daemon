@@ -92,13 +92,15 @@ describe('PanelAlumno', () => {
     const fixture = TestBed.createComponent(PanelAlumno);
     fixture.detectChanges();
     const elemento = fixture.nativeElement as HTMLElement;
+    const indicadores = elemento.querySelector('[aria-label="Indicadores principales"]');
+    const tarjetasIndicadores = Array.from(indicadores?.querySelectorAll('article') ?? []);
 
     expect(elemento.querySelector('main')).toBeNull();
     expect(elemento.querySelectorAll('[role="progressbar"]')).toHaveLength(2);
-    expect(elemento.querySelectorAll('.summary-tile')).toHaveLength(4);
-    expect(elemento.querySelector('.summary-tile--violet small')?.textContent?.trim()).toBe('Tu aula');
-    expect(elemento.querySelectorAll('.week-grid li')).toHaveLength(7);
-    expect(elemento.querySelector('.next-mission-card h3')?.textContent?.trim()).toBe('Privacidad digital');
+    expect(tarjetasIndicadores).toHaveLength(4);
+    expect(tarjetasIndicadores.some((tarjeta) => tarjeta.textContent?.includes('Tu aula'))).toBe(true);
+    expect(elemento.querySelectorAll('[aria-label="Actividad real de los últimos siete días"] li')).toHaveLength(7);
+    expect(elemento.querySelector('[aria-label="Prioridades de aprendizaje"] h3')?.textContent?.trim()).toBe('Privacidad digital');
   });
 
   it('conserva el ultimo panel cuando falla una actualizacion', () => {
