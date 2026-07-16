@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component, computed, inject, Output, EventEmitter } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { ChangeDetectionStrategy, Component, computed, inject, Output, EventEmitter, signal } from '@angular/core';
+import '../../../../../node_modules/ng-zorro-antd/dropdown/style/index.min.css';
+import { Router, RouterLink } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faBell, faChevronDown, faHouse } from '@fortawesome/free-solid-svg-icons';
+import { faBell, faChevronDown, faHouse, faRightFromBracket, faTriangleExclamation, faUser } from '@fortawesome/free-solid-svg-icons';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzBadgeModule } from 'ng-zorro-antd/badge';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
@@ -24,11 +25,22 @@ export class TopbarAlumno {
   public readonly sesion = inject(Sesion);
   private readonly activos = inject(Activos);
   private readonly notificacionesService = inject(NotificacionesService);
+  private readonly router = inject(Router);
+
+  /**
+   * Estado explícito de ambos dropdowns. Así podemos hacerlos mutuamente
+   * excluyentes y cerrarlos antes de navegar o cerrar sesión.
+   */
+  readonly notifMenuAbierto = signal(false);
+  readonly perfilMenuAbierto = signal(false);
 
   readonly iconos = {
+    alerta: faTriangleExclamation,
     campana: faBell,
     desplegar: faChevronDown,
     inicio: faHouse,
+    perfil: faUser,
+    salir: faRightFromBracket,
   };
 
   notificaciones = this.notificacionesService.notificaciones;
@@ -58,5 +70,45 @@ export class TopbarAlumno {
     if (this.notificacionesNoLeidas() > 0) {
       this.notificacionesService.marcarTodasComoLeidas().subscribe();
     }
+  }
+
+  cambiarVisibilidadNotificaciones(abierto: boolean): void {
+    this.notifMenuAbierto.set(abierto);
+
+    if (!abierto) {
+      return;
+    }
+
+    this.perfilMenuAbierto.set(false);
+    this.marcarComoLeidas();
+  }
+
+  cambiarVisibilidadPerfil(abierto: boolean): void {
+    this.perfilMenuAbierto.set(abierto);
+
+    if (abierto) {
+      this.notifMenuAbierto.set(false);
+    }
+  }
+
+  cerrarSesion(): void {
+    this.perfilMenuAbierto.set(false);
+    this.logout.emit();
+  }
+
+  /**
+   * El footer "Ver todas o configurar alertas" vive dentro de un
+   * CDK overlay de ng-zorro, donde el `routerLink` directive no se
+   * procesa de forma confiable: el navegador termina tratando el
+   * `<a>` como un anchor normal, hace reload, y el estado de
+   * autenticación se pierde. Hacemos la navegación programática y
+   * cerramos el dropdown explícitamente.
+   */
+  irANotificaciones(event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.notifMenuAbierto.set(false);
+    this.perfilMenuAbierto.set(false);
+    void this.router.navigateByUrl('/alumno/notificaciones');
   }
 }

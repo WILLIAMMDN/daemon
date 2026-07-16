@@ -4,6 +4,7 @@ module.exports = {
   testEnvironment: 'jsdom',
   testPathIgnorePatterns: ['<rootDir>/e2e/', '<rootDir>/playwright/'],
   moduleNameMapper: {
+    '\\.(css)$': '<rootDir>/test-style-mock.js',
     '^@core/(.*)$': '<rootDir>/src/app/core/$1',
     '^@shared/(.*)$': '<rootDir>/src/app/shared/$1',
     '^@features/(.*)$': '<rootDir>/src/app/features/$1',

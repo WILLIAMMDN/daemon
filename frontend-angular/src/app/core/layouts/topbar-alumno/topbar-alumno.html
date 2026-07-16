@@ -35,13 +35,39 @@
         </span>
       </a>
 
-      <a nz-dropdown [nzDropdownMenu]="notifMenu" nzPlacement="bottomRight" nzTrigger="click" (nzVisibleChange)="marcarComoLeidas()" class="topbar-card icon-card" aria-label="Notificaciones">
+      <button
+        type="button"
+        nz-dropdown
+        [nzVisible]="notifMenuAbierto()"
+        [nzDropdownMenu]="notifMenu"
+        nzOverlayClassName="student-notification-dropdown"
+        nzPlacement="bottomRight"
+        nzTrigger="click"
+        class="topbar-card icon-card"
+        aria-label="Notificaciones"
+        aria-haspopup="dialog"
+        [attr.aria-expanded]="notifMenuAbierto()"
+        (nzVisibleChange)="cambiarVisibilidadNotificaciones($event)"
+      >
         <nz-badge [nzCount]="notificacionesNoLeidas()">
           <fa-icon [icon]="iconos.campana" />
         </nz-badge>
-      </a>
+      </button>
 
-      <a nz-dropdown nzTrigger="click" [nzDropdownMenu]="userMenu" nzPlacement="bottomRight" class="topbar-card profile-card">
+      <button
+        type="button"
+        nz-dropdown
+        [nzVisible]="perfilMenuAbierto()"
+        [nzDropdownMenu]="userMenu"
+        nzOverlayClassName="student-profile-dropdown"
+        nzPlacement="bottomRight"
+        nzTrigger="click"
+        class="topbar-card profile-card"
+        aria-label="Abrir menú de cuenta"
+        aria-haspopup="menu"
+        [attr.aria-expanded]="perfilMenuAbierto()"
+        (nzVisibleChange)="cambiarVisibilidadPerfil($event)"
+      >
         <nz-badge [nzDot]="sesion.usuario()?.email_verificado === false" nzStatus="warning" [nzOffset]="[-4, 4]">
           <nz-avatar [nzSize]="42" [nzSrc]="avatarUrl() || undefined" [nzText]="iniciales()" />
         </nz-badge>
@@ -50,13 +76,13 @@
           <small>{{ sesion.usuario()?.rango || 'NOVATO' }}</small>
         </span>
         <fa-icon [icon]="iconos.desplegar" class="profile-chevron" />
-      </a>
+      </button>
     </div>
   </header>
 </div>
 
 <nz-dropdown-menu #notifMenu="nzDropdownMenu">
-  <section class="notification-popover">
+  <section class="notification-popover" role="dialog" aria-label="Centro de notificaciones">
     <header>
       <div><small>Centro de actividad</small><strong>Notificaciones</strong></div>
       <span>{{ notificacionesNoLeidas() }} nuevas</span>
@@ -71,23 +97,37 @@
         <p class="notification-empty">Todo al día. Aquí aparecerán tus novedades.</p>
       }
     </div>
-    <a routerLink="/alumno/configuracion" fragment="notificaciones" class="notification-footer">Ver todas o configurar alertas</a>
+    <button type="button" (click)="irANotificaciones($event)" class="notification-footer">Ver todas o configurar alertas</button>
   </section>
 </nz-dropdown-menu>
 
 <nz-dropdown-menu #userMenu="nzDropdownMenu">
-  <ul nz-menu class="profile-popover-menu">
+  <ul nz-menu class="profile-popover-menu" aria-label="Cuenta del estudiante">
+    <li class="profile-popover-heading">Mi cuenta DAEMON</li>
+    <li nz-menu-divider></li>
     @if (sesion.usuario()?.email_verificado === false) {
-      <li nz-menu-group nzTitle="Acción requerida">
-        <a nz-menu-item routerLink="/alumno/configuracion"><span class="text-orange-500 font-bold">Confirma tu correo electrónico</span></a>
+      <li>
+        <a nz-menu-item routerLink="/alumno/perfil/editar" class="profile-popover-warning">
+          <fa-icon [icon]="iconos.alerta" /> Confirma tu correo electrónico
+        </a>
       </li>
       <li nz-menu-divider></li>
     }
-    <li nz-menu-group nzTitle="Mi cuenta DAEMON">
-      <a nz-menu-item routerLink="/alumno/perfil">Mi perfil de estudiante</a>
-      <a nz-menu-item routerLink="/alumno/configuracion">Ajustes y privacidad</a>
+    <li>
+      <a nz-menu-item routerLink="/alumno/perfil">
+        <fa-icon [icon]="iconos.perfil" /> Mi perfil de estudiante
+      </a>
+    </li>
+    <li>
+      <a nz-menu-item routerLink="/alumno/notificaciones">
+        <fa-icon [icon]="iconos.campana" /> Notificaciones y alertas
+      </a>
     </li>
     <li nz-menu-divider></li>
-    <li nz-menu-item nzDanger (click)="logout.emit()">Cerrar sesión en este dispositivo</li>
+    <li>
+      <button type="button" nz-menu-item class="profile-popover-danger" (click)="cerrarSesion()">
+        <fa-icon [icon]="iconos.salir" /> Cerrar sesión en este dispositivo
+      </button>
+    </li>
   </ul>
 </nz-dropdown-menu>
