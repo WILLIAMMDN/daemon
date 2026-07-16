@@ -14,6 +14,7 @@ import {
   faWandMagicSparkles,
   faXmark,
   faFlag,
+  faPlay,
 } from '@fortawesome/free-solid-svg-icons';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
@@ -71,6 +72,7 @@ export class PanelAlumno {
     brillo: faWandMagicSparkles,
     cerrar: faXmark,
     bandera: faFlag,
+    play: faPlay,
   };
 
   constructor() {
