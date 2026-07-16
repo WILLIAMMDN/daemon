@@ -1,5 +1,8 @@
 :host {
   display: block;
+  position: sticky;
+  top: 0;
+  z-index: 50; /* Z-index mayor que el sidebar para que cubra sus sombras/bordes */
 }
 
 :host-context([data-nivel-alumno="kids"]) .topbar-shell {
@@ -18,10 +21,9 @@
 /* Fallback general por si no pilla el contexto */
 .topbar-shell {
   background: #10105d;
-  /* Cubrimos el borde derecho de 1px del sidebar usando un margen negativo */
+  /* El margen negativo solapa un posible gap. El z-index de host lo pone por encima. */
   margin-left: -1px;
   padding: 0.8rem clamp(1rem, 2.2vw, 2rem) 0.8rem calc(clamp(1rem, 2.2vw, 2rem) + 1px);
-  /* Se remueve position: sticky para que baje con el contenido */
   position: relative;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
