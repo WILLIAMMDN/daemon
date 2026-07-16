@@ -1,3 +1,7 @@
+:host {
+  display: block;
+}
+
 :host-context([data-nivel-alumno="kids"]) .topbar-shell {
   background: #10105d; /* Mismo color base del Hero Banner Kids y Sidebar */
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
@@ -14,10 +18,11 @@
 /* Fallback general por si no pilla el contexto */
 .topbar-shell {
   background: #10105d;
-  padding: 0.8rem clamp(1rem, 2.2vw, 2rem);
-  position: sticky;
-  top: 0;
-  z-index: 40;
+  /* Cubrimos el borde derecho de 1px del sidebar usando un margen negativo */
+  margin-left: -1px;
+  padding: 0.8rem clamp(1rem, 2.2vw, 2rem) 0.8rem calc(clamp(1rem, 2.2vw, 2rem) + 1px);
+  /* Se remueve position: sticky para que baje con el contenido */
+  position: relative;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
