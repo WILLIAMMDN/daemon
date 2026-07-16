@@ -1,0 +1,93 @@
+<div class="topbar-shell">
+  <header class="student-topbar-cards">
+    <button type="button" class="mobile-menu-trigger" aria-label="Abrir navegación" (click)="abrirMenuMovil.emit()">
+      <span></span><span></span><span></span>
+    </button>
+
+    <div class="topbar-left">
+      <a routerLink="/alumno" fragment="progreso-nivel" class="topbar-card level-card premium-glass" aria-label="Ver progreso hacia el siguiente nivel">
+        <div class="level-hexagon">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="hex-bg"><path d="M12 2L21 7V17L12 22L3 17V7L12 2Z" stroke="currentColor" stroke-width="2"/></svg>
+          <span>{{ nivelGamificacion() }}</span>
+        </div>
+        <div class="level-copy">
+          <small>NIVEL {{ nivelGamificacion() }}</small>
+          <strong>{{ xpRestante() }} XP para subir</strong>
+          <div class="level-mini-bar"><div class="fill" [style.width]="progresoNivel() + '%'"></div></div>
+        </div>
+      </a>
+
+      <div class="topbar-card message-card premium-glass">
+        <div class="message-icon"><fa-icon [icon]="iconos.inicio" /></div>
+        <div class="message-copy">
+          <small>CAMPUS DEL ESTUDIANTE</small>
+          <strong>Tu aprendizaje, en un solo lugar</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="topbar-right">
+      <a id="topbar-tokens" routerLink="/alumno/tienda" class="topbar-card token-card premium-glass" aria-label="Abrir tienda">
+        <span class="token-glyph"><app-moneda-daemon [size]="28" titulo="DAEMONS" /></span>
+        <span class="token-copy">
+          <small>SALDO DAEMONS</small>
+          <strong>{{ perfilTokens() || 0 }}</strong>
+        </span>
+      </a>
+
+      <a nz-dropdown [nzDropdownMenu]="notifMenu" nzPlacement="bottomRight" nzTrigger="click" (nzVisibleChange)="marcarComoLeidas()" class="topbar-card icon-card premium-glass" aria-label="Notificaciones">
+        <nz-badge [nzCount]="notificacionesNoLeidas()">
+          <fa-icon [icon]="iconos.campana" />
+        </nz-badge>
+      </a>
+
+      <a nz-dropdown nzTrigger="click" [nzDropdownMenu]="userMenu" nzPlacement="bottomRight" class="topbar-card profile-card premium-glass">
+        <nz-badge [nzDot]="sesion.usuario()?.email_verificado === false" nzStatus="warning" [nzOffset]="[-4, 4]">
+          <nz-avatar [nzSize]="42" [nzSrc]="avatarUrl() || undefined" [nzText]="iniciales()" />
+        </nz-badge>
+        <span class="profile-copy">
+          <strong>{{ sesion.usuario()?.nombre_completo || sesion.usuario()?.usuario }}</strong>
+          <small>{{ sesion.usuario()?.rango || 'NOVATO' }}</small>
+        </span>
+        <fa-icon [icon]="iconos.desplegar" class="profile-chevron" />
+      </a>
+    </div>
+  </header>
+</div>
+
+<nz-dropdown-menu #notifMenu="nzDropdownMenu">
+  <section class="notification-popover">
+    <header>
+      <div><small>Centro de actividad</small><strong>Notificaciones</strong></div>
+      <span>{{ notificacionesNoLeidas() }} nuevas</span>
+    </header>
+    <div class="notification-list">
+      @for (notif of notificaciones(); track notif.id) {
+        <article [class.unread]="!notif.leida">
+          <div><strong>{{ notif.titulo }}</strong><time>{{ notif.created_at | date:'shortTime' }}</time></div>
+          <p>{{ notif.mensaje }}</p>
+        </article>
+      } @empty {
+        <p class="notification-empty">Todo al día. Aquí aparecerán tus novedades.</p>
+      }
+    </div>
+    <a routerLink="/alumno/configuracion" fragment="notificaciones" class="notification-footer">Ver todas o configurar alertas</a>
+  </section>
+</nz-dropdown-menu>
+
+<nz-dropdown-menu #userMenu="nzDropdownMenu">
+  <ul nz-menu class="profile-popover-menu">
+    @if (sesion.usuario()?.email_verificado === false) {
+      <li nz-menu-group nzTitle="Acción requerida">
+        <a nz-menu-item routerLink="/alumno/configuracion"><span class="text-orange-500 font-bold">Confirma tu correo electrónico</span></a>
+      </li>
+      <li nz-menu-divider></li>
+    }
+    <li nz-menu-group nzTitle="Mi cuenta DAEMON">
+      <a nz-menu-item routerLink="/alumno/perfil">Mi perfil de estudiante</a>
+      <a nz-menu-item routerLink="/alumno/configuracion">Ajustes y privacidad</a>
+    </li>
+    <li nz-menu-divider></li>
+    <li nz-menu-item nzDanger (click)="logout.emit()">Cerrar sesión en este dispositivo</li>
+  </ul>
+</nz-dropdown-menu>

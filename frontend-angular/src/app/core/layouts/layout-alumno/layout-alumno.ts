@@ -39,11 +39,12 @@ import { temaPortalAlumno } from '../../dominio/tema-portal-alumno';
 
 import { TourService } from '../../servicios/tour.service';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { TopbarAlumno } from '../topbar-alumno/topbar-alumno';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-layout-alumno',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, FontAwesomeModule, NzAvatarModule, NzBadgeModule, NzButtonModule, NzDropDownModule, NzProgressModule, EmailVerificationBanner, MonedaDaemon, SidebarPortal, DatePipe],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, FontAwesomeModule, NzAvatarModule, NzBadgeModule, NzButtonModule, NzDropDownModule, NzProgressModule, EmailVerificationBanner, SidebarPortal, TopbarAlumno],
   templateUrl: './layout-alumno.html',
   styleUrl: './layout-alumno.scss',
 })
