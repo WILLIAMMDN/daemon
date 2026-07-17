@@ -97,4 +97,17 @@ describe('TopbarAlumno', () => {
     expect(componente.notifMenuAbierto()).toBe(false);
     expect(navegar).toHaveBeenCalledWith('/alumno/notificaciones');
   });
+
+  it('expone un botón real para abrir la navegación móvil', () => {
+    const fixture = TestBed.createComponent(TopbarAlumno);
+    const abrir = jest.spyOn(fixture.componentInstance.abrirMenuMovil, 'emit');
+    fixture.detectChanges();
+
+    const boton = (fixture.nativeElement as HTMLElement).querySelector<HTMLButtonElement>('.mobile-menu-trigger');
+    boton?.click();
+
+    expect(boton?.getAttribute('aria-label')).toBe('Abrir navegación');
+    expect(boton?.querySelectorAll('span')).toHaveLength(3);
+    expect(abrir).toHaveBeenCalledTimes(1);
+  });
 });

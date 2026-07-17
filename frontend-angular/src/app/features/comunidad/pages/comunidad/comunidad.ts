@@ -6,7 +6,7 @@ import { Alumno } from '../../../alumno/services/alumno';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
 import { NzTagModule } from 'ng-zorro-antd/tag';
-import { MonedaDaemon } from '../../../../shared/componentes/moneda-daemon/moneda-daemon';
+import { ImageFallbackDirective } from '../../../../shared/directivas/image-fallback.directive';
 
 import { NzCardModule } from 'ng-zorro-antd/card';
 
@@ -15,7 +15,7 @@ interface PersonaComunidad {
   nombre_completo: string;
   usuario: string;
   nivel?: string | null;
-  tokens: number;
+  experiencia: number;
   rango?: string | null;
   avatar?: string | null;
   rol: string;
@@ -28,7 +28,7 @@ interface ComunidadRespuesta {
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-comunidad',
-  imports: [RouterLink, Cargando, UpperCasePipe, EstadoVacio, NzTagModule, MonedaDaemon, NzCardModule],
+  imports: [RouterLink, Cargando, UpperCasePipe, EstadoVacio, NzTagModule, NzCardModule, ImageFallbackDirective],
   templateUrl: './comunidad.html',
   styleUrl: './comunidad.scss',
 })
@@ -71,7 +71,7 @@ export class Comunidad {
       .filter((persona): persona is PersonaComunidad => Boolean(persona?.id))
       .map((persona) => ({
         ...persona,
-        tokens: Number(persona.tokens ?? 0),
+        experiencia: Number(persona.experiencia ?? 0),
       }));
   }
 }

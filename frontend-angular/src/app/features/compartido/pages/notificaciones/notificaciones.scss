@@ -1,0 +1,42 @@
+:host { display: block; min-width: 0; }
+.notifications-page { display: grid; gap: 1rem; margin: 0 auto; max-width: 1100px; min-width: 0; width: 100%; }
+.notifications-header { align-items: center; background: #fff; border: 1px solid #e4eaf2; border-radius: 16px; display: flex; gap: 1rem; justify-content: space-between; padding: clamp(1rem, 2.5vw, 1.5rem); }
+.notifications-title { align-items: center; display: flex; gap: 1rem; min-width: 0; }
+.notifications-title > span { align-items: center; background: #edf5ff; border: 1px solid #cfe3ff; border-radius: 14px; color: #1677ff; display: flex; flex: 0 0 auto; font-size: 1.15rem; height: 52px; justify-content: center; width: 52px; }
+.notifications-title small { color: #1677ff; display: block; font-size: .67rem; font-weight: 750; letter-spacing: .08em; text-transform: uppercase; }
+.notifications-title h1 { color: #172033; font-size: clamp(1.45rem, 3vw, 2rem); letter-spacing: -.03em; margin: .1rem 0; }
+.notifications-title p { color: #667085; font-size: .9rem; margin: 0; }
+.mark-all { align-items: center; appearance: none; background: #fff; border: 1px solid #cfe3ff; border-radius: 9px; color: #0958d9; cursor: pointer; display: inline-flex; flex: 0 0 auto; font: inherit; font-size: .84rem; font-weight: 700; gap: .5rem; min-height: 42px; padding: .65rem .9rem; }
+.mark-all:hover:not(:disabled) { background: #edf5ff; }
+.mark-all:disabled { cursor: not-allowed; opacity: .48; }
+.notifications-toolbar { align-items: center; background: #fff; border: 1px solid #e4eaf2; border-radius: 12px; display: flex; gap: .35rem; padding: .35rem; width: fit-content; }
+.notifications-toolbar button { appearance: none; background: transparent; border: 0; border-radius: 8px; color: #667085; cursor: pointer; font: inherit; font-size: .82rem; font-weight: 700; min-height: 38px; padding: .5rem .75rem; }
+.notifications-toolbar button span { background: #eef1f5; border-radius: 999px; font-size: .69rem; margin-left: .35rem; padding: .15rem .42rem; }
+.notifications-toolbar button.active { background: #edf5ff; color: #0958d9; }
+.notifications-toolbar button.active span { background: #fff; }
+.notifications-list { background: #fff; border: 1px solid #e4eaf2; border-radius: 16px; overflow: hidden; }
+.notifications-list article { align-items: flex-start; border-bottom: 1px solid #eef1f5; display: grid; gap: .85rem; grid-template-columns: auto minmax(0, 1fr); padding: 1rem 1.15rem; }
+.notifications-list article:last-child { border-bottom: 0; }
+.notifications-list article.unread { background: #f6faff; box-shadow: inset 3px 0 #1677ff; }
+.read-toggle { align-items: center; appearance: none; background: #edf5ff; border: 0; border-radius: 50%; color: #1677ff; cursor: pointer; display: flex; font-size: .95rem; height: 36px; justify-content: center; width: 36px; }
+.read-toggle.is-read { background: #f1f5f9; color: #94a3b8; cursor: default; }
+.notification-copy { min-width: 0; }
+.notification-copy header { align-items: baseline; display: flex; gap: 1rem; justify-content: space-between; }
+.notification-copy h2 { color: #172033; font-size: .95rem; font-weight: 750; margin: 0; overflow-wrap: anywhere; }
+.notification-copy time { color: #7a8699; flex: 0 0 auto; font-size: .72rem; }
+.notification-copy p { color: #526174; font-size: .86rem; line-height: 1.55; margin: .35rem 0 0; overflow-wrap: anywhere; }
+.notification-copy a { color: #0958d9; display: inline-flex; font-size: .8rem; font-weight: 700; margin-top: .55rem; text-decoration: none; }
+.notifications-error { align-items: center; background: #fff; border: 1px solid #fecaca; border-radius: 12px; display: flex; gap: 1rem; justify-content: space-between; padding: .9rem 1rem; }
+.notifications-error p { color: #b42318; margin: 0; }
+.notifications-error button { background: #b42318; border: 0; border-radius: 8px; color: #fff; cursor: pointer; font-weight: 700; min-height: 38px; padding: .5rem .8rem; }
+
+@media (max-width: 680px) {
+  .notifications-header { align-items: stretch; border-radius: 14px; flex-direction: column; }
+  .mark-all { justify-content: center; width: 100%; }
+  .notifications-toolbar { width: 100%; }
+  .notifications-toolbar button { flex: 1; }
+  .notifications-list { border-radius: 14px; }
+  .notifications-list article { padding: .9rem; }
+  .notification-copy header { align-items: flex-start; flex-direction: column; gap: .25rem; }
+  .notifications-error { align-items: stretch; flex-direction: column; }
+}

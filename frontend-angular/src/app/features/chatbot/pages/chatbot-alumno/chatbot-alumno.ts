@@ -3,6 +3,9 @@ import { RouterLink } from '@angular/router';
 import { Activos } from '../../../../core/servicios/activos';
 import { Api } from '../../../../core/servicios/api';
 import { ImageFallbackDirective } from '../../../../shared/directivas/image-fallback.directive';
+import { Cargando } from '../../../../shared/componentes/cargando/cargando';
+import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
+import { finalize, map, of, switchMap } from 'rxjs';
 import 'deep-chat';
 
 interface BotAlumno {
@@ -17,19 +20,28 @@ interface MensajeChat {
   content: string;
 }
 
+interface DeepChatRequestBody {
+  messages?: Array<{ text?: string }>;
+}
+
+interface DeepChatSignals {
+  onResponse: (respuesta: { text?: string; error?: string }) => void;
+}
+
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-chatbot-alumno',
-  imports: [RouterLink, ImageFallbackDirective],
+  imports: [RouterLink, ImageFallbackDirective, Cargando, EstadoVacio],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './chatbot-alumno.html',
   styleUrl: './chatbot-alumno.scss',
 })
 export class ChatbotAlumno {
   bot = signal<BotAlumno | null | undefined>(undefined);
+  cargando = signal(true);
+  limpiando = signal(false);
   error = signal('');
   mensajesFormateados = signal<any[]>([]);
-  mensajesCargados = signal(false);
 
   // Binder para el handler de Deep Chat
   requestHandler = this.procesarMensaje.bind(this);
@@ -59,22 +71,35 @@ export class ChatbotAlumno {
   }
 
   cargar(): void {
-    this.api.get<BotAlumno | null>('/chatbot/bot').subscribe((bot) => this.bot.set(bot));
-    this.api.get<MensajeChat[]>('/chatbot/mensajes').subscribe((mensajes) => {
-      this.mensajesFormateados.set(
-        mensajes.map(m => ({
-          role: m.role === 'user' ? 'user' : 'ai',
-          text: m.content
-        }))
-      );
-      this.mensajesCargados.set(true);
+    this.cargando.set(true);
+    this.error.set('');
+
+    this.api.get<BotAlumno | null>('/chatbot/bot').pipe(
+      switchMap((bot) => bot
+        ? this.api.get<MensajeChat[]>('/chatbot/mensajes').pipe(map((mensajes) => ({ bot, mensajes })))
+        : of({ bot: null, mensajes: [] as MensajeChat[] })),
+      finalize(() => this.cargando.set(false)),
+    ).subscribe({
+      next: ({ bot, mensajes }) => {
+        this.bot.set(bot);
+        this.mensajesFormateados.set(mensajes.map((mensaje) => ({
+          role: mensaje.role === 'user' ? 'user' : 'ai',
+          text: mensaje.content,
+        })));
+      },
+      error: (error) => {
+        this.error.set(error.error?.message ?? 'No pudimos cargar el bot y su conversación.');
+      },
     });
   }
 
-  procesarMensaje(body: any, signals: any): void {
-    // Deep chat envía el texto en el último mensaje
-    const lastMessage = body.messages[body.messages.length - 1];
-    const content = lastMessage.text;
+  procesarMensaje(body: DeepChatRequestBody, signals: DeepChatSignals): void {
+    const content = body.messages?.at(-1)?.text?.trim();
+
+    if (!content) {
+      signals.onResponse({ error: 'Escribe un mensaje antes de enviarlo.' });
+      return;
+    }
 
     this.api.post<MensajeChat>('/chatbot/mensajes', { content }).subscribe({
       next: (mensaje) => {
@@ -87,8 +112,15 @@ export class ChatbotAlumno {
   }
 
   limpiar(): void {
-    this.api.delete('/chatbot/mensajes').subscribe(() => {
-      this.mensajesFormateados.set([]);
+    if (this.limpiando() || !this.mensajesFormateados().length) {
+      return;
+    }
+
+    this.limpiando.set(true);
+    this.error.set('');
+    this.api.delete('/chatbot/mensajes').pipe(finalize(() => this.limpiando.set(false))).subscribe({
+      next: () => this.mensajesFormateados.set([]),
+      error: (error) => this.error.set(error.error?.message ?? 'No se pudo limpiar la conversación.'),
     });
   }
 

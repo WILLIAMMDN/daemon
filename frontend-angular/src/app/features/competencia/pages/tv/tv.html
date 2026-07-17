@@ -40,7 +40,7 @@
               @if (data.candidato.avatar) {
                 <img [src]="data.candidato.avatar" class="w-full h-full object-cover rounded-full shadow-xl border-8 border-white z-10 relative" alt="Avatar">
               } @else {
-                <div class="w-full h-full bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full shadow-xl flex items-center justify-center text-white text-7xl font-bold border-8 border-white z-10 relative">
+                <div class="w-full h-full bg-blue-600 rounded-full shadow-sm flex items-center justify-center text-white text-7xl font-bold border-8 border-white z-10 relative">
                   {{ data.candidato.nombre_completo.charAt(0) }}
                 </div>
               }

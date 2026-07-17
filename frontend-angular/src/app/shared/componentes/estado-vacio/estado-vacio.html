@@ -1,21 +1,12 @@
-<div class="flex flex-col items-center justify-center p-8 md:p-12 bg-slate-50/50 rounded-2xl border-2 border-dashed border-slate-200 min-h-[300px] transition-all hover:bg-slate-50 duration-500 w-full text-center group">
-  <div class="relative w-24 h-24 mb-6 flex items-center justify-center">
-    <!-- Círculos decorativos de fondo que se expanden -->
-    <div class="absolute inset-0 bg-blue-100 rounded-full scale-50 group-hover:scale-100 transition-transform duration-700 ease-out opacity-50"></div>
-    <div class="absolute inset-0 bg-blue-50 rounded-full scale-100 group-hover:scale-150 transition-transform duration-1000 ease-out opacity-50"></div>
-    
-    <!-- Ícono central -->
-    <div class="relative z-10 bg-white rounded-full p-4 shadow-sm border border-slate-100 text-slate-300 group-hover:text-blue-500 group-hover:-translate-y-2 transition-all duration-500">
-      <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-      </svg>
-    </div>
-  </div>
-  
-  <h3 class="text-xl md:text-2xl font-extrabold text-slate-900 tracking-tight mb-2 group-hover:text-blue-900 transition-colors">{{ titulo }}</h3>
-  <p class="text-slate-500 max-w-sm mx-auto font-medium text-sm md:text-base leading-relaxed">{{ descripcion }}</p>
-  
-  <div class="mt-8">
+<section class="empty-state" [class.empty-state--compact]="compacto" role="status">
+  <span class="empty-state__icon" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M5 8.5h14v10a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-10Zm3-4h8a2 2 0 0 1 2 2v2H6v-2a2 2 0 0 1 2-2Zm1 9h6" />
+    </svg>
+  </span>
+  <h3>{{ titulo }}</h3>
+  <p>{{ descripcion }}</p>
+  <div class="empty-state__actions">
     <ng-content></ng-content>
   </div>
-</div>
+</section>

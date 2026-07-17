@@ -1,43 +1,53 @@
-<div class="bg-white rounded-xl shadow-sm border border-gray-200">
-  <div class="px-6 py-5 border-b border-gray-200 flex justify-between items-center bg-gray-50 rounded-t-xl">
-    <div class="flex items-center gap-3">
-      <fa-icon [icon]="iconos.bell" class="text-blue-500 text-xl"></fa-icon>
-      <h2 class="text-xl font-bold text-gray-800 m-0">Tus Notificaciones</h2>
+<main class="notifications-page" aria-labelledby="notifications-title">
+  <header class="notifications-header">
+    <div class="notifications-title">
+      <span aria-hidden="true"><fa-icon [icon]="iconos.bell" /></span>
+      <div><small>Centro de actividad</small><h1 id="notifications-title">Notificaciones</h1><p>Revisa las novedades de tu cuenta y de tus clases.</p></div>
     </div>
-    <button (click)="marcarTodasComoLeidas()" class="text-sm font-semibold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-4 py-2 rounded-lg transition-colors">
-      Marcar todas como leídas
+    <button type="button" class="mark-all" (click)="marcarTodasComoLeidas()" [disabled]="!noLeidas() || procesando() !== null">
+      <fa-icon [icon]="iconos.check" /> {{ procesando() === 'todas' ? 'Marcando...' : 'Marcar todas como leídas' }}
     </button>
+  </header>
+
+  <div class="notifications-toolbar" aria-label="Filtros de notificaciones">
+    <button type="button" [class.active]="filtroActual() === 'todas'" (click)="filtroActual.set('todas')">Todas <span>{{ notificaciones().length }}</span></button>
+    <button type="button" [class.active]="filtroActual() === 'no_leidas'" (click)="filtroActual.set('no_leidas')">No leídas <span>{{ noLeidas() }}</span></button>
   </div>
 
-  <div class="p-0">
-    @if (notificaciones().length === 0) {
-      <div class="p-12 text-center text-gray-500">
-        <p class="text-lg">No tienes notificaciones en este momento.</p>
-      </div>
-    } @else {
-      <div class="divide-y divide-gray-100">
-        @for (notif of notificaciones(); track notif.id) {
-          <div class="p-5 flex gap-4 transition-colors hover:bg-gray-50" [class.bg-blue-50]="!notif.leida">
-            <div class="mt-1">
-              @if (notif.leida) {
-                <fa-icon [icon]="iconos.check" class="text-gray-400 text-lg"></fa-icon>
-              } @else {
-                <fa-icon [icon]="iconos.uncheck" class="text-blue-500 text-lg cursor-pointer hover:text-blue-600" (click)="marcarComoLeida(notif.id)"></fa-icon>
-              }
-            </div>
-            <div class="flex-1">
-              <div class="flex justify-between items-start mb-1">
-                <h3 class="font-bold text-gray-900 m-0 text-base" [class.text-blue-800]="!notif.leida">{{ notif.titulo }}</h3>
-                <span class="text-xs font-semibold text-gray-500 bg-gray-100 px-2 py-1 rounded-md">{{ notif.created_at | date:'short' }}</span>
-              </div>
-              <p class="text-gray-600 text-sm mb-2">{{ notif.mensaje }}</p>
-              @if (notif.url_accion) {
-                <a [href]="notif.url_accion" class="text-sm font-medium text-blue-600 hover:underline">Ver detalles &rarr;</a>
-              }
-            </div>
+  @if (error()) {
+    <section class="notifications-error" role="alert"><p>{{ error() }}</p><button type="button" (click)="cargar()">Reintentar</button></section>
+  }
+
+  @if (cargando()) {
+    <app-cargando texto="Cargando notificaciones..."></app-cargando>
+  } @else if (notificacionesFiltradas().length) {
+    <section class="notifications-list" aria-live="polite">
+      @for (notif of notificacionesFiltradas(); track notif.id) {
+        <article [class.unread]="!notif.leida">
+          <button
+            type="button"
+            class="read-toggle"
+            [class.is-read]="notif.leida"
+            [disabled]="notif.leida || procesando() !== null"
+            (click)="marcarComoLeida(notif.id)"
+            [attr.aria-label]="notif.leida ? 'Notificación leída' : 'Marcar como leída: ' + notif.titulo"
+          >
+            <fa-icon [icon]="notif.leida ? iconos.check : iconos.uncheck" />
+          </button>
+          <div class="notification-copy">
+            <header><h2>{{ notif.titulo }}</h2><time [attr.datetime]="notif.created_at">{{ notif.created_at | date:'short' }}</time></header>
+            <p>{{ notif.mensaje }}</p>
+            @if (notif.url_accion) {
+              <a [href]="notif.url_accion">Ver detalles <span aria-hidden="true">→</span></a>
+            }
           </div>
-        }
-      </div>
-    }
-  </div>
-</div>
+        </article>
+      }
+    </section>
+  } @else {
+    <app-estado-vacio
+      [titulo]="filtroActual() === 'no_leidas' ? 'Estás al día' : 'Aún no tienes notificaciones'"
+      [descripcion]="filtroActual() === 'no_leidas' ? 'No quedan novedades pendientes de lectura.' : 'Cuando ocurra algo importante aparecerá en este espacio.'"
+    />
+  }
+</main>

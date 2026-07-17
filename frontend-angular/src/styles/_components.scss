@@ -270,3 +270,53 @@
   border-color: color-mix(in srgb, var(--student-primary-dark, #0958d9), #000 14%);
   box-shadow: none;
 }
+
+/* Shell compartido para módulos alumno que aún usan composición utilitaria. */
+.student-premium .content-area > :not(router-outlet) {
+  display: block;
+  max-width: 100%;
+  min-width: 0;
+  width: 100%;
+}
+
+.student-premium .student-module-page {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1rem, 2vw, 1.5rem);
+  margin: 0 auto;
+  max-width: 1280px;
+  min-width: 0;
+  padding: 0 !important;
+  width: 100%;
+}
+
+.student-premium .student-module-header {
+  background: #ffffff;
+  border: 1px solid #e4eaf2 !important;
+  border-radius: 16px;
+  box-shadow: none !important;
+  padding: clamp(1.15rem, 2.5vw, 1.6rem) !important;
+}
+
+.student-premium .student-module-actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: .65rem;
+}
+
+.student-premium .ant-table-wrapper,
+.student-premium .ant-table-container {
+  max-width: 100%;
+  min-width: 0;
+}
+
+@media (max-width: 700px) {
+  .student-premium .student-module-page { gap: 1rem; }
+  .student-premium .student-module-header { border-radius: 14px; padding: 1rem !important; }
+  .student-premium .student-module-actions { align-items: stretch; flex-direction: column; width: 100%; }
+  .student-premium .student-module-actions > * { justify-content: center; width: 100%; }
+  .student-premium input,
+  .student-premium select,
+  .student-premium textarea { font-size: 16px; }
+}
