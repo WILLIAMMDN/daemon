@@ -13,6 +13,7 @@ import {
 } from '@rive-app/canvas';
 import { CargaGlobal } from '../../../../core/servicios/carga-global';
 import { Autenticacion } from '../../../../core/servicios/autenticacion';
+import { Api } from '../../../../core/servicios/api';
 import { Sesion } from '../../../../core/servicios/sesion';
 import { validarCredenciales } from '../../../../shared/validadores/auth-validadores';
 
@@ -59,6 +60,7 @@ export class Login implements AfterViewInit, OnDestroy {
     private router: Router,
     private zone: NgZone,
     private cargaGlobal: CargaGlobal,
+    private api: Api,
   ) {}
 
   ngAfterViewInit(): void {
@@ -123,6 +125,7 @@ export class Login implements AfterViewInit, OnDestroy {
 
         this.dispararExito();
         this.cargaGlobal.cambiarMensaje('Abriendo tu portal de estudiante...');
+        this.precargarPanelAlumno();
         setTimeout(() => {
           void this.router.navigateByUrl(
             this.sesion.usuario()?.perfil_completo === false ? '/bienvenida' : '/alumno',
@@ -156,6 +159,7 @@ export class Login implements AfterViewInit, OnDestroy {
 
         this.dispararExito();
         this.cargaGlobal.cambiarMensaje('Abriendo tu portal de estudiante...');
+        this.precargarPanelAlumno();
         setTimeout(() => {
           void this.router.navigateByUrl(
             this.sesion.usuario()?.perfil_completo === false ? '/bienvenida' : '/alumno',
@@ -175,6 +179,16 @@ export class Login implements AfterViewInit, OnDestroy {
         this.dispararFallo();
       },
     });
+  }
+
+  private precargarPanelAlumno(): void {
+    if (this.sesion.usuario()?.perfil_completo === false) {
+      return;
+    }
+
+    // La animación de acceso y la primera consulta viajan en paralelo. Cuando
+    // el panel se crea, Api reutiliza esta misma solicitud en curso.
+    this.api.get('/alumno/panel').subscribe({ error: () => undefined });
   }
 
   private cargarRive(): void {

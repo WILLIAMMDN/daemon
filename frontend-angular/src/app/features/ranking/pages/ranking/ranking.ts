@@ -26,13 +26,13 @@ export class Ranking {
   readonly iconos = { actualizar: faArrowRotateRight, energia: faBolt, corona: faCrown, medalla: faMedal, trofeo: faTrophy };
 
   constructor(private ranking: RankingService) {
-    this.cargar();
+    this.cargar(false);
   }
 
-  cargar(): void {
+  cargar(forzar = true): void {
     this.cargando.set(true);
     this.error.set('');
-    this.ranking.listar().subscribe({
+    this.ranking.listar(forzar).subscribe({
       next: (datos) => {
         this.alumnos.set(datos.alumnos);
         this.scopeLabel.set(datos.scope_label);

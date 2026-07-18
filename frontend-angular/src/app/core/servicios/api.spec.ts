@@ -47,22 +47,91 @@ describe('Api Service', () => {
     expect(secondData).toEqual({ data: 'first' });
   });
 
-  it('should clear cache on POST', () => {
-    // 1st request caches
-    service.get('/cache-test').subscribe();
-    const req1 = httpMock.expectOne(`${environment.apiUrl}/cache-test`);
-    req1.flush({ data: 'first' });
+  it('should deduplicate simultaneous GET requests', () => {
+    const values: unknown[] = [];
+    service.get('/shared').subscribe((value) => values.push(value));
+    service.get('/shared').subscribe((value) => values.push(value));
 
-    // POST clears cache
-    service.post('/some-action', {}).subscribe();
-    const reqPost = httpMock.expectOne(`${environment.apiUrl}/some-action`);
+    const requests = httpMock.match(`${environment.apiUrl}/shared`);
+    expect(requests).toHaveLength(1);
+    requests[0].flush({ data: 'shared' });
+    expect(values).toEqual([{ data: 'shared' }, { data: 'shared' }]);
+  });
+
+  it('should return stale data immediately and refresh it in the background', () => {
+    let now = 1_000;
+    const dateSpy = jest.spyOn(Date, 'now').mockImplementation(() => now);
+
+    service.get('/panel').subscribe();
+    httpMock.expectOne(`${environment.apiUrl}/panel`).flush({ version: 1 });
+
+    now += 3 * 60 * 1000;
+    const values: unknown[] = [];
+    service.get('/panel').subscribe((value) => values.push(value));
+
+    expect(values).toEqual([{ version: 1 }]);
+    httpMock.expectOne(`${environment.apiUrl}/panel`).flush({ version: 2 });
+    expect(values).toEqual([{ version: 1 }, { version: 2 }]);
+
+    dateSpy.mockRestore();
+  });
+
+  it('should invalidate only the scope changed by a mutation', () => {
+    service.get('/chatbot/bot').subscribe();
+    httpMock.expectOne(`${environment.apiUrl}/chatbot/bot`).flush({ nombre: 'Ada' });
+    service.get('/alumno/panel').subscribe();
+    httpMock.expectOne(`${environment.apiUrl}/alumno/panel`).flush({ experiencia: 100 });
+
+    service.post('/chatbot/mensajes', { content: 'Hola' }).subscribe();
+    const reqPost = httpMock.expectOne(`${environment.apiUrl}/chatbot/mensajes`);
     expect(reqPost.request.method).toBe('POST');
     reqPost.flush({});
 
-    // 2nd GET should trigger a new HTTP request
-    service.get('/cache-test').subscribe();
-    const req2 = httpMock.expectOne(`${environment.apiUrl}/cache-test`);
-    req2.flush({ data: 'second' });
+    service.get('/chatbot/bot').subscribe();
+    httpMock.expectOne(`${environment.apiUrl}/chatbot/bot`).flush({ nombre: 'Ada' });
+
+    service.get('/alumno/panel').subscribe();
+    httpMock.expectNone(`${environment.apiUrl}/alumno/panel`);
+  });
+
+  it('should keep cached data when a mutation fails', () => {
+    service.get('/chatbot/bot').subscribe();
+    httpMock.expectOne(`${environment.apiUrl}/chatbot/bot`).flush({ nombre: 'Ada' });
+
+    service.post('/chatbot/mensajes', { content: 'Hola' }).subscribe({ error: () => undefined });
+    httpMock.expectOne(`${environment.apiUrl}/chatbot/mensajes`).flush(
+      { message: 'No disponible' },
+      { status: 503, statusText: 'Service Unavailable' },
+    );
+
+    service.get('/chatbot/bot').subscribe();
+    httpMock.expectNone(`${environment.apiUrl}/chatbot/bot`);
+  });
+
+  it('should invalidate panel and ranking after an academic reward changes', () => {
+    service.get('/alumno/panel').subscribe();
+    httpMock.expectOne(`${environment.apiUrl}/alumno/panel`).flush({ experiencia: 100 });
+    service.get('/ranking').subscribe();
+    httpMock.expectOne(`${environment.apiUrl}/ranking`).flush({ alumnos: [] });
+
+    service.post('/misiones/8/entregar', {}).subscribe();
+    httpMock.expectOne(`${environment.apiUrl}/misiones/8/entregar`).flush({});
+
+    service.get('/alumno/panel').subscribe();
+    httpMock.expectOne(`${environment.apiUrl}/alumno/panel`).flush({ experiencia: 120 });
+    service.get('/ranking').subscribe();
+    httpMock.expectOne(`${environment.apiUrl}/ranking`).flush({ alumnos: [] });
+  });
+
+  it('should clear every cached response when the authenticated session changes', () => {
+    service.get('/alumno/panel').subscribe();
+    httpMock.expectOne(`${environment.apiUrl}/alumno/panel`).flush({ experiencia: 100 });
+
+    service.post('/auth/login', {}).subscribe();
+    httpMock.expectOne(`${environment.apiUrl}/auth/login`).flush({ usuario: { id: 2 } });
+
+    service.get('/alumno/panel').subscribe();
+    httpMock.expectOne(`${environment.apiUrl}/alumno/panel`).flush({ experiencia: 200 });
   });
 
   it('should bypass cache when fresh data is requested', () => {

@@ -51,6 +51,52 @@ export class ChatbotAlumno {
     webSpeech: { language: 'es-ES' }
   };
 
+  textToSpeechConfig = {
+    lang: 'es-ES',
+    rate: 1,
+  };
+
+  textInputConfig = {
+    characterLimit: 2000,
+    placeholder: { text: 'Escribe tu mensaje...' },
+  };
+
+  // Deep Chat usa una grilla interna. Sin minmax(0, 1fr), un historial largo
+  // puede crecer por su contenido y empujar el campo de escritura fuera del
+  // componente, especialmente en pantallas bajas.
+  auxiliaryStyle = `
+    #chat-view.deep-chat-downwards-mode {
+      grid-template-rows: minmax(0, 1fr) auto;
+      min-height: 0;
+    }
+    #messages {
+      min-height: 0;
+      overscroll-behavior: contain;
+    }
+    #input {
+      background: #ffffff;
+      border-top: 1px solid #e4eaf2;
+      flex: 0 0 auto;
+    }
+    #text-input-container {
+      border-color: #cbd5e1;
+      box-shadow: none;
+      margin-block: 0.65rem;
+      width: min(88%, 780px);
+    }
+    .message-bubble {
+      max-width: min(82%, 720px);
+    }
+    @media (max-width: 680px) {
+      #text-input-container {
+        width: calc(100% - 5.5rem);
+      }
+      .message-bubble {
+        max-width: 82%;
+      }
+    }
+  `;
+
 
   messageStyles = {
     default: {

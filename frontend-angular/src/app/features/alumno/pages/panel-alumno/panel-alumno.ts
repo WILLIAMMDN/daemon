@@ -76,17 +76,17 @@ export class PanelAlumno {
   };
 
   constructor() {
-    this.cargar();
+    this.cargar(false);
   }
 
-  cargar(): void {
+  cargar(forzar = true): void {
     const datosAnteriores = this.panel();
     if (!datosAnteriores) {
       this.estado.set({ kind: 'loading' });
     }
     this.actualizando.set(true);
 
-    this.alumno.panel().subscribe({
+    this.alumno.panel(forzar).subscribe({
       next: (datos) => {
         this.estado.set({ kind: 'ready', data: datos, stale: false });
         const usuarioActual = this.sesion.usuario();

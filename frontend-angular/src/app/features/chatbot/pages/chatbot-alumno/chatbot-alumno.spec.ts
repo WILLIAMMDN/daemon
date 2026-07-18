@@ -47,4 +47,13 @@ describe('ChatbotAlumno', () => {
     expect(componente.cargando()).toBe(false);
     expect(componente.error()).toBe('Servicio no disponible');
   });
+
+  it('configura entrada y voz en español y mantiene el input dentro de la grilla', () => {
+    const componente = new ChatbotAlumno(crearApi(jest.fn(() => of(null))), activos);
+
+    expect(componente.speechConfig.webSpeech.language).toBe('es-ES');
+    expect(componente.textToSpeechConfig.lang).toBe('es-ES');
+    expect(componente.textInputConfig.placeholder.text).toBe('Escribe tu mensaje...');
+    expect(componente.auxiliaryStyle).toContain('grid-template-rows: minmax(0, 1fr) auto');
+  });
 });

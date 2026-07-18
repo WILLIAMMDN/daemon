@@ -11,7 +11,7 @@ type UsuarioResourceRespuesta = UsuarioSesion | { data?: UsuarioSesion; usuario?
 })
 export class Alumno {
   constructor(private api: Api) {}
-  panel() { return this.api.get<PanelAlumnoDto>('/alumno/panel', { fresh: true }); }
+  panel(fresh = false) { return this.api.get<PanelAlumnoDto>('/alumno/panel', { fresh }); }
   perfil<T = unknown>(usuarioId?: number | string | null) {
     return this.api.get<T>(usuarioId ? `/alumno/perfil/${usuarioId}` : '/alumno/perfil');
   }

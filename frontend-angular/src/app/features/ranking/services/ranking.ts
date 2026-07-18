@@ -7,5 +7,5 @@ import { RankingDto } from '../models/ranking.model';
 })
 export class Ranking {
   constructor(private api: Api) {}
-  listar() { return this.api.get<RankingDto>('/ranking', { fresh: true }); }
+  listar(fresh = false) { return this.api.get<RankingDto>('/ranking', { fresh }); }
 }
