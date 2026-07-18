@@ -707,6 +707,7 @@
 .nav-item,
 .nav-parent,
 .submenu-item {
+  -webkit-tap-highlight-color: transparent;
   align-items: center;
   background: transparent;
   border: 0;
@@ -723,6 +724,7 @@
   position: relative;
   text-align: left;
   text-decoration: none;
+  touch-action: manipulation;
   transition: background .12s ease, color .12s ease;
   width: 100%;
   z-index: 1;
@@ -1236,30 +1238,50 @@
     box-shadow: 18px 0 46px rgba(18, 14, 62, .28);
     border-radius: 0 26px 26px 0;
     height: 100dvh;
-    left: -340px;
+    left: 0;
     margin: 0;
     max-width: calc(100vw - 2rem);
     position: fixed;
     top: 0;
-    transition: left .22s ease;
+    transform: translate3d(-105%, 0, 0);
+    transition: transform .18s cubic-bezier(.2, .75, .25, 1);
     width: 324px;
     z-index: 70;
     overflow-y: auto;
     overflow-x: hidden;
+    will-change: transform;
   }
 
   .portal-sidebar.mobile-open {
+    transform: translate3d(0, 0, 0);
+  }
+
+  .sidebar-backdrop {
+    background: rgba(15, 23, 42, .5);
+    display: block;
+    height: 100dvh;
     left: 0;
+    opacity: 0;
+    pointer-events: none;
+    position: fixed;
+    top: 0;
+    transition: opacity .18s ease, visibility 0s linear .18s;
+    visibility: hidden;
+    width: 100vw;
+    z-index: 65;
   }
 
   .sidebar-backdrop.visible {
-    background: rgba(15, 23, 42, 0.5);
-    display: block;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100dvh;
-    position: fixed;
-    z-index: 65;
+    opacity: 1;
+    pointer-events: auto;
+    transition-delay: 0s;
+    visibility: visible;
+  }
+}
+
+@media (max-width: 980px) and (prefers-reduced-motion: reduce) {
+  .portal-sidebar,
+  .sidebar-backdrop {
+    transition: none;
   }
 }

@@ -1,1 +1,50 @@
-:host { display: block; min-height: 100vh; }
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+.route-progress {
+  height: 3px;
+  inset: 0 0 auto;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+  position: fixed;
+  transition: opacity .12s ease;
+  z-index: 10000;
+}
+
+.route-progress span {
+  background: #1677ff;
+  display: block;
+  height: 100%;
+  transform: scaleX(.08);
+  transform-origin: left center;
+  width: 100%;
+}
+
+.route-progress--active {
+  opacity: 1;
+}
+
+.route-progress--active span {
+  animation: daemon-route-progress 1.15s cubic-bezier(.2, .7, .25, 1) infinite;
+}
+
+@keyframes daemon-route-progress {
+  0% { transform: scaleX(.08); }
+  55% { transform: scaleX(.72); }
+  100% { transform: scaleX(.92); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .route-progress,
+  .route-progress span {
+    animation: none;
+    transition: none;
+  }
+
+  .route-progress--active span {
+    transform: scaleX(.82);
+  }
+}

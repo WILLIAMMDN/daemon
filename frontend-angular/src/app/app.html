@@ -1,3 +1,13 @@
+<div
+  class="route-progress"
+  [class.route-progress--active]="navegando()"
+  [attr.aria-hidden]="!navegando()"
+  role="progressbar"
+  aria-label="Abriendo módulo"
+>
+  <span></span>
+</div>
+
 <router-outlet />
 
 <ngx-spinner
