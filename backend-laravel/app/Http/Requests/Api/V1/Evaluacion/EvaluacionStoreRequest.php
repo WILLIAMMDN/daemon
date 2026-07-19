@@ -19,6 +19,12 @@ class EvaluacionStoreRequest extends FormRequest
             'titulo' => ['required', 'string', 'max:100'],
             'nivel' => ['required', Rule::in(NivelAlumno::values())],
             'estado' => ['nullable', 'in:borrador,activo,finalizado'],
+            'id_institucion' => ['nullable', 'integer', 'exists:instituciones,id'],
+            'id_aula' => ['nullable', 'integer', 'exists:aulas,id'],
+            'id_leccion' => ['nullable', 'integer', 'exists:lecciones,id'],
+            'puntaje_maximo' => ['sometimes', 'integer', 'min:1', 'max:10000'],
+            'objetivos' => ['sometimes', 'array', 'max:50'],
+            'objetivos.*' => ['integer', 'distinct', 'exists:objetivos_aprendizaje,id'],
         ];
     }
 }

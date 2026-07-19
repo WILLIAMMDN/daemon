@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Interoperabilidad\LtiLaunchController;
 use App\Http\Controllers\Interoperabilidad\OneRosterController;
+use App\Http\Controllers\Interoperabilidad\OneRosterGradebookController;
 use App\Http\Controllers\Interoperabilidad\OneRosterTokenController;
 use App\Services\Interoperabilidad\OneRosterAuthService;
 use Illuminate\Support\Facades\Route;
@@ -17,4 +18,16 @@ Route::prefix('/ims/oneroster/rostering/v1p2')
             ->whereIn('tipo', ['students', 'teachers']);
         Route::get('/{tipo}/{sourcedId}', [OneRosterController::class, 'show']);
         Route::get('/{tipo}', [OneRosterController::class, 'index']);
+    });
+
+Route::prefix('/ims/oneroster/gradebook/v1p2')
+    ->middleware([
+        'oneroster:'.OneRosterAuthService::SCOPE_GRADEBOOK_READONLY.','.OneRosterAuthService::SCOPE_GRADEBOOK_CORE_READONLY,
+        'throttle:120,1',
+    ])
+    ->group(function (): void {
+        Route::get('/{tipo}/{sourcedId}', [OneRosterGradebookController::class, 'show'])
+            ->whereIn('tipo', ['categories', 'lineItems', 'results']);
+        Route::get('/{tipo}', [OneRosterGradebookController::class, 'index'])
+            ->whereIn('tipo', ['categories', 'lineItems', 'results']);
     });

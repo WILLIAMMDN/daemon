@@ -26,7 +26,7 @@ class InteroperabilidadAdminController extends Controller
             'oneroster' => ClienteOneRoster::with('institucion')->orderBy('nombre')->get(),
             'lti' => RegistroLti::orderBy('nombre')->get(),
             'estandar' => [
-                'oneroster' => '1.2 Core Rostering (REST, lectura)',
+                'oneroster' => '1.2 Core Rostering + Gradebook (REST, lectura)',
                 'lti' => 'LTI 1.3 / Advantage, registro seguro pendiente de credenciales del socio',
             ],
         ];
@@ -38,7 +38,11 @@ class InteroperabilidadAdminController extends Controller
             'id_institucion' => ['required', 'integer', 'exists:instituciones,id'],
             'nombre' => ['required', 'string', 'max:120'],
             'scopes' => ['sometimes', 'array', 'max:10'],
-            'scopes.*' => ['string', Rule::in([OneRosterAuthService::SCOPE_ROSTER_READONLY])],
+            'scopes.*' => ['string', Rule::in([
+                OneRosterAuthService::SCOPE_ROSTER_READONLY,
+                OneRosterAuthService::SCOPE_GRADEBOOK_READONLY,
+                OneRosterAuthService::SCOPE_GRADEBOOK_CORE_READONLY,
+            ])],
         ]);
 
         return response()->json($this->auth->crearCliente($datos['id_institucion'], $datos['nombre'], $datos['scopes'] ?? []), 201);

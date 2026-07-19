@@ -16,6 +16,7 @@ class RevisarEntregaRequest extends FormRequest
         return [
             'estado' => ['required', 'in:aprobado,rechazado'],
             'calificacion' => ['nullable', 'integer', 'min:0'],
+            'puntaje_academico' => ['nullable', 'numeric', 'min:0', 'max:100'],
             'comentario_docente' => ['nullable', 'string'],
         ];
     }

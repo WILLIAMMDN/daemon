@@ -3,9 +3,11 @@
 namespace App\Services\Academico;
 
 use App\Models\Aula;
+use App\Models\MatriculaAula;
 use App\Models\Usuario;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Support\Facades\Schema;
 
 class AcademicScopeService
 {
@@ -15,11 +17,22 @@ class AcademicScopeService
             return $query;
         }
 
-        if (blank($usuario->id_aula)) {
+        $aulas = $this->aulasGestionables($usuario);
+        if ($aulas === []) {
             return $query->whereRaw('1 = 0');
         }
 
-        return $query->where($columna, $usuario->id_aula);
+        if (! Schema::hasTable('matriculas_aula')) {
+            return $query->whereIn($columna, $aulas);
+        }
+
+        return $query->where(function (EloquentBuilder $scope) use ($columna, $aulas): void {
+            $scope->whereIn($columna, $aulas)
+                ->orWhereHas('matriculas', fn (EloquentBuilder $matriculas) => $matriculas
+                    ->whereIn('id_aula', $aulas)
+                    ->where('rol', 'student')
+                    ->where('estado', 'active'));
+        });
     }
 
     public function aplicarAlumnosQuery(QueryBuilder $query, ?Usuario $usuario, string $columna = 'id_aula'): QueryBuilder
@@ -28,11 +41,27 @@ class AcademicScopeService
             return $query;
         }
 
-        if (blank($usuario->id_aula)) {
+        $aulas = $this->aulasGestionables($usuario);
+        if ($aulas === []) {
             return $query->whereRaw('1 = 0');
         }
 
-        return $query->where($columna, $usuario->id_aula);
+        if (! Schema::hasTable('matriculas_aula')) {
+            return $query->whereIn($columna, $aulas);
+        }
+
+        $prefijo = str_contains($columna, '.') ? explode('.', $columna, 2)[0] : 'usuarios';
+
+        return $query->where(function (QueryBuilder $scope) use ($columna, $aulas, $prefijo): void {
+            $scope->whereIn($columna, $aulas)
+                ->orWhereExists(fn (QueryBuilder $matriculas) => $matriculas
+                    ->selectRaw('1')
+                    ->from('matriculas_aula as matricula_scope')
+                    ->whereColumn('matricula_scope.id_usuario', "{$prefijo}.id")
+                    ->whereIn('matricula_scope.id_aula', $aulas)
+                    ->where('matricula_scope.rol', 'student')
+                    ->where('matricula_scope.estado', 'active'));
+        });
     }
 
     public function alumnoGestionable(Usuario $actor, int $idAlumno, bool $bloquear = false): Usuario
@@ -47,10 +76,17 @@ class AcademicScopeService
             return $query->findOrFail($idAlumno);
         }
 
-        abort_unless($actor->rol === 'docente' && filled($actor->id_aula), 403, 'El docente no tiene un aula asignada.');
+        $aulas = $this->aulasGestionables($actor);
+        abort_unless($actor->rol === 'docente' && $aulas !== [], 403, 'El docente no tiene un aula asignada.');
 
         $alumno = $query->findOrFail($idAlumno);
-        abort_unless((int) $alumno->id_aula === (int) $actor->id_aula, 403, 'Este alumno no pertenece al aula asignada.');
+        $pertenece = in_array((int) $alumno->id_aula, $aulas, true)
+            || (Schema::hasTable('matriculas_aula') && MatriculaAula::where('id_usuario', $alumno->id)
+                ->whereIn('id_aula', $aulas)
+                ->where('rol', 'student')
+                ->where('estado', 'active')
+                ->exists());
+        abort_unless($pertenece, 403, 'Este alumno no pertenece a un aula asignada al docente.');
 
         return $alumno;
     }
@@ -61,9 +97,18 @@ class AcademicScopeService
             return true;
         }
 
-        return $actor->rol === 'docente'
-            && filled($actor->id_aula)
-            && (int) $actor->id_aula === (int) $alumno->id_aula;
+        if ($actor->rol !== 'docente') {
+            return false;
+        }
+
+        $aulas = $this->aulasGestionables($actor);
+
+        return in_array((int) $alumno->id_aula, $aulas, true)
+            || (Schema::hasTable('matriculas_aula') && MatriculaAula::where('id_usuario', $alumno->id)
+                ->whereIn('id_aula', $aulas)
+                ->where('rol', 'student')
+                ->where('estado', 'active')
+                ->exists());
     }
 
     public function resumen(?Usuario $usuario): array
@@ -126,5 +171,23 @@ class AcademicScopeService
             'codigo' => $aula->codigo,
             'id_institucion' => $aula->id_institucion,
         ];
+    }
+
+    /** @return array<int, int> */
+    private function aulasGestionables(Usuario $usuario): array
+    {
+        if (! Schema::hasTable('matriculas_aula')) {
+            return $usuario->id_aula ? [(int) $usuario->id_aula] : [];
+        }
+
+        $ids = MatriculaAula::where('id_usuario', $usuario->id)
+            ->where('estado', 'active')
+            ->where('rol', 'teacher')
+            ->pluck('id_aula');
+        if ($usuario->id_aula) {
+            $ids->push($usuario->id_aula);
+        }
+
+        return $ids->map(fn ($id) => (int) $id)->unique()->values()->all();
     }
 }
