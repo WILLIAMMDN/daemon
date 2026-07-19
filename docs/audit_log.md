@@ -57,3 +57,4 @@
 - [2026-07-19 18:48:46] style(models): add minor comments to models module
 - [2026-07-19 18:48:46] ci(gamification): optimize logic in gamification module
 - [2026-07-19 18:48:47] style(api): update documentation for api module
+- [2026-07-19 18:48:47] ci(api): update dependencies of api module
