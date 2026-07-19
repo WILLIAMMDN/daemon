@@ -359,8 +359,8 @@ Resultado del piloto antes de publicar:
 - suite backend completa: 134 casos y 475 aserciones aprobados;
 - arquitectura `shared/core/features`: aprobada;
 - build de producción: aprobado;
-- bundle inicial: 908.25 kB, bajo el presupuesto de advertencia de 1 MB;
-- chunk lazy de Cursos: 51.42 kB sin comprimir, 10.82 kB estimado transferido;
+- bundle inicial: 908.07 kB, bajo el presupuesto de advertencia de 1 MB;
+- chunk lazy de Cursos: 46.90 kB sin comprimir, 9.95 kB estimado transferido;
 - no se agregaron advertencias nuevas; permanecen cuatro advertencias Sass
   preexistentes por `@import` en `src/styles.scss`.
 - Jest conserva una advertencia preexistente de `ts-jest` sobre
@@ -459,3 +459,24 @@ cambios de variables de entorno ni reversión de datos.
 | Accesibilidad más allá del color | landmarks, jerarquía, labels, estados live, focus, progressbars y reduced motion | Cumplido |
 | Sin dependencias ni reglas de negocio nuevas | `package.json` y backend sin cambios; cálculos limitados a presentación de progreso ya entregado | Cumplido |
 | Arquitectura y calidad | check de límites, contrato visual, Jest, build, Laravel y CI del PR | Cumplido tras repetir los gates finales |
+
+## 18. Refinamiento de jerarquía visual
+
+Después de revisar el piloto en contexto real se simplificó la cabecera y la
+navegación del catálogo para acercarlas a la composición aprobada:
+
+- el hero dejó de ser una tarjeta independiente con borde y ahora se integra
+  directamente en el lienzo del módulo;
+- el icono principal y los iconos informativos usan color sólido y contraste
+  directo, sin fondos pálidos ni contenedores decorativos;
+- los filtros inactivos se presentan como icono y texto abiertos; únicamente el
+  filtro activo conserva una cápsula violeta porque representa selección;
+- se retiraron los contadores encapsulados de los filtros, ya que el resumen
+  lateral mantiene las cantidades reales;
+- la barra de búsqueda y filtros ya no se encierra en otra tarjeta y cambia a
+  dos filas antes de que una etiqueta pueda recortarse;
+- se conservaron tarjetas, bordes y fondos cuando expresan estructura real:
+  curso, unidad, resumen, ayuda, estado o acción.
+
+Este refinamiento es exclusivamente visual. No modifica endpoints, filtros,
+búsqueda, datos, progreso, caché ni contratos de ilustración.

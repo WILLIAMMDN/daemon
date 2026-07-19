@@ -110,7 +110,6 @@
           >
             <fa-icon [icon]="opcion.icon" aria-hidden="true"></fa-icon>
             <span>{{ opcion.label }}</span>
-            <strong>{{ opcion.count }}</strong>
           </button>
         }
       </div>
@@ -120,7 +119,7 @@
         <fa-icon [icon]="faMagnifyingGlass" aria-hidden="true"></fa-icon>
         <input
           type="search"
-          placeholder="Buscar en mis cursos"
+          placeholder="Buscar cursos"
           autocomplete="off"
           [value]="busqueda()"
           (input)="actualizarBusqueda($event)"
