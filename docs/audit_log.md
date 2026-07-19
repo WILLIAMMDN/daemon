@@ -78,3 +78,4 @@
 - [2026-07-19 18:48:50] build(sidebar): update documentation for sidebar module
 - [2026-07-19 18:48:50] style(core): format structure of core module
 - [2026-07-19 18:48:50] docs(api): review implementation of api module
+- [2026-07-19 18:48:50] chore(sidebar): refine type hints in sidebar module
