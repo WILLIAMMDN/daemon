@@ -61,3 +61,4 @@
 - [2026-07-19 18:48:47] test(api): clean up code in api module
 - [2026-07-19 18:48:47] style(services): clean up code in services module
 - [2026-07-19 18:48:48] perf(database): improve performance of database module
+- [2026-07-19 18:48:48] fix(assets): remove dead code from assets module
