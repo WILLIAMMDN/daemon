@@ -4,14 +4,17 @@ namespace Tests\Feature;
 
 use App\Models\Aula;
 use App\Models\Curso;
+use App\Models\Entrega;
 use App\Models\Evaluacion;
 use App\Models\Institucion;
 use App\Models\Leccion;
 use App\Models\MatriculaAula;
 use App\Models\Mision;
 use App\Models\ObjetivoAprendizaje;
+use App\Models\RespuestaEvaluacion;
 use App\Models\UnidadCurso;
 use App\Models\Usuario;
+use App\Services\Academico\AcademicScopeService;
 use App\Services\Academico\LibroCalificacionesService;
 use App\Services\Interoperabilidad\OneRosterAuthService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -257,6 +260,96 @@ class AcademicMasteryGradebookTest extends TestCase
             ->assertJsonPath('items.0.resultados.0.id_alumno', $escenario['alumno_a']->id)
             ->assertJsonFragment(['id_alumno' => $alumnoSecundario->id])
             ->assertJsonMissing(['id_alumno' => $otroAlumno->id]);
+    }
+
+    public function test_docente_no_ve_ni_revisa_actividad_de_otra_aula_con_alumno_compartido(): void
+    {
+        $escenario = $this->escenario();
+        $otraAula = Aula::create([
+            'id_institucion' => $escenario['institucion_a']->id,
+            'id_curso' => $escenario['curso_a']->id,
+            'nombre' => 'Aula A2',
+            'nivel' => 'TEENS',
+        ]);
+        $otroDocente = $this->usuario('docente', $escenario['institucion_a'], $otraAula, 'Docente A2');
+        MatriculaAula::create([
+            'sourced_id' => (string) Str::uuid(),
+            'id_aula' => $otraAula->id,
+            'id_usuario' => $escenario['alumno_a']->id,
+            'rol' => 'student',
+            'estado' => 'active',
+        ]);
+
+        $mision = Mision::create([
+            'titulo' => 'Mision exclusiva del aula A2',
+            'recompensa' => 10,
+            'tipo_evidencia' => 'texto',
+            'nivel_requerido' => 'TEENS',
+            'estado' => 'activo',
+            'id_institucion' => $escenario['institucion_a']->id,
+            'id_aula' => $otraAula->id,
+        ]);
+        $entrega = Entrega::create([
+            'id_desafio' => $mision->id,
+            'id_alumno' => $escenario['alumno_a']->id,
+            'archivo_url' => 'Evidencia de otra clase',
+            'estado' => 'pendiente',
+        ]);
+
+        $this->actingAs($escenario['docente_a'])->getJson('/api/v1/misiones/entregas')
+            ->assertOk()
+            ->assertJsonMissing(['id' => $entrega->id]);
+        $this->actingAs($escenario['docente_a'])->postJson("/api/v1/misiones/entregas/{$entrega->id}/revisar", [
+            'estado' => 'aprobado',
+            'calificacion' => 10,
+            'puntaje_academico' => 90,
+        ])->assertForbidden();
+        $this->actingAs($otroDocente)->postJson("/api/v1/misiones/entregas/{$entrega->id}/revisar", [
+            'estado' => 'aprobado',
+            'calificacion' => 10,
+            'puntaje_academico' => 90,
+        ])->assertOk();
+
+        $evaluacion = Evaluacion::create([
+            'titulo' => 'Evaluacion exclusiva del aula A2',
+            'nivel' => 'TEENS',
+            'estado' => 'activo',
+            'id_institucion' => $escenario['institucion_a']->id,
+            'id_aula' => $otraAula->id,
+        ]);
+        RespuestaEvaluacion::create([
+            'alumno_id' => $escenario['alumno_a']->id,
+            'examen_id' => $evaluacion->id,
+            'nivel' => 'TEENS',
+            'respuestas' => [],
+            'puntaje' => 80,
+        ]);
+
+        $this->actingAs($escenario['docente_a'])->getJson('/api/v1/evaluaciones/resultados')
+            ->assertOk()
+            ->assertJsonMissing(['examen_id' => $evaluacion->id]);
+        $this->actingAs($otroDocente)->getJson('/api/v1/evaluaciones/resultados')
+            ->assertOk()
+            ->assertJsonFragment(['examen_id' => $evaluacion->id]);
+    }
+
+    public function test_resumen_docente_reconoce_matricula_secundaria_activa(): void
+    {
+        $escenario = $this->escenario();
+        $docente = $this->usuario('docente', $escenario['institucion_a'], null, 'Docente secundario');
+        MatriculaAula::create([
+            'sourced_id' => (string) Str::uuid(),
+            'id_aula' => $escenario['aula_a']->id,
+            'id_usuario' => $docente->id,
+            'rol' => 'teacher',
+            'estado' => 'active',
+        ]);
+
+        $resumen = app(AcademicScopeService::class)->resumen($docente);
+
+        $this->assertSame('aula', $resumen['tipo']);
+        $this->assertSame($escenario['aula_a']->id, $resumen['aula']['id']);
+        $this->assertSame($escenario['institucion_a']->id, $resumen['institucion']['id']);
     }
 
     private function crearEvaluacion(Usuario $docente, Leccion $leccion, ObjetivoAprendizaje $objetivo): int

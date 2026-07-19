@@ -21,6 +21,12 @@ nuevo resultado académico se guarda en un libro separado.
   institución y aula. Nunca afecta a otro colegio.
 - El profesor puede operar su aula principal y las matrículas activas con rol
   `teacher`; no obtiene acceso institucional completo.
+- Una matrícula compartida no convierte al alumno en puente entre aulas: el
+  listado, la revisión de entregas y los resultados se filtran también por el
+  alcance de la actividad, incluso si el docente puede ver al mismo estudiante
+  en otra clase.
+- El resumen docente reconoce tanto el aula principal como una matrícula
+  secundaria activa con rol `teacher`.
 - Si la instalación tiene una sola institución, la migración asigna a ella los
   registros legacy. Si hay varias y el origen es ambiguo, el registro continúa
   global y únicamente un administrador puede modificarlo.
@@ -180,7 +186,7 @@ Pruebas dirigidas añadidas en `AcademicMasteryGradebookTest`:
 Validación local de la rama:
 
 ```text
-Laravel: 139 pruebas / 540 aserciones, OK
+Laravel: 141 pruebas / 551 aserciones, OK
 Angular Jest: 11 suites / 39 pruebas, OK
 Arquitectura Angular: OK
 Build Angular: OK; inicial 919.89 kB, bajo el presupuesto de 1 MB

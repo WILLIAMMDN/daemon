@@ -157,6 +157,10 @@ class MisionController extends Controller
             ->select('e.*', 'd.titulo as mision', 'd.recompensa', 'd.es_mision_nivel', 'u.nombre_completo as alumno', 'u.nivel', 'u.id_aula');
 
         $this->alcance->aplicarAlumnosQuery($query, $request->user(), 'u.id_aula');
+        $misionesVisibles = $this->alineacion
+            ->aplicarVisibilidad(Mision::query(), $request->user())
+            ->select('desafios.id');
+        $query->whereIn('d.id', $misionesVisibles);
 
         return $query->orderByDesc('e.fecha_entrega')->get()
             ->map(fn ($entrega) => $this->entregaConUrl($entrega));
@@ -169,6 +173,7 @@ class MisionController extends Controller
         return DB::transaction(function () use ($request, $entrega, $datos) {
             $yaAprobada = $entrega->estado === 'aprobado';
             $mision = Mision::findOrFail($entrega->id_desafio);
+            $this->alineacion->autorizarGestion($request->user(), $mision);
             $puntos = $datos['calificacion'] ?? $mision->recompensa;
             $puntajeAcademico = (float) ($datos['puntaje_academico'] ?? ($datos['estado'] === 'aprobado' ? 100 : 0));
             $alumno = $this->alcance->alumnoGestionable($request->user(), (int) $entrega->id_alumno, true);

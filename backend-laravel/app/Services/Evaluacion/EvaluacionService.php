@@ -208,6 +208,10 @@ class EvaluacionService
             $query->where('r.alumno_id', $usuario->id);
         } elseif ($usuario->rol === 'docente') {
             $this->alcance->aplicarAlumnosQuery($query, $usuario, 'u.id_aula');
+            $evaluacionesVisibles = $this->alineacion
+                ->aplicarVisibilidad(Evaluacion::query(), $usuario)
+                ->select('examenes.id');
+            $query->whereIn('e.id', $evaluacionesVisibles);
         }
 
         return $query->orderByDesc('r.fecha_envio')->get();

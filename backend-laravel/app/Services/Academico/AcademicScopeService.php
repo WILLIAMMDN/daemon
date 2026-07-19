@@ -133,17 +133,25 @@ class AcademicScopeService
             ];
         }
 
-        if ($usuario->rol === 'docente' && blank($usuario->id_aula)) {
-            return [
-                'tipo' => 'sin_aula',
-                'titulo' => 'Docente sin aula asignada',
-                'descripcion' => 'Asigna un aula para activar su dashboard, alumnos, entregas y tokens.',
-                'aula' => null,
-                'institucion' => null,
-            ];
-        }
+        if ($usuario->rol === 'docente') {
+            $aulas = $this->aulasGestionables($usuario);
+            if ($aulas === []) {
+                return [
+                    'tipo' => 'sin_aula',
+                    'titulo' => 'Docente sin aula asignada',
+                    'descripcion' => 'Asigna un aula para activar su dashboard, alumnos, entregas y tokens.',
+                    'aula' => null,
+                    'institucion' => null,
+                ];
+            }
 
-        $aula = $usuario->aula()->with('institucion')->first();
+            $aulaPreferida = $usuario->id_aula && in_array((int) $usuario->id_aula, $aulas, true)
+                ? (int) $usuario->id_aula
+                : $aulas[0];
+            $aula = Aula::with('institucion')->find($aulaPreferida);
+        } else {
+            $aula = $usuario->aula()->with('institucion')->first();
+        }
 
         return [
             'tipo' => $usuario->rol === 'docente' ? 'aula' : 'alumno',
