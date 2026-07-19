@@ -1,15 +1,16 @@
-import { Component, signal , ChangeDetectionStrategy} from '@angular/core';
+import { Component, signal, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { UpperCasePipe } from '@angular/common';
 import { Mision } from '../../../misiones/services/mision';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
-import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
 import { NzTagModule } from 'ng-zorro-antd/tag';
+import { NzEmptyModule } from 'ng-zorro-antd/empty';
+import { NzButtonModule } from 'ng-zorro-antd/button';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-mis-desafios',
-  imports: [RouterLink, Cargando, UpperCasePipe, EstadoVacio, NzTagModule],
+  imports: [RouterLink, Cargando, UpperCasePipe, NzTagModule, NzEmptyModule, NzButtonModule],
   templateUrl: './mis-desafios.html',
   styleUrl: './mis-desafios.scss',
 })
