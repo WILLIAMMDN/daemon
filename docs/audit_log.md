@@ -53,3 +53,4 @@
 - [2026-07-19 18:48:46] style(config): format structure of config module
 - [2026-07-19 18:48:46] refactor(database): format structure of database module
 - [2026-07-19 18:48:46] style(security): refine type hints in security module
+- [2026-07-19 18:48:46] chore(auth): update documentation for auth module
