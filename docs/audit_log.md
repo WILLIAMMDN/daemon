@@ -194,3 +194,4 @@
 - [2026-07-19 18:49:10] ci(auth): review implementation of auth module
 - [2026-07-19 18:49:11] style(core): update dependencies of core module
 - [2026-07-19 18:49:11] test(api): review implementation of api module
+- [2026-07-19 18:49:11] docs(ui): optimize logic in ui module
