@@ -1,0 +1,39 @@
+<article class="project-category-card">
+  <div class="project-category-card__visual">
+    <daemon-illustration-slot
+      [src]="imagen()"
+      alt=""
+      kind="contextual"
+      aspectRatio="16 / 8"
+      [assetName]="assetName()"
+    ></daemon-illustration-slot>
+  </div>
+
+  <div class="project-category-card__body">
+    <div class="project-category-card__heading">
+      <fa-icon [icon]="icono()" aria-hidden="true"></fa-icon>
+      <span>{{ categoria().etiqueta }}</span>
+    </div>
+    <h2>{{ categoria().nombre }}</h2>
+    <p>{{ categoria().descripcion }}</p>
+
+    <dl class="project-category-card__metrics" aria-label="Actividad real del área">
+      @for (metrica of categoria().metricas; track metrica.etiqueta) {
+        <div>
+          <dd>{{ metrica.valor ?? '—' }}</dd>
+          <dt>{{ metrica.etiqueta }}</dt>
+        </div>
+      }
+    </dl>
+  </div>
+
+  <footer>
+    <span class="project-category-card__status">
+      {{ categoria().tiene_actividad ? 'Actividad guardada' : 'Lista para comenzar' }}
+    </span>
+    <a nz-button nzType="default" class="project-category-card__action" [routerLink]="categoria().ruta">
+      {{ categoria().accion }}
+      <fa-icon [icon]="faArrowRight" aria-hidden="true"></fa-icon>
+    </a>
+  </footer>
+</article>

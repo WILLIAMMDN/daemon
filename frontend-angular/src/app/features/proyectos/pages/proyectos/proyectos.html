@@ -1,0 +1,110 @@
+<section class="projects-hub" aria-labelledby="projects-title">
+  <header class="projects-heading">
+    <div class="projects-heading__copy">
+      <fa-icon [icon]="faDiagramProject" aria-hidden="true"></fa-icon>
+      <div>
+        <span>Creaciones DAEMON</span>
+        <h1 id="projects-title">Mis proyectos</h1>
+        <p>Organiza tus historias, asistentes y experimentos desde un solo lugar.</p>
+      </div>
+    </div>
+    <button nz-button nzType="default" type="button" (click)="cargar(true)" [disabled]="refrescando()">
+      <fa-icon [icon]="faRotateRight" aria-hidden="true"></fa-icon>
+      {{ refrescando() ? 'Actualizando' : 'Actualizar' }}
+    </button>
+  </header>
+
+  <section class="projects-hero" aria-label="Empieza un proyecto creativo">
+    <div class="projects-hero__copy">
+      <span>Aprender creando</span>
+      <h2>Convierte una idea en algo que puedas mostrar</h2>
+      <p>Cada área conserva su propia herramienta y sus datos. Aquí encuentras el punto de entrada correcto para continuar.</p>
+      <a nz-button nzType="primary" routerLink="/alumno/proyectos/cuentos">
+        Abrir historias
+        <fa-icon [icon]="faArrowRight" aria-hidden="true"></fa-icon>
+      </a>
+    </div>
+    <daemon-illustration-slot
+      class="projects-hero__art"
+      src="/img/hero-monster.png"
+      alt=""
+      kind="hero"
+      aspectRatio="1 / 1"
+      assetName="projects-hub-hero.webp"
+      [eager]="true"
+    ></daemon-illustration-slot>
+  </section>
+
+  @if (error() && datos()) {
+    <div class="projects-alert" role="alert">
+      <div>
+        <strong>{{ datosConservados() ? 'Mostramos tus datos guardados' : 'No se pudo actualizar' }}</strong>
+        <p>{{ error() }}</p>
+      </div>
+      <button nz-button nzType="default" type="button" (click)="cargar(true)">Reintentar</button>
+    </div>
+  }
+
+  @if (cargando()) {
+    <section class="projects-loading" aria-label="Cargando proyectos" aria-busy="true">
+      <div class="projects-loading__summary"></div>
+      <div class="projects-loading__cards">
+        @for (item of [1, 2, 3]; track item) {
+          <div></div>
+        }
+      </div>
+    </section>
+  } @else if (error() && !datos()) {
+    <section class="projects-load-error" role="alert">
+      <h2>No pudimos abrir tus proyectos</h2>
+      <p>{{ error() }}</p>
+      <button nz-button nzType="primary" type="button" (click)="cargar(true)">Volver a intentar</button>
+    </section>
+  } @else if (datos(); as estado) {
+    <section class="projects-summary" aria-label="Resumen de proyectos">
+      <div>
+        <strong>{{ estado.resumen.proyectos_personales }}</strong>
+        <span>creaciones guardadas</span>
+      </div>
+      <div>
+        <strong>{{ estado.resumen.areas_exploradas }}</strong>
+        <span>áreas exploradas</span>
+      </div>
+      <div>
+        <strong>{{ estado.resumen.areas_disponibles }}</strong>
+        <span>áreas disponibles</span>
+      </div>
+      <p>Los conteos provienen de tus datos actuales; no incluyen ejemplos ni contenido de demostración.</p>
+    </section>
+
+    <div class="projects-section-heading">
+      <div>
+        <span>Explora por área</span>
+        <h2>Elige qué quieres construir</h2>
+      </div>
+      @if (refrescando()) {
+        <small role="status">Actualizando actividad…</small>
+      }
+    </div>
+
+    @if (categorias().length) {
+      <section class="projects-grid" aria-label="Áreas de proyecto disponibles">
+        @for (categoria of categorias(); track categoria.slug) {
+          <app-tarjeta-categoria-proyecto
+            [categoria]="categoria"
+            [icono]="categoria.icono"
+            [imagen]="categoria.imagen"
+            [assetName]="categoria.assetName"
+          ></app-tarjeta-categoria-proyecto>
+        }
+      </section>
+    } @else {
+      <app-estado-vacio
+        titulo="Tus áreas de proyecto están preparándose"
+        descripcion="Cuando la academia habilite una experiencia creativa, aparecerá aquí."
+      >
+        <button nz-button nzType="primary" type="button" (click)="cargar(true)">Actualizar proyectos</button>
+      </app-estado-vacio>
+    }
+  }
+</section>
