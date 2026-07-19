@@ -1,6 +1,19 @@
 # Plan de evolución visual del portal alumno
 
-Estado inicial: 15 de julio de 2026.
+Estado inicial: 15 de julio de 2026. Decisión de continuidad: 19 de julio de
+2026.
+
+## Base autorizada para continuar
+
+Los próximos cambios parten exclusivamente de `origin/main` y se entregan por
+módulo en ramas `codex/*`. Se descartan como fuente de integración los cambios
+de `feature/frontend-design-system` y `codex/antigravity-integration`: no deben
+fusionarse ni copiarse en bloque. Cualquier idea útil se vuelve a evaluar desde
+la base estable y se implementa como un cambio pequeño, trazable y revisable.
+
+El dashboard estable conserva el robot `/img/robot-mision.png` en el estado
+“Ruta completada por ahora”. No volver a retirarlo durante una refactorización
+visual del panel.
 
 ## Diagnóstico
 
@@ -46,6 +59,22 @@ pero con más claridad, accesibilidad y solidez técnica que la vista heredada.
 
 ## Hoja de ruta
 
+### Próxima sesión de trabajo
+
+1. Terminar la revisión visual de Cursos sin rehacer todavía su estructura:
+   corregir iconos poco claros, repetidos o semánticamente incorrectos;
+   mantener una sola familia de iconos, registro explícito y atributos
+   accesibles.
+2. Diseñar la estructura objetivo de cada módulo antes de editar código:
+   propósito, acción primaria, datos reales, estados de carga/vacío/error,
+   responsive y criterio de aceptación.
+3. Ejecutar un solo módulo por rama y revisión. No volver a mezclar tienda,
+   mascota, evaluaciones, ranking, comunidad, cuentos, laboratorios y chatbot
+   en un mismo lote visual.
+
+Los iconos de Cursos quedan anotados como pendiente, no implementados en este
+cambio.
+
 ### Fase 1. Núcleo de identidad
 
 - convertir el dashboard en un centro de operaciones y no en un resumen de KPIs;
@@ -53,17 +82,26 @@ pero con más claridad, accesibilidad y solidez técnica que la vista heredada.
 - crear primitivas compartidas para hero, estación, estado y CTA físico;
 - auditar todos los botones sin ruta, enlaces `#` y acciones sin confirmación.
 
+Módulos pendientes: dashboard, chatbot y configuración del bot. El dashboard
+solo se modifica con un alcance explícito y debe conservar su robot de misión.
+
 ### Fase 2. Ciclo de aprendizaje
 
 - reconstruir listado, detalle y entrega de misiones como una ruta continua;
 - mejorar evaluaciones, resultados y recursos con contexto y siguiente acción;
 - hacer visibles prerequisitos, recompensas y estados reales del backend.
 
+Orden propuesto: Cursos e iconografía; listado de misiones; detalle y entrega;
+evaluaciones y resultados; recursos académicos.
+
 ### Fase 3. Progreso y recompensa
 
 - convertir perfil, ranking y tienda en superficies de logro conectadas;
 - conservar la separación XP/DAEMONS;
 - reforzar estados vacíos, desbloqueos y celebraciones sin animación constante.
+
+Cada uno de Perfil, Ranking, Tienda, Canjes y Mascota se trata como módulo
+independiente y conserva todas sus funciones actuales durante la mejora.
 
 ### Fase 4. Motores heredados
 

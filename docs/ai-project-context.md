@@ -87,10 +87,14 @@ Student portal documentation:
 docs/sistema-visual-portal-alumno.md
 docs/portal-alumno.md
 docs/gamificacion-xp-daemons.md
+docs/plan-evolucion-visual-portal-alumno.md
 docs/release-2026-07-14-portal-alumno.md
 ```
 
 Current student visual direction:
+
+- Future portal work starts from `origin/main`; the Antigravity branches are
+  explicitly excluded from integration. See `docs/plan-evolucion-visual-portal-alumno.md`.
 
 - Inter only.
 - Solid colors; no gradients in the main student modules.
