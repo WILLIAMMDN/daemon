@@ -197,3 +197,4 @@
 - [2026-07-19 18:49:11] docs(ui): optimize logic in ui module
 - [2026-07-19 18:49:11] style(auth): clean up code in auth module
 - [2026-07-19 18:49:11] test(sidebar): clean up code in sidebar module
+- [2026-07-19 18:49:11] fix(config): improve performance of config module
