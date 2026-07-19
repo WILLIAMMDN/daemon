@@ -94,3 +94,4 @@
 - [2026-07-19 18:48:53] ci(assets): update dependencies of assets module
 - [2026-07-19 18:48:53] fix(routing): remove dead code from routing module
 - [2026-07-19 18:48:53] fix(assets): update dependencies of assets module
+- [2026-07-19 18:48:53] refactor(models): refine type hints in models module
