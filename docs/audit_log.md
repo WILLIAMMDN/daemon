@@ -89,3 +89,4 @@
 - [2026-07-19 18:48:52] build(config): update dependencies of config module
 - [2026-07-19 18:48:52] chore(services): update dependencies of services module
 - [2026-07-19 18:48:52] docs(assets): add minor comments to assets module
+- [2026-07-19 18:48:52] perf(models): improve performance of models module
