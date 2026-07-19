@@ -24,3 +24,4 @@
 - [2026-07-19 18:48:41] docs(api): refine type hints in api module
 - [2026-07-19 18:48:41] fix(auth): review implementation of auth module
 - [2026-07-19 18:48:41] test(gamification): improve performance of gamification module
+- [2026-07-19 18:48:42] docs(assets): clean up code in assets module
