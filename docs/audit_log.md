@@ -107,3 +107,4 @@
 - [2026-07-19 18:48:55] ci(models): optimize logic in models module
 - [2026-07-19 18:48:55] fix(services): format structure of services module
 - [2026-07-19 18:48:55] chore(routing): update documentation for routing module
+- [2026-07-19 18:48:55] style(database): remove dead code from database module
