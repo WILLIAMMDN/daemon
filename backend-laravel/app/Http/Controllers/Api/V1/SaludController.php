@@ -20,6 +20,9 @@ class SaludController extends Controller
             'version' => config('app.version'),
             'commit' => config('app.commit'),
             'database' => $database,
+            'authentication' => [
+                'firebase_project_configured' => filled(config('services.firebase.project_id')),
+            ],
             'assets' => [
                 'public_url_configured' => filled(config('daemon.asset_public_url')),
                 'cloud_url_configured' => filled(config('daemon.asset_cloud_url')),

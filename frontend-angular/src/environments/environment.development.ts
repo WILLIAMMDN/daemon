@@ -1,6 +1,9 @@
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:8000/api/v1',
+  // El servidor de desarrollo de Angular reenvia /api al Laravel local.
+  // Al ser una URL relativa funciona igual desde localhost y desde otro
+  // dispositivo de la red sin apuntar accidentalmente al propio telefono.
+  apiUrl: '/api/v1',
   assetBaseUrl: '',
   observability: {
     sentryEnabled: false,
