@@ -178,3 +178,4 @@
 - [2026-07-19 18:49:08] style(api): update documentation for api module
 - [2026-07-19 18:49:08] refactor(security): refine type hints in security module
 - [2026-07-19 18:49:08] test(auth): review implementation of auth module
+- [2026-07-19 18:49:08] test(models): clean up code in models module
