@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { of, throwError } from 'rxjs';
+import { concat, of, Subject, throwError } from 'rxjs';
 import { Api, ApiError } from '../../../../core/servicios/api';
 import { Recursos } from './recursos';
 
@@ -167,6 +167,23 @@ describe('Recursos', () => {
     expect(element.querySelectorAll('.course-card')).toHaveLength(3);
     expect(element.querySelector('.course-alert')?.getAttribute('data-problem')).toBe('timeout');
     expect(element.querySelector('.course-stale')?.textContent).toContain('Datos guardados');
+  });
+
+  it('muestra la respuesta cacheada mientras la revalidación continúa en segundo plano', () => {
+    const actualizacion = new Subject<typeof respuesta>();
+    getMock.mockReturnValue(concat(of(respuesta), actualizacion));
+    const fixture = TestBed.createComponent(Recursos);
+    fixture.detectChanges();
+    const element = fixture.nativeElement as HTMLElement;
+
+    expect(element.querySelector('.course-loading')).toBeNull();
+    expect(element.querySelectorAll('.course-card')).toHaveLength(3);
+    expect(fixture.componentInstance.refrescando()).toBe(true);
+
+    actualizacion.next(respuesta);
+    actualizacion.complete();
+    fixture.detectChanges();
+    expect(fixture.componentInstance.refrescando()).toBe(false);
   });
 
   it('actualiza el progreso local y conserva telemetría permitida al completar', () => {

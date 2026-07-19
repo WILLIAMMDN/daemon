@@ -330,8 +330,9 @@ aunque el viewport por sí solo todavía sea ancho.
 - Signals y `computed` para filtros, estados y porcentajes.
 - No se ejecutan getters de progreso repetitivos desde el template.
 - La caché, deduplicación y SWR permanecen centralizados en `Api`.
-- Al cambiar de módulo y volver, la primera representación puede usar la
-  respuesta cacheada mientras se revalida según la política existente.
+- Al cambiar de módulo y volver, la primera representación usa inmediatamente
+  la respuesta cacheada mientras se revalida según la política existente; el
+  skeleton queda reservado para una carga inicial sin datos disponibles.
 - Hero prioritario; resto de imágenes diferidas.
 - No se incorporaron nuevas dependencias ni bundles globales.
 

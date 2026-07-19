@@ -223,13 +223,16 @@ export class Recursos {
       }))
       .subscribe({
         next: (datos) => {
+          const eraCargaInicial = this.cargando();
           this.datos.set(datos);
+          this.cargando.set(false);
+          this.refrescando.set(eraCargaInicial);
           this.contenidoDesactualizado.set(false);
           this.tipoProblema.set('generic');
         },
         error: (problema: unknown) => {
           this.tipoProblema.set(this.clasificarProblema(problema));
-          this.contenidoDesactualizado.set(conservaDatos);
+          this.contenidoDesactualizado.set(Boolean(this.datos()));
           this.error.set('No pudimos cargar tus cursos. Revisa tu conexión e inténtalo nuevamente.');
         },
       });
