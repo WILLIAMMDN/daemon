@@ -52,3 +52,4 @@
 - [2026-07-19 18:48:46] docs(api): update documentation for api module
 - [2026-07-19 18:48:46] style(config): format structure of config module
 - [2026-07-19 18:48:46] refactor(database): format structure of database module
+- [2026-07-19 18:48:46] style(security): refine type hints in security module
