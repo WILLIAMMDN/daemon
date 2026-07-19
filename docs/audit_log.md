@@ -151,3 +151,4 @@
 - [2026-07-19 18:49:02] ci(api): refine type hints in api module
 - [2026-07-19 18:49:03] build(core): refine type hints in core module
 - [2026-07-19 18:49:03] docs(api): improve performance of api module
+- [2026-07-19 18:49:03] build(core): remove dead code from core module
