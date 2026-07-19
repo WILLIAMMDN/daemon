@@ -158,3 +158,4 @@
 - [2026-07-19 18:49:04] fix(auth): review implementation of auth module
 - [2026-07-19 18:49:04] test(api): format structure of api module
 - [2026-07-19 18:49:04] refactor(routing): clean up code in routing module
+- [2026-07-19 18:49:04] build(auth): refine type hints in auth module
