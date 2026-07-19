@@ -10,3 +10,4 @@
 - [2026-07-19 18:48:39] docs(config): improve performance of config module
 - [2026-07-19 18:48:39] test(database): add minor comments to database module
 - [2026-07-19 18:48:39] chore(auth): format structure of auth module
+- [2026-07-19 18:48:40] docs(models): refine type hints in models module
