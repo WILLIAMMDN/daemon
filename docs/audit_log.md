@@ -142,3 +142,4 @@
 - [2026-07-19 18:49:01] fix(models): format structure of models module
 - [2026-07-19 18:49:01] ci(config): format structure of config module
 - [2026-07-19 18:49:01] fix(services): improve performance of services module
+- [2026-07-19 18:49:01] build(ui): optimize logic in ui module
