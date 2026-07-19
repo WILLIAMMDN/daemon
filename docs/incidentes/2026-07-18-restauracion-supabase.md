@@ -30,6 +30,9 @@ premios=2
 
 8. `scripts/smoke-produccion.ps1` finalizó correctamente: frontend, backend,
    base, CORS, storage, cabeceras y service worker en estado OK.
+9. El release incremental `2d76c45` se desplegó después de la restauración.
+   La comprobación final confirmó `usuarios=50`, `instituciones=1`,
+   `migraciones=31` y las nuevas tablas operativas presentes.
 
 ## Ventana de recuperación
 
