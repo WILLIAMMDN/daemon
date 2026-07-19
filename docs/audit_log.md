@@ -91,3 +91,4 @@
 - [2026-07-19 18:48:52] docs(assets): add minor comments to assets module
 - [2026-07-19 18:48:52] perf(models): improve performance of models module
 - [2026-07-19 18:48:53] chore(models): add minor comments to models module
+- [2026-07-19 18:48:53] ci(assets): update dependencies of assets module
