@@ -20,3 +20,4 @@
 - [2026-07-19 18:48:41] build(core): update dependencies of core module
 - [2026-07-19 18:48:41] docs(config): update dependencies of config module
 - [2026-07-19 18:48:41] chore(assets): update documentation for assets module
+- [2026-07-19 18:48:41] chore(models): optimize logic in models module
