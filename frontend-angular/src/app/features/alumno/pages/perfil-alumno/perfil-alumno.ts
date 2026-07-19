@@ -8,10 +8,11 @@ import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzProgressModule } from 'ng-zorro-antd/progress';
 import { NzStatisticModule } from 'ng-zorro-antd/statistic';
 import { NzTagModule } from 'ng-zorro-antd/tag';
+import { NzEmptyModule } from 'ng-zorro-antd/empty';
+import { NzIconModule } from 'ng-zorro-antd/icon';
 import { Activos } from '../../../../core/servicios/activos';
 import { Sesion } from '../../../../core/servicios/sesion';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
-import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
 import { MonedaDaemon } from '../../../../shared/componentes/moneda-daemon/moneda-daemon';
 import { Alumno } from '../../services/alumno';
 
@@ -48,12 +49,12 @@ interface PerfilData {
     NzProgressModule,
     NzStatisticModule,
     NzTagModule,
+    NzEmptyModule,
+    NzIconModule,
     Cargando,
-    EstadoVacio,
     MonedaDaemon,
   ],
   templateUrl: './perfil-alumno.html',
-  styleUrl: './perfil-alumno.scss',
 })
 export class PerfilAlumno {
   perfil = signal<PerfilData | null>(null);

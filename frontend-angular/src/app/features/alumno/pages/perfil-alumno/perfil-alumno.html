@@ -1,137 +1,204 @@
 @if (cargando()) {
-  <app-cargando class="profile-state" texto="Cargando perfil..."></app-cargando>
+  <app-cargando class="w-full bg-white border border-slate-100 shadow-sm rounded-[24px] p-12 mt-6 max-w-7xl mx-auto" texto="Cargando perfil..."></app-cargando>
 } @else if (error()) {
-  <section class="profile-state profile-state--error">
-    <nz-alert nzType="error" nzShowIcon nzMessage="Error al cargar perfil" [nzDescription]="error()"></nz-alert>
-    <button nz-button nzType="primary" class="daemon-btn" type="button" (click)="cargar()">Reintentar</button>
+  <section class="w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8">
+    <div class="bg-red-50 border border-red-100 rounded-[24px] p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm">
+      <nz-alert nzType="error" nzShowIcon nzMessage="Error al cargar perfil" [nzDescription]="error()"></nz-alert>
+      <button nz-button nzType="primary" nzShape="round" class="daemon-btn bg-red-600 hover:bg-red-700 border-0" type="button" (click)="cargar()">Reintentar</button>
+    </div>
   </section>
 } @else if (perfil(); as datos) {
-  <main class="profile-page">
-    <header class="profile-hero">
-      <div class="profile-identity">
+  <main class="w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-6 md:gap-8 font-inter">
+    
+    <!-- HERO SECTION -->
+    <header class="flex flex-col md:flex-row justify-between items-center md:items-stretch gap-8 bg-white border border-slate-100 shadow-sm rounded-[24px] p-6 md:p-10 relative overflow-hidden">
+      <!-- Decoración de fondo sutil -->
+      <div class="absolute top-0 right-0 w-64 h-64 bg-blue-50/50 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
+
+      <div class="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-6 relative z-10 w-full">
         <nz-avatar
-          class="profile-avatar"
-          [nzSize]="104"
+          class="shadow-sm border-4 border-white flex-shrink-0"
+          [nzSize]="120"
           [nzSrc]="avatar(datos.usuario) || undefined"
           [nzText]="iniciales(datos.usuario)"
         />
-        <div class="identity-copy">
-          <span class="section-label">{{ perfilPropio() ? 'Mi perfil' : 'Perfil de compañero' }}</span>
-          <h1>{{ datos.usuario.nombre_completo || 'Usuario nuevo' }}</h1>
-          <p>@{{ datos.usuario.usuario }}</p>
-          <div class="identity-tags">
-            <span class="solid-tag solid-tag--blue">{{ datos.usuario.nivel || 'Nivel inicial' }}</span>
-            <span class="solid-tag solid-tag--green">{{ datos.usuario.rango || 'Rango en progreso' }}</span>
+        <div class="flex flex-col justify-center h-full">
+          <span class="text-blue-600 text-[11px] font-extrabold uppercase tracking-widest block mb-2">{{ perfilPropio() ? 'Mi perfil' : 'Perfil de compañero' }}</span>
+          <h1 class="text-2xl md:text-4xl font-black text-slate-900 tracking-tight leading-tight">{{ datos.usuario.nombre_completo || 'Usuario nuevo' }}</h1>
+          <p class="text-slate-500 font-medium mt-1">@{{ datos.usuario.usuario }}</p>
+          <div class="flex flex-wrap justify-center sm:justify-start gap-2 mt-4">
+            <span class="bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap">{{ datos.usuario.nivel || 'Nivel inicial' }}</span>
+            <span class="bg-emerald-100 text-emerald-700 text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap">{{ datos.usuario.rango || 'Rango en progreso' }}</span>
           </div>
         </div>
       </div>
 
-      <div class="profile-completion">
-        <div>
-          <span>Perfil completo</span>
-          <strong>{{ progresoPerfil(datos.usuario) }}%</strong>
+      <div class="flex flex-col justify-center bg-slate-50 border border-slate-100 rounded-[20px] p-5 sm:p-6 w-full md:w-80 relative z-10">
+        <div class="flex justify-between items-end mb-2">
+          <span class="text-slate-500 text-xs font-bold uppercase tracking-widest">Perfil completo</span>
+          <strong class="text-blue-600 text-2xl font-black">{{ progresoPerfil(datos.usuario) }}%</strong>
         </div>
         <nz-progress
           [nzPercent]="progresoPerfil(datos.usuario)"
           [nzStatus]="estadoProgreso(datos.usuario)"
           [nzShowInfo]="false"
-          [nzStrokeWidth]="7"
-          nzStrokeColor="#1677ff"
+          [nzStrokeWidth]="8"
+          nzStrokeColor="#2563eb"
         />
-        @if (perfilPropio()) {
-          <a nz-button nzType="primary" class="daemon-btn edit-profile-button" routerLink="/alumno/perfil/editar">Editar perfil</a>
-        } @else {
-          <a nz-button nzType="default" class="daemon-btn edit-profile-button" routerLink="/alumno/comunidad">Volver a comunidad</a>
-        }
+        <div class="mt-4 flex">
+          @if (perfilPropio()) {
+            <a nz-button nzType="primary" nzShape="round" class="daemon-btn bg-blue-600 hover:bg-blue-700 border-0 w-full flex items-center justify-center font-bold h-10" routerLink="/alumno/perfil/editar">Editar perfil</a>
+          } @else {
+            <a nz-button nzType="default" nzShape="round" class="w-full flex items-center justify-center font-bold text-slate-600 bg-white hover:bg-slate-50 h-10" routerLink="/alumno/comunidad">Volver a comunidad</a>
+          }
+        </div>
       </div>
     </header>
 
-    <section class="profile-stats" aria-label="Resumen del perfil">
-      <article class="stat-card stat-card--blue">
-        <span>Experiencia total</span>
-        <strong>{{ datos.usuario.experiencia || 0 }} <small>XP</small></strong>
-        <p>Nivel {{ datos.usuario.nivel_gamificacion || 1 }}</p>
+    <!-- STATS GRID -->
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6" aria-label="Resumen del perfil">
+      <article class="bg-white border border-slate-100 rounded-[24px] p-6 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_20px_-6px_rgba(0,0,0,0.1)] hover:-translate-y-1 transition-all duration-300">
+        <span class="text-blue-600 text-[10px] font-extrabold uppercase tracking-widest block mb-2">Experiencia total</span>
+        <strong class="text-slate-900 text-4xl font-black tracking-tight block">{{ datos.usuario.experiencia || 0 }} <small class="text-xl text-slate-400 font-bold ml-1">XP</small></strong>
+        <p class="text-slate-500 text-xs font-medium mt-2">Nivel {{ datos.usuario.nivel_gamificacion || 1 }}</p>
       </article>
-      <article class="stat-card stat-card--amber">
-        <span>Saldo DAEMONS</span>
-        <strong><app-moneda-daemon [cantidad]="datos.usuario.tokens || 0" [size]="23" [soloNumero]="true" /></strong>
-        <p>Disponible en la tienda</p>
+      <article class="bg-white border border-slate-100 rounded-[24px] p-6 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_20px_-6px_rgba(0,0,0,0.1)] hover:-translate-y-1 transition-all duration-300">
+        <span class="text-amber-500 text-[10px] font-extrabold uppercase tracking-widest block mb-2">Saldo DAEMONS</span>
+        <strong class="text-slate-900 text-4xl font-black tracking-tight flex items-center gap-2 block"><app-moneda-daemon [cantidad]="datos.usuario.tokens || 0" [size]="28" [soloNumero]="true" /></strong>
+        <p class="text-slate-500 text-xs font-medium mt-2">Disponible en la tienda</p>
       </article>
-      <article class="stat-card stat-card--green">
-        <span>Insignias ganadas</span>
-        <strong>{{ datos.insignias.length }}</strong>
-        <p>Logros reconocidos</p>
+      <article class="bg-white border border-slate-100 rounded-[24px] p-6 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_20px_-6px_rgba(0,0,0,0.1)] hover:-translate-y-1 transition-all duration-300">
+        <span class="text-emerald-500 text-[10px] font-extrabold uppercase tracking-widest block mb-2">Insignias ganadas</span>
+        <strong class="text-slate-900 text-4xl font-black tracking-tight block">{{ datos.insignias.length }}</strong>
+        <p class="text-slate-500 text-xs font-medium mt-2">Logros reconocidos</p>
       </article>
-      <article class="stat-card stat-card--violet">
-        <span>Premios en mochila</span>
-        <strong>{{ datos.mochila.length }}</strong>
-        <p>Recompensas entregadas</p>
+      <article class="bg-white border border-slate-100 rounded-[24px] p-6 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_20px_-6px_rgba(0,0,0,0.1)] hover:-translate-y-1 transition-all duration-300">
+        <span class="text-purple-600 text-[10px] font-extrabold uppercase tracking-widest block mb-2">Premios en mochila</span>
+        <strong class="text-slate-900 text-4xl font-black tracking-tight block">{{ datos.mochila.length }}</strong>
+        <p class="text-slate-500 text-xs font-medium mt-2">Recompensas entregadas</p>
       </article>
     </section>
 
-    <section class="profile-content">
-      <article class="surface-card personal-card">
-        <header class="card-title">
-          <div><span>Cuenta</span><h2>Datos personales</h2></div>
+    <!-- CONTENT GRID (Personal Info & Backpack) -->
+    <section class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
+      
+      <!-- INFORMACIÓN PERSONAL -->
+      <article class="bg-white border border-slate-100 shadow-sm rounded-[24px] flex flex-col overflow-hidden">
+        <header class="p-6 md:p-8 border-b border-slate-100 bg-slate-50/50">
+          <span class="text-slate-400 text-[11px] font-extrabold uppercase tracking-widest block mb-1">Cuenta</span>
+          <h2 class="text-xl md:text-2xl font-black text-slate-900 tracking-tight">Datos personales</h2>
         </header>
-        <div class="information-list">
-          <div>
-            <span nz-icon nzType="mail" nzTheme="outline"></span>
-            <p><small>Correo electrónico</small><strong>{{ datos.usuario.email || 'Oculto por privacidad' }}</strong></p>
+        <div class="flex flex-col p-6 md:p-8 gap-6">
+          <div class="flex items-start gap-4">
+            <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
+              <span nz-icon nzType="mail" nzTheme="outline" class="text-lg"></span>
+            </div>
+            <div class="flex flex-col gap-1">
+              <small class="text-slate-500 text-xs font-bold uppercase tracking-wide">Correo electrónico</small>
+              <strong class="text-slate-900 font-bold break-all">{{ datos.usuario.email || 'Oculto por privacidad' }}</strong>
+            </div>
           </div>
-          <div>
-            <span nz-icon nzType="user" nzTheme="outline"></span>
-            <p><small>Biografía</small><strong>{{ datos.usuario.biografia || 'El estudiante aún no ha escrito su biografía.' }}</strong></p>
+          <div class="flex items-start gap-4">
+            <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center flex-shrink-0">
+              <span nz-icon nzType="user" nzTheme="outline" class="text-lg"></span>
+            </div>
+            <div class="flex flex-col gap-1">
+              <small class="text-slate-500 text-xs font-bold uppercase tracking-wide">Biografía</small>
+              <strong class="text-slate-900 font-medium leading-relaxed">{{ datos.usuario.biografia || 'El estudiante aún no ha escrito su biografía.' }}</strong>
+            </div>
           </div>
         </div>
       </article>
 
-      <article class="surface-card backpack-card">
-        <header class="card-title">
-          <div><span>Recompensas</span><h2>Mochila digital</h2></div>
-          <small>{{ datos.mochila.length }} premios</small>
+      <!-- MOCHILA DIGITAL -->
+      <article class="bg-white border border-slate-100 shadow-sm rounded-[24px] flex flex-col overflow-hidden">
+        <header class="p-6 md:p-8 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+          <div>
+            <span class="text-slate-400 text-[11px] font-extrabold uppercase tracking-widest block mb-1">Recompensas</span>
+            <h2 class="text-xl md:text-2xl font-black text-slate-900 tracking-tight">Mochila digital</h2>
+          </div>
+          <span class="bg-purple-100 text-purple-700 text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap">{{ datos.mochila.length }} premios</span>
         </header>
-        @if (datos.mochila.length) {
-          <div class="reward-list">
-            @for (premio of datos.mochila; track premio.id) {
-              <article>
-                @if (premio.imagen) {
-                  <img [src]="asset(premio.imagen)" [alt]="premio.nombre">
+        
+        <div class="p-6 md:p-8 flex-grow">
+          @if (datos.mochila.length) {
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              @for (premio of datos.mochila; track premio.id) {
+                <article class="flex items-center gap-4 bg-slate-50 border border-slate-100 p-4 rounded-2xl hover:-translate-y-1 hover:shadow-md transition-all duration-300">
+                  @if (premio.imagen) {
+                    <img [src]="asset(premio.imagen)" [alt]="premio.nombre" class="w-12 h-12 object-contain rounded-lg">
+                  } @else {
+                    <div class="w-12 h-12 rounded-lg bg-slate-200 text-slate-400 flex items-center justify-center text-xl">
+                      <span nz-icon nzType="gift" nzTheme="outline"></span>
+                    </div>
+                  }
+                  <div class="flex flex-col">
+                    <strong class="text-sm font-extrabold text-slate-900 leading-tight">{{ premio.nombre }}</strong>
+                    <small class="text-xs text-slate-500 font-medium mt-1">{{ premio.descripcion || 'Premio entregado' }}</small>
+                  </div>
+                </article>
+              }
+            </div>
+          } @else {
+            <div class="h-full flex items-center justify-center py-8">
+              <nz-empty 
+                nzNotFoundImage="simple"
+                [nzNotFoundContent]="contentMochila">
+                <ng-template #contentMochila>
+                  <span class="text-slate-900 font-bold block mb-1">{{ perfilPropio() ? 'Mochila sin premios' : 'Mochila vacía' }}</span>
+                  <span class="text-slate-500 text-sm font-medium">{{ perfilPropio() ? 'Todavía no tienes premios entregados.' : 'Todavía no tiene premios entregados.' }}</span>
+                </ng-template>
+              </nz-empty>
+            </div>
+          }
+        </div>
+      </article>
+    </section>
+
+    <!-- BADGES SECTION -->
+    <section class="bg-white border border-slate-100 shadow-sm rounded-[24px] flex flex-col overflow-hidden">
+      <header class="p-6 md:p-8 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+        <div>
+          <span class="text-slate-400 text-[11px] font-extrabold uppercase tracking-widest block mb-1">Progreso</span>
+          <h2 class="text-xl md:text-2xl font-black text-slate-900 tracking-tight">Insignias ganadas</h2>
+        </div>
+        <span class="bg-emerald-100 text-emerald-700 text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap">{{ datos.insignias.length }} insignias</span>
+      </header>
+      
+      <div class="p-6 md:p-8">
+        @if (datos.insignias.length) {
+          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            @for (insignia of datos.insignias; track insignia.id) {
+              <article class="flex flex-col items-center text-center gap-3 p-5 rounded-[20px] hover:bg-slate-50 transition-colors">
+                @if (insignia.imagen) {
+                  <img [src]="asset(insignia.imagen)" [alt]="insignia.nombre" class="w-20 h-20 object-contain hover:scale-110 transition-transform duration-300">
                 } @else {
-                  <span class="reward-placeholder" nz-icon nzType="gift" nzTheme="outline"></span>
+                  <div class="w-20 h-20 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center text-3xl hover:scale-110 transition-transform duration-300">
+                    <span nz-icon nzType="star" nzTheme="fill"></span>
+                  </div>
                 }
-                <div><strong>{{ premio.nombre }}</strong><small>{{ premio.descripcion || 'Premio entregado' }}</small></div>
+                <div class="flex flex-col items-center w-full mt-2">
+                  <strong class="text-sm font-black text-slate-900 leading-tight">{{ insignia.nombre }}</strong>
+                  <span class="text-xs text-slate-500 font-medium mt-1 line-clamp-2">{{ insignia.descripcion }}</span>
+                  <small class="text-[10px] text-slate-400 font-bold uppercase mt-2">{{ insignia.fecha }}</small>
+                </div>
               </article>
             }
           </div>
         } @else {
-          <app-estado-vacio
-            [titulo]="perfilPropio() ? 'Mochila sin premios' : 'Mochila vacía'"
-            [descripcion]="perfilPropio() ? 'Todavía no tienes premios entregados.' : 'Todavía no tiene premios entregados.'"
-          />
+          <div class="flex items-center justify-center py-12">
+            <nz-empty 
+              nzNotFoundImage="simple"
+              [nzNotFoundContent]="contentInsignias">
+              <ng-template #contentInsignias>
+                <span class="text-slate-900 font-bold block mb-1">Aún sin insignias</span>
+                <span class="text-slate-500 text-sm font-medium">Cuando completes logros importantes aparecerán aquí.</span>
+              </ng-template>
+            </nz-empty>
+          </div>
         }
-      </article>
+      </div>
     </section>
-
-    <section class="surface-card badges-card">
-      <header class="card-title">
-        <div><span>Progreso</span><h2>Insignias ganadas</h2></div>
-        <small>{{ datos.insignias.length }} insignias</small>
-      </header>
-      @if (datos.insignias.length) {
-        <div class="badge-list">
-          @for (insignia of datos.insignias; track insignia.id) {
-            <article>
-              @if (insignia.imagen) {
-                <img [src]="asset(insignia.imagen)" [alt]="insignia.nombre">
-              }
-              <div><strong>{{ insignia.nombre }}</strong><span>{{ insignia.descripcion }}</span><small>{{ insignia.fecha }}</small></div>
-            </article>
-          }
-        </div>
-      } @else {
-        <app-estado-vacio titulo="Aún sin insignias" descripcion="Cuando completes logros importantes aparecerán aquí." />
-      }
-    </section>
+    
   </main>
 }
