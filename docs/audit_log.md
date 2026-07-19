@@ -66,3 +66,4 @@
 - [2026-07-19 18:48:48] refactor(models): format structure of models module
 - [2026-07-19 18:48:48] build(gamification): improve performance of gamification module
 - [2026-07-19 18:48:48] test(models): format structure of models module
+- [2026-07-19 18:48:48] ci(core): refine type hints in core module
