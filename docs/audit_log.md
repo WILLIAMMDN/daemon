@@ -48,3 +48,4 @@
 - [2026-07-19 18:48:45] chore(config): format structure of config module
 - [2026-07-19 18:48:45] build(api): format structure of api module
 - [2026-07-19 18:48:45] docs(database): refine type hints in database module
+- [2026-07-19 18:48:45] style(core): update dependencies of core module
