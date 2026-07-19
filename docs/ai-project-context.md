@@ -4,7 +4,7 @@ This document is written for future AI agents and developers. It summarizes the
 current DAEMON system, the cloud decisions already made, the important files,
 and the traps that caused confusion during the migration.
 
-Last updated: 2026-07-15.
+Last updated: 2026-07-20.
 
 ## 1. What DAEMON is
 
@@ -166,6 +166,12 @@ Gamification uses two independent fields:
 
 Do not order ranking by tokens or subtract experience during store redemptions.
 Read `docs/gamificacion-xp-daemons.md` before changing rewards.
+
+Academic evidence is separate from rewards. Missions and evaluations may align
+to lessons and learning objectives, write OneRoster-shaped gradebook records,
+and update per-objective mastery. Never derive formal grades from XP or DAEMONS.
+Read `docs/release-2026-07-20-academic-mastery.md` before changing curriculum,
+missions, evaluations, gradebook or mastery.
 
 The student companion system lives at `/alumno/mascota`. Laravel owns species,
 cosmetic compatibility, permanent inventory and equipped slots; cosmetic store

@@ -17,6 +17,7 @@ use App\Http\Controllers\Api\V1\EvaluacionController;
 use App\Http\Controllers\Api\V1\IaModeloAdminController;
 use App\Http\Controllers\Api\V1\InstitucionController;
 use App\Http\Controllers\Api\V1\InteroperabilidadAdminController;
+use App\Http\Controllers\Api\V1\LibroCalificacionesController;
 use App\Http\Controllers\Api\V1\MascotaCatalogoController;
 use App\Http\Controllers\Api\V1\MascotaController;
 use App\Http\Controllers\Api\V1\MisionController;
@@ -68,6 +69,7 @@ Route::prefix('v1')->group(function (): void {
         Route::middleware('role:alumno')->group(function (): void {
             Route::get('/alumno/panel', [AlumnoController::class, 'panel']);
             Route::get('/alumno/aprendizaje', [AcademicoController::class, 'alumno']);
+            Route::get('/alumno/dominio', [LibroCalificacionesController::class, 'dominio']);
             Route::put('/alumno/aprendizaje/lecciones/{leccion}/progreso', [AcademicoController::class, 'progreso'])->middleware('throttle:60,1');
             Route::get('/ranking', [RankingController::class, 'index']);
             Route::get('/alumno/bienestar-digital', [BienestarDigitalController::class, 'estado']);
@@ -107,6 +109,7 @@ Route::prefix('v1')->group(function (): void {
         Route::middleware('role:docente,admin')->group(function (): void {
             Route::prefix('academico')->group(function (): void {
                 Route::get('/', [AcademicoController::class, 'catalogo']);
+                Route::get('/libro-calificaciones', [LibroCalificacionesController::class, 'index']);
                 Route::post('/periodos', [AcademicoController::class, 'crearPeriodo']);
                 Route::post('/cursos', [AcademicoController::class, 'crearCurso']);
                 Route::put('/cursos/{curso}', [AcademicoController::class, 'actualizarCurso']);

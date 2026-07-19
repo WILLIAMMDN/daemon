@@ -215,6 +215,11 @@ class TutorPortalService
             ]);
         $fechasActivas = $entregas->map(fn ($entrega): string => CarbonImmutable::parse($entrega->fecha_actividad)->toDateString())->unique();
         $progreso = $this->gamificacion->progreso((int) $alumno->experiencia);
+        $dominios = DB::table('dominios_objetivo as d')
+            ->join('objetivos_aprendizaje as o', 'o.id', '=', 'd.id_objetivo')
+            ->where('d.id_alumno', $alumno->id)
+            ->orderByDesc('d.calculado_at')
+            ->get(['o.codigo', 'o.descripcion', 'd.porcentaje', 'd.nivel_dominio', 'd.cantidad_evidencias']);
         $alcance = $this->ranking->alcanceDe($alumno);
         $membresia = MembresiaFamiliar::query()->where('alumno_id', $alumno->id)->first();
         $portalPagos = (string) config('daemon.familias.portal_pagos_url', '');
@@ -257,6 +262,13 @@ class TutorPortalService
                     'xp' => (int) $entrega->recompensa,
                     'fecha' => CarbonImmutable::parse($entrega->fecha_actividad)->toDateString(),
                 ])->values()->all(),
+            ],
+            'aprendizaje' => [
+                'objetivos_con_evidencia' => $dominios->count(),
+                'objetivos_dominados' => $dominios->where('nivel_dominio', 'dominado')->count(),
+                'promedio_dominio' => round((float) $dominios->avg('porcentaje'), 1),
+                'objetivos_recientes' => $dominios->take(5)->values()->all(),
+                'nota' => 'El dominio resume evidencias calificadas; no reemplaza la evaluación profesional del docente.',
             ],
             'bienestar_digital' => $this->bienestar->estadoPara($alumno),
             'membresia' => [

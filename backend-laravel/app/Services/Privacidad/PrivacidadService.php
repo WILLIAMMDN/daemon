@@ -74,7 +74,7 @@ class PrivacidadService
         return [
             'metadata' => [
                 'formato' => 'DAEMON-PRIVACY-EXPORT',
-                'version' => 1,
+                'version' => 2,
                 'generado_at' => now()->toIso8601String(),
                 'politica_version' => config('privacy.policy_version'),
             ],
@@ -88,13 +88,21 @@ class PrivacidadService
                 ->toArray(),
             'actividad' => [
                 'entregas' => $this->filas('entregas', 'id_alumno', $usuario->id, [
-                    'id', 'id_desafio', 'archivo_url', 'estado', 'calificacion', 'fecha_entrega', 'comentario_docente',
+                    'id', 'id_desafio', 'archivo_url', 'estado', 'calificacion', 'puntaje_academico', 'fecha_entrega', 'comentario_docente',
                 ]),
                 'canjes' => $this->filas('canjes', 'id_alumno', $usuario->id, [
                     'id', 'id_premio', 'fecha', 'estado', 'visto_por_alumno',
                 ]),
                 'respuestas_evaluacion' => $this->filas('respuestas_examen', 'alumno_id', $usuario->id, [
                     'id', 'examen_id', 'nivel', 'respuestas', 'puntaje', 'fecha_envio',
+                ]),
+                'resultados_academicos' => $this->filas('resultados_calificacion', 'id_alumno', $usuario->id, [
+                    'sourced_id', 'id_item_calificacion', 'intento', 'puntaje', 'puntaje_maximo', 'porcentaje',
+                    'estado', 'retroalimentacion', 'entregado_at', 'calificado_at',
+                ]),
+                'dominio_objetivos' => $this->filas('dominios_objetivo', 'id_alumno', $usuario->id, [
+                    'id_objetivo', 'porcentaje', 'nivel_dominio', 'cantidad_evidencias',
+                    'ultima_evidencia_at', 'calculado_at',
                 ]),
                 'insignias' => $this->filas('insignias_otorgadas', 'id_alumno', $usuario->id, [
                     'id', 'id_insignia', 'fecha',
