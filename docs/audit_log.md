@@ -56,3 +56,4 @@
 - [2026-07-19 18:48:46] chore(auth): update documentation for auth module
 - [2026-07-19 18:48:46] style(models): add minor comments to models module
 - [2026-07-19 18:48:46] ci(gamification): optimize logic in gamification module
+- [2026-07-19 18:48:47] style(api): update documentation for api module
