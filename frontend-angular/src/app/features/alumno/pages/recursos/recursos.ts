@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
@@ -15,11 +16,12 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { finalize } from 'rxjs';
 import { NzButtonModule } from 'ng-zorro-antd/button';
-import { Api } from '../../../../core/servicios/api';
+import { Api, ApiError } from '../../../../core/servicios/api';
 import { IllustrationSlot } from '../../../../shared/componentes/illustration-slot/illustration-slot';
 
 type EstadoCurso = 'notStarted' | 'inProgress' | 'completed';
 type FiltroCurso = 'all' | EstadoCurso;
+type TipoProblema = 'generic' | 'offline' | 'permission' | 'timeout';
 
 interface ProgresoLeccion {
   estado: EstadoCurso;
@@ -81,6 +83,12 @@ interface OpcionFiltro {
   count: number;
 }
 
+interface ProblemaCarga {
+  titulo: string;
+  detalle: string;
+  accion: 'retry' | 'home';
+}
+
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-recursos',
@@ -107,6 +115,10 @@ export class Recursos {
   readonly refrescando = signal(false);
   readonly actualizando = signal<number | null>(null);
   readonly error = signal('');
+  readonly errorAccion = signal('');
+  readonly feedback = signal('');
+  readonly tipoProblema = signal<TipoProblema>('generic');
+  readonly contenidoDesactualizado = signal(false);
   readonly filtro = signal<FiltroCurso>('all');
   readonly busqueda = signal('');
 
@@ -139,6 +151,43 @@ export class Recursos {
   readonly cursosEnProgreso = computed(() => this.cursosVista().filter((curso) => curso.estado === 'inProgress').length);
   readonly cursosCompletados = computed(() => this.cursosVista().filter((curso) => curso.estado === 'completed').length);
   readonly cursosPorIniciar = computed(() => this.cursosVista().filter((curso) => curso.estado === 'notStarted').length);
+  readonly problemaCarga = computed<ProblemaCarga>(() => {
+    const conservaDatos = Boolean(this.datos());
+
+    if (this.tipoProblema() === 'offline') {
+      return {
+        titulo: 'Sin conexión con DAEMON',
+        detalle: conservaDatos
+          ? 'Mostramos la última versión disponible. Cuando recuperes conexión, vuelve a actualizar.'
+          : 'Comprueba tu conexión y vuelve a intentarlo para abrir tus cursos.',
+        accion: 'retry',
+      };
+    }
+
+    if (this.tipoProblema() === 'permission') {
+      return {
+        titulo: 'Acceso no disponible',
+        detalle: 'Tu cuenta no tiene permiso para consultar esta ruta. Vuelve al inicio o comunícate con tu docente.',
+        accion: 'home',
+      };
+    }
+
+    if (this.tipoProblema() === 'timeout') {
+      return {
+        titulo: 'La conexión está tardando',
+        detalle: conservaDatos
+          ? 'Conservamos tus cursos visibles. Puedes continuar y actualizar nuevamente en unos momentos.'
+          : 'DAEMON tardó más de lo esperado. Inténtalo nuevamente en unos momentos.',
+        accion: 'retry',
+      };
+    }
+
+    return {
+      titulo: 'Ocurrió un problema',
+      detalle: this.error() || 'La ruta de aprendizaje no está disponible por el momento.',
+      accion: 'retry',
+    };
+  });
 
   constructor() {
     this.cargar();
@@ -149,6 +198,8 @@ export class Recursos {
     this.cargando.set(!conservaDatos);
     this.refrescando.set(conservaDatos);
     this.error.set('');
+    this.errorAccion.set('');
+    this.feedback.set('');
 
     this.api.get<AprendizajeResponse>('/alumno/aprendizaje', { fresh })
       .pipe(finalize(() => {
@@ -156,8 +207,16 @@ export class Recursos {
         this.refrescando.set(false);
       }))
       .subscribe({
-        next: (datos) => this.datos.set(datos),
-        error: () => this.error.set('No pudimos cargar tus cursos. Revisa tu conexión e inténtalo nuevamente.'),
+        next: (datos) => {
+          this.datos.set(datos);
+          this.contenidoDesactualizado.set(false);
+          this.tipoProblema.set('generic');
+        },
+        error: (problema: unknown) => {
+          this.tipoProblema.set(this.clasificarProblema(problema));
+          this.contenidoDesactualizado.set(conservaDatos);
+          this.error.set('No pudimos cargar tus cursos. Revisa tu conexión e inténtalo nuevamente.');
+        },
       });
   }
 
@@ -180,7 +239,8 @@ export class Recursos {
     }
 
     this.actualizando.set(leccion.id);
-    this.error.set('');
+    this.errorAccion.set('');
+    this.feedback.set('');
     this.api.put<ProgresoLeccion>(`/alumno/aprendizaje/lecciones/${leccion.id}/progreso`, {
       estado: 'completed',
       porcentaje: 100,
@@ -213,9 +273,14 @@ export class Recursos {
           nombre: 'lesson_completed',
           propiedades: { lesson_id: leccion.id, module: 'cursos' },
         }).subscribe({ error: () => undefined });
+        this.feedback.set(`La lección ${leccion.titulo} quedó completada y tu progreso ya está actualizado.`);
       },
-      error: () => this.error.set('No se pudo guardar el avance. Tu contenido permanece disponible.'),
+      error: () => this.errorAccion.set('No se pudo guardar el avance. Tu contenido permanece disponible y puedes volver a intentarlo desde la lección.'),
     });
+  }
+
+  cerrarErrorAccion(): void {
+    this.errorAccion.set('');
   }
 
   private construirCursoVista(curso: Curso): CursoVista {
@@ -270,5 +335,17 @@ export class Recursos {
       .replace(/[\u0300-\u036f]/g, '')
       .trim()
       .toLocaleLowerCase('es');
+  }
+
+  private clasificarProblema(problema: unknown): TipoProblema {
+    if (problema instanceof ApiError) {
+      return problema.kind === 'offline' ? 'offline' : 'timeout';
+    }
+
+    if (problema instanceof HttpErrorResponse && [401, 403].includes(problema.status)) {
+      return 'permission';
+    }
+
+    return 'generic';
   }
 }

@@ -28,15 +28,36 @@
   </header>
 
   @if (error() && datos()) {
-    <div class="course-alert" role="alert" aria-live="assertive">
+    <div class="course-alert" [attr.data-problem]="tipoProblema()" role="alert" aria-live="assertive">
       <div>
-        <strong>Ocurrió un problema</strong>
-        <p>{{ error() }}</p>
+        <strong>{{ problemaCarga().titulo }}</strong>
+        <p>{{ problemaCarga().detalle }}</p>
       </div>
-      <button nz-button nzType="default" type="button" (click)="cargar(true)">
-        <fa-icon [icon]="faRotateRight" aria-hidden="true"></fa-icon>
-        Reintentar
-      </button>
+      @if (problemaCarga().accion === 'home') {
+        <a nz-button nzType="default" routerLink="/alumno">Volver al inicio</a>
+      } @else {
+        <button nz-button nzType="default" type="button" (click)="cargar(true)">
+          <fa-icon [icon]="faRotateRight" aria-hidden="true"></fa-icon>
+          Reintentar
+        </button>
+      }
+    </div>
+  }
+
+  @if (errorAccion()) {
+    <div class="course-alert course-alert--action" role="alert" aria-live="assertive">
+      <div>
+        <strong>No guardamos el avance</strong>
+        <p>{{ errorAccion() }}</p>
+      </div>
+      <button nz-button nzType="default" type="button" (click)="cerrarErrorAccion()">Entendido</button>
+    </div>
+  }
+
+  @if (feedback()) {
+    <div class="course-success" role="status" aria-live="polite">
+      <fa-icon [icon]="faCheck" aria-hidden="true"></fa-icon>
+      <span>{{ feedback() }}</span>
     </div>
   }
 
@@ -59,18 +80,22 @@
       </div>
     </section>
   } @else if (!datos()) {
-    <section class="course-load-error" role="alert" aria-live="assertive">
+    <section class="course-load-error" [attr.data-problem]="tipoProblema()" role="alert" aria-live="assertive">
       <span class="course-load-error__icon" aria-hidden="true">
         <fa-icon [icon]="faBookOpen"></fa-icon>
       </span>
       <div>
-        <h2>No pudimos abrir tus cursos</h2>
-        <p>{{ error() || 'La ruta de aprendizaje no está disponible por el momento.' }}</p>
+        <h2>{{ problemaCarga().titulo }}</h2>
+        <p>{{ problemaCarga().detalle }}</p>
       </div>
-      <button nz-button nzType="primary" type="button" (click)="cargar(true)">
-        <fa-icon [icon]="faRotateRight" aria-hidden="true"></fa-icon>
-        Intentar nuevamente
-      </button>
+      @if (problemaCarga().accion === 'home') {
+        <a nz-button nzType="primary" routerLink="/alumno">Volver al inicio</a>
+      } @else {
+        <button nz-button nzType="primary" type="button" (click)="cargar(true)">
+          <fa-icon [icon]="faRotateRight" aria-hidden="true"></fa-icon>
+          Intentar nuevamente
+        </button>
+      }
     </section>
   } @else {
     <section class="course-toolbar" aria-label="Buscar y filtrar cursos">
@@ -101,10 +126,27 @@
         />
       </label>
 
+      <button
+        nz-button
+        nzType="default"
+        type="button"
+        class="course-refresh-action"
+        aria-label="Actualizar cursos"
+        [disabled]="refrescando()"
+        (click)="cargar(true)"
+      >
+        <fa-icon [icon]="faRotateRight" aria-hidden="true"></fa-icon>
+        <span>Actualizar</span>
+      </button>
+
       @if (refrescando()) {
         <span class="course-refresh" role="status">
           <span aria-hidden="true"></span>
           Actualizando
+        </span>
+      } @else if (contenidoDesactualizado()) {
+        <span class="course-stale" role="status">
+          Datos guardados
         </span>
       }
     </section>

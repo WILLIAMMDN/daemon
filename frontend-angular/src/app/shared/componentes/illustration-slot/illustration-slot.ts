@@ -6,7 +6,8 @@ export type IllustrationKind =
   | 'instructional'
   | 'reward'
   | 'empty-state'
-  | 'hero';
+  | 'hero'
+  | 'interactive';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -1,7 +1,8 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { of } from 'rxjs';
-import { Api } from '../../../../core/servicios/api';
+import { of, throwError } from 'rxjs';
+import { Api, ApiError } from '../../../../core/servicios/api';
 import { Recursos } from './recursos';
 
 const respuesta = {
@@ -85,6 +86,9 @@ describe('Recursos', () => {
     expect(element.querySelector('.course-summary-card')?.textContent).toContain('En progreso');
     expect(element.querySelector('.course-summary-card')?.textContent).toContain('Completados');
     expect(element.querySelectorAll('[role="progressbar"]')).toHaveLength(4);
+
+    element.querySelector<HTMLButtonElement>('.course-refresh-action')?.click();
+    expect(getMock).toHaveBeenLastCalledWith('/alumno/aprendizaje', { fresh: true });
   });
 
   it('filtra por estado y búsqueda sin inventar categorías del backend', () => {
@@ -125,6 +129,44 @@ describe('Recursos', () => {
     expect(element.querySelector('.course-summary-card')?.textContent).toContain('Aún no tienes cursos asignados');
   });
 
+  it('diferencia falta de conexión de un estado vacío académico', () => {
+    getMock.mockReturnValue(throwError(() => new ApiError('offline', 'Sin conexión')));
+    const fixture = TestBed.createComponent(Recursos);
+    fixture.detectChanges();
+    const element = fixture.nativeElement as HTMLElement;
+
+    expect(element.querySelector('.course-load-error')?.getAttribute('data-problem')).toBe('offline');
+    expect(element.querySelector('.course-load-error h2')?.textContent).toContain('Sin conexión con DAEMON');
+    expect(element.querySelector('.course-empty')).toBeNull();
+  });
+
+  it('ofrece una salida segura cuando el backend deniega acceso', () => {
+    getMock.mockReturnValue(throwError(() => new HttpErrorResponse({ status: 403 })));
+    const fixture = TestBed.createComponent(Recursos);
+    fixture.detectChanges();
+    const element = fixture.nativeElement as HTMLElement;
+
+    expect(element.querySelector('.course-load-error')?.getAttribute('data-problem')).toBe('permission');
+    expect(element.querySelector('.course-load-error h2')?.textContent).toContain('Acceso no disponible');
+    expect(element.querySelector<HTMLAnchorElement>('.course-load-error a')?.getAttribute('href')).toBe('/alumno');
+  });
+
+  it('conserva y etiqueta los datos anteriores cuando falla una actualización', () => {
+    getMock
+      .mockReturnValueOnce(of(respuesta))
+      .mockReturnValueOnce(throwError(() => new ApiError('timeout', 'Tiempo agotado')));
+    const fixture = TestBed.createComponent(Recursos);
+    fixture.detectChanges();
+
+    fixture.componentInstance.cargar(true);
+    fixture.detectChanges();
+    const element = fixture.nativeElement as HTMLElement;
+
+    expect(element.querySelectorAll('.course-card')).toHaveLength(3);
+    expect(element.querySelector('.course-alert')?.getAttribute('data-problem')).toBe('timeout');
+    expect(element.querySelector('.course-stale')?.textContent).toContain('Datos guardados');
+  });
+
   it('actualiza el progreso local y conserva telemetría permitida al completar', () => {
     const fixture = TestBed.createComponent(Recursos);
     fixture.detectChanges();
@@ -142,5 +184,22 @@ describe('Recursos', () => {
       nombre: 'lesson_completed',
       propiedades: { lesson_id: 111, module: 'cursos' },
     });
+    expect((fixture.nativeElement as HTMLElement).querySelector('.course-success')?.textContent)
+      .toContain('La lección Primer algoritmo quedó completada');
+  });
+
+  it('separa un fallo al guardar de los errores de carga y no ofrece un reintento engañoso', () => {
+    putMock.mockReturnValue(throwError(() => new ApiError('offline', 'Sin conexión')));
+    const fixture = TestBed.createComponent(Recursos);
+    fixture.detectChanges();
+    const leccion = fixture.componentInstance.cursosVista()[0].unidades[0].lecciones[0];
+
+    fixture.componentInstance.completar(leccion);
+    fixture.detectChanges();
+    const element = fixture.nativeElement as HTMLElement;
+
+    expect(element.querySelector('.course-alert--action')?.textContent).toContain('No guardamos el avance');
+    expect(element.querySelector('.course-alert--action')?.textContent).toContain('volver a intentarlo desde la lección');
+    expect(element.querySelector('.course-alert--action')?.textContent).not.toContain('Reintentar');
   });
 });

@@ -12,6 +12,8 @@
   --course-ink: var(--daemon-ink, #172033);
   --course-muted: var(--daemon-muted, #667085);
   --course-surface: var(--daemon-surface, #ffffff);
+  container-name: course-catalog;
+  container-type: inline-size;
   display: grid;
   gap: clamp(1rem, 2vw, 1.35rem);
   margin: 0 auto;
@@ -145,8 +147,8 @@
   margin-top: .2rem;
 }
 
-.course-alert button,
-.course-load-error button {
+.course-alert .ant-btn,
+.course-load-error .ant-btn {
   align-items: center;
   border-radius: 9px;
   display: inline-flex;
@@ -154,6 +156,35 @@
   font-weight: 700;
   gap: .5rem;
   min-height: 42px;
+}
+
+.course-alert[data-problem='offline'],
+.course-alert[data-problem='timeout'],
+.course-load-error[data-problem='offline'],
+.course-load-error[data-problem='timeout'] {
+  background: #fffaf0;
+  border-color: #f7d58a;
+  color: #8a4b08;
+}
+
+.course-alert[data-problem='offline'] p,
+.course-alert[data-problem='timeout'] p,
+.course-load-error[data-problem='offline'] p,
+.course-load-error[data-problem='timeout'] p {
+  color: #9a5a13;
+}
+
+.course-success {
+  align-items: center;
+  background: #f0fff6;
+  border: 1px solid #a7e2bf;
+  border-radius: 14px;
+  color: #176b3a;
+  display: flex;
+  font-size: .84rem;
+  font-weight: 700;
+  gap: .6rem;
+  padding: .8rem 1rem;
 }
 
 .course-load-error {
@@ -313,6 +344,16 @@
   cursor: pointer;
 }
 
+.course-refresh-action.ant-btn {
+  align-items: center;
+  border-radius: 10px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  font-weight: 750;
+  gap: .45rem;
+  min-height: 42px;
+}
+
 .course-refresh {
   align-items: center;
   color: #526174;
@@ -329,6 +370,20 @@
   border-radius: 50%;
   height: 8px;
   width: 8px;
+}
+
+.course-stale {
+  align-items: center;
+  background: #fff8e8;
+  border: 1px solid #f2d38c;
+  border-radius: 999px;
+  color: #83510a;
+  display: inline-flex;
+  flex: 0 0 auto;
+  font-size: .7rem;
+  font-weight: 800;
+  min-height: 30px;
+  padding: .25rem .65rem;
 }
 
 .course-layout {
@@ -1060,6 +1115,46 @@ input:focus-visible {
   50% { opacity: 1; }
 }
 
+/*
+ * El sidebar puede reducir el área útil sin cambiar el viewport. Estas reglas
+ * responden al ancho real del catálogo y evitan depender de nombres de
+ * dispositivo o de duplicar el DOM para una variante compacta.
+ */
+@container course-catalog (max-width: 760px) {
+  .course-hero {
+    grid-template-columns: minmax(0, 1fr) minmax(180px, 240px);
+  }
+
+  .course-toolbar {
+    align-items: stretch;
+    flex-wrap: wrap;
+  }
+
+  .course-filter-list {
+    flex: 1 1 100%;
+    order: 2;
+  }
+
+  .course-search {
+    flex: 1 1 260px;
+    order: 1;
+  }
+
+  .course-refresh,
+  .course-refresh-action,
+  .course-stale {
+    order: 1;
+  }
+
+  .course-loading__main {
+    grid-template-columns: 1fr;
+  }
+
+  .course-empty {
+    grid-template-columns: minmax(180px, .75fr) minmax(0, 1fr);
+  }
+}
+
 @media (max-width: 1120px) {
   .course-layout,
   .course-loading__layout {
@@ -1097,6 +1192,10 @@ input:focus-visible {
   }
 
   .course-refresh {
+    order: 1;
+  }
+
+  .course-refresh-action {
     order: 1;
   }
 
@@ -1154,12 +1253,25 @@ input:focus-visible {
   }
 
   .course-search {
-    flex-basis: 100%;
+    flex: 1 1 230px;
     min-width: 0;
   }
 
   .course-search input {
     font-size: 16px;
+  }
+
+  .course-refresh-action.ant-btn {
+    height: 42px;
+    justify-content: center;
+    margin-left: 0;
+    min-width: 42px;
+    padding-inline: 0;
+    width: 42px;
+  }
+
+  .course-refresh-action span {
+    display: none;
   }
 
   .course-filter-list {
@@ -1183,8 +1295,8 @@ input:focus-visible {
     flex-direction: column;
   }
 
-  .course-alert button,
-  .course-load-error button {
+  .course-alert .ant-btn,
+  .course-load-error .ant-btn {
     justify-content: center;
     width: 100%;
   }

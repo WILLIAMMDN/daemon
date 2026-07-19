@@ -38,14 +38,23 @@ la misma plantilla. El módulo debe:
 
 ### Stack y límites
 
-- Angular 21 con componentes standalone y signals.
-- NG-ZORRO se conserva para acciones fiables mediante `NzButtonModule`.
-- Font Awesome ya es la iconografía registrada en el portal; no se incorporó
-  otra dependencia de iconos.
-- El nuevo slot de ilustración vive en `shared` y no importa `core` ni
-  `features`.
-- Se usan los tokens globales de DAEMON: canvas claro, superficies blancas,
-  bordes suaves, azul para acción/progreso y ámbar sólo para DAEMONS.
+| Elemento auditado | Estado comprobado | Decisión del piloto |
+| --- | --- | --- |
+| Angular | `21.2.18`, standalone, signals y lazy routes | conservar `OnPush`, signals y la ruta lazy existente |
+| Angular CDK | `21.0.0` | no requerido: no hay overlay, virtualización ni cambio de DOM por breakpoint |
+| NG-ZORRO | `21.3.2` | usar `NzButtonModule`; no recrear el comportamiento de botones |
+| Iconografía | Font Awesome ya registrado en el portal | reutilizar sólo los iconos usados y no añadir otra familia |
+| Tailwind | `3.4.19` disponible | el piloto usa SCSS encapsulado para estados y composición específicos |
+| Tokens | variables `--daemon-*` en `styles.scss` | mapear color, superficie, borde y texto; no cambiar estilos globales |
+| Caché | `Api` con GET cacheado, deduplicación y SWR | no crear una segunda caché en la feature |
+| Empty state compartido | `app-estado-vacio`, útil para mensajes simples | no duplicarlo; `IllustrationSlot` resuelve únicamente el contrato visual opcional |
+| Assets | PNG/Rive existentes en `public`; no hay portadas de curso | reutilizar dos PNG aprobados y reservar portadas futuras con fallback |
+| Duplicación detectada | varias pantallas poseen vacíos simples, pero ninguna reserva un asset reemplazable | extraer sólo `daemon-illustration-slot`, no un page shell anticipado |
+
+El nuevo slot vive en `shared` y no importa `core` ni `features`. No se añadió
+ninguna dependencia. Se usan los tokens globales de DAEMON: canvas claro,
+superficies blancas, bordes suaves, azul para acción/progreso y ámbar sólo para
+DAEMONS.
 
 ### Decisiones para evitar funciones ficticias
 
@@ -62,16 +71,16 @@ la misma plantilla. El módulo debe:
 
 La implementación toma principios, no copias literales:
 
-| Fuente oficial | Principio aplicado |
-| --- | --- |
-| Moodle Course overview y Courses block | progreso, búsqueda y acceso rápido a cursos inscritos |
-| Canvas LMS guides | jerarquía clara entre curso, contenido y estado |
-| Khan Academy mastery | progreso comprensible por unidad/curso |
-| Duolingo course path | continuidad visible y siguiente acción clara |
-| Atlassian Empty State | explicar qué ocurre y ofrecer una acción útil |
-| Carbon Empty States | distinguir sin datos, sin resultados y error |
-| Fluent 2 Layout | una sola interfaz que redistribuye contenido al reducirse |
-| NG-ZORRO Empty/Input/Button | controles accesibles y personalizables bajo identidad DAEMON |
+| Referencia | Patrón estudiado | Problema que resuelve | Adaptación para DAEMON | Riesgo de aplicarlo mal |
+| --- | --- | --- | --- | --- |
+| Moodle Course overview / Courses block | cursos inscritos, búsqueda y progreso | localizar y retomar aprendizaje | filtros por estado real y avance visible | copiar controles que la API de DAEMON no soporta |
+| Canvas LMS guides | jerarquía curso-contenido-estado | navegar estructuras académicas profundas | curso, unidades y lecciones con disclosure progresivo | convertir la pantalla infantil en una administración densa |
+| Khan Academy mastery | progreso por unidad/curso | explicar dominio y continuidad | resumen global y porcentaje por curso | presentar el porcentaje como nota académica |
+| Duolingo course path | siguiente acción y continuidad | evitar que el estudiante se pierda | CTAs reales hacia lecciones, Misiones y Herramientas | gamificar sin relación con aprendizaje real |
+| Atlassian Empty State | explicación y próximo paso | orientar cuando todavía no hay datos | empty de asignación con actualizar y abrir Misiones | usar la misma explicación para error y vacío |
+| Carbon Empty States | taxonomía de vacíos y errores | distinguir causa y recuperación | separar sin asignaciones, sin coincidencias, offline y error | convertir cada ausencia en una ilustración innecesaria |
+| Fluent 2 Layout | reflow de una sola interfaz | conservar contenido al reducir ancho | aside debajo, filtros táctiles y tarjetas apiladas | duplicar DOM móvil y desktop |
+| NG-ZORRO | controles y estados accesibles | consistencia de interacción Angular | botones fiables con identidad visual DAEMON | dejar apariencia administrativa predeterminada |
 
 Referencias:
 
@@ -129,7 +138,7 @@ Entradas:
 | --- | --- |
 | `src` | URL opcional del asset actual |
 | `alt` | texto alternativo; vacío cuando la imagen es decorativa |
-| `kind` | `decorative`, `contextual`, `instructional`, `reward`, `empty-state` o `hero` |
+| `kind` | `decorative`, `contextual`, `instructional`, `reward`, `empty-state`, `hero` o `interactive` |
 | `aspectRatio` | reserva proporción y evita saltos de layout |
 | `assetName` | contrato de nombre para reemplazo futuro |
 | `eager` | prioriza sólo ilustraciones por encima del pliegue |
@@ -144,6 +153,9 @@ Comportamiento:
 - tarjetas y estados secundarios usan carga diferida;
 - el espacio no colapsa, por lo que un ilustrador puede sustituir el asset sin
   rediseñar la página.
+
+El valor semántico `none` se expresa omitiendo el componente; así no se crea un
+wrapper vacío cuando una región no necesita ilustración.
 
 ## 6. Contrato de assets pendientes
 
@@ -219,6 +231,30 @@ nombres de destino quedan registrados en el DOM mediante `data-asset-name`.
 - Mensaje bloqueante claro y botón para intentar nuevamente.
 - No se muestra simultáneamente como si fuera un estado vacío académico.
 
+### Sin conexión, timeout y acceso denegado
+
+- `ApiError('offline')` presenta “Sin conexión con DAEMON” y una recuperación
+  real; nunca se confunde con ausencia de asignaciones.
+- `ApiError('timeout')` explica que la conexión está tardando.
+- HTTP `401/403` presenta “Acceso no disponible” y una salida segura al inicio,
+  en vez de un reintento infinito.
+
+### Datos conservados o parciales
+
+- Si falla una actualización y ya existían cursos, se conservan las tarjetas,
+  aparece la explicación correspondiente y se etiqueta “Datos guardados”.
+- Un curso sin unidades o una unidad sin lecciones conserva su estructura y
+  muestra el mensaje contextual en esa región, sin ocultar el resto del
+  catálogo.
+
+### Envío y confirmación
+
+- Mientras se guarda una lección, el control muestra “Guardando…” y bloquea
+  envíos duplicados.
+- Al completarse, un `role=status` confirma la actualización del progreso.
+- Si falla el guardado, se muestra un error de acción independiente; no ofrece
+  un botón “Reintentar” que sólo recargaría el catálogo.
+
 ## 8. Responsividad
 
 ### Escritorio
@@ -233,7 +269,7 @@ nombres de destino quedan registrados en el DOM mediante `data-asset-name`.
 - El resumen deja de ser sticky y se convierte en una grilla de apoyo.
 - Buscador y filtros se redistribuyen sin reducir sus áreas táctiles.
 
-### Móvil 390 x 844
+### Móvil 360–390 px
 
 - Hero en una sola columna; la ilustración se conserva debajo del texto.
 - Buscador ocupa todo el ancho.
@@ -244,6 +280,10 @@ nombres de destino quedan registrados en el DOM mediante `data-asset-name`.
 - El ancho real de la página permanece dentro del viewport; sólo la lista de
   filtros tiene desplazamiento horizontal intencional.
 - La navegación inferior del portal sigue siendo dueña de la zona fija.
+
+La adaptación también responde al ancho real del contenedor. Esto evita que
+el catálogo se comprima cuando el sidebar permanece expandido en una tableta,
+aunque el viewport por sí solo todavía sea ancho.
 
 ## 9. Accesibilidad
 
@@ -287,13 +327,13 @@ npm run build
 
 Resultado del piloto antes de publicar:
 
-- pruebas específicas: 2 suites y 6 casos aprobados;
-- suite frontend completa: 13 suites y 45 casos aprobados;
+- pruebas específicas: 2 suites y 10 casos aprobados;
+- suite frontend completa: 13 suites y 49 casos aprobados;
 - suite backend completa: 134 casos y 475 aserciones aprobados;
 - arquitectura `shared/core/features`: aprobada;
 - build de producción: aprobado;
 - bundle inicial: 908.25 kB, bajo el presupuesto de advertencia de 1 MB;
-- chunk lazy de Cursos: 45.81 kB sin comprimir, 9.82 kB estimado transferido;
+- chunk lazy de Cursos: 51.42 kB sin comprimir, 10.82 kB estimado transferido;
 - no se agregaron advertencias nuevas; permanecen cuatro advertencias Sass
   preexistentes por `@import` en `src/styles.scss`.
 - Jest conserva una advertencia preexistente de `ts-jest` sobre
@@ -312,24 +352,41 @@ Comprobaciones:
 
 - 1440 x 900 con sidebar colapsado: aprobado;
 - 1440 x 900 con sidebar expandido: aprobado;
+- 1024 x 768 con sidebar expandido: aprobado; el catálogo responde al ancho
+  disponible y el topbar oculta sólo texto secundario dentro de su propio
+  componente;
 - 390 x 844 con header y bottom navigation reales: aprobado;
+- 360 x 800 con header y bottom navigation reales: aprobado;
 - sin overflow horizontal global: aprobado;
 - carrusel táctil de filtros: aprobado y sin scrollbar visible;
 - estado sin resultados: aprobado;
+- estado sin asignaciones e ilustración reservada: aprobado;
+- error de conexión con datos previos conservados: aprobado;
+- acceso denegado con salida segura: aprobado;
+- confirmación de lección guardada mediante región live: aprobado;
 - DOM semántico y nombres accesibles: aprobado;
 - consola de Cursos después de cargar el fixture: sin errores del módulo.
 
 El fixture incompleto produjo errores del dashboard antes de navegar a Cursos;
-no corresponden al módulo ni al código publicado. Se documenta para no
-confundirlos con la validación de Cursos.
+no corresponden al módulo ni al código publicado. Además, el dashboard
+aprobado conserva un overflow horizontal propio a 1024 px provocado por su
+hero y sus tarjetas. No se corrigió dentro de este piloto porque el objetivo
+protege expresamente esa pantalla; el catálogo de Cursos sí permanece dentro
+del viewport en el mismo tamaño.
 
 ## 13. Hallazgo del entorno local
 
-La cuenta documentada `jose123` no autenticó con la contraseña de prueba durante
-este QA y el backend respondió “Credenciales incorrectas”. No se modificó la
-cuenta ni la base de datos. Este hallazgo es independiente del rediseño y debe
-diagnosticarse verificando la fila canónica en `usuarios`, el `password_hash` y
-qué base PostgreSQL está usando el proceso local, sin sobrescribir producción.
+El frontend del PR se sirve en `http://localhost:4300`; el puerto `4200`
+pertenece al worktree paralelo de Antigravity y no contiene necesariamente este
+piloto. El backend real de este worktree responde en
+`http://127.0.0.1:8000/api/v1`.
+
+La cuenta documentada `jose123` fue comprobada mediante `POST
+/api/v1/auth/login`: HTTP 200, usuario 41 y rol `alumno`, sin modificar cuenta,
+contraseña ni datos de producción. La automatización embebida de QA quedó en
+“Ingresando…”, aunque la API respondió correctamente; por eso este último punto
+se conserva como limitación del navegador automatizado y no como fallo de la
+cuenta o del endpoint.
 
 ## 14. Archivos de implementación
 
@@ -338,6 +395,7 @@ frontend-angular/src/app/features/alumno/pages/recursos/recursos.ts
 frontend-angular/src/app/features/alumno/pages/recursos/recursos.html
 frontend-angular/src/app/features/alumno/pages/recursos/recursos.scss
 frontend-angular/src/app/features/alumno/pages/recursos/recursos.spec.ts
+frontend-angular/src/app/core/layouts/topbar-alumno/topbar-alumno.scss
 frontend-angular/src/app/shared/componentes/illustration-slot/illustration-slot.ts
 frontend-angular/src/app/shared/componentes/illustration-slot/illustration-slot.html
 frontend-angular/src/app/shared/componentes/illustration-slot/illustration-slot.scss
@@ -358,3 +416,19 @@ frontend-angular/src/app/shared/componentes/illustration-slot/illustration-slot.
 El cambio se revierte eliminando el componente compartido de ilustración y
 restaurando los cuatro archivos del módulo Cursos. No requiere migraciones,
 cambios de variables de entorno ni reversión de datos.
+
+## 17. Matriz de cierre del objetivo
+
+| Requisito aplicable al piloto Cursos | Evidencia autoritativa | Estado |
+| --- | --- | --- |
+| Dashboard principal intacto | el commit no contiene archivos de `panel-alumno`, layout, sidebar ni estilos globales | Cumplido |
+| Captura usada como referencia, no como plantilla universal | sólo se migró el arquetipo A `/alumno/recursos`; no se alteraron otros módulos | Cumplido |
+| Estructura de catálogo con contenido y aside | `recursos.html` separa hero, toolbar, main content, discovery y aside | Cumplido |
+| Datos y acciones reales | endpoints `/alumno/aprendizaje` y progreso existentes; sin favoritos, períodos ni XP ficticio | Cumplido |
+| Espacios permanentes y sustituibles para ilustraciones | `daemon-illustration-slot`, `aspectRatio`, `assetName`, fallback y carga priorizada/diferida | Cumplido |
+| Ausencia de asset sin imagen rota | prueba de error de imagen y fallback SVG | Cumplido |
+| Estados remotos completos aplicables | loading, success, empty, filtered-empty, error, offline, permission, refreshing, stale, partial, submitting y success-feedback | Cumplido |
+| Mobile-first y sin pérdida funcional | QA 390 x 844; filtros táctiles, aside reubicado, lecciones y acciones disponibles | Cumplido |
+| Accesibilidad más allá del color | landmarks, jerarquía, labels, estados live, focus, progressbars y reduced motion | Cumplido |
+| Sin dependencias ni reglas de negocio nuevas | `package.json` y backend sin cambios; cálculos limitados a presentación de progreso ya entregado | Cumplido |
+| Arquitectura y calidad | check de límites, contrato visual, Jest, build, Laravel y CI del PR | Cumplido tras repetir los gates finales |
