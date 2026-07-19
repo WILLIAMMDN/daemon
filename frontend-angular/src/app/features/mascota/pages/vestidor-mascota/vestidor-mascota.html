@@ -1,0 +1,168 @@
+<main class="companion-page">
+  <header class="companion-hero">
+    <div class="hero-icon" aria-hidden="true"><fa-icon [icon]="iconos.criatura" /></div>
+    <div class="hero-copy">
+      <span class="page-kicker"><fa-icon [icon]="iconos.brillo" /> Tu compañero DAEMON</span>
+      <h1>Mi criatura</h1>
+      <p>Combina skins y accesorios que desbloqueas con tus DAEMONS. Tu XP y tu nivel siempre se conservan.</p>
+    </div>
+    <div class="hero-balance" aria-label="Saldo disponible">
+      <span>Saldo</span>
+      <strong><app-moneda-daemon [cantidad]="estado()?.saldo ?? 0" [size]="25" /></strong>
+      <a routerLink="/alumno/tienda">Ir a la tienda <fa-icon [icon]="iconos.flecha" /></a>
+    </div>
+  </header>
+
+  @if (mensaje()) {
+    <div class="notice notice--success" role="status"><fa-icon [icon]="iconos.check" /> {{ mensaje() }}</div>
+  }
+  @if (error()) {
+    <div class="notice notice--error" role="alert">
+      <span>{{ error() }}</span>
+      <button type="button" (click)="cargar(true)"><fa-icon [icon]="iconos.actualizar" /> Reintentar</button>
+    </div>
+  }
+
+  @if (cargando()) {
+    <section class="loading-card"><app-cargando texto="Preparando tu criatura..."></app-cargando></section>
+  } @else if (estado(); as datos) {
+    <section class="dresser-grid">
+      <article class="preview-card">
+        <header class="card-heading">
+          <div>
+            <span>Vista en vivo</span>
+            <h2>{{ datos.mascota.nombre }}</h2>
+          </div>
+          <button class="icon-button" type="button" title="Actualizar" aria-label="Actualizar criatura" (click)="cargar(true)" [disabled]="guardando()">
+            <fa-icon [icon]="iconos.actualizar" />
+          </button>
+        </header>
+
+        <div
+          class="creature-stage"
+          [style.aspect-ratio]="datos.mascota.especie.lienzo.ancho + ' / ' + datos.mascota.especie.lienzo.alto"
+          [attr.aria-label]="'Vista previa de ' + datos.mascota.nombre"
+        >
+          <div class="stage-orbit stage-orbit--one" aria-hidden="true"></div>
+          <div class="stage-orbit stage-orbit--two" aria-hidden="true"></div>
+          @for (capa of capasVista(); track capa.id) {
+            @if (!capasInvalidas().has(capa.id)) {
+              <img class="creature-layer" [src]="capa.asset" [alt]="capa.tipo === 'base' ? capa.alt : ''" (error)="marcarCapaInvalida(capa.id)">
+            }
+          }
+          @if (capasInvalidas().has('base-' + datos.mascota.especie.codigo)) {
+            <div class="missing-creature"><fa-icon [icon]="iconos.criatura" /><span>Asset base pendiente</span></div>
+          }
+          @if (seleccionado() && !seleccionado()?.equipado) {
+            <span class="preview-pill"><fa-icon [icon]="iconos.varita" /> Vista previa</span>
+          }
+        </div>
+
+        <div class="identity-controls">
+          <label>
+            <span>Nombre</span>
+            <div class="input-action">
+              <input [(ngModel)]="nombreBorrador" maxlength="30" autocomplete="off" aria-label="Nombre de la criatura" (keyup.enter)="guardarNombre()">
+              <button type="button" (click)="guardarNombre()" [disabled]="guardando() || !nombreBorrador.trim()">Guardar</button>
+            </div>
+          </label>
+          <label>
+            <span>Especie</span>
+            <select #especieSelect [value]="datos.mascota.especie.id" (change)="cambiarEspecie(+especieSelect.value)" [disabled]="guardando()">
+              @for (especie of datos.especies; track especie.id) {
+                <option [value]="especie.id">{{ especie.nombre }}</option>
+              }
+            </select>
+          </label>
+        </div>
+
+        <dl class="collection-stats">
+          <div><dt>En tu colección</dt><dd>{{ datos.resumen.poseidos }}</dd></div>
+          <div><dt>Equipados</dt><dd>{{ datos.resumen.equipados }}</dd></div>
+          <div><dt>Por descubrir</dt><dd>{{ datos.resumen.disponibles }}</dd></div>
+        </dl>
+      </article>
+
+      <article class="wardrobe-card">
+        <header class="card-heading wardrobe-heading">
+          <div>
+            <span>Inventario</span>
+            <h2>Construye tu estilo</h2>
+          </div>
+          <a class="store-link" routerLink="/alumno/tienda"><fa-icon [icon]="iconos.tienda" /> Tienda</a>
+        </header>
+
+        <nav class="slot-tabs" aria-label="Filtrar accesorios">
+          <button type="button" [class.active]="slotActivo() === 'todos'" [attr.aria-pressed]="slotActivo() === 'todos'" (click)="filtrar('todos')">Todo</button>
+          @for (slot of datos.slots; track slot.codigo) {
+            <button type="button" [class.active]="slotActivo() === slot.codigo" [attr.aria-pressed]="slotActivo() === slot.codigo" (click)="filtrar(slot.codigo)">{{ slot.etiqueta }}</button>
+          }
+        </nav>
+
+        @if (cosmeticosPoseidos().length) {
+          <div class="inventory-grid">
+            @for (item of cosmeticosPoseidos(); track item.id) {
+              <button
+                type="button"
+                class="inventory-item"
+                [class.selected]="seleccionId() === item.id"
+                [class.equipped]="item.equipado"
+                [class.incompatible]="!item.compatible"
+                [attr.aria-disabled]="!item.compatible"
+                [attr.aria-pressed]="seleccionId() === item.id"
+                [attr.aria-label]="item.nombre + ', ' + (item.compatible ? item.slot + ', ' + item.rareza : 'para otra especie') + (item.equipado ? ', puesto' : '')"
+                (click)="seleccionar(item)"
+              >
+                <span class="item-visual"><img [src]="item.asset_miniatura" alt="" loading="lazy"></span>
+                <span class="item-copy">
+                  <strong>{{ item.nombre }}</strong>
+                  <small>{{ item.compatible ? item.slot + ' · ' + item.rareza : 'Para otra especie' }}</small>
+                </span>
+                @if (item.equipado) { <span class="equipped-badge"><fa-icon [icon]="iconos.check" /> Puesto</span> }
+              </button>
+            }
+          </div>
+        } @else {
+          <div class="empty-inventory">
+            <span><fa-icon [icon]="iconos.ropa" /></span>
+            <h3>{{ slotActivo() === 'todos' ? 'Tu colección está lista para crecer' : 'Aún no tienes piezas en esta categoría' }}</h3>
+            <p>Completa retos, gana DAEMONS y desbloquea accesorios en la tienda.</p>
+            <a routerLink="/alumno/tienda"><fa-icon [icon]="iconos.tienda" /> Explorar accesorios</a>
+          </div>
+        }
+
+        @if (seleccionado(); as item) {
+          <footer class="selection-bar">
+            <div>
+              <span class="rarity-dot" [attr.data-rarity]="item.rareza"></span>
+              <p><small>{{ item.slot }}</small><strong>{{ item.nombre }}</strong></p>
+            </div>
+            @if (item.equipado) {
+              <button class="secondary-action" type="button" (click)="quitarSeleccion()" [disabled]="guardando()">Quitar</button>
+            } @else {
+              <button class="primary-action" type="button" (click)="equiparSeleccion()" [disabled]="guardando()">
+                <fa-icon [icon]="iconos.varita" /> {{ guardando() ? 'Guardando...' : 'Usar accesorio' }}
+              </button>
+            }
+          </footer>
+        } @else {
+          <p class="selection-hint"><fa-icon [icon]="iconos.varita" /> Toca una pieza para verla antes de equiparla.</p>
+        }
+      </article>
+    </section>
+
+    @if (cosmeticosTienda().length) {
+      <section class="discover-section">
+        <header><div><span>Nuevos looks</span><h2>Accesorios que puedes desbloquear</h2></div><a routerLink="/alumno/tienda">Ver catálogo completo <fa-icon [icon]="iconos.flecha" /></a></header>
+        <div class="discover-row">
+          @for (item of cosmeticosTienda().slice(0, 4); track item.id) {
+            <article>
+              <img [src]="item.asset_miniatura" [alt]="item.nombre" loading="lazy">
+              <div><span>{{ item.rareza }}</span><h3>{{ item.nombre }}</h3><app-moneda-daemon [cantidad]="item.tienda?.precio ?? 0" [size]="18" /></div>
+            </article>
+          }
+        </div>
+      </section>
+    }
+  }
+</main>

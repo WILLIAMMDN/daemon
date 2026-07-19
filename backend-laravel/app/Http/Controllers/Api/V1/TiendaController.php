@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Enums\MascotaRareza;
+use App\Enums\MascotaSlot;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Tienda\PremioStoreRequest;
 use App\Http\Requests\Api\V1\Tienda\PremioUpdateRequest;
 use App\Models\Canje;
+use App\Models\EspecieMascota;
+use App\Models\InventarioMascota;
 use App\Models\Premio;
 use App\Services\Academico\AcademicScopeService;
 use App\Services\Archivo\ArchivoUrlService;
@@ -25,13 +29,25 @@ class TiendaController extends Controller
 
     public function index(Request $request)
     {
+        $poseidos = InventarioMascota::where('id_alumno', $request->user()->id)->pluck('id_cosmetico');
+
         return [
             'saldo' => $request->user()->tokens,
-            'premios' => Premio::where('stock', '>', 0)
+            'premios' => Premio::with('cosmetico.especies')
+                ->where('stock', '>', 0)
+                ->where(function ($query) {
+                    $query->where('tipo_entrega', '!=', 'cosmetico')
+                        ->orWhereHas('cosmetico', fn ($cosmeticos) => $cosmeticos->where('activo', true));
+                })
                 ->whereIn('categoria', ['GENERAL', $request->user()->nivel])
                 ->orderBy('precio')
                 ->get()
-                ->map(fn (Premio $premio) => $this->premioConUrls($premio)),
+                ->map(function (Premio $premio) use ($poseidos) {
+                    return [
+                        ...$this->premioConUrls($premio),
+                        'ya_posee' => $premio->cosmetico ? $poseidos->contains($premio->cosmetico->id) : false,
+                    ];
+                }),
         ];
     }
 
@@ -54,7 +70,7 @@ class TiendaController extends Controller
 
     public function administrar(Request $request)
     {
-        $premios = Premio::query();
+        $premios = Premio::with('cosmetico.especies');
 
         if ($busqueda = trim((string) $request->query('q', ''))) {
             $busquedaLower = mb_strtolower($busqueda);
@@ -108,6 +124,15 @@ class TiendaController extends Controller
                 'estado' => $request->query('estado'),
                 'id_alumno' => $request->query('id_alumno'),
             ],
+            'mascota' => [
+                'especies' => EspecieMascota::orderBy('orden')->orderBy('nombre')->get(),
+                'slots' => collect(MascotaSlot::cases())->map(fn (MascotaSlot $slot) => [
+                    'codigo' => $slot->value,
+                    'etiqueta' => $slot->etiqueta(),
+                    'orden_sugerido' => $slot->ordenSugerido(),
+                ]),
+                'rarezas' => MascotaRareza::values(),
+            ],
         ];
     }
 
@@ -138,10 +163,19 @@ class TiendaController extends Controller
 
     private function premioConUrls(Premio $premio): array
     {
-        return [
+        $datos = [
             ...$premio->toArray(),
             'imagen' => $this->archivos->url($premio->imagen),
         ];
+
+        if ($premio->cosmetico) {
+            $datos['cosmetico'] = [
+                ...$premio->cosmetico->only(['id', 'codigo', 'nombre', 'slot', 'rareza', 'asset_capa', 'asset_miniatura', 'orden_capa', 'activo']),
+                'especies' => $premio->cosmetico->especies->pluck('id')->values(),
+            ];
+        }
+
+        return $datos;
     }
 
     private function conImagen(object $registro): object

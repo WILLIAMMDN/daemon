@@ -123,6 +123,17 @@ describe('Api Service', () => {
     httpMock.expectOne(`${environment.apiUrl}/ranking`).flush({ alumnos: [] });
   });
 
+  it('should invalidate the companion inventory after a store purchase', () => {
+    service.get('/mascota').subscribe();
+    httpMock.expectOne(`${environment.apiUrl}/mascota`).flush({ resumen: { poseidos: 0 } });
+
+    service.post('/tienda/canjear/9', {}).subscribe();
+    httpMock.expectOne(`${environment.apiUrl}/tienda/canjear/9`).flush({ cosmetico: { id: 4 } });
+
+    service.get('/mascota').subscribe();
+    httpMock.expectOne(`${environment.apiUrl}/mascota`).flush({ resumen: { poseidos: 1 } });
+  });
+
   it('should clear every cached response when the authenticated session changes', () => {
     service.get('/alumno/panel').subscribe();
     httpMock.expectOne(`${environment.apiUrl}/alumno/panel`).flush({ experiencia: 100 });

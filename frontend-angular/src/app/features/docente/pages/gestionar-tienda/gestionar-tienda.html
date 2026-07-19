@@ -25,6 +25,23 @@
       <app-cargando texto="Cargando datos de la tienda..."></app-cargando>
     </div>
   } @else {
+    @if (esAdmin()) {
+      <section class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 md:p-6">
+        <header class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+          <div><span class="text-xs font-bold uppercase tracking-wider text-violet-600">Sistema de criaturas</span><h2 class="mt-1 text-lg font-extrabold text-slate-900">Especies base</h2><p class="mt-1 text-xs text-slate-500">Publica el lienzo base antes de asociar skins y accesorios.</p></div>
+          <button nz-button nzType="default" type="button" (click)="abrirEspecie()" class="!border-violet-200 !text-violet-700 !font-bold">Nueva criatura</button>
+        </header>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          @for (especie of configuracionMascota().especies; track especie.id) {
+            <button type="button" (click)="abrirEspecie(especie)" class="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3 text-left hover:border-violet-300 hover:bg-violet-50 transition-colors">
+              <span class="w-14 h-14 rounded-xl bg-white border border-slate-200 overflow-hidden shrink-0"><img [src]="asset(especie.asset_miniatura || especie.asset_base)" [alt]="especie.nombre" class="w-full h-full object-contain"></span>
+              <span class="min-w-0 flex flex-col"><strong class="text-sm text-slate-900 truncate">{{ especie.nombre }}</strong><small class="text-[10px] font-bold text-slate-500">{{ especie.codigo }} · {{ especie.lienzo_ancho }}×{{ especie.lienzo_alto }}</small><small class="mt-1 text-[10px] font-bold" [class.text-green-600]="especie.activo" [class.text-slate-400]="!especie.activo">{{ especie.activo ? 'ACTIVA' : 'OCULTA' }}</small></span>
+            </button>
+          }
+        </div>
+      </section>
+    }
+
     <!-- Tablas Split -->
     <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
       
@@ -132,7 +149,7 @@
 </main>
 
 <!-- Modal de Creación -->
-<nz-modal [(nzVisible)]="modalCrearVisible" nzTitle="Crear nuevo premio" (nzOnCancel)="cerrarCrear()" (nzOnOk)="crear()" [nzOkLoading]="guardando()" [nzOkDisabled]="!nuevo.nombre.trim()" nzOkText="Crear premio" nzCancelText="Cancelar" nzCentered nzWidth="600px">
+<nz-modal [(nzVisible)]="modalCrearVisible" nzTitle="Crear nuevo premio" (nzOnCancel)="cerrarCrear()" (nzOnOk)="crear()" [nzOkLoading]="guardando()" [nzOkDisabled]="!nuevo.nombre.trim()" nzOkText="Crear premio" nzCancelText="Cancelar" nzCentered nzWidth="760px">
   <ng-container *nzModalContent>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
       <label class="flex flex-col gap-1.5 md:col-span-2">
@@ -169,8 +186,53 @@
                 class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all cursor-pointer">
           <option value="fisico">Físico</option>
           <option value="digital">Digital</option>
+          <option value="cosmetico">Cosmético para criatura</option>
         </select>
       </label>
+
+      @if (nuevo.tipo_entrega === 'cosmetico') {
+        <section class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4 rounded-xl border border-blue-200 bg-blue-50 p-4">
+          <div class="md:col-span-2">
+            <h3 class="text-sm font-bold text-slate-900">Configuración del cosmético</h3>
+            <p class="mt-1 text-xs text-slate-600">La capa debe usar exactamente el mismo lienzo y origen que la especie. La compra otorgará propiedad permanente.</p>
+          </div>
+          <label class="flex flex-col gap-1.5">
+            <span class="text-sm font-semibold text-slate-700">Código único</span>
+            <input name="cosmetico_codigo" [(ngModel)]="nuevo.cosmetico.codigo" placeholder="ej. gorro-estelar" class="px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
+          </label>
+          <label class="flex flex-col gap-1.5">
+            <span class="text-sm font-semibold text-slate-700">Ranura</span>
+            <select name="cosmetico_slot" [(ngModel)]="nuevo.cosmetico.slot" (ngModelChange)="ordenSugerido($event, nuevo.cosmetico)" class="px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
+              @for (slot of configuracionMascota().slots; track slot.codigo) { <option [value]="slot.codigo">{{ slot.etiqueta }}</option> }
+            </select>
+          </label>
+          <label class="flex flex-col gap-1.5">
+            <span class="text-sm font-semibold text-slate-700">Rareza</span>
+            <select name="cosmetico_rareza" [(ngModel)]="nuevo.cosmetico.rareza" class="px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
+              @for (rareza of configuracionMascota().rarezas; track rareza) { <option [value]="rareza">{{ rareza }}</option> }
+            </select>
+          </label>
+          <label class="flex flex-col gap-1.5">
+            <span class="text-sm font-semibold text-slate-700">Orden de capa</span>
+            <input name="cosmetico_orden" type="number" [(ngModel)]="nuevo.cosmetico.orden_capa" class="px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
+          </label>
+          <label class="flex flex-col gap-1.5 md:col-span-2">
+            <span class="text-sm font-semibold text-slate-700">Ruta de capa transparente</span>
+            <input name="cosmetico_asset" [(ngModel)]="nuevo.cosmetico.asset_capa" placeholder="img/mascotas/daemon-origen/cabeza/gorro-estelar.webp" class="px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
+          </label>
+          <label class="flex flex-col gap-1.5">
+            <span class="text-sm font-semibold text-slate-700">Miniatura (opcional)</span>
+            <input name="cosmetico_miniatura" [(ngModel)]="nuevo.cosmetico.asset_miniatura" placeholder="Usa la capa si se deja vacío" class="px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
+          </label>
+          <label class="flex flex-col gap-1.5">
+            <span class="text-sm font-semibold text-slate-700">Especies compatibles</span>
+            <select name="cosmetico_especies" multiple [(ngModel)]="nuevo.cosmetico.especies" class="min-h-24 px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
+              @for (especie of configuracionMascota().especies; track especie.id) { <option [ngValue]="especie.id">{{ especie.nombre }}{{ especie.activo ? '' : ' (oculta)' }}</option> }
+            </select>
+          </label>
+          <label class="md:col-span-2 flex items-center gap-3 rounded-xl border border-blue-200 bg-white px-4 py-3"><input name="cosmetico_activo" type="checkbox" [(ngModel)]="nuevo.cosmetico.activo" class="w-4 h-4"><span class="text-sm font-semibold text-slate-700">Visible y comprable en la tienda</span></label>
+        </section>
+      }
       
       <label class="flex flex-col gap-1.5 md:col-span-2">
         <span class="text-sm font-semibold text-slate-700">Ruta de la Imagen (URL)</span>
@@ -187,8 +249,25 @@
   </ng-container>
 </nz-modal>
 
+<nz-modal [(nzVisible)]="modalEspecieVisible" [nzTitle]="especieEditando ? 'Editar criatura base' : 'Nueva criatura base'" (nzOnCancel)="cerrarEspecie()" (nzOnOk)="guardarEspecie()" [nzOkLoading]="guardando()" [nzOkDisabled]="!nuevaEspecie.nombre.trim() || !nuevaEspecie.codigo.trim() || !nuevaEspecie.asset_base.trim()" nzOkText="Guardar criatura" nzCancelText="Cancelar" nzCentered nzWidth="700px">
+  <ng-container *nzModalContent>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
+      <div class="md:col-span-2 rounded-xl border border-violet-200 bg-violet-50 p-4 text-xs text-slate-600"><strong class="text-violet-800">Contrato visual:</strong> base y accesorios deben compartir exactamente el mismo tamaño de lienzo, origen y encuadre. No recortes automáticamente el espacio transparente.</div>
+      <label class="flex flex-col gap-1.5"><span class="text-sm font-semibold text-slate-700">Nombre visible</span><input name="especie_nombre" [(ngModel)]="nuevaEspecie.nombre" class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-500 w-full"></label>
+      <label class="flex flex-col gap-1.5"><span class="text-sm font-semibold text-slate-700">Código estable</span><input name="especie_codigo" [(ngModel)]="nuevaEspecie.codigo" placeholder="ej. daemon-luna" class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-500 w-full"></label>
+      <label class="flex flex-col gap-1.5 md:col-span-2"><span class="text-sm font-semibold text-slate-700">Descripción</span><textarea name="especie_descripcion" rows="2" [(ngModel)]="nuevaEspecie.descripcion" class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-500 w-full resize-none"></textarea></label>
+      <label class="flex flex-col gap-1.5 md:col-span-2"><span class="text-sm font-semibold text-slate-700">Ruta del asset base</span><input name="especie_asset" [(ngModel)]="nuevaEspecie.asset_base" placeholder="img/mascotas/daemon-luna/base.webp" class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-500 w-full"></label>
+      <label class="flex flex-col gap-1.5 md:col-span-2"><span class="text-sm font-semibold text-slate-700">Ruta de miniatura (opcional)</span><input name="especie_miniatura" [(ngModel)]="nuevaEspecie.asset_miniatura" placeholder="Usa la base si se deja vacío" class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-500 w-full"></label>
+      <label class="flex flex-col gap-1.5"><span class="text-sm font-semibold text-slate-700">Ancho del lienzo</span><input name="especie_ancho" type="number" min="256" max="4096" [(ngModel)]="nuevaEspecie.lienzo_ancho" class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-500 w-full"></label>
+      <label class="flex flex-col gap-1.5"><span class="text-sm font-semibold text-slate-700">Alto del lienzo</span><input name="especie_alto" type="number" min="256" max="4096" [(ngModel)]="nuevaEspecie.lienzo_alto" class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-500 w-full"></label>
+      <label class="flex flex-col gap-1.5"><span class="text-sm font-semibold text-slate-700">Orden</span><input name="especie_orden" type="number" [(ngModel)]="nuevaEspecie.orden" class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-500 w-full"></label>
+      <label class="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3"><input name="especie_activa" type="checkbox" [(ngModel)]="nuevaEspecie.activo" class="w-4 h-4"><span class="text-sm font-semibold text-slate-700">Disponible para estudiantes</span></label>
+    </div>
+  </ng-container>
+</nz-modal>
+
 <!-- Modal de Edición -->
-<nz-modal [(nzVisible)]="modalEditVisible" nzTitle="Editar Premio" (nzOnCancel)="cerrarEditar()" (nzOnOk)="guardarEdicion()" [nzOkLoading]="guardando()" [nzOkDisabled]="!premioEditando?.nombre?.trim()" nzOkText="Guardar cambios" nzCancelText="Cancelar" nzCentered nzWidth="600px">
+<nz-modal [(nzVisible)]="modalEditVisible" nzTitle="Editar Premio" (nzOnCancel)="cerrarEditar()" (nzOnOk)="guardarEdicion()" [nzOkLoading]="guardando()" [nzOkDisabled]="!premioEditando?.nombre?.trim()" nzOkText="Guardar cambios" nzCancelText="Cancelar" nzCentered nzWidth="760px">
   <ng-container *nzModalContent>
     @if (premioEditando) {
       <div class="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
@@ -226,8 +305,23 @@
                   class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full transition-all cursor-pointer">
             <option value="fisico">Físico</option>
             <option value="digital">Digital</option>
+            <option value="cosmetico">Cosmético para criatura</option>
           </select>
         </label>
+
+        @if (premioEditando.tipo_entrega === 'cosmetico') {
+          <section class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4 rounded-xl border border-blue-200 bg-blue-50 p-4">
+            <div class="md:col-span-2"><h3 class="text-sm font-bold text-slate-900">Configuración del cosmético</h3><p class="mt-1 text-xs text-slate-600">Cambiar compatibilidad puede retirar la pieza de criaturas que ya no sean compatibles, sin quitarla de sus inventarios.</p></div>
+            <label class="flex flex-col gap-1.5"><span class="text-sm font-semibold text-slate-700">Código único</span><input name="edit_cosmetico_codigo" [(ngModel)]="premioEditando.cosmetico.codigo" class="px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"></label>
+            <label class="flex flex-col gap-1.5"><span class="text-sm font-semibold text-slate-700">Ranura</span><select name="edit_cosmetico_slot" [(ngModel)]="premioEditando.cosmetico.slot" (ngModelChange)="ordenSugerido($event, premioEditando.cosmetico)" class="px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">@for (slot of configuracionMascota().slots; track slot.codigo) { <option [value]="slot.codigo">{{ slot.etiqueta }}</option> }</select></label>
+            <label class="flex flex-col gap-1.5"><span class="text-sm font-semibold text-slate-700">Rareza</span><select name="edit_cosmetico_rareza" [(ngModel)]="premioEditando.cosmetico.rareza" class="px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">@for (rareza of configuracionMascota().rarezas; track rareza) { <option [value]="rareza">{{ rareza }}</option> }</select></label>
+            <label class="flex flex-col gap-1.5"><span class="text-sm font-semibold text-slate-700">Orden de capa</span><input name="edit_cosmetico_orden" type="number" [(ngModel)]="premioEditando.cosmetico.orden_capa" class="px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"></label>
+            <label class="flex flex-col gap-1.5 md:col-span-2"><span class="text-sm font-semibold text-slate-700">Ruta de capa transparente</span><input name="edit_cosmetico_asset" [(ngModel)]="premioEditando.cosmetico.asset_capa" class="px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"></label>
+            <label class="flex flex-col gap-1.5"><span class="text-sm font-semibold text-slate-700">Miniatura (opcional)</span><input name="edit_cosmetico_miniatura" [(ngModel)]="premioEditando.cosmetico.asset_miniatura" class="px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"></label>
+            <label class="flex flex-col gap-1.5"><span class="text-sm font-semibold text-slate-700">Especies compatibles</span><select name="edit_cosmetico_especies" multiple [(ngModel)]="premioEditando.cosmetico.especies" class="min-h-24 px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">@for (especie of configuracionMascota().especies; track especie.id) { <option [ngValue]="especie.id">{{ especie.nombre }}{{ especie.activo ? '' : ' (oculta)' }}</option> }</select></label>
+            <label class="md:col-span-2 flex items-center gap-3 rounded-xl border border-blue-200 bg-white px-4 py-3"><input name="edit_cosmetico_activo" type="checkbox" [(ngModel)]="premioEditando.cosmetico.activo" class="w-4 h-4"><span class="text-sm font-semibold text-slate-700">Visible y comprable en la tienda</span></label>
+          </section>
+        }
         
         <label class="flex flex-col gap-1.5 md:col-span-2">
           <span class="text-sm font-semibold text-slate-700">Ruta de la Imagen (URL)</span>

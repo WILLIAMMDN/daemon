@@ -11,6 +11,7 @@ import {
   faClipboardQuestion,
   faCode,
   faCoins,
+  faDragon,
   faGaugeHigh,
   faGift,
   faMedal,
@@ -56,6 +57,7 @@ export const alumnoSidebarSections: PortalSidebarSection[] = [
       { id: 'alumno-ranking', etiqueta: 'Ranking', ruta: '/alumno/ranking', detalle: 'Clasificacion', icono: faRankingStar },
       { id: 'alumno-comunidad', etiqueta: 'Comunidad', ruta: '/alumno/comunidad', detalle: 'Perfiles del aula', icono: faPeopleGroup },
       { id: 'alumno-recompensas', etiqueta: 'Recompensas', ruta: '/alumno/tienda', detalle: 'Tienda y canjes', icono: faGift },
+      { id: 'alumno-mascota', etiqueta: 'Mi criatura', ruta: '/alumno/mascota', detalle: 'Vestidor y colección', icono: faDragon },
     ],
   },
   {

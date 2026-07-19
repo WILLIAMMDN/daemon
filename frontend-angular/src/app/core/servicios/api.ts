@@ -160,6 +160,9 @@ export class Api {
     if (['misiones', 'tienda', 'evaluaciones', 'competencia'].includes(scope)) {
       relacionados.add('alumno');
     }
+    if (scope === 'tienda') {
+      relacionados.add('mascota');
+    }
     if (['misiones', 'evaluaciones', 'competencia'].includes(scope)) {
       relacionados.add('ranking');
     }

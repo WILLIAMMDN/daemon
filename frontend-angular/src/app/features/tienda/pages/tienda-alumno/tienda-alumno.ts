@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faArrowRight, faBagShopping, faCheck, faLock, faRotateRight, faShieldHeart, faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons';
+import { faArrowRight, faBagShopping, faCheck, faDragon, faLock, faRotateRight, faShieldHeart, faShirt, faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { Activos } from '../../../../core/servicios/activos';
@@ -30,7 +30,7 @@ export class TiendaAlumno {
   readonly procesando = signal<number | null>(null);
   readonly mensaje = signal('');
   readonly error = signal('');
-  readonly iconos = { bolsa: faBagShopping, flecha: faArrowRight, check: faCheck, candado: faLock, actualizar: faRotateRight, escudo: faShieldHeart, brillo: faWandMagicSparkles };
+  readonly iconos = { bolsa: faBagShopping, criatura: faDragon, ropa: faShirt, flecha: faArrowRight, check: faCheck, candado: faLock, actualizar: faRotateRight, escudo: faShieldHeart, brillo: faWandMagicSparkles };
 
   constructor() {
     this.cargar();
@@ -63,7 +63,13 @@ export class TiendaAlumno {
         const saldo = Number(respuesta.saldo ?? this.saldo());
         this.saldo.set(saldo);
         this.sincronizarSaldo(saldo);
-        this.mensaje.set(respuesta.codigo ? `Premio desbloqueado. Código: ${respuesta.codigo}` : 'Premio canjeado. Ya aparece en Mis canjes.');
+        this.mensaje.set(
+          respuesta.cosmetico
+            ? `${respuesta.cosmetico.nombre} ya está en tu vestidor.`
+            : respuesta.codigo
+              ? `Premio desbloqueado. Código: ${respuesta.codigo}`
+              : 'Premio canjeado. Ya aparece en Mis canjes.',
+        );
         this.procesando.set(null);
         this.cargar();
       },
@@ -75,7 +81,7 @@ export class TiendaAlumno {
   }
 
   puedeCanjear(premio: any): boolean {
-    return this.saldo() >= Number(premio.precio ?? 0) && Number(premio.stock ?? 0) > 0;
+    return !premio.ya_posee && this.saldo() >= Number(premio.precio ?? 0) && Number(premio.stock ?? 0) > 0;
   }
 
   asset(ruta?: string | null): string {

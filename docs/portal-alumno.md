@@ -263,3 +263,10 @@ chat ni contenido de la actividad.
 - Supabase Storage aloja uploads de negocio.
 - Firebase Hosting entrega la SPA y sus assets estáticos.
 - Firebase Auth autentica la identidad; no calcula progreso académico.
+
+## Criatura y cosméticos
+
+El vestidor vive en `/alumno/mascota` y reutiliza los DAEMONS de la tienda.
+Inventario, compatibilidad y equipamiento son autoridad de Laravel; Angular
+solo compone las capas visuales devueltas por la API. El contrato para producir
+nuevas especies y accesorios está en `docs/sistema-mascotas-cosmeticos.md`.

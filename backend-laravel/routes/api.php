@@ -16,6 +16,8 @@ use App\Http\Controllers\Api\V1\EvaluacionController;
 use App\Http\Controllers\Api\V1\IaModeloAdminController;
 use App\Http\Controllers\Api\V1\InstitucionController;
 use App\Http\Controllers\Api\V1\MisionController;
+use App\Http\Controllers\Api\V1\MascotaCatalogoController;
+use App\Http\Controllers\Api\V1\MascotaController;
 use App\Http\Controllers\Api\V1\PrivacidadController;
 use App\Http\Controllers\Api\V1\RankingController;
 use App\Http\Controllers\Api\V1\SaludController;
@@ -64,6 +66,10 @@ Route::prefix('v1')->group(function (): void {
             Route::get('/tienda', [TiendaController::class, 'index']);
             Route::post('/tienda/canjear/{premio}', [TiendaController::class, 'canjear']);
             Route::get('/tienda/canjes', [TiendaController::class, 'canjes']);
+            Route::get('/mascota', [MascotaController::class, 'show']);
+            Route::patch('/mascota', [MascotaController::class, 'update'])->middleware('throttle:30,1');
+            Route::post('/mascota/equipar', [MascotaController::class, 'equipar'])->middleware('throttle:60,1');
+            Route::delete('/mascota/equipamiento/{slot}', [MascotaController::class, 'quitar'])->middleware('throttle:60,1');
             Route::get('/evaluaciones/activas', [EvaluacionController::class, 'activas']);
             Route::post('/evaluaciones/{evaluacion}/responder', [EvaluacionController::class, 'responder']);
             Route::post('/competencia/votar', [CompetenciaController::class, 'votar']);
@@ -138,6 +144,12 @@ Route::prefix('v1')->group(function (): void {
                 Route::put('/{modelo}', [IaModeloAdminController::class, 'update']);
                 Route::delete('/bulk', [IaModeloAdminController::class, 'destroyBulk']);
                 Route::delete('/{modelo}', [IaModeloAdminController::class, 'destroy']);
+            });
+
+            Route::middleware('role:admin')->prefix('mascota/admin')->group(function (): void {
+                Route::get('/catalogo', [MascotaCatalogoController::class, 'index']);
+                Route::post('/especies', [MascotaCatalogoController::class, 'store']);
+                Route::put('/especies/{especie}', [MascotaCatalogoController::class, 'update']);
             });
 
             Route::get('/chatbot/admin/bots', [ChatbotController::class, 'adminIndex']);

@@ -49,7 +49,7 @@ class ModuleRequestRulesTest extends TestCase
 
         $this->assertContains('min:0', $rules['precio']);
         $this->assertContains('min:0', $rules['stock']);
-        $this->assertContains('in:fisico,digital', $rules['tipo_entrega']);
+        $this->assertContains('in:fisico,digital,cosmetico', $rules['tipo_entrega']);
         $this->assertFalse(Validator::make(
             ['categoria' => 'PRO'],
             ['categoria' => $rules['categoria']],

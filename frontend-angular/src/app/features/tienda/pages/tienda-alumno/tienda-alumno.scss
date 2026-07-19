@@ -21,6 +21,7 @@
 :host ::ng-deep .hero-actions .daemon-btn.ant-btn-primary { background: #1677ff; border-color: #1677ff; color: #fff; }
 .refresh-button { align-items: center; background: #fff; border: 1px solid #cfe3ff; border-radius: 8px; color: #0958d9; display: inline-flex; font-weight: 600; gap: .45rem; }
 .refresh-button:hover { background: #f6faff; border-color: #9ccaff; color: #0958d9; }
+.wardrobe-button { align-items: center; background: #fff; border: 1px solid #cfe3ff; border-radius: 8px; color: #0958d9; display: inline-flex; font-weight: 650; gap: .45rem; }
 .balance-vault { background: #fffbeb; border: 1px solid #f2d989; border-radius: 12px; display: grid; padding: 1.25rem; }
 .balance-vault > span { color: #8a5700; font-size: .67rem; font-weight: 700; letter-spacing: .075em; text-transform: uppercase; }
 .balance-vault > div { align-items: center; display: flex; gap: .7rem; margin: .7rem 0; }
@@ -43,6 +44,7 @@
 .reward-visual img { height: 100%; object-fit: contain; padding: 1rem; width: 100%; }
 .reward-visual > span { align-items: center; background: #fff; border: 1px solid #e4eaf2; border-radius: 12px; color: #1677ff; display: flex; font-size: 1.7rem; height: 68px; justify-content: center; width: 68px; }
 .reward-visual small { background: #fff; border: 1px solid #e4eaf2; border-radius: 7px; color: #0958d9; font-size: .6rem; font-weight: 700; left: .65rem; letter-spacing: .05em; padding: .35rem .5rem; position: absolute; text-transform: uppercase; top: .65rem; }
+.reward-visual .cosmetic-badge { color: #6d28a8; left: auto; right: .65rem; }
 .reward-copy { padding: .9rem .15rem .65rem; }
 .reward-copy h2 { color: #172033; font-size: 1rem; margin: 0 0 .4rem; }
 .reward-copy p { color: #667085; font-size: .78rem; line-height: 1.5; margin: 0; }
@@ -53,6 +55,8 @@
 .reward-meta strong { color: #344054; margin-top: .18rem; }
 :host ::ng-deep .redeem-button.ant-btn { border-radius: 8px; margin-top: .75rem; width: 100%; }
 :host ::ng-deep .reward-card--locked.ant-card { opacity: .72; }
+:host ::ng-deep .reward-card--owned.ant-card { border-color: #b9e0c7; }
+.owned-button { align-items: center; background: #edf9f1; border: 1px solid #cce9d6; border-radius: 8px; color: #08783a; display: inline-flex; font-size: .72rem; font-weight: 700; gap: .4rem; justify-content: center; margin-top: .75rem; width: 100%; }
 .store-state { background: #fff; border: 1px solid #e4eaf2; border-radius: 14px; padding: 2rem; }
 
 @media (max-width: 1180px) { .rewards-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }

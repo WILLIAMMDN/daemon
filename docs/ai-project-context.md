@@ -167,6 +167,13 @@ Gamification uses two independent fields:
 Do not order ranking by tokens or subtract experience during store redemptions.
 Read `docs/gamificacion-xp-daemons.md` before changing rewards.
 
+The student companion system lives at `/alumno/mascota`. Laravel owns species,
+cosmetic compatibility, permanent inventory and equipped slots; cosmetic store
+redemptions grant inventory inside the same locked transaction that spends
+DAEMONS. New art is supplied as aligned transparent layers rather than coded
+into Angular. Read `docs/sistema-mascotas-cosmeticos.md` before changing this
+domain or publishing new creature assets.
+
 ## 6. Authentication decisions
 
 Current working decision:

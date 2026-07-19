@@ -4,7 +4,7 @@
       <span class="page-kicker"><fa-icon [icon]="iconos.brillo" /> DAEMON Rewards</span>
       <h1>Convierte tu esfuerzo<br><span>en algo memorable.</span></h1>
       <p>Gasta DAEMONS con tranquilidad: tu XP, nivel y posición en el ranking nunca bajan.</p>
-      <div class="hero-actions"><a nz-button nzType="primary" class="daemon-btn" routerLink="/alumno/canjes">Ver mis canjes <fa-icon [icon]="iconos.flecha" /></a><button nz-button type="button" class="refresh-button" (click)="cargar()" [disabled]="cargando()"><fa-icon [icon]="iconos.actualizar" /> Actualizar</button></div>
+      <div class="hero-actions"><a nz-button nzType="primary" class="daemon-btn" routerLink="/alumno/canjes">Ver mis canjes <fa-icon [icon]="iconos.flecha" /></a><a nz-button class="wardrobe-button" routerLink="/alumno/mascota"><fa-icon [icon]="iconos.criatura" /> Mi criatura</a><button nz-button type="button" class="refresh-button" (click)="cargar()" [disabled]="cargando()"><fa-icon [icon]="iconos.actualizar" /> Actualizar</button></div>
     </div>
     <div class="balance-vault">
       <span>Saldo disponible</span>
@@ -22,7 +22,7 @@
     <section class="catalog-heading"><div><span>Catálogo</span><h2>Elige tu próxima recompensa</h2></div><small>{{ premios().length }} premios disponibles</small></section>
     <section class="rewards-grid">
       @for (premio of premios(); track premio.id) {
-        <nz-card nzHoverable class="reward-card" [class.reward-card--locked]="!puedeCanjear(premio)">
+        <nz-card nzHoverable class="reward-card" [class.reward-card--locked]="!puedeCanjear(premio) && !premio.ya_posee" [class.reward-card--owned]="premio.ya_posee">
           <div class="reward-visual">
             @if (premio.imagen && !imagenesInvalidas().has(premio.id)) {
               <img [src]="asset(premio.imagen)" [alt]="premio.nombre" loading="lazy" (error)="marcarImagenInvalida(premio.id)">
@@ -30,6 +30,7 @@
               <span><fa-icon [icon]="iconos.bolsa" /></span>
             }
             <small>{{ premio.categoria }}</small>
+            @if (premio.tipo_entrega === 'cosmetico') { <small class="cosmetic-badge"><fa-icon [icon]="iconos.ropa" /> Cosmético</small> }
           </div>
 
           <div class="reward-copy">
@@ -42,9 +43,13 @@
             <span><small>Disponibles</small><strong>{{ premio.stock }}</strong></span>
           </div>
 
-          <button nz-button nzType="primary" class="daemon-btn redeem-button" type="button" (click)="canjear(premio.id)" [nzLoading]="procesando() === premio.id" [disabled]="procesando() === premio.id || !puedeCanjear(premio)">
-            @if (premio.stock < 1) { Agotado } @else if (saldo() < premio.precio) { <fa-icon [icon]="iconos.candado" /> Te faltan {{ premio.precio - saldo() }} } @else { Canjear ahora <fa-icon [icon]="iconos.flecha" /> }
-          </button>
+          @if (premio.ya_posee) {
+            <a nz-button class="owned-button" routerLink="/alumno/mascota"><fa-icon [icon]="iconos.check" /> Ya es tuyo · Abrir vestidor</a>
+          } @else {
+            <button nz-button nzType="primary" class="daemon-btn redeem-button" type="button" (click)="canjear(premio.id)" [nzLoading]="procesando() === premio.id" [disabled]="procesando() === premio.id || !puedeCanjear(premio)">
+              @if (premio.stock < 1) { Agotado } @else if (saldo() < premio.precio) { <fa-icon [icon]="iconos.candado" /> Te faltan {{ premio.precio - saldo() }} } @else if (premio.tipo_entrega === 'cosmetico') { Desbloquear look <fa-icon [icon]="iconos.flecha" /> } @else { Canjear ahora <fa-icon [icon]="iconos.flecha" /> }
+            </button>
+          }
         </nz-card>
       }
     </section>
