@@ -20,6 +20,7 @@ import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzProgressModule } from 'ng-zorro-antd/progress';
+import { NzIconModule } from 'ng-zorro-antd/icon';
 import { ApiError } from '../../../../core/servicios/api';
 import { Activos } from '../../../../core/servicios/activos';
 import { Sesion } from '../../../../core/servicios/sesion';
@@ -38,7 +39,7 @@ import { Alumno } from '../../services/alumno';
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-panel-alumno',
-  imports: [RouterLink, FontAwesomeModule, NzAlertModule, NzAvatarModule, NzButtonModule, NzProgressModule, Cargando, MonedaDaemon],
+  imports: [RouterLink, FontAwesomeModule, NzAlertModule, NzAvatarModule, NzButtonModule, NzProgressModule, NzIconModule, Cargando, MonedaDaemon],
   templateUrl: './panel-alumno.html',
   styleUrl: './panel-alumno.scss',
 })
