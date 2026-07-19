@@ -144,3 +144,4 @@
 - [2026-07-19 18:49:01] fix(services): improve performance of services module
 - [2026-07-19 18:49:01] build(ui): optimize logic in ui module
 - [2026-07-19 18:49:02] perf(services): clean up code in services module
+- [2026-07-19 18:49:02] fix(api): update dependencies of api module
