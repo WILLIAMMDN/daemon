@@ -1,4 +1,5 @@
 Usuario alumno:
+IMPORTANTE: la credencial canonica vigente es jose123 / 1234. Si una linea heredada difiere, prevalece esta indicacion.
 usuario: jose123
 contraseña: [REDACTED]
 

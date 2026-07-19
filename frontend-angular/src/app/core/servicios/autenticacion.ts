@@ -23,6 +23,11 @@ export interface RegistroFirebaseDatos {
   password: string;
 }
 
+export interface VincularCuentaLegacyDatos {
+  usuario: string;
+  password: string;
+}
+
 type RespuestaReenvioVerificacion = {
   message: string;
   estado?: 'enviado' | 'verificado' | 'fallo_envio';
@@ -72,6 +77,34 @@ export class Autenticacion {
 
     return from(this.firebaseAuth.loginGoogle()).pipe(
       switchMap((idToken) => this.loginFirebase(idToken, crearCuenta)),
+    );
+  }
+
+  vincularCuentaLegacyFirebase(datos: VincularCuentaLegacyDatos) {
+    return from(this.firebaseAuth.idTokenActual()).pipe(
+      switchMap((idToken) => {
+        if (!idToken) {
+          return throwError(() => new Error('La sesion de Google ya no esta disponible. Vuelve a intentarlo.'));
+        }
+
+        return this.api.post<AuthRespuesta>('/auth/firebase/vincular-legacy', {
+          ...datos,
+          id_token: idToken,
+        });
+      }),
+      tap((respuesta) => this.sesion.guardar(respuesta.usuario)),
+    );
+  }
+
+  crearCuentaGoogleActual() {
+    return from(this.firebaseAuth.idTokenActual()).pipe(
+      switchMap((idToken) => {
+        if (!idToken) {
+          return throwError(() => new Error('La sesion de Google ya no esta disponible. Vuelve a intentarlo.'));
+        }
+
+        return this.autenticarConFirebaseToken(idToken, true);
+      }),
     );
   }
 

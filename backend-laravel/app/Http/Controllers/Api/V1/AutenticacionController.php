@@ -17,6 +17,7 @@ use App\Http\Requests\Api\V1\Auth\LoginRequest;
 use App\Http\Requests\Api\V1\Auth\RecuperarClaveRequest;
 use App\Http\Requests\Api\V1\Auth\RegistroAlumnoRequest;
 use App\Http\Requests\Api\V1\Auth\SyncPasswordRequest;
+use App\Http\Requests\Api\V1\Auth\VincularCuentaLegacyFirebaseRequest;
 use App\Http\Resources\Api\V1\UsuarioResource;
 use App\Services\Auth\AutenticacionService;
 use App\Services\Auth\EmailVerificationService;
@@ -217,7 +218,9 @@ class AutenticacionController extends Controller
             }
 
             return $this->respuestaAutenticada($usuario);
-        } catch (InvalidArgumentException|RuntimeException|UnexpectedValueException $exception) {
+        } catch (InvalidArgumentException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        } catch (RuntimeException|UnexpectedValueException $exception) {
             report($exception);
 
             return response()->json(['message' => $exception->getMessage()], 422);
@@ -225,6 +228,31 @@ class AutenticacionController extends Controller
             report($exception);
 
             return response()->json(['message' => 'No se pudo validar la cuenta de Firebase.'], 422);
+        }
+    }
+
+    public function vincularCuentaLegacyFirebase(VincularCuentaLegacyFirebaseRequest $request)
+    {
+        $datos = $request->validated();
+
+        try {
+            $claims = $this->firebase->verify($datos['id_token']);
+            $usuario = $this->autenticacion->vincularCuentaLegacyFirebase($claims, [
+                'usuario' => $datos['usuario'],
+                'password' => $datos['password'],
+            ]);
+
+            return $this->respuestaAutenticada($usuario);
+        } catch (InvalidArgumentException|RuntimeException|UnexpectedValueException $exception) {
+            report($exception);
+
+            return response()->json(['message' => $exception->getMessage()], 422);
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return response()->json([
+                'message' => 'No se pudo vincular la cuenta anterior en este momento.',
+            ], 422);
         }
     }
 

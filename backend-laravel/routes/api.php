@@ -38,6 +38,7 @@ Route::prefix('v1')->group(function (): void {
     Route::post('/auth/confirmar-reset', [AutenticacionController::class, 'confirmarReset'])->middleware('throttle:10,1');
     Route::post('/auth/confirmar-verificar', [AutenticacionController::class, 'confirmarVerificacion'])->middleware('throttle:10,1');
     Route::post('/auth/firebase', [AutenticacionController::class, 'firebase'])->middleware('throttle:10,1');
+    Route::post('/auth/firebase/vincular-legacy', [AutenticacionController::class, 'vincularCuentaLegacyFirebase'])->middleware('throttle:5,1');
     Route::post('/auth/tutor/firebase', [AutenticacionController::class, 'firebaseTutor'])->middleware('throttle:10,1');
     Route::post('/auth/firebase/perfil', [AutenticacionController::class, 'completarPerfilFirebase'])->middleware('throttle:10,1');
     Route::post('/auth/google', [AutenticacionController::class, 'google'])->middleware('throttle:10,1');
