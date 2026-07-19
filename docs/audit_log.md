@@ -145,3 +145,4 @@
 - [2026-07-19 18:49:01] build(ui): optimize logic in ui module
 - [2026-07-19 18:49:02] perf(services): clean up code in services module
 - [2026-07-19 18:49:02] fix(api): update dependencies of api module
+- [2026-07-19 18:49:02] ci(config): refine type hints in config module
