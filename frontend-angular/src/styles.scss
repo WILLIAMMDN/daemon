@@ -42,20 +42,20 @@
 @layer utilities {
   /* Efecto Premium magnético para tarjetas interactuables */
   .hover-premium {
-    @apply transition-all duration-300 shadow-premium hover:shadow-premium-hover hover:-translate-y-1;
+    @apply shadow-sm transition-shadow hover:shadow-md motion-reduce:transition-none;
   }
   
   /* Contenedores fijos premium */
   .card-premium {
-    @apply rounded-4xl border-0 bg-white shadow-bento;
+    @apply rounded-2xl border border-slate-200 bg-white shadow-sm;
   }
 
   .daemon-glass {
-    @apply border border-white/70 bg-white/80 shadow-glass backdrop-blur-xl;
+    @apply border border-slate-200 bg-white shadow-sm;
   }
 
   .daemon-bento {
-    @apply rounded-4xl border-0 bg-white shadow-bento transition-all duration-300 hover:-translate-y-1 hover:shadow-bento-hover;
+    @apply rounded-2xl border border-slate-200 bg-white shadow-sm transition-shadow hover:shadow-md motion-reduce:transition-none;
   }
 
   .text-gradient-daemon {

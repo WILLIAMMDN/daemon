@@ -3,8 +3,6 @@ import { finalize } from 'rxjs';
 import { Api } from '../../../../core/servicios/api';
 import { NzEmptyModule } from 'ng-zorro-antd/empty';
 import { NzButtonModule } from 'ng-zorro-antd/button';
-import { NzIconModule } from 'ng-zorro-antd/icon';
-import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 
 interface ProgresoLeccion {
   estado: 'notStarted' | 'inProgress' | 'completed';
@@ -42,7 +40,7 @@ interface AprendizajeResponse {
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-recursos',
-  imports: [NzEmptyModule, NzButtonModule, NzIconModule, Cargando],
+  imports: [NzEmptyModule, NzButtonModule],
   templateUrl: './recursos.html',
 })
 export class Recursos {

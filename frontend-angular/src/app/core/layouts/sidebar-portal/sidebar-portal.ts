@@ -1,27 +1,14 @@
 import { Component, EventEmitter, HostBinding, HostListener, Input, OnChanges, OnInit, Output, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { DecimalPipe, TitleCasePipe } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
   faBars,
-  faChartLine,
   faChevronDown,
   faChevronRight,
-  faEnvelope,
-  faGraduationCap,
-  faChalkboardUser,
   faRightFromBracket,
   faThumbtack,
-  faUserTag,
   faXmark,
 } from '@fortawesome/free-solid-svg-icons';
-import { NzAvatarModule } from 'ng-zorro-antd/avatar';
-import { NzBadgeModule } from 'ng-zorro-antd/badge';
-import { NzDividerModule } from 'ng-zorro-antd/divider';
-import { NzIconModule } from 'ng-zorro-antd/icon';
-import { NzPopoverModule } from 'ng-zorro-antd/popover';
-import { NzTagModule } from 'ng-zorro-antd/tag';
-import { MonedaDaemon } from '../../../shared/componentes/moneda-daemon/moneda-daemon';
 import { FloatingShape } from '../../../shared/componentes/floating-shape/floating-shape';
 import { PortalSidebarItem, PortalSidebarSection } from '../portal-sidebar.config';
 
@@ -38,11 +25,6 @@ const SUFFIJO_PIN = '_pin';
  *
  * Estructura visual:
  *  - Brand bar superior con color sólido institucional (alumno / docente).
- *  - Bloque de perfil limpio tipo University: avatar grande arriba (nz-avatar),
- *    nombre + chevron debajo; click en el bloque abre un popover con toda la
- *    información de la cuenta (correo, rol, nivel, tokens).
- *  - Saldo de la moneda DAEMON visible debajo del rol, sin necesidad de abrir
- *    el popover (usa el componente reutilizable <app-moneda-daemon>).
  *  - Navegación con secciones, submenús, badges e iconos.
  *  - Footer con cerrar sesión y firma institucional.
  */
@@ -53,15 +35,6 @@ const SUFFIJO_PIN = '_pin';
     RouterLink,
     RouterLinkActive,
     FontAwesomeModule,
-    DecimalPipe,
-    TitleCasePipe,
-    NzAvatarModule,
-    NzBadgeModule,
-    NzDividerModule,
-    NzIconModule,
-    NzPopoverModule,
-    NzTagModule,
-    MonedaDaemon,
     FloatingShape,
   ],
   templateUrl: './sidebar-portal.html',
@@ -72,13 +45,6 @@ export class SidebarPortal implements OnInit, OnChanges {
   @Input() brandDetalle = 'Portal';
   @Input() homeLink = '/';
   @Input() modo: 'alumno' | 'docente' = 'alumno';
-  @Input() perfilDetalle = '';
-  @Input() perfilNombre = 'Cuenta activa';
-  @Input() perfilUsuario = '';
-  @Input() perfilEmail = '';
-  @Input() perfilAvatar = '';
-  @Input() perfilNivel: string | null = null;
-  @Input() perfilTokens: number | null = null;
   @Input() rol = 'Usuario';
   @Input() secciones: PortalSidebarSection[] = [];
   @Input() storageKey = 'daemon_sidebar_colapsado';
@@ -95,12 +61,6 @@ export class SidebarPortal implements OnInit, OnChanges {
     salir: faRightFromBracket,
     submenuAbierto: faChevronDown,
     submenuCerrado: faChevronRight,
-    chevronDown: faChevronDown,
-    alumno: faGraduationCap,
-    docente: faChalkboardUser,
-    correo: faEnvelope,
-    rolIcono: faUserTag,
-    nivel: faChartLine,
   };
 
   /** Estado manual persistido (cuando está fijado). */
@@ -110,16 +70,6 @@ export class SidebarPortal implements OnInit, OnChanges {
   /** Hover activo (mouse encima). */
   hoverActivo = false;
   mobileOpen = false;
-  /**
-   * Estado del popover del bloque de perfil (click sobre avatar/nombre/chevron).
-   * Lo expone `[(nzPopoverVisible)]` para que el click toggle lo abra/cierre.
-   */
-  profilePopoverOpen = false;
-  /**
-   * Si la imagen del avatar falla al cargar (404, CORS, etc.),
-   * se vuelve false y nz-avatar vuelve a mostrar las iniciales.
-   */
-  avatarSrcVisible = true;
   brandLogoVisible = true;
 
   private readonly gruposAbiertos = new Set<string>();
@@ -143,11 +93,6 @@ export class SidebarPortal implements OnInit, OnChanges {
   @HostListener('window:resize')
   onResize(): void {
     // Fuerzo la evaluación de isMobile para recalcular colapsado
-  }
-
-  @HostListener('document:keydown.escape')
-  onEscape(): void {
-    this.profilePopoverOpen = false;
   }
 
   @HostBinding('class.sidebar-collapsed')
@@ -185,24 +130,6 @@ export class SidebarPortal implements OnInit, OnChanges {
     return 'Alumno';
   }
 
-  get perfilNombreCorto(): string {
-    const base = (this.perfilNombre || this.perfilUsuario || 'Cuenta activa').trim();
-    const partes = base.split(/\s+/).filter(Boolean);
-    if (partes.length <= 2) {
-      return base || 'Cuenta activa';
-    }
-    return `${partes[0]} ${partes[1]}`;
-  }
-
-  get profilePopoverClass(): string {
-    const responsiveClass = this.isMobile ? 'profile-popover--mobile' : 'profile-popover--desktop';
-    return `profile-popover profile-popover--${this.modo} ${responsiveClass}`;
-  }
-
-  get profilePopoverPlacement(): string {
-    return this.isMobile ? 'bottomLeft' : 'rightTop';
-  }
-
   abrirMovil(): void {
     this.mobileOpen = true;
     this.cdr.markForCheck();
@@ -210,18 +137,10 @@ export class SidebarPortal implements OnInit, OnChanges {
 
   cerrarMovil(): void {
     this.mobileOpen = false;
-    this.profilePopoverOpen = false;
     this.cdr.markForCheck();
   }
 
-  cerrarProfilePopover(event?: Event): void {
-    event?.preventDefault();
-    event?.stopPropagation();
-    this.profilePopoverOpen = false;
-  }
-
   emitirLogout(): void {
-    this.profilePopoverOpen = false;
     this.logout.emit();
   }
 
@@ -236,47 +155,16 @@ export class SidebarPortal implements OnInit, OnChanges {
     return this.gruposAbiertos.has(item.id) || this.estaActivo(item);
   }
 
-  iniciales(): string {
-    const base = this.perfilNombre || 'DAEMON';
-    return (
-      base
-        .split(/\s+/)
-        .filter(Boolean)
-        .slice(0, 2)
-        .map((parte) => parte[0]?.toUpperCase())
-        .join('') || 'D'
-    );
-  }
-
-  /**
-   * URL resuelta del avatar, lista para pasar a nz-avatar.
-   * Vacía cuando no hay avatar para que nz-avatar muestre nzText.
-   */
-  avatarSrc(): string {
-    return this.perfilAvatar?.trim() ?? '';
-  }
-
-  /**
-   * Se ejecuta cuando la imagen del avatar falla al cargar.
-   * Vuelve a las iniciales automáticamente.
-   */
-  onAvatarError(): void {
-    this.avatarSrcVisible = false;
-  }
-
   onBrandLogoError(): void {
     this.brandLogoVisible = false;
   }
 
   ngOnChanges(): void {
-    // Cuando cambia el avatar (login, actualización de perfil), re-intentar mostrarlo.
-    this.avatarSrcVisible = true;
     this.sincronizarGruposIniciales();
   }
 
   navegar(): void {
     this.mobileOpen = false;
-    this.profilePopoverOpen = false;
   }
 
   /**

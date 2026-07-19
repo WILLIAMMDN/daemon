@@ -1,30 +1,28 @@
 @if (cargando()) {
-  <app-cargando class="w-full bg-white border border-slate-100 shadow-sm rounded-[24px] p-12 mt-6 max-w-7xl mx-auto" texto="Cargando perfil..."></app-cargando>
+  <app-cargando class="w-full bg-white border border-slate-200 shadow-sm rounded-2xl p-8 md:p-12 mt-6 max-w-7xl mx-auto" texto="Cargando perfil..."></app-cargando>
 } @else if (error()) {
   <section class="w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8">
-    <div class="bg-red-50 border border-red-100 rounded-[24px] p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm">
+    <div class="bg-red-50 border border-red-200 rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm" role="alert" aria-live="assertive">
       <nz-alert nzType="error" nzShowIcon nzMessage="Error al cargar perfil" [nzDescription]="error()"></nz-alert>
       <button nz-button nzType="primary" nzShape="round" class="daemon-btn bg-red-600 hover:bg-red-700 border-0" type="button" (click)="cargar()">Reintentar</button>
     </div>
   </section>
 } @else if (perfil(); as datos) {
-  <main class="w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-6 md:gap-8 font-inter">
+  <main class="w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-6 md:gap-8 font-inter" aria-labelledby="profile-title">
     
     <!-- HERO SECTION -->
-    <header class="flex flex-col md:flex-row justify-between items-center md:items-stretch gap-8 bg-white border border-slate-100 shadow-sm rounded-[24px] p-6 md:p-10 relative overflow-hidden">
-      <!-- Decoración de fondo sutil -->
-      <div class="absolute top-0 right-0 w-64 h-64 bg-blue-50/50 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
-
-      <div class="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-6 relative z-10 w-full">
+    <header class="flex flex-col md:flex-row justify-between items-center md:items-stretch gap-8 bg-white border border-slate-200 shadow-sm rounded-2xl p-6 md:p-10">
+      <div class="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-6 w-full">
         <nz-avatar
           class="shadow-sm border-4 border-white flex-shrink-0"
           [nzSize]="120"
           [nzSrc]="avatar(datos.usuario) || undefined"
           [nzText]="iniciales(datos.usuario)"
+          (nzError)="avatarFallido.set(true)"
         />
         <div class="flex flex-col justify-center h-full">
           <span class="text-blue-600 text-[11px] font-extrabold uppercase tracking-widest block mb-2">{{ perfilPropio() ? 'Mi perfil' : 'Perfil de compañero' }}</span>
-          <h1 class="text-2xl md:text-4xl font-black text-slate-900 tracking-tight leading-tight">{{ datos.usuario.nombre_completo || 'Usuario nuevo' }}</h1>
+          <h1 id="profile-title" class="text-2xl md:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">{{ datos.usuario.nombre_completo || 'Usuario nuevo' }}</h1>
           <p class="text-slate-500 font-medium mt-1">@{{ datos.usuario.usuario }}</p>
           <div class="flex flex-wrap justify-center sm:justify-start gap-2 mt-4">
             <span class="bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap">{{ datos.usuario.nivel || 'Nivel inicial' }}</span>
@@ -33,7 +31,7 @@
         </div>
       </div>
 
-      <div class="flex flex-col justify-center bg-slate-50 border border-slate-100 rounded-[20px] p-5 sm:p-6 w-full md:w-80 relative z-10">
+      <div class="flex flex-col justify-center bg-slate-50 border border-slate-100 rounded-2xl p-5 sm:p-6 w-full md:w-80">
         <div class="flex justify-between items-end mb-2">
           <span class="text-slate-500 text-xs font-bold uppercase tracking-widest">Perfil completo</span>
           <strong class="text-blue-600 text-2xl font-black">{{ progresoPerfil(datos.usuario) }}%</strong>
@@ -56,25 +54,25 @@
     </header>
 
     <!-- STATS GRID -->
-    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6" aria-label="Resumen del perfil">
-      <article class="bg-white border border-slate-100 rounded-[24px] p-6 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_20px_-6px_rgba(0,0,0,0.1)] hover:-translate-y-1 transition-all duration-300">
+    <section class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6" aria-label="Resumen del perfil">
+      <article class="bg-white border border-slate-200 rounded-2xl p-4 sm:p-6 shadow-sm hover:shadow-md transition-shadow motion-reduce:transition-none">
         <span class="text-blue-600 text-[10px] font-extrabold uppercase tracking-widest block mb-2">Experiencia total</span>
-        <strong class="text-slate-900 text-4xl font-black tracking-tight block">{{ datos.usuario.experiencia || 0 }} <small class="text-xl text-slate-400 font-bold ml-1">XP</small></strong>
+        <strong class="text-slate-900 text-2xl sm:text-3xl font-extrabold tracking-tight block">{{ datos.usuario.experiencia || 0 }} <small class="text-sm sm:text-base text-slate-400 font-bold">XP</small></strong>
         <p class="text-slate-500 text-xs font-medium mt-2">Nivel {{ datos.usuario.nivel_gamificacion || 1 }}</p>
       </article>
-      <article class="bg-white border border-slate-100 rounded-[24px] p-6 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_20px_-6px_rgba(0,0,0,0.1)] hover:-translate-y-1 transition-all duration-300">
+      <article class="bg-white border border-slate-200 rounded-2xl p-4 sm:p-6 shadow-sm hover:shadow-md transition-shadow motion-reduce:transition-none">
         <span class="text-amber-500 text-[10px] font-extrabold uppercase tracking-widest block mb-2">Saldo DAEMONS</span>
-        <strong class="text-slate-900 text-4xl font-black tracking-tight flex items-center gap-2 block"><app-moneda-daemon [cantidad]="datos.usuario.tokens || 0" [size]="28" [soloNumero]="true" /></strong>
+        <strong class="text-slate-900 text-2xl sm:text-3xl font-extrabold tracking-tight flex items-center gap-2"><app-moneda-daemon [cantidad]="datos.usuario.tokens || 0" [size]="24" [soloNumero]="true" /></strong>
         <p class="text-slate-500 text-xs font-medium mt-2">Disponible en la tienda</p>
       </article>
-      <article class="bg-white border border-slate-100 rounded-[24px] p-6 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_20px_-6px_rgba(0,0,0,0.1)] hover:-translate-y-1 transition-all duration-300">
+      <article class="bg-white border border-slate-200 rounded-2xl p-4 sm:p-6 shadow-sm hover:shadow-md transition-shadow motion-reduce:transition-none">
         <span class="text-emerald-500 text-[10px] font-extrabold uppercase tracking-widest block mb-2">Insignias ganadas</span>
-        <strong class="text-slate-900 text-4xl font-black tracking-tight block">{{ datos.insignias.length }}</strong>
+        <strong class="text-slate-900 text-2xl sm:text-3xl font-extrabold tracking-tight block">{{ datos.insignias.length }}</strong>
         <p class="text-slate-500 text-xs font-medium mt-2">Logros reconocidos</p>
       </article>
-      <article class="bg-white border border-slate-100 rounded-[24px] p-6 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_20px_-6px_rgba(0,0,0,0.1)] hover:-translate-y-1 transition-all duration-300">
+      <article class="bg-white border border-slate-200 rounded-2xl p-4 sm:p-6 shadow-sm hover:shadow-md transition-shadow motion-reduce:transition-none">
         <span class="text-purple-600 text-[10px] font-extrabold uppercase tracking-widest block mb-2">Premios en mochila</span>
-        <strong class="text-slate-900 text-4xl font-black tracking-tight block">{{ datos.mochila.length }}</strong>
+        <strong class="text-slate-900 text-2xl sm:text-3xl font-extrabold tracking-tight block">{{ datos.mochila.length }}</strong>
         <p class="text-slate-500 text-xs font-medium mt-2">Recompensas entregadas</p>
       </article>
     </section>
@@ -83,8 +81,8 @@
     <section class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
       
       <!-- INFORMACIÓN PERSONAL -->
-      <article class="bg-white border border-slate-100 shadow-sm rounded-[24px] flex flex-col overflow-hidden">
-        <header class="p-6 md:p-8 border-b border-slate-100 bg-slate-50/50">
+      <article class="bg-white border border-slate-200 shadow-sm rounded-2xl flex flex-col overflow-hidden">
+        <header class="p-6 md:p-8 border-b border-slate-100 bg-slate-50">
           <span class="text-slate-400 text-[11px] font-extrabold uppercase tracking-widest block mb-1">Cuenta</span>
           <h2 class="text-xl md:text-2xl font-black text-slate-900 tracking-tight">Datos personales</h2>
         </header>
@@ -95,7 +93,7 @@
             </div>
             <div class="flex flex-col gap-1">
               <small class="text-slate-500 text-xs font-bold uppercase tracking-wide">Correo electrónico</small>
-              <strong class="text-slate-900 font-bold break-all">{{ datos.usuario.email || 'Oculto por privacidad' }}</strong>
+              <strong class="text-slate-900 font-bold break-all">{{ perfilPropio() ? (datos.usuario.email || 'Sin correo registrado') : 'Oculto por privacidad' }}</strong>
             </div>
           </div>
           <div class="flex items-start gap-4">
@@ -111,8 +109,8 @@
       </article>
 
       <!-- MOCHILA DIGITAL -->
-      <article class="bg-white border border-slate-100 shadow-sm rounded-[24px] flex flex-col overflow-hidden">
-        <header class="p-6 md:p-8 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+      <article class="bg-white border border-slate-200 shadow-sm rounded-2xl flex flex-col overflow-hidden">
+        <header class="p-6 md:p-8 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
           <div>
             <span class="text-slate-400 text-[11px] font-extrabold uppercase tracking-widest block mb-1">Recompensas</span>
             <h2 class="text-xl md:text-2xl font-black text-slate-900 tracking-tight">Mochila digital</h2>
@@ -124,9 +122,9 @@
           @if (datos.mochila.length) {
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               @for (premio of datos.mochila; track premio.id) {
-                <article class="flex items-center gap-4 bg-slate-50 border border-slate-100 p-4 rounded-2xl hover:-translate-y-1 hover:shadow-md transition-all duration-300">
-                  @if (premio.imagen) {
-                    <img [src]="asset(premio.imagen)" [alt]="premio.nombre" class="w-12 h-12 object-contain rounded-lg">
+                <article class="flex items-center gap-4 bg-slate-50 border border-slate-100 p-4 rounded-xl hover:shadow-sm transition-shadow motion-reduce:transition-none">
+                  @if (premio.imagen && !imagenPremioFallida(premio.id)) {
+                    <img [src]="asset(premio.imagen)" [alt]="premio.nombre" class="w-12 h-12 object-contain rounded-lg" (error)="registrarImagenFallida('premio', premio.id)">
                   } @else {
                     <div class="w-12 h-12 rounded-lg bg-slate-200 text-slate-400 flex items-center justify-center text-xl">
                       <span nz-icon nzType="gift" nzTheme="outline"></span>
@@ -156,8 +154,8 @@
     </section>
 
     <!-- BADGES SECTION -->
-    <section class="bg-white border border-slate-100 shadow-sm rounded-[24px] flex flex-col overflow-hidden">
-      <header class="p-6 md:p-8 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+    <section class="bg-white border border-slate-200 shadow-sm rounded-2xl flex flex-col overflow-hidden">
+      <header class="p-6 md:p-8 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
         <div>
           <span class="text-slate-400 text-[11px] font-extrabold uppercase tracking-widest block mb-1">Progreso</span>
           <h2 class="text-xl md:text-2xl font-black text-slate-900 tracking-tight">Insignias ganadas</h2>
@@ -169,11 +167,11 @@
         @if (datos.insignias.length) {
           <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             @for (insignia of datos.insignias; track insignia.id) {
-              <article class="flex flex-col items-center text-center gap-3 p-5 rounded-[20px] hover:bg-slate-50 transition-colors">
-                @if (insignia.imagen) {
-                  <img [src]="asset(insignia.imagen)" [alt]="insignia.nombre" class="w-20 h-20 object-contain hover:scale-110 transition-transform duration-300">
+              <article class="flex flex-col items-center text-center gap-3 p-5 rounded-2xl hover:bg-slate-50 transition-colors motion-reduce:transition-none">
+                @if (insignia.imagen && !imagenInsigniaFallida(insignia.id)) {
+                  <img [src]="asset(insignia.imagen)" [alt]="insignia.nombre" class="w-20 h-20 object-contain" (error)="registrarImagenFallida('insignia', insignia.id)">
                 } @else {
-                  <div class="w-20 h-20 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center text-3xl hover:scale-110 transition-transform duration-300">
+                  <div class="w-20 h-20 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center text-3xl">
                     <span nz-icon nzType="star" nzTheme="fill"></span>
                   </div>
                 }

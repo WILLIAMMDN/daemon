@@ -36,6 +36,7 @@
       </a>
 
       <button
+        id="topbar-perfil"
         type="button"
         nz-dropdown
         [nzVisible]="notifMenuAbierto()"
@@ -63,7 +64,7 @@
         nzPlacement="bottomRight"
         nzTrigger="click"
         class="topbar-card profile-card"
-        aria-label="Abrir menú de cuenta"
+        aria-label="Abrir menú de cuenta y perfil"
         aria-haspopup="menu"
         [attr.aria-expanded]="perfilMenuAbierto()"
         (nzVisibleChange)="cambiarVisibilidadPerfil($event)"

@@ -3,32 +3,19 @@ import '../../../../../node_modules/ng-zorro-antd/descriptions/style/index.min.c
 import '../../../../../node_modules/ng-zorro-antd/statistic/style/index.min.css';
 import '../../../../../node_modules/ng-zorro-antd/table/style/index.min.css';
 import '../../../../../node_modules/ng-zorro-antd/upload/style/index.min.css';
-import { DatePipe } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
-  faArrowRightFromBracket,
-  faBell,
   faBookOpenReader,
-  faChevronDown,
-  faGear,
   faHouse,
-  faMagnifyingGlass,
   faRankingStar,
   faRocket,
-  faShieldHalved,
   faStore,
   faUser,
 } from '@fortawesome/free-solid-svg-icons';
-import { NzAvatarModule } from 'ng-zorro-antd/avatar';
-import { NzBadgeModule } from 'ng-zorro-antd/badge';
-import { NzButtonModule } from 'ng-zorro-antd/button';
-import { NzProgressModule } from 'ng-zorro-antd/progress';
 import { EmailVerificationBanner } from '../../componentes/email-verification-banner/email-verification-banner';
-import { MonedaDaemon } from '../../../shared/componentes/moneda-daemon/moneda-daemon';
 import { SidebarPortal } from '../sidebar-portal/sidebar-portal';
-import { Activos } from '../../servicios/activos';
 import { Autenticacion } from '../../servicios/autenticacion';
 import { CargaGlobal } from '../../servicios/carga-global';
 import { BienestarDigital, EstadoBienestarDigital } from '../../servicios/bienestar-digital';
@@ -38,13 +25,12 @@ import { alumnoSidebarSections } from '../portal-sidebar.config';
 import { temaPortalAlumno } from '../../dominio/tema-portal-alumno';
 
 import { TourService } from '../../servicios/tour.service';
-import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { TopbarAlumno } from '../topbar-alumno/topbar-alumno';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-layout-alumno',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, FontAwesomeModule, NzAvatarModule, NzBadgeModule, NzButtonModule, NzDropDownModule, NzProgressModule, EmailVerificationBanner, SidebarPortal, TopbarAlumno],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, FontAwesomeModule, EmailVerificationBanner, SidebarPortal, TopbarAlumno],
   templateUrl: './layout-alumno.html',
   styleUrl: './layout-alumno.scss',
 })
@@ -54,7 +40,6 @@ export class LayoutAlumno implements OnInit, OnDestroy {
   private readonly notificacionesService = inject(NotificacionesService);
   private readonly tourService = inject(TourService);
   private readonly router = inject(Router);
-  private readonly activos = inject(Activos);
   private readonly cargaGlobal = inject(CargaGlobal);
   private readonly titleService = inject(Title);
   private readonly bienestarService = inject(BienestarDigital);
@@ -64,23 +49,13 @@ export class LayoutAlumno implements OnInit, OnDestroy {
   readonly seccionesSidebar = alumnoSidebarSections;
   readonly temaPortal = computed(() => temaPortalAlumno(this.sesion.usuario()?.nivel));
   readonly iconos = {
-    buscar: faMagnifyingGlass,
-    campana: faBell,
-    rango: faShieldHalved,
-    desplegar: faChevronDown,
-    perfil: faUser,
-    config: faGear,
-    salir: faArrowRightFromBracket,
+    descanso: faBookOpenReader,
     inicio: faHouse,
     misiones: faRocket,
     tienda: faStore,
     ranking: faRankingStar,
-    descanso: faBookOpenReader,
+    perfil: faUser,
   };
-
-  // Servicio de Notificaciones
-  notificaciones = this.notificacionesService.notificaciones;
-  notificacionesNoLeidas = this.notificacionesService.noLeidas;
 
   constructor() {
     this.titleService.setTitle('Portal Alumno | DAEMON');
@@ -95,58 +70,6 @@ export class LayoutAlumno implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     if (this.latidoId !== null) window.clearInterval(this.latidoId);
-  }
-
-  marcarComoLeidas(): void {
-    if (this.notificacionesNoLeidas() > 0) {
-      this.notificacionesService.marcarTodasComoLeidas().subscribe();
-    }
-  }
-
-  perfilDetalle(): string {
-    const usuario = this.sesion.usuario();
-    return `Nivel ${this.nivelGamificacion()} - ${usuario?.tokens || 0} DAEMONS`;
-  }
-
-  perfilNivel(): string | null {
-    const usuario = this.sesion.usuario();
-    if (!usuario?.nivel) {
-      return null;
-    }
-    return `Nivel ${this.nivelGamificacion()} · ${usuario.nivel}`;
-  }
-
-  perfilTokens(): number | null {
-    return this.sesion.usuario()?.tokens ?? null;
-  }
-
-  nivelGamificacion(): number {
-    return this.sesion.usuario()?.nivel_gamificacion ?? 1;
-  }
-
-  progresoNivel(): number {
-    return this.sesion.usuario()?.progreso_nivel?.progreso_porcentaje ?? 0;
-  }
-
-  xpRestante(): number {
-    return this.sesion.usuario()?.progreso_nivel?.experiencia_restante ?? 100;
-  }
-
-  readonly formatoNivel = (): string => `${this.nivelGamificacion()}`;
-
-  avatarUrl(): string {
-    return this.activos.url(this.sesion.usuario()?.avatar);
-  }
-
-  iniciales(): string {
-    const usuario = this.sesion.usuario();
-    const base = usuario?.nombre_completo || usuario?.usuario || 'DAEMON';
-    return base
-      .split(/\s+/)
-      .filter(Boolean)
-      .slice(0, 2)
-      .map((parte) => parte[0]?.toUpperCase())
-      .join('') || 'D';
   }
 
   salir(): void {
