@@ -18,3 +18,4 @@
 - [2026-07-19 18:48:40] test(config): remove dead code from config module
 - [2026-07-19 18:48:40] chore(config): improve performance of config module
 - [2026-07-19 18:48:41] build(core): update dependencies of core module
+- [2026-07-19 18:48:41] docs(config): update dependencies of config module
