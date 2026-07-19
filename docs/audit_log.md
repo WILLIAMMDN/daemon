@@ -12,3 +12,4 @@
 - [2026-07-19 18:48:39] chore(auth): format structure of auth module
 - [2026-07-19 18:48:40] docs(models): refine type hints in models module
 - [2026-07-19 18:48:40] build(core): refine type hints in core module
+- [2026-07-19 18:48:40] refactor(sidebar): optimize logic in sidebar module
