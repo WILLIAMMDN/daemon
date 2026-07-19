@@ -59,3 +59,4 @@
 - [2026-07-19 18:48:47] style(api): update documentation for api module
 - [2026-07-19 18:48:47] ci(api): update dependencies of api module
 - [2026-07-19 18:48:47] test(api): clean up code in api module
+- [2026-07-19 18:48:47] style(services): clean up code in services module
