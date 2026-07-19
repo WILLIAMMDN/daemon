@@ -173,3 +173,4 @@
 - [2026-07-19 18:49:07] test(gamification): improve performance of gamification module
 - [2026-07-19 18:49:07] perf(gamification): update documentation for gamification module
 - [2026-07-19 18:49:07] build(api): update dependencies of api module
+- [2026-07-19 18:49:07] style(ui): remove dead code from ui module
