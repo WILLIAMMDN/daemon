@@ -41,3 +41,4 @@
 - [2026-07-19 18:48:44] build(gamification): optimize logic in gamification module
 - [2026-07-19 18:48:44] build(sidebar): format structure of sidebar module
 - [2026-07-19 18:48:44] style(models): remove dead code from models module
+- [2026-07-19 18:48:44] docs(auth): update documentation for auth module
