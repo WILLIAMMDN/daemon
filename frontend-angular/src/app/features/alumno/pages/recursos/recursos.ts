@@ -17,6 +17,7 @@ import {
 import { finalize } from 'rxjs';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { Api, ApiError } from '../../../../core/servicios/api';
+import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
 import { IllustrationSlot } from '../../../../shared/componentes/illustration-slot/illustration-slot';
 
 type EstadoCurso = 'notStarted' | 'inProgress' | 'completed';
@@ -92,7 +93,7 @@ interface ProblemaCarga {
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-recursos',
-  imports: [RouterLink, FontAwesomeModule, NzButtonModule, IllustrationSlot],
+  imports: [RouterLink, FontAwesomeModule, NzButtonModule, EstadoVacio, IllustrationSlot],
   templateUrl: './recursos.html',
   styleUrl: './recursos.scss',
 })

@@ -123,9 +123,11 @@ describe('Recursos', () => {
     fixture.detectChanges();
     const element = fixture.nativeElement as HTMLElement;
 
-    expect(element.querySelector('.course-empty')?.textContent).toContain('Tu aprendizaje está preparándose');
-    expect(element.querySelector('.course-empty__illustration')?.getAttribute('assetName'))
-      .toBe('course-empty-learning.webp');
+    const estadoVacio = element.querySelector('.course-empty-state');
+    expect(estadoVacio?.textContent).toContain('Tu aprendizaje está preparándose');
+    expect(estadoVacio?.querySelector<HTMLImageElement>('.empty-state__art img')?.getAttribute('src'))
+      .toBe('/img/empty/empty-robot.webp');
+    expect(estadoVacio?.querySelector('.ant-btn-primary')?.textContent).toContain('Actualizar cursos');
     expect(element.querySelector('.course-summary-card')?.textContent).toContain('Aún no tienes cursos asignados');
   });
 
@@ -137,7 +139,7 @@ describe('Recursos', () => {
 
     expect(element.querySelector('.course-load-error')?.getAttribute('data-problem')).toBe('offline');
     expect(element.querySelector('.course-load-error h2')?.textContent).toContain('Sin conexión con DAEMON');
-    expect(element.querySelector('.course-empty')).toBeNull();
+    expect(element.querySelector('.course-empty-state')).toBeNull();
   });
 
   it('ofrece una salida segura cuando el backend deniega acceso', () => {

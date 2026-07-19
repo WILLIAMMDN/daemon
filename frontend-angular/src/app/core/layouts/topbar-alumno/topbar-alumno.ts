@@ -7,6 +7,7 @@ import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzBadgeModule } from 'ng-zorro-antd/badge';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { DatePipe } from '@angular/common';
+import { EstadoVacio } from '../../../shared/componentes/estado-vacio/estado-vacio';
 import { MonedaDaemon } from '../../../shared/componentes/moneda-daemon/moneda-daemon';
 import { Activos } from '../../servicios/activos';
 import { Sesion } from '../../servicios/sesion';
@@ -15,7 +16,7 @@ import { NotificacionesService } from '../../servicios/notificaciones.service';
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-topbar-alumno',
-  imports: [RouterLink, FontAwesomeModule, NzAvatarModule, NzBadgeModule, NzDropDownModule, MonedaDaemon, DatePipe],
+  imports: [RouterLink, FontAwesomeModule, NzAvatarModule, NzBadgeModule, NzDropDownModule, EstadoVacio, MonedaDaemon, DatePipe],
   templateUrl: './topbar-alumno.html',
   styleUrl: './topbar-alumno.scss',
 })

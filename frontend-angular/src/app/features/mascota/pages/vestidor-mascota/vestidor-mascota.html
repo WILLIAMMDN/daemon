@@ -123,12 +123,16 @@
             }
           </div>
         } @else {
-          <div class="empty-inventory">
-            <span><fa-icon [icon]="iconos.ropa" /></span>
-            <h3>{{ slotActivo() === 'todos' ? 'Tu colección está lista para crecer' : 'Aún no tienes piezas en esta categoría' }}</h3>
-            <p>Completa retos, gana DAEMONS y desbloquea accesorios en la tienda.</p>
-            <a routerLink="/alumno/tienda"><fa-icon [icon]="iconos.tienda" /> Explorar accesorios</a>
-          </div>
+          <app-estado-vacio
+            tamano="compact"
+            [titulo]="slotActivo() === 'todos' ? 'Tu colección está lista para crecer' : 'Aún no tienes piezas en esta categoría'"
+            descripcion="Completa retos, gana DAEMONS y desbloquea accesorios compatibles en la tienda."
+          >
+            <a nz-button nzType="primary" routerLink="/alumno/tienda">
+              <fa-icon [icon]="iconos.tienda" aria-hidden="true" />
+              Explorar accesorios
+            </a>
+          </app-estado-vacio>
         }
 
         @if (seleccionado(); as item) {

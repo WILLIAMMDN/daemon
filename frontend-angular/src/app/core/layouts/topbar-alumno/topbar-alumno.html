@@ -95,7 +95,12 @@
           <p>{{ notif.mensaje }}</p>
         </article>
       } @empty {
-        <p class="notification-empty">Todo al día. Aquí aparecerán tus novedades.</p>
+        <app-estado-vacio
+          tamano="mini"
+          titulo="Todo al día"
+          descripcion="Aquí aparecerán tus novedades."
+          [anunciar]="false"
+        />
       }
     </div>
     <button type="button" (click)="irANotificaciones($event)" class="notification-footer">Ver todas o configurar alertas</button>

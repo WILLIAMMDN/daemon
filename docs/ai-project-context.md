@@ -87,6 +87,7 @@ Student portal documentation:
 docs/sistema-visual-portal-alumno.md
 docs/portal-alumno.md
 docs/gamificacion-xp-daemons.md
+docs/estados-vacios-daemon.md
 docs/release-2026-07-14-portal-alumno.md
 ```
 
@@ -100,6 +101,9 @@ Current student visual direction:
 - Existing purple sidebar preserved.
 - Compact header that displays XP level and DAEMONS separately.
 - Dashboard, profile, missions, ranking and store share one visual language.
+- Confirmed empty datasets use the shared NG-ZORRO-based `app-estado-vacio`
+  with the canonical lossless robot, contextual copy and real actions; loading
+  and errors remain distinct states.
 - Courses (`/alumno/recursos`) is the first catalog/exploration pilot using a
   dedicated illustrated hero, real status filters, accent-insensitive search,
   course progress, a contextual aside and complete loading/empty/error states.

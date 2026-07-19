@@ -138,16 +138,15 @@
               }
             </div>
           } @else {
-            <div class="h-full flex items-center justify-center py-8">
-              <nz-empty 
-                nzNotFoundImage="simple"
-                [nzNotFoundContent]="contentMochila">
-                <ng-template #contentMochila>
-                  <span class="text-slate-900 font-bold block mb-1">{{ perfilPropio() ? 'Mochila sin premios' : 'Mochila vacía' }}</span>
-                  <span class="text-slate-500 text-sm font-medium">{{ perfilPropio() ? 'Todavía no tienes premios entregados.' : 'Todavía no tiene premios entregados.' }}</span>
-                </ng-template>
-              </nz-empty>
-            </div>
+            <app-estado-vacio
+              tamano="compact"
+              [titulo]="perfilPropio() ? 'Tu mochila está lista para crecer' : 'Mochila sin premios'"
+              [descripcion]="perfilPropio() ? 'Canjea recompensas en la tienda y aparecerán aquí cuando sean entregadas.' : 'Este estudiante todavía no tiene premios entregados.'"
+            >
+              @if (perfilPropio()) {
+                <a nz-button nzType="primary" routerLink="/alumno/tienda">Explorar recompensas</a>
+              }
+            </app-estado-vacio>
           }
         </div>
       </article>
@@ -184,16 +183,15 @@
             }
           </div>
         } @else {
-          <div class="flex items-center justify-center py-12">
-            <nz-empty 
-              nzNotFoundImage="simple"
-              [nzNotFoundContent]="contentInsignias">
-              <ng-template #contentInsignias>
-                <span class="text-slate-900 font-bold block mb-1">Aún sin insignias</span>
-                <span class="text-slate-500 text-sm font-medium">Cuando completes logros importantes aparecerán aquí.</span>
-              </ng-template>
-            </nz-empty>
-          </div>
+          <app-estado-vacio
+            tamano="compact"
+            [titulo]="perfilPropio() ? 'Tu primera insignia está por llegar' : 'Aún sin insignias'"
+            [descripcion]="perfilPropio() ? 'Completa misiones y logros importantes para llenar esta colección.' : 'Cuando este estudiante complete logros importantes, sus insignias aparecerán aquí.'"
+          >
+            @if (perfilPropio()) {
+              <a nz-button nzType="primary" routerLink="/alumno/misiones">Ver misiones</a>
+            }
+          </app-estado-vacio>
         }
       </div>
     </section>

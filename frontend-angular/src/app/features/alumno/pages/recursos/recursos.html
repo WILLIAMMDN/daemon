@@ -270,38 +270,29 @@
             }
           </section>
         } @else if (hayFiltrosActivos()) {
-          <section class="course-filtered-empty" role="status">
-            <span aria-hidden="true"><fa-icon [icon]="faMagnifyingGlass"></fa-icon></span>
-            <h2>No encontramos coincidencias</h2>
-            <p>Prueba otra búsqueda o vuelve a mostrar todos tus cursos.</p>
-            <button nz-button nzType="default" type="button" (click)="limpiarFiltros()">Limpiar filtros</button>
-          </section>
+          <app-estado-vacio
+            class="course-filtered-empty-state"
+            tamano="compact"
+            titulo="No encontramos coincidencias"
+            descripcion="Prueba otra búsqueda o vuelve a mostrar todos tus cursos."
+          >
+            <button nz-button nzType="primary" type="button" (click)="limpiarFiltros()">Limpiar filtros</button>
+          </app-estado-vacio>
         } @else {
-          <section class="course-empty">
-            <daemon-illustration-slot
-              class="course-empty__illustration"
-              src="/img/robot-mision.png"
-              alt=""
-              kind="empty-state"
-              aspectRatio="4 / 3"
-              assetName="course-empty-learning.webp"
-            ></daemon-illustration-slot>
-            <div class="course-empty__copy">
-              <span class="course-eyebrow">Tu próxima ruta</span>
-              <h2>Tu aprendizaje está preparándose</h2>
-              <p>Cuando tu docente publique y asigne un curso, aparecerá aquí automáticamente.</p>
-              <div class="course-empty__actions">
-                <button nz-button nzType="primary" type="button" (click)="cargar(true)">
-                  <fa-icon [icon]="faRotateRight" aria-hidden="true"></fa-icon>
-                  Actualizar cursos
-                </button>
-                <a nz-button nzType="default" routerLink="/alumno/misiones">
-                  Ver misiones
-                  <fa-icon [icon]="faArrowRight" aria-hidden="true"></fa-icon>
-                </a>
-              </div>
-            </div>
-          </section>
+          <app-estado-vacio
+            class="course-empty-state"
+            titulo="Tu aprendizaje está preparándose"
+            descripcion="Cuando tu docente publique y asigne un curso, aparecerá aquí automáticamente."
+          >
+            <button nz-button nzType="primary" type="button" (click)="cargar(true)">
+              <fa-icon [icon]="faRotateRight" aria-hidden="true"></fa-icon>
+              Actualizar cursos
+            </button>
+            <a nz-button nzType="default" routerLink="/alumno/misiones">
+              Ver misiones
+              <fa-icon [icon]="faArrowRight" aria-hidden="true"></fa-icon>
+            </a>
+          </app-estado-vacio>
         }
 
         <section class="course-discovery" aria-labelledby="course-discovery-title">

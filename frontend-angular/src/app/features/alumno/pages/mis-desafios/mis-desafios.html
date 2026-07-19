@@ -55,15 +55,11 @@
       }
     </div>
   } @else {
-    <div class="bg-white border border-slate-200 shadow-sm rounded-2xl p-8 md:p-12 flex items-center justify-center">
-      <nz-empty 
-        nzNotFoundImage="simple"
-        [nzNotFoundContent]="contentTpl">
-        <ng-template #contentTpl>
-          <span class="text-slate-900 text-lg font-extrabold block mt-2">No hay misiones activas</span>
-          <span class="text-slate-500 text-sm font-medium mt-1 block">Aún no tienes misiones disponibles para tu nivel. ¡Vuelve más tarde!</span>
-        </ng-template>
-      </nz-empty>
-    </div>
+    <app-estado-vacio
+      titulo="Tu próxima misión está en camino"
+      descripcion="Ahora no hay misiones activas para tu nivel. Actualiza más tarde para descubrir nuevos retos."
+    >
+      <button nz-button nzType="primary" type="button" (click)="cargar()">Actualizar misiones</button>
+    </app-estado-vacio>
   }
 </main>
