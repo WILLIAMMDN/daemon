@@ -1,57 +1,208 @@
-<main class="student-module-page w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-6 md:gap-8 font-inter">
-  <header class="student-module-header flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white border border-slate-200 shadow-sm rounded-2xl p-6">
-    <div class="flex flex-col gap-1">
-      <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Cuentos</p>
-      <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 leading-tight">Galería de historias</h1>
-      <p class="text-sm text-slate-600">Historias creadas por estudiantes de DAEMON.</p>
+<section class="story-gallery" aria-labelledby="stories-title">
+  <a class="story-back" routerLink="/alumno/proyectos">
+    <fa-icon [icon]="faArrowLeft" aria-hidden="true"></fa-icon>
+    Todos los proyectos
+  </a>
+
+  <header class="story-hero">
+    <div class="story-hero__copy">
+      <span>Proyectos · Narrativa digital</span>
+      <h1 id="stories-title">Galería de historias</h1>
+      <p>Descubre cuentos creados en DAEMON y continúa tu propia historia por escenas.</p>
+      <div class="story-hero__actions">
+        <a nz-button nzType="primary" routerLink="/alumno/proyectos/cuentos/crear">
+          <fa-icon [icon]="faPenNib" aria-hidden="true"></fa-icon>
+          {{ miCuentoVista() ? 'Continuar mi cuento' : 'Crear mi cuento' }}
+        </a>
+        <a nz-button nzType="default" href="#historias-publicadas">
+          Explorar historias
+          <fa-icon [icon]="faArrowRight" aria-hidden="true"></fa-icon>
+        </a>
+      </div>
     </div>
-    <div class="student-module-actions flex flex-col sm:flex-row gap-2">
-      <button nz-button nzType="default" class="daemon-btn" type="button" (click)="cargar()" [disabled]="cargando()">
-        @if (cargando()) { Actualizando... } @else { Actualizar }
-      </button>
-      <a nz-button nzType="primary" class="daemon-btn" routerLink="/alumno/cuentos/crear">Crear cuento</a>
-    </div>
+    <daemon-illustration-slot
+      class="story-hero__art"
+      src="/img/hero-monster.png"
+      alt=""
+      kind="hero"
+      aspectRatio="1 / 1"
+      assetName="story-gallery-hero.webp"
+      [eager]="true"
+    ></daemon-illustration-slot>
   </header>
 
-  @if (cargando()) {
-    <app-cargando class="w-full bg-white border border-slate-200 shadow-sm rounded-2xl p-8" texto="Cargando cuentos..."></app-cargando>
-  } @else if (error()) {
-    <div class="w-full bg-red-50 border border-red-200 rounded-xl p-4">
-      <p class="text-sm font-bold text-red-700">{{ error() }}</p>
+  @if (error() && cuentos().length) {
+    <div class="story-alert" role="alert">
+      <div>
+        <strong>{{ datosConservados() ? 'Mostramos la galería guardada' : 'No se pudo actualizar' }}</strong>
+        <p>{{ error() }}</p>
+      </div>
+      <button nz-button nzType="default" type="button" (click)="cargar(true)">Reintentar</button>
     </div>
-  } @else if (cuentos().length) {
-    <!-- GALERÍA DE CUENTOS (GRID RESPONSIVO) -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 w-full">
-      @for (cuento of cuentos(); track cuento.id) {
-        <article class="flex flex-col gap-3 bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 h-full">
-          @if (portada(cuento)) {
-            <div class="w-full h-40 bg-slate-100 overflow-hidden relative border-b border-slate-100 shrink-0">
-              <img class="w-full h-full object-cover" [src]="portada(cuento)" [alt]="cuento.titulo">
-            </div>
-          } @else {
-            <div class="w-full h-40 bg-slate-100 flex items-center justify-center border-b border-slate-100 shrink-0">
-              <span class="text-slate-400 font-bold">Sin portada</span>
+  }
+
+  <div class="story-layout" id="historias-publicadas">
+    <div class="story-main">
+      <section class="story-toolbar" aria-label="Buscar y ordenar historias">
+        <nav class="story-filters" aria-label="Filtrar historias">
+          <button type="button" [class.active]="filtro() === 'todos'" [attr.aria-pressed]="filtro() === 'todos'" (click)="seleccionarFiltro('todos')">
+            <fa-icon [icon]="faBookOpen" aria-hidden="true"></fa-icon>
+            Todas
+          </button>
+          <button type="button" [class.active]="filtro() === 'mio'" [attr.aria-pressed]="filtro() === 'mio'" (click)="seleccionarFiltro('mio')">
+            <fa-icon [icon]="faCircleUser" aria-hidden="true"></fa-icon>
+            Mi cuento
+          </button>
+          <button type="button" [class.active]="filtro() === 'portada'" [attr.aria-pressed]="filtro() === 'portada'" (click)="seleccionarFiltro('portada')">
+            Con portada
+          </button>
+        </nav>
+
+        <div class="story-toolbar__controls">
+          <label class="story-order">
+            <fa-icon [icon]="faCalendarDays" aria-hidden="true"></fa-icon>
+            <span class="sr-only">Ordenar historias</span>
+            <select [value]="orden()" (change)="actualizarOrden($event)">
+              <option value="recientes">Más recientes</option>
+              <option value="antiguos">Más antiguas</option>
+              <option value="titulo">Por título</option>
+            </select>
+          </label>
+          <label class="story-search">
+            <fa-icon [icon]="faMagnifyingGlass" aria-hidden="true"></fa-icon>
+            <span class="sr-only">Buscar por título o autor</span>
+            <input type="search" [value]="busqueda()" (input)="actualizarBusqueda($event)" placeholder="Buscar historias">
+          </label>
+        </div>
+      </section>
+
+      @if (cargando()) {
+        <section class="story-loading" aria-label="Cargando historias" aria-busy="true">
+          @for (item of [1, 2, 3, 4, 5, 6]; track item) {
+            <div class="story-skeleton">
+              <span></span>
+              <i></i>
+              <i></i>
             </div>
           }
-          
-          <div class="flex flex-col gap-2 p-5 flex-grow">
-            <h2 class="text-base font-bold text-slate-900 leading-tight line-clamp-2">{{ cuento.titulo }}</h2>
-            <div class="flex items-center gap-2 mt-1">
-              <div class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center shrink-0">
-                <span class="text-[10px] font-bold">{{ (cuento.autor || 'A').charAt(0) }}</span>
+        </section>
+      } @else if (error() && !cuentos().length) {
+        <section class="story-load-error" role="alert">
+          <h2>No pudimos abrir la galería</h2>
+          <p>{{ error() }}</p>
+          <button nz-button nzType="primary" type="button" (click)="cargar(true)">Volver a intentar</button>
+        </section>
+      } @else if (cuentos().length && cuentosFiltrados().length) {
+        <section class="story-grid" aria-label="Historias publicadas">
+          @for (cuento of cuentosFiltrados(); track cuento.id) {
+            <article class="story-card" [class.story-card--own]="cuento.esMio">
+              <div class="story-card__cover">
+                @if (portadaDisponible(cuento)) {
+                  <img [src]="cuento.portadaUrl!" [alt]="'Portada de ' + cuento.tituloVista" loading="lazy" decoding="async" (error)="registrarPortadaFallida(cuento.id)">
+                } @else {
+                  <div class="story-card__cover-placeholder" [attr.data-asset-name]="'story-' + cuento.id + '-cover.webp'">
+                    <fa-icon [icon]="faBookOpen" aria-hidden="true"></fa-icon>
+                    <span>Portada pendiente</span>
+                  </div>
+                }
               </div>
-              <p class="text-xs text-slate-600 font-medium truncate">{{ cuento.autor || 'Autor registrado' }}</p>
-            </div>
-          </div>
-          
-          <div class="flex items-center justify-between p-5 pt-0 mt-auto">
-            <small class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ cuento.fecha_creacion }}</small>
-            <a nz-button nzType="primary" nzSize="small" class="daemon-btn" [routerLink]="['/alumno/cuentos', cuento.id]">Leer</a>
-          </div>
-        </article>
+              <div class="story-card__body">
+                @if (cuento.esMio) {
+                  <span class="story-card__own-label">Tu historia</span>
+                }
+                <h2>{{ cuento.tituloVista }}</h2>
+                <div class="story-card__author">
+                  <span aria-hidden="true">{{ cuento.inicialAutor }}</span>
+                  <p>{{ cuento.autorVista }}</p>
+                </div>
+                <dl>
+                  <div>
+                    <dt>Escenas</dt>
+                    <dd>{{ cuento.escenasConContenido }}/6</dd>
+                  </div>
+                  <div>
+                    <dt>Fecha</dt>
+                    <dd>{{ cuento.fechaVista }}</dd>
+                  </div>
+                </dl>
+              </div>
+              <footer>
+                <a [routerLink]="['/alumno/proyectos/cuentos', cuento.id]">
+                  <fa-icon [icon]="faBookOpen" aria-hidden="true"></fa-icon>
+                  Leer historia
+                </a>
+              </footer>
+            </article>
+          }
+        </section>
+      } @else if (cuentos().length) {
+        <app-estado-vacio
+          tamano="compact"
+          titulo="No encontramos historias"
+          descripcion="Prueba otro texto o vuelve a mostrar toda la galería."
+        >
+          <button nz-button nzType="primary" type="button" (click)="limpiarFiltros()">Limpiar filtros</button>
+        </app-estado-vacio>
+      } @else {
+        <app-estado-vacio
+          titulo="La primera historia está por comenzar"
+          descripcion="Todavía no hay cuentos con título en la galería. Puedes crear el primero desde tu espacio."
+        >
+          <a nz-button nzType="primary" routerLink="/alumno/proyectos/cuentos/crear">Crear mi cuento</a>
+        </app-estado-vacio>
+      }
+
+      @if (refrescando()) {
+        <p class="story-refresh-status" role="status">Actualizando historias sin ocultar la galería…</p>
       }
     </div>
-  } @else {
-    <app-estado-vacio titulo="Sin cuentos" descripcion="Todavía no hay cuentos publicados. ¡Anímate a escribir el primero!"></app-estado-vacio>
-  }
-</main>
+
+    <aside class="story-aside" aria-label="Resumen creativo">
+      <section class="story-personal-card">
+        <span>Tu espacio creativo</span>
+        @if (!miCuentoCargado()) {
+          <div class="story-personal-card__loading" aria-label="Cargando tu cuento"></div>
+        } @else if (miCuentoVista(); as propio) {
+          <h2>{{ propio.tituloVista }}</h2>
+          <p>Has construido {{ propio.escenasConContenido }} de 6 escenas en tu cuento.</p>
+          <div class="story-scene-progress" role="progressbar" aria-label="Escenas con contenido" aria-valuemin="0" aria-valuemax="6" [attr.aria-valuenow]="propio.escenasConContenido">
+            <span [style.width.%]="propio.escenasConContenido * 100 / 6"></span>
+          </div>
+          <a nz-button nzType="primary" routerLink="/alumno/proyectos/cuentos/crear">Continuar escribiendo</a>
+        } @else {
+          <h2>Tu historia empieza aquí</h2>
+          <p>DAEMON guardará un cuento personal de hasta seis escenas.</p>
+          <a nz-button nzType="primary" routerLink="/alumno/proyectos/cuentos/crear">Crear mi cuento</a>
+        }
+      </section>
+
+      <section class="story-stats-card">
+        <span>Galería actual</span>
+        <h2>Contenido real disponible</h2>
+        <dl>
+          <div>
+            <dd>{{ cuentos().length }}</dd>
+            <dt>historias</dt>
+          </div>
+          <div>
+            <dd>{{ cuentosConPortada() }}</dd>
+            <dt>con portada</dt>
+          </div>
+          <div>
+            <dd>{{ miCuentoVista() ? 1 : 0 }}</dd>
+            <dt>tuya</dt>
+          </div>
+        </dl>
+      </section>
+
+      <section class="story-guide-card">
+        <span>Cómo funciona</span>
+        <ol>
+          <li><strong>1</strong><p>Escribe un título y construye hasta seis escenas.</p></li>
+          <li><strong>2</strong><p>Guarda tu avance desde el editor de cuentos.</p></li>
+          <li><strong>3</strong><p>Regresa a la galería para leer las historias disponibles.</p></li>
+        </ol>
+      </section>
+    </aside>
+  </div>
+</section>

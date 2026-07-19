@@ -1,79 +1,117 @@
-<main class="student-module-page w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-6 md:gap-8 font-inter">
-  <!-- Cabecera -->
-  <header class="student-module-header flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-    <div class="flex flex-col gap-1">
-      <span class="text-sm font-semibold uppercase tracking-wider text-blue-600">Evaluaciones</span>
-      <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 leading-tight">Exámenes activos</h1>
-      <p class="text-sm text-slate-600">Responde las evaluaciones disponibles para tu nivel.</p>
+<section class="assessments-page" aria-labelledby="assessments-title">
+  <header class="assessments-hero">
+    <span class="assessments-hero__icon" aria-hidden="true"><fa-icon [icon]="iconos.evaluacion" /></span>
+    <div>
+      <span class="assessments-kicker">Evaluaciones</span>
+      <h1 id="assessments-title">Exámenes activos</h1>
+      <p>Responde con calma y revisa cada pregunta antes de registrar tu evaluación.</p>
     </div>
-    <app-boton-accion tipo="actualizar" (accion)="cargar()" [cargando]="cargando()" [deshabilitado]="cargando()"></app-boton-accion>
+    <nav aria-label="Acciones de evaluaciones">
+      <a nz-button nzType="default" routerLink="/alumno/resultados">Ver mis resultados <fa-icon [icon]="iconos.flecha" aria-hidden="true" /></a>
+      <button nz-button nzType="default" type="button" (click)="cargar()" [disabled]="cargando()">
+        <fa-icon [icon]="iconos.actualizar" aria-hidden="true" /> Actualizar
+      </button>
+    </nav>
   </header>
 
   @if (mensaje()) {
-    <nz-alert nzType="success" nzShowIcon [nzMessage]="mensaje()"></nz-alert>
+    <nz-alert class="assessment-feedback" nzType="success" nzShowIcon [nzMessage]="mensaje()"></nz-alert>
   }
-  @if (error()) {
-    <nz-alert nzType="error" nzShowIcon [nzMessage]="error()"></nz-alert>
+  @if (errorEnvio()) {
+    <nz-alert class="assessment-feedback" nzType="error" nzShowIcon [nzMessage]="errorEnvio()"></nz-alert>
   }
 
-  <!-- Contenido Principal -->
-  <section class="w-full flex flex-col gap-6">
-    @if (cargando()) {
-      <div class="py-12 bg-white rounded-2xl shadow-sm border border-slate-100">
-        <app-cargando texto="Cargando evaluaciones..."></app-cargando>
-      </div>
-    } @else if (examenes().length) {
+  @if (cargando()) {
+    <section class="assessments-loading" aria-label="Cargando evaluaciones" aria-busy="true">
+      @for (item of [1, 2]; track item) {
+        <article aria-hidden="true"><span></span><span></span><span></span><span></span></article>
+      }
+    </section>
+  } @else if (errorCarga()) {
+    <section class="assessments-error" role="alert" aria-live="assertive">
+      <span aria-hidden="true"><fa-icon [icon]="iconos.problema" /></span>
+      <div><h2>No pudimos abrir tus evaluaciones</h2><p>{{ errorCarga() }}</p></div>
+      <button nz-button nzType="primary" type="button" (click)="cargar()">
+        <fa-icon [icon]="iconos.actualizar" aria-hidden="true" /> Intentar nuevamente
+      </button>
+    </section>
+  } @else if (examenes().length) {
+    <section class="assessment-list" aria-label="Evaluaciones disponibles">
       @for (examen of examenes(); track examen.id) {
-        <nz-card class="rounded-2xl shadow-sm border-slate-200" [nzBodyStyle]="{'padding': '0'}">
-          <form (ngSubmit)="responder(examen)" class="p-6 md:p-8 flex flex-col gap-6">
-            <div class="flex flex-col gap-2 border-b border-slate-100 pb-4">
-              <h2 class="text-xl md:text-2xl font-bold text-slate-900 m-0">{{ examen.titulo }}</h2>
-              <div class="flex items-center gap-2 mt-1">
-                <nz-tag nzColor="blue" class="font-bold border-0 rounded-md m-0">{{ examen.nivel }}</nz-tag>
-                <span class="text-sm text-slate-500 font-medium">{{ examen.estado | uppercase }}</span>
+        <article class="assessment-card">
+          <form (ngSubmit)="responder(examen)">
+            <header>
+              <div>
+                <span class="assessment-label">Evaluación activa</span>
+                <h2>{{ examen.titulo }}</h2>
+                <p>{{ examen.preguntas.length }} {{ examen.preguntas.length === 1 ? 'pregunta' : 'preguntas' }} · Nivel {{ examen.nivel }}</p>
               </div>
-            </div>
-            
-            @if (examen.preguntas?.length) {
-              <div class="flex flex-col gap-6">
+              <nz-tag nzColor="blue">{{ respondidas(examen) }} / {{ examen.preguntas.length }} respondidas</nz-tag>
+            </header>
+
+            @if (examen.preguntas.length) {
+              <div class="assessment-progress" role="progressbar" [attr.aria-label]="'Preguntas respondidas en ' + examen.titulo" [attr.aria-valuenow]="respondidas(examen)" aria-valuemin="0" [attr.aria-valuemax]="examen.preguntas.length">
+                <span [style.width.%]="examen.preguntas.length ? respondidas(examen) * 100 / examen.preguntas.length : 0"></span>
+              </div>
+
+              <div class="question-list">
                 @for (pregunta of examen.preguntas; track pregunta.id; let i = $index) {
-                  <label class="flex flex-col gap-2 bg-slate-50 p-5 rounded-xl border border-slate-200">
-                    <span class="text-base font-semibold text-slate-800">
-                      <span class="text-blue-600 mr-1">{{ i + 1 }}.</span> {{ pregunta.enunciado }}
-                    </span>
-                    
+                  <fieldset class="question-card">
+                    <legend><span aria-hidden="true">{{ i + 1 }}</span>{{ pregunta.enunciado }}</legend>
+
                     @if (pregunta.opciones?.length) {
-                      <select [name]="'p_' + pregunta.id" [(ngModel)]="respuestas[pregunta.id]" required
-                              class="px-4 py-3 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors w-full text-slate-700 font-medium mt-2">
-                        <option value="" disabled selected>Selecciona una opción</option>
+                      <div class="question-options">
                         @for (opcion of pregunta.opciones; track opcion) {
-                          <option [value]="opcion">{{ opcion }}</option>
+                          <label>
+                            <input
+                              type="radio"
+                              [name]="'p_' + examen.id + '_' + pregunta.id"
+                              [value]="opcion"
+                              [ngModel]="respuestas[pregunta.id] || ''"
+                              (ngModelChange)="actualizarRespuesta(pregunta, $event)"
+                              required
+                            />
+                            <span>{{ opcion }}</span>
+                          </label>
                         }
-                      </select>
+                      </div>
                     } @else {
-                      <input [name]="'p_' + pregunta.id" [(ngModel)]="respuestas[pregunta.id]" required
-                             placeholder="Escribe tu respuesta aquí"
-                             class="px-4 py-3 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors w-full text-slate-700 mt-2">
+                      <label class="question-text-answer">
+                        <span class="sr-only">Respuesta para {{ pregunta.enunciado }}</span>
+                        <input
+                          [name]="'p_' + examen.id + '_' + pregunta.id"
+                          [ngModel]="respuestas[pregunta.id] || ''"
+                          (ngModelChange)="actualizarRespuesta(pregunta, $event)"
+                          required
+                          placeholder="Escribe tu respuesta aquí"
+                        />
+                      </label>
                     }
-                  </label>
+                  </fieldset>
                 }
               </div>
-              
-              <div class="pt-4 border-t border-slate-100 flex justify-end">
-                <app-boton-accion tipo="guardar" [texto]="enviando() === examen.id ? 'Enviando...' : 'Enviar respuestas'" [esSubmit]="true" [deshabilitado]="enviando() === examen.id" [cargando]="enviando() === examen.id"></app-boton-accion>
-              </div>
+
+              <footer>
+                <span role="status"><fa-icon [icon]="puedeResponder(examen) ? iconos.check : iconos.reloj" aria-hidden="true" /> {{ puedeResponder(examen) ? 'Lista para enviar' : 'Responde todas las preguntas' }}</span>
+                <button nz-button nzType="primary" type="submit" [nzLoading]="enviando() === examen.id" [disabled]="enviando() !== null || !puedeResponder(examen)">
+                  Enviar respuestas
+                </button>
+              </footer>
             } @else {
-              <div class="py-8">
-                <app-estado-vacio titulo="Sin preguntas" descripcion="Esta evaluación no tiene preguntas registradas."></app-estado-vacio>
-              </div>
+              <app-estado-vacio tamano="compact" titulo="Evaluación sin preguntas" descripcion="Tu docente todavía está preparando el contenido de esta evaluación." />
             }
           </form>
-        </nz-card>
+        </article>
       }
-    } @else {
-      <div class="py-12 bg-white rounded-2xl shadow-sm border border-slate-100">
-        <app-estado-vacio titulo="Sin evaluaciones" descripcion="No hay evaluaciones activas para tu nivel en este momento."></app-estado-vacio>
-      </div>
-    }
-  </section>
-</main>
+    </section>
+  } @else {
+    <app-estado-vacio
+      class="assessments-empty"
+      titulo="No hay evaluaciones activas"
+      descripcion="Cuando tu docente publique una evaluación para tu nivel, aparecerá aquí automáticamente."
+    >
+      <button nz-button nzType="primary" type="button" (click)="cargar()"><fa-icon [icon]="iconos.actualizar" aria-hidden="true" /> Actualizar</button>
+      <a nz-button nzType="default" routerLink="/alumno/resultados">Ver resultados anteriores</a>
+    </app-estado-vacio>
+  }
+</section>

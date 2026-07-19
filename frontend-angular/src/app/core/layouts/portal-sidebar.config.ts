@@ -52,7 +52,7 @@ export const alumnoSidebarSections: PortalSidebarSection[] = [
     items: [
       { id: 'alumno-panel', etiqueta: 'Dashboard', ruta: '/alumno', detalle: 'Vista general', icono: faGaugeHigh, exacto: true },
       { id: 'alumno-recursos', etiqueta: 'Cursos', ruta: '/alumno/recursos', detalle: 'Materiales y rutas', icono: faBookOpenReader },
-      { id: 'alumno-proyectos', etiqueta: 'Proyectos', ruta: '/alumno/cuentos', detalle: 'Cuentos y creatividad', icono: faCode },
+      { id: 'alumno-proyectos', etiqueta: 'Proyectos', ruta: '/alumno/proyectos', detalle: 'Crea y experimenta', icono: faCode },
       { id: 'alumno-misiones', etiqueta: 'Misiones', ruta: '/alumno/misiones', detalle: 'Retos activos', icono: faRocket },
       { id: 'alumno-ranking', etiqueta: 'Ranking', ruta: '/alumno/ranking', detalle: 'Clasificacion', icono: faRankingStar },
       { id: 'alumno-comunidad', etiqueta: 'Comunidad', ruta: '/alumno/comunidad', detalle: 'Perfiles del aula', icono: faPeopleGroup },

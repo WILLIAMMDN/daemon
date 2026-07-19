@@ -148,6 +148,7 @@ export class Api {
 
   private invalidarTrasMutacion(ruta: string): void {
     const scope = this.scope(ruta);
+    const rutaLimpia = `/${ruta.split('?')[0].split('/').filter(Boolean).join('/')}`;
     if (!scope || scope === 'auth') {
       this.cacheGet.clear();
       return;
@@ -168,6 +169,14 @@ export class Api {
     }
     if (scope === 'alumno') {
       relacionados.add('comunidad');
+    }
+    const cambiaProyecto = ['cuentos', 'ia-modelos', 'neuro-maze'].includes(scope)
+      || rutaLimpia === '/chatbot/bot'
+      || rutaLimpia === '/chatbot/cerebro';
+    if (cambiaProyecto) {
+      // El hub de Proyectos agrega estos artefactos. Se invalida únicamente
+      // ese agregado para conservar calientes el panel y los demás módulos.
+      this.cacheGet.delete(this.url('/alumno/proyectos'));
     }
 
     for (const key of this.cacheGet.keys()) {

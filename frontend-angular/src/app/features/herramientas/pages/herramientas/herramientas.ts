@@ -128,7 +128,7 @@ export class Herramientas {
       detalle: 'Convierte tus ideas en historias y compártelas con la comunidad creativa.',
       estado: 'Creativo',
       categoria: 'Proyecto',
-      ruta: '/alumno/cuentos',
+      ruta: '/alumno/proyectos/cuentos',
       tono: 'coral',
       acciones: ['Editor de historias', 'Galería comunitaria'],
       llamada: 'Crear historia',

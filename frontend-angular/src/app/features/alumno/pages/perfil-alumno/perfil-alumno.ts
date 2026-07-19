@@ -1,4 +1,4 @@
-import { Component, signal , ChangeDetectionStrategy} from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
@@ -8,6 +8,8 @@ import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzProgressModule } from 'ng-zorro-antd/progress';
 import { NzStatisticModule } from 'ng-zorro-antd/statistic';
 import { NzTagModule } from 'ng-zorro-antd/tag';
+import { NzIconModule, NzIconService } from 'ng-zorro-antd/icon';
+import { GiftOutline, MailOutline, StarFill, UserOutline } from '@ant-design/icons-angular/icons';
 import { Activos } from '../../../../core/servicios/activos';
 import { Sesion } from '../../../../core/servicios/sesion';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
@@ -48,25 +50,30 @@ interface PerfilData {
     NzProgressModule,
     NzStatisticModule,
     NzTagModule,
+    NzIconModule,
     Cargando,
     EstadoVacio,
     MonedaDaemon,
   ],
   templateUrl: './perfil-alumno.html',
-  styleUrl: './perfil-alumno.scss',
 })
 export class PerfilAlumno {
   perfil = signal<PerfilData | null>(null);
   cargando = signal(true);
   error = signal('');
   perfilPropio = signal(true);
+  avatarFallido = signal(false);
+  private readonly imagenesPremioInvalidas = signal<Set<number>>(new Set());
+  private readonly imagenesInsigniaInvalidas = signal<Set<number>>(new Set());
 
   constructor(
     private alumno: Alumno,
     private route: ActivatedRoute,
     private sesion: Sesion,
     private activos: Activos,
+    iconos: NzIconService,
   ) {
+    iconos.addIcon(MailOutline, UserOutline, GiftOutline, StarFill);
     this.route.paramMap.subscribe(() => this.cargar());
   }
 
@@ -75,6 +82,7 @@ export class PerfilAlumno {
     this.perfilPropio.set(!usuarioId || usuarioId === this.sesion.usuario()?.id);
     this.cargando.set(true);
     this.error.set('');
+    this.avatarFallido.set(false);
     this.alumno.perfil<PerfilData>(usuarioId).subscribe({
       next: (perfil) => {
         this.perfil.set(perfil);
@@ -92,7 +100,20 @@ export class PerfilAlumno {
   }
 
   avatar(usuario: UsuarioPerfil): string {
-    return this.asset(usuario.avatar);
+    return this.avatarFallido() ? '' : this.asset(usuario.avatar);
+  }
+
+  imagenPremioFallida(id: number): boolean {
+    return this.imagenesPremioInvalidas().has(id);
+  }
+
+  imagenInsigniaFallida(id: number): boolean {
+    return this.imagenesInsigniaInvalidas().has(id);
+  }
+
+  registrarImagenFallida(tipo: 'premio' | 'insignia', id: number): void {
+    const origen = tipo === 'premio' ? this.imagenesPremioInvalidas : this.imagenesInsigniaInvalidas;
+    origen.update((ids) => new Set(ids).add(id));
   }
 
   iniciales(usuario: UsuarioPerfil): string {

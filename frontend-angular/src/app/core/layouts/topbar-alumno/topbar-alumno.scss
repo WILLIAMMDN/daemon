@@ -259,6 +259,23 @@
   width: 20px;
 }
 
+/*
+ * Con el sidebar expandido, el ancho útil se reduce antes de que el viewport
+ * llegue al breakpoint móvil. Compactamos contenido secundario por espacio
+ * disponible para que el grid del portal no fuerce overflow horizontal.
+ */
+@media (max-width: 1160px) {
+  .message-card,
+  .profile-copy {
+    display: none;
+  }
+
+  .topbar-left,
+  .topbar-right {
+    gap: .75rem;
+  }
+}
+
 @media (max-width: 980px) {
   .student-topbar-cards {
     flex-wrap: nowrap;

@@ -1,58 +1,136 @@
-<main class="missions-page">
+<section class="missions-page" aria-labelledby="missions-title">
   <header class="missions-hero">
-    <div>
-      <span class="page-kicker"><fa-icon [icon]="iconos.cohete" /> Centro de misiones</span>
-      <h1>Convierte retos<br><span>en progreso real.</span></h1>
+    <div class="missions-hero__copy">
+      <span class="page-kicker"><fa-icon [icon]="iconos.cohete" aria-hidden="true" /> Centro de misiones</span>
+      <h1 id="missions-title">Convierte retos en progreso real</h1>
       <p>Cada misión aprobada suma la misma recompensa a tu XP permanente y a tu saldo de DAEMONS.</p>
+      @if (!cargando() && !error()) {
+        <span class="missions-hero__meta">{{ misiones().length }} {{ misiones().length === 1 ? 'misión en tu ruta' : 'misiones en tu ruta' }}</span>
+      }
     </div>
-    <button nz-button class="refresh-button" type="button" (click)="cargar()" [disabled]="cargando()">
-      <fa-icon [icon]="iconos.actualizar" /> Actualizar ruta
+
+    <daemon-illustration-slot
+      class="missions-hero__illustration"
+      src="/img/robot-mision.png"
+      alt=""
+      kind="hero"
+      aspectRatio="4 / 3"
+      assetName="missions-route-guide.webp"
+      [eager]="true"
+    ></daemon-illustration-slot>
+
+    <button nz-button nzType="default" class="refresh-button" type="button" (click)="cargar()" [disabled]="cargando()">
+      <fa-icon [icon]="iconos.actualizar" aria-hidden="true" />
+      <span>Actualizar ruta</span>
     </button>
-    <div class="hero-geometry" aria-hidden="true"><span></span><span></span><span><fa-icon [icon]="iconos.estrella" /></span></div>
   </header>
 
-  @if (error()) {
-    <nz-alert class="daemon-alert" nzType="error" nzShowIcon [nzMessage]="error()" />
-  }
-
   @if (cargando()) {
-    <app-cargando class="missions-state" texto="Sincronizando tus misiones..."></app-cargando>
-  } @else if (misiones().length) {
-    <section class="missions-grid" aria-label="Misiones disponibles">
-      @for (mision of misiones(); track mision.id; let index = $index) {
-        <nz-card nzHoverable class="mission-card" [class.mission-card--approved]="estado(mision) === 'approved'" [class.mission-card--pending]="estado(mision) === 'pending'">
-          <header>
-            <span class="mission-index">{{ (index + 1).toString().padStart(2, '0') }}</span>
-            <span class="status-pill" [attr.data-state]="estado(mision)">
-              <fa-icon [icon]="estado(mision) === 'approved' ? iconos.check : (estado(mision) === 'pending' ? iconos.reloj : iconos.energia)" />
-              {{ estadoLabel(mision) }}
-            </span>
-          </header>
-
-          <div class="mission-copy">
-            <small>{{ mision.nivel_requerido }} · {{ mision.tipo_evidencia }}</small>
-            <h2>{{ mision.titulo }}</h2>
-            <p>{{ mision.descripcion || 'Tu docente preparó un desafío para poner a prueba lo que aprendiste.' }}</p>
-          </div>
-
-          <div class="dual-reward" aria-label="Recompensa dual">
-            <span><fa-icon [icon]="iconos.energia" /><strong>+{{ mision.recompensa }}</strong><small>XP</small></span>
-            <i></i>
-            <span><app-moneda-daemon [size]="20" /><strong>+{{ mision.recompensa }}</strong><small>DAEMONS</small></span>
-          </div>
-
-          <footer>
-            @if (estado(mision) === 'available') {
-              <a nz-button nzType="primary" class="daemon-btn" [routerLink]="['/alumno/misiones', mision.id, 'entregar']">Comenzar misión <fa-icon [icon]="iconos.flecha" /></a>
-            } @else {
-              <a nz-button nzType="default" class="daemon-btn" [routerLink]="['/alumno/misiones', mision.id]">Ver progreso <fa-icon [icon]="iconos.flecha" /></a>
-            }
-            <a class="detail-link" [routerLink]="['/alumno/misiones', mision.id]" aria-label="Ver detalle"><fa-icon [icon]="iconos.flecha" /></a>
-          </footer>
-        </nz-card>
-      }
+    <section class="missions-loading" aria-label="Cargando misiones" aria-busy="true">
+      <div class="missions-loading__toolbar" aria-hidden="true"></div>
+      <div class="missions-loading__grid">
+        @for (item of [1, 2, 3]; track item) {
+          <article class="mission-skeleton" aria-hidden="true">
+            <span></span><span></span><span></span><span></span>
+          </article>
+        }
+      </div>
     </section>
+  } @else if (error()) {
+    <section class="missions-error" role="alert" aria-live="assertive">
+      <span class="missions-error__icon" aria-hidden="true"><fa-icon [icon]="iconos.error" /></span>
+      <div>
+        <h2>No pudimos abrir tu ruta</h2>
+        <p>{{ error() }}</p>
+      </div>
+      <button nz-button nzType="primary" type="button" (click)="cargar()">
+        <fa-icon [icon]="iconos.actualizar" aria-hidden="true" /> Intentar nuevamente
+      </button>
+    </section>
+  } @else if (misiones().length) {
+    <nav class="missions-toolbar" aria-label="Filtrar misiones por estado">
+      @for (opcion of filtros(); track opcion.value) {
+        <button
+          type="button"
+          class="mission-filter"
+          [class.mission-filter--active]="filtro() === opcion.value"
+          [attr.aria-pressed]="filtro() === opcion.value"
+          (click)="seleccionarFiltro(opcion.value)"
+        >
+          <fa-icon [icon]="opcion.icon" aria-hidden="true" />
+          <span>{{ opcion.label }}</span>
+          <strong>{{ opcion.count }}</strong>
+        </button>
+      }
+    </nav>
+
+    @if (misionesFiltradas().length) {
+      <section class="missions-grid" aria-label="Misiones de la ruta seleccionada">
+        @for (mision of misionesFiltradas(); track mision.id; let index = $index) {
+          <article
+            class="mission-card"
+            [attr.data-state]="estado(mision)"
+          >
+            <header>
+              <span class="mission-index">{{ (index + 1).toString().padStart(2, '0') }}</span>
+              <span class="status-pill" [attr.data-state]="estado(mision)">
+                <fa-icon
+                  [icon]="estado(mision) === 'approved' ? iconos.check : (estado(mision) === 'pending' ? iconos.pendiente : (estado(mision) === 'rejected' ? iconos.reparar : iconos.ruta))"
+                  aria-hidden="true"
+                />
+                {{ estadoLabel(mision) }}
+              </span>
+            </header>
+
+            <div class="mission-copy">
+              <small>{{ mision.nivel_requerido }} · {{ mision.tipo_evidencia }}</small>
+              <h2>{{ mision.titulo }}</h2>
+              <p>{{ mision.descripcion || 'Tu docente preparó un desafío para poner a prueba lo que aprendiste.' }}</p>
+            </div>
+
+            <div class="dual-reward" aria-label="Recompensa al aprobar">
+              <span><fa-icon [icon]="iconos.energia" aria-hidden="true" /><strong>+{{ mision.recompensa }}</strong><small>XP permanente</small></span>
+              <i aria-hidden="true"></i>
+              <span><app-moneda-daemon [size]="20" /><strong>+{{ mision.recompensa }}</strong><small>DAEMONS</small></span>
+            </div>
+
+            <footer>
+              @if (estado(mision) === 'available' || estado(mision) === 'rejected') {
+                <a nz-button nzType="primary" class="mission-primary-action" [routerLink]="['/alumno/misiones', mision.id, 'entregar']">
+                  {{ etiquetaAccion(mision) }} <fa-icon [icon]="iconos.flecha" aria-hidden="true" />
+                </a>
+              } @else {
+                <a nz-button nzType="default" class="mission-primary-action" [routerLink]="['/alumno/misiones', mision.id]">
+                  Ver progreso <fa-icon [icon]="iconos.flecha" aria-hidden="true" />
+                </a>
+              }
+              <a class="detail-link" [routerLink]="['/alumno/misiones', mision.id]" [attr.aria-label]="'Ver detalle de ' + mision.titulo">
+                <fa-icon [icon]="iconos.flecha" aria-hidden="true" />
+              </a>
+            </footer>
+          </article>
+        }
+      </section>
+    } @else {
+      <app-estado-vacio
+        class="missions-state"
+        tamano="compact"
+        titulo="No hay misiones en este estado"
+        descripcion="Elige otra categoría para revisar el resto de tu ruta."
+      >
+        <button nz-button nzType="primary" type="button" (click)="seleccionarFiltro('all')">Ver todas</button>
+      </app-estado-vacio>
+    }
   } @else {
-    <section class="missions-state"><app-estado-vacio titulo="Ruta completada" descripcion="No tienes misiones pendientes. Vuelve pronto para descubrir nuevos retos." /></section>
+    <app-estado-vacio
+      class="missions-state"
+      titulo="Ruta completada por ahora"
+      descripcion="No tienes misiones pendientes. Vuelve pronto para descubrir nuevos retos."
+    >
+      <button nz-button nzType="primary" type="button" (click)="cargar()">
+        <fa-icon [icon]="iconos.actualizar" aria-hidden="true" /> Actualizar misiones
+      </button>
+      <a nz-button nzType="default" routerLink="/alumno/recursos">Volver a mis cursos</a>
+    </app-estado-vacio>
   }
-</main>
+</section>

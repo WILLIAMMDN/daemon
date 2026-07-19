@@ -1,58 +1,65 @@
-<main class="w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-6 md:gap-8 font-inter">
-  <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white border border-slate-200 shadow-sm rounded-2xl p-6">
+<main class="w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-6 md:gap-8 font-inter" aria-labelledby="challenges-title">
+  <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white border border-slate-200 shadow-sm rounded-2xl p-6 md:p-8">
     <div class="flex flex-col gap-1">
-      <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Mis desafíos</p>
-      <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 leading-tight">Misiones disponibles</h1>
-      <p class="text-sm text-slate-600">Retos activos para tu nivel y estado de tus entregas.</p>
+      <span class="text-blue-600 text-[11px] font-extrabold uppercase tracking-widest block">MIS DESAFÍOS</span>
+      <h1 id="challenges-title" class="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight leading-tight mt-1">Misiones disponibles</h1>
+      <p class="text-sm font-medium text-slate-500">Retos activos para tu nivel y estado de tus entregas.</p>
     </div>
-    <button nz-button nzType="default" class="daemon-btn" type="button" (click)="cargar()" [disabled]="cargando()">
+    <button nz-button nzType="primary" nzShape="round" class="daemon-btn bg-blue-600 hover:bg-blue-700 border-0" type="button" (click)="cargar()" [disabled]="cargando()">
       @if (cargando()) { Actualizando... } @else { Actualizar }
     </button>
   </header>
 
   @if (cargando()) {
-    <app-cargando class="w-full bg-white border border-slate-200 shadow-sm rounded-2xl p-8" texto="Cargando misiones..."></app-cargando>
+    <app-cargando class="w-full bg-white border border-slate-200 shadow-sm rounded-2xl p-8 md:p-12" texto="Cargando misiones..."></app-cargando>
   } @else if (error()) {
-    <div class="w-full bg-red-50 border border-red-200 rounded-2xl p-6 flex flex-col gap-4">
+    <div class="w-full bg-red-50 border border-red-200 rounded-2xl p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 shadow-sm" role="alert" aria-live="assertive">
       <p class="text-sm font-bold text-red-600">{{ error() }}</p>
+      <button nz-button nzType="default" nzShape="round" class="min-h-10 font-bold" type="button" (click)="cargar()">Reintentar</button>
     </div>
   } @else if (misiones().length) {
     <!-- CATÁLOGO AUTO-GRID -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 w-full">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
       @for (mision of misiones(); track mision.id) {
-        <article class="flex flex-col gap-3 bg-white border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow duration-300 h-full">
+        <article class="flex flex-col gap-4 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow motion-reduce:transition-none h-full">
           
-          <div class="flex justify-between items-start w-full">
-            <nz-tag class="daemon-tag m-0" [nzColor]="mision.entrega?.estado === 'pendiente' ? 'gold' : (mision.entrega?.estado === 'aprobado' ? 'green' : 'blue')">
+          <div class="flex justify-between items-start w-full mb-1">
+            <nz-tag class="daemon-tag m-0 rounded-lg font-bold px-3 py-1 border-0" 
+                    [nzColor]="mision.entrega?.estado === 'pendiente' ? 'gold' : (mision.entrega?.estado === 'aprobado' ? 'green' : 'blue')">
               {{ (mision.entrega?.estado || mision.estado) | uppercase }}
             </nz-tag>
           </div>
           
-          <h2 class="text-lg font-bold text-slate-900 leading-tight mt-1">{{ mision.titulo }}</h2>
-          <p class="text-sm text-slate-600 leading-relaxed flex-grow line-clamp-3">{{ mision.descripcion || 'Sin descripción registrada.' }}</p>
+          <h2 class="text-xl font-extrabold text-slate-900 tracking-tight leading-tight">{{ mision.titulo }}</h2>
+          <p class="text-sm font-medium text-slate-500 leading-relaxed flex-grow line-clamp-3">{{ mision.descripcion || 'Sin descripción registrada.' }}</p>
           
-          <div class="flex flex-col gap-2 w-full mt-2 bg-slate-50 border border-slate-100 rounded-xl p-3">
+          <div class="flex flex-col gap-3 w-full mt-2 bg-slate-50 rounded-xl p-4 border border-slate-100">
             <div class="flex justify-between items-center w-full">
-              <span class="text-xs font-bold text-slate-500">Recompensa</span>
-              <strong class="text-sm font-extrabold text-blue-600">{{ mision.recompensa }} DAEMONS</strong>
+              <span class="text-[11px] font-extrabold tracking-widest uppercase text-slate-400">Recompensa</span>
+              <span class="flex flex-wrap justify-end gap-2 text-sm font-extrabold">
+                <strong class="text-blue-600">+{{ mision.recompensa }} XP</strong>
+                <strong class="text-amber-600">+{{ mision.recompensa }} DAEMONS</strong>
+              </span>
             </div>
             <div class="flex justify-between items-center w-full">
-              <span class="text-xs font-bold text-slate-500">Nivel Mínimo</span>
-              <strong class="text-xs font-bold text-slate-900">{{ mision.nivel_requerido }}</strong>
+              <span class="text-[11px] font-extrabold tracking-widest uppercase text-slate-400">Nivel Mínimo</span>
+              <strong class="text-sm font-black text-slate-900">{{ mision.nivel_requerido }}</strong>
             </div>
           </div>
           
-          <div class="flex items-center gap-2 w-full mt-4 pt-4 border-t border-slate-100">
-            <a nz-button nzType="default" class="w-full text-center" [routerLink]="['/alumno/misiones', mision.id]">Ver detalle</a>
-            <a nz-button nzType="primary" class="daemon-btn w-full text-center" [routerLink]="['/alumno/misiones', mision.id, 'entregar']">Entregar</a>
+          <div class="flex flex-col sm:flex-row items-center gap-3 w-full mt-2 pt-4 border-t border-slate-100">
+            <a nz-button nzType="default" nzShape="round" class="w-full min-h-10 text-center flex items-center justify-center font-bold text-slate-600 bg-slate-50 hover:bg-slate-100" [routerLink]="['/alumno/misiones', mision.id]">Detalles</a>
+            <a nz-button nzType="primary" nzShape="round" class="daemon-btn w-full min-h-10 text-center flex items-center justify-center font-bold" [routerLink]="['/alumno/misiones', mision.id, 'entregar']">Entregar</a>
           </div>
         </article>
       }
     </div>
   } @else {
-    <app-estado-vacio 
-      titulo="No hay misiones activas"
-      descripcion="Aún no tienes misiones disponibles para tu nivel. ¡Vuelve más tarde!"
-    />
+    <app-estado-vacio
+      titulo="Tu próxima misión está en camino"
+      descripcion="Ahora no hay misiones activas para tu nivel. Actualiza más tarde para descubrir nuevos retos."
+    >
+      <button nz-button nzType="primary" type="button" (click)="cargar()">Actualizar misiones</button>
+    </app-estado-vacio>
   }
 </main>

@@ -36,6 +36,7 @@
       </a>
 
       <button
+        id="topbar-perfil"
         type="button"
         nz-dropdown
         [nzVisible]="notifMenuAbierto()"
@@ -63,7 +64,7 @@
         nzPlacement="bottomRight"
         nzTrigger="click"
         class="topbar-card profile-card"
-        aria-label="Abrir menú de cuenta"
+        aria-label="Abrir menú de cuenta y perfil"
         aria-haspopup="menu"
         [attr.aria-expanded]="perfilMenuAbierto()"
         (nzVisibleChange)="cambiarVisibilidadPerfil($event)"
@@ -94,7 +95,12 @@
           <p>{{ notif.mensaje }}</p>
         </article>
       } @empty {
-        <p class="notification-empty">Todo al día. Aquí aparecerán tus novedades.</p>
+        <app-estado-vacio
+          tamano="mini"
+          titulo="Todo al día"
+          descripcion="Aquí aparecerán tus novedades."
+          [anunciar]="false"
+        />
       }
     </div>
     <button type="button" (click)="irANotificaciones($event)" class="notification-footer">Ver todas o configurar alertas</button>

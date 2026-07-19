@@ -1,55 +1,76 @@
-<main class="student-module-page w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-6 md:gap-8 font-inter">
-  <!-- Cabecera -->
-  <header class="student-module-header flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-    <div class="flex flex-col gap-1">
-      <span class="text-sm font-semibold uppercase tracking-wider text-blue-600">Resultados</span>
-      <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 leading-tight">Mis evaluaciones enviadas</h1>
-      <p class="text-sm text-slate-600">Puntajes registrados en tu historial.</p>
+<section class="results-page" aria-labelledby="results-title">
+  <header class="results-hero">
+    <span class="results-hero__icon" aria-hidden="true"><fa-icon [icon]="iconos.progreso" /></span>
+    <div>
+      <span class="results-kicker">Historial académico</span>
+      <h1 id="results-title">Mis resultados</h1>
+      <p>Consulta los puntajes reales registrados en tus evaluaciones enviadas.</p>
     </div>
-    <app-boton-accion tipo="actualizar" (accion)="cargar()" [cargando]="cargando()" [deshabilitado]="cargando()"></app-boton-accion>
+    <nav aria-label="Acciones de resultados">
+      <a nz-button nzType="primary" routerLink="/alumno/evaluaciones">Ver evaluaciones activas <fa-icon [icon]="iconos.flecha" aria-hidden="true" /></a>
+      <button nz-button nzType="default" type="button" (click)="cargar()" [disabled]="cargando()">
+        <fa-icon [icon]="iconos.actualizar" aria-hidden="true" /> Actualizar
+      </button>
+    </nav>
   </header>
 
-  @if (error()) {
-    <nz-alert nzType="error" nzShowIcon [nzMessage]="error()"></nz-alert>
-  }
+  @if (cargando()) {
+    <section class="results-loading" aria-label="Cargando resultados" aria-busy="true">
+      <div aria-hidden="true"></div><div aria-hidden="true"></div>
+    </section>
+  } @else if (error()) {
+    <section class="results-error" role="alert" aria-live="assertive">
+      <span aria-hidden="true"><fa-icon [icon]="iconos.problema" /></span>
+      <div><h2>No pudimos abrir tu historial</h2><p>{{ error() }}</p></div>
+      <button nz-button nzType="primary" type="button" (click)="cargar()">
+        <fa-icon [icon]="iconos.actualizar" aria-hidden="true" /> Intentar nuevamente
+      </button>
+    </section>
+  } @else if (resultados().length) {
+    <section class="results-summary" aria-label="Resumen de resultados">
+      <article><span aria-hidden="true"><fa-icon [icon]="iconos.progreso" /></span><div><small>Promedio</small><strong>{{ promedio() }} puntos</strong></div></article>
+      <article><span aria-hidden="true"><fa-icon [icon]="iconos.estrella" /></span><div><small>Mejor resultado</small><strong>{{ mejorPuntaje() }} puntos</strong></div></article>
+      <article><span aria-hidden="true"><fa-icon [icon]="iconos.check" /></span><div><small>Evaluaciones aprobadas</small><strong>{{ aprobadas() }} de {{ resultados().length }}</strong></div></article>
+    </section>
 
-  <!-- Contenido Principal -->
-  <section class="w-full">
-    @if (cargando()) {
-      <div class="py-12 bg-white rounded-2xl shadow-sm border border-slate-100">
-        <app-cargando texto="Cargando resultados..."></app-cargando>
-      </div>
-    } @else if (resultados().length) {
-      <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-        <div class="overflow-x-auto p-0">
-          <nz-table #tablaResultados [nzData]="resultados()" [nzShowPagination]="true" [nzPageSize]="10" nzSize="middle" class="w-full whitespace-nowrap">
-            <thead>
-              <tr class="bg-slate-50">
-                <th class="text-slate-500 font-semibold text-sm">Evaluación</th>
-                <th class="text-slate-500 font-semibold text-sm">Puntaje</th>
-                <th class="text-slate-500 font-semibold text-sm">Nivel</th>
-                <th class="text-slate-500 font-semibold text-sm">Fecha</th>
+    <section class="results-table-card" aria-labelledby="results-history-title">
+      <header>
+        <div><span class="results-kicker">Detalle</span><h2 id="results-history-title">Historial de envíos</h2></div>
+        <small>{{ resultados().length }} {{ resultados().length === 1 ? 'resultado' : 'resultados' }}</small>
+      </header>
+      <div class="results-table-scroll">
+        <nz-table #tablaResultados [nzData]="resultados()" [nzShowPagination]="resultados().length > 10" [nzPageSize]="10" nzSize="middle">
+          <thead>
+            <tr>
+              <th>Evaluación</th>
+              <th>Puntaje</th>
+              <th>Estado</th>
+              <th>Nivel</th>
+              <th>Fecha de envío</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (resultado of tablaResultados.data; track resultado.id) {
+              <tr>
+                <td><strong>{{ resultado.titulo }}</strong></td>
+                <td><span class="result-score">{{ resultado.puntaje }}</span> puntos</td>
+                <td><nz-tag [nzColor]="resultado.puntaje >= 70 ? 'success' : 'gold'">{{ estadoLabel(resultado) }}</nz-tag></td>
+                <td>{{ resultado.nivel }}</td>
+                <td>{{ resultado.fecha_envio | date:'d MMM y, HH:mm' }}</td>
               </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-100">
-              @for (resultado of tablaResultados.data; track resultado.id) {
-                <tr class="hover:bg-slate-50 transition-colors">
-                  <td class="font-medium text-slate-900">{{ resultado.titulo }}</td>
-                  <td class="font-bold text-yellow-600">{{ resultado.puntaje }} ptos</td>
-                  <td>
-                    <nz-tag nzColor="blue" class="font-bold border-0 rounded-md">{{ resultado.nivel }}</nz-tag>
-                  </td>
-                  <td class="text-slate-600 text-sm">{{ resultado.fecha_envio }}</td>
-                </tr>
-              }
-            </tbody>
-          </nz-table>
-        </div>
+            }
+          </tbody>
+        </nz-table>
       </div>
-    } @else {
-      <div class="py-12 bg-white rounded-2xl shadow-sm border border-slate-100">
-        <app-estado-vacio titulo="Sin resultados" descripcion="Todavía no tienes resultados registrados de ninguna evaluación."></app-estado-vacio>
-      </div>
-    }
-  </section>
-</main>
+    </section>
+  } @else {
+    <app-estado-vacio
+      class="results-empty"
+      titulo="Todavía no tienes resultados"
+      descripcion="Cuando envíes una evaluación, su puntaje aparecerá aquí automáticamente."
+    >
+      <a nz-button nzType="primary" routerLink="/alumno/evaluaciones">Ver evaluaciones activas</a>
+      <button nz-button nzType="default" type="button" (click)="cargar()">Actualizar historial</button>
+    </app-estado-vacio>
+  }
+</section>

@@ -123,6 +123,21 @@ describe('Api Service', () => {
     httpMock.expectOne(`${environment.apiUrl}/ranking`).flush({ alumnos: [] });
   });
 
+  it('should invalidate the projects hub after saving a story', () => {
+    service.get('/alumno/proyectos').subscribe();
+    httpMock.expectOne(`${environment.apiUrl}/alumno/proyectos`).flush({ categorias: [] });
+    service.get('/alumno/panel').subscribe();
+    httpMock.expectOne(`${environment.apiUrl}/alumno/panel`).flush({ experiencia: 100 });
+
+    service.post('/cuentos', { titulo: 'Mi historia' }).subscribe();
+    httpMock.expectOne(`${environment.apiUrl}/cuentos`).flush({ id: 7 });
+
+    service.get('/alumno/proyectos').subscribe();
+    httpMock.expectOne(`${environment.apiUrl}/alumno/proyectos`).flush({ categorias: [{ slug: 'cuentos' }] });
+    service.get('/alumno/panel').subscribe();
+    httpMock.expectNone(`${environment.apiUrl}/alumno/panel`);
+  });
+
   it('should invalidate the companion inventory after a store purchase', () => {
     service.get('/mascota').subscribe();
     httpMock.expectOne(`${environment.apiUrl}/mascota`).flush({ resumen: { poseidos: 0 } });
