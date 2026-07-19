@@ -165,3 +165,4 @@
 - [2026-07-19 18:49:05] refactor(ui): clean up code in ui module
 - [2026-07-19 18:49:05] ci(config): optimize logic in config module
 - [2026-07-19 18:49:06] refactor(assets): format structure of assets module
+- [2026-07-19 18:49:06] style(models): add minor comments to models module
