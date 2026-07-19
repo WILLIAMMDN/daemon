@@ -86,3 +86,4 @@
 - [2026-07-19 18:48:51] docs(security): improve performance of security module
 - [2026-07-19 18:48:51] refactor(sidebar): format structure of sidebar module
 - [2026-07-19 18:48:52] ci(database): clean up code in database module
+- [2026-07-19 18:48:52] build(config): update dependencies of config module
