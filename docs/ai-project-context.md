@@ -97,8 +97,9 @@ Current student visual direction:
 - Continue the current Codex work from `codex/antigravity-integration`; the
   branch name is historical and does not authorize importing Antigravity work.
 - `feature/frontend-design-system` is explicitly excluded from future work.
-- The next session starts with the pending Courses icon audit, then restructures
-  one student module at a time following the documented roadmap.
+- The Courses icon audit and the Missions/Evaluations learning-cycle
+  restructuring are complete in the active PR branch. The next visual block is
+  Tools IA: chatbot, bot configuration and conversation states.
 - Inter only.
 - Solid colors; no gradients in the main student modules.
 - Canvas `#f4f7fb`, white surfaces, light borders and restrained shadows.
@@ -116,6 +117,14 @@ Current student visual direction:
 - Optional course illustrations use the shared `daemon-illustration-slot`,
   which preserves aspect ratio and renders a safe fallback when an asset is
   pending or fails. See `docs/piloto-visual-cursos-2026-07-19.md`.
+- Courses now registers replaceable contracts for its hero, course covers and
+  progress companion; its confirmed empty state uses the canonical shared
+  robot. Icons distinguish all, not-started, in-progress and completed states.
+- Missions list/detail/delivery and student Evaluations/Results now share a
+  complete remote-state discipline without becoming one generic page shell.
+  Pending or approved missions cannot be resubmitted from the UI, rejected
+  missions can be corrected, and assessments require every answer before
+  submission. See `docs/release-2026-07-19-ciclo-aprendizaje.md`.
 
 The earlier experimental Bento/glass implementation was corrected. Do not use
 that first iteration as the target for new student screens.

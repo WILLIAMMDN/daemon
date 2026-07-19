@@ -268,6 +268,10 @@
   transition: background-color .18s ease, border-color .18s ease, color .18s ease;
 }
 
+.course-filter > fa-icon {
+  font-size: .72rem;
+}
+
 .course-filter strong {
   align-items: center;
   background: #eef2f7;
@@ -873,8 +877,35 @@
   margin-top: .55rem;
 }
 
+.course-summary-card__illustration {
+  margin: .8rem 0 -.25rem auto;
+  max-height: 104px;
+  max-width: 230px;
+}
+
+:host ::ng-deep .course-summary-card__illustration .illustration-slot {
+  max-height: 104px;
+}
+
 .course-summary-card .course-progress {
   margin-top: .4rem;
+}
+
+.course-help-card__header {
+  align-items: center;
+  display: flex;
+  gap: .6rem;
+}
+
+.course-help-card__header > span {
+  align-items: center;
+  background: #f0edff;
+  border-radius: 9px;
+  color: #6842d7;
+  display: inline-flex;
+  height: 32px;
+  justify-content: center;
+  width: 32px;
 }
 
 .course-help-card ol {

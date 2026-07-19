@@ -82,7 +82,7 @@
   } @else if (!datos()) {
     <section class="course-load-error" [attr.data-problem]="tipoProblema()" role="alert" aria-live="assertive">
       <span class="course-load-error__icon" aria-hidden="true">
-        <fa-icon [icon]="faBookOpen"></fa-icon>
+        <fa-icon [icon]="faTriangleExclamation"></fa-icon>
       </span>
       <div>
         <h2>{{ problemaCarga().titulo }}</h2>
@@ -108,6 +108,7 @@
             [attr.aria-pressed]="filtro() === opcion.value"
             (click)="seleccionarFiltro(opcion.value)"
           >
+            <fa-icon [icon]="opcion.icon" aria-hidden="true"></fa-icon>
             <span>{{ opcion.label }}</span>
             <strong>{{ opcion.count }}</strong>
           </button>
@@ -332,12 +333,12 @@
               <span>En progreso</span>
             </article>
             <article>
-              <fa-icon [icon]="faCheck" aria-hidden="true"></fa-icon>
+              <fa-icon [icon]="faCircleCheck" aria-hidden="true"></fa-icon>
               <strong>{{ cursosCompletados() }}</strong>
               <span>Completados</span>
             </article>
             <article>
-              <fa-icon [icon]="faClock" aria-hidden="true"></fa-icon>
+              <fa-icon [icon]="faFlag" aria-hidden="true"></fa-icon>
               <strong>{{ cursosPorIniciar() }}</strong>
               <span>Por iniciar</span>
             </article>
@@ -358,21 +359,32 @@
             <span [style.width.%]="datos()!.resumen.porcentaje"></span>
           </div>
           <small>{{ datos()!.resumen.completadas }} de {{ datos()!.resumen.lecciones }} lecciones completadas</small>
+          <daemon-illustration-slot
+            class="course-summary-card__illustration"
+            src="/img/robot-mision.png"
+            alt=""
+            kind="reward"
+            aspectRatio="16 / 5"
+            assetName="course-progress-companion.webp"
+          ></daemon-illustration-slot>
         </section>
 
         <section class="course-help-card">
-          <h2>¿Cómo funciona?</h2>
+          <header class="course-help-card__header">
+            <span aria-hidden="true"><fa-icon [icon]="faCircleInfo"></fa-icon></span>
+            <h2>¿Cómo funciona?</h2>
+          </header>
           <ol>
             <li>
-              <span aria-hidden="true">1</span>
+              <span aria-hidden="true"><fa-icon [icon]="faPersonChalkboard"></fa-icon></span>
               <p>Tu docente crea y publica una ruta de aprendizaje.</p>
             </li>
             <li>
-              <span aria-hidden="true">2</span>
+              <span aria-hidden="true"><fa-icon [icon]="faBookOpen"></fa-icon></span>
               <p>La ruta asignada aparece aquí con sus unidades y lecciones.</p>
             </li>
             <li>
-              <span aria-hidden="true">3</span>
+              <span aria-hidden="true"><fa-icon [icon]="faRocket"></fa-icon></span>
               <p>Completa cada lección para mantener actualizado tu progreso.</p>
             </li>
           </ol>

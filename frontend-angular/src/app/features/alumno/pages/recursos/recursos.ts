@@ -2,17 +2,24 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { HttpErrorResponse } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import {
   faArrowRight,
   faBookOpen,
   faCheck,
+  faCircleCheck,
+  faCircleInfo,
   faCirclePlay,
   faClock,
+  faFlag,
+  faGrip,
   faLayerGroup,
   faMagnifyingGlass,
+  faPersonChalkboard,
   faRotateRight,
   faRocket,
   faStar,
+  faTriangleExclamation,
 } from '@fortawesome/free-solid-svg-icons';
 import { finalize } from 'rxjs';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -82,6 +89,7 @@ interface OpcionFiltro {
   value: FiltroCurso;
   label: string;
   count: number;
+  icon: IconDefinition;
 }
 
 interface ProblemaCarga {
@@ -103,13 +111,19 @@ export class Recursos {
   readonly faArrowRight = faArrowRight;
   readonly faBookOpen = faBookOpen;
   readonly faCheck = faCheck;
+  readonly faCircleCheck = faCircleCheck;
+  readonly faCircleInfo = faCircleInfo;
   readonly faCirclePlay = faCirclePlay;
   readonly faClock = faClock;
+  readonly faFlag = faFlag;
+  readonly faGrip = faGrip;
   readonly faLayerGroup = faLayerGroup;
   readonly faMagnifyingGlass = faMagnifyingGlass;
+  readonly faPersonChalkboard = faPersonChalkboard;
   readonly faRotateRight = faRotateRight;
   readonly faRocket = faRocket;
   readonly faStar = faStar;
+  readonly faTriangleExclamation = faTriangleExclamation;
 
   readonly datos = signal<AprendizajeResponse | null>(null);
   readonly cargando = signal(true);
@@ -130,10 +144,10 @@ export class Recursos {
   readonly filtros = computed<OpcionFiltro[]>(() => {
     const cursos = this.cursosVista();
     return [
-      { value: 'all', label: 'Todos', count: cursos.length },
-      { value: 'notStarted', label: 'Por iniciar', count: cursos.filter((curso) => curso.estado === 'notStarted').length },
-      { value: 'inProgress', label: 'En progreso', count: cursos.filter((curso) => curso.estado === 'inProgress').length },
-      { value: 'completed', label: 'Completados', count: cursos.filter((curso) => curso.estado === 'completed').length },
+      { value: 'all', label: 'Todos', count: cursos.length, icon: this.faGrip },
+      { value: 'notStarted', label: 'Por iniciar', count: cursos.filter((curso) => curso.estado === 'notStarted').length, icon: this.faFlag },
+      { value: 'inProgress', label: 'En progreso', count: cursos.filter((curso) => curso.estado === 'inProgress').length, icon: this.faCirclePlay },
+      { value: 'completed', label: 'Completados', count: cursos.filter((curso) => curso.estado === 'completed').length, icon: this.faCircleCheck },
     ];
   });
 

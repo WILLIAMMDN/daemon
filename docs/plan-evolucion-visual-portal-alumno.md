@@ -59,25 +59,34 @@ pero con más claridad, accesibilidad y solidez técnica que la vista heredada.
 
 ## Hoja de ruta
 
-### Próxima sesión de trabajo
+### Bloque completado: ciclo de aprendizaje
 
-1. Revisar la iconografía de Cursos: reemplazar iconos repetidos, ambiguos o
-   semánticamente incorrectos sin cambiar todavía sus contratos de datos.
-2. Reestructurar un módulo por vez, conservando todas sus funciones y rutas.
-3. Para cada módulo definir antes de editar: propósito, acción principal, datos
-   reales, carga, vacío, error, reintento, responsive y accesibilidad.
-4. Validar primero en local; commit y PR por alcance; producción solamente con
-   autorización y los gates completos.
+El 19 de julio de 2026 quedó implementado el primer bloque posterior al piloto:
 
-Orden propuesto:
+1. Cursos: iconografía semántica, tres contratos reemplazables —hero, portada y
+   acompañante de progreso—, robot canónico para vacío y conservación de datos
+   reales.
+2. Misiones: listado, detalle y entrega con continuidad, filtros de estado,
+   carga, vacío, error, reintento y bloqueo de reenvíos pendientes o aprobados.
+3. Evaluaciones: preguntas accesibles, progreso de respuestas, prevención de
+   envíos incompletos y separación del error de carga y el error de envío.
+4. Resultados: resumen calculado desde respuestas reales, historial responsive
+   y umbral de aprobación alineado con la regla vigente de 70 puntos.
 
-1. Cursos e iconografía.
-2. Misiones: listado, detalle y entrega.
-3. Evaluaciones, resultados y recursos académicos.
-4. Herramientas IA: chatbot y configuración del bot.
-5. Perfil, ranking y comunidad.
-6. Tienda, canjes y mascota.
-7. Proyectos y motores heredados.
+La evidencia técnica y los contratos se documentan en
+`release-2026-07-19-ciclo-aprendizaje.md`.
+
+### Próximo bloque de trabajo
+
+1. Herramientas IA: chatbot, configuración del bot y estados de conversación.
+2. Perfil, ranking y comunidad.
+3. Tienda, canjes y mascota.
+4. Proyectos y motores heredados.
+
+Para cada bloque se mantiene el mismo orden operativo: auditar contrato y
+acciones reales; diseñar carga, vacío, error y recuperación; implementar
+responsive y accesibilidad; validar localmente; publicar en la rama/PR; y
+desplegar producción únicamente con autorización y gates completos.
 
 No mezclar varios módulos en un lote visual. Cada entrega debe conservar el
 sidebar morado, Inter, XP separado de DAEMONS, los datos reales del backend y
@@ -92,12 +101,15 @@ las funciones existentes.
 
 ### Fase 2. Ciclo de aprendizaje
 
-- reconstruir listado, detalle y entrega de misiones como una ruta continua;
-- mejorar evaluaciones, resultados y recursos con contexto y siguiente acción;
-- hacer visibles prerequisitos, recompensas y estados reales del backend.
+- completado: reconstruir listado, detalle y entrega de misiones como una ruta
+  continua;
+- completado: mejorar evaluaciones, resultados y recursos con contexto y
+  siguiente acción;
+- completado: hacer visibles recompensas y estados reales disponibles en el
+  backend, sin inventar prerrequisitos que el contrato todavía no expone.
 
-Los iconos pendientes de Cursos se resuelven al inicio de esta fase con una sola
-familia visual, significado consistente, texto accesible y registro explícito.
+Los iconos pendientes de Cursos quedaron resueltos con Font Awesome como única
+familia, significado consistente, texto accesible y registro explícito.
 
 ### Fase 3. Progreso y recompensa
 

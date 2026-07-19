@@ -175,14 +175,13 @@ nombres de destino quedan registrados en el DOM mediante `data-asset-name`.
 
 ### Estado sin cursos
 
-- Nombre objetivo: `course-empty-learning.webp`.
-- Uso: estado vacío decorativo.
-- Asset provisional: `/img/robot-mision.png`.
-- Formato recomendado: WebP con transparencia.
-- Lienzo recomendado: 720 x 540 px; zona segura de 12%.
-- Composición: personaje centrado, sin texto ni botones incrustados.
-- Alt: vacío; título y explicación viven en HTML.
-- Mobile: legible cerca de 240 x 180 px.
+- Asset canónico: `/img/empty/empty-robot.webp`.
+- Uso: estado vacío compartido mediante `app-estado-vacio`.
+- No es un contrato pendiente específico de Cursos: se conserva el mismo robot
+  lossless estandarizado para vacíos confirmados en toda la plataforma.
+- El título, la explicación y las acciones contextuales viven en HTML; la
+  ilustración no contiene texto ni botones.
+- Mobile: permanece legible cerca de 240 x 180 px.
 
 ### Portada por curso
 
@@ -194,6 +193,34 @@ nombres de destino quedan registrados en el DOM mediante `data-asset-name`.
 - No incluir título, nivel, porcentaje ni botones dentro de la imagen.
 - Si el backend todavía no entrega una URL, se mantiene el fallback y el
   espacio reservado.
+
+### Acompañante del progreso
+
+- Nombre objetivo: `course-progress-companion.webp`.
+- Uso: recompensa visual dentro del resumen de progreso general.
+- Asset provisional: `/img/robot-mision.png`.
+- Proporción reservada: 16:5.
+- Formato recomendado: WebP con transparencia, sin texto incrustado.
+- Composición: personaje o criatura a la derecha, con la zona izquierda libre
+  para que el resumen siga siendo legible.
+- Alt: vacío; las métricas y la explicación ya existen como texto HTML.
+
+## 6.1. Auditoría final de iconografía
+
+La revisión pendiente quedó resuelta en el lote del ciclo de aprendizaje:
+
+- Todos: cuadrícula, porque representa el conjunto completo;
+- Por iniciar: bandera, porque comunica un punto de partida;
+- En progreso: reproducción, porque comunica continuidad;
+- Completados: círculo validado, porque comunica cierre confirmado;
+- ayuda: información;
+- asignación docente: grupo de personas;
+- ruta publicada: libro abierto;
+- siguiente acción: cohete;
+- fallo remoto: triángulo de advertencia.
+
+No se reutiliza el mismo pictograma para estados académicos distintos. Los
+iconos siguen acompañados por texto y no son el único portador de significado.
 
 ## 7. Estados completos
 

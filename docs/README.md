@@ -22,6 +22,9 @@ a la tarea.
 | `gamificacion-xp-daemons.md` | Separación de XP y DAEMONS, nivel, ranking y canjes. |
 | `release-2026-07-14-portal-alumno.md` | Historial completo, commits, archivos y evidencia del release. |
 | `frontend-ui-standard.md` | Uso de NG-ZORRO y estándar compartido de componentes. |
+| `piloto-visual-cursos-2026-07-19.md` | Contrato visual, iconografía y espacios de imágenes de Cursos. |
+| `release-2026-07-19-ciclo-aprendizaje.md` | Reestructuración de Cursos, Misiones, Evaluaciones y Resultados. |
+| `plan-evolucion-visual-portal-alumno.md` | Bloques completados y orden vigente de los módulos pendientes. |
 
 ## Portal de familias
 
