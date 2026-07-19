@@ -9,3 +9,4 @@
 - [2026-07-19 18:48:39] chore(gamification): improve performance of gamification module
 - [2026-07-19 18:48:39] docs(config): improve performance of config module
 - [2026-07-19 18:48:39] test(database): add minor comments to database module
+- [2026-07-19 18:48:39] chore(auth): format structure of auth module
