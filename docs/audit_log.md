@@ -81,3 +81,4 @@
 - [2026-07-19 18:48:50] chore(sidebar): refine type hints in sidebar module
 - [2026-07-19 18:48:51] docs(api): update documentation for api module
 - [2026-07-19 18:48:51] chore(services): improve performance of services module
+- [2026-07-19 18:48:51] refactor(database): update dependencies of database module
