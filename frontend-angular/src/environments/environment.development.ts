@@ -1,6 +1,9 @@
 export const environment = {
   production: false,
-  apiUrl: 'http://127.0.0.1:8000/api/v1',
+  // Mantener el mismo hostname que usa Angular en desarrollo. Mezclar
+  // localhost con 127.0.0.1 convierte la cookie HttpOnly en cross-site y el
+  // navegador descarta la sesión justo después de un login exitoso.
+  apiUrl: 'http://localhost:8000/api/v1',
   assetBaseUrl: '',
   observability: {
     sentryEnabled: false,

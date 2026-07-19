@@ -378,15 +378,15 @@ del viewport en el mismo tamaño.
 
 El frontend del PR se sirve en `http://localhost:4300`; el puerto `4200`
 pertenece al worktree paralelo de Antigravity y no contiene necesariamente este
-piloto. El backend real de este worktree responde en
-`http://127.0.0.1:8000/api/v1`.
+piloto. El backend local responde en `http://localhost:8000/api/v1`.
+Frontend y API deben conservar ese mismo hostname para que la cookie HttpOnly
+no se vuelva cross-site.
 
-La cuenta documentada `jose123` fue comprobada mediante `POST
-/api/v1/auth/login`: HTTP 200, usuario 41 y rol `alumno`, sin modificar cuenta,
-contraseña ni datos de producción. La automatización embebida de QA quedó en
-“Ingresando…”, aunque la API respondió correctamente; por eso este último punto
-se conserva como limitación del navegador automatizado y no como fallo de la
-cuenta o del endpoint.
+La cuenta documentada `jose123` fue comprobada de extremo a extremo: login
+HTTP 200, cookie aceptada y navegación real a `/alumno`, sin modificar cuenta,
+contraseña ni datos de producción. La regresión “Ingresando…” se reprodujo con
+la API en `127.0.0.1` y quedó resuelta al restaurar `localhost`, que es el mismo
+hostname del frontend de desarrollo.
 
 ## 14. Archivos de implementación
 
