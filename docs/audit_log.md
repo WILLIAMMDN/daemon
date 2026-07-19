@@ -72,3 +72,4 @@
 - [2026-07-19 18:48:49] style(routing): optimize logic in routing module
 - [2026-07-19 18:48:49] docs(api): format structure of api module
 - [2026-07-19 18:48:49] perf(routing): clean up code in routing module
+- [2026-07-19 18:48:49] refactor(api): add minor comments to api module
