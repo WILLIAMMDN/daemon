@@ -153,3 +153,4 @@
 - [2026-07-19 18:49:03] docs(api): improve performance of api module
 - [2026-07-19 18:49:03] build(core): remove dead code from core module
 - [2026-07-19 18:49:03] chore(api): optimize logic in api module
+- [2026-07-19 18:49:03] test(routing): update documentation for routing module
