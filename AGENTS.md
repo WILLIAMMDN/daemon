@@ -1,8 +1,13 @@
 # DAEMON agent guide
 
 This file is the fastest onboarding point for AI agents working in this repo.
-Read it before editing code. For a fuller snapshot, read
-`docs/ai-project-context.md`.
+Read it before editing code. Then read `docs/ai-project-context.md` completely:
+it is the canonical, detailed project map and was reconciled against code,
+production evidence, local worktrees, and open PRs on 2026-07-19.
+
+The context file labels facts as PRODUCTION, MAIN, PR, LOCAL, or EXTERNAL.
+Never treat an open PR, a local Antigravity change, or a green CI check as a
+deployed production capability.
 
 ## Project root
 
@@ -117,6 +122,12 @@ scripts/              Local automation helpers
 - Academic rewards go through `GamificacionService`; store redemptions never
   subtract XP.
 - Ranking queries order by `experiencia`, not tokens.
+- Every XP/DAEMONS change also belongs in the append-only
+  `movimientos_economia` ledger; the fields on `usuarios` are read projections.
+- The published academic foundation includes courses, units, lessons,
+  objectives, classroom enrollments, progress, OneRoster 1.2 read APIs, and an
+  initial LTI 1.3 launch. Do not claim formal 1EdTech certification or live LMS
+  compatibility without external conformance evidence.
 - Tutor accounts must authenticate through `/auth/tutor/firebase`; never
   silently convert an existing student, teacher or admin account into a tutor.
 - DAEMON must not receive or store payment-card details. Family checkout links
@@ -189,9 +200,15 @@ verify Render separately.
 - Student portal behavior: `docs/portal-alumno.md`
 - Student visual system: `docs/sistema-visual-portal-alumno.md`
 - Frontend module boundaries: `docs/frontend-architecture.md`
+- Angular/NG-ZORRO UI standard: `docs/frontend-ui-standard.md`
 - XP and DAEMONS architecture: `docs/gamificacion-xp-daemons.md`
+- Creature and cosmetic platform: `docs/sistema-mascotas-cosmeticos.md`
+- OneRoster 1.2 and LTI Advantage: `docs/interoperabilidad-oneroster-lti.md`
+- Standard platform foundation: `docs/implementacion-plataforma-estandar-2026-07-19.md`
 - Production QA: `docs/qa-produccion.md`
 - Runtime, staging, backups and rollback: `docs/infraestructura-operativa.md`
 - KIDS/TEENS privacy and retention: `docs/privacidad-kids-teens.md`
 - Family/guardian portal: `docs/portal-familias.md`
-- July 2026 release evidence: `docs/release-2026-07-14-portal-alumno.md`
+- Current production release evidence: `docs/release-2026-07-19-plataforma-estandar.md`
+- Previous student portal release: `docs/release-2026-07-14-portal-alumno.md`
+- Database restoration incident: `docs/incidentes/2026-07-18-restauracion-supabase.md`
