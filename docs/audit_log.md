@@ -97,3 +97,4 @@
 - [2026-07-19 18:48:53] refactor(models): refine type hints in models module
 - [2026-07-19 18:48:53] chore(core): improve performance of core module
 - [2026-07-19 18:48:53] fix(ui): improve performance of ui module
+- [2026-07-19 18:48:54] chore(security): update documentation for security module
