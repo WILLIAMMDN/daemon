@@ -129,3 +129,4 @@
 - [2026-07-19 18:48:59] ci(api): add minor comments to api module
 - [2026-07-19 18:48:59] ci(security): optimize logic in security module
 - [2026-07-19 18:48:59] ci(models): improve performance of models module
+- [2026-07-19 18:48:59] style(api): update documentation for api module
