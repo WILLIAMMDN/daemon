@@ -58,3 +58,4 @@
 - [2026-07-19 18:48:46] ci(gamification): optimize logic in gamification module
 - [2026-07-19 18:48:47] style(api): update documentation for api module
 - [2026-07-19 18:48:47] ci(api): update dependencies of api module
+- [2026-07-19 18:48:47] test(api): clean up code in api module
