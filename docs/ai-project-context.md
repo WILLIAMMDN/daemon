@@ -88,11 +88,17 @@ docs/sistema-visual-portal-alumno.md
 docs/portal-alumno.md
 docs/gamificacion-xp-daemons.md
 docs/estados-vacios-daemon.md
+docs/plan-evolucion-visual-portal-alumno.md
 docs/release-2026-07-14-portal-alumno.md
 ```
 
 Current student visual direction:
 
+- Continue the current Codex work from `codex/antigravity-integration`; the
+  branch name is historical and does not authorize importing Antigravity work.
+- `feature/frontend-design-system` is explicitly excluded from future work.
+- The next session starts with the pending Courses icon audit, then restructures
+  one student module at a time following the documented roadmap.
 - Inter only.
 - Solid colors; no gradients in the main student modules.
 - Canvas `#f4f7fb`, white surfaces, light borders and restrained shadows.

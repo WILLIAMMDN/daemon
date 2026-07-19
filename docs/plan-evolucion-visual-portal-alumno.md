@@ -1,6 +1,19 @@
 # Plan de evolución visual del portal alumno
 
-Estado inicial: 15 de julio de 2026.
+Estado inicial: 15 de julio de 2026. Continuidad confirmada: 19 de julio de
+2026.
+
+## Base confirmada para continuar
+
+El estado vigente es el trabajo de Codex conservado en
+`codex/antigravity-integration`. El nombre de la rama es histórico: no significa
+que se deban incorporar cambios de Antigravity. La rama
+`feature/frontend-design-system` queda descartada como fuente de integración y
+no se copiará ni fusionará en bloque.
+
+El dashboard conserva `/img/robot-mision.png` en el estado “Ruta completada por
+ahora”. El login local `jose123` sigue siendo parte de la verificación funcional
+y no debe alterarse durante cambios puramente visuales.
 
 ## Diagnóstico
 
@@ -46,6 +59,30 @@ pero con más claridad, accesibilidad y solidez técnica que la vista heredada.
 
 ## Hoja de ruta
 
+### Próxima sesión de trabajo
+
+1. Revisar la iconografía de Cursos: reemplazar iconos repetidos, ambiguos o
+   semánticamente incorrectos sin cambiar todavía sus contratos de datos.
+2. Reestructurar un módulo por vez, conservando todas sus funciones y rutas.
+3. Para cada módulo definir antes de editar: propósito, acción principal, datos
+   reales, carga, vacío, error, reintento, responsive y accesibilidad.
+4. Validar primero en local; commit y PR por alcance; producción solamente con
+   autorización y los gates completos.
+
+Orden propuesto:
+
+1. Cursos e iconografía.
+2. Misiones: listado, detalle y entrega.
+3. Evaluaciones, resultados y recursos académicos.
+4. Herramientas IA: chatbot y configuración del bot.
+5. Perfil, ranking y comunidad.
+6. Tienda, canjes y mascota.
+7. Proyectos y motores heredados.
+
+No mezclar varios módulos en un lote visual. Cada entrega debe conservar el
+sidebar morado, Inter, XP separado de DAEMONS, los datos reales del backend y
+las funciones existentes.
+
 ### Fase 1. Núcleo de identidad
 
 - convertir el dashboard en un centro de operaciones y no en un resumen de KPIs;
@@ -58,6 +95,9 @@ pero con más claridad, accesibilidad y solidez técnica que la vista heredada.
 - reconstruir listado, detalle y entrega de misiones como una ruta continua;
 - mejorar evaluaciones, resultados y recursos con contexto y siguiente acción;
 - hacer visibles prerequisitos, recompensas y estados reales del backend.
+
+Los iconos pendientes de Cursos se resuelven al inicio de esta fase con una sola
+familia visual, significado consistente, texto accesible y registro explícito.
 
 ### Fase 3. Progreso y recompensa
 
