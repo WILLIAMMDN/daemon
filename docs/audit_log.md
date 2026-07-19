@@ -183,3 +183,4 @@
 - [2026-07-19 18:49:08] ci(services): review implementation of services module
 - [2026-07-19 18:49:09] chore(api): update documentation for api module
 - [2026-07-19 18:49:09] test(assets): review implementation of assets module
+- [2026-07-19 18:49:09] build(core): remove dead code from core module
