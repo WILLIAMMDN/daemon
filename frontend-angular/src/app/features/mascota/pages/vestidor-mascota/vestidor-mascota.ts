@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { NzButtonModule } from 'ng-zorro-antd/button';
 import {
   faArrowRight,
   faBagShopping,
@@ -15,6 +16,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { Sesion } from '../../../../core/servicios/sesion';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
+import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
 import { MonedaDaemon } from '../../../../shared/componentes/moneda-daemon/moneda-daemon';
 import { MascotaCapa, MascotaCosmetico, MascotaEstado, MascotaSlotCodigo } from '../../models/mascota.models';
 import { MascotaService } from '../../services/mascota.service';
@@ -24,7 +26,7 @@ type FiltroSlot = 'todos' | MascotaSlotCodigo;
 @Component({
   selector: 'app-vestidor-mascota',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, RouterLink, FontAwesomeModule, Cargando, MonedaDaemon],
+  imports: [FormsModule, RouterLink, FontAwesomeModule, NzButtonModule, Cargando, EstadoVacio, MonedaDaemon],
   templateUrl: './vestidor-mascota.html',
   styleUrl: './vestidor-mascota.scss',
 })

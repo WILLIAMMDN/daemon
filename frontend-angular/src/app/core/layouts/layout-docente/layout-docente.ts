@@ -75,18 +75,6 @@ export class LayoutDocente implements OnInit {
     return rol;
   }
 
-  perfilNivel(): string | null {
-    const usuario = this.sesion.usuario();
-    if (!usuario?.nivel) {
-      return null;
-    }
-    return usuario.nivel.startsWith('Nivel') ? usuario.nivel : `Nivel ${usuario.nivel}`;
-  }
-
-  perfilTokens(): number | null {
-    return this.sesion.usuario()?.tokens ?? null;
-  }
-
   avatarUrl(): string {
     return this.activos.url(this.sesion.usuario()?.avatar);
   }

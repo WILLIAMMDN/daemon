@@ -185,6 +185,24 @@ firebase.projectId: 'daemon-a41f8'
 
 La config web de Firebase no es secreto. Las service accounts si son secreto.
 
+### Desarrollo local y cookies
+
+Angular y Laravel deben usar el mismo hostname durante las pruebas locales:
+
+```text
+Frontend: http://localhost:4200 o http://localhost:4300
+API:      http://localhost:8000/api/v1
+```
+
+No mezclar `localhost` con `127.0.0.1`. Aunque ambos apunten al mismo equipo,
+el navegador los considera sitios distintos. La llamada de login puede
+responder HTTP 200, pero la cookie HttpOnly `daemon_access` con `SameSite=Lax`
+no queda disponible para la siguiente consulta autenticada y el interceptor
+termina limpiando la sesión.
+
+Si se elige `127.0.0.1`, tanto el frontend como el backend deben servirse con
+ese mismo hostname.
+
 ## Variables backend
 
 Laravel necesita:

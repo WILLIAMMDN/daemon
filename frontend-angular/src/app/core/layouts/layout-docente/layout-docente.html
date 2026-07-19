@@ -6,12 +6,6 @@
     modo="docente"
     rol="Docente"
     storageKey="daemon_sidebar_docente_colapsado"
-    [perfilAvatar]="avatarUrl()"
-    [perfilEmail]="sesion.usuario()?.email || ''"
-    [perfilNombre]="sesion.usuario()?.nombre_completo || sesion.usuario()?.usuario || 'Cuenta activa'"
-    [perfilUsuario]="sesion.usuario()?.usuario || ''"
-    [perfilNivel]="perfilNivel()"
-    [perfilTokens]="perfilTokens()"
     [secciones]="seccionesSidebar"
     (logout)="salir()"
   />

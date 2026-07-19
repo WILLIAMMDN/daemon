@@ -2,8 +2,14 @@
 
 Estado tecnico al 15 de julio de 2026.
 
-Actualización del 19 de julio: el monitor gratuito se ejecuta cada diez
-minutos. Es una mitigación temporal sin SLA; ver
+Actualización del 19 de julio: producción usa el plan gratuito declarado en
+`render.yaml`. Render puede suspender un servicio gratuito después de quince
+minutos consecutivos sin tráfico entrante. El monitor de GitHub está programado
+cada diez minutos y el frontend conserva un keep-alive cada diez minutos sólo
+durante sesiones autenticadas y visibles. Ambos son mitigaciones sin SLA: los
+workflows programados pueden retrasarse y una sesión cerrada no genera tráfico.
+La única garantía operativa de no suspensión es migrar a una instancia de pago;
+ver
 `implementacion-plataforma-estandar-2026-07-19.md`. La recuperación y las
 barreras destructivas están en
 `incidentes/2026-07-18-restauracion-supabase.md`.
@@ -37,6 +43,11 @@ El entrypoint invalida caches cuando cambian variables, ejecuta `php artisan mig
 - `schedule:work`.
 
 No existe una ruta HTTP para ejecutar migraciones.
+
+El health check de Render apunta a `/api/v1/salud`. El workflow
+`production-monitor.yml` y el servicio Angular `KeepAlive` consultan salud de
+forma independiente, pero no deben documentarse ni operarse como sustitutos de
+una instancia siempre activa.
 
 ## Backups
 

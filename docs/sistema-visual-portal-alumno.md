@@ -144,6 +144,12 @@ marcado puede romper el resaltado aunque la navegación siga funcionando.
 NG-ZORRO aporta comportamiento y accesibilidad. La apariencia final se ajusta
 con clases locales y `:host ::ng-deep` cuando el encapsulado lo exige.
 
+Los estados vacíos editoriales usan exclusivamente `app-estado-vacio`, que
+compone `nz-empty` con el robot canónico, mensajes contextuales y acciones
+reales. No se configura una imagen global de NG-ZORRO porque también afectaría
+selects, tablas y controles compactos. El contrato, tamaños y reglas de
+redacción están documentados en `docs/estados-vacios-daemon.md`.
+
 ## Responsive
 
 Puntos comprobados durante el rediseño:
@@ -164,7 +170,8 @@ En móvil:
 - No usar `linear-gradient` ni `radial-gradient` en sus módulos principales.
 - No crear un color de acento diferente para cada pantalla.
 - No usar glassmorphism como superficie principal.
-- No usar robots o ilustraciones genéricas como relleno.
+- No usar robots o ilustraciones genéricas como relleno. El robot canónico solo
+  representa un vacío confirmado mediante `app-estado-vacio`.
 - No ocultar información académica detrás de animaciones.
 - No convertir el portal en una plantilla administrativa.
 

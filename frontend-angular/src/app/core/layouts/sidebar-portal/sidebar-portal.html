@@ -11,72 +11,6 @@
   aria-label="Cerrar menú"
 ></button>
 
-<ng-template #profilePopContent>
-  <div class="profile-popover-inner">
-    <header class="profile-popover-head">
-      <div class="profile-popover-avatar-shell">
-        <nz-avatar
-          class="profile-popover-avatar"
-          [nzSize]="64"
-          [nzSrc]="avatarSrcVisible && avatarSrc() ? avatarSrc() : undefined"
-          [nzText]="iniciales()"
-          (nzError)="onAvatarError()"
-        ></nz-avatar>
-        <span class="profile-popover-status" aria-hidden="true"></span>
-      </div>
-
-      <div class="profile-popover-id">
-        <span class="profile-popover-eyebrow">{{ modo === 'docente' ? 'Portal docente' : 'Portal estudiante' }}</span>
-        <strong class="profile-popover-name" [attr.title]="perfilNombre">{{ perfilNombre | titlecase }}</strong>
-        <span class="profile-popover-username" [attr.title]="perfilUsuario ? '@' + perfilUsuario : rol">
-          {{ perfilUsuario ? '@' + perfilUsuario : rol }}
-        </span>
-      </div>
-
-      <button
-        type="button"
-        class="profile-popover-close"
-        (click)="cerrarProfilePopover($event)"
-        aria-label="Cerrar datos de cuenta"
-        title="Cerrar"
-      >
-        <fa-icon [icon]="iconos.cerrar" />
-      </button>
-    </header>
-
-    <ul class="profile-popover-list">
-      @if (perfilEmail) {
-        <li class="profile-popover-item">
-          <fa-icon class="profile-popover-icon" [icon]="iconos.correo" aria-hidden="true" />
-          <span class="profile-popover-key">Correo</span>
-          <span class="profile-popover-val" [attr.title]="perfilEmail">{{ perfilEmail }}</span>
-        </li>
-      }
-      <li class="profile-popover-item">
-        <fa-icon class="profile-popover-icon" [icon]="iconos.rolIcono" aria-hidden="true" />
-        <span class="profile-popover-key">Rol</span>
-        <span class="profile-popover-val">{{ rol }}</span>
-      </li>
-      @if (perfilNivel) {
-        <li class="profile-popover-item">
-          <fa-icon class="profile-popover-icon" [icon]="iconos.nivel" aria-hidden="true" />
-          <span class="profile-popover-key">Nivel</span>
-          <span class="profile-popover-val">{{ perfilNivel }}</span>
-        </li>
-      }
-      @if (perfilTokens !== null) {
-        <li class="profile-popover-item profile-popover-item--accent">
-          <span class="profile-popover-icon profile-popover-icon--coin">
-            <app-moneda-daemon [size]="20" titulo="Moneda DAEMON" />
-          </span>
-          <span class="profile-popover-key">Daemons</span>
-          <span class="profile-popover-val">{{ perfilTokens | number }}</span>
-        </li>
-      }
-    </ul>
-  </div>
-</ng-template>
-
 <aside
   class="portal-sidebar"
   [class.mobile-open]="mobileOpen"
@@ -169,49 +103,6 @@
       <fa-icon [icon]="iconos.cerrar" />
     </button>
   </header>
-
-  <section class="profile-block" id="sidebar-perfil" aria-label="Cuenta activa">
-    <button
-      type="button"
-      class="profile-trigger"
-      nz-popover
-      nzPopoverTrigger="click"
-      [nzPopoverPlacement]="profilePopoverPlacement"
-      [nzPopoverOverlayClassName]="profilePopoverClass"
-      [nzPopoverContent]="profilePopContent"
-      [(nzPopoverVisible)]="profilePopoverOpen"
-      [attr.aria-label]="'Ver datos de la cuenta ' + perfilNombre"
-    >
-      <span class="profile-avatar-wrap">
-        <nz-avatar
-          class="profile-avatar"
-          [nzSize]="colapsado ? 42 : 52"
-          [nzSrc]="avatarSrcVisible && avatarSrc() ? avatarSrc() : undefined"
-          [nzText]="iniciales()"
-          (nzError)="onAvatarError()"
-        ></nz-avatar>
-        <span class="profile-status" aria-hidden="true"></span>
-      </span>
-
-      <span class="profile-id">
-        <strong class="profile-name" [attr.title]="perfilNombre">{{ perfilNombreCorto | titlecase }}</strong>
-        <fa-icon class="profile-chevron" [icon]="iconos.chevronDown" aria-hidden="true" />
-      </span>
-
-      @if (rol) {
-        <span class="profile-role-tag" [attr.title]="'Rol: ' + rol">
-          <fa-icon class="profile-role-icon" [icon]="modo === 'docente' ? iconos.docente : iconos.alumno" aria-hidden="true" />
-          <span class="profile-role-text">{{ rol }}</span>
-        </span>
-      }
-
-      @if (perfilTokens !== null) {
-        <span class="profile-balance" [attr.title]="perfilTokens + ' daemons'">
-          <app-moneda-daemon [size]="20" [cantidad]="perfilTokens" titulo="Saldo de daemons" />
-        </span>
-      }
-    </button>
-  </section>
 
   <nav class="sidebar-nav">
     @for (seccion of secciones; track seccion.titulo; let last = $last) {

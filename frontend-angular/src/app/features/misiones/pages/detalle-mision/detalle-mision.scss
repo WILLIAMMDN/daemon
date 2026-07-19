@@ -1,10 +1,10 @@
 :host { display: block; }
-.mission-detail-page { display: grid; gap: 1.2rem; }
+.mission-detail-page { display: grid; gap: 1.2rem; margin: 0 auto; max-width: 1360px; }
 .detail-hero { align-items: center; background: #eaf5ff; border: 1px solid #d7eaff; border-radius: 16px; display: grid; gap: 2rem; grid-template-columns: minmax(0, 1fr) minmax(280px, .42fr); min-height: 240px; padding: clamp(1.5rem, 3vw, 2.4rem); }
 .hero-copy > span { color: #0958d9; font-size: .68rem; font-weight: 700; letter-spacing: .075em; text-transform: uppercase; }
 .hero-copy h1 { color: #172033; font-size: clamp(2rem, 4vw, 3.25rem); line-height: 1.06; margin: .7rem 0; }
 .hero-copy p { color: #667085; line-height: 1.6; margin: 0; max-width: 650px; }
-.hero-copy a { color: #0958d9; display: inline-block; font-size: .78rem; font-weight: 700; margin-top: 1.1rem; text-decoration: none; }
+.hero-copy a { align-items: center; color: #0958d9; display: inline-flex; font-size: .78rem; font-weight: 700; gap: .45rem; margin-top: 1.1rem; text-decoration: none; }
 .dual-prize { background: #fff; border: 1px solid #dce8f5; border-radius: 12px; display: grid; gap: .8rem; grid-template-columns: 1fr 1px 1fr; padding: 1.2rem; }
 .dual-prize > small { color: #667085; font-size: .63rem; font-weight: 700; grid-column: 1 / -1; letter-spacing: .07em; text-transform: uppercase; }
 .dual-prize article { display: grid; }
@@ -23,9 +23,9 @@
 .action-kicker { color: #1677ff; font-size: .64rem; font-weight: 700; letter-spacing: .075em; text-transform: uppercase; }
 .delivery-card h2,
 .action-card h2 { color: #172033; font-size: 1.2rem; margin: .25rem 0 0; }
-.delivery-timeline { display: grid; gap: .3rem .8rem; grid-template-columns: 18px 1fr; margin-top: 1.4rem; }
-.timeline-dot { background: #d9e0e8; border: 5px solid #f4f7fa; border-radius: 50%; height: 18px; margin-top: .1rem; width: 18px; }
-.timeline-dot.active { background: #1677ff; border-color: #ddebff; }
+.delivery-timeline { display: grid; gap: .3rem .8rem; grid-template-columns: 28px 1fr; margin-top: 1.4rem; }
+.timeline-dot { align-items: center; background: #eef1f5; border-radius: 50%; color: #8590a2; display: inline-flex; font-size: .68rem; height: 28px; justify-content: center; margin-top: .1rem; width: 28px; }
+.timeline-dot.active { background: #ddebff; color: #0958d9; }
 .delivery-timeline strong { color: #344054; }
 .delivery-timeline p,
 .action-card p,
@@ -35,15 +35,19 @@ blockquote { background: #f8fafc; border-left: 3px solid #1677ff; border-radius:
 blockquote small { color: #0958d9; font-size: .62rem; font-weight: 700; text-transform: uppercase; }
 blockquote p { color: #536079; margin: .4rem 0 0; }
 .empty-delivery { padding: 1.6rem 0 .4rem; }
-.empty-delivery > span { color: #c4cbd5; font-family: Inter, sans-serif; font-size: 2rem; font-weight: 700; }
+.empty-delivery > span { align-items: center; background: #edf5ff; border-radius: 12px; color: #0958d9; display: inline-flex; font-size: 1.1rem; height: 48px; justify-content: center; width: 48px; }
 .empty-delivery h3 { color: #344054; margin: .3rem 0; }
 :host ::ng-deep .action-card.ant-card { background: #f8fafc; }
 .action-card { display: grid; }
 .action-card p { line-height: 1.6; }
 .primary-action,
-.secondary-action { border-radius: 8px; display: block; font-size: .78rem; font-weight: 700; margin-top: .65rem; padding: .75rem 1rem; text-align: center; text-decoration: none; }
+.secondary-action { align-items: center; border-radius: 8px; display: flex; font-size: .78rem; font-weight: 700; gap: .45rem; justify-content: center; margin-top: .65rem; padding: .75rem 1rem; text-align: center; text-decoration: none; }
 .primary-action { background: #1677ff; color: #fff; }
 .secondary-action { background: #eef1f5; color: #536079; }
 .detail-state { background: #fff; border: 1px solid #e4eaf2; border-radius: 14px; padding: 2rem; }
+.detail-error { align-items: center; background: #fff7f7; border: 1px solid #fecaca; border-radius: 16px; display: grid; gap: 1rem; grid-template-columns: minmax(0, 1fr) auto auto; padding: 1.25rem; }
+.detail-error h1 { color: #7f1d1d; font-size: 1.1rem; margin: 0; }
+.detail-error p { color: #b42318; font-size: .82rem; margin: .3rem 0 0; }
 @media (max-width: 850px) { .detail-hero, .detail-grid { grid-template-columns: 1fr; } .mission-facts { grid-template-columns: 1fr; } }
-@media (max-width: 520px) { .dual-prize { grid-template-columns: 1fr; } .dual-prize i { height: 1px; } }
+@media (max-width: 620px) { .detail-error { align-items: stretch; grid-template-columns: 1fr; } .detail-error .ant-btn { justify-content: center; width: 100%; } }
+@media (max-width: 520px) { .dual-prize { grid-template-columns: 1fr; } .dual-prize i { height: 1px; } .delivery-card header { align-items: flex-start; flex-direction: column; gap: .65rem; } }

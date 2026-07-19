@@ -1,89 +1,406 @@
-<main class="learning-page" aria-labelledby="learning-title">
-  <header class="learning-header">
-    <div>
-      <p class="eyebrow">Campus de aprendizaje</p>
-      <h1 id="learning-title">Mis cursos</h1>
-      <p>Continúa tus lecciones y revisa el avance de tu ruta académica.</p>
+<section class="course-catalog" aria-labelledby="learning-title">
+  <header class="course-hero">
+    <div class="course-hero__copy">
+      <span class="course-hero__icon" aria-hidden="true">
+        <fa-icon [icon]="faBookOpen"></fa-icon>
+      </span>
+      <div>
+        <span class="course-eyebrow">Campus de aprendizaje</span>
+        <h1 id="learning-title">Mis cursos</h1>
+        <p>Aquí verás las rutas, unidades y lecciones que tu docente te asigne.</p>
+        @if (datos(); as estado) {
+          <span class="course-hero__meta">
+            {{ estado.resumen.cursos }} {{ estado.resumen.cursos === 1 ? 'curso asignado' : 'cursos asignados' }}
+          </span>
+        }
+      </div>
     </div>
 
-    @if (datos(); as estado) {
-      <section class="progress-card" aria-label="Progreso total">
-        <strong>{{ estado.resumen.porcentaje }}%</strong>
-        <span>{{ estado.resumen.completadas }} de {{ estado.resumen.lecciones }} lecciones</span>
-        <div class="progress-track" role="progressbar" aria-label="Progreso de cursos" [attr.aria-valuenow]="estado.resumen.porcentaje" aria-valuemin="0" aria-valuemax="100">
-          <span [style.width.%]="estado.resumen.porcentaje"></span>
-        </div>
-      </section>
-    }
+    <daemon-illustration-slot
+      class="course-hero__illustration"
+      src="/img/hero-monster.png"
+      alt=""
+      kind="hero"
+      aspectRatio="16 / 9"
+      assetName="course-catalog-guide.webp"
+      [eager]="true"
+    ></daemon-illustration-slot>
   </header>
 
-  @if (error()) {
-    <section class="state-card state-card--error" role="alert">
+  @if (error() && datos()) {
+    <div class="course-alert" [attr.data-problem]="tipoProblema()" role="alert" aria-live="assertive">
       <div>
-        <strong>Ocurrió un problema</strong>
-        <p>{{ error() }}</p>
+        <strong>{{ problemaCarga().titulo }}</strong>
+        <p>{{ problemaCarga().detalle }}</p>
       </div>
-      <button type="button" (click)="cargar(true)">Reintentar</button>
-    </section>
+      @if (problemaCarga().accion === 'home') {
+        <a nz-button nzType="default" routerLink="/alumno">Volver al inicio</a>
+      } @else {
+        <button nz-button nzType="default" type="button" (click)="cargar(true)">
+          <fa-icon [icon]="faRotateRight" aria-hidden="true"></fa-icon>
+          Reintentar
+        </button>
+      }
+    </div>
+  }
+
+  @if (errorAccion()) {
+    <div class="course-alert course-alert--action" role="alert" aria-live="assertive">
+      <div>
+        <strong>No guardamos el avance</strong>
+        <p>{{ errorAccion() }}</p>
+      </div>
+      <button nz-button nzType="default" type="button" (click)="cerrarErrorAccion()">Entendido</button>
+    </div>
+  }
+
+  @if (feedback()) {
+    <div class="course-success" role="status" aria-live="polite">
+      <fa-icon [icon]="faCheck" aria-hidden="true"></fa-icon>
+      <span>{{ feedback() }}</span>
+    </div>
   }
 
   @if (cargando()) {
-    <section class="course-grid" aria-label="Cargando cursos" aria-busy="true">
-      @for (item of [1, 2, 3]; track item) {
-        <article class="course-card course-card--skeleton"><span></span><span></span><span></span></article>
-      }
+    <section class="course-loading" aria-label="Cargando cursos" aria-busy="true">
+      <div class="course-loading__toolbar" aria-hidden="true"></div>
+      <div class="course-loading__layout">
+        <div class="course-loading__main">
+          @for (item of [1, 2]; track item) {
+            <article class="course-skeleton" aria-hidden="true">
+              <span class="course-skeleton__visual"></span>
+              <span class="course-skeleton__line course-skeleton__line--short"></span>
+              <span class="course-skeleton__line course-skeleton__line--title"></span>
+              <span class="course-skeleton__line"></span>
+              <span class="course-skeleton__panel"></span>
+            </article>
+          }
+        </div>
+        <aside class="course-skeleton course-skeleton--aside" aria-hidden="true"></aside>
+      </div>
     </section>
-  } @else if (datos()?.cursos?.length) {
-    <section class="course-list" aria-label="Cursos matriculados">
-      @for (curso of datos()!.cursos; track curso.id) {
-        <article class="course-card">
-          <header class="course-head">
-            <div>
-              <span class="course-level">{{ curso.nivel || 'Todos los niveles' }}</span>
-              <h2>{{ curso.titulo }}</h2>
-              @if (curso.descripcion) { <p>{{ curso.descripcion }}</p> }
-            </div>
-            <span class="course-count">{{ curso.unidades.length }} {{ curso.unidades.length === 1 ? 'unidad' : 'unidades' }}</span>
-          </header>
-
-          <div class="unit-list">
-            @for (unidad of curso.unidades; track unidad.id; let unitIndex = $index) {
-              <section class="unit-card">
-                <header>
-                  <span class="unit-number">{{ unitIndex + 1 }}</span>
-                  <div><h3>{{ unidad.titulo }}</h3>@if (unidad.descripcion) { <p>{{ unidad.descripcion }}</p> }</div>
-                </header>
-                <ul class="lesson-list">
-                  @for (leccion of unidad.lecciones; track leccion.id) {
-                    <li [class.lesson-completed]="progreso(leccion).estado === 'completed'">
-                      <span class="lesson-status" aria-hidden="true">{{ progreso(leccion).estado === 'completed' ? '✓' : '•' }}</span>
-                      <div class="lesson-copy">
-                        <strong>{{ leccion.titulo }}</strong>
-                        <span>{{ leccion.duracion_minutos ? leccion.duracion_minutos + ' min' : 'Lección' }}</span>
-                      </div>
-                      <button
-                        type="button"
-                        [disabled]="progreso(leccion).estado === 'completed' || actualizando() !== null"
-                        (click)="completar(leccion)"
-                        [attr.aria-label]="progreso(leccion).estado === 'completed' ? leccion.titulo + ' completada' : 'Marcar ' + leccion.titulo + ' como completada'"
-                      >
-                        {{ progreso(leccion).estado === 'completed' ? 'Completada' : actualizando() === leccion.id ? 'Guardando…' : 'Completar' }}
-                      </button>
-                    </li>
-                  } @empty {
-                    <li class="lesson-empty">Esta unidad todavía no tiene lecciones publicadas.</li>
-                  }
-                </ul>
-              </section>
-            }
-          </div>
-        </article>
+  } @else if (!datos()) {
+    <section class="course-load-error" [attr.data-problem]="tipoProblema()" role="alert" aria-live="assertive">
+      <span class="course-load-error__icon" aria-hidden="true">
+        <fa-icon [icon]="faTriangleExclamation"></fa-icon>
+      </span>
+      <div>
+        <h2>{{ problemaCarga().titulo }}</h2>
+        <p>{{ problemaCarga().detalle }}</p>
+      </div>
+      @if (problemaCarga().accion === 'home') {
+        <a nz-button nzType="primary" routerLink="/alumno">Volver al inicio</a>
+      } @else {
+        <button nz-button nzType="primary" type="button" (click)="cargar(true)">
+          <fa-icon [icon]="faRotateRight" aria-hidden="true"></fa-icon>
+          Intentar nuevamente
+        </button>
       }
     </section>
   } @else {
-    <section class="state-card state-card--empty">
-      <span aria-hidden="true">📚</span>
-      <div><strong>Tu ruta está preparándose</strong><p>Cuando tu docente publique y asigne un curso, aparecerá aquí automáticamente.</p></div>
+    <section class="course-toolbar" aria-label="Buscar y filtrar cursos">
+      <div class="course-filter-list" role="group" aria-label="Estado del curso">
+        @for (opcion of filtros(); track opcion.value) {
+          <button
+            type="button"
+            class="course-filter"
+            [class.course-filter--active]="filtro() === opcion.value"
+            [attr.aria-pressed]="filtro() === opcion.value"
+            (click)="seleccionarFiltro(opcion.value)"
+          >
+            <fa-icon [icon]="opcion.icon" aria-hidden="true"></fa-icon>
+            <span>{{ opcion.label }}</span>
+          </button>
+        }
+      </div>
+
+      <label class="course-search">
+        <span class="sr-only">Buscar cursos, unidades o lecciones</span>
+        <fa-icon [icon]="faMagnifyingGlass" aria-hidden="true"></fa-icon>
+        <input
+          type="search"
+          placeholder="Buscar cursos"
+          autocomplete="off"
+          [value]="busqueda()"
+          (input)="actualizarBusqueda($event)"
+        />
+      </label>
+
+      <button
+        nz-button
+        nzType="default"
+        type="button"
+        class="course-refresh-action"
+        aria-label="Actualizar cursos"
+        [disabled]="refrescando()"
+        (click)="cargar(true)"
+      >
+        <fa-icon [icon]="faRotateRight" aria-hidden="true"></fa-icon>
+        <span>Actualizar</span>
+      </button>
+
+      @if (refrescando()) {
+        <span class="course-refresh" role="status">
+          <span aria-hidden="true"></span>
+          Actualizando
+        </span>
+      } @else if (contenidoDesactualizado()) {
+        <span class="course-stale" role="status">
+          Datos guardados
+        </span>
+      }
     </section>
+
+    <div class="course-layout">
+      <div class="course-main">
+        @if (cursosFiltrados().length) {
+          <section class="course-grid" aria-label="Cursos asignados">
+            @for (curso of cursosFiltrados(); track curso.id) {
+              <article class="course-card">
+                <daemon-illustration-slot
+                  class="course-card__illustration"
+                  [src]="curso.ilustracionUrl"
+                  alt=""
+                  kind="contextual"
+                  aspectRatio="16 / 7"
+                  [assetName]="'course-' + curso.id + '-cover.webp'"
+                ></daemon-illustration-slot>
+
+                <header class="course-card__header">
+                  <div class="course-card__title-row">
+                    <div>
+                      <span class="course-level">{{ curso.nivel || 'Todos los niveles' }}</span>
+                      <h2>{{ curso.titulo }}</h2>
+                    </div>
+                    <span class="course-status" [attr.data-status]="curso.estado">
+                      {{ curso.estadoLabel }}
+                    </span>
+                  </div>
+                  @if (curso.descripcion) {
+                    <p>{{ curso.descripcion }}</p>
+                  }
+                  <div class="course-card__metadata" aria-label="Contenido del curso">
+                    <span>
+                      <fa-icon [icon]="faLayerGroup" aria-hidden="true"></fa-icon>
+                      {{ curso.unidades.length }} {{ curso.unidades.length === 1 ? 'unidad' : 'unidades' }}
+                    </span>
+                    <span>
+                      <fa-icon [icon]="faBookOpen" aria-hidden="true"></fa-icon>
+                      {{ curso.totalLecciones }} {{ curso.totalLecciones === 1 ? 'lección' : 'lecciones' }}
+                    </span>
+                  </div>
+                  <div class="course-card__progress-copy">
+                    <span>{{ curso.leccionesCompletadas }} de {{ curso.totalLecciones }} lecciones</span>
+                    <strong>{{ curso.porcentaje }}%</strong>
+                  </div>
+                  <div
+                    class="course-progress"
+                    role="progressbar"
+                    [attr.aria-label]="'Progreso en ' + curso.titulo"
+                    [attr.aria-valuenow]="curso.porcentaje"
+                    [attr.aria-valuetext]="curso.leccionesCompletadas + ' de ' + curso.totalLecciones + ' lecciones completadas'"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                  >
+                    <span [style.width.%]="curso.porcentaje"></span>
+                  </div>
+                </header>
+
+                <div class="course-card__units">
+                  @for (unidad of curso.unidades; track unidad.id) {
+                    <details class="course-unit" open>
+                      <summary>
+                        <span class="course-unit__number" aria-hidden="true">{{ unidad.orden }}</span>
+                        <span class="course-unit__title">
+                          <strong>{{ unidad.titulo }}</strong>
+                          <small>{{ unidad.lecciones.length }} {{ unidad.lecciones.length === 1 ? 'lección' : 'lecciones' }}</small>
+                        </span>
+                        <span class="course-unit__chevron" aria-hidden="true"></span>
+                      </summary>
+
+                      @if (unidad.descripcion) {
+                        <p class="course-unit__description">{{ unidad.descripcion }}</p>
+                      }
+
+                      <ul class="course-lesson-list">
+                        @for (leccion of unidad.lecciones; track leccion.id) {
+                          <li class="course-lesson" [class.course-lesson--completed]="leccion.progresoActual.estado === 'completed'">
+                            <span class="course-lesson__state" aria-hidden="true">
+                              <fa-icon [icon]="leccion.progresoActual.estado === 'completed' ? faCheck : faCirclePlay"></fa-icon>
+                            </span>
+                            <div class="course-lesson__copy">
+                              <strong>{{ leccion.titulo }}</strong>
+                              <span>
+                                <fa-icon [icon]="faClock" aria-hidden="true"></fa-icon>
+                                {{ leccion.duracion_minutos ? leccion.duracion_minutos + ' min' : 'Duración flexible' }}
+                              </span>
+                            </div>
+                            <button
+                              nz-button
+                              [nzType]="leccion.progresoActual.estado === 'completed' ? 'default' : 'primary'"
+                              type="button"
+                              class="course-lesson__action"
+                              [disabled]="leccion.progresoActual.estado === 'completed' || actualizando() !== null"
+                              (click)="completar(leccion)"
+                              [attr.aria-label]="leccion.progresoActual.estado === 'completed' ? leccion.titulo + ' completada' : 'Marcar ' + leccion.titulo + ' como completada'"
+                            >
+                              @if (leccion.progresoActual.estado === 'completed') {
+                                <fa-icon [icon]="faCheck" aria-hidden="true"></fa-icon>
+                                Completada
+                              } @else if (actualizando() === leccion.id) {
+                                Guardando…
+                              } @else {
+                                Completar
+                              }
+                            </button>
+                          </li>
+                        } @empty {
+                          <li class="course-lessons-empty">Esta unidad todavía no tiene lecciones publicadas.</li>
+                        }
+                      </ul>
+                    </details>
+                  } @empty {
+                    <div class="course-units-empty">
+                      <fa-icon [icon]="faLayerGroup" aria-hidden="true"></fa-icon>
+                      <p>Este curso todavía no tiene unidades publicadas.</p>
+                    </div>
+                  }
+                </div>
+              </article>
+            }
+          </section>
+        } @else if (hayFiltrosActivos()) {
+          <app-estado-vacio
+            class="course-filtered-empty-state"
+            tamano="compact"
+            titulo="No encontramos coincidencias"
+            descripcion="Prueba otra búsqueda o vuelve a mostrar todos tus cursos."
+          >
+            <button nz-button nzType="primary" type="button" (click)="limpiarFiltros()">Limpiar filtros</button>
+          </app-estado-vacio>
+        } @else {
+          <app-estado-vacio
+            class="course-empty-state"
+            titulo="Tu aprendizaje está preparándose"
+            descripcion="Cuando tu docente publique y asigne un curso, aparecerá aquí automáticamente."
+          >
+            <button nz-button nzType="primary" type="button" (click)="cargar(true)">
+              <fa-icon [icon]="faRotateRight" aria-hidden="true"></fa-icon>
+              Actualizar cursos
+            </button>
+            <a nz-button nzType="default" routerLink="/alumno/misiones">
+              Ver misiones
+              <fa-icon [icon]="faArrowRight" aria-hidden="true"></fa-icon>
+            </a>
+          </app-estado-vacio>
+        }
+
+        <section class="course-discovery" aria-labelledby="course-discovery-title">
+          <span class="course-discovery__icon" aria-hidden="true">
+            <fa-icon [icon]="faStar"></fa-icon>
+          </span>
+          <div>
+            <h2 id="course-discovery-title">Siempre hay algo nuevo por descubrir</h2>
+            <p>Mientras llegan nuevas rutas, practica con misiones y herramientas disponibles.</p>
+          </div>
+          <a nz-button nzType="default" routerLink="/alumno/herramientas">
+            Explorar herramientas
+            <fa-icon [icon]="faArrowRight" aria-hidden="true"></fa-icon>
+          </a>
+        </section>
+      </div>
+
+      <aside class="course-aside" aria-label="Resumen y ayuda de cursos">
+        <section class="course-summary-card">
+          <header>
+            <span aria-hidden="true"><fa-icon [icon]="faLayerGroup"></fa-icon></span>
+            <div>
+              <h2>Tu progreso general</h2>
+              <p>
+                @if (datos()!.resumen.cursos) {
+                  Avance de todas tus rutas asignadas.
+                } @else {
+                  Aún no tienes cursos asignados.
+                }
+              </p>
+            </div>
+          </header>
+          <div class="course-summary-card__stats">
+            <article>
+              <fa-icon [icon]="faCirclePlay" aria-hidden="true"></fa-icon>
+              <strong>{{ cursosEnProgreso() }}</strong>
+              <span>En progreso</span>
+            </article>
+            <article>
+              <fa-icon [icon]="faCircleCheck" aria-hidden="true"></fa-icon>
+              <strong>{{ cursosCompletados() }}</strong>
+              <span>Completados</span>
+            </article>
+            <article>
+              <fa-icon [icon]="faFlag" aria-hidden="true"></fa-icon>
+              <strong>{{ cursosPorIniciar() }}</strong>
+              <span>Por iniciar</span>
+            </article>
+          </div>
+          <div class="course-summary-card__progress-copy">
+            <span>Progreso de lecciones</span>
+            <strong>{{ datos()!.resumen.porcentaje }}%</strong>
+          </div>
+          <div
+            class="course-progress"
+            role="progressbar"
+            aria-label="Progreso total de lecciones"
+            [attr.aria-valuenow]="datos()!.resumen.porcentaje"
+            [attr.aria-valuetext]="datos()!.resumen.completadas + ' de ' + datos()!.resumen.lecciones + ' lecciones completadas'"
+            aria-valuemin="0"
+            aria-valuemax="100"
+          >
+            <span [style.width.%]="datos()!.resumen.porcentaje"></span>
+          </div>
+          <small>{{ datos()!.resumen.completadas }} de {{ datos()!.resumen.lecciones }} lecciones completadas</small>
+          <daemon-illustration-slot
+            class="course-summary-card__illustration"
+            src="/img/robot-mision.png"
+            alt=""
+            kind="reward"
+            aspectRatio="16 / 5"
+            assetName="course-progress-companion.webp"
+          ></daemon-illustration-slot>
+        </section>
+
+        <section class="course-help-card">
+          <header class="course-help-card__header">
+            <span aria-hidden="true"><fa-icon [icon]="faCircleInfo"></fa-icon></span>
+            <h2>¿Cómo funciona?</h2>
+          </header>
+          <ol>
+            <li>
+              <span aria-hidden="true"><fa-icon [icon]="faPersonChalkboard"></fa-icon></span>
+              <p>Tu docente crea y publica una ruta de aprendizaje.</p>
+            </li>
+            <li>
+              <span aria-hidden="true"><fa-icon [icon]="faBookOpen"></fa-icon></span>
+              <p>La ruta asignada aparece aquí con sus unidades y lecciones.</p>
+            </li>
+            <li>
+              <span aria-hidden="true"><fa-icon [icon]="faRocket"></fa-icon></span>
+              <p>Completa cada lección para mantener actualizado tu progreso.</p>
+            </li>
+          </ol>
+        </section>
+
+        <section class="course-recommendation-card">
+          <span aria-hidden="true"><fa-icon [icon]="faRocket"></fa-icon></span>
+          <div>
+            <h2>Practica mientras avanzas</h2>
+            <p>Las misiones convierten lo aprendido en retos concretos.</p>
+          </div>
+          <a routerLink="/alumno/misiones" aria-label="Ir a mis misiones">
+            Ir a misiones
+            <fa-icon [icon]="faArrowRight" aria-hidden="true"></fa-icon>
+          </a>
+        </section>
+      </aside>
+    </div>
   }
-</main>
+</section>

@@ -179,6 +179,14 @@ verify Render separately.
 - Do not revert user changes. Inspect `git status` first.
 - Prefer scoped changes matching existing Angular/Laravel patterns.
 
+## Parallel AI coordination
+
+When Codex and Antigravity work at the same time, read
+`docs/colaboracion-ias.md` and the two files under `docs/handoffs/` before
+editing. Never work directly on `main`, never force-push a shared branch and do
+not modify a file currently owned by the other agent. The account/profile block
+belongs in the topbar; it is intentionally absent from the sidebar.
+
 ## Docs to read by task
 
 - Overall project state: `docs/ai-project-context.md`

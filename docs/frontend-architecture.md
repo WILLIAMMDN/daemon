@@ -57,6 +57,11 @@ sesión, la autenticación o la configuración del shell. Los componentes
 puramente presentacionales, como la moneda DAEMON y los estados vacíos,
 permanecen en `shared`.
 
+`shared/componentes/estado-vacio` es la única abstracción editorial para
+colecciones vacías. Encapsula `nz-empty`, no conoce servicios ni rutas y recibe
+sus acciones por proyección de contenido. Su contrato visual se documenta en
+`docs/estados-vacios-daemon.md`.
+
 ## Modelos, configuración, directivas y pipes
 
 - Un modelo utilizado solo por una feature se coloca junto a esa feature.

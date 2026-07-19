@@ -1,0 +1,30 @@
+<figure
+  class="illustration-slot"
+  [attr.data-kind]="kind()"
+  [attr.data-asset-name]="assetName() || null"
+  [attr.role]="!hasImage() && alt() ? 'img' : null"
+  [attr.aria-label]="!hasImage() && alt() ? fallbackLabel() : null"
+  [style.--illustration-aspect-ratio]="aspectRatio()"
+>
+  @if (hasImage()) {
+    <img
+      [src]="src()!"
+      [alt]="alt()"
+      [attr.loading]="eager() ? 'eager' : 'lazy'"
+      [attr.fetchpriority]="eager() ? 'high' : 'auto'"
+      decoding="async"
+      (error)="onImageError()"
+    />
+  } @else {
+    <span class="illustration-slot__fallback" aria-hidden="true">
+      <svg viewBox="0 0 64 64" fill="none">
+        <rect x="10" y="13" width="44" height="38" rx="10" stroke="currentColor" stroke-width="2.5" />
+        <path d="m17 43 10-10 8 7 6-6 6 6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" />
+        <circle cx="42" cy="25" r="4" fill="currentColor" />
+      </svg>
+      @if (alt()) {
+        <span>{{ fallbackLabel() }}</span>
+      }
+    </span>
+  }
+</figure>

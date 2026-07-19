@@ -23,12 +23,12 @@ export class TourService {
 
     const steps: DriveStep[] = [
       {
-        element: '#sidebar-perfil',
+        element: '#topbar-perfil',
         popover: {
           title: 'Tu Perfil',
-          description: 'Aqui puedes ver tu rango, nivel y personalizar tu avatar o fondo.',
-          side: 'right',
-          align: 'start',
+          description: 'Aquí puedes abrir tu perfil, revisar alertas de cuenta y cerrar sesión de forma segura.',
+          side: 'bottom',
+          align: 'end',
         },
       },
       {

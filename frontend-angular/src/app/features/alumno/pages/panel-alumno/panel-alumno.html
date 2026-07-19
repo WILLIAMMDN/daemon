@@ -38,7 +38,7 @@
     }
 
     <!-- HERO BANNER -->
-    <section class="student-hero-banner relative flex flex-col lg:flex-row items-center justify-between rounded-[24px] lg:rounded-[32px] p-5 sm:p-8 lg:p-12 overflow-visible mt-16 sm:mt-24 lg:mt-0">
+    <section class="student-hero-banner relative flex flex-col lg:flex-row items-center justify-between rounded-2xl p-5 sm:p-8 lg:p-12 overflow-visible mt-16 sm:mt-24 lg:mt-0">
       
       <div class="relative z-10 flex-none w-[240px] sm:w-[280px] lg:w-[450px] -mt-20 sm:-mt-28 mb-4 lg:-mt-20 lg:-mb-16 lg:-ml-8 pointer-events-none">
         <img src="/img/hero-monster.png" alt="Monstruo DAEMON" class="w-full h-auto drop-shadow-2xl transform scale-110 lg:scale-90 origin-bottom" />
@@ -54,10 +54,10 @@
         </p>
         
         <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto">
-          <a nz-button class="bg-gradient-to-b from-[#ffcf3a] to-[#ffb300] hover:from-[#ffd95b] hover:to-[#ffc414] text-[#1e1441] border-none rounded-xl font-extrabold h-12 px-8 shadow-[0_6px_20px_rgba(255,196,20,0.5)] active:scale-95 transition-all duration-200 inline-flex items-center justify-center gap-2 w-full sm:w-auto" routerLink="/alumno/misiones">
+          <a nz-button class="bg-[#ffc414] hover:bg-[#f4a900] text-[#24194f] border-none rounded-xl font-extrabold h-12 px-8 shadow-sm transition-colors inline-flex items-center justify-center gap-2 w-full sm:w-auto" routerLink="/alumno/misiones">
             <fa-icon [icon]="iconos.play" /> Continuar misión
           </a>
-          <a nz-button class="bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 text-white rounded-xl font-semibold h-12 px-8 shadow-glass active:scale-95 transition-all duration-200 inline-flex items-center justify-center gap-2 w-full sm:w-auto" routerLink="/alumno/perfil">
+          <a nz-button class="bg-[#3730a3] hover:bg-[#312e81] border border-[#4f46e5] text-white rounded-xl font-semibold h-12 px-8 transition-colors inline-flex items-center justify-center gap-2 w-full sm:w-auto" routerLink="/alumno/perfil">
             <fa-icon [icon]="iconos.brillo" /> Ver mi ruta
           </a>
         </div>
@@ -65,7 +65,7 @@
 
       <div class="relative z-10 flex-none lg:ml-4 mt-12 lg:mt-0 flex flex-col items-center">
         <div
-          class="relative flex items-center justify-center bg-white/10 backdrop-blur-md border border-white/20 rounded-full w-[136px] h-[136px] shadow-[0_8px_32px_rgba(0,0,0,0.2)]"
+          class="relative flex items-center justify-center bg-[#1f1f75] border border-[#4f46e5] rounded-full w-[136px] h-[136px] shadow-sm"
           role="progressbar"
           aria-label="Progreso al siguiente nivel"
           aria-valuemin="0"
@@ -90,7 +90,7 @@
     <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" aria-label="Indicadores principales">
       
       <!-- XP Card -->
-      <article class="bg-white rounded-[24px] p-6 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.05)] border border-slate-100 hover:-translate-y-1 hover:shadow-[0_8px_20px_-6px_rgba(0,0,0,0.1)] transition-all duration-300 cursor-default">
+      <article class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:shadow-md transition-shadow motion-reduce:transition-none cursor-default">
         <span class="text-blue-600 text-[11px] font-extrabold tracking-widest uppercase block mb-3">EXPERIENCIA XP</span>
         <div class="flex items-center gap-3">
           <strong class="text-slate-900 text-5xl font-black tracking-tight">{{ progreso(datos).experiencia_total }}</strong>
@@ -100,7 +100,7 @@
       </article>
 
       <!-- DAEMONS Card -->
-      <article class="bg-white rounded-[24px] p-6 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.05)] border border-slate-100 hover:-translate-y-1 hover:shadow-[0_8px_20px_-6px_rgba(0,0,0,0.1)] transition-all duration-300 cursor-default">
+      <article class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:shadow-md transition-shadow motion-reduce:transition-none cursor-default">
         <span class="text-amber-500 text-[11px] font-extrabold tracking-widest uppercase block mb-3">SALDO DAEMONS</span>
         <div class="flex items-center gap-3">
           <strong class="text-slate-900 text-5xl font-black tracking-tight">{{ datos.usuario.tokens }}</strong>
@@ -110,7 +110,7 @@
       </article>
 
       <!-- MISIONES Card -->
-      <article class="bg-white rounded-[24px] p-6 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.05)] border border-slate-100 hover:-translate-y-1 hover:shadow-[0_8px_20px_-6px_rgba(0,0,0,0.1)] transition-all duration-300 cursor-default">
+      <article class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:shadow-md transition-shadow motion-reduce:transition-none cursor-default">
         <span class="text-emerald-500 text-[11px] font-extrabold tracking-widest uppercase block mb-3">MISIONES COMPLETADAS</span>
         <div class="flex items-center gap-3">
           <strong class="text-slate-900 text-5xl font-black tracking-tight">{{ datos.misiones_completadas }}</strong>
@@ -122,7 +122,7 @@
       </article>
 
       <!-- RANKING Card (Protagonista) -->
-      <article class="bg-purple-600 rounded-[24px] p-6 shadow-md hover:-translate-y-1 hover:shadow-[0_12px_24px_-8px_rgba(147,51,234,0.5)] transition-all duration-300 relative overflow-hidden cursor-default">
+      <article class="bg-purple-600 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow motion-reduce:transition-none relative overflow-hidden cursor-default">
         <!-- Ícono masivo de fondo -->
         <div class="absolute right-0 bottom-0 opacity-10">
           <fa-icon [icon]="iconos.ranking" class="text-9xl -mr-4 -mb-4" />
@@ -159,21 +159,23 @@
                 <span class="bg-slate-100 text-slate-600 text-xs font-bold px-3 py-1.5 rounded-lg">+{{ mision.recompensa }} XP</span>
                 <span class="bg-slate-100 text-slate-600 text-xs font-bold px-3 py-1.5 rounded-lg">+{{ mision.recompensa }} DAEMONS</span>
               </div>
-              <a nz-button nzType="primary" class="bg-blue-600 hover:bg-blue-500 text-white border-none !h-12 !rounded-xl font-extrabold px-8 shadow-[0_4px_14px_rgba(37,99,235,0.4)] active:scale-95 transition-all duration-200 w-full sm:w-auto flex items-center justify-center" [routerLink]="['/alumno/misiones', mision.id]">Abrir misión</a>
+              <a nz-button nzType="primary" class="bg-blue-600 hover:bg-blue-700 text-white border-none !h-12 !rounded-xl font-extrabold px-8 shadow-sm transition-colors w-full sm:w-auto flex items-center justify-center" [routerLink]="['/alumno/misiones', mision.id]">Abrir misión</a>
             </div>
           </div>
         } @else {
-          <div class="bg-gradient-to-r from-slate-50 to-white border border-slate-100 rounded-3xl p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between mt-6 gap-4 sm:gap-0 shadow-sm">
-            <div class="flex gap-4 sm:gap-6 items-center">
-              <span class="bg-gradient-to-br from-emerald-400 to-emerald-500 text-white rounded-2xl w-14 h-14 flex items-center justify-center text-2xl flex-none shadow-md shadow-emerald-500/30" aria-hidden="true"><fa-icon [icon]="iconos.bandera" /></span>
+          <div class="bg-slate-50 border border-slate-200 rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center sm:justify-between mt-6 gap-5 shadow-sm">
+            <div class="flex gap-4 sm:gap-6 items-center min-w-0">
+              <span class="bg-emerald-500 text-white rounded-xl w-14 h-14 flex items-center justify-center text-2xl flex-none" aria-hidden="true"><fa-icon [icon]="iconos.bandera" /></span>
               <div>
                 <h3 class="text-slate-900 text-xl font-extrabold mb-1 tracking-tight">Ruta completada por ahora</h3>
                 <p class="text-slate-500 text-sm font-medium">No tienes misiones pendientes. Vuelve pronto para descubrir nuevos retos.</p>
               </div>
             </div>
-            <div class="flex-none sm:-mr-4 sm:-mb-6 self-end sm:self-auto opacity-90 hover:opacity-100 transition-opacity">
-              <img src="/img/robot-mision.png" alt="Robot DAEMON" class="h-20 sm:h-32 object-contain drop-shadow-xl" />
-            </div>
+            <img
+              src="/img/robot-mision.png"
+              alt="Robot DAEMON celebrando que completaste tu ruta"
+              class="w-28 sm:w-32 h-auto object-contain flex-none self-center"
+            />
           </div>
         }
         <div class="flex flex-wrap gap-3 mt-8 pt-6 border-t border-slate-100/60">
@@ -245,22 +247,22 @@
           <a routerLink="/alumno/perfil" class="text-slate-400 font-bold text-sm flex items-center gap-2 hover:text-purple-600 transition-colors bg-slate-50 hover:bg-purple-50 px-4 py-2 rounded-xl">Abrir perfil <fa-icon [icon]="iconos.flecha" /></a>
         </header>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div class="flex items-center gap-4 bg-slate-50/80 border border-slate-100 rounded-2xl p-4 hover:bg-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
-            <span class="bg-gradient-to-br from-blue-400 to-blue-500 text-white shadow-md shadow-blue-500/30 rounded-xl w-12 h-12 flex-none flex items-center justify-center text-xl group-hover:scale-110 transition-transform" aria-hidden="true"><fa-icon [icon]="iconos.medalla" /></span>
+          <div class="flex items-center gap-4 bg-slate-50 border border-slate-100 rounded-xl p-4 cursor-default">
+            <span class="bg-blue-500 text-white rounded-xl w-12 h-12 flex-none flex items-center justify-center text-xl" aria-hidden="true"><fa-icon [icon]="iconos.medalla" /></span>
             <div class="flex flex-col">
               <strong class="text-slate-900 text-2xl font-extrabold leading-none tracking-tight">{{ datos.insignias }}</strong>
               <small class="text-slate-500 text-[11px] font-bold uppercase tracking-widest mt-1">Insignias</small>
             </div>
           </div>
-          <div class="flex items-center gap-4 bg-slate-50/80 border border-slate-100 rounded-2xl p-4 hover:bg-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
-            <span class="bg-gradient-to-br from-emerald-400 to-emerald-500 text-white shadow-md shadow-emerald-500/30 rounded-xl w-12 h-12 flex-none flex items-center justify-center text-xl group-hover:scale-110 transition-transform" aria-hidden="true"><fa-icon [icon]="iconos.regalo" /></span>
+          <div class="flex items-center gap-4 bg-slate-50 border border-slate-100 rounded-xl p-4 cursor-default">
+            <span class="bg-emerald-500 text-white rounded-xl w-12 h-12 flex-none flex items-center justify-center text-xl" aria-hidden="true"><fa-icon [icon]="iconos.regalo" /></span>
             <div class="flex flex-col">
               <strong class="text-slate-900 text-2xl font-extrabold leading-none tracking-tight">{{ datos.canjes_pendientes }}</strong>
               <small class="text-slate-500 text-[11px] font-bold uppercase tracking-widest mt-1">Premios</small>
             </div>
           </div>
-          <div class="flex items-center gap-4 bg-slate-50/80 border border-slate-100 rounded-2xl p-4 hover:bg-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
-            <span class="bg-gradient-to-br from-amber-400 to-amber-500 text-white shadow-md shadow-amber-500/30 rounded-xl w-12 h-12 flex-none flex items-center justify-center text-xl group-hover:scale-110 transition-transform" aria-hidden="true"><fa-icon [icon]="iconos.cohete" /></span>
+          <div class="flex items-center gap-4 bg-slate-50 border border-slate-100 rounded-xl p-4 cursor-default">
+            <span class="bg-amber-500 text-white rounded-xl w-12 h-12 flex-none flex items-center justify-center text-xl" aria-hidden="true"><fa-icon [icon]="iconos.cohete" /></span>
             <div class="flex flex-col">
               <strong class="text-slate-900 text-2xl font-extrabold leading-none tracking-tight">{{ datos.misiones_pendientes }}</strong>
               <small class="text-slate-500 text-[11px] font-bold uppercase tracking-widest mt-1">Pendientes</small>

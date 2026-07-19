@@ -1,6 +1,19 @@
 # Plan de evolución visual del portal alumno
 
-Estado inicial: 15 de julio de 2026.
+Estado inicial: 15 de julio de 2026. Continuidad confirmada: 19 de julio de
+2026.
+
+## Base confirmada para continuar
+
+El estado vigente es el trabajo de Codex conservado en
+`codex/antigravity-integration`. El nombre de la rama es histórico: no significa
+que se deban incorporar cambios de Antigravity. La rama
+`feature/frontend-design-system` queda descartada como fuente de integración y
+no se copiará ni fusionará en bloque.
+
+El dashboard conserva `/img/robot-mision.png` en el estado “Ruta completada por
+ahora”. El login local `jose123` sigue siendo parte de la verificación funcional
+y no debe alterarse durante cambios puramente visuales.
 
 ## Diagnóstico
 
@@ -46,6 +59,39 @@ pero con más claridad, accesibilidad y solidez técnica que la vista heredada.
 
 ## Hoja de ruta
 
+### Bloque completado: ciclo de aprendizaje
+
+El 19 de julio de 2026 quedó implementado el primer bloque posterior al piloto:
+
+1. Cursos: iconografía semántica, tres contratos reemplazables —hero, portada y
+   acompañante de progreso—, robot canónico para vacío y conservación de datos
+   reales.
+2. Misiones: listado, detalle y entrega con continuidad, filtros de estado,
+   carga, vacío, error, reintento y bloqueo de reenvíos pendientes o aprobados.
+3. Evaluaciones: preguntas accesibles, progreso de respuestas, prevención de
+   envíos incompletos y separación del error de carga y el error de envío.
+4. Resultados: resumen calculado desde respuestas reales, historial responsive
+   y umbral de aprobación alineado con la regla vigente de 70 puntos.
+
+La evidencia técnica y los contratos se documentan en
+`release-2026-07-19-ciclo-aprendizaje.md`.
+
+### Próximo bloque de trabajo
+
+1. Herramientas IA: chatbot, configuración del bot y estados de conversación.
+2. Perfil, ranking y comunidad.
+3. Tienda, canjes y mascota.
+4. Proyectos y motores heredados.
+
+Para cada bloque se mantiene el mismo orden operativo: auditar contrato y
+acciones reales; diseñar carga, vacío, error y recuperación; implementar
+responsive y accesibilidad; validar localmente; publicar en la rama/PR; y
+desplegar producción únicamente con autorización y gates completos.
+
+No mezclar varios módulos en un lote visual. Cada entrega debe conservar el
+sidebar morado, Inter, XP separado de DAEMONS, los datos reales del backend y
+las funciones existentes.
+
 ### Fase 1. Núcleo de identidad
 
 - convertir el dashboard en un centro de operaciones y no en un resumen de KPIs;
@@ -55,9 +101,15 @@ pero con más claridad, accesibilidad y solidez técnica que la vista heredada.
 
 ### Fase 2. Ciclo de aprendizaje
 
-- reconstruir listado, detalle y entrega de misiones como una ruta continua;
-- mejorar evaluaciones, resultados y recursos con contexto y siguiente acción;
-- hacer visibles prerequisitos, recompensas y estados reales del backend.
+- completado: reconstruir listado, detalle y entrega de misiones como una ruta
+  continua;
+- completado: mejorar evaluaciones, resultados y recursos con contexto y
+  siguiente acción;
+- completado: hacer visibles recompensas y estados reales disponibles en el
+  backend, sin inventar prerrequisitos que el contrato todavía no expone.
+
+Los iconos pendientes de Cursos quedaron resueltos con Font Awesome como única
+familia, significado consistente, texto accesible y registro explícito.
 
 ### Fase 3. Progreso y recompensa
 

@@ -1,22 +1,187 @@
-:host { display: block; min-width: 0; width: 100%; }
+:host {
+  display: block;
+  min-width: 0;
+  width: 100%;
+}
 
 .empty-state {
   align-content: center;
-  background: #ffffff;
-  border: 1px dashed #cbd5e1;
-  border-radius: 14px;
-  display: grid;
-  justify-items: center;
-  min-height: 270px;
-  padding: clamp(1.5rem, 5vw, 3rem);
+  background: var(--daemon-surface, #ffffff);
+  border: 1px solid var(--daemon-border, #e4eaf2);
+  border-radius: 18px;
+  display: flex;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  justify-content: center;
+  min-height: 350px;
+  padding: clamp(1.5rem, 4vw, 2.75rem);
   text-align: center;
   width: 100%;
 }
 
-.empty-state--compact { min-height: 190px; padding: 1.5rem; }
-.empty-state__icon { align-items: center; background: #edf5ff; border: 1px solid #cfe3ff; border-radius: 14px; color: #1677ff; display: inline-flex; height: 58px; justify-content: center; width: 58px; }
-.empty-state__icon svg { height: 28px; width: 28px; }
-.empty-state h3 { color: #172033; font-size: clamp(1.15rem, 3vw, 1.4rem); font-weight: 750; letter-spacing: -.02em; margin: 1rem 0 .35rem; }
-.empty-state p { color: #667085; font-size: .92rem; line-height: 1.55; margin: 0; max-width: 440px; overflow-wrap: anywhere; }
-.empty-state__actions { display: flex; flex-wrap: wrap; gap: .65rem; justify-content: center; margin-top: 1.25rem; }
-.empty-state__actions:empty { display: none; }
+nz-empty {
+  margin: 0;
+  max-width: 560px;
+  width: 100%;
+}
+
+/* NG-ZORRO reserva una altura fija para sus ilustraciones predeterminadas.
+ * Esta plantilla aporta una imagen responsiva propia, por eso el contenedor
+ * interno debe crecer con ella y no recortarla. */
+:host ::ng-deep .ant-empty-image {
+  height: auto;
+  margin-bottom: .85rem;
+}
+
+:host ::ng-deep .ant-empty-description {
+  color: inherit;
+}
+
+:host ::ng-deep .ant-empty-footer {
+  margin-top: 1rem;
+}
+
+.empty-state__art {
+  align-items: center;
+  aspect-ratio: 1;
+  display: flex;
+  justify-content: center;
+  margin: 0 auto;
+  max-width: 230px;
+  width: min(46vw, 230px);
+}
+
+.empty-state__art img {
+  display: block;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+  width: 100%;
+}
+
+.empty-state__fallback {
+  align-items: center;
+  background: #edf7ff;
+  border: 1px solid #cfe8f6;
+  border-radius: 24px;
+  color: var(--daemon-primary, #1677ff);
+  display: inline-flex;
+  height: 112px;
+  justify-content: center;
+  width: 112px;
+}
+
+.empty-state__fallback svg {
+  height: 54px;
+  width: 54px;
+}
+
+.empty-state__copy {
+  display: grid;
+  gap: .45rem;
+  justify-items: center;
+}
+
+.empty-state h3 {
+  color: var(--daemon-ink, #172033);
+  font-size: clamp(1.12rem, 2vw, 1.35rem);
+  font-weight: 800;
+  letter-spacing: -.02em;
+  line-height: 1.25;
+  margin: 0;
+}
+
+.empty-state p {
+  color: var(--daemon-muted, #667085);
+  font-size: .92rem;
+  line-height: 1.55;
+  margin: 0;
+  max-width: 470px;
+  overflow-wrap: anywhere;
+}
+
+.empty-state__actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: .65rem;
+  justify-content: center;
+  margin-top: .35rem;
+}
+
+.empty-state__actions:empty {
+  display: none;
+}
+
+.empty-state--compact {
+  min-height: 270px;
+  padding: 1.5rem;
+}
+
+.empty-state--compact .empty-state__art {
+  max-width: 155px;
+  width: min(38vw, 155px);
+}
+
+.empty-state--mini {
+  background: transparent;
+  border: 0;
+  min-height: 170px;
+  padding: 1rem .75rem;
+}
+
+.empty-state--mini .empty-state__art {
+  max-width: 92px;
+  width: 92px;
+}
+
+.empty-state--mini h3 {
+  font-size: .92rem;
+}
+
+.empty-state--mini p {
+  font-size: .78rem;
+  line-height: 1.45;
+  max-width: 300px;
+}
+
+:host ::ng-deep .empty-state--mini .ant-empty-image {
+  margin-bottom: .45rem;
+}
+
+@media (max-width: 560px) {
+  .empty-state {
+    border-radius: 16px;
+    min-height: 300px;
+    padding: 1.35rem 1rem;
+  }
+
+  .empty-state__art {
+    max-width: 190px;
+    width: min(58vw, 190px);
+  }
+
+  .empty-state--compact {
+    min-height: 245px;
+  }
+
+  .empty-state--compact .empty-state__art {
+    max-width: 135px;
+  }
+
+  .empty-state--mini {
+    min-height: 150px;
+    padding: .75rem .5rem;
+  }
+
+  .empty-state__actions {
+    align-items: stretch;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .empty-state__actions > * {
+    justify-content: center;
+    width: 100%;
+  }
+}

@@ -80,11 +80,7 @@
 .item-copy strong { color: #273246; font-size: .74rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .item-copy small { color: #7b8798; font-size: .58rem; text-transform: capitalize; }
 .equipped-badge { background: #e8f7ee; border: 1px solid #c9ead5; border-radius: 999px; color: #08783a; font-size: .56rem; font-weight: 800; padding: .26rem .42rem; position: absolute; right: .38rem; top: .38rem; }
-.empty-inventory { align-items: center; display: flex; flex: 1; flex-direction: column; justify-content: center; min-height: 330px; padding: 2rem; text-align: center; }
-.empty-inventory > span { align-items: center; background: #edf5ff; border: 1px solid #cfe4ff; border-radius: 14px; color: #1677ff; display: flex; font-size: 1.5rem; height: 66px; justify-content: center; width: 66px; }
-.empty-inventory h3 { color: #273246; font-size: 1rem; margin: .8rem 0 .35rem; }
-.empty-inventory p { color: #7b8798; font-size: .76rem; line-height: 1.5; margin: 0 0 .8rem; max-width: 360px; }
-.empty-inventory a { background: #1677ff; border-radius: 8px; color: #fff; font-size: .72rem; font-weight: 750; padding: .58rem .8rem; text-decoration: none; }
+.wardrobe-card app-estado-vacio { flex: 1; }
 .selection-bar { align-items: center; background: #f8fafc; border: 1px solid #e0e7ef; border-radius: 11px; display: flex; gap: .7rem; justify-content: space-between; margin-top: auto; padding: .7rem; }
 .selection-bar > div { align-items: center; display: flex; gap: .55rem; min-width: 0; }
 .selection-bar p { display: grid; margin: 0; min-width: 0; }
@@ -135,7 +131,6 @@
   .hero-copy p { font-size: .74rem; }
   .preview-card, .wardrobe-card, .discover-section { border-radius: 12px; padding: .8rem; }
   .wardrobe-card { min-height: 0; }
-  .empty-inventory { min-height: 280px; }
   .identity-controls { grid-template-columns: 1fr; }
   .collection-stats dt { font-size: .53rem; }
   .inventory-grid { gap: .5rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }
