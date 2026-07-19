@@ -27,3 +27,4 @@
 - [2026-07-19 18:48:42] docs(assets): clean up code in assets module
 - [2026-07-19 18:48:42] build(config): clean up code in config module
 - [2026-07-19 18:48:42] ci(security): improve performance of security module
+- [2026-07-19 18:48:42] ci(api): optimize logic in api module
