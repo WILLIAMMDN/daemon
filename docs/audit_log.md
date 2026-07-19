@@ -114,3 +114,4 @@
 - [2026-07-19 18:48:56] style(gamification): review implementation of gamification module
 - [2026-07-19 18:48:56] ci(gamification): review implementation of gamification module
 - [2026-07-19 18:48:56] docs(api): remove dead code from api module
+- [2026-07-19 18:48:57] test(assets): refine type hints in assets module
