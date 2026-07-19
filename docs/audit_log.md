@@ -32,3 +32,4 @@
 - [2026-07-19 18:48:42] fix(routing): remove dead code from routing module
 - [2026-07-19 18:48:43] style(assets): update documentation for assets module
 - [2026-07-19 18:48:43] docs(sidebar): optimize logic in sidebar module
+- [2026-07-19 18:48:43] refactor(auth): remove dead code from auth module
