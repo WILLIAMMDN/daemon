@@ -28,6 +28,7 @@ use App\Http\Controllers\Api\V1\SeguridadComunidadController;
 use App\Http\Controllers\Api\V1\TelemetriaController;
 use App\Http\Controllers\Api\V1\TiendaController;
 use App\Http\Controllers\Api\V1\TutorPortalController;
+use App\Http\Controllers\Api\V1\ProyectoController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function (): void {
@@ -67,6 +68,7 @@ Route::prefix('v1')->group(function (): void {
 
         Route::middleware('role:alumno')->group(function (): void {
             Route::get('/alumno/panel', [AlumnoController::class, 'panel']);
+            Route::get('/alumno/proyectos', [ProyectoController::class, 'index']);
             Route::get('/alumno/aprendizaje', [AcademicoController::class, 'alumno']);
             Route::put('/alumno/aprendizaje/lecciones/{leccion}/progreso', [AcademicoController::class, 'progreso'])->middleware('throttle:60,1');
             Route::get('/ranking', [RankingController::class, 'index']);
