@@ -7,10 +7,13 @@ use App\Models\CosmeticoMascota;
 use App\Models\InventarioMascota;
 use App\Models\Premio;
 use App\Models\Usuario;
+use App\Services\Economia\EconomiaService;
 use Illuminate\Support\Facades\DB;
 
 class CanjeService
 {
+    public function __construct(private readonly EconomiaService $economia) {}
+
     public function canjear(Usuario $solicitante, Premio $premio): array
     {
         return DB::transaction(function () use ($solicitante, $premio) {
@@ -29,13 +32,22 @@ class CanjeService
             abort_if($premio->stock < 1, 422, 'Premio agotado.');
             abort_if($usuario->tokens < $premio->precio, 422, 'Tokens insuficientes.');
 
-            $usuario->decrement('tokens', $premio->precio);
             $premio->decrement('stock');
             $canje = Canje::create([
                 'id_alumno' => $usuario->id,
                 'id_premio' => $premio->id,
                 'estado' => in_array($premio->tipo_entrega, ['digital', 'cosmetico'], true) ? 'entregado' : 'pendiente',
             ]);
+            $usuario = $this->economia->ajustarDaemons(
+                $usuario,
+                -$premio->precio,
+                'tienda_canje',
+                $canje->id,
+                $usuario,
+                "tienda:canje:{$canje->id}",
+                "Canje: {$premio->nombre}",
+                ['id_premio' => $premio->id],
+            );
 
             if ($cosmetico) {
                 InventarioMascota::create([
@@ -56,7 +68,7 @@ class CanjeService
 
             return [
                 'canje' => $canje,
-                'saldo' => $usuario->fresh()->tokens,
+                'saldo' => $usuario->tokens,
                 'codigo' => $digital?->dato_privado,
                 'cosmetico' => $cosmetico ? [
                     'id' => $cosmetico->id,

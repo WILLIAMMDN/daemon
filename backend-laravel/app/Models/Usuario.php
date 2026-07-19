@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
 
 class Usuario extends Authenticatable
@@ -42,9 +44,20 @@ class Usuario extends Authenticatable
         'heroe',
         'genero',
         'tour_completado',
+        'sourced_id',
+        'estado_interoperabilidad',
     ];
 
     protected $hidden = ['password_hash'];
+
+    protected static function booted(): void
+    {
+        static::creating(function (Usuario $usuario): void {
+            if (Schema::hasColumn('usuarios', 'sourced_id')) {
+                $usuario->sourced_id ??= (string) Str::uuid();
+            }
+        });
+    }
 
     protected function casts(): array
     {
@@ -135,5 +148,15 @@ class Usuario extends Authenticatable
     public function aula(): BelongsTo
     {
         return $this->belongsTo(Aula::class, 'id_aula');
+    }
+
+    public function matriculas(): HasMany
+    {
+        return $this->hasMany(MatriculaAula::class, 'id_usuario');
+    }
+
+    public function movimientosEconomia(): HasMany
+    {
+        return $this->hasMany(MovimientoEconomia::class, 'id_usuario');
     }
 }

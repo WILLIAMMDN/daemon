@@ -126,7 +126,15 @@ class EvaluacionService
         );
 
         if (! $anterior && $puntaje >= 70) {
-            $this->gamificacion->otorgarRecompensa($alumno, 100);
+            $this->gamificacion->otorgarRecompensa(
+                $alumno,
+                100,
+                'evaluacion_aprobada',
+                $registro->id,
+                null,
+                "evaluacion:{$evaluacion->id}:alumno:{$alumno->id}:primera-aprobacion",
+                "Evaluación aprobada: {$evaluacion->titulo}",
+            );
         }
 
         return ['resultado' => $registro, 'correctas' => $correctas, 'total' => $preguntas->count()];

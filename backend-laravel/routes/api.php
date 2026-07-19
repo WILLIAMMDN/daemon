@@ -1,7 +1,8 @@
 <?php
 
-use App\Http\Controllers\Api\V1\AlumnoController;
+use App\Http\Controllers\Api\V1\AcademicoController;
 use App\Http\Controllers\Api\V1\AlumnoAdminController;
+use App\Http\Controllers\Api\V1\AlumnoController;
 use App\Http\Controllers\Api\V1\ArchivoAdminController;
 use App\Http\Controllers\Api\V1\ArchivoController;
 use App\Http\Controllers\Api\V1\AutenticacionController;
@@ -9,18 +10,22 @@ use App\Http\Controllers\Api\V1\BienestarDigitalController;
 use App\Http\Controllers\Api\V1\CertificadoController;
 use App\Http\Controllers\Api\V1\ChatbotController;
 use App\Http\Controllers\Api\V1\CompetenciaController;
-use App\Http\Controllers\Api\V1\CuentoController;
 use App\Http\Controllers\Api\V1\ComunidadController;
+use App\Http\Controllers\Api\V1\CuentoController;
 use App\Http\Controllers\Api\V1\DocenteController;
 use App\Http\Controllers\Api\V1\EvaluacionController;
 use App\Http\Controllers\Api\V1\IaModeloAdminController;
 use App\Http\Controllers\Api\V1\InstitucionController;
-use App\Http\Controllers\Api\V1\MisionController;
+use App\Http\Controllers\Api\V1\InteroperabilidadAdminController;
 use App\Http\Controllers\Api\V1\MascotaCatalogoController;
 use App\Http\Controllers\Api\V1\MascotaController;
+use App\Http\Controllers\Api\V1\MisionController;
+use App\Http\Controllers\Api\V1\NotificacionController;
 use App\Http\Controllers\Api\V1\PrivacidadController;
 use App\Http\Controllers\Api\V1\RankingController;
 use App\Http\Controllers\Api\V1\SaludController;
+use App\Http\Controllers\Api\V1\SeguridadComunidadController;
+use App\Http\Controllers\Api\V1\TelemetriaController;
 use App\Http\Controllers\Api\V1\TiendaController;
 use App\Http\Controllers\Api\V1\TutorPortalController;
 use Illuminate\Support\Facades\Route;
@@ -51,13 +56,19 @@ Route::prefix('v1')->group(function (): void {
         Route::post('/privacidad/eliminacion', [PrivacidadController::class, 'solicitarEliminacion'])->middleware('throttle:3,60');
         Route::post('/auth/google/perfil', [AutenticacionController::class, 'completarPerfilGoogle'])->middleware('throttle:10,1');
         Route::post('/auth/usuarios', [AutenticacionController::class, 'crearUsuario'])->middleware('role:admin');
-        
-        Route::get('/notificaciones', [\App\Http\Controllers\Api\V1\NotificacionController::class, 'index']);
-        Route::post('/notificaciones/marcar-todas', [\App\Http\Controllers\Api\V1\NotificacionController::class, 'marcarTodasLeidas']);
-        Route::post('/notificaciones/{notificacion}/marcar-leida', [\App\Http\Controllers\Api\V1\NotificacionController::class, 'marcarLeida']);
+        Route::post('/telemetria/eventos', [TelemetriaController::class, 'store'])->middleware('throttle:120,1');
+        Route::post('/comunidad/reportes', [SeguridadComunidadController::class, 'reportar'])->middleware('throttle:10,1');
+        Route::post('/comunidad/bloqueos/{usuario}', [SeguridadComunidadController::class, 'bloquear'])->middleware('throttle:30,1');
+        Route::delete('/comunidad/bloqueos/{usuario}', [SeguridadComunidadController::class, 'desbloquear'])->middleware('throttle:30,1');
+
+        Route::get('/notificaciones', [NotificacionController::class, 'index']);
+        Route::post('/notificaciones/marcar-todas', [NotificacionController::class, 'marcarTodasLeidas']);
+        Route::post('/notificaciones/{notificacion}/marcar-leida', [NotificacionController::class, 'marcarLeida']);
 
         Route::middleware('role:alumno')->group(function (): void {
             Route::get('/alumno/panel', [AlumnoController::class, 'panel']);
+            Route::get('/alumno/aprendizaje', [AcademicoController::class, 'alumno']);
+            Route::put('/alumno/aprendizaje/lecciones/{leccion}/progreso', [AcademicoController::class, 'progreso'])->middleware('throttle:60,1');
             Route::get('/ranking', [RankingController::class, 'index']);
             Route::get('/alumno/bienestar-digital', [BienestarDigitalController::class, 'estado']);
             Route::post('/alumno/bienestar-digital/latido', [BienestarDigitalController::class, 'latido'])->middleware('throttle:90,1');
@@ -94,6 +105,19 @@ Route::prefix('v1')->group(function (): void {
         });
 
         Route::middleware('role:docente,admin')->group(function (): void {
+            Route::prefix('academico')->group(function (): void {
+                Route::get('/', [AcademicoController::class, 'catalogo']);
+                Route::post('/periodos', [AcademicoController::class, 'crearPeriodo']);
+                Route::post('/cursos', [AcademicoController::class, 'crearCurso']);
+                Route::put('/cursos/{curso}', [AcademicoController::class, 'actualizarCurso']);
+                Route::post('/cursos/{curso}/unidades', [AcademicoController::class, 'crearUnidad']);
+                Route::put('/unidades/{unidad}', [AcademicoController::class, 'actualizarUnidad']);
+                Route::post('/unidades/{unidad}/lecciones', [AcademicoController::class, 'crearLeccion']);
+                Route::put('/lecciones/{leccion}', [AcademicoController::class, 'actualizarLeccion']);
+                Route::post('/objetivos', [AcademicoController::class, 'crearObjetivo']);
+                Route::put('/aulas/{aula}/curso', [AcademicoController::class, 'vincularAula']);
+                Route::post('/aulas/{aula}/usuarios/{usuario}', [AcademicoController::class, 'matricular']);
+            });
             Route::get('/docente/panel', [DocenteController::class, 'panel']);
             Route::get('/docente/alumnos', [DocenteController::class, 'alumnos']);
             Route::get('/docente/docentes', [DocenteController::class, 'docentes']);
@@ -117,7 +141,21 @@ Route::prefix('v1')->group(function (): void {
                 Route::patch('/solicitudes/{solicitud}', [PrivacidadController::class, 'resolver']);
             });
 
+            Route::middleware('role:admin')->prefix('moderacion/admin')->group(function (): void {
+                Route::get('/reportes', [SeguridadComunidadController::class, 'reportes']);
+                Route::patch('/reportes/{reporte}', [SeguridadComunidadController::class, 'resolver']);
+            });
+
             Route::apiResource('instituciones', InstitucionController::class);
+
+            Route::middleware('role:admin')->prefix('interoperabilidad/admin')->group(function (): void {
+                Route::get('/', [InteroperabilidadAdminController::class, 'index']);
+                Route::post('/oneroster/clientes', [InteroperabilidadAdminController::class, 'crearClienteOneRoster'])->middleware('throttle:10,1');
+                Route::delete('/oneroster/clientes/{cliente}', [InteroperabilidadAdminController::class, 'revocarClienteOneRoster']);
+                Route::post('/lti/registros', [InteroperabilidadAdminController::class, 'crearRegistroLti'])->middleware('throttle:10,1');
+                Route::post('/lti/registros/{registro}/verificar', [InteroperabilidadAdminController::class, 'verificarRegistroLti'])->middleware('throttle:10,1');
+                Route::post('/lti/registros/{registro}/vinculos', [InteroperabilidadAdminController::class, 'vincularUsuarioLti'])->middleware('throttle:20,1');
+            });
 
             Route::middleware('role:admin')->prefix('archivos/admin')->group(function (): void {
                 Route::get('/', [ArchivoAdminController::class, 'index']);

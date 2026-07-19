@@ -1,5 +1,10 @@
 # Privacidad KIDS y TEENS
 
+Actualización del 19 de julio de 2026: se añadieron reportes de seguridad,
+bloqueo y telemetría con lista cerrada. La telemetría no acepta texto libre,
+chat, URL, IP, pulsaciones ni historial de navegación; la sesión solo se guarda
+como hash.
+
 Estado tecnico al 15 de julio de 2026. Este documento describe controles de producto; no sustituye una revision legal para el pais y las instituciones donde opere DAEMON.
 
 ## Controles implementados

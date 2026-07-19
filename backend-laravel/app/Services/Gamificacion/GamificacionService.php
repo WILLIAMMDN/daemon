@@ -3,6 +3,7 @@
 namespace App\Services\Gamificacion;
 
 use App\Models\Usuario;
+use App\Services\Economia\EconomiaService;
 
 class GamificacionService
 {
@@ -10,20 +11,34 @@ class GamificacionService
 
     public const XP_BASE = 100;
 
+    public function __construct(private readonly EconomiaService $economia) {}
+
     /**
      * Suma una recompensa dual. La experiencia representa progreso historico
      * y los tokens representan saldo gastable.
      */
-    public function otorgarRecompensa(Usuario $usuario, int $cantidad): Usuario
-    {
+    public function otorgarRecompensa(
+        Usuario $usuario,
+        int $cantidad,
+        string $origenTipo = 'recompensa',
+        string|int|null $origenId = null,
+        ?Usuario $actor = null,
+        ?string $claveIdempotencia = null,
+        ?string $motivo = null,
+    ): Usuario {
         if ($cantidad <= 0) {
             return $usuario;
         }
 
-        $usuario->increment('experiencia', $cantidad);
-        $usuario->increment('tokens', $cantidad);
-
-        return $usuario->refresh();
+        return $this->economia->otorgarDual(
+            $usuario,
+            $cantidad,
+            $origenTipo,
+            $origenId,
+            $actor,
+            $claveIdempotencia,
+            $motivo,
+        );
     }
 
     /**

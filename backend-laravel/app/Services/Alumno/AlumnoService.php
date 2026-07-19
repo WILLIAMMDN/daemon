@@ -113,11 +113,16 @@ class AlumnoService
         return $usuario->fresh();
     }
 
-    public function comunidad(): Collection
+    public function comunidad(Usuario $usuario): Collection
     {
         return Usuario::query()
             ->select('id', 'nombre_completo', 'usuario', 'nivel', 'tokens', 'experiencia', 'rango', 'avatar', 'rol')
             ->whereIn('rol', ['alumno', 'docente'])
+            ->where(function ($query) use ($usuario): void {
+                $query->where('id_institucion', $usuario->id_institucion)
+                    ->orWhere('id_aula', $usuario->id_aula);
+            })
+            ->whereNotIn('id', DB::table('bloqueos_usuario')->where('id_usuario', $usuario->id)->select('id_bloqueado'))
             ->orderByDesc('experiencia')
             ->get();
     }

@@ -136,7 +136,15 @@ class MisionController extends Controller
             }
             $entrega->update($actualizacion);
             if ($datos['estado'] === 'aprobado' && ! $yaAprobada) {
-                $this->gamificacion->otorgarRecompensa($alumno, $puntos);
+                $this->gamificacion->otorgarRecompensa(
+                    $alumno,
+                    $puntos,
+                    'mision_entrega',
+                    $entrega->id,
+                    $request->user(),
+                    "mision:entrega:{$entrega->id}:aprobada",
+                    "Misión aprobada: {$mision->titulo}",
+                );
                 if ($mision->es_mision_nivel) {
                     $alumno->increment('mision_actual');
                 }

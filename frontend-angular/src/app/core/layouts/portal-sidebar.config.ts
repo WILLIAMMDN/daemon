@@ -87,6 +87,7 @@ export const docenteSidebarSections: PortalSidebarSection[] = [
     titulo: 'Academia',
     tono: 'orange',
     items: [
+      { id: 'docente-curriculo', etiqueta: 'Currículo', ruta: '/docente/curriculo', detalle: 'Cursos y lecciones', icono: faBookOpenReader },
       {
         id: 'docente-misiones',
         etiqueta: 'Misiones',

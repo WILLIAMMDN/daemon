@@ -2,6 +2,7 @@
 
 namespace App\Services\Competencia;
 
+use App\Events\CompetenciaActualizada;
 use App\Models\ChatLive;
 use App\Models\CompetenciaLive;
 use App\Models\HistorialRonda;
@@ -10,7 +11,6 @@ use App\Models\VotoLive;
 use App\Services\Academico\AcademicScopeService;
 use App\Services\Archivo\ArchivoUrlService;
 use App\Services\Gamificacion\GamificacionService;
-use App\Events\CompetenciaActualizada;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -65,9 +65,11 @@ class CompetenciaService
         ];
     }
 
-    public function chat(): Collection
+    public function chat(Usuario $usuario): Collection
     {
-        return ChatLive::latest('id')->limit(50)->get()->reverse()->values();
+        return ChatLive::query()
+            ->whereNotIn('id_usuario', DB::table('bloqueos_usuario')->where('id_usuario', $usuario->id)->select('id_bloqueado'))
+            ->latest('id')->limit(50)->get()->reverse()->values();
     }
 
     public function enviarChat(Usuario $usuario, string $mensaje): ChatLive
@@ -157,7 +159,16 @@ class CompetenciaService
         $alumno = $this->alcance->alumnoGestionable($docente, (int) $ronda->id_alumno_en_tarima);
         $puntos = $datos['puntos'] ?? (int) round(((float) $ronda->promedio_alumnos) * 10);
 
-        $this->gamificacion->otorgarRecompensa($alumno, $puntos);
+        $claveRonda = $ronda->fin_votacion?->format('YmdHis') ?? now()->format('YmdHis');
+        $this->gamificacion->otorgarRecompensa(
+            $alumno,
+            $puntos,
+            'competencia_ronda',
+            $ronda->id,
+            $docente,
+            "competencia:{$ronda->id}:{$claveRonda}:alumno:{$alumno->id}",
+            'Premio de competencia',
+        );
         DB::table('historial_movimientos')->insert([
             'id_docente' => $docente->id,
             'id_alumno' => $alumno->id,

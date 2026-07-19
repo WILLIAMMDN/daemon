@@ -47,8 +47,8 @@ class AlumnoController extends Controller
         return UsuarioResource::make($this->alumnos->actualizarPerfil($usuario, $datos));
     }
 
-    public function comunidad()
+    public function comunidad(Request $request)
     {
-        return UsuarioResource::collection($this->alumnos->comunidad());
+        return UsuarioResource::collection($this->alumnos->comunidad($request->user()));
     }
 }

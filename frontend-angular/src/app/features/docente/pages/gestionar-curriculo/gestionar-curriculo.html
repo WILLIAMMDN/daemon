@@ -1,0 +1,61 @@
+<main class="curriculum-page" aria-labelledby="curriculum-title">
+  <header class="page-head">
+    <div><p>Gestión académica</p><h1 id="curriculum-title">Currículo y cursos</h1><span>Organiza períodos, cursos, unidades y lecciones publicables.</span></div>
+    <div class="head-actions"><button type="button" class="secondary" (click)="abrir('periodo')">Nuevo período</button><button type="button" (click)="abrir('curso')">Nuevo curso</button></div>
+  </header>
+
+  @if (error()) { <div class="notice notice--error" role="alert">{{ error() }}</div> }
+  @if (mensaje()) { <div class="notice notice--success" role="status">{{ mensaje() }}</div> }
+
+  <section class="metrics" aria-label="Resumen académico">
+    <article><strong>{{ cursos().length }}</strong><span>Cursos</span></article>
+    <article><strong>{{ periodos().length }}</strong><span>Períodos</span></article>
+    <article><strong>{{ instituciones().length }}</strong><span>Instituciones</span></article>
+  </section>
+
+  @if (panel()) {
+    <section class="editor" aria-label="Editor curricular">
+      <header><h2>{{ panel() === 'curso' ? 'Crear curso' : panel() === 'periodo' ? 'Crear período' : panel() === 'unidad' ? 'Añadir unidad' : 'Añadir lección' }}</h2><button type="button" class="close" (click)="cerrar()" aria-label="Cerrar editor">×</button></header>
+      @if (panel() === 'curso') {
+        <form (ngSubmit)="crearCurso()" class="form-grid">
+          <label>Institución<select [(ngModel)]="curso.id_institucion" name="curso_institucion" required>@for (item of instituciones(); track item.id) { <option [ngValue]="item.id">{{ item.nombre }}</option> }</select></label>
+          <label>Título<input [(ngModel)]="curso.titulo" name="curso_titulo" maxlength="150" required /></label>
+          <label>Código<input [(ngModel)]="curso.codigo" name="curso_codigo" maxlength="60" /></label>
+          <label>Nivel<select [(ngModel)]="curso.nivel" name="curso_nivel"><option>KIDS</option><option>TEENS</option><option>TODOS</option></select></label>
+          <label class="wide">Descripción<textarea [(ngModel)]="curso.descripcion" name="curso_descripcion" rows="3" maxlength="5000"></textarea></label>
+          <button class="submit" [disabled]="guardando()">{{ guardando() ? 'Guardando…' : 'Crear borrador' }}</button>
+        </form>
+      } @else if (panel() === 'periodo') {
+        <form (ngSubmit)="crearPeriodo()" class="form-grid">
+          <label>Institución<select [(ngModel)]="periodo.id_institucion" name="periodo_institucion" required>@for (item of instituciones(); track item.id) { <option [ngValue]="item.id">{{ item.nombre }}</option> }</select></label>
+          <label>Título<input [(ngModel)]="periodo.titulo" name="periodo_titulo" required /></label>
+          <label>Tipo<select [(ngModel)]="periodo.tipo" name="periodo_tipo"><option value="schoolYear">Año escolar</option><option value="term">Trimestre</option><option value="semester">Semestre</option><option value="gradingPeriod">Período de notas</option></select></label>
+          <label>Inicio<input type="date" [(ngModel)]="periodo.fecha_inicio" name="periodo_inicio" required /></label>
+          <label>Fin<input type="date" [(ngModel)]="periodo.fecha_fin" name="periodo_fin" required /></label>
+          <button class="submit" [disabled]="guardando()">{{ guardando() ? 'Guardando…' : 'Crear período' }}</button>
+        </form>
+      } @else if (panel() === 'unidad') {
+        <form (ngSubmit)="crearUnidad()" class="form-grid"><label>Título<input [(ngModel)]="unidad.titulo" name="unidad_titulo" required /></label><label>Orden<input type="number" min="1" [(ngModel)]="unidad.orden" name="unidad_orden" /></label><label>Estado<select [(ngModel)]="unidad.estado" name="unidad_estado"><option value="draft">Borrador</option><option value="published">Publicada</option></select></label><label class="wide">Descripción<textarea [(ngModel)]="unidad.descripcion" name="unidad_descripcion"></textarea></label><button class="submit" [disabled]="guardando()">Añadir unidad</button></form>
+      } @else {
+        <form (ngSubmit)="crearLeccion()" class="form-grid"><label>Título<input [(ngModel)]="leccion.titulo" name="leccion_titulo" required /></label><label>Orden<input type="number" min="1" [(ngModel)]="leccion.orden" name="leccion_orden" /></label><label>Duración (min)<input type="number" min="1" [(ngModel)]="leccion.duracion_minutos" name="leccion_duracion" /></label><label>Estado<select [(ngModel)]="leccion.estado" name="leccion_estado"><option value="draft">Borrador</option><option value="published">Publicada</option></select></label><label class="wide">Resumen<textarea [(ngModel)]="leccion.resumen" name="leccion_resumen"></textarea></label><button class="submit" [disabled]="guardando()">Añadir lección</button></form>
+      }
+    </section>
+  }
+
+  @if (cargando()) {
+    <section class="loading" aria-busy="true">Cargando currículo…</section>
+  } @else {
+    <section class="course-list" aria-label="Cursos configurados">
+      @for (curso of cursos(); track curso.id) {
+        <article class="course">
+          <header><div><span class="status" [class.status--published]="curso.estado === 'published'">{{ curso.estado === 'published' ? 'Publicado' : 'Borrador' }}</span><h2>{{ curso.titulo }}</h2><p>{{ curso.codigo || 'Sin código' }} · {{ curso.nivel || 'Todos' }} · versión {{ curso.version }}</p></div><div class="course-actions"><button type="button" class="secondary" (click)="abrir('unidad', curso.id)">Añadir unidad</button>@if (curso.estado !== 'published') { <button type="button" (click)="publicar(curso)">Publicar</button> }</div></header>
+          <div class="units">
+            @for (unidad of curso.unidades; track unidad.id) {
+              <section><header><div><strong>{{ unidad.orden }}. {{ unidad.titulo }}</strong><span>{{ unidad.estado }}</span></div><button type="button" class="text-button" (click)="abrir('leccion', unidad.id)">+ Lección</button></header><ul>@for (leccion of unidad.lecciones; track leccion.id) { <li><span>{{ leccion.titulo }}</span><small>{{ leccion.estado }}</small></li> } @empty { <li class="empty">Sin lecciones todavía</li> }</ul></section>
+            } @empty { <p class="empty course-empty">Añade la primera unidad para comenzar a estructurar el curso.</p> }
+          </div>
+        </article>
+      } @empty { <section class="empty-state"><strong>Aún no hay cursos</strong><p>Crea el primer curso como borrador y publícalo cuando su contenido esté listo.</p><button type="button" (click)="abrir('curso')">Crear primer curso</button></section> }
+    </section>
+  }
+</main>

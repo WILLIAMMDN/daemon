@@ -1,5 +1,10 @@
 # Gamificacion DAEMON: XP y DAEMONS
 
+Desde el 19 de julio de 2026, cada cambio también se registra en el ledger
+append-only `movimientos_economia`, con saldo anterior/resultante,
+idempotencia, origen y actor. `usuarios.experiencia` y `usuarios.tokens` siguen
+siendo proyecciones rápidas.
+
 DAEMON usa dos valores separados en `usuarios`:
 
 - `experiencia`: progreso historico. Solo aumenta por logros academicos y nunca

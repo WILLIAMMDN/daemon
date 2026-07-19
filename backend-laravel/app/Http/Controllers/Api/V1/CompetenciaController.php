@@ -18,9 +18,9 @@ class CompetenciaController extends Controller
         return $this->competencia->estado($request->user());
     }
 
-    public function chat()
+    public function chat(Request $request)
     {
-        return $this->competencia->chat();
+        return $this->competencia->chat($request->user());
     }
 
     public function enviarChat(EnviarChatLiveRequest $request)

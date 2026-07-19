@@ -9,6 +9,7 @@ frontend-angular/dist/
 # Laravel
 backend-laravel/.env
 backend-laravel/.env.*
+!backend-laravel/.env.testing
 backend-laravel/.rnd
 backend-laravel/storage/logs/*.log
 backend-laravel/bootstrap/cache/*.php

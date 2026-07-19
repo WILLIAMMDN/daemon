@@ -5,18 +5,22 @@ namespace App\Services\Docente;
 use App\Models\Aula;
 use App\Models\Insignia;
 use App\Models\Institucion;
+use App\Models\MatriculaAula;
 use App\Models\Usuario;
 use App\Services\Academico\AcademicScopeService;
 use App\Services\Archivo\ArchivoUrlService;
+use App\Services\Economia\EconomiaService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class DocenteService
 {
     public function __construct(
         private readonly ArchivoUrlService $archivos,
         private readonly AcademicScopeService $alcance,
+        private readonly EconomiaService $economia,
     ) {}
 
     public function panel(?Usuario $docente = null): array
@@ -149,6 +153,10 @@ class DocenteService
         abort_unless(in_array($usuario->rol, ['alumno', 'docente'], true), 422, 'Solo se pueden asignar alumnos o docentes a aulas.');
 
         if (! $idAula) {
+            MatriculaAula::where('id_usuario', $usuario->id)->where('es_principal', true)->update([
+                'es_principal' => false,
+                'estado' => 'tobedeleted',
+            ]);
             $usuario->forceFill([
                 'id_aula' => null,
                 'id_institucion' => null,
@@ -158,6 +166,11 @@ class DocenteService
         }
 
         $aula = Aula::findOrFail($idAula);
+        $rolOneRoster = $usuario->rol === 'alumno' ? 'student' : 'teacher';
+        MatriculaAula::where('id_usuario', $usuario->id)->update(['es_principal' => false]);
+        $matricula = MatriculaAula::firstOrNew(['id_aula' => $aula->id, 'id_usuario' => $usuario->id, 'rol' => $rolOneRoster]);
+        $matricula->sourced_id ??= (string) Str::uuid();
+        $matricula->fill(['es_principal' => true, 'estado' => 'active'])->save();
         $usuario->forceFill([
             'id_aula' => $aula->id,
             'id_institucion' => $aula->id_institucion,
@@ -173,9 +186,7 @@ class DocenteService
 
             abort_if($alumno->tokens + $datos['cantidad'] < 0, 422, 'El saldo no puede quedar negativo.');
 
-            $alumno->increment('tokens', $datos['cantidad']);
-
-            DB::table('historial_movimientos')->insert([
+            $movimientoLegacyId = DB::table('historial_movimientos')->insertGetId([
                 'id_docente' => $docente->id,
                 'id_alumno' => $alumno->id,
                 'cantidad' => $datos['cantidad'],
@@ -183,7 +194,15 @@ class DocenteService
                 'motivo' => $datos['motivo'] ?? 'Ajuste manual',
             ]);
 
-            return $alumno->fresh();
+            return $this->economia->ajustarDaemons(
+                $alumno,
+                (int) $datos['cantidad'],
+                'ajuste_manual',
+                $movimientoLegacyId,
+                $docente,
+                "ajuste-manual:{$movimientoLegacyId}",
+                $datos['motivo'] ?? 'Ajuste manual',
+            );
         });
     }
 

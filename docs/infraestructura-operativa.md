@@ -2,6 +2,12 @@
 
 Estado tecnico al 15 de julio de 2026.
 
+Actualización del 19 de julio: el monitor gratuito se ejecuta cada diez
+minutos. Es una mitigación temporal sin SLA; ver
+`implementacion-plataforma-estandar-2026-07-19.md`. La recuperación y las
+barreras destructivas están en
+`incidentes/2026-07-18-restauracion-supabase.md`.
+
 ## Topologia
 
 ```text
