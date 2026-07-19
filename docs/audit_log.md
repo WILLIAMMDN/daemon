@@ -163,3 +163,4 @@
 - [2026-07-19 18:49:05] test(security): clean up code in security module
 - [2026-07-19 18:49:05] ci(assets): update dependencies of assets module
 - [2026-07-19 18:49:05] refactor(ui): clean up code in ui module
+- [2026-07-19 18:49:05] ci(config): optimize logic in config module
