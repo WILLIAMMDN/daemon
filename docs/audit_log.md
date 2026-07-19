@@ -120,3 +120,4 @@
 - [2026-07-19 18:48:57] chore(models): optimize logic in models module
 - [2026-07-19 18:48:57] perf(models): format structure of models module
 - [2026-07-19 18:48:57] style(auth): optimize logic in auth module
+- [2026-07-19 18:48:58] perf(config): add minor comments to config module
