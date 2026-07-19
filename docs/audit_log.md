@@ -118,3 +118,4 @@
 - [2026-07-19 18:48:57] docs(models): refine type hints in models module
 - [2026-07-19 18:48:57] chore(ui): improve performance of ui module
 - [2026-07-19 18:48:57] chore(models): optimize logic in models module
+- [2026-07-19 18:48:57] perf(models): format structure of models module
