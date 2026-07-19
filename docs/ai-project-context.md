@@ -4,7 +4,7 @@ This document is written for future AI agents and developers. It summarizes the
 current DAEMON system, the cloud decisions already made, the important files,
 and the traps that caused confusion during the migration.
 
-Last updated: 2026-07-15.
+Last updated: 2026-07-19.
 
 ## 1. What DAEMON is
 
@@ -100,6 +100,12 @@ Current student visual direction:
 - Existing purple sidebar preserved.
 - Compact header that displays XP level and DAEMONS separately.
 - Dashboard, profile, missions, ranking and store share one visual language.
+- Courses (`/alumno/recursos`) is the first catalog/exploration pilot using a
+  dedicated illustrated hero, real status filters, accent-insensitive search,
+  course progress, a contextual aside and complete loading/empty/error states.
+- Optional course illustrations use the shared `daemon-illustration-slot`,
+  which preserves aspect ratio and renders a safe fallback when an asset is
+  pending or fails. See `docs/piloto-visual-cursos-2026-07-19.md`.
 
 The earlier experimental Bento/glass implementation was corrected. Do not use
 that first iteration as the target for new student screens.
@@ -397,8 +403,11 @@ Backend health: https://daemon-5vo1.onrender.com/api/v1/salud
 
 `npm run build` keeps the initial bundle below the configured 1 MB warning
 budget. Heavy NG-ZORRO table, upload and modal styles are loaded with the lazy
-student or teacher layout instead of the public shell. Global Sass partials use
-`@use`, so a clean build should not emit the former deprecation warning.
+student or teacher layout instead of the public shell. The current clean build
+still emits four Sass deprecation warnings because `src/styles.scss` imports
+`layout`, `components`, `popovers` and `gamification` with `@import`. They are
+pre-existing non-blockers, but the future Sass migration should replace them
+with `@use`/`@forward` and verify global selector order.
 
 ## 15. Verification checklist
 

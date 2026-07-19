@@ -1,11 +1,28 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import {
+  faArrowRight,
+  faBookOpen,
+  faCheck,
+  faCirclePlay,
+  faClock,
+  faLayerGroup,
+  faMagnifyingGlass,
+  faRotateRight,
+  faRocket,
+  faStar,
+} from '@fortawesome/free-solid-svg-icons';
 import { finalize } from 'rxjs';
-import { Api } from '../../../../core/servicios/api';
-import { NzEmptyModule } from 'ng-zorro-antd/empty';
 import { NzButtonModule } from 'ng-zorro-antd/button';
+import { Api } from '../../../../core/servicios/api';
+import { IllustrationSlot } from '../../../../shared/componentes/illustration-slot/illustration-slot';
+
+type EstadoCurso = 'notStarted' | 'inProgress' | 'completed';
+type FiltroCurso = 'all' | EstadoCurso;
 
 interface ProgresoLeccion {
-  estado: 'notStarted' | 'inProgress' | 'completed';
+  estado: EstadoCurso;
   porcentaje: number;
 }
 
@@ -29,6 +46,7 @@ interface Curso {
   titulo: string;
   descripcion?: string | null;
   nivel?: string | null;
+  ilustracion_url?: string | null;
   unidades: Unidad[];
 }
 
@@ -37,44 +55,132 @@ interface AprendizajeResponse {
   resumen: { cursos: number; lecciones: number; completadas: number; porcentaje: number };
 }
 
+interface LeccionVista extends Leccion {
+  progresoActual: ProgresoLeccion;
+}
+
+interface UnidadVista extends Omit<Unidad, 'lecciones'> {
+  orden: number;
+  lecciones: LeccionVista[];
+}
+
+interface CursoVista extends Omit<Curso, 'unidades'> {
+  unidades: UnidadVista[];
+  totalLecciones: number;
+  leccionesCompletadas: number;
+  porcentaje: number;
+  estado: EstadoCurso;
+  estadoLabel: string;
+  textoBusqueda: string;
+  ilustracionUrl: string | null;
+}
+
+interface OpcionFiltro {
+  value: FiltroCurso;
+  label: string;
+  count: number;
+}
+
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-recursos',
-  imports: [NzEmptyModule, NzButtonModule],
+  imports: [RouterLink, FontAwesomeModule, NzButtonModule, IllustrationSlot],
   templateUrl: './recursos.html',
+  styleUrl: './recursos.scss',
 })
 export class Recursos {
   private readonly api = inject(Api);
 
+  readonly faArrowRight = faArrowRight;
+  readonly faBookOpen = faBookOpen;
+  readonly faCheck = faCheck;
+  readonly faCirclePlay = faCirclePlay;
+  readonly faClock = faClock;
+  readonly faLayerGroup = faLayerGroup;
+  readonly faMagnifyingGlass = faMagnifyingGlass;
+  readonly faRotateRight = faRotateRight;
+  readonly faRocket = faRocket;
+  readonly faStar = faStar;
+
   readonly datos = signal<AprendizajeResponse | null>(null);
   readonly cargando = signal(true);
+  readonly refrescando = signal(false);
   readonly actualizando = signal<number | null>(null);
   readonly error = signal('');
+  readonly filtro = signal<FiltroCurso>('all');
+  readonly busqueda = signal('');
+
+  readonly cursosVista = computed<CursoVista[]>(() =>
+    (this.datos()?.cursos ?? []).map((curso) => this.construirCursoVista(curso)),
+  );
+
+  readonly filtros = computed<OpcionFiltro[]>(() => {
+    const cursos = this.cursosVista();
+    return [
+      { value: 'all', label: 'Todos', count: cursos.length },
+      { value: 'notStarted', label: 'Por iniciar', count: cursos.filter((curso) => curso.estado === 'notStarted').length },
+      { value: 'inProgress', label: 'En progreso', count: cursos.filter((curso) => curso.estado === 'inProgress').length },
+      { value: 'completed', label: 'Completados', count: cursos.filter((curso) => curso.estado === 'completed').length },
+    ];
+  });
+
+  readonly cursosFiltrados = computed(() => {
+    const filtro = this.filtro();
+    const termino = this.normalizar(this.busqueda());
+
+    return this.cursosVista().filter((curso) => {
+      const coincideEstado = filtro === 'all' || curso.estado === filtro;
+      const coincideBusqueda = !termino || curso.textoBusqueda.includes(termino);
+      return coincideEstado && coincideBusqueda;
+    });
+  });
+
+  readonly hayFiltrosActivos = computed(() => this.filtro() !== 'all' || Boolean(this.busqueda().trim()));
+  readonly cursosEnProgreso = computed(() => this.cursosVista().filter((curso) => curso.estado === 'inProgress').length);
+  readonly cursosCompletados = computed(() => this.cursosVista().filter((curso) => curso.estado === 'completed').length);
+  readonly cursosPorIniciar = computed(() => this.cursosVista().filter((curso) => curso.estado === 'notStarted').length);
 
   constructor() {
     this.cargar();
   }
 
   cargar(fresh = false): void {
-    this.cargando.set(!this.datos());
+    const conservaDatos = Boolean(this.datos());
+    this.cargando.set(!conservaDatos);
+    this.refrescando.set(conservaDatos);
     this.error.set('');
+
     this.api.get<AprendizajeResponse>('/alumno/aprendizaje', { fresh })
-      .pipe(finalize(() => this.cargando.set(false)))
+      .pipe(finalize(() => {
+        this.cargando.set(false);
+        this.refrescando.set(false);
+      }))
       .subscribe({
         next: (datos) => this.datos.set(datos),
         error: () => this.error.set('No pudimos cargar tus cursos. Revisa tu conexión e inténtalo nuevamente.'),
       });
   }
 
-  progreso(leccion: Leccion): ProgresoLeccion {
-    return leccion.progresos[0] ?? { estado: 'notStarted', porcentaje: 0 };
+  seleccionarFiltro(filtro: FiltroCurso): void {
+    this.filtro.set(filtro);
   }
 
-  completar(leccion: Leccion): void {
-    if (this.progreso(leccion).estado === 'completed' || this.actualizando() !== null) {
+  actualizarBusqueda(event: Event): void {
+    this.busqueda.set((event.target as HTMLInputElement).value);
+  }
+
+  limpiarFiltros(): void {
+    this.filtro.set('all');
+    this.busqueda.set('');
+  }
+
+  completar(leccion: LeccionVista): void {
+    if (leccion.progresoActual.estado === 'completed' || this.actualizando() !== null) {
       return;
     }
+
     this.actualizando.set(leccion.id);
+    this.error.set('');
     this.api.put<ProgresoLeccion>(`/alumno/aprendizaje/lecciones/${leccion.id}/progreso`, {
       estado: 'completed',
       porcentaje: 100,
@@ -82,15 +188,19 @@ export class Recursos {
       next: (progreso) => {
         const datos = this.datos();
         if (!datos) return;
+
         const cursos = datos.cursos.map((curso) => ({
           ...curso,
           unidades: curso.unidades.map((unidad) => ({
             ...unidad,
-            lecciones: unidad.lecciones.map((item) => item.id === leccion.id ? { ...item, progresos: [progreso] } : item),
+            lecciones: unidad.lecciones.map((item) =>
+              item.id === leccion.id ? { ...item, progresos: [progreso] } : item,
+            ),
           })),
         }));
         const lecciones = cursos.flatMap((curso) => curso.unidades).flatMap((unidad) => unidad.lecciones);
-        const completadas = lecciones.filter((item) => this.progreso(item).estado === 'completed').length;
+        const completadas = lecciones.filter((item) => this.progresoActual(item).estado === 'completed').length;
+
         this.datos.set({
           cursos,
           resumen: {
@@ -106,5 +216,59 @@ export class Recursos {
       },
       error: () => this.error.set('No se pudo guardar el avance. Tu contenido permanece disponible.'),
     });
+  }
+
+  private construirCursoVista(curso: Curso): CursoVista {
+    const unidades = curso.unidades.map<UnidadVista>((unidad, index) => ({
+      ...unidad,
+      orden: index + 1,
+      lecciones: unidad.lecciones.map((leccion) => ({
+        ...leccion,
+        progresoActual: this.progresoActual(leccion),
+      })),
+    }));
+    const lecciones = unidades.flatMap((unidad) => unidad.lecciones);
+    const leccionesCompletadas = lecciones.filter((leccion) => leccion.progresoActual.estado === 'completed').length;
+    const tieneProgreso = lecciones.some((leccion) => leccion.progresoActual.estado === 'inProgress') || leccionesCompletadas > 0;
+    const estado: EstadoCurso = lecciones.length > 0 && leccionesCompletadas === lecciones.length
+      ? 'completed'
+      : tieneProgreso
+        ? 'inProgress'
+        : 'notStarted';
+    const porcentaje = lecciones.length ? Math.round(leccionesCompletadas * 100 / lecciones.length) : 0;
+    const textoBusqueda = this.normalizar([
+      curso.titulo,
+      curso.descripcion,
+      curso.nivel,
+      ...unidades.flatMap((unidad) => [
+        unidad.titulo,
+        unidad.descripcion,
+        ...unidad.lecciones.map((leccion) => leccion.titulo),
+      ]),
+    ].filter(Boolean).join(' '));
+
+    return {
+      ...curso,
+      unidades,
+      totalLecciones: lecciones.length,
+      leccionesCompletadas,
+      porcentaje,
+      estado,
+      estadoLabel: estado === 'completed' ? 'Completado' : estado === 'inProgress' ? 'En progreso' : 'Por iniciar',
+      textoBusqueda,
+      ilustracionUrl: curso.ilustracion_url ?? null,
+    };
+  }
+
+  private progresoActual(leccion: Leccion): ProgresoLeccion {
+    return leccion.progresos[0] ?? { estado: 'notStarted', porcentaje: 0 };
+  }
+
+  private normalizar(valor: string): string {
+    return valor
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .trim()
+      .toLocaleLowerCase('es');
   }
 }
