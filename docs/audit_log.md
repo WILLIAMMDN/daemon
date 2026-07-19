@@ -133,3 +133,4 @@
 - [2026-07-19 18:48:59] chore(models): update documentation for models module
 - [2026-07-19 18:49:00] docs(core): review implementation of core module
 - [2026-07-19 18:49:00] ci(ui): optimize logic in ui module
+- [2026-07-19 18:49:00] fix(security): format structure of security module
