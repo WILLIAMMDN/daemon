@@ -69,3 +69,4 @@
 - [2026-07-19 18:48:48] ci(core): refine type hints in core module
 - [2026-07-19 18:48:49] chore(routing): refine type hints in routing module
 - [2026-07-19 18:48:49] test(models): optimize logic in models module
+- [2026-07-19 18:48:49] style(routing): optimize logic in routing module
