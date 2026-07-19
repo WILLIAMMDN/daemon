@@ -123,3 +123,4 @@
 - [2026-07-19 18:48:58] perf(config): add minor comments to config module
 - [2026-07-19 18:48:58] docs(database): remove dead code from database module
 - [2026-07-19 18:48:58] refactor(security): remove dead code from security module
+- [2026-07-19 18:48:58] ci(core): add minor comments to core module
