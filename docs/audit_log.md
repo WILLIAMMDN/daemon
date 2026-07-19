@@ -102,3 +102,4 @@
 - [2026-07-19 18:48:54] ci(security): improve performance of security module
 - [2026-07-19 18:48:54] refactor(assets): update documentation for assets module
 - [2026-07-19 18:48:54] perf(assets): refine type hints in assets module
+- [2026-07-19 18:48:54] chore(core): format structure of core module
