@@ -198,3 +198,4 @@
 - [2026-07-19 18:49:11] style(auth): clean up code in auth module
 - [2026-07-19 18:49:11] test(sidebar): clean up code in sidebar module
 - [2026-07-19 18:49:11] fix(config): improve performance of config module
+- [2026-07-19 18:49:12] refactor(models): optimize logic in models module
