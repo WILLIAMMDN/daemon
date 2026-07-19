@@ -50,3 +50,4 @@
 - [2026-07-19 18:48:45] docs(database): refine type hints in database module
 - [2026-07-19 18:48:45] style(core): update dependencies of core module
 - [2026-07-19 18:48:46] docs(api): update documentation for api module
+- [2026-07-19 18:48:46] style(config): format structure of config module
