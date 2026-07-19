@@ -44,3 +44,4 @@
 - [2026-07-19 18:48:44] docs(auth): update documentation for auth module
 - [2026-07-19 18:48:44] style(api): improve performance of api module
 - [2026-07-19 18:48:45] test(assets): clean up code in assets module
+- [2026-07-19 18:48:45] chore(core): add minor comments to core module
