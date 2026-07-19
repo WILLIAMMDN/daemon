@@ -188,3 +188,4 @@
 - [2026-07-19 18:49:09] docs(sidebar): optimize logic in sidebar module
 - [2026-07-19 18:49:10] style(services): add minor comments to services module
 - [2026-07-19 18:49:10] test(assets): add minor comments to assets module
+- [2026-07-19 18:49:10] fix(config): optimize logic in config module
