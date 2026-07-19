@@ -175,3 +175,4 @@
 - [2026-07-19 18:49:07] build(api): update dependencies of api module
 - [2026-07-19 18:49:07] style(ui): remove dead code from ui module
 - [2026-07-19 18:49:07] style(api): improve performance of api module
+- [2026-07-19 18:49:08] style(api): update documentation for api module
