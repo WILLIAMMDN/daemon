@@ -6,6 +6,7 @@
     "start": "ng serve --configuration cloud",
     "start:cloud": "ng serve --configuration cloud",
     "start:local": "ng serve --configuration development",
+    "start:lan": "ng serve --configuration development --host 0.0.0.0",
     "build": "ng build",
     "build:staging": "node scripts/generate-staging-environment.mjs && ng build --configuration staging",
     "watch": "ng build --watch --configuration development",

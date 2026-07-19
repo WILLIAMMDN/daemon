@@ -158,7 +158,8 @@
               "buildTarget": "frontend-angular:build:staging"
             },
             "development": {
-              "buildTarget": "frontend-angular:build:development"
+              "buildTarget": "frontend-angular:build:development",
+              "proxyConfig": "proxy.conf.json"
             }
           },
           "defaultConfiguration": "development"

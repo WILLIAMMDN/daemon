@@ -1,0 +1,17 @@
+{
+  "/api": {
+    "target": "http://localhost:8000",
+    "secure": false,
+    "changeOrigin": false
+  },
+  "/broadcasting": {
+    "target": "http://localhost:8000",
+    "secure": false,
+    "changeOrigin": false
+  },
+  "/storage": {
+    "target": "http://localhost:8000",
+    "secure": false,
+    "changeOrigin": false
+  }
+}
