@@ -1,13 +1,15 @@
-import { Component, signal , ChangeDetectionStrategy} from '@angular/core';
+import { Component, signal, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Cuento } from '../../services/cuento';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
+import { QuillModule } from 'ngx-quill';
+import { CommonModule } from '@angular/common';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-ver-cuento',
-  imports: [RouterLink, Cargando, EstadoVacio],
+  imports: [RouterLink, Cargando, EstadoVacio, QuillModule, CommonModule],
   templateUrl: './ver-cuento.html',
   styleUrl: './ver-cuento.scss',
 })
@@ -29,11 +31,5 @@ export class VerCuento {
         this.cargando.set(false);
       },
     });
-  }
-
-  escenas(cuento: any): string[] {
-    return [1, 2, 3, 4, 5, 6]
-      .map((numero) => cuento?.[`data_${numero}`])
-      .filter((texto) => Boolean(String(texto ?? '').trim()));
   }
 }

@@ -48,8 +48,10 @@
     "laravel-echo": "^2.3.7",
     "ng-zorro-antd": "^21.3.2",
     "ng2-charts": "^10.0.0",
+    "ngx-quill": "^31.0.1",
     "ngx-spinner": "^21.1.0",
     "pusher-js": "^8.5.0",
+    "quill": "^2.0.3",
     "rxjs": "~7.8.0",
     "tailwind-merge": "^3.5.0",
     "tslib": "^2.3.0"
@@ -64,6 +66,7 @@
     "@emnapi/wasi-threads": "1.2.2",
     "@playwright/test": "^1.42.1",
     "@types/jest": "^30.0.0",
+    "@types/quill": "^2.0.14",
     "autoprefixer": "^10.5.0",
     "jest": "^30.4.2",
     "jest-environment-jsdom": "^30.4.1",

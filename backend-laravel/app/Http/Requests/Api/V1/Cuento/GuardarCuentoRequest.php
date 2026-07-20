@@ -13,16 +13,9 @@ class GuardarCuentoRequest extends FormRequest
 
     public function rules(): array
     {
-        $reglas = [
+        return [
             'titulo' => ['required', 'string', 'max:150'],
+            'contenido' => ['nullable', 'string'],
         ];
-
-        foreach (range(1, 6) as $i) {
-            $reglas["img_$i"] = ['nullable', 'string'];
-            $reglas["data_$i"] = ['nullable'];
-            $reglas["pos_$i"] = ['nullable', 'string', 'max:20'];
-        }
-
-        return $reglas;
     }
 }

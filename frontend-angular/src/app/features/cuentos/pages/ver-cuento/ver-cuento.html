@@ -23,23 +23,12 @@
       <a nz-button nzType="default" class="daemon-btn" routerLink="/alumno/proyectos/cuentos">Volver a galería</a>
     </header>
 
-    @if (escenas(datosCuento.cuento).length) {
-      <section class="flex flex-col gap-6 md:gap-8 w-full">
-        @for (escena of escenas(datosCuento.cuento); track $index) {
-          <article class="bg-white border border-slate-200 rounded-2xl p-6 md:p-8 shadow-sm flex flex-col gap-4">
-            <div class="flex items-center gap-3 border-b border-slate-100 pb-3">
-              <span class="flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 font-bold text-slate-500 text-sm">
-                {{ $index + 1 }}
-              </span>
-              <p class="text-sm font-bold text-slate-400 uppercase tracking-widest">Escena</p>
-            </div>
-            
-            <p class="text-base md:text-lg text-slate-700 leading-relaxed font-nunito whitespace-pre-wrap">{{ escena }}</p>
-          </article>
-        }
-      </section>
+    @if (datosCuento.cuento.contenido) {
+      <article class="bg-white border border-slate-200 rounded-2xl p-6 md:p-8 shadow-sm quill-container overflow-hidden">
+        <quill-view-html [content]="datosCuento.cuento.contenido" theme="snow"></quill-view-html>
+      </article>
     } @else {
-      <app-estado-vacio titulo="Cuento vacío" descripcion="Este cuento no tiene escenas registradas."></app-estado-vacio>
+      <app-estado-vacio titulo="Cuento vacío" descripcion="Este cuento no tiene contenido registrado."></app-estado-vacio>
     }
   </main>
 }
