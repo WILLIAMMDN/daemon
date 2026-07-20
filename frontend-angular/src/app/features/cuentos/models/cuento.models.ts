@@ -17,6 +17,8 @@ export interface CuentoRegistro {
   data_4?: unknown;
   data_5?: unknown;
   data_6?: unknown;
+  categoria?: string | null;
+  reacciones_count?: number;
 }
 
 export interface CuentoVista extends CuentoRegistro {
@@ -29,4 +31,7 @@ export interface CuentoVista extends CuentoRegistro {
   esMio: boolean;
   escenasConContenido: number;
   textoBusqueda: string;
+  colorAutor: string;
+  tagNombre: string;
+  tagClase: string;
 }

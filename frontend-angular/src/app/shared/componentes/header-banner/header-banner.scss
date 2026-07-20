@@ -1,0 +1,105 @@
+.module-hero {
+  position: relative;
+  overflow: hidden;
+  border-radius: 22px;
+  min-height: 240px;
+  padding: clamp(1.5rem, 3vw, 2.25rem) clamp(1.5rem, 3.5vw, 2.75rem);
+  display: flex;
+  align-items: center;
+}
+
+.module-hero__bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  user-select: none;
+}
+
+.module-hero__art {
+  position: absolute;
+  right: clamp(0.5rem, 1.5vw, 1.25rem);
+  bottom: -0.25rem;
+  height: clamp(150px, 18vw, 220px);
+  object-fit: contain;
+  object-position: bottom center;
+  z-index: 1;
+  pointer-events: none;
+  user-select: none;
+  filter: drop-shadow(0 8px 18px rgba(8, 6, 38, 0.35));
+  opacity: 0.95;
+}
+
+.module-hero__content {
+  position: relative;
+  z-index: 2;
+  max-width: 540px;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  padding-right: clamp(7rem, 20%, 10rem);
+}
+
+::ng-deep .module-hero__tag {
+  color: #ffc414;
+  font-size: .7rem;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+  display: inline-block;
+}
+
+::ng-deep .module-hero__title {
+  color: #fff;
+  font-size: clamp(1.9rem, 3.2vw, 2.4rem);
+  font-weight: 850;
+  letter-spacing: -.03em;
+  line-height: 1.08;
+  margin: 0 0 0.65rem 0;
+}
+
+::ng-deep .module-hero__desc {
+  color: #dce2ff;
+  font-size: .88rem;
+  line-height: 1.5;
+  margin: 0 0 1.25rem 0;
+}
+
+::ng-deep .module-hero__actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 760px) {
+  .module-hero {
+    padding: 1.25rem 1.25rem 0;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .module-hero__art {
+    position: relative;
+    right: auto;
+    bottom: auto;
+    align-self: center;
+    margin: -0.75rem 0 -0.5rem;
+    height: 180px;
+  }
+
+  .module-hero__content {
+    padding-right: 0;
+    max-width: 100%;
+    padding-top: 0.5rem;
+  }
+}
+
+@media (max-width: 540px) {
+  .module-hero__art {
+    height: 150px;
+  }
+}

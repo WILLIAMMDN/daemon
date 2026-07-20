@@ -27,7 +27,7 @@
     />
 
     @if (bienestar()?.bloqueado) {
-      <main class="content-area pb-24 md:pb-0">
+      <main class="content-area">
         <section class="digital-pause" role="alert" aria-live="assertive">
           <span><fa-icon [icon]="iconos.descanso" /></span>
           <p>Bienestar digital</p>
@@ -37,27 +37,9 @@
         </section>
       </main>
     } @else {
-      <main class="content-area pb-24 md:pb-0">
+      <main class="content-area">
         <router-outlet />
       </main>
     }
   </section>
-
-  <nav class="mobile-tabbar" aria-label="Navegación rápida">
-    <a routerLink="/alumno" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
-      <fa-icon [icon]="iconos.inicio" /><span>Inicio</span>
-    </a>
-    <a routerLink="/alumno/misiones" routerLinkActive="active">
-      <fa-icon [icon]="iconos.misiones" /><span>Misiones</span>
-    </a>
-    <a routerLink="/alumno/tienda" routerLinkActive="active" class="store-tab">
-      <span class="store-tab-icon"><fa-icon [icon]="iconos.tienda" /></span><span>Tienda</span>
-    </a>
-    <a routerLink="/alumno/ranking" routerLinkActive="active">
-      <fa-icon [icon]="iconos.ranking" /><span>Ranking</span>
-    </a>
-    <a routerLink="/alumno/perfil" routerLinkActive="active">
-      <fa-icon [icon]="iconos.perfil" /><span>Perfil</span>
-    </a>
-  </nav>
 </div>

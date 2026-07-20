@@ -53,11 +53,20 @@ describe('GaleriaProyectos', () => {
 
     expect(element.querySelector('main')).toBeNull();
     expect(element.querySelectorAll('.story-card')).toHaveLength(2);
-    expect(element.querySelector('.story-stats-card')?.textContent).toContain('2');
+    expect(element.querySelector('.story-progress-stats')?.textContent).toContain('2');
     expect(element.querySelector('[data-asset-name="story-11-cover.webp"]')).toBeTruthy();
     expect(element.querySelector<HTMLAnchorElement>('a[href="/alumno/proyectos/cuentos/10"]')).toBeTruthy();
-    expect(element.textContent).not.toContain('Reacciones');
+    // The hero carries two real CTAs: primary "Crear cuento" and a secondary "Volver a Proyectos".
+    // No fake "Explorar historias" anchor, no overlay breadcrumb breaking the banner's alignment.
+    const volverBtn = Array.from(element.querySelectorAll<HTMLAnchorElement>('.module-hero a'))
+      .find((a) => a.textContent?.includes('Volver a Proyectos'));
+    expect(volverBtn?.getAttribute('href')).toBe('/alumno/proyectos');
+    expect(element.querySelector('a[href="#historias-publicadas"]')).toBeNull();
+    expect(element.querySelector('.story-breadcrumb')).toBeNull();
+    expect(element.textContent).not.toContain('Reacciones recibidas');
     expect(element.textContent).not.toContain('Destacados');
+    expect(element.textContent).not.toContain('Favoritos');
+    expect(element.textContent).not.toContain('Nuevos');
   });
 
   it('filtra por propiedad y búsqueda sin categorías inventadas', () => {
@@ -65,7 +74,7 @@ describe('GaleriaProyectos', () => {
     fixture.detectChanges();
     const element = fixture.nativeElement as HTMLElement;
     const filtroMio = Array.from(element.querySelectorAll<HTMLButtonElement>('.story-filters button'))
-      .find((button) => button.textContent?.includes('Mi cuento'));
+      .find((button) => button.textContent?.includes('Mis historias'));
 
     filtroMio?.click();
     fixture.detectChanges();
@@ -91,5 +100,48 @@ describe('GaleriaProyectos', () => {
 
     expect(element.querySelector('.story-load-error')?.textContent).toContain('No pudimos abrir la galería');
     expect(element.querySelector('app-estado-vacio')).toBeNull();
+  });
+
+  it('expone un FAB para abrir el resumen creativo y lo cierra con la X o el overlay', () => {
+    const fixture = TestBed.createComponent(GaleriaProyectos);
+    fixture.detectChanges();
+    const element = fixture.nativeElement as HTMLElement;
+    const component = fixture.componentInstance;
+
+    // Initial state: aside closed, FAB visible, overlay hidden.
+    const aside = element.querySelector<HTMLElement>('.story-aside');
+    const fab = element.querySelector<HTMLButtonElement>('.story-aside-fab');
+    const overlay = element.querySelector<HTMLElement>('.story-aside-overlay');
+    expect(aside).toBeTruthy();
+    expect(fab).toBeTruthy();
+    expect(overlay).toBeTruthy();
+    expect(aside?.classList.contains('is-open')).toBe(false);
+    expect(fab?.classList.contains('is-hidden')).toBe(false);
+    expect(overlay?.classList.contains('is-visible')).toBe(false);
+    expect(component.asideAbierto()).toBe(false);
+
+    // Open via FAB.
+    fab?.click();
+    fixture.detectChanges();
+    expect(component.asideAbierto()).toBe(true);
+    expect(aside?.classList.contains('is-open')).toBe(true);
+    expect(fab?.classList.contains('is-hidden')).toBe(true);
+    expect(overlay?.classList.contains('is-visible')).toBe(true);
+
+    // Close via the X button.
+    const closeBtn = element.querySelector<HTMLButtonElement>('.story-aside-close');
+    expect(closeBtn).toBeTruthy();
+    closeBtn?.click();
+    fixture.detectChanges();
+    expect(component.asideAbierto()).toBe(false);
+    expect(aside?.classList.contains('is-open')).toBe(false);
+
+    // Re-open, then close via overlay click.
+    fab?.click();
+    fixture.detectChanges();
+    expect(component.asideAbierto()).toBe(true);
+    overlay?.click();
+    fixture.detectChanges();
+    expect(component.asideAbierto()).toBe(false);
   });
 });

@@ -1,15 +1,18 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, HostListener } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
   faArrowLeft,
-  faArrowRight,
   faBookOpen,
   faCalendarDays,
+  faChartLine,
   faCircleUser,
   faMagnifyingGlass,
-  faPenNib,
-  faRotateRight,
+  faEllipsis,
+  faStar,
+  faQuoteLeft,
+  faTimes,
+  faPlus,
 } from '@fortawesome/free-solid-svg-icons';
 import { finalize } from 'rxjs';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -19,14 +22,16 @@ import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-
 import { IllustrationSlot } from '../../../../shared/componentes/illustration-slot/illustration-slot';
 import { CuentoRegistro, CuentoVista } from '../../models/cuento.models';
 import { Cuento } from '../../services/cuento';
+import { HeaderBannerComponent } from '../../../../shared/componentes/header-banner/header-banner';
+import { NgClass } from '@angular/common';
 
-type FiltroCuento = 'todos' | 'mio' | 'portada';
+type FiltroCuento = 'todos' | 'mio';
 type OrdenCuento = 'recientes' | 'antiguos' | 'titulo';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-galeria-proyectos',
-  imports: [RouterLink, FontAwesomeModule, NzButtonModule, EstadoVacio, IllustrationSlot],
+  imports: [RouterLink, FontAwesomeModule, NzButtonModule, EstadoVacio, NgClass, HeaderBannerComponent],
   templateUrl: './galeria-proyectos.html',
   styleUrl: './galeria-proyectos.scss',
 })
@@ -40,13 +45,16 @@ export class GaleriaProyectos {
   });
 
   readonly faArrowLeft = faArrowLeft;
-  readonly faArrowRight = faArrowRight;
   readonly faBookOpen = faBookOpen;
   readonly faCalendarDays = faCalendarDays;
+  readonly faChartLine = faChartLine;
   readonly faCircleUser = faCircleUser;
   readonly faMagnifyingGlass = faMagnifyingGlass;
-  readonly faPenNib = faPenNib;
-  readonly faRotateRight = faRotateRight;
+  readonly faEllipsis = faEllipsis;
+  readonly faStar = faStar;
+  readonly faQuoteLeft = faQuoteLeft;
+  readonly faTimes = faTimes;
+  readonly faPlus = faPlus;
   readonly cuentos = signal<CuentoRegistro[]>([]);
   readonly miCuento = signal<CuentoRegistro | null>(null);
   readonly miCuentoCargado = signal(false);
@@ -58,6 +66,19 @@ export class GaleriaProyectos {
   readonly orden = signal<OrdenCuento>('recientes');
   readonly busqueda = signal('');
   readonly portadasInvalidas = signal<ReadonlySet<number>>(new Set());
+  /** Mobile bottom-sheet state. Desktop ignores it entirely. */
+  readonly asideAbierto = signal(false);
+
+  readonly plantillasRecomendadas = signal([
+    { id: '1', titulo: 'Aventura en el espacio', imagen: '/img/cuentos/template-1.png' },
+    { id: '2', titulo: 'Amigos del bosque', imagen: '/img/cuentos/template-2.png' },
+    { id: '3', titulo: 'Viaje en el tiempo', imagen: '/img/cuentos/template-3.png' }
+  ]);
+
+  readonly inspiracionDiaria = signal({
+    frase: "La imaginación es el comienzo de la creación.",
+    autor: "George Bernard Shaw"
+  });
 
   readonly cuentosVista = computed<CuentoVista[]>(() =>
     this.cuentos().map((cuento) => this.construirVista(cuento)),
@@ -74,9 +95,7 @@ export class GaleriaProyectos {
     const busqueda = this.normalizar(this.busqueda());
     const orden = this.orden();
     const resultado = this.cuentosVista().filter((cuento) => {
-      const coincideFiltro = filtro === 'todos'
-        || (filtro === 'mio' && cuento.esMio)
-        || (filtro === 'portada' && Boolean(cuento.portadaUrl));
+      const coincideFiltro = filtro === 'mio' ? cuento.esMio : true;
       return coincideFiltro && (!busqueda || cuento.textoBusqueda.includes(busqueda));
     });
 
@@ -88,8 +107,49 @@ export class GaleriaProyectos {
   });
   readonly hayFiltros = computed(() => this.filtro() !== 'todos' || Boolean(this.busqueda().trim()));
 
+  readonly progresoCreativo = computed(() => {
+    const miCuento = this.miCuentoVista();
+    if (!miCuento) return 0;
+    return Math.round((miCuento.escenasConContenido / 6) * 100);
+  });
+
+  readonly reaccionesRecibidas = computed(() => {
+    return this.cuentosVista().filter(c => c.esMio).reduce((sum, c) => sum + (c.reacciones_count || 0), 0);
+  });
+
   constructor() {
     this.cargar();
+
+    // Lock body scroll while the mobile bottom sheet is open so the page
+    // behind doesn't scroll when the user drags the sheet.
+    effect(() => {
+      if (typeof document === 'undefined') return;
+      if (this.asideAbierto()) {
+        document.body.classList.add('story-aside-scroll-lock');
+      } else {
+        document.body.classList.remove('story-aside-scroll-lock');
+      }
+    });
+  }
+
+  /** Close the mobile aside when the user presses Escape. */
+  @HostListener('document:keydown.escape')
+  onEscapeKey(): void {
+    if (this.asideAbierto()) {
+      this.cerrarAside();
+    }
+  }
+
+  abrirAside(): void {
+    this.asideAbierto.set(true);
+  }
+
+  cerrarAside(): void {
+    this.asideAbierto.set(false);
+  }
+
+  toggleAside(): void {
+    this.asideAbierto.update((abierto) => !abierto);
   }
 
   cargar(fresh = false): void {
@@ -161,18 +221,39 @@ export class GaleriaProyectos {
     const fecha = cuento.fecha_creacion ? new Date(cuento.fecha_creacion) : null;
     const timestamp = fecha && Number.isFinite(fecha.getTime()) ? fecha.getTime() : 0;
     const portadaUrl = this.portada(cuento);
+    const inicial = autorVista.charAt(0).toLocaleUpperCase('es');
+    
+    // Generar tags reales basados en el campo categoría
+    const categoriaReal = cuento.categoria || 'Sin clasificar';
+    
+    // Hash simple para asignar un color de tag basado en el nombre de la categoría
+    let hash = 0;
+    for (let i = 0; i < categoriaReal.length; i++) {
+      hash = categoriaReal.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    
+    const idNum = cuento.id || 0;
+    const clases = ['bg-emerald-100 text-emerald-800', 'bg-blue-100 text-blue-800', 'bg-purple-100 text-purple-800', 'bg-pink-100 text-pink-800', 'bg-indigo-100 text-indigo-800', 'bg-orange-100 text-orange-800'];
+    const indexTag = Math.abs(hash) % clases.length;
+    
+    // Colores para el avatar
+    const coloresAvatar = ['#1d4f91', '#0d9488', '#e11d48', '#9333ea', '#ca8a04', '#2563eb'];
+    const colorAutor = coloresAvatar[idNum % coloresAvatar.length];
 
     return {
       ...cuento,
       tituloVista,
       autorVista,
-      inicialAutor: autorVista.charAt(0).toLocaleUpperCase('es'),
+      inicialAutor: inicial,
+      colorAutor,
       portadaUrl,
       fechaVista: timestamp ? this.fecha.format(fecha!) : 'Fecha no disponible',
       timestamp,
       esMio: cuento.id_alumno === this.sesion.usuario()?.id,
       escenasConContenido: this.contarEscenas(cuento),
       textoBusqueda: this.normalizar(`${tituloVista} ${autorVista}`),
+      tagNombre: categoriaReal,
+      tagClase: clases[indexTag],
     };
   }
 

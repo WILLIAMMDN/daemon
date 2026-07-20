@@ -17,6 +17,11 @@ class CuentoService
         return DB::table('cuentos as c')
             ->join('usuarios as u', 'u.id', '=', 'c.id_alumno')
             ->select('c.*', 'u.nombre_completo as autor', 'u.avatar')
+            ->selectSub(function ($query) {
+                $query->selectRaw('count(*)')
+                      ->from('cuento_reacciones')
+                      ->whereColumn('cuento_id', 'c.id');
+            }, 'reacciones_count')
             ->orderByDesc('c.fecha_creacion')
             ->get()
             ->map(fn ($cuento) => $this->cuentoConUrls($cuento));

@@ -90,34 +90,11 @@
 @keyframes reward-pop { from { opacity: 0; transform: scale(.2) translateY(12px); } to { opacity: 1; transform: scale(1) translateY(0); } }
 
 .student-hero-banner {
-  background: #10105d;
-  box-shadow: 0 4px 0 #08083f;
-}
-
-.student-hero-banner::after {
-  content: '';
-  position: absolute;
-  top: 30%; right: 10%;
-  width: 8px; height: 8px;
-  background: transparent;
-  z-index: 1;
-  /* Clusters de cuadraditos morados estilo pixel art */
-  box-shadow: 
-    20px -20px 0 #5b21b6,
-    0px 0px 0 #5b21b6,
-    20px 0px 0 #4c1d95,
-    -20px 20px 0 #5b21b6,
-    0px 20px 0 #5b21b6,
-    20px 20px 0 #6d28d9,
-    -80px -20px 0 #6d28d9,
-    -100px 0px 0 #5b21b6,
-    -100px 20px 0 #4c1d95,
-    -350px -50px 0 #4c1d95,
-    -330px -50px 0 #5b21b6,
-    -330px -30px 0 #6d28d9,
-    -200px 150px 0 #4c1d95,
-    -180px 170px 0 #5b21b6;
-  opacity: 0.85;
+  background-image: linear-gradient(to right, rgba(16, 16, 93, 0.7), rgba(16, 16, 93, 0.4)), url('/img/headers/story-header-bg.png');
+  background-size: cover;
+  background-position: center;
+  box-shadow: none;
+  border-radius: 20px;
 }
 
 /* Ocultar texto por defecto de progress y mejorar track */

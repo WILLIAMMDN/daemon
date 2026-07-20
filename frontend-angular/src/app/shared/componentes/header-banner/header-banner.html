@@ -1,0 +1,11 @@
+<section class="module-hero" [style.minHeight]="minHeight">
+  <img class="module-hero__bg" [src]="bgImage" alt="" aria-hidden="true" />
+
+  <div class="module-hero__content">
+    <ng-content></ng-content>
+  </div>
+
+  @if (artImage) {
+    <img class="module-hero__art" [src]="artImage" [alt]="artAlt" loading="lazy" decoding="async" />
+  }
+</section>

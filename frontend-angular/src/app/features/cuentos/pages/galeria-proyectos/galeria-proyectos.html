@@ -1,60 +1,47 @@
 <section class="story-gallery" aria-labelledby="stories-title">
-  <a class="story-back" routerLink="/alumno/proyectos">
-    <fa-icon [icon]="faArrowLeft" aria-hidden="true"></fa-icon>
-    Todos los proyectos
-  </a>
-
-  <header class="story-hero">
-    <div class="story-hero__copy">
-      <span>Proyectos · Narrativa digital</span>
-      <h1 id="stories-title">Galería de historias</h1>
-      <p>Descubre cuentos creados en DAEMON y continúa tu propia historia por escenas.</p>
-      <div class="story-hero__actions">
-        <a nz-button nzType="primary" routerLink="/alumno/proyectos/cuentos/crear">
-          <fa-icon [icon]="faPenNib" aria-hidden="true"></fa-icon>
-          {{ miCuentoVista() ? 'Continuar mi cuento' : 'Crear mi cuento' }}
-        </a>
-        <a nz-button nzType="default" href="#historias-publicadas">
-          Explorar historias
-          <fa-icon [icon]="faArrowRight" aria-hidden="true"></fa-icon>
-        </a>
-      </div>
-    </div>
-    <daemon-illustration-slot
-      class="story-hero__art"
-      src="/img/hero-monster.png"
-      alt=""
-      kind="hero"
-      aspectRatio="1 / 1"
-      assetName="story-gallery-hero.webp"
-      [eager]="true"
-    ></daemon-illustration-slot>
-  </header>
-
-  @if (error() && cuentos().length) {
-    <div class="story-alert" role="alert">
-      <div>
-        <strong>{{ datosConservados() ? 'Mostramos la galería guardada' : 'No se pudo actualizar' }}</strong>
-        <p>{{ error() }}</p>
-      </div>
-      <button nz-button nzType="default" type="button" (click)="cargar(true)">Reintentar</button>
-    </div>
-  }
-
   <div class="story-layout" id="historias-publicadas">
     <div class="story-main">
+      <div class="story-hero-wrap">
+        <app-header-banner
+          bgImage="/img/headers/story-header-bg.png"
+          artImage="/img/cuento-monstruo.png"
+          artAlt="Mascota DAEMON leyendo un cuento"
+          minHeight="clamp(280px, 34vh, 340px)"
+        >
+          <span class="module-hero__tag">Proyectos</span>
+          <h1 class="module-hero__title" id="stories-title">Galería de historias</h1>
+          <p class="module-hero__desc">Descubre, crea y comparte cuentos increíbles.<br>Tu imaginación puede inspirar al mundo.</p>
+          <div class="module-hero__actions">
+            <a nz-button nzType="primary" class="btn-cta-primary" routerLink="/alumno/proyectos/cuentos/crear">
+              <fa-icon [icon]="faPlus" aria-hidden="true"></fa-icon>
+              Crear cuento
+            </a>
+            <a nz-button nzType="default" class="btn-cta-secondary" routerLink="/alumno/proyectos">
+              <fa-icon [icon]="faArrowLeft" aria-hidden="true"></fa-icon>
+              Volver a Proyectos
+            </a>
+          </div>
+        </app-header-banner>
+      </div>
+
+      @if (error() && cuentos().length) {
+        <div class="story-alert" role="alert">
+          <div>
+            <strong>{{ datosConservados() ? 'Mostramos la galería guardada' : 'No se pudo actualizar' }}</strong>
+            <p>{{ error() }}</p>
+          </div>
+          <button nz-button nzType="default" type="button" (click)="cargar(true)">Reintentar</button>
+        </div>
+      }
       <section class="story-toolbar" aria-label="Buscar y ordenar historias">
         <nav class="story-filters" aria-label="Filtrar historias">
           <button type="button" [class.active]="filtro() === 'todos'" [attr.aria-pressed]="filtro() === 'todos'" (click)="seleccionarFiltro('todos')">
             <fa-icon [icon]="faBookOpen" aria-hidden="true"></fa-icon>
-            Todas
+            Todos
           </button>
           <button type="button" [class.active]="filtro() === 'mio'" [attr.aria-pressed]="filtro() === 'mio'" (click)="seleccionarFiltro('mio')">
             <fa-icon [icon]="faCircleUser" aria-hidden="true"></fa-icon>
-            Mi cuento
-          </button>
-          <button type="button" [class.active]="filtro() === 'portada'" [attr.aria-pressed]="filtro() === 'portada'" (click)="seleccionarFiltro('portada')">
-            Con portada
+            Mis historias
           </button>
         </nav>
 
@@ -71,7 +58,7 @@
           <label class="story-search">
             <fa-icon [icon]="faMagnifyingGlass" aria-hidden="true"></fa-icon>
             <span class="sr-only">Buscar por título o autor</span>
-            <input type="search" [value]="busqueda()" (input)="actualizarBusqueda($event)" placeholder="Buscar historias">
+            <input type="search" [value]="busqueda()" (input)="actualizarBusqueda($event)" placeholder="Buscar historias...">
           </label>
         </div>
       </section>
@@ -111,26 +98,31 @@
                   <span class="story-card__own-label">Tu historia</span>
                 }
                 <h2>{{ cuento.tituloVista }}</h2>
-                <div class="story-card__author">
-                  <span aria-hidden="true">{{ cuento.inicialAutor }}</span>
-                  <p>{{ cuento.autorVista }}</p>
+                <div class="story-card__author-row">
+                  <div class="story-card__author" [style.backgroundColor]="cuento.colorAutor">
+                    @if (cuento.avatar) {
+                      <img [src]="cuento.avatar" [alt]="cuento.autorVista" class="story-card__avatar" />
+                    } @else {
+                      <span aria-hidden="true">{{ cuento.inicialAutor }}</span>
+                    }
+                  </div>
+                  <div class="story-card__author-info">
+                    <p>{{ cuento.autorVista }}</p>
+                  </div>
+                  <span class="story-card__date">{{ cuento.fechaVista }}</span>
                 </div>
-                <dl>
-                  <div>
-                    <dt>Escenas</dt>
-                    <dd>{{ cuento.escenasConContenido }}/6</dd>
-                  </div>
-                  <div>
-                    <dt>Fecha</dt>
-                    <dd>{{ cuento.fechaVista }}</dd>
-                  </div>
-                </dl>
+                <div class="story-card__tags">
+                  <span class="story-card__tag" [ngClass]="cuento.tagClase">{{ cuento.tagNombre }}</span>
+                </div>
               </div>
               <footer>
-                <a [routerLink]="['/alumno/proyectos/cuentos', cuento.id]">
+                <a [routerLink]="['/alumno/proyectos/cuentos', cuento.id]" class="btn-read">
                   <fa-icon [icon]="faBookOpen" aria-hidden="true"></fa-icon>
                   Leer historia
                 </a>
+                <button type="button" class="btn-more">
+                  <fa-icon [icon]="faEllipsis" aria-hidden="true"></fa-icon>
+                </button>
               </footer>
             </article>
           }
@@ -157,52 +149,123 @@
       }
     </div>
 
-    <aside class="story-aside" aria-label="Resumen creativo">
-      <section class="story-personal-card">
-        <span>Tu espacio creativo</span>
-        @if (!miCuentoCargado()) {
-          <div class="story-personal-card__loading" aria-label="Cargando tu cuento"></div>
-        } @else if (miCuentoVista(); as propio) {
-          <h2>{{ propio.tituloVista }}</h2>
-          <p>Has construido {{ propio.escenasConContenido }} de 6 escenas en tu cuento.</p>
-          <div class="story-scene-progress" role="progressbar" aria-label="Escenas con contenido" aria-valuemin="0" aria-valuemax="6" [attr.aria-valuenow]="propio.escenasConContenido">
-            <span [style.width.%]="propio.escenasConContenido * 100 / 6"></span>
+    <aside class="story-aside" [class.is-open]="asideAbierto()" [attr.aria-hidden]="asideAbierto() ? null : 'true'" aria-label="Resumen creativo">
+      <button type="button" class="story-aside-close" (click)="cerrarAside()" aria-label="Cerrar resumen">
+        <fa-icon [icon]="faTimes" aria-hidden="true"></fa-icon>
+      </button>
+      <!-- 1. Tu progreso creativo -->
+      <section class="story-progress-card">
+        <header>
+          <h2>Tu progreso creativo</h2>
+          <button type="button" class="btn-info" aria-label="Información"><fa-icon [icon]="faEllipsis"></fa-icon></button>
+        </header>
+        <div class="story-progress-chart">
+          <div class="circular-chart-container">
+            <svg viewBox="0 0 36 36" class="circular-chart">
+              <path class="circle-bg"
+                d="M18 2.0845
+                  a 15.9155 15.9155 0 0 1 0 31.831
+                  a 15.9155 15.9155 0 0 1 0 -31.831"
+              />
+              <path class="circle"
+                [attr.stroke-dasharray]="progresoCreativo() + ', 100'"
+                d="M18 2.0845
+                  a 15.9155 15.9155 0 0 1 0 31.831
+                  a 15.9155 15.9155 0 0 1 0 -31.831"
+              />
+              <text x="18" y="20.35" class="percentage">{{ progresoCreativo() }}%</text>
+            </svg>
           </div>
-          <a nz-button nzType="primary" routerLink="/alumno/proyectos/cuentos/crear">Continuar escribiendo</a>
-        } @else {
-          <h2>Tu historia empieza aquí</h2>
-          <p>DAEMON guardará un cuento personal de hasta seis escenas.</p>
-          <a nz-button nzType="primary" routerLink="/alumno/proyectos/cuentos/crear">Crear mi cuento</a>
-        }
+          <div class="story-progress-text">
+            <h3>{{ progresoCreativo() === 100 ? '¡Cuento terminado!' : (progresoCreativo() > 0 ? '¡Sigue así!' : '¡Empieza tu historia!') }}</h3>
+            <p>Estás construyendo historias increíbles.</p>
+          </div>
+        </div>
+        <div class="story-progress-stats">
+          <div>
+            <strong>{{ cuentos().length }}</strong>
+            <span>Historias<br>publicadas</span>
+          </div>
+          <div>
+            <strong>{{ miCuentoVista() ? 1 : 0 }}</strong>
+            <span>Borradores<br>en progreso</span>
+          </div>
+          <div>
+            <strong>{{ reaccionesRecibidas() }}</strong>
+            <span>Reacciones<br>recibidas</span>
+          </div>
+        </div>
       </section>
 
-      <section class="story-stats-card">
-        <span>Galería actual</span>
-        <h2>Contenido real disponible</h2>
-        <dl>
-          <div>
-            <dd>{{ cuentos().length }}</dd>
-            <dt>historias</dt>
-          </div>
-          <div>
-            <dd>{{ cuentosConPortada() }}</dd>
-            <dt>con portada</dt>
-          </div>
-          <div>
-            <dd>{{ miCuentoVista() ? 1 : 0 }}</dd>
-            <dt>tuya</dt>
-          </div>
-        </dl>
+      <!-- 2. ¿Necesitas inspiración? -->
+      <section class="story-inspiration-card">
+        <div class="inspiration-content">
+          <h2>¿Necesitas inspiración?</h2>
+          <p>Explora ideas, personajes y escenarios para tu próxima historia.</p>
+          <button nz-button nzType="primary" class="btn-inspirarme">
+            <fa-icon [icon]="faStar" aria-hidden="true"></fa-icon>
+            Inspirarme
+          </button>
+        </div>
+        <img src="/img/cuento-robot.png" alt="Robot leyendo un libro mágico" class="inspiration-art" loading="lazy" decoding="async">
       </section>
 
-      <section class="story-guide-card">
-        <span>Cómo funciona</span>
-        <ol>
-          <li><strong>1</strong><p>Escribe un título y construye hasta seis escenas.</p></li>
-          <li><strong>2</strong><p>Guarda tu avance desde el editor de cuentos.</p></li>
-          <li><strong>3</strong><p>Regresa a la galería para leer las historias disponibles.</p></li>
-        </ol>
+      <!-- 3. Plantillas recomendadas -->
+      <section class="story-templates-card">
+        <header>
+          <h2>Plantillas recomendadas</h2>
+          <a href="#">Ver todas</a>
+        </header>
+        <ul class="template-list">
+          @for (plantilla of plantillasRecomendadas(); track plantilla.id) {
+            <li class="cursor-pointer hover:bg-slate-50 transition-colors rounded-xl border border-transparent hover:border-slate-100" [routerLink]="['/alumno/cuentos/crear']" [queryParams]="{ plantilla: plantilla.id }">
+              <div class="template-icon">
+                <img [src]="plantilla.imagen" [alt]="plantilla.titulo" class="w-full h-full object-cover rounded-[10px]" />
+              </div>
+              <div class="template-info">
+                <strong>{{ plantilla.titulo }}</strong>
+                <span>Plantilla</span>
+              </div>
+            </li>
+          }
+        </ul>
+      </section>
+
+      <!-- 4. Inspiración de hoy -->
+      <section class="story-quote-card">
+        <header>
+          <h2>Inspiración de hoy</h2>
+        </header>
+        <blockquote class="quote">
+          <fa-icon [icon]="faQuoteLeft" class="quote-icon-left"></fa-icon>
+          <p>"{{ inspiracionDiaria().frase }}"</p>
+          <footer>— {{ inspiracionDiaria().autor }}</footer>
+          <fa-icon [icon]="faQuoteLeft" class="quote-icon-right"></fa-icon>
+        </blockquote>
       </section>
     </aside>
   </div>
+
+  <!-- Mobile-only: floating action button to open the aside as a bottom sheet.
+       Hidden on desktop, accessible from the bottom-right on phones/tablets. -->
+  <button
+    type="button"
+    class="story-aside-fab"
+    [class.is-hidden]="asideAbierto()"
+    (click)="abrirAside()"
+    [attr.aria-expanded]="asideAbierto()"
+    aria-controls="story-aside-panel"
+    aria-label="Ver resumen creativo"
+  >
+    <fa-icon [icon]="faChartLine" aria-hidden="true"></fa-icon>
+    <span class="story-aside-fab__label">Tu progreso</span>
+  </button>
+
+  <!-- Mobile-only: dimming overlay behind the bottom sheet -->
+  <div
+    class="story-aside-overlay"
+    [class.is-visible]="asideAbierto()"
+    (click)="cerrarAside()"
+    aria-hidden="true"
+  ></div>
 </section>
