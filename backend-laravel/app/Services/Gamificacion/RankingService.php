@@ -42,11 +42,21 @@ class RankingService
 
     public function posicionDe(Usuario $usuario): int
     {
-        $indice = $this->alumnosPara($usuario)->search(
-            fn (Usuario $alumno): bool => (int) $alumno->id === (int) $usuario->id,
-        );
-
-        return $indice === false ? 1 : $indice + 1;
+        return $this->consultaPara($usuario)
+            ->where(function (Builder $query) use ($usuario): void {
+                $nombreUsuario = $usuario->nombre_completo ?? '';
+                $query->where('experiencia', '>', (int) $usuario->experiencia)
+                    ->orWhere(function (Builder $q) use ($usuario, $nombreUsuario): void {
+                        $q->where('experiencia', '=', (int) $usuario->experiencia)
+                            ->whereRaw("COALESCE(nombre_completo, '') < ?", [$nombreUsuario]);
+                    })
+                    ->orWhere(function (Builder $q) use ($usuario, $nombreUsuario): void {
+                        $q->where('experiencia', '=', (int) $usuario->experiencia)
+                            ->whereRaw("COALESCE(nombre_completo, '') = ?", [$nombreUsuario])
+                            ->where('id', '<', $usuario->id);
+                    });
+            })
+            ->count() + 1;
     }
 
     /** @return array{codigo: string, etiqueta: string} */
