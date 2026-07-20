@@ -179,6 +179,23 @@ verify Render separately.
 - Do not revert user changes. Inspect `git status` first.
 - Prefer scoped changes matching existing Angular/Laravel patterns.
 
+## DB / migrations
+
+`backend-laravel/.env` points **directly at the production Supabase Postgres**
+(`aws-1-sa-east-1.pooler.supabase.com`, project `lbxdcvsrmkkynttgwblc`).
+There is no local/staging DB. So:
+
+- `php artisan migrate` from local = migration on production.
+- `php artisan tinker` DB queries = live production data.
+- Always run `php artisan migrate:status` first to see what would actually run.
+  All migrations currently show as `[N] Ran` (last batch is 13) — there is
+  nothing pending. If a new batch is added, confirm with the user before
+  running it.
+- Prefer `php artisan migrate --pretend` first to inspect the SQL.
+- For ad-hoc read-only inspection of the prod schema, a small PHP script in
+  `backend-laravel/` that uses the bootstrap (`__DIR__.'/../bootstrap/app.php'`)
+  works fine. Clean it up after — don't commit it.
+
 ## Docs to read by task
 
 - Overall project state: `docs/ai-project-context.md`
