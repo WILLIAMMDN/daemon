@@ -218,14 +218,22 @@
         </header>
         <ul class="template-list">
           @for (plantilla of plantillasRecomendadas(); track plantilla.id) {
-            <li class="cursor-pointer hover:bg-slate-50 transition-colors rounded-xl border border-transparent hover:border-slate-100" [routerLink]="['/alumno/cuentos/crear']" [queryParams]="{ plantilla: plantilla.id }">
-              <div class="template-icon">
-                <img [src]="plantilla.imagen" [alt]="plantilla.titulo" class="w-full h-full object-cover rounded-[10px]" />
-              </div>
-              <div class="template-info">
-                <strong>{{ plantilla.titulo }}</strong>
-                <span>Plantilla</span>
-              </div>
+            <li>
+              <a
+                class="template-link"
+                [routerLink]="['/alumno/cuentos/crear']"
+                [queryParams]="{ plantilla: plantilla.id }"
+                (click)="onTemplateClick($event)"
+                [attr.aria-label]="'Usar plantilla ' + plantilla.titulo"
+              >
+                <div class="template-icon">
+                  <img [src]="plantilla.imagen" [alt]="plantilla.titulo" class="template-icon__img" />
+                </div>
+                <div class="template-info">
+                  <strong>{{ plantilla.titulo }}</strong>
+                  <span>Plantilla</span>
+                </div>
+              </a>
             </li>
           }
         </ul>

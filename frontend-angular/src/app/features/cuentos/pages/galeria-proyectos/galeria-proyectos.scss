@@ -707,13 +707,46 @@
 }
 
 .template-list li {
-  display: flex;
-  align-items: center;
-  gap: .8rem;
+  /* The list item is just a layout container; the clickable surface is the
+     <a> inside it. We removed the previous Tailwind class soup and now let
+     the SCSS handle layout, hover, focus and active states. */
   background: #f8fafc;
   border-radius: 8px;
-  padding: .6rem;
   border: 1px solid #edf1f6;
+  overflow: hidden;
+}
+
+.template-link {
+  align-items: center;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: inherit;
+  cursor: pointer;
+  display: flex;
+  gap: .8rem;
+  min-height: 64px;
+  padding: .6rem;
+  text-decoration: none;
+  transition: background-color .18s ease, border-color .18s ease, transform .18s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.template-link:hover {
+  background-color: #f1f5fb;
+  border-color: #d6e0f0;
+}
+
+.template-link:focus-visible {
+  background-color: #f1f5fb;
+  border-color: #5f35d7;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(95, 53, 215, 0.18);
+}
+
+.template-link:active {
+  background-color: #e8eef8;
+  transform: scale(0.99);
 }
 
 .template-icon {
@@ -721,6 +754,16 @@
   flex-shrink: 0;
   height: 48px;
   width: 48px;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+}
+
+.template-icon__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .template-info strong {
@@ -1040,13 +1083,15 @@
 /* Mobile bottom sheet plumbing — hidden on desktop.
    The aside is rendered as a bottom sheet in viewports <=1180px (see media query above).
    On desktop the aside is the sticky right column and the close button never shows. */
-.story-aside-close {
-  display: none;
-}
+@media (min-width: 1181px) {
+  .story-aside-close {
+    display: none;
+  }
 
-.story-aside-fab,
-.story-aside-overlay {
-  display: none;
+  .story-aside-fab,
+  .story-aside-overlay {
+    display: none;
+  }
 }
 
 @media (max-width: 1180px) {

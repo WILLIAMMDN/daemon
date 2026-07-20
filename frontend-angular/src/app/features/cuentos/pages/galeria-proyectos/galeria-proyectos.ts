@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, HostListener } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, signal, HostListener } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
@@ -38,6 +38,7 @@ type OrdenCuento = 'recientes' | 'antiguos' | 'titulo';
 export class GaleriaProyectos {
   private readonly cuento = inject(Cuento);
   private readonly sesion = inject(Sesion);
+  private readonly destroyRef = inject(DestroyRef);
   private readonly fecha = new Intl.DateTimeFormat('es-PE', {
     day: '2-digit',
     month: 'short',
@@ -121,12 +122,24 @@ export class GaleriaProyectos {
     this.cargar();
 
     // Lock body scroll while the mobile bottom sheet is open so the page
-    // behind doesn't scroll when the user drags the sheet.
+    // behind doesn't scroll when the user drags the sheet. We DO NOT rely on
+    // component teardown to remove the class — if the user navigates while
+    // the sheet is open (e.g. tapping a recommended template), the component
+    // is destroyed and any effect that only reads asideAbierto() can leave
+    // the body class behind, freezing the next page. We belt-and-suspenders
+    // this: the effect toggles the class, and DestroyRef guarantees it is
+    // cleared even if the effect is torn down mid-flight.
     effect(() => {
       if (typeof document === 'undefined') return;
       if (this.asideAbierto()) {
         document.body.classList.add('story-aside-scroll-lock');
       } else {
+        document.body.classList.remove('story-aside-scroll-lock');
+      }
+    });
+
+    this.destroyRef.onDestroy(() => {
+      if (typeof document !== 'undefined') {
         document.body.classList.remove('story-aside-scroll-lock');
       }
     });
@@ -150,6 +163,22 @@ export class GaleriaProyectos {
 
   toggleAside(): void {
     this.asideAbierto.update((abierto) => !abierto);
+  }
+
+  /**
+   * Runs BEFORE the [routerLink] on the template <a> navigates. We close the
+   * mobile bottom sheet first so the body scroll-lock is released in the same
+   * tick as the navigation — otherwise iOS / Android can briefly show the
+   * next page with `body { overflow: hidden }` and look frozen.
+   *
+   * We respect modifier keys (cmd/ctrl/shift/middle-click) so users can still
+   * "open in new tab" without the sheet collapsing under their cursor.
+   */
+  onTemplateClick(event: MouseEvent): void {
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+      return;
+    }
+    this.cerrarAside();
   }
 
   cargar(fresh = false): void {
