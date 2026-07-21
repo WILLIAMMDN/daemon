@@ -86,7 +86,7 @@ Assert-Ok ($login.StatusCode -eq 200) 'Frontend /login responds with HTTP 200.'
 Assert-Ok ((Get-HeaderValue $login.Headers 'Content-Type') -match 'text/html') 'Frontend /login returns HTML.'
 Assert-Ok ((Get-HeaderValue $login.Headers 'Cache-Control') -match 'no-store') 'Frontend HTML is served with no-store cache policy.'
 Assert-Ok ($login.Content -match 'main-[A-Za-z0-9]+\.js') 'Frontend HTML references an Angular main bundle.'
-Assert-Ok ($login.Content -match '<meta name="daemon-release" content="[0-9a-f]{40}">') 'Frontend app shell exposes the deployed commit release stamp.'
+Assert-Ok ($login.Content -match '<meta name="daemon-release" content="[0-9a-f]{40}">') 'Frontend app shell exposes the deployed commit release stamp (40-char hex SHA).'
 Assert-Ok ((Get-HeaderValue $login.Headers 'X-Content-Type-Options') -eq 'nosniff') 'Frontend sends X-Content-Type-Options nosniff.'
 
 $contentSecurityPolicy = Get-HeaderValue $login.Headers 'Content-Security-Policy'

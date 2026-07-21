@@ -18,6 +18,10 @@ return [
         'name' => env('AUTH_COOKIE_NAME', 'daemon_access'),
         'minutes' => (int) env('SANCTUM_TOKEN_EXPIRATION', 480),
         'same_site' => env('AUTH_COOKIE_SAME_SITE', env('APP_ENV') === 'production' ? 'none' : 'lax'),
+        // En produccion SIEMPRE secure + SameSite=None (cross-site Firebase).
+        // No confiamos en env() como unica senal: APP_ENV deberia ser
+        // 'production' pero si se cambia accidentalmente, seguimos
+        // fallando seguro para HTTPS-only cookies.
         'secure' => env('AUTH_COOKIE_SECURE', env('APP_ENV') === 'production'),
         'expose_bearer_token' => env('AUTH_EXPOSE_BEARER_TOKEN', false),
     ],
