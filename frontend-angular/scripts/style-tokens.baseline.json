@@ -1514,25 +1514,25 @@
   {
     "file": "src\\app\\features\\autenticacion\\pages\\login\\login.html",
     "rule": "hex-literal",
-    "line": 117,
+    "line": 126,
     "match": "#FFC107"
   },
   {
     "file": "src\\app\\features\\autenticacion\\pages\\login\\login.html",
     "rule": "hex-literal",
-    "line": 118,
+    "line": 127,
     "match": "#FF3D00"
   },
   {
     "file": "src\\app\\features\\autenticacion\\pages\\login\\login.html",
     "rule": "hex-literal",
-    "line": 119,
+    "line": 128,
     "match": "#4CAF50"
   },
   {
     "file": "src\\app\\features\\autenticacion\\pages\\login\\login.html",
     "rule": "hex-literal",
-    "line": 120,
+    "line": 129,
     "match": "#1976D2"
   },
   {
