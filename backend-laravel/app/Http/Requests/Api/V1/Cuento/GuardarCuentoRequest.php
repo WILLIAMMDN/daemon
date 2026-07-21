@@ -15,7 +15,11 @@ class GuardarCuentoRequest extends FormRequest
     {
         return [
             'titulo' => ['required', 'string', 'max:150'],
-            'contenido' => ['nullable', 'string'],
+            // Limite de tamano para evitar abuso / DoS de almacenamiento.
+            // 200 KB alcanza para ~50k palabras en HTML rico, mucho mas
+            // que cualquier cuento que un estudiante pueda escribir.
+            // El sanitizer final aplica su propio limite (defensa en profundidad).
+            'contenido' => ['nullable', 'string', 'max:204800'],
         ];
     }
 }

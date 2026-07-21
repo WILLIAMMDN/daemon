@@ -3,9 +3,15 @@ import { NivelAlumno, normalizarNivelAlumno } from './nivel-alumno';
 export interface TemaPortalAlumno {
   readonly nivel: NivelAlumno;
   readonly atributo: 'kids' | 'teens';
+  /** Clase CSS que se aplica al host del layout. Sobreescribe --daemon-primary. */
+  readonly claseTema: 'theme-kids' | 'theme-teens';
+  /** @deprecated mantener por compatibilidad temporal; usar claseTema. */
   readonly colorPrincipal: string;
+  /** @deprecated mantener por compatibilidad temporal; usar claseTema. */
   readonly colorPrincipalOscuro: string;
+  /** @deprecated mantener por compatibilidad temporal; usar claseTema. */
   readonly colorSuave: string;
+  /** @deprecated mantener por compatibilidad temporal; usar claseTema. */
   readonly colorBorde: string;
 }
 
@@ -13,7 +19,9 @@ const TEMAS_PORTAL: Record<NivelAlumno, TemaPortalAlumno> = {
   KIDS: {
     nivel: 'KIDS',
     atributo: 'kids',
-    // Colores KIDS recuperados de la identidad legacy; no cambia el layout.
+    claseTema: 'theme-kids',
+    // Valores legacy — los layouts nuevos deberían leer de --daemon-*
+    // (sobrescritos por la clase .theme-kids en _tokens.scss).
     colorPrincipal: '#00b4d8',
     colorPrincipalOscuro: '#0077b6',
     colorSuave: '#e8f9fc',
@@ -22,7 +30,7 @@ const TEMAS_PORTAL: Record<NivelAlumno, TemaPortalAlumno> = {
   TEENS: {
     nivel: 'TEENS',
     atributo: 'teens',
-    // Conserva la identidad vigente del portal TEENS.
+    claseTema: 'theme-teens',
     colorPrincipal: '#1677ff',
     colorPrincipalOscuro: '#0958d9',
     colorSuave: '#edf5ff',

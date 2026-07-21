@@ -2,25 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+@import './styles/tokens';
 @import './styles/layout';
 @import './styles/components';
 @import './styles/popovers';
 @import './styles/gamification';
 
 @layer base {
-  :root {
-    --daemon-canvas: #f4f7fb;
-    --daemon-surface: #ffffff;
-    --daemon-surface-muted: #f8fafc;
-    --daemon-border: #e4eaf2;
-    --daemon-ink: #172033;
-    --daemon-muted: #667085;
-    --daemon-primary: #1677ff;
-    --daemon-primary-dark: #0958d9;
-    --daemon-success: #12a150;
-    --daemon-warning: #f5a000;
-  }
-
   html {
     background: var(--daemon-canvas);
     color: var(--daemon-ink);
@@ -60,7 +48,7 @@
   .hover-premium {
     @apply shadow-sm transition-shadow hover:shadow-md motion-reduce:transition-none;
   }
-  
+
   /* Contenedores fijos premium */
   .card-premium {
     @apply rounded-2xl border border-slate-200 bg-white shadow-sm;
@@ -79,3 +67,18 @@
   }
 }
 @import 'quill/dist/quill.snow.css';
+
+/* Accesibilidad: WCAG 2.3.3 (AAA) y 2.2.2 (AA).
+   Usuarios con prefers-reduced-motion ven una UI sin animaciones
+   decorativas (transiciones, skeletons, hover-bounce). Funcionalidad
+   intacta: el cursor sigue siendo pointer, los focus rings siguen. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

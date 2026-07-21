@@ -90,11 +90,43 @@
 @keyframes reward-pop { from { opacity: 0; transform: scale(.2) translateY(12px); } to { opacity: 1; transform: scale(1) translateY(0); } }
 
 .student-hero-banner {
+  background-color: #10105d;
   background-image: linear-gradient(to right, rgba(16, 16, 93, 0.7), rgba(16, 16, 93, 0.4)), url('/img/headers/story-header-bg.png');
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
   box-shadow: none;
   border-radius: 20px;
+}
+
+@media (max-width: 1023px) {
+  .student-hero-banner {
+    /* Evitar que 'cover' haga un zoom enorme a la imagen horizontal en contenedores verticales */
+    background-size: auto;
+    background-position: center top;
+    /* Gradiente vertical para fusionar suavemente la imagen con el color de fondo en la parte inferior */
+    background-image: linear-gradient(to bottom, rgba(16, 16, 93, 0.2) 0%, rgba(16, 16, 93, 1) 85%), url('/img/headers/story-header-bg.png');
+  }
+}
+
+/* Estilos migrados a Tailwind CSS. Solo se conservan animaciones globales */
+
+@media (max-width: 1023px) {
+  .student-stats-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+@media (min-width: 1024px) {
+  .student-stats-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+}
+
+.student-logros-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
 }
 
 /* Ocultar texto por defecto de progress y mejorar track */

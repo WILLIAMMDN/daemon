@@ -122,3 +122,10 @@
   color: #facc15; /* Un tono más dorado al pasar el mouse */
   filter: drop-shadow(0 0 8px rgba(250, 204, 21, 0.5));
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .daemon-skeleton::after,
+  .daemon-token-icon:hover {
+    animation: none;
+  }
+}

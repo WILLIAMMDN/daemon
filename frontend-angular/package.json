@@ -10,9 +10,10 @@
     "build:staging": "node scripts/generate-staging-environment.mjs && ng build --configuration staging",
     "watch": "ng build --watch --configuration development",
     "check:architecture": "node scripts/check-architecture.mjs",
+    "check:style-tokens": "node scripts/check-style-tokens.mjs",
     "check:student-visual": "node scripts/check-student-visual.mjs",
     "test": "jest",
-    "test:ci": "npm run check:architecture && npm run check:student-visual && jest --runInBand --coverage",
+    "test:ci": "npm run check:architecture && npm run check:style-tokens && npm run check:student-visual && jest --runInBand --coverage",
     "test:watch": "jest --watch",
     "e2e": "playwright test",
     "e2e:public": "playwright test --project=public"

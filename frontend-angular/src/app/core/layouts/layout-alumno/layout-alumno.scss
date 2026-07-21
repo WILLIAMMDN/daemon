@@ -1,21 +1,21 @@
 :host {
-  --student-bg: #f4f7fb;
-  --student-surface: #ffffff;
-  --student-surface-muted: #f8fafc;
-  --student-border: #e4eaf2;
-  --student-text: #172033;
-  --student-muted: #667085;
-  --student-primary: #1677ff;
-  --student-primary-dark: #0958d9;
-  --student-primary-soft: #edf5ff;
-  --student-primary-border: #cfe3ff;
+  --student-bg: var(--daemon-canvas);
+  --student-surface: var(--daemon-surface);
+  --student-surface-muted: var(--daemon-surface-muted);
+  --student-border: var(--daemon-border);
+  --student-text: var(--daemon-ink);
+  --student-muted: var(--daemon-muted);
+  --student-primary: var(--daemon-primary);
+  --student-primary-dark: var(--daemon-primary-dark);
+  --student-primary-soft: var(--daemon-primary-soft);
+  --student-primary-border: var(--daemon-border-strong);
   display: block;
   min-height: 100vh;
 }
 
 .portal {
-  background: var(--student-bg);
-  color: var(--student-text);
+  background: var(--daemon-canvas);
+  color: var(--daemon-ink);
   display: grid;
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
   grid-template-columns: auto minmax(0, 1fr);
@@ -30,8 +30,8 @@
 
 .mobile-menu-trigger {
   align-items: center;
-  background: var(--student-primary-soft);
-  border: 1px solid var(--student-primary-border);
+  background: var(--daemon-primary-soft);
+  border: 1px solid var(--daemon-border-strong);
   border-radius: 10px;
   display: none;
   flex-direction: column;
@@ -43,7 +43,7 @@
 }
 
 .mobile-menu-trigger span {
-  background: var(--student-primary);
+  background: var(--daemon-primary);
   border-radius: 99px;
   height: 2px;
   width: 18px;
@@ -59,8 +59,8 @@
 
 .digital-pause {
   align-content: center;
-  background: #fff;
-  border: 1px solid var(--student-border);
+  background: var(--daemon-surface);
+  border: 1px solid var(--daemon-border);
   border-radius: 18px;
   display: grid;
   justify-items: center;
@@ -68,15 +68,15 @@
   padding: clamp(2rem, 7vw, 5rem);
   text-align: center;
 }
-.digital-pause > span { align-items: center; background: #eef8f2; border-radius: 18px; color: #17603a; display: flex; font-size: 1.6rem; height: 72px; justify-content: center; width: 72px; }
+.digital-pause > span { align-items: center; background: var(--daemon-success-soft); border-radius: 18px; color: #17603a; display: flex; font-size: 1.6rem; height: 72px; justify-content: center; width: 72px; }
 .digital-pause p { color: #17603a; font-size: .75rem; font-weight: 800; letter-spacing: .09em; margin: 1.5rem 0 .5rem; text-transform: uppercase; }
 .digital-pause h1 { font-size: clamp(1.8rem, 5vw, 3rem); letter-spacing: -.04em; margin: 0; max-width: 700px; }
 .digital-pause strong { color: #526174; font-size: 1rem; margin-top: 1rem; }
 .digital-pause small { color: #7a8699; line-height: 1.5; margin-top: .65rem; max-width: 560px; }
 
 .notification-popover {
-  background: #fff;
-  border: 1px solid var(--student-border);
+  background: var(--daemon-surface);
+  border: 1px solid var(--daemon-border);
   border-radius: 14px;
   box-shadow: 0 18px 45px rgba(25, 42, 70, .14);
   overflow: hidden;
@@ -85,17 +85,17 @@
 
 .notification-popover > header {
   align-items: center;
-  background: #f8fafc;
-  border-bottom: 1px solid var(--student-border);
+  background: var(--daemon-surface-muted);
+  border-bottom: 1px solid var(--daemon-border);
   display: flex;
   justify-content: space-between;
   padding: 1rem 1.15rem;
 }
 
 .notification-popover > header div { display: grid; }
-.notification-popover > header small { color: var(--student-primary); font-size: .64rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; }
+.notification-popover > header small { color: var(--daemon-primary); font-size: .64rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; }
 .notification-popover > header strong { font-size: .95rem; }
-.notification-popover > header > span { background: var(--student-primary-soft); border-radius: 8px; color: var(--student-primary-dark); font-size: .7rem; font-weight: 700; padding: .35rem .55rem; }
+.notification-popover > header > span { background: var(--daemon-primary-soft); border-radius: 8px; color: var(--daemon-primary-dark); font-size: .7rem; font-weight: 700; padding: .35rem .55rem; }
 .notification-list { max-height: 310px; overflow: auto; }
 .notification-list article { border-bottom: 1px solid #eef1f5; padding: .9rem 1.15rem; }
 .notification-list article.unread { background: #f6faff; }
@@ -103,11 +103,11 @@
 .notification-list time,
 .notification-list p { color: #7a8699; font-size: .75rem; }
 .notification-list p { margin: .3rem 0 0; }
-.notification-popover > a { color: var(--student-primary); display: block; font-size: .78rem; font-weight: 700; padding: .8rem; text-align: center; }
+.notification-popover > a { color: var(--daemon-primary); display: block; font-size: .78rem; font-weight: 700; padding: .8rem; text-align: center; }
 .notification-empty { padding: 1.2rem; text-align: center; }
 
 .profile-menu {
-  border: 1px solid var(--student-border);
+  border: 1px solid var(--daemon-border);
   border-radius: 12px;
   box-shadow: 0 18px 45px rgba(25, 42, 70, .14);
   min-width: 230px;
@@ -116,7 +116,7 @@
 .profile-menu-summary { display: grid; padding: .7rem .85rem; }
 .profile-menu-summary span { color: #7a8699; font-size: .75rem; margin-top: .2rem; }
 :host ::ng-deep .profile-menu .ant-dropdown-menu-item { border-radius: 8px; gap: .6rem; margin: .1rem 0; }
-:host ::ng-deep .profile-menu .logout-item { color: #dc2626; }
+:host ::ng-deep .profile-menu .logout-item { color: var(--daemon-danger); }
 
 
 

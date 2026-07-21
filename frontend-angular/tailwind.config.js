@@ -1,4 +1,14 @@
 /** @type {import('tailwindcss').Config} */
+/*
+ * DAEMON — Tailwind theme
+ * ------------------------------------------------------------
+ * The theme values are `var(--daemon-*)` references. The actual
+ * hex values live in `src/styles/_tokens.scss` (single source of
+ * truth). Changing a token there propagates here automatically.
+ *
+ * Phase 1 deliverable (2026-07-20). See
+ * docs/sistema-diseno/04-tokens-y-tema.md for the rationale.
+ */
 module.exports = {
   content: [
     "./src/**/*.{html,ts}",
@@ -6,71 +16,99 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        daemon: {
-          ink: '#111827',
-          canvas: '#f6f8fc',
-          electric: '#2563eb',
-          indigo: '#6366f1',
-          purple: '#9333ea',
-          gold: '#fbbf24',
-          mint: '#2dd4bf',
-        },
+        /* === SUPERFICIE === */
+        canvas:          'var(--daemon-canvas)',
+        surface:         'var(--daemon-surface)',
+        'surface-muted': 'var(--daemon-surface-muted)',
+        'surface-elevated': 'var(--daemon-surface-elevated)',
+        border:          'var(--daemon-border)',
+        'border-strong': 'var(--daemon-border-strong)',
+
+        /* === TIPOGRAFÍA === */
+        ink:        'var(--daemon-ink)',
+        'ink-soft': 'var(--daemon-ink-soft)',
+        muted:      'var(--daemon-muted)',
+        'on-primary': 'var(--daemon-on-primary)',
+        'on-accent':  'var(--daemon-on-accent)',
+
+        /* === ACCIÓN PRIMARIA === */
         primary: {
-          DEFAULT: '#17243c',
-          50: '#f4f6f9',
-          100: '#e4eaf1',
-          200: '#cbd5e5',
-          300: '#a3b7d1',
-          400: '#7592ba',
-          500: '#5272a2',
-          600: '#3f5885',
-          700: '#34476c',
-          800: '#2d3c5a',
-          900: '#17243c',
-          950: '#101626',
+          DEFAULT: 'var(--daemon-primary)',
+          soft:    'var(--daemon-primary-soft)',
+          dark:    'var(--daemon-primary-dark)',
         },
+
+        /* === ACENTO DAEMONS === */
         accent: {
-          DEFAULT: '#ffc414',
-          50: '#fffdf0',
-          100: '#fff9d6',
-          200: '#fff1ac',
-          300: '#ffe476',
-          400: '#ffd036',
-          500: '#ffc414',
-          600: '#dca003',
-          700: '#b07500',
-          800: '#8f5c07',
-          900: '#76490c',
-          950: '#442602',
+          DEFAULT: 'var(--daemon-accent)',
+          soft:    'var(--daemon-accent-soft)',
+          dark:    'var(--daemon-accent-dark)',
         },
-        success: '#047857',
-        danger: '#9f1239',
-        warning: '#6d4b00',
-        background: '#f6f8fc',
-        surface: '#ffffff',
-      },
-      fontFamily: {
-        sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        heading: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+
+        /* === SEMÁNTICOS === */
+        success: { DEFAULT: 'var(--daemon-success)', soft: 'var(--daemon-success-soft)' },
+        warning: { DEFAULT: 'var(--daemon-warning)', soft: 'var(--daemon-warning-soft)' },
+        danger:  { DEFAULT: 'var(--daemon-danger)',  soft: 'var(--daemon-danger-soft)'  },
+        info:    { DEFAULT: 'var(--daemon-info)',    soft: 'var(--daemon-info-soft)'    },
+
+        /* === NIVELES === */
+        kids: {
+          DEFAULT: 'var(--daemon-kids)',
+          soft:    'var(--daemon-kids-soft)',
+          border:  'var(--daemon-kids-border)',
+        },
+        teens: {
+          DEFAULT: 'var(--daemon-teens)',
+          soft:    'var(--daemon-teens-soft)',
+          border:  'var(--daemon-teens-border)',
+        },
+
+        /* === DOCENTE / TUTOR === */
+        docente: { DEFAULT: 'var(--daemon-docente)', soft: 'var(--daemon-docente-soft)' },
+        tutor:   { DEFAULT: 'var(--daemon-tutor)',   soft: 'var(--daemon-tutor-soft)',   ink: 'var(--daemon-tutor-ink)' },
       },
       borderRadius: {
-        '4xl': '2rem',
-        '5xl': '2.5rem',
+        sm:     'var(--daemon-radius-sm)',
+        md:     'var(--daemon-radius-md)',
+        lg:     'var(--daemon-radius-lg)',
+        card:   'var(--daemon-radius-card)',
+        banner: 'var(--daemon-radius-banner)',
+      },
+      maxWidth: {
+        page: 'var(--daemon-page-max)',
+      },
+      padding: {
+        page: 'var(--daemon-page-pad)',
       },
       boxShadow: {
-        'sm': '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-        'md': '0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04)',
-        'lg': '0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04)',
-        'xl': '0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-        'soft': '0 2px 10px rgba(23, 36, 60, 0.04)',
-        'popover': '0 12px 32px rgba(0, 0, 0, 0.1)',
-        'premium': '0 4px 6px -1px rgba(0, 0, 0, 0.03), 0 12px 24px -4px rgba(0, 0, 0, 0.05), 0 24px 48px -12px rgba(0, 0, 0, 0.08)',
-        'premium-hover': '0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 20px 30px -5px rgba(0, 0, 0, 0.08), 0 32px 64px -12px rgba(0, 0, 0, 0.12)',
-        'bento': '0 24px 70px -34px rgba(30, 64, 175, .28)',
-        'bento-hover': '0 32px 78px -30px rgba(30, 64, 175, .34)',
-        'glass': '0 18px 60px -28px rgba(15, 23, 42, .28)'
-      }
+        soft:    'var(--daemon-shadow-soft)',
+        popover: 'var(--daemon-shadow-popover)',
+        premium: 'var(--daemon-shadow-premium)',
+        bento:   'var(--daemon-shadow-bento)',
+      },
+      transitionTimingFunction: {
+        'ease-out-daemon': 'var(--daemon-ease-out)',
+      },
+      transitionDuration: {
+        fast: 'var(--daemon-duration-fast)',
+        base: 'var(--daemon-duration-base)',
+        slow: 'var(--daemon-duration-slow)',
+      },
+      zIndex: {
+        content:  'var(--daemon-z-content)',
+        sticky:   'var(--daemon-z-sticky)',
+        sidebar:  'var(--daemon-z-sidebar)',
+        topbar:   'var(--daemon-z-topbar)',
+        dropdown: 'var(--daemon-z-dropdown)',
+        modal:    'var(--daemon-z-modal)',
+        toast:    'var(--daemon-z-toast)',
+        tooltip:  'var(--daemon-z-tooltip)',
+      },
+      fontFamily: {
+        sans:    ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        heading: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+      },
     },
   },
   plugins: [],
-}
+};

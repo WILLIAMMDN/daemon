@@ -34,8 +34,8 @@
 }
 
 .home-link:hover {
-  border-color: #15326b;
-  color: #15326b;
+  border-color: var(--daemon-primary-dark);
+  color: var(--daemon-primary-dark);
 }
 
 .login-stage {
@@ -75,7 +75,7 @@
 }
 
 .card-accent {
-  background: #15326b;
+  background: var(--daemon-primary-dark);
   height: 5px;
   margin: 0 calc(clamp(1.5rem, 7vw, 3.15rem) * -1) 0;
 }
@@ -131,9 +131,9 @@
 }
 
 .portal-switch .is-active {
-  background: #15326b;
+  background: var(--daemon-primary-dark);
   color: #ffffff;
-  box-shadow: 0 5px 14px #15326b26;
+  box-shadow: 0 5px 14px color-mix(in srgb, var(--daemon-primary-dark) 15%, transparent);
 }
 
 .rive-medallion {
@@ -209,8 +209,8 @@
 }
 
 .classic-field:focus-within {
-  border-color: #15326b;
-  box-shadow: 0 0 0 3px rgba(21, 50, 107, .12);
+  border-color: var(--daemon-primary-dark);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--daemon-primary-dark) 12%, transparent);
 }
 
 .field-icon {
@@ -240,7 +240,11 @@
   font-weight: 500;
   min-width: 0;
   outline: 0;
-  padding: 0 1.25rem;
+  padding: 0 3.5rem 0 1.25rem;
+}
+
+.classic-field input[type='text'] {
+  padding-right: 3.5rem;
 }
 
 .classic-field input::placeholder {
@@ -252,16 +256,19 @@
   align-items: center;
   background: #ffffff;
   border: 0;
+  border-left: 1px solid #dbe2ec;
   color: #0f172a;
   cursor: pointer;
   display: inline-flex;
   justify-content: center;
   min-width: 58px;
   padding: 0 1rem;
+  position: relative;
+  z-index: 2;
 }
 
 .field-action:hover {
-  color: #15326b;
+  color: var(--daemon-primary-dark);
 }
 
 .field-error {
@@ -272,7 +279,7 @@
 }
 
 .help-link {
-  color: #15326b;
+  color: var(--daemon-primary-dark);
   font-size: 1rem;
   font-weight: 720;
   justify-self: end;
@@ -298,10 +305,10 @@
 }
 
 .submit-button {
-  background: #15326b;
+  background: var(--daemon-primary-dark);
   border: 0;
   border-radius: 6px;
-  box-shadow: 0 12px 24px rgba(21, 50, 107, .2);
+  box-shadow: 0 12px 24px color-mix(in srgb, var(--daemon-primary-dark) 20%, transparent);
   color: #ffffff;
   cursor: pointer;
   font-size: 1.1rem;
@@ -311,7 +318,7 @@
 }
 
 .submit-button:hover:not(:disabled) {
-  background: #0f2857;
+  background: var(--daemon-primary);
 }
 
 .submit-button:disabled {
@@ -414,7 +421,7 @@
 }
 
 .login-footer a {
-  color: #15326b;
+  color: var(--daemon-primary-dark);
   font-weight: 600;
   text-decoration: none;
 }

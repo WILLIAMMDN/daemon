@@ -37,8 +37,27 @@ jobs:
         working-directory: frontend-angular
 
       - name: Stamp app shell release
-        run: node -e 'const fs = require("fs"); const path = "src/index.html"; const html = fs.readFileSync(path, "utf8"); const stamped = html.replace(/(<meta name="daemon-release" content=")[^"]+("[^>]*>)/, `$1${process.env.GITHUB_SHA}$2`); if (stamped === html) throw new Error("daemon-release meta tag not found"); fs.writeFileSync(path, stamped);'
-        working-directory: frontend-angular
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+        run: |
+          node -e '
+            const fs = require("fs");
+            const path = "src/index.html";
+            const html = fs.readFileSync(path, "utf8");
+            const sha = process.env.GITHUB_SHA;
+            if (!sha || sha === "undefined") {
+              throw new Error("GITHUB_SHA not available; cannot stamp release");
+            }
+            const stamped = html.replace(
+              /(<meta name="daemon-release" content=")[^"]+("[^>]*>)/,
+              `$1${sha}$2`
+            );
+            if (stamped === html) {
+              throw new Error("daemon-release meta tag not found in src/index.html");
+            }
+            fs.writeFileSync(path, stamped);
+            console.log("Stamped daemon-release with " + sha);
+          '
 
       - name: Build frontend
         run: npm run build

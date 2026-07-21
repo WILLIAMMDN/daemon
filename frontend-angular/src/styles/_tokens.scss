@@ -1,0 +1,157 @@
+/* ============================================================
+   DAEMON — Design tokens
+   ------------------------------------------------------------
+   Single source of truth for visual values in the frontend.
+   Consumed by:
+     - src/styles.scss                (typography, base styles)
+     - src/styles/_components.scss    (NG-ZORRO overrides)
+     - src/styles/_popovers.scss      (CDK overlay popovers)
+     - tailwind.config.js             (utility class theme)
+     - src/app/core/dominio/tema-portal-alumno.ts (read at runtime)
+
+   ARQUITECTURA DE TOKENS (4 capas):
+     1. Universales        — no se sobreescriben nunca
+     2. Brand              — default en :root (morado DAEMON, la galería)
+     3. Niveles (KIDS/TEENS) — colores directos para uso específico
+     4. Portal themes      — reescriben --daemon-primary según el portal
+
+   Cómo se aplica el tema:
+     - layout-alumno  agrega .theme-kids  o .theme-teens  al host
+     - layout-docente agrega .theme-docente
+     - layout-tutor   agrega .theme-tutor
+     - /, /login y rutas públicas no llevan clase → heredan brand morado
+
+   RULES:
+     - No hex values outside this file (except allowlist).
+     - No new tokens without a written reason in
+       docs/sistema-diseno/01-auditoria-frontend.md §6.
+     - Changing a token here propagates to all consumers.
+   ============================================================ */
+
+:root {
+  /* === LAYER 1: SUPERFICIE === */
+  --daemon-canvas:           #f4f7fb;
+  --daemon-surface:          #ffffff;
+  --daemon-surface-muted:    #f8fafc;
+  --daemon-surface-elevated: #ffffff;
+  --daemon-border:           #e4eaf2;
+  --daemon-border-strong:    #cbd5e5;
+
+  /* === LAYER 1: TIPOGRAFÍA === */
+  --daemon-ink:        #172033;
+  --daemon-ink-soft:   #334155;
+  --daemon-muted:      #667085;
+  --daemon-on-primary: #ffffff;
+  --daemon-on-accent:  #24194f;
+
+  /* === LAYER 2: BRAND — primary morado DAEMON (la galería) === */
+  --daemon-primary:       #5e34d7;
+  --daemon-primary-soft:  #7359c8;
+  --daemon-primary-dark:  #5730cf;
+
+  /* === LAYER 1: ACENTO DAEMONS (universal, no cambia) === */
+  --daemon-accent:      #ffc414;
+  --daemon-accent-soft: #fff7d6;
+  --daemon-accent-dark: #dca003;
+
+  /* === LAYER 1: SEMÁNTICOS === */
+  --daemon-success:      #12a150;
+  --daemon-success-soft: #e7f8ef;
+  --daemon-warning:      #f5a000;
+  --daemon-warning-soft: #fff4d7;
+  --daemon-danger:       #b42331;
+  --daemon-danger-soft:  #ffe5e9;
+  --daemon-info:         #2563eb;
+  --daemon-info-soft:    #eff6ff;
+
+  /* === LAYER 3: NIVELES (colores directos para uso específico) === */
+  --daemon-kids:        #00b4d8;
+  --daemon-kids-soft:   #e8f9fc;
+  --daemon-kids-border: #b8edf5;
+  --daemon-teens:       #1677ff;
+  --daemon-teens-soft:  #edf5ff;
+  --daemon-teens-border: #cfe3ff;
+
+  /* === LAYER 3: DOCENTE / TUTOR (colores directos) === */
+  --daemon-docente:      #19c1d0;
+  --daemon-docente-soft: #e9fbfd;
+  --daemon-tutor:        #ffc414;
+  --daemon-tutor-soft:   #fff8dc;
+  --daemon-tutor-ink:    #24194f;
+
+  /* === RADIO === */
+  --daemon-radius-sm:     8px;
+  --daemon-radius-md:     12px;
+  --daemon-radius-lg:     16px;
+  --daemon-radius-card:   14px;
+  --daemon-radius-banner: 22px;
+
+  /* === ESPACIO === */
+  --daemon-space-1:  0.25rem;
+  --daemon-space-2:  0.5rem;
+  --daemon-space-3:  0.75rem;
+  --daemon-space-4:  1rem;
+  --daemon-space-6:  1.5rem;
+  --daemon-space-8:  2rem;
+  --daemon-page-pad: clamp(1rem, 2.5vw, 1.5rem);
+  --daemon-page-max: 1280px;
+
+  /* === SOMBRAS === */
+  --daemon-shadow-soft:    0 2px 10px rgba(23, 36, 60, 0.04);
+  --daemon-shadow-popover: 0 12px 32px rgba(0, 0, 0, 0.10);
+  --daemon-shadow-premium: 0 4px 6px -1px rgba(0, 0, 0, 0.03),
+                           0 12px 24px -4px rgba(0, 0, 0, 0.05),
+                           0 24px 48px -12px rgba(0, 0, 0, 0.08);
+  --daemon-shadow-bento:   0 24px 70px -34px rgba(30, 64, 175, 0.28);
+
+  /* === TRANSICIONES === */
+  --daemon-ease-out:        cubic-bezier(0.2, 0.7, 0.25, 1);
+  --daemon-duration-fast:   120ms;
+  --daemon-duration-base:   180ms;
+  --daemon-duration-slow:   280ms;
+
+  /* === Z-INDEX === */
+  --daemon-z-content:    1;
+  --daemon-z-sticky:     100;
+  --daemon-z-sidebar:    200;
+  --daemon-z-topbar:     300;
+  --daemon-z-dropdown:   1000;
+  --daemon-z-modal:      1050;
+  --daemon-z-toast:      1100;
+  --daemon-z-tooltip:    1200;
+}
+
+/* ============================================================
+   LAYER 4: PORTAL THEMES
+   Reescriben --daemon-primary según el contexto.
+   El layout agrega la clase al host del componente.
+   ============================================================ */
+
+/* KIDS — cyan (sidebar KIDS) */
+.theme-kids {
+  --daemon-primary:      #00b4d8;
+  --daemon-primary-soft: #e8f9fc;
+  --daemon-primary-dark: #0077b6;
+}
+
+/* TEENS — azul con acento amarillo (DAEMONS) */
+.theme-teens {
+  --daemon-primary:      #1677ff;
+  --daemon-primary-soft: #e8f1ff;
+  --daemon-primary-dark: #0958d9;
+}
+
+/* DOCENTE — cyan-teal */
+.theme-docente {
+  --daemon-primary:      #19c1d0;
+  --daemon-primary-soft: #e9fbfd;
+  --daemon-primary-dark: #0e8a96;
+}
+
+/* TUTOR (familias) — amarillo + dark purple ink */
+.theme-tutor {
+  --daemon-primary:      #ffc414;
+  --daemon-primary-soft: #fff7d6;
+  --daemon-primary-dark: #dca003;
+  --daemon-ink:          #24194f;
+}
