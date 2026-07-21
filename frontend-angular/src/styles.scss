@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+@import './styles/tokens';
 @import './styles/layout';
 @import './styles/components';
 @import './styles/popovers';
@@ -9,16 +10,17 @@
 
 @layer base {
   :root {
-    --daemon-canvas: #f4f7fb;
-    --daemon-surface: #ffffff;
-    --daemon-surface-muted: #f8fafc;
-    --daemon-border: #e4eaf2;
-    --daemon-ink: #172033;
-    --daemon-muted: #667085;
-    --daemon-primary: #1677ff;
-    --daemon-primary-dark: #0958d9;
-    --daemon-success: #12a150;
-    --daemon-warning: #f5a000;
+    /* Mapeo de legacy CSS vars para no romper NG-ZORRO u otros hasta migrarlo todo */
+    --daemon-canvas: var(--ds-color-canvas);
+    --daemon-surface: var(--ds-color-surface);
+    --daemon-surface-muted: var(--ds-color-surface-subtle);
+    --daemon-border: var(--ds-color-border);
+    --daemon-ink: var(--ds-color-text-primary);
+    --daemon-muted: var(--ds-color-text-secondary);
+    --daemon-primary: var(--ds-color-brand);
+    --daemon-primary-dark: var(--ds-color-brand-active);
+    --daemon-success: var(--ds-color-success);
+    --daemon-warning: var(--ds-color-warning);
   }
 
   html {
@@ -79,3 +81,18 @@
   }
 }
 @import 'quill/dist/quill.snow.css';
+
+/* Accesibilidad: WCAG 2.3.3 (AAA) y 2.2.2 (AA).
+   Usuarios con prefers-reduced-motion ven una UI sin animaciones
+   decorativas (transiciones, skeletons, hover-bounce). Funcionalidad
+   intacta: el cursor sigue siendo pointer, los focus rings siguen. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

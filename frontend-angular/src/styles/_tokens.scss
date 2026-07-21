@@ -1,0 +1,73 @@
+/* ==========================================================================
+   DAEMON DESIGN SYSTEM - TOKENS
+   ========================================================================== */
+
+:root {
+  /* COLORS: Base */
+  --ds-color-white: #ffffff;
+  --ds-color-black: #000000;
+  --ds-color-transparent: transparent;
+
+  /* COLORS: Semantic Backgrounds */
+  --ds-color-canvas: #f6f8fc;
+  --ds-color-surface: #ffffff;
+  --ds-color-surface-raised: #f4f6f9;
+  --ds-color-surface-subtle: #f8fafc;
+  --ds-color-surface-inverse: #111827;
+
+  /* COLORS: Typography */
+  --ds-color-text-primary: #111827;
+  --ds-color-text-secondary: #667085;
+  --ds-color-text-muted: #a3b7d1;
+  --ds-color-text-inverse: #ffffff;
+
+  /* COLORS: Borders & Dividers */
+  --ds-color-border: #e4eaf2;
+  --ds-color-border-subtle: #f4f6f9;
+  --ds-color-border-strong: #cbd5e5;
+
+  /* COLORS: Brand & Actions */
+  --ds-color-brand: #2563eb;
+  --ds-color-brand-hover: #1d4ed8;
+  --ds-color-brand-active: #1e40af;
+  --ds-color-brand-subtle: #eff6ff;
+
+  --ds-color-accent: #fbbf24;
+  --ds-color-accent-hover: #f59e0b;
+
+  /* COLORS: Feedback */
+  --ds-color-success: #047857;
+  --ds-color-warning: #f5a000;
+  --ds-color-danger: #9f1239;
+  --ds-color-info: #6366f1;
+
+  /* SPACING (Base 4px scale) */
+  --ds-space-2: 0.125rem;
+  --ds-space-4: 0.25rem;
+  --ds-space-8: 0.5rem;
+  --ds-space-12: 0.75rem;
+  --ds-space-16: 1rem;
+  --ds-space-24: 1.5rem;
+  --ds-space-32: 2rem;
+  --ds-space-40: 2.5rem;
+  --ds-space-48: 3rem;
+  --ds-space-64: 4rem;
+
+  /* BORDER RADIUS */
+  --ds-radius-sm: 0.25rem;
+  --ds-radius-md: 0.5rem;
+  --ds-radius-lg: 0.75rem;
+  --ds-radius-xl: 1rem;
+  --ds-radius-2xl: 1.5rem;
+  --ds-radius-full: 9999px;
+
+  /* SHADOWS (Elevations) */
+  --ds-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --ds-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+  --ds-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+  --ds-shadow-soft: 0 2px 10px rgba(23, 36, 60, 0.04);
+  --ds-shadow-premium: 0 4px 6px -1px rgba(0, 0, 0, 0.03), 0 12px 24px -4px rgba(0, 0, 0, 0.05), 0 24px 48px -12px rgba(0, 0, 0, 0.08);
+
+  /* TYPOGRAPHY: Font Families */
+  --ds-font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+}
