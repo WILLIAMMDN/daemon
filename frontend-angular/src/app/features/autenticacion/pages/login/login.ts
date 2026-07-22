@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, NgZone, OnDestroy, ViewChild, signal , ChangeDetectionStrategy} from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, NgZone, OnDestroy, signal, ViewChild } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import {
@@ -53,6 +53,9 @@ export class Login implements AfterViewInit, OnDestroy {
   riveError = signal(false);
   enviando = signal(false);
   error = signal('');
+  vinculacionGoogle = signal(false);
+  usuarioLegacy = '';
+  passwordLegacy = '';
 
   constructor(
     private auth: Autenticacion,
@@ -113,25 +116,7 @@ export class Login implements AfterViewInit, OnDestroy {
       : this.auth.login({ usuario: this.usuario, password: this.password });
 
     acceso.subscribe({
-      next: () => {
-        if (!this.sesion.esAlumno()) {
-          this.error.set('Este acceso es solo para estudiantes. Usa el portal correspondiente a tu cuenta.');
-          this.sesion.limpiar();
-          this.enviando.set(false);
-          this.cargaGlobal.ocultar(carga);
-          this.dispararFallo();
-          return;
-        }
-
-        this.dispararExito();
-        this.cargaGlobal.cambiarMensaje('Abriendo tu portal de estudiante...');
-        this.precargarPanelAlumno();
-        setTimeout(() => {
-          void this.router.navigateByUrl(
-            this.sesion.usuario()?.perfil_completo === false ? '/bienvenida' : '/alumno',
-          ).finally(() => this.cargaGlobal.ocultar(carga));
-        }, 420);
-      },
+      next: () => this.completarAcceso(carga),
       error: (error) => {
         this.error.set(error.error?.message ?? 'Credenciales incorrectas.');
         this.enviando.set(false);
@@ -146,39 +131,117 @@ export class Login implements AfterViewInit, OnDestroy {
     this.error.set('');
     const carga = this.cargaGlobal.mostrar('Conectando con Google...');
 
-    this.auth.loginGoogleFirebase(true).subscribe({
+    this.auth.loginGoogleFirebase(false).subscribe({
       next: () => {
-        if (!this.sesion.esAlumno()) {
-          this.error.set('Este acceso es solo para estudiantes. Usa el portal correspondiente a tu cuenta.');
-          this.sesion.limpiar();
-          this.enviando.set(false);
-          this.cargaGlobal.ocultar(carga);
-          this.dispararFallo();
+        if (this.sesion.usuario()?.perfil_completo === false) {
+          this.mostrarVinculacionGoogle(
+            carga,
+            'Puedes vincular este Google con tu cuenta anterior para conservar progreso, XP y monedas.',
+          );
           return;
         }
 
-        this.dispararExito();
-        this.cargaGlobal.cambiarMensaje('Abriendo tu portal de estudiante...');
-        this.precargarPanelAlumno();
-        setTimeout(() => {
-          void this.router.navigateByUrl(
-            this.sesion.usuario()?.perfil_completo === false ? '/bienvenida' : '/alumno',
-          ).finally(() => this.cargaGlobal.ocultar(carga));
-        }, 420);
+        this.completarAcceso(carga);
       },
       error: (err) => {
         if (err.error?.requires_registration) {
-          this.auth.cerrarSesionGoogle();
+          this.mostrarVinculacionGoogle(
+            carga,
+            'Ese Google no esta vinculado. Confirma tu cuenta anterior o crea una cuenta nueva.',
+          );
+          return;
         }
 
-        this.error.set(err.error?.requires_registration
-          ? 'Ese Google todavia no tiene una cuenta activa. Termina el registro desde Crear cuenta.'
-          : (err.error?.message ?? err.message ?? 'No se pudo iniciar sesion con Google.'));
+        this.error.set(err.error?.message ?? err.message ?? 'No se pudo iniciar sesion con Google.');
         this.enviando.set(false);
         this.cargaGlobal.ocultar(carga);
         this.dispararFallo();
       },
     });
+  }
+
+  vincularCuentaAnterior(form: NgForm): void {
+    const validacion = validarCredenciales(this.usuarioLegacy, this.passwordLegacy);
+    if (form.invalid || validacion) {
+      this.error.set(validacion ?? 'Completa el usuario y la contrasena de tu cuenta anterior.');
+      return;
+    }
+
+    this.enviando.set(true);
+    this.error.set('');
+    const carga = this.cargaGlobal.mostrar('Vinculando tu progreso anterior...');
+
+    this.auth.vincularCuentaLegacyFirebase({
+      usuario: this.usuarioLegacy.trim(),
+      password: this.passwordLegacy,
+    }).subscribe({
+      next: () => {
+        this.vinculacionGoogle.set(false);
+        this.passwordLegacy = '';
+        this.completarAcceso(carga);
+      },
+      error: (err) => {
+        this.error.set(err.error?.message ?? err.message ?? 'No se pudo vincular la cuenta anterior.');
+        this.enviando.set(false);
+        this.cargaGlobal.ocultar(carga);
+        this.dispararFallo();
+      },
+    });
+  }
+
+  crearCuentaNuevaGoogle(): void {
+    this.enviando.set(true);
+    this.error.set('');
+    const carga = this.cargaGlobal.mostrar('Creando tu cuenta DAEMON...');
+
+    this.auth.crearCuentaGoogleActual().subscribe({
+      next: () => {
+        this.vinculacionGoogle.set(false);
+        this.completarAcceso(carga);
+      },
+      error: (err) => {
+        this.error.set(err.error?.message ?? err.message ?? 'No se pudo crear la cuenta con Google.');
+        this.enviando.set(false);
+        this.cargaGlobal.ocultar(carga);
+        this.dispararFallo();
+      },
+    });
+  }
+
+  cancelarVinculacionGoogle(): void {
+    this.auth.cerrarSesionGoogle();
+    this.sesion.limpiar();
+    this.vinculacionGoogle.set(false);
+    this.usuarioLegacy = '';
+    this.passwordLegacy = '';
+    this.error.set('');
+  }
+
+  private mostrarVinculacionGoogle(carga: symbol, mensaje: string): void {
+    this.vinculacionGoogle.set(true);
+    this.error.set(mensaje);
+    this.enviando.set(false);
+    this.cargaGlobal.ocultar(carga);
+  }
+
+  private completarAcceso(carga: symbol): void {
+    if (!this.sesion.esAlumno()) {
+      this.error.set('Este acceso es solo para estudiantes. Usa el portal correspondiente a tu cuenta.');
+      this.sesion.limpiar();
+      this.enviando.set(false);
+      this.cargaGlobal.ocultar(carga);
+      this.dispararFallo();
+      return;
+    }
+
+    this.dispararExito();
+    this.cargaGlobal.cambiarMensaje('Abriendo tu portal de estudiante...');
+    this.precargarPanelAlumno();
+    setTimeout(() => {
+      void this.router.navigateByUrl(
+        this.sesion.usuario()?.perfil_completo === false ? '/bienvenida' : '/alumno',
+      ).finally(() => this.cargaGlobal.ocultar(carga));
+    }, 420);
   }
 
   private precargarPanelAlumno(): void {

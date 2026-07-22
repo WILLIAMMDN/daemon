@@ -214,6 +214,115 @@ class AutenticacionService
         return $usuario->fresh();
     }
 
+    /**
+     * Vincula una identidad Firebase ya validada con una cuenta legacy.
+     * La clave local demuestra propiedad de la cuenta historica; nunca se
+     * enlaza por nombre, correo inferido ni coincidencias parciales.
+     *
+     * @param  array{uid?: mixed, email?: mixed, email_verified?: mixed, google_id?: mixed, picture?: mixed, provider?: mixed}  $claims
+     * @param  array{usuario: string, password: string}  $credenciales
+     */
+    public function vincularCuentaLegacyFirebase(array $claims, array $credenciales): Usuario
+    {
+        $firebaseUid = trim((string) ($claims['uid'] ?? ''));
+        $email = isset($claims['email']) ? mb_strtolower(trim((string) $claims['email'])) : null;
+        $googleId = isset($claims['google_id']) ? trim((string) $claims['google_id']) : null;
+        $provider = trim((string) ($claims['provider'] ?? ''));
+
+        if ($firebaseUid === '' || $provider !== 'google.com' || blank($googleId)) {
+            throw new InvalidArgumentException('La vinculacion requiere una identidad de Google valida.');
+        }
+
+        return DB::transaction(function () use ($claims, $credenciales, $email, $firebaseUid, $googleId): Usuario {
+            $usuario = Usuario::query()
+                ->where('usuario', $credenciales['usuario'])
+                ->lockForUpdate()
+                ->first();
+
+            if (! $usuario || ! Hash::check($credenciales['password'], $usuario->password_hash)) {
+                throw new InvalidArgumentException('Usuario o contrasena incorrectos.');
+            }
+
+            if ($usuario->rol !== 'alumno') {
+                throw new InvalidArgumentException('Este acceso solo puede vincular cuentas de estudiante.');
+            }
+
+            if (filled($usuario->firebase_uid) && $usuario->firebase_uid !== $firebaseUid) {
+                throw new InvalidArgumentException('La cuenta DAEMON ya esta vinculada a otra identidad.');
+            }
+
+            if (filled($usuario->google_id) && $usuario->google_id !== $googleId) {
+                throw new InvalidArgumentException('La cuenta DAEMON ya esta vinculada a otro Google.');
+            }
+
+            $propietarioFirebase = Usuario::query()
+                ->where('firebase_uid', $firebaseUid)
+                ->lockForUpdate()
+                ->first();
+
+            if ($propietarioFirebase && $propietarioFirebase->id !== $usuario->id) {
+                $esPlaceholderSeguro = $propietarioFirebase->rol === 'alumno'
+                    && ! $propietarioFirebase->perfil_completo
+                    && blank($propietarioFirebase->usuario);
+
+                if (! $esPlaceholderSeguro) {
+                    throw new InvalidArgumentException('Este Google ya esta vinculado a otra cuenta DAEMON.');
+                }
+
+                $propietarioFirebase->tokens()->delete();
+                $propietarioFirebase->delete();
+            }
+
+            if ($email) {
+                $propietarioEmail = Usuario::query()
+                    ->whereRaw('LOWER(email) = ?', [$email])
+                    ->whereKeyNot($usuario->id)
+                    ->lockForUpdate()
+                    ->first();
+
+                if ($propietarioEmail) {
+                    throw new InvalidArgumentException('El correo de Google ya pertenece a otra cuenta DAEMON.');
+                }
+            }
+
+            if ($googleId) {
+                $propietarioGoogle = Usuario::query()
+                    ->where('google_id', $googleId)
+                    ->whereKeyNot($usuario->id)
+                    ->lockForUpdate()
+                    ->first();
+
+                if ($propietarioGoogle) {
+                    throw new InvalidArgumentException('La identidad de Google ya pertenece a otra cuenta DAEMON.');
+                }
+            }
+
+            $actualizacion = ['firebase_uid' => $firebaseUid];
+
+            if ($email && blank($usuario->email)) {
+                $actualizacion['email'] = $email;
+            }
+            if ($googleId && blank($usuario->google_id)) {
+                $actualizacion['google_id'] = $googleId;
+            }
+            if (($claims['picture'] ?? null) && blank($usuario->avatar)) {
+                $actualizacion['avatar'] = $claims['picture'];
+            }
+
+            $usuario->update($actualizacion);
+
+            $correoFirebaseEsElDeLaCuenta = $email
+                && mb_strtolower(trim((string) $usuario->email)) === $email;
+            if ($correoFirebaseEsElDeLaCuenta && ($claims['email_verified'] ?? false)) {
+                $usuario->markEmailAsVerified();
+            }
+
+            $usuario->tokens()->delete();
+
+            return $usuario->fresh();
+        });
+    }
+
     public function autenticarTutorConFirebase(array $claims, bool $crearCuenta = false): ?Usuario
     {
         $firebaseUid = (string) ($claims['uid'] ?? '');
