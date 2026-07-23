@@ -37,6 +37,7 @@ jobs:
         working-directory: frontend-angular
 
       - name: Stamp app shell release
+        working-directory: frontend-angular
         env:
           GITHUB_SHA: ${{ github.sha }}
         run: |
