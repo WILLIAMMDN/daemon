@@ -1,0 +1,56 @@
+.aula-layout {
+  --aula-grafito-principal: rgb(32 37 42);
+  --aula-grafito-secundario: rgb(49 56 63);
+  --aula-bronce: rgb(184 132 53);
+  --aula-bronce-activo: rgb(154 107 39);
+  --aula-fondo: rgb(244 242 237);
+  --aula-superficie: rgb(255 255 255);
+  --aula-texto-principal: rgb(34 39 43);
+  --aula-texto-secundario: rgb(98 106 112);
+  --aula-texto-sobre-oscuro: rgb(244 242 237);
+  --aula-borde: rgb(216 213 206);
+  --aula-borde-sutil: rgb(234 231 224);
+  --aula-exito: rgb(57 114 87);
+  --aula-error: rgb(168 59 59);
+  --aula-advertencia: rgb(166 106 32);
+  --aula-info: rgb(46 90 136);
+
+  background: var(--aula-fondo);
+  color: var(--aula-texto-principal);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  .aula-sidebar,
+  .ant-menu-dark {
+    background: var(--aula-grafito-principal);
+  }
+
+  .ant-menu-dark .ant-menu-item-selected,
+  .ant-menu-dark .ant-menu-item-selected:hover {
+    background: var(--aula-bronce-activo);
+  }
+
+  .aula-topbar,
+  .ant-layout-header {
+    background: var(--aula-superficie);
+  }
+
+  .ant-layout-content {
+    background: var(--aula-fondo);
+  }
+
+  .ant-btn {
+    border-radius: 6px;
+  }
+
+  .ant-btn-primary {
+    background: var(--aula-bronce);
+    border-color: var(--aula-bronce);
+    box-shadow: none;
+  }
+
+  .ant-btn-primary:hover,
+  .ant-btn-primary:focus-visible {
+    background: var(--aula-bronce-activo);
+    border-color: var(--aula-bronce-activo);
+  }
+}
