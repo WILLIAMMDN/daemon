@@ -1,10 +1,7 @@
 <div
   class="portal student-premium"
+  [class]="'theme-' + temaPortal().atributo"
   [attr.data-nivel-alumno]="temaPortal().atributo"
-  [style.--student-primary]="temaPortal().colorPrincipal"
-  [style.--student-primary-dark]="temaPortal().colorPrincipalOscuro"
-  [style.--student-primary-soft]="temaPortal().colorSuave"
-  [style.--student-primary-border]="temaPortal().colorBorde"
 >
   <app-sidebar-portal
     #sidebar

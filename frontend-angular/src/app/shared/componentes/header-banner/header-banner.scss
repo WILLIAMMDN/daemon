@@ -77,29 +77,36 @@
 
 @media (max-width: 760px) {
   .module-hero {
-    padding: 1.25rem 1.25rem 0;
+    padding: 1.5rem;
     flex-direction: column;
     align-items: flex-start;
+    min-height: auto;
   }
 
   .module-hero__art {
-    position: relative;
-    right: auto;
-    bottom: auto;
-    align-self: center;
-    margin: -0.75rem 0 -0.5rem;
-    height: 180px;
+    display: none;
   }
 
   .module-hero__content {
     padding-right: 0;
     max-width: 100%;
-    padding-top: 0.5rem;
+  }
+
+  ::ng-deep .module-hero__actions {
+    flex-direction: column;
+    width: 100%;
+    align-items: stretch;
+  }
+
+  ::ng-deep .module-hero__actions .btn-cta-primary,
+  ::ng-deep .module-hero__actions .btn-cta-secondary {
+    width: 100%;
+    justify-content: center;
   }
 }
 
 @media (max-width: 540px) {
-  .module-hero__art {
-    height: 150px;
+  ::ng-deep .module-hero__title {
+    font-size: 1.6rem;
   }
 }

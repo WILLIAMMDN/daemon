@@ -40,7 +40,7 @@
 }
 
 .hero-slide--contain-left {
-  background: #15326b;
+  background: var(--daemon-primary-dark);
   object-fit: contain;
   object-position: center;
 }
@@ -64,7 +64,7 @@
 }
 
 .hero-cut-fill {
-  fill: #15326b;
+  fill: var(--daemon-primary-dark);
 }
 
 .hero-cut-line {
@@ -85,7 +85,7 @@
 }
 
 .hero-cut-mobile path {
-  fill: #15326b;
+  fill: var(--daemon-primary-dark);
 }
 
 .hero-carousel-controls {
@@ -108,7 +108,7 @@
   background: rgba(255, 255, 255, .92);
   border: 0;
   border-radius: 999px;
-  color: #15326b;
+  color: var(--daemon-primary-dark);
   cursor: pointer;
   display: inline-flex;
   font-size: 1.55rem;

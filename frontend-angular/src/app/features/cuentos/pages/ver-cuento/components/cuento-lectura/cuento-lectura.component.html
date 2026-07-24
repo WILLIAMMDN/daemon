@@ -1,0 +1,80 @@
+        <article class="bg-surface border border-border rounded-[24px] shadow-soft overflow-hidden flex flex-col h-full w-full">
+          <!-- Toolbar de Lectura -->
+          <div class="flex justify-between items-center px-6 py-3 border-b border-border/40 bg-canvas/30">
+            <button (click)="onToggleModoLectura.emit()" class="flex items-center gap-2 text-xs font-bold transition-colors" [class.text-primary]="modoLectura" [class.text-muted]="!modoLectura" [class.hover:text-ink]="!modoLectura">
+              <fa-icon [icon]="faBookOpenReader"></fa-icon> Modo lectura
+            </button>
+            <div class="flex items-center gap-4 text-muted">
+              <button (click)="onCambiarFuente.emit(-0.1)" class="text-sm font-bold hover:text-ink transition-colors" title="Reducir fuente">A-</button>
+              <button (click)="onCambiarFuente.emit(0.1)" class="text-base font-bold hover:text-ink transition-colors" title="Aumentar fuente">A+</button>
+              <button (click)="onReaccionar.emit('encanto')" [class.text-pink-500]="miReaccion === 'encanto'" class="hover:text-pink-500 transition-colors ml-2"><fa-icon [icon]="faHeart"></fa-icon></button>
+              <button (click)="onGuardar.emit()" [class.text-primary]="guardado" class="hover:text-primary transition-colors"><fa-icon [icon]="faBookmark"></fa-icon></button>
+              <button (click)="onCompartir.emit()" class="hover:text-primary transition-colors"><fa-icon [icon]="faShareNodes"></fa-icon></button>
+              <button class="text-xl leading-none hover:text-ink mb-2">...</button>
+            </div>
+          </div>
+
+          <!-- Contenido del Cuento (Libro Interactivo Calcando crear-cuento) -->
+          <div class="p-4 md:p-6 relative flex-1 flex flex-col w-full" #contenedorLectura>
+            <section class="crear-editor w-full border-none shadow-none" style="padding: 0; max-width: 100%;">
+              
+              <!-- ───── EDITOR (Quill) + ILUSTRACIÓN DE PÁGINA ───── -->
+              <div class="crear-pagina-editor">
+                <div class="quill-wrapper" [style.background-color]="paginaActiva?.colorFondo || '#ffffff'">
+
+                  <!-- TEXTO -->
+                  @if (paginaActiva?.contenido) {
+                    <quill-view-html class="custom-quill-page block h-full w-full" [style.font-size.rem]="escalaFuente" [content]="paginaActiva.contenido" theme="snow"></quill-view-html>
+                  } @else {
+                    <div class="custom-quill-page p-8 text-center text-muted italic my-10">Página sin contenido.</div>
+                  }
+
+                  <!-- Panel de ilustración de la PÁGINA ACTIVA -->
+                  <div class="pagina-illust" [class.hidden]="!paginaActiva?.ilustracion">
+                    <div class="pagina-illust__inner bg-transparent shadow-none">
+                      @if (paginaActiva?.ilustracion) {
+                        <img [src]="resolverImagen(paginaActiva.ilustracion)" class="pagina-illust__img object-cover h-full w-full" alt="Ilustración" />
+                      }
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ───── GESTOR DE PÁGINAS ───── -->
+              <div class="crear-paginas mt-6 rounded-b-[24px]">
+                <div class="crear-paginas__header">
+                  <span class="crear-paginas__label">Páginas de la historia</span>
+                  <!-- Controles de pasar hoja -->
+                  <div class="flex gap-2">
+                      <button (click)="anteriorPagina()" [disabled]="paginaActualIndex() === 0" class="text-xs font-bold text-muted px-2 py-1 bg-surface rounded hover:bg-canvas disabled:opacity-50">
+                        <fa-icon [icon]="faChevronLeft"></fa-icon> Anterior
+                      </button>
+                      <button (click)="siguientePagina()" [disabled]="paginaActualIndex() === paginasCuento.length - 1" class="text-xs font-bold text-muted px-2 py-1 bg-surface rounded hover:bg-canvas disabled:opacity-50">
+                        Siguiente <fa-icon [icon]="faChevronRight"></fa-icon>
+                      </button>
+                  </div>
+                </div>
+
+                <div class="crear-paginas__list flex flex-wrap gap-2 mt-2">
+                  @for (pagina of paginasCuento; track pagina.id; let i = $index) {
+                    <button
+                      type="button"
+                      class="crear-paginas__item"
+                      [class.crear-paginas__item--active]="paginaActualIndex() === i"
+                      (click)="irAPagina(i)"
+                    >
+                      <div class="crear-paginas__item-bg" [style.background-color]="pagina.colorFondo"></div>
+                      @if (pagina.ilustracion) {
+                        <img [src]="resolverImagen(pagina.ilustracion)" alt="" class="crear-paginas__item-thumb" />
+                      }
+                      <span class="crear-paginas__item-label">
+                        {{ i === 0 ? 'PORTADA' : 'PÁG ' + i }}
+                      </span>
+                    </button>
+                  }
+                </div>
+              </div>
+
+            </section>
+          </div>
+        </article>

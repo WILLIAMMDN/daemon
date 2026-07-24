@@ -212,3 +212,22 @@ There is no local/staging DB. So:
 - KIDS/TEENS privacy and retention: `docs/privacidad-kids-teens.md`
 - Family/guardian portal: `docs/portal-familias.md`
 - July 2026 release evidence: `docs/release-2026-07-14-portal-alumno.md`
+- **Design system redesign (in progress): `docs/sistema-diseno/`** —
+  read `00-resumen-ejecutivo.md` first. Source of truth for the UI/UX
+  migration. Decisions D-01 through D-10 are closed; do not reopen
+  without talking to the owner. Current phase: **Phase 0 closed, Phase 1
+  pending start** (token consolidation + style-tokens linter).
+
+## Arquitectura y Diseño Premium (DAEMON)
+
+El sistema de diseño de DAEMON está diseñado para ser inmersivo, gamificado y de calidad "Enterprise", no un simple panel básico.
+
+Para construir interfaces en este proyecto, **DEBES referirte a los manuales maestros de estética y distribución**. No impongas reglas básicas que limiten la calidad del producto.
+
+Las guías supremas para el desarrollo de UI/UX son:
+1. `docs/SISTEMA_DISENO_PREMIUM.md` (Para la estética, uso de 3D, contrastes y gradientes profundos).
+2. `docs/ESTRUCTURA_COMPONENTES.md` (Para los Layouts asimétricos, CSS Grid y Responsividad corporativa).
+
+**Referencia Canónica:** La galería de historias (`/alumno/proyectos/cuentos`) es el estándar visual supremo que todos los demás módulos deben alcanzar o superar en cuanto a calidad de assets, paleta de colores inmersiva y distribución de tarjetas.
+
+Las herramientas base son Tailwind CSS y NG-ZORRO, pero deben aplicarse con un criterio arquitectónico avanzado (Sistemas de Componentes, no solo clases amontonadas).

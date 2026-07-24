@@ -1,0 +1,72 @@
+<nz-layout class="aula-layout">
+  <nz-sider
+    class="aula-sidebar"
+    nzBreakpoint="lg"
+    [nzCollapsed]="sidebarColapsada()"
+    [nzCollapsedWidth]="0"
+    [nzTrigger]="null"
+    [nzWidth]="240"
+    (nzCollapsedChange)="sidebarColapsada.set($event)"
+  >
+    <a class="aula-marca" routerLink="/aula/inicio" aria-label="Ir al inicio de DAEMON Aula">
+      <strong>DAEMON</strong>
+      <span>Aula</span>
+    </a>
+
+    <p class="aula-seccion">Operaciones</p>
+    <ul nz-menu nzMode="inline" nzTheme="dark" aria-label="Navegación principal del Aula">
+      @for (enlace of enlaces; track enlace.ruta) {
+        <li
+          nz-menu-item
+          routerLinkActive="ant-menu-item-selected"
+          [routerLinkActiveOptions]="{ exact: enlace.ruta === '/aula/inicio' }"
+        >
+          <a [routerLink]="enlace.ruta">{{ enlace.etiqueta }}</a>
+        </li>
+      }
+    </ul>
+  </nz-sider>
+
+  <nz-layout class="aula-workspace">
+    <nz-header class="aula-topbar">
+      <div class="aula-topbar__navegacion">
+        <button
+          nz-button
+          nzType="text"
+          type="button"
+          class="aula-menu-movil"
+          [attr.aria-expanded]="!sidebarColapsada()"
+          aria-label="Alternar menú de navegación"
+          (click)="alternarSidebar()"
+        >
+          Menú
+        </button>
+
+        <nz-breadcrumb>
+          <nz-breadcrumb-item>Aula</nz-breadcrumb-item>
+          <nz-breadcrumb-item>Gestión académica</nz-breadcrumb-item>
+        </nz-breadcrumb>
+      </div>
+
+      <div class="aula-cuenta">
+        <nz-badge
+          class="aula-conexion"
+          [nzStatus]="firestoreDisponible ? 'success' : 'error'"
+          [nzText]="firestoreDisponible ? 'Firestore inicializado' : 'Firestore no disponible'"
+        />
+
+        <nz-avatar [nzText]="iniciales()" />
+        <span class="aula-cuenta__identidad">
+          <strong>{{ nombreUsuario() }}</strong>
+          <small>{{ rolUsuario() }}</small>
+        </span>
+
+        <button nz-button nzType="default" type="button" (click)="salir()">Salir</button>
+      </div>
+    </nz-header>
+
+    <nz-content class="aula-contenido">
+      <router-outlet />
+    </nz-content>
+  </nz-layout>
+</nz-layout>

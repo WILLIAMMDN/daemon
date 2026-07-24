@@ -1,49 +1,689 @@
-<main class="student-module-page w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-6 md:gap-8 font-inter">
-  @if (cargando()) {
-    <div class="py-12 bg-white rounded-2xl shadow-sm border border-slate-100">
-      <app-cargando texto="Cargando cuento..."></app-cargando>
-    </div>
-  } @else {
-    <!-- Cabecera -->
-    <header class="student-module-header flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-      <div class="flex flex-col gap-1">
-        <span class="text-sm font-semibold uppercase tracking-wider text-blue-600">Cuento</span>
-        <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 leading-tight">Mi historia</h1>
-        <p class="text-sm text-slate-600">Guarda o actualiza tu cuento personal.</p>
-      </div>
-      <a routerLink="/alumno/proyectos/cuentos" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium rounded-lg transition-colors whitespace-nowrap text-sm cursor-pointer">
-        Galería
+@if (cargando()) {
+  <app-cargando class="w-full h-64" texto="Preparando tu lienzo..."></app-cargando>
+} @else if (error()) {
+  <!--
+    ERROR DE CARGA: este SÍ bloquea la página. El usuario no podría
+    editar nada si el cuento nunca se cargó. Se ofrece un botón
+    "Reintentar" que llama a `cargar` (no aplica aquí porque es
+    un cuento nuevo, pero queda como gancho).
+  -->
+  <main class="crear-error">
+    <div class="crear-error__card">
+      <h2 class="crear-error__title">No pudimos abrir el editor</h2>
+      <p class="crear-error__msg">{{ error() }}</p>
+      <a routerLink="/alumno/proyectos/cuentos" class="crear-btn crear-btn--primary">
+        Volver a la galería
       </a>
-    </header>
+    </div>
+  </main>
+} @else {
+  <main class="crear-page">
 
-    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 md:p-8">
-      <form (ngSubmit)="guardar()" class="flex flex-col gap-6">
-        <label class="flex flex-col gap-1.5">
-          <span class="text-sm font-semibold text-slate-700">Título</span>
-          <input name="titulo" [(ngModel)]="cuento['titulo']" required placeholder="Escribe un título épico"
-                 class="px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors w-full text-slate-900 text-lg font-bold">
-        </label>
+    <!-- Banner de estado de guardado (no rompe la página) -->
+    @if (errorGuardado(); as msg) {
+      <div class="crear-save-banner crear-save-banner--error" role="alert">
+        <fa-icon [icon]="faTimes" class="crear-save-banner__icon"></fa-icon>
+        <div class="crear-save-banner__body">
+          <strong>No pudimos guardar el cuento.</strong>
+          <p>{{ msg }}</p>
+        </div>
+        <button
+          type="button"
+          class="crear-save-banner__close"
+          (click)="errorGuardado.set(null)"
+          aria-label="Cerrar aviso"
+        >
+          <fa-icon [icon]="faClose"></fa-icon>
+        </button>
+      </div>
+    }
 
-        <div class="quill-container bg-white border border-slate-200 rounded-xl overflow-hidden mt-4">
-          <quill-editor [modules]="quillModules" [(ngModel)]="cuento['contenido']" name="contenido"
-                        placeholder="Érase una vez..."
-                        [styles]="{height: '450px', border: 'none'}">
-          </quill-editor>
+    @if (guardadoOk()) {
+      <div class="crear-save-banner crear-save-banner--ok" role="status">
+        <fa-icon [icon]="faCheck" class="crear-save-banner__icon"></fa-icon>
+        <div class="crear-save-banner__body">
+          <strong>Cuento guardado.</strong>
+          <p>Tus cambios están a salvo.</p>
+        </div>
+      </div>
+    }
+
+    <!-- ─────────────────────────────────────────────────────
+         HERO BANNER (carga / vista previa / galería)
+         ───────────────────────────────────────────────────── -->
+    <div class="crear-hero">
+      <div class="crear-hero__bg" style="background-image: url('/img/headers/bg-cuento-banner.png');"></div>
+      <div class="crear-hero__overlay"></div>
+
+      <div class="crear-hero__content">
+        <div class="crear-hero__title-block">
+          <span class="crear-hero__tag">CUENTO</span>
+          <h1 class="crear-hero__title">Mi historia</h1>
+          <p class="crear-hero__desc">
+            Crea, edita y publica tu cuento con herramientas creativas.
+          </p>
         </div>
 
-        <div class="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-end">
-          <div class="w-full sm:w-auto">
-            <app-boton-accion tipo="guardar" [texto]="guardando() ? 'Guardando...' : 'Guardar cuento'" [esSubmit]="true" [deshabilitado]="guardando() || !cuento['titulo'].trim()" [cargando]="guardando()"></app-boton-accion>
+        <div class="crear-hero__actions">
+          <button type="button" class="crear-hero__btn crear-hero__btn--ghost" (click)="guardar('borrador')" [disabled]="guardando()">
+            @if (guardando()) {
+              <fa-icon [icon]="faSpinner" class="animate-spin"></fa-icon> Guardando...
+            } @else {
+              <fa-icon [icon]="faSave"></fa-icon> Guardar borrador
+            }
+          </button>
+          <button type="button" class="crear-hero__btn crear-hero__btn--ghost" (click)="vistaPrevia()">
+            <fa-icon [icon]="faEye"></fa-icon> Vista previa
+          </button>
+          <a class="crear-hero__btn crear-hero__btn--accent" routerLink="/alumno/proyectos/cuentos">
+            <fa-icon [icon]="faImage"></fa-icon> Galería
+          </a>
+        </div>
+      </div>
+
+      <img src="/img/headers/monster-writer.png" class="crear-hero__art" alt="Mascota" />
+    </div>
+
+    <!-- ─────────────────────────────────────────────────────
+         WORKSPACE
+         ───────────────────────────────────────────────────── -->
+    <div class="crear-workspace">
+
+      <!-- Atajo móvil al sidebar -->
+      <button type="button" class="crear-sidebar-shortcut lg:hidden" (click)="mostrarSidebarMovil.set(true)">
+        <fa-icon [icon]="faGear"></fa-icon> Abrir Herramientas y Publicación
+      </button>
+
+      <!-- ───────── COLUMNA IZQUIERDA: EDITOR ───────── -->
+      <section class="crear-editor">
+
+        <!-- ───── TÍTULO ───── -->
+        <div class="crear-field">
+          <div class="crear-field__label-row">
+            <label class="crear-field__label">Título</label>
+            <span class="crear-field__counter">{{ titulo().length }}/100</span>
+          </div>
+          <input
+            type="text"
+            [ngModel]="titulo()"
+            (ngModelChange)="onTituloChange($event)"
+            class="crear-input crear-input--title"
+            placeholder="Mi nueva historia"
+            maxlength="100"
+          />
+        </div>
+
+        <!-- ───── PORTADA + DESCRIPCIÓN (2 columnas) ───── -->
+        <div class="crear-cover">
+          <div class="crear-cover__col crear-cover__col--image">
+            <div class="crear-field__label-row">
+              <label class="crear-field__label">Portada</label>
+              @if (portada()) {
+                <button type="button" class="crear-cover__clear" (click)="eliminarPortada()" aria-label="Quitar portada">
+                  <fa-icon [icon]="faTimes" class="text-[10px]"></fa-icon> Quitar
+                </button>
+              }
+            </div>
+
+            <label
+              class="crear-cover__dropzone"
+              [class.crear-cover__dropzone--filled]="!!portada()"
+              [class.crear-cover__dropzone--uploading]="subiendoPortada()"
+              [attr.aria-busy]="subiendoPortada()"
+              aria-label="Subir o cambiar imagen de portada"
+            >
+              <input
+                type="file"
+                (change)="onSubirPortada($event)"
+                accept="image/png,image/jpeg,image/webp,image/gif"
+                class="crear-cover__file-input"
+                [disabled]="subiendoPortada()"
+              />
+
+              @if (portadaDisplayUrl(); as src) {
+                <img [src]="src" alt="Portada del cuento" class="crear-cover__img" />
+
+                @if (subiendoPortada()) {
+                  <div class="crear-cover__uploading">
+                    <span class="crear-spinner crear-spinner--light"></span>
+                    <span>Subiendo a la nube…</span>
+                  </div>
+                } @else {
+                  <div class="crear-cover__overlay">
+                    <span class="crear-cover__overlay-btn">
+                      <fa-icon [icon]="faUpload"></fa-icon> Cambiar
+                    </span>
+                  </div>
+                }
+              } @else {
+                <div class="crear-cover__placeholder">
+                  <div class="crear-cover__icon">
+                    <fa-icon [icon]="faUpload" size="lg"></fa-icon>
+                  </div>
+                  <p class="crear-cover__hint-title">Sube la imagen de portada</p>
+                  <p class="crear-cover__hint-sub">Ocupa todo el espacio. PNG / JPG / WEBP hasta 5MB</p>
+                </div>
+              }
+            </label>
+          </div>
+
+          <div class="crear-cover__col crear-cover__col--desc">
+            <div class="crear-field__label-row">
+              <label class="crear-field__label" for="descripcion-textarea">
+                Descripción / Sinopsis
+              </label>
+              <span class="crear-field__counter">{{ descripcion().length }}/500</span>
+            </div>
+
+            <textarea
+              id="descripcion-textarea"
+              [ngModel]="descripcion()"
+              (ngModelChange)="onDescripcionChange($event)"
+              class="crear-input crear-input--textarea"
+              rows="6"
+              maxlength="500"
+              placeholder="Cuenta de qué va tu historia: el conflicto central, los personajes, el mundo. Esta descripción guía a Dae-bot para que sus sugerencias tengan coherencia con tu idea."
+            ></textarea>
+
+            <div class="crear-cover__hint">
+              <fa-icon [icon]="faLightbulb" class="crear-cover__hint-icon"></fa-icon>
+              <span>
+                Cuanto más concreto seas, mejores ideas generará Dae-bot. Esta descripción se guarda
+                con tu cuento y se usa como contexto en cada sugerencia de la IA.
+              </span>
+            </div>
           </div>
         </div>
 
-        @if (mensaje()) {
-          <nz-alert nzType="success" nzShowIcon [nzMessage]="mensaje()"></nz-alert>
-        }
-        @if (error()) {
-          <nz-alert nzType="error" nzShowIcon [nzMessage]="error()"></nz-alert>
-        }
-      </form>
+        <!-- ───── EDITOR (Quill) + ILUSTRACIÓN DE PÁGINA ───── -->
+        <div class="crear-pagina-editor">
+          <div class="quill-wrapper" [style.background-color]="paginaActiva()?.colorFondo || '#ffffff'">
+
+            <quill-editor
+              class="custom-quill-page"
+              [ngModel]="contenido()"
+              (ngModelChange)="onContentChange($event)"
+              (onEditorCreated)="onEditorCreated($event)"
+              [modules]="quillModules"
+              theme="snow"
+              placeholder="Escribe tu historia aquí..."
+            ></quill-editor>
+
+            <!-- Panel de ilustración de la PÁGINA ACTIVA -->
+            <div class="pagina-illust">
+              <div class="pagina-illust__inner">
+
+                @if (ilustracionDisplayUrl(); as illust) {
+                  <img [src]="illust" class="pagina-illust__img" alt="Ilustración de esta página" />
+
+                  @if (subiendoIlustracion()) {
+                    <div class="pagina-illust__uploading">
+                      <span class="crear-spinner crear-spinner--light"></span>
+                      <span>Subiendo…</span>
+                    </div>
+                  } @else {
+                    <!-- Overlay con "Cambiar" (cubre toda la imagen al hacer hover) -->
+                    <label class="pagina-illust__overlay" aria-label="Cambiar ilustración de esta página">
+                      <input
+                        type="file"
+                        (change)="onSubirIlustracion($event)"
+                        accept="image/png,image/jpeg,image/webp,image/gif"
+                        class="pagina-illust__file-input"
+                      />
+                      <span class="pagina-illust__overlay-btn">
+                        <fa-icon [icon]="faUpload"></fa-icon> Cambiar
+                      </span>
+                    </label>
+
+                    <!-- Botón X flotante para eliminar (siempre visible, esquina sup-der) -->
+                    <button
+                      type="button"
+                      class="pagina-illust__remove"
+                      (click)="quitarIlustracion()"
+                      aria-label="Quitar ilustración de esta página"
+                      title="Quitar ilustración"
+                    >
+                      <fa-icon [icon]="faTimes"></fa-icon>
+                    </button>
+                  }
+                } @else {
+                  <label class="pagina-illust__placeholder">
+                    <input
+                      type="file"
+                      (change)="onSubirIlustracion($event)"
+                      accept="image/png,image/jpeg,image/webp,image/gif"
+                      class="pagina-illust__file-input"
+                      aria-label="Subir ilustración para esta página"
+                      [disabled]="subiendoIlustracion()"
+                    />
+                    <div class="pagina-illust__icon">
+                      <fa-icon [icon]="faImage" class="text-2xl"></fa-icon>
+                    </div>
+                    <span class="pagina-illust__hint-title">Ilustración de esta página</span>
+                    <span class="pagina-illust__hint-sub">
+                      Sube una imagen y ocupará todo este panel. Cada página puede tener la suya.
+                    </span>
+                  </label>
+                }
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ───── GESTOR DE PÁGINAS ───── -->
+        <div class="crear-paginas">
+          <div class="crear-paginas__header">
+            <span class="crear-paginas__label">Páginas de la historia</span>
+            <button type="button" class="crear-paginas__add" (click)="agregarPagina()">
+              <span class="text-base leading-none">+</span> Nueva página
+            </button>
+          </div>
+
+          <div class="crear-paginas__list">
+            @for (pagina of paginas(); track pagina.id; let i = $index) {
+              <button
+                type="button"
+                class="crear-paginas__item"
+                [class.crear-paginas__item--active]="paginaActivaIndex() === i"
+                (click)="seleccionarPagina(i)"
+                [attr.aria-label]="'Ir a ' + (i === 0 ? 'portada' : 'página ' + i)"
+                [attr.aria-current]="paginaActivaIndex() === i ? 'page' : null"
+              >
+                <div class="crear-paginas__item-bg" [style.background-color]="pagina.colorFondo"></div>
+
+                <!-- preview miniatura -->
+                @if (pagina.ilustracion) {
+                  <img [src]="pagina.ilustracion" alt="" class="crear-paginas__item-thumb" />
+                }
+
+                <span class="crear-paginas__item-label">
+                  {{ i === 0 ? 'PORTADA' : 'PÁG ' + i }}
+                </span>
+
+                @if (pagina.ideaIA) {
+                  <span class="crear-paginas__item-dot" title="Dae-bot dejó una sugerencia en esta página"></span>
+                }
+
+                @if (paginas().length > 1) {
+                  <span
+                    class="crear-paginas__item-remove"
+                    role="button"
+                    tabindex="0"
+                    (click)="eliminarPagina(i); $event.stopPropagation()"
+                    (keydown.enter)="eliminarPagina(i); $event.stopPropagation()"
+                    aria-label="Eliminar página"
+                    title="Eliminar"
+                  >
+                    <fa-icon [icon]="faTimes"></fa-icon>
+                  </span>
+                }
+              </button>
+            }
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ───────── COLUMNA DERECHA: SIDEBAR ───────── -->
+      <button
+        type="button"
+        class="crear-sidebar-backdrop"
+        [class.crear-sidebar-backdrop--visible]="mostrarSidebarMovil()"
+        (click)="mostrarSidebarMovil.set(false)"
+        aria-label="Cerrar panel"
+        tabindex="-1"
+      ></button>
+
+      <aside class="crear-sidebar" [class.crear-sidebar--open]="mostrarSidebarMovil()">
+
+        <div class="crear-sidebar__mobile-header">
+          <span class="crear-sidebar__mobile-title">Herramientas y Publicación</span>
+          <button class="crear-sidebar__mobile-close" (click)="mostrarSidebarMovil.set(false)" aria-label="Cerrar panel">
+            <fa-icon [icon]="faTimes"></fa-icon>
+          </button>
+        </div>
+
+        <!-- ───── 1. DETALLES DEL CUENTO ───── -->
+        <section class="crear-card">
+          <header class="crear-card__head">
+            <h3 class="crear-card__title">
+              <fa-icon [icon]="faListCheck" class="text-primary"></fa-icon>
+              Detalles del cuento
+            </h3>
+            <button
+              type="button"
+              class="crear-card__close"
+              (click)="detallesExpandido.set(false)"
+              aria-label="Cerrar detalles"
+              title="Cerrar"
+            >
+              <fa-icon [icon]="faClose"></fa-icon>
+            </button>
+          </header>
+
+          @if (detallesExpandido()) {
+            <div class="crear-card__body">
+              <div class="crear-detalle-row">
+                <span class="crear-detalle-row__label">
+                  <fa-icon [icon]="faStar"></fa-icon> Género
+                </span>
+                <select
+                  class="crear-detalle-row__select crear-detalle-row__select--primary"
+                  [ngModel]="categoria()"
+                  (ngModelChange)="categoria.set($event); autoSaveSubject.next()"
+                >
+                  <option value="Sin clasificar">Sin clasificar</option>
+                  <option value="Fantasía">Fantasía</option>
+                  <option value="Aventura">Aventura</option>
+                  <option value="Ciencia Ficción">Ciencia Ficción</option>
+                  <option value="Misterio">Misterio</option>
+                  <option value="Cotidiano">Cotidiano</option>
+                  <option value="Terror">Terror</option>
+                  <option value="Fábula">Fábula</option>
+                </select>
+              </div>
+
+              <div class="crear-detalle-row">
+                <span class="crear-detalle-row__label">
+                  <fa-icon [icon]="faCirclePlay"></fa-icon> Edad
+                </span>
+                <select
+                  class="crear-detalle-row__select crear-detalle-row__select--success"
+                  [ngModel]="rangoEdad()"
+                  (ngModelChange)="rangoEdad.set($event); autoSaveSubject.next()"
+                >
+                  <option value="3 - 5 años">3 - 5 años</option>
+                  <option value="6 - 8 años">6 - 8 años</option>
+                  <option value="9 - 12 años">9 - 12 años</option>
+                  <option value="13+ años">13+ años</option>
+                </select>
+              </div>
+
+              <div class="crear-detalle-row">
+                <span class="crear-detalle-row__label">
+                  <fa-icon [icon]="faCirclePlay"></fa-icon> Lectura
+                </span>
+                <span class="crear-detalle-row__value">{{ tiempoLectura() }}</span>
+              </div>
+
+              <div class="crear-detalle-row crear-detalle-row--borderless">
+                <span class="crear-detalle-row__label">
+                  <fa-icon [icon]="faCloudArrowUp"></fa-icon> Guardado
+                </span>
+                <div class="crear-detalle-row__value-group">
+                  <span class="crear-detalle-row__value">{{ ultimaEdicion() }}</span>
+                  <span class="crear-badge crear-badge--success">Guardado</span>
+                </div>
+              </div>
+            </div>
+          } @else {
+            <button type="button" class="crear-card__reabrir" (click)="detallesExpandido.set(true)">
+              <span><fa-icon [icon]="faListCheck" class="text-primary"></fa-icon> Detalles del cuento</span>
+              <span>Reabrir <fa-icon [icon]="faClose"></fa-icon></span>
+            </button>
+          }
+        </section>
+
+        <!-- ───── 2. ASISTENTE DAE-BOT ───── -->
+        <section class="crear-card crear-card--bot">
+          <header class="crear-card__head">
+            <div class="crear-card__head-group">
+              <img src="/img/cuento-robot.png" class="crear-card__bot-avatar" alt="Dae-bot" />
+              <div class="crear-card__head-text">
+                <h3 class="crear-card__title">Asistente creativo</h3>
+                <p class="crear-card__subtitle">Hola, soy Dae-bot 🤖</p>
+                <p class="crear-card__hint">Te ayudo a crear historias increíbles.</p>
+              </div>
+            </div>
+            <button
+              type="button"
+              class="crear-card__close"
+              (click)="asistenteExpandido.set(false)"
+              aria-label="Cerrar asistente"
+              title="Cerrar"
+            >
+              <fa-icon [icon]="faClose"></fa-icon>
+            </button>
+          </header>
+
+          @if (asistenteExpandido()) {
+
+            <!-- 3 acciones claras -->
+            <div class="crear-bot-actions">
+
+              <!-- 1. Generar ideas (multimodal si hay ilustración en la página) -->
+              <button
+                type="button"
+                class="crear-btn crear-btn--primary crear-btn--block"
+                (click)="generarIdeas()"
+                [disabled]="cargandoIdea()"
+                [title]="ilustracionActiva() ? 'Analiza la ilustración de esta página' : 'Genera ideas a partir del título y el brief'"
+              >
+                @if (cargandoIdea()) {
+                  <fa-icon [icon]="faSpinner" class="animate-spin"></fa-icon>
+                  <span>{{ ilustracionActiva() ? 'Analizando tu imagen…' : 'Pensando ideas…' }}</span>
+                } @else {
+                  <fa-icon [icon]="faLightbulb"></fa-icon>
+                  <span>{{ ilustracionActiva() ? 'Ideas desde tu imagen' : 'Generar ideas' }}</span>
+                }
+              </button>
+
+              <!-- 2. Continuar mi historia (nuevo) -->
+              <button
+                type="button"
+                class="crear-btn crear-btn--outline crear-btn--block"
+                (click)="continuarHistoria()"
+                [disabled]="cargandoContinuacion()"
+                title="Continúa el texto de la página actual"
+              >
+                @if (cargandoContinuacion()) {
+                  <fa-icon [icon]="faSpinner" class="animate-spin"></fa-icon>
+                  <span>Continuando…</span>
+                } @else {
+                  <fa-icon [icon]="faArrowRight"></fa-icon>
+                  <span>Continuar mi historia</span>
+                }
+              </button>
+
+              <!-- 3. Sugerir título (categoría + edad + brief) -->
+              <button
+                type="button"
+                class="crear-btn crear-btn--outline crear-btn--block"
+                (click)="sugerirTitulo()"
+                [disabled]="cargandoTitulo()"
+                title="Sugiere un título alineado al género, edad y brief"
+              >
+                @if (cargandoTitulo()) {
+                  <fa-icon [icon]="faSpinner" class="animate-spin"></fa-icon>
+                  <span>Buscando título…</span>
+                } @else {
+                  <fa-icon [icon]="faFileLines"></fa-icon>
+                  <span>Sugerir título</span>
+                }
+              </button>
+            </div>
+
+            <!-- Indicador: la IA trabaja sobre la página activa -->
+            <p class="crear-bot-context">
+              Trabajando sobre la página {{ paginaActivaIndex() + 1 }} de {{ paginas().length }}
+            </p>
+
+            <!-- Resultado: sugerencia de la IA para ESTA PÁGINA -->
+            @if (ideaActiva(); as idea) {
+              <div class="crear-bot-result">
+                <div class="crear-bot-result__head">
+                  <h4 class="crear-bot-result__title">
+                    <fa-icon [icon]="faStar" class="text-accent"></fa-icon>
+                    {{ idea.modo === 'continuar' ? 'Continuación sugerida' : 'Análisis de Dae-bot' }}
+                    @if (idea.conImagen) {
+                      <span class="crear-bot-result__chip">· con imagen</span>
+                    }
+                  </h4>
+                  <button
+                    type="button"
+                    class="crear-bot-result__close"
+                    (click)="cerrarIdea()"
+                    aria-label="Cerrar sugerencia"
+                    title="Cerrar"
+                  >
+                    <fa-icon [icon]="faClose"></fa-icon>
+                  </button>
+                </div>
+                <p class="crear-bot-result__text">{{ idea.texto }}</p>
+                <button type="button" class="crear-btn crear-btn--primary crear-btn--sm" (click)="aplicarIdeaIA()">
+                  <fa-icon [icon]="faCheck"></fa-icon> Añadir a esta página
+                </button>
+              </div>
+            }
+
+            <!-- Resultado: título sugerido -->
+            @if (tituloIA(); as t) {
+              <div class="crear-bot-result">
+                <div class="crear-bot-result__head">
+                  <h4 class="crear-bot-result__title">
+                    <fa-icon [icon]="faStar" class="text-accent"></fa-icon>
+                    Título sugerido
+                  </h4>
+                  <button
+                    type="button"
+                    class="crear-bot-result__close"
+                    (click)="cerrarTituloIA()"
+                    aria-label="Cerrar sugerencia de título"
+                    title="Cerrar"
+                  >
+                    <fa-icon [icon]="faClose"></fa-icon>
+                  </button>
+                </div>
+                <p class="crear-bot-result__quote">"{{ t }}"</p>
+                <button type="button" class="crear-btn crear-btn--primary crear-btn--sm" (click)="aplicarTitulo(t)">
+                  <fa-icon [icon]="faCheck"></fa-icon> Usar este título
+                </button>
+              </div>
+            }
+
+          } @else {
+            <button type="button" class="crear-card__reabrir" (click)="asistenteExpandido.set(true)">
+              <span><fa-icon [icon]="faStar" class="text-primary"></fa-icon> Asistente creativo</span>
+              <span>Reabrir <fa-icon [icon]="faClose"></fa-icon></span>
+            </button>
+          }
+        </section>
+
+        <!-- ───── 3. PUBLICACIÓN ───── -->
+        <section class="crear-card">
+          <header class="crear-card__head">
+            <h3 class="crear-card__title">
+              <fa-icon [icon]="faUpload" class="text-primary"></fa-icon>
+              Publicación
+            </h3>
+            <button
+              type="button"
+              class="crear-card__close"
+              (click)="publicacionExpandido.set(false)"
+              aria-label="Cerrar publicación"
+              title="Cerrar"
+            >
+              <fa-icon [icon]="faClose"></fa-icon>
+            </button>
+          </header>
+
+          @if (publicacionExpandido()) {
+            <div class="crear-card__body">
+              <button
+                type="button"
+                class="crear-btn crear-btn--accent crear-btn--block"
+                (click)="guardar('borrador')"
+                [disabled]="guardando()"
+              >
+                @if (guardando()) {
+                  <span class="crear-spinner"></span> Guardando...
+                } @else {
+                  <fa-icon [icon]="faSave"></fa-icon> Guardar borrador
+                }
+              </button>
+
+              <div class="crear-btn-row">
+                <button
+                  type="button"
+                  class="crear-btn crear-btn--primary crear-btn--sm"
+                  (click)="guardar('publicado')"
+                  [disabled]="!listoParaPublicar() || guardando()"
+                >
+                  <fa-icon [icon]="faCheckCircle"></fa-icon> Publicar
+                </button>
+                <button type="button" class="crear-btn crear-btn--outline crear-btn--sm" (click)="compartir()">
+                  <fa-icon [icon]="faShareNodes"></fa-icon> Compartir
+                </button>
+              </div>
+
+              <div class="crear-btn-row">
+                <button
+                  type="button"
+                  class="crear-btn crear-btn--ghost crear-btn--sm"
+                  (click)="vistaPrevia()"
+                  [disabled]="!titulo().trim()"
+                >
+                  <fa-icon [icon]="faEye"></fa-icon> Vista previa
+                </button>
+                <button type="button" class="crear-btn crear-btn--danger crear-btn--sm" (click)="eliminarCuento()">
+                  <fa-icon [icon]="faTrash"></fa-icon> Eliminar
+                </button>
+              </div>
+            </div>
+          } @else {
+            <button type="button" class="crear-card__reabrir" (click)="publicacionExpandido.set(true)">
+              <span><fa-icon [icon]="faUpload" class="text-primary"></fa-icon> Publicación</span>
+              <span>Reabrir <fa-icon [icon]="faClose"></fa-icon></span>
+            </button>
+          }
+        </section>
+
+        <!-- ───── 4. PROGRESO ───── -->
+        <section class="crear-card">
+          <header class="crear-card__head">
+            <h3 class="crear-card__title">Progreso del cuento</h3>
+            <div class="crear-card__head-actions">
+              <div class="crear-card__icon-pill">
+                <fa-icon [icon]="faStar"></fa-icon>
+              </div>
+              <button
+                type="button"
+                class="crear-card__close"
+                (click)="progresoExpandido.set(false)"
+                aria-label="Cerrar progreso"
+                title="Cerrar"
+              >
+                <fa-icon [icon]="faClose"></fa-icon>
+              </button>
+            </div>
+          </header>
+
+          @if (progresoExpandido()) {
+            <div class="crear-card__body">
+              <div class="crear-progress">
+                <div class="crear-progress__bar">
+                  <div class="crear-progress__fill" [style.width.%]="progresoPorcentaje()"></div>
+                </div>
+                <span class="crear-progress__label"
+                      [class.crear-progress__label--complete]="progresoPorcentaje() === 100">
+                  @if (progresoPorcentaje() === 100) {
+                    ¡Completado! Listo para publicar.
+                  } @else {
+                    Completado {{ progresoPorcentaje() }}%
+                  }
+                </span>
+              </div>
+            </div>
+          } @else {
+            <button type="button" class="crear-card__reabrir" (click)="progresoExpandido.set(true)">
+              <span><fa-icon [icon]="faStar" class="text-primary"></fa-icon> Progreso del cuento</span>
+              <span>Reabrir <fa-icon [icon]="faClose"></fa-icon></span>
+            </button>
+          }
+        </section>
+
+      </aside>
     </div>
-  }
-</main>
+  </main>
+}

@@ -34,8 +34,8 @@
 }
 
 .home-link:hover {
-  border-color: #15326b;
-  color: #15326b;
+  border-color: var(--daemon-primary-dark);
+  color: var(--daemon-primary-dark);
 }
 
 .recovery-stage {
@@ -77,7 +77,7 @@
 }
 
 .card-accent {
-  background: #15326b;
+  background: var(--daemon-primary-dark);
   grid-column: 1 / -1;
   grid-row: 1;
   height: 5px;
@@ -201,8 +201,8 @@
 }
 
 .secondary-action {
-  background: #15326b;
-  border: 1px solid #15326b;
+  background: var(--daemon-primary-dark);
+  border: 1px solid var(--daemon-primary-dark);
   color: #ffffff;
 }
 
@@ -237,13 +237,13 @@
 
 .recovery-option-button:hover:not(:disabled) {
   background: #fafbfc;
-  border-color: #15326b;
+  border-color: var(--daemon-primary-dark);
   box-shadow: 0 4px 14px #1118271a;
   transform: translateY(-1px);
 }
 
 .recovery-option-button:focus-visible {
-  border-color: #15326b;
+  border-color: var(--daemon-primary-dark);
   box-shadow: 0 0 0 3px rgba(21, 50, 107, .12);
   outline: 0;
 }
@@ -325,7 +325,7 @@
 }
 
 .classic-field:focus-within {
-  border-color: #15326b;
+  border-color: var(--daemon-primary-dark);
   box-shadow: 0 0 0 3px rgba(21, 50, 107, .12);
 }
 
@@ -420,13 +420,13 @@
 }
 
 .form-hint strong {
-  color: #15326b;
+  color: var(--daemon-primary-dark);
   font-weight: 800;
   word-break: break-all;
 }
 
 .submit-button {
-  background: #15326b;
+  background: var(--daemon-primary-dark);
   border: 0;
   border-radius: 6px;
   box-shadow: 0 12px 24px rgba(21, 50, 107, .2);
@@ -439,7 +439,7 @@
 }
 
 .submit-button:hover:not(:disabled) {
-  background: #0f2857;
+  background: var(--daemon-primary);
 }
 
 .submit-button:disabled {
@@ -459,7 +459,7 @@
 }
 
 .login-footer a {
-  color: #15326b;
+  color: var(--daemon-primary-dark);
   font-weight: 600;
   text-decoration: none;
 }

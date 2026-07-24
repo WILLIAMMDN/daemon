@@ -1,0 +1,29 @@
+      <section class="story-toolbar" aria-label="Buscar y ordenar historias">
+        <nav class="story-filters" aria-label="Filtrar historias">
+          <button type="button" [class.active]="filtro === 'todos'" [attr.aria-pressed]="filtro === 'todos'" (click)="onFiltroChange.emit('todos')">
+            <fa-icon [icon]="faBookOpen" aria-hidden="true"></fa-icon>
+            Comunidad
+          </button>
+          <button type="button" [class.active]="filtro === 'mio'" [attr.aria-pressed]="filtro === 'mio'" (click)="onFiltroChange.emit('mio')">
+            <fa-icon [icon]="faCircleUser" aria-hidden="true"></fa-icon>
+            Mis historias
+          </button>
+        </nav>
+
+        <div class="story-toolbar__controls">
+          <label class="story-order">
+            <fa-icon [icon]="faCalendarDays" aria-hidden="true"></fa-icon>
+            <span class="sr-only">Ordenar historias</span>
+            <select [value]="orden" (change)="actualizarOrden($event)">
+              <option value="recientes">Más recientes</option>
+              <option value="antiguos">Más antiguas</option>
+              <option value="titulo">Por título</option>
+            </select>
+          </label>
+          <label class="story-search">
+            <fa-icon [icon]="faMagnifyingGlass" aria-hidden="true"></fa-icon>
+            <span class="sr-only">Buscar por título o autor</span>
+            <input type="search" [value]="busqueda" (input)="actualizarBusqueda($event)" placeholder="Buscar historias...">
+          </label>
+        </div>
+      </section>

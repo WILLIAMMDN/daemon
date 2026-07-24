@@ -1,3 +1,5 @@
+@use './styles/aula-theme';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -9,20 +11,6 @@
 @import './styles/gamification';
 
 @layer base {
-  :root {
-    /* Mapeo de legacy CSS vars para no romper NG-ZORRO u otros hasta migrarlo todo */
-    --daemon-canvas: var(--ds-color-canvas);
-    --daemon-surface: var(--ds-color-surface);
-    --daemon-surface-muted: var(--ds-color-surface-subtle);
-    --daemon-border: var(--ds-color-border);
-    --daemon-ink: var(--ds-color-text-primary);
-    --daemon-muted: var(--ds-color-text-secondary);
-    --daemon-primary: var(--ds-color-brand);
-    --daemon-primary-dark: var(--ds-color-brand-active);
-    --daemon-success: var(--ds-color-success);
-    --daemon-warning: var(--ds-color-warning);
-  }
-
   html {
     background: var(--daemon-canvas);
     color: var(--daemon-ink);
@@ -62,7 +50,7 @@
   .hover-premium {
     @apply shadow-sm transition-shadow hover:shadow-md motion-reduce:transition-none;
   }
-  
+
   /* Contenedores fijos premium */
   .card-premium {
     @apply rounded-2xl border border-slate-200 bg-white shadow-sm;

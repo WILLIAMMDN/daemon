@@ -49,15 +49,15 @@
 }
 
 .daemon-btn.ant-btn-primary {
-  background-color: #17243c;
-  border-color: #17243c;
+  background-color: var(--daemon-primary-dark);
+  border-color: var(--daemon-primary-dark);
   color: #ffffff;
 }
 
 .daemon-btn.ant-btn-primary:not(:disabled):hover,
 .daemon-btn.ant-btn-primary:not(:disabled):focus {
-  background-color: #2d3c5a;
-  border-color: #2d3c5a;
+  background-color: var(--daemon-primary);
+  border-color: var(--daemon-primary);
   transform: translateY(-1px);
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
 }
@@ -65,7 +65,7 @@
 .daemon-btn.ant-btn-primary:not(:disabled):active {
   transform: translateY(0);
   box-shadow: none;
-  background-color: #101626;
+  background-color: color-mix(in srgb, var(--daemon-primary-dark), #000 18%);
 }
 
 .daemon-btn.ant-btn-default {
@@ -194,7 +194,7 @@
 }
 
 .daemon-avatar.ant-avatar {
-  background: #17243c;
+  background: var(--daemon-primary-dark);
   color: #fff;
   font-weight: 700;
 }
@@ -259,15 +259,15 @@
 }
 
 .student-premium .daemon-btn.ant-btn-primary {
-  background: var(--student-primary-dark, #0958d9);
-  border-color: var(--student-primary-dark, #0958d9);
+  background: var(--daemon-primary-dark);
+  border-color: var(--daemon-primary-dark);
   box-shadow: none;
 }
 
 .student-premium .daemon-btn.ant-btn-primary:not(:disabled):hover,
 .student-premium .daemon-btn.ant-btn-primary:not(:disabled):focus {
-  background: color-mix(in srgb, var(--student-primary-dark, #0958d9), #000 14%);
-  border-color: color-mix(in srgb, var(--student-primary-dark, #0958d9), #000 14%);
+  background: color-mix(in srgb, var(--daemon-primary-dark), #000 14%);
+  border-color: color-mix(in srgb, var(--daemon-primary-dark), #000 14%);
   box-shadow: none;
 }
 
