@@ -920,7 +920,7 @@
      so it never pushes the main content (hundreds of stories) below the fold.
      Desktop layout (>=1181px) is untouched. */
   .story-layout {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr !important;
   }
 
   .story-aside {
