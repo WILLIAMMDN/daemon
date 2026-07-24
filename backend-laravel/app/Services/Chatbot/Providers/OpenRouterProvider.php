@@ -11,7 +11,7 @@ class OpenRouterProvider implements AiProviderInterface
 {
     public function responder(BotAlumno $bot, array $mensajes): string
     {
-        $apiKey = env('OPENROUTER_API_KEY', base64_decode('QVEuQWI4Uk42SVZQQ3NTX1BDd3gyV3Qyc2lXYUV5ZDRHTlJaZkkxUVB3SVNhbFpkS3ZGYnc='));
+        $apiKey = env('OPENROUTER_API_KEY_NUEVA', base64_decode('QVEuQWI4Uk42SVZQQ3NTX1BDd3gyV3Qyc2lXYUV5ZDRHTlJaZkkxUVB3SVNhbFpkS3ZGYnc='));
         if (empty($apiKey)) {
             throw new RuntimeException('La API Key de OpenRouter no esta configurada en el servidor.');
         }
