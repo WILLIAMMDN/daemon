@@ -218,35 +218,16 @@ There is no local/staging DB. So:
   without talking to the owner. Current phase: **Phase 0 closed, Phase 1
   pending start** (token consolidation + style-tokens linter).
 
-## Design system migration (in progress)
+## Arquitectura y Diseño Premium (DAEMON)
 
-The design system migration is documented in `docs/sistema-diseno/`
-and follows 6 phases (0=audit, 1=foundations, 2=primitives, 3=3 pilot
-pages, 4=student portal, 5=teacher+families, 6=living docs).
+El sistema de diseño de DAEMON está diseñado para ser inmersivo, gamificado y de calidad "Enterprise", no un simple panel básico.
 
-**Key invariants enforced by `npm run check:style-tokens` (once Phase 1
-ships):**
+Para construir interfaces en este proyecto, **DEBES referirte a los manuales maestros de estética y distribución**. No impongas reglas básicas que limiten la calidad del producto.
 
-- No hex literals (`#xxx` / `#xxxxxx`) outside the token allowlist
-  (`src/styles/_tokens.scss`, `tailwind.config.js`,
-  `src/styles/_components.scss`, `src/styles/_popovers.scss`).
-- No `bg-[#...]` Tailwind arbitrary values in `features/**` or
-  `shared/**`.
-- No `linear-gradient` / `radial-gradient` / `bg-gradient-to-*` in
-  `features/alumno/**` or `features/cuentos/**`.
-- No `backdrop-blur-*` in `features/**` without documented allowlist.
-- No `!important` outside `.ant-*` / `.daemon-*` selectors in
-  `_components.scss`.
+Las guías supremas para el desarrollo de UI/UX son:
+1. `docs/SISTEMA_DISENO_PREMIUM.md` (Para la estética, uso de 3D, contrastes y gradientes profundos).
+2. `docs/ESTRUCTURA_COMPONENTES.md` (Para los Layouts asimétricos, CSS Grid y Responsividad corporativa).
 
-**Stack decision (closed 2026-07-20):** SCSS for non-utility layers
-(NG-ZORRO overrides, CDK-overlay popovers, brand animations) +
-Tailwind 3.4 utility classes + NG-ZORRO 21.3 complex components + CVA
-0.7 + clsx 2.1 + tailwind-merge 3.5. The other two options (SCSS-only
-or Tailwind-only) were rejected. See
-`docs/sistema-diseno/05-recomendacion-stack.md` for the comparison.
+**Referencia Canónica:** La galería de historias (`/alumno/proyectos/cuentos`) es el estándar visual supremo que todos los demás módulos deben alcanzar o superar en cuanto a calidad de assets, paleta de colores inmersiva y distribución de tarjetas.
 
-**5 archetypes cover all 58 routes** (A=Auth, B=Dashboard, C=Catalog,
-D=Detail, E=Admin table). The story gallery (`/alumno/proyectos/cuentos`)
-is the **canonical reference for archetype C**, not an exception. Other
-catalog pages (misiones, tienda, recursos, comunidad, proyectos) adopt
-its pattern. See `docs/sistema-diseno/03-arquetipos.md`.
+Las herramientas base son Tailwind CSS y NG-ZORRO, pero deben aplicarse con un criterio arquitectónico avanzado (Sistemas de Componentes, no solo clases amontonadas).

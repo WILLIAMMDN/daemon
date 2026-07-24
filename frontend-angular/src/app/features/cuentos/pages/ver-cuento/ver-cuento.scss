@@ -1,0 +1,63 @@
+.lectura-content {
+  transition: font-size 0.3s ease;
+  
+  ::ng-deep {
+    .ql-editor {
+      padding: 0;
+      font-size: inherit;
+      line-height: 1.8;
+      color: var(--color-ink, #2B1B54);
+      
+      h1, h2, h3, h4 {
+        color: var(--color-ink, #2B1B54);
+        margin-top: 1.5em;
+        margin-bottom: 0.75em;
+        font-weight: 800;
+        line-height: 1.2;
+      }
+
+      h1 { font-size: 2.5em; }
+      h2 { font-size: 2em; }
+      h3 { font-size: 1.5em; }
+      
+      p {
+        margin-bottom: 1.5em;
+        font-size: 1.1em;
+      }
+      
+      img {
+        max-width: 100%;
+        border-radius: 12px;
+        margin: 2rem auto;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+        display: block;
+      }
+
+      blockquote {
+        border-left: 4px solid var(--color-primary, #6C5CE7);
+        padding-left: 1.5rem;
+        margin-left: 0;
+        font-style: italic;
+        color: var(--color-ink-soft, #5A4A8C);
+        background: var(--color-canvas, #F8F9FA);
+        padding: 1.5rem;
+        border-radius: 0 12px 12px 0;
+      }
+    }
+  }
+}
+
+// Ocultar barras de desplazamiento para una vista más limpia
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent; 
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border, #E2E8F0); 
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-muted, #94A3B8); 
+}

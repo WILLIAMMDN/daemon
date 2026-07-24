@@ -1,0 +1,88 @@
+      <!-- Lado Derecho: Sidebar UI Premium -->
+      <aside class="w-full flex flex-col gap-5 sticky top-24 transition-opacity duration-300" [class.hidden]="modoLectura" [class.opacity-0]="modoLectura">
+        
+        <!-- Detalles del cuento -->
+        <div class="bg-surface rounded-[24px] border border-border shadow-soft p-6 flex flex-col gap-4 relative overflow-hidden">
+          <div class="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-bl-[100px] pointer-events-none"></div>
+          
+          <h3 class="text-sm font-bold text-ink flex items-center gap-2"><fa-icon [icon]="faBookmark" class="text-primary"></fa-icon> Detalles del cuento</h3>
+          
+          <div class="flex flex-wrap gap-2 mt-1">
+             @if (datosCuento.cuento.categoria) {
+               <span class="bg-primary/10 text-primary text-[10px] font-extrabold px-3 py-1 rounded-full">{{ datosCuento.cuento.categoria }}</span>
+             }
+             @if (datosCuento.cuento.rango_edad) {
+               <span class="bg-blue-500/10 text-blue-600 text-[10px] font-extrabold px-3 py-1 rounded-full">{{ datosCuento.cuento.rango_edad }}</span>
+             }
+             @if (!datosCuento.cuento.categoria && !datosCuento.cuento.rango_edad) {
+               <span class="bg-muted/10 text-muted text-[10px] font-extrabold px-3 py-1 rounded-full">Sin etiquetas</span>
+             }
+          </div>
+
+          <div class="grid grid-cols-2 gap-4 mt-3">
+             <div class="flex flex-col gap-1">
+               <span class="text-[10px] font-bold text-muted flex items-center gap-1.5"><fa-icon [icon]="faClock"></fa-icon> Tiempo de lectura</span>
+               <span class="text-xs font-extrabold text-ink">{{ datosCuento.cuento.tiempo_lectura || 3 }} min</span>
+             </div>
+             <div class="flex flex-col gap-1">
+               <span class="text-[10px] font-bold text-muted flex items-center gap-1.5"><fa-icon [icon]="faCalendarDays"></fa-icon> Publicado el</span>
+               <span class="text-xs font-extrabold text-ink">{{ (datosCuento.cuento.fecha_creacion | date:"dd 'de' MMMM, yyyy") || 'Reciente' }}</span>
+             </div>
+             <div class="flex flex-col gap-1 mt-2">
+               <span class="text-[10px] font-bold text-muted flex items-center gap-1.5"><fa-icon [icon]="faHeart"></fa-icon> Reacciones</span>
+               <span class="text-xs font-extrabold text-ink">{{ getReaccionesTotales() }}</span>
+             </div>
+             <div class="flex flex-col gap-1 mt-2">
+               <span class="text-[10px] font-bold text-muted flex items-center gap-1.5"><fa-icon [icon]="faCommentDots"></fa-icon> Comentarios</span>
+               <span class="text-xs font-extrabold text-ink">{{ comentariosCount }}</span>
+             </div>
+          </div>
+        </div>
+
+        <!-- Asistente lector -->
+        <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-[24px] border border-indigo-100 shadow-soft p-5 flex flex-col relative overflow-hidden">
+           <h3 class="text-sm font-bold text-indigo-900 flex items-center gap-2 mb-2">
+             <fa-icon [icon]="faRobot" class="text-indigo-600"></fa-icon> Asistente lector
+           </h3>
+           <p class="text-[10px] font-extrabold text-indigo-400 uppercase tracking-wider mb-1">Tip creativo</p>
+           <p class="text-xs font-medium text-indigo-800 leading-relaxed max-w-[200px]">
+             {{ tipAsistente }}
+           </p>
+           
+           <img src="/img/cuento-robot.png" class="absolute -right-6 -bottom-6 w-32 opacity-90 drop-shadow-md" alt="Dae-bot">
+        </div>
+
+        <!-- Reacciones -->
+        <div class="bg-surface rounded-[24px] border border-border shadow-soft p-6 flex flex-col gap-3 relative">
+          <h3 class="text-sm font-bold text-ink mb-1">Reacciones</h3>
+          <p class="text-[10px] font-bold text-muted mb-3">¿Qué te pareció esta historia?</p>
+          
+          <div class="flex justify-between items-center px-1">
+             <button class="flex flex-col items-center gap-1.5 group transition-transform hover:scale-110" (click)="onReaccionar.emit('encanto')">
+               <span class="text-2xl filter drop-shadow-sm grayscale-[30%] opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all" [class.!grayscale-0]="miReaccion === 'encanto'" [class.!opacity-100]="miReaccion === 'encanto'">🤩</span>
+               <span class="text-[9px] font-bold text-muted group-hover:text-primary transition-colors">Me encantó!</span>
+               <span class="text-[10px] font-extrabold text-ink">{{ reaccionesCount['encanto'] || 0 }}</span>
+             </button>
+             <button class="flex flex-col items-center gap-1.5 group transition-transform hover:scale-110" (click)="onReaccionar.emit('increible')">
+               <span class="text-2xl filter drop-shadow-sm grayscale-[30%] opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all" [class.!grayscale-0]="miReaccion === 'increible'" [class.!opacity-100]="miReaccion === 'increible'">🤯</span>
+               <span class="text-[9px] font-bold text-muted group-hover:text-primary transition-colors">Increíble</span>
+               <span class="text-[10px] font-extrabold text-ink">{{ reaccionesCount['increible'] || 0 }}</span>
+             </button>
+             <button class="flex flex-col items-center gap-1.5 group transition-transform hover:scale-110" (click)="onReaccionar.emit('gusto')">
+               <span class="text-2xl filter drop-shadow-sm grayscale-[30%] opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all" [class.!grayscale-0]="miReaccion === 'gusto'" [class.!opacity-100]="miReaccion === 'gusto'">😊</span>
+               <span class="text-[9px] font-bold text-muted group-hover:text-primary transition-colors">Me gustó</span>
+               <span class="text-[10px] font-extrabold text-ink">{{ reaccionesCount['gusto'] || 0 }}</span>
+             </button>
+             <button class="flex flex-col items-center gap-1.5 group transition-transform hover:scale-110" (click)="onReaccionar.emit('sorprendio')">
+               <span class="text-2xl filter drop-shadow-sm grayscale-[30%] opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all" [class.!grayscale-0]="miReaccion === 'sorprendio'" [class.!opacity-100]="miReaccion === 'sorprendio'">😲</span>
+               <span class="text-[9px] font-bold text-muted group-hover:text-primary transition-colors">Me sorprendió</span>
+               <span class="text-[10px] font-extrabold text-ink">{{ reaccionesCount['sorprendio'] || 0 }}</span>
+             </button>
+             <button class="flex flex-col items-center gap-1.5 group transition-transform hover:scale-110" (click)="onReaccionar.emit('interesante')">
+               <span class="text-2xl filter drop-shadow-sm grayscale-[30%] opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all" [class.!grayscale-0]="miReaccion === 'interesante'" [class.!opacity-100]="miReaccion === 'interesante'">🤔</span>
+               <span class="text-[9px] font-bold text-muted group-hover:text-primary transition-colors">Interesante</span>
+               <span class="text-[10px] font-extrabold text-ink">{{ reaccionesCount['interesante'] || 0 }}</span>
+             </button>
+          </div>
+        </div>
+      </aside>

@@ -13,6 +13,7 @@ import {
 import { provideRouter, withInMemoryScrolling, withPreloading } from '@angular/router';
 import { provideServiceWorker } from '@angular/service-worker';
 import { es_ES, provideNzI18n } from 'ng-zorro-antd/i18n';
+import { provideNzConfig } from 'ng-zorro-antd/core/config';
 import { provideSpinnerConfig } from 'ngx-spinner';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import { routes } from './app.routes';
@@ -35,6 +36,12 @@ export const appConfig: ApplicationConfig = {
     ),
     provideHttpClient(withInterceptors([tokenInterceptor])),
     provideNzI18n(es_ES),
+    // Notificaciones a la esquina inferior derecha, no encima del contenido.
+    // Solo 1 a la vez y que se cierre sola en 3s.
+    provideNzConfig({
+      message: { nzTop: 'auto', nzDuration: 3000, nzMaxStack: 1, nzPauseOnHover: true },
+      notification: { nzPlacement: 'bottomRight', nzDuration: 3000, nzMaxStack: 1 },
+    }),
     provideSpinnerConfig({ type: 'square-jelly-box' }),
     provideAppInitializer(() => {
       return inject(FirestoreApp).inicializar();

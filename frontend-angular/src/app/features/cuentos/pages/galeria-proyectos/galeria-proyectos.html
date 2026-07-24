@@ -33,35 +33,15 @@
           <button nz-button nzType="default" type="button" (click)="cargar(true)">Reintentar</button>
         </div>
       }
-      <section class="story-toolbar" aria-label="Buscar y ordenar historias">
-        <nav class="story-filters" aria-label="Filtrar historias">
-          <button type="button" [class.active]="filtro() === 'todos'" [attr.aria-pressed]="filtro() === 'todos'" (click)="seleccionarFiltro('todos')">
-            <fa-icon [icon]="faBookOpen" aria-hidden="true"></fa-icon>
-            Todos
-          </button>
-          <button type="button" [class.active]="filtro() === 'mio'" [attr.aria-pressed]="filtro() === 'mio'" (click)="seleccionarFiltro('mio')">
-            <fa-icon [icon]="faCircleUser" aria-hidden="true"></fa-icon>
-            Mis historias
-          </button>
-        </nav>
 
-        <div class="story-toolbar__controls">
-          <label class="story-order">
-            <fa-icon [icon]="faCalendarDays" aria-hidden="true"></fa-icon>
-            <span class="sr-only">Ordenar historias</span>
-            <select [value]="orden()" (change)="actualizarOrden($event)">
-              <option value="recientes">Más recientes</option>
-              <option value="antiguos">Más antiguas</option>
-              <option value="titulo">Por título</option>
-            </select>
-          </label>
-          <label class="story-search">
-            <fa-icon [icon]="faMagnifyingGlass" aria-hidden="true"></fa-icon>
-            <span class="sr-only">Buscar por título o autor</span>
-            <input type="search" [value]="busqueda()" (input)="actualizarBusqueda($event)" placeholder="Buscar historias...">
-          </label>
-        </div>
-      </section>
+      <app-galeria-toolbar
+        [filtro]="filtro()"
+        [orden]="orden()"
+        [busqueda]="busqueda()"
+        (onFiltroChange)="seleccionarFiltro($event)"
+        (onOrdenChange)="orden.set($event)"
+        (onBusquedaChange)="busqueda.set($event)">
+      </app-galeria-toolbar>
 
       @if (cargando()) {
         <section class="story-loading" aria-label="Cargando historias" aria-busy="true">
@@ -82,49 +62,12 @@
       } @else if (cuentos().length && cuentosFiltrados().length) {
         <section class="story-grid" aria-label="Historias publicadas">
           @for (cuento of cuentosFiltrados(); track cuento.id) {
-            <article class="story-card" [class.story-card--own]="cuento.esMio">
-              <div class="story-card__cover">
-                @if (portadaDisponible(cuento)) {
-                  <img [src]="cuento.portadaUrl!" [alt]="'Portada de ' + cuento.tituloVista" loading="lazy" decoding="async" (error)="registrarPortadaFallida(cuento.id)">
-                } @else {
-                  <div class="story-card__cover-placeholder" [attr.data-asset-name]="'story-' + cuento.id + '-cover.webp'">
-                    <fa-icon [icon]="faBookOpen" aria-hidden="true"></fa-icon>
-                    <span>Portada pendiente</span>
-                  </div>
-                }
-              </div>
-              <div class="story-card__body">
-                @if (cuento.esMio) {
-                  <span class="story-card__own-label">Tu historia</span>
-                }
-                <h2>{{ cuento.tituloVista }}</h2>
-                <div class="story-card__author-row">
-                  <div class="story-card__author" [style.backgroundColor]="cuento.colorAutor">
-                    @if (cuento.avatar) {
-                      <img [src]="cuento.avatar" [alt]="cuento.autorVista" class="story-card__avatar" />
-                    } @else {
-                      <span aria-hidden="true">{{ cuento.inicialAutor }}</span>
-                    }
-                  </div>
-                  <div class="story-card__author-info">
-                    <p>{{ cuento.autorVista }}</p>
-                  </div>
-                  <span class="story-card__date">{{ cuento.fechaVista }}</span>
-                </div>
-                <div class="story-card__tags">
-                  <span class="story-card__tag" [ngClass]="cuento.tagClase">{{ cuento.tagNombre }}</span>
-                </div>
-              </div>
-              <footer>
-                <a [routerLink]="['/alumno/proyectos/cuentos', cuento.id]" class="btn-read">
-                  <fa-icon [icon]="faBookOpen" aria-hidden="true"></fa-icon>
-                  Leer historia
-                </a>
-                <button type="button" class="btn-more">
-                  <fa-icon [icon]="faEllipsis" aria-hidden="true"></fa-icon>
-                </button>
-              </footer>
-            </article>
+            <app-galeria-cuento-card 
+              [cuento]="cuento" 
+              [portadaDisponible]="portadaDisponible(cuento)"
+              (onEliminar)="eliminarCuento($event)"
+              (onPortadaFallida)="registrarPortadaFallida($event)">
+            </app-galeria-cuento-card>
           }
         </section>
       } @else if (cuentos().length) {
@@ -149,113 +92,20 @@
       }
     </div>
 
-    <aside class="story-aside" [class.is-open]="asideAbierto()" [attr.aria-hidden]="asideAbierto() ? null : 'true'" aria-label="Resumen creativo">
-      <button type="button" class="story-aside-close" (click)="cerrarAside()" aria-label="Cerrar resumen">
-        <fa-icon [icon]="faTimes" aria-hidden="true"></fa-icon>
-      </button>
-      <!-- 1. Tu progreso creativo -->
-      <section class="story-progress-card">
-        <header>
-          <h2>Tu progreso creativo</h2>
-          <button type="button" class="btn-info" aria-label="Información"><fa-icon [icon]="faEllipsis"></fa-icon></button>
-        </header>
-        <div class="story-progress-chart">
-          <div class="circular-chart-container">
-            <svg viewBox="0 0 36 36" class="circular-chart">
-              <path class="circle-bg"
-                d="M18 2.0845
-                  a 15.9155 15.9155 0 0 1 0 31.831
-                  a 15.9155 15.9155 0 0 1 0 -31.831"
-              />
-              <path class="circle"
-                [attr.stroke-dasharray]="progresoCreativo() + ', 100'"
-                d="M18 2.0845
-                  a 15.9155 15.9155 0 0 1 0 31.831
-                  a 15.9155 15.9155 0 0 1 0 -31.831"
-              />
-              <text x="18" y="20.35" class="percentage">{{ progresoCreativo() }}%</text>
-            </svg>
-          </div>
-          <div class="story-progress-text">
-            <h3>{{ progresoCreativo() === 100 ? '¡Cuento terminado!' : (progresoCreativo() > 0 ? '¡Sigue así!' : '¡Empieza tu historia!') }}</h3>
-            <p>Estás construyendo historias increíbles.</p>
-          </div>
-        </div>
-        <div class="story-progress-stats">
-          <div>
-            <strong>{{ cuentos().length }}</strong>
-            <span>Historias<br>publicadas</span>
-          </div>
-          <div>
-            <strong>{{ miCuentoVista() ? 1 : 0 }}</strong>
-            <span>Borradores<br>en progreso</span>
-          </div>
-          <div>
-            <strong>{{ reaccionesRecibidas() }}</strong>
-            <span>Reacciones<br>recibidas</span>
-          </div>
-        </div>
-      </section>
-
-      <!-- 2. ¿Necesitas inspiración? -->
-      <section class="story-inspiration-card">
-        <div class="inspiration-content">
-          <h2>¿Necesitas inspiración?</h2>
-          <p>Explora ideas, personajes y escenarios para tu próxima historia.</p>
-          <button nz-button nzType="primary" class="btn-inspirarme">
-            <fa-icon [icon]="faStar" aria-hidden="true"></fa-icon>
-            Inspirarme
-          </button>
-        </div>
-        <img src="/img/cuento-robot.png" alt="Robot leyendo un libro mágico" class="inspiration-art" loading="lazy" decoding="async">
-      </section>
-
-      <!-- 3. Plantillas recomendadas -->
-      <section class="story-templates-card">
-        <header>
-          <h2>Plantillas recomendadas</h2>
-          <a href="#">Ver todas</a>
-        </header>
-        <ul class="template-list">
-          @for (plantilla of plantillasRecomendadas(); track plantilla.id) {
-            <li>
-              <a
-                class="template-link"
-                [routerLink]="['/alumno/cuentos/crear']"
-                [queryParams]="{ plantilla: plantilla.id }"
-                (click)="onTemplateClick($event)"
-                [attr.aria-label]="'Usar plantilla ' + plantilla.titulo"
-              >
-                <div class="template-icon">
-                  <img [src]="plantilla.imagen" [alt]="plantilla.titulo" class="template-icon__img" />
-                </div>
-                <div class="template-info">
-                  <strong>{{ plantilla.titulo }}</strong>
-                  <span>Plantilla</span>
-                </div>
-              </a>
-            </li>
-          }
-        </ul>
-      </section>
-
-      <!-- 4. Inspiración de hoy -->
-      <section class="story-quote-card">
-        <header>
-          <h2>Inspiración de hoy</h2>
-        </header>
-        <blockquote class="quote">
-          <fa-icon [icon]="faQuoteLeft" class="quote-icon-left"></fa-icon>
-          <p>"{{ inspiracionDiaria().frase }}"</p>
-          <footer>— {{ inspiracionDiaria().autor }}</footer>
-          <fa-icon [icon]="faQuoteLeft" class="quote-icon-right"></fa-icon>
-        </blockquote>
-      </section>
-    </aside>
+    <app-galeria-aside
+      [asideAbierto]="asideAbierto()"
+      [progresoCreativo]="progresoCreativo()"
+      [totalCuentos]="cuentos().length"
+      [totalBorradores]="miCuentoVista() ? 1 : 0"
+      [reaccionesRecibidas]="reaccionesRecibidas()"
+      [plantillasRecomendadas]="plantillasRecomendadas()"
+      [inspiracionDiaria]="inspiracionDiaria()"
+      (onClose)="cerrarAside()"
+      (onTemplateClick)="onTemplateClick($event)">
+    </app-galeria-aside>
   </div>
 
-  <!-- Mobile-only: floating action button to open the aside as a bottom sheet.
-       Hidden on desktop, accessible from the bottom-right on phones/tablets. -->
+  <!-- Mobile-only: floating action button -->
   <button
     type="button"
     class="story-aside-fab"

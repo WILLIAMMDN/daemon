@@ -21,4 +21,10 @@ export const environment = {
     key: 'staging-not-configured',
     cluster: 'staging-not-configured',
   },
+  supabase: {
+    url: 'https://staging.invalid',
+    bucket: 'daemon-assets',
+    uploadsPath: 'uploads',
+    anonKey: 'staging-not-configured',
+  },
 };

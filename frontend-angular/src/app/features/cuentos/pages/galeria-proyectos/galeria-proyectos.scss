@@ -157,6 +157,7 @@
   padding-top: 0;
 }
 
+::ng-deep {
 .story-toolbar {
   align-items: center;
   display: flex;
@@ -277,30 +278,34 @@
 }
 
 .story-card {
-  background: #fff;
-  border: 1px solid var(--daemon-border, #e4eaf2);
-  border-radius: 14px;
+  background: #ffffff;
+  border: 1px solid rgba(228, 234, 242, 0.8);
+  border-radius: 16px;
   display: flex;
   flex-direction: column;
   min-width: 0;
   overflow: hidden;
-  transition: border-color .18s ease, box-shadow .18s ease;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
 }
 
 .story-card:hover {
-  border-color: #b7c8e5;
-  box-shadow: 0 10px 24px -20px rgba(23, 32, 51, .45);
+  border-color: #d1d5db;
+  box-shadow: 0 16px 32px -12px rgba(23, 32, 51, 0.15);
+  transform: translateY(-4px);
 }
 
 .story-card--own {
   border-color: #8c76dd;
+  border-width: 2px;
 }
 
 .story-card__cover {
   aspect-ratio: 4 / 3;
-  background: #edf2f8;
-  border-bottom: 1px solid #e2e8f0;
+  background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.6);
   overflow: hidden;
+  position: relative;
 }
 
 .story-card__cover img {
@@ -1176,4 +1181,6 @@
     animation: none;
     transition: none;
   }
+}
+
 }

@@ -1,5 +1,5 @@
 @if (cargando()) {
-  <app-cargando class="w-full" texto="Cargando cuento..."></app-cargando>
+  <app-cargando class="w-full" texto="Cargando historia..."></app-cargando>
 } @else if (error()) {
   <main class="student-module-page w-full max-w-3xl mx-auto p-4 md:p-8 flex justify-center">
     <div class="w-full bg-red-50 border border-red-200 rounded-2xl p-6 text-center">
@@ -7,28 +7,62 @@
     </div>
   </main>
 } @else if (datos(); as datosCuento) {
-  <main class="student-module-page w-full max-w-4xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-6 font-inter">
-    
-    <header class="student-module-header flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white border border-slate-200 shadow-sm rounded-2xl p-6 md:p-8">
-      <div class="flex flex-col gap-2 w-full md:w-3/4">
-        <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Lectura</p>
-        <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 leading-tight">{{ datosCuento.cuento.titulo }}</h1>
-        <div class="flex items-center gap-2 mt-2">
-          <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center shrink-0">
-            <span class="text-xs font-bold">{{ (datosCuento.autor?.nombre_completo || 'A').charAt(0) }}</span>
-          </div>
-          <p class="text-sm text-slate-700 font-medium">{{ datosCuento.autor?.nombre_completo || 'Autor registrado' }}</p>
-        </div>
-      </div>
-      <a nz-button nzType="default" class="daemon-btn" routerLink="/alumno/proyectos/cuentos">Volver a galería</a>
-    </header>
+  <main class="student-module-page flex flex-col gap-6 max-w-[1400px] mx-auto w-full font-inter px-4 lg:px-8 pb-10">
 
-    @if (datosCuento.cuento.contenido) {
-      <article class="bg-white border border-slate-200 rounded-2xl p-6 md:p-8 shadow-sm quill-container overflow-hidden">
-        <quill-view-html [content]="datosCuento.cuento.contenido" theme="snow"></quill-view-html>
-      </article>
-    } @else {
-      <app-estado-vacio titulo="Cuento vacío" descripcion="Este cuento no tiene contenido registrado."></app-estado-vacio>
-    }
+    <app-cuento-hero 
+      [datosCuento]="datosCuento"
+      [esPropietario]="esPropietario()"
+      [idCuento]="id"
+      [guardado]="guardado()"
+      (onCompartir)="copiarEnlace()"
+      (onGuardar)="toggleGuardar()">
+    </app-cuento-hero>
+
+    <!-- Main Workspace (Grid) -->
+    <div class="flex flex-col lg:grid lg:grid-cols-[1fr_340px] xl:grid-cols-[1fr_380px] gap-6 items-start w-full max-w-full">
+      
+      <!-- Lado Izquierdo: Cuento y Comentarios -->
+      <div class="w-full flex flex-col gap-6 transition-all duration-300" [class.max-w-4xl]="modoLectura()" [class.mx-auto]="modoLectura()">
+        
+        <app-cuento-lectura
+          [datosCuento]="datosCuento"
+          [modoLectura]="modoLectura()"
+          [escalaFuente]="escalaFuente()"
+          [guardado]="guardado()"
+          [miReaccion]="miReaccion()"
+          (onToggleModoLectura)="toggleModoLectura()"
+          (onCambiarFuente)="cambiarFuente($event)"
+          (onReaccionar)="reaccionar($event)"
+          (onGuardar)="toggleGuardar()"
+          (onCompartir)="copiarEnlace()">
+        </app-cuento-lectura>
+
+        <app-cuento-comentarios
+          [comentarios]="comentarios()"
+          [miAvatar]="miAvatar()"
+          [miId]="miId()"
+          [enviandoComentario]="enviandoComentario()"
+          (onEnviarComentario)="enviarComentario($event)"
+          (onEditarComentario)="editarComentario($event)"
+          (onEliminarComentario)="eliminarComentario($event)">
+        </app-cuento-comentarios>
+
+      </div>
+
+      <!-- Lado Derecho: Sidebar UI Premium -->
+      <app-cuento-sidebar
+        class="w-full flex flex-col gap-5 sticky top-24 transition-opacity duration-300"
+        [class.hidden]="modoLectura()"
+        [class.opacity-0]="modoLectura()"
+        [datosCuento]="datosCuento"
+        [modoLectura]="modoLectura()"
+        [tipAsistente]="tipAsistente()"
+        [reaccionesCount]="reaccionesCount()"
+        [miReaccion]="miReaccion()"
+        [comentariosCount]="comentarios().length"
+        (onReaccionar)="reaccionar($event)">
+      </app-cuento-sidebar>
+
+    </div>
   </main>
 }
