@@ -1,0 +1,62 @@
+name: Keep Alive (Render)
+
+# Mantiene despierta la instancia gratuita de Render pegando al health
+# endpoint cada 5 minutos. Render duerme el servicio tras ~15 min sin
+# trafico, lo que provoca cold starts de 20-40 s en el primer login.
+# Este workflow existe solo para evitar eso: no falla, no alerta,
+# no abre issues. Es un latido silencioso.
+
+on:
+  schedule:
+    # Cron de GitHub: cada 5 minutos. Bajo el umbral de 15 min de Render
+    # para que la instancia nunca se duerma mientras el repo este activo.
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: keep-alive
+  cancel-in-progress: true
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - name: Warm up Render backend
+        env:
+          HEALTH_URL: https://daemon-5vo1.onrender.com/api/v1/salud
+          FRONTEND_URL: https://daemonestudiante.web.app
+        shell: bash
+        run: |
+          set +e
+          start=$(date +%s)
+          echo "[keep-alive] $(date -u +%FT%TZ) ping -> $HEALTH_URL"
+
+          # 1. Calentar el backend (es lo que duerme).
+          backend_status=$(curl -sS -o /tmp/health.json -w "%{http_code}" \
+            --max-time 60 \
+            -H "Origin: $FRONTEND_URL" \
+            "$HEALTH_URL" || echo "000")
+          backend_ms=$(( $(date +%s) - start ))
+          echo "[keep-alive] backend HTTP $backend_status en ${backend_ms}s"
+
+          # 2. Calentar el frontend tambien; asi el primer hit a la
+          #    SPA no se come el cold start del CDN edge de Firebase.
+          frontend_status=$(curl -sS -o /dev/null -w "%{http_code}" \
+            --max-time 30 \
+            "$FRONTEND_URL" || echo "000")
+          echo "[keep-alive] frontend HTTP $frontend_status"
+
+          # 3. Log del payload de salud para auditoria (sin secretos).
+          if [ -s /tmp/health.json ]; then
+            echo "[keep-alive] payload:"
+            cat /tmp/health.json | head -c 400
+            echo
+          fi
+
+          # 4. No fallamos nunca. Este workflow es un latido, no un
+          #    monitor. production-monitor.yml es el que alerta.
+          exit 0
