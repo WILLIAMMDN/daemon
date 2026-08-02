@@ -19,4 +19,17 @@ export const environment = {
     key: '921d28612ceab3864425',
     cluster: 'sa1',
   },
+  /**
+   * Almacenamiento de imágenes. Las portadas e ilustraciones de los
+   * cuentos se suben al bucket público `daemon-assets` y la URL relativa
+   * resultante (prefijo `uploads/`) se persiste en Firestore.
+   */
+  supabase: {
+    url: 'https://lbxdcvsrmkkynttgwblc.supabase.co',
+    bucket: 'daemon-assets',
+    /** Prefijo dentro del bucket. Coincide con la convención del backend Laravel. */
+    uploadsPath: 'uploads',
+    /** Anon key (Project API keys → `anon` `public`). NUNCA la `service_role`. */
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxieGRjdnNybWtreW50dGd3YmxjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI1OTQ0MTQsImV4cCI6MjA5ODE3MDQxNH0.457VHljBnyK-0sUXFni7fG_y_BczZUBgOL7Dtu3NVZU',
+  },
 };

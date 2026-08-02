@@ -19,4 +19,10 @@ export const environment = {
     key: '921d28612ceab3864425',
     cluster: 'sa1',
   },
+  supabase: {
+    url: 'https://lbxdcvsrmkkynttgwblc.supabase.co',
+    bucket: 'daemon-assets',
+    uploadsPath: 'uploads',
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxieGRjdnNybWtreW50dGd3YmxjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI1OTQ0MTQsImV4cCI6MjA5ODE3MDQxNH0.457VHljBnyK-0sUXFni7fG_y_BczZUBgOL7Dtu3NVZU',
+  },
 };

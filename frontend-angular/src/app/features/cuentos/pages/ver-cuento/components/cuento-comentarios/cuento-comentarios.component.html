@@ -1,0 +1,84 @@
+        <section class="flex flex-col gap-4">
+          <div class="flex items-center gap-3">
+            <h3 class="text-base font-extrabold text-ink flex items-center gap-2">
+              <fa-icon [icon]="faCommentDots" class="text-primary"></fa-icon> Comentarios de la Comunidad
+            </h3>
+            <span class="bg-canvas text-muted text-xs font-bold px-2 py-0.5 rounded-full border border-border/50">{{ comentarios.length }}</span>
+          </div>
+          
+          <!-- Lista de Comentarios -->
+          <div class="max-h-[350px] overflow-y-auto pr-2 custom-scrollbar">
+            <div class="grid grid-cols-1 gap-4">
+              @for (comentario of comentarios; track comentario.id) {
+                <div class="bg-surface border border-border rounded-[16px] shadow-sm p-4 flex gap-3 relative group">
+                  <div class="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 overflow-hidden border border-primary/20">
+                    @if (comentario.avatar) {
+                      <img [src]="comentario.avatar" alt="Avatar" class="w-full h-full object-cover" />
+                    } @else {
+                      <span class="text-sm font-bold">{{ (comentario.autor_nombre || 'A').charAt(0) }}</span>
+                    }
+                  </div>
+                  <div class="flex-1 min-w-0 pr-6">
+                    <div class="flex justify-between items-center mb-1">
+                      <p class="text-[11px] font-extrabold text-ink truncate">{{ comentario.autor_nombre }}</p>
+                      <span class="text-[9px] font-bold text-muted whitespace-nowrap">{{ comentario.fecha_creacion | date:'shortTime' }}</span>
+                    </div>
+                    
+                    @if (editandoId === comentario.id) {
+                      <div class="flex flex-col gap-2 mt-2">
+                        <textarea class="w-full bg-canvas border border-border rounded-lg p-2 text-xs text-ink outline-none focus:border-primary resize-none custom-scrollbar" 
+                                  rows="2" [(ngModel)]="contenidoEdicion"></textarea>
+                        <div class="flex justify-end gap-2">
+                          <button class="text-[10px] font-bold text-muted hover:text-ink px-2 py-1" (click)="cancelarEdicion()">Cancelar</button>
+                          <button class="bg-primary hover:bg-primary-hover text-white text-[10px] font-bold px-3 py-1 rounded-lg shadow-sm" (click)="guardarEdicion()">Guardar</button>
+                        </div>
+                      </div>
+                    } @else {
+                      <p class="text-xs text-ink-soft leading-relaxed break-words">{{ comentario.contenido }}</p>
+                    }
+                  </div>
+                  
+                  @if (miId && comentario.autor_id == miId) {
+                    <div class="absolute top-3 right-2">
+                      <button class="w-6 h-6 flex items-center justify-center text-muted hover:text-ink rounded-full hover:bg-canvas transition-all opacity-0 group-hover:opacity-100" 
+                              nz-dropdown nzTrigger="click" [nzDropdownMenu]="menuComentario" nzPlacement="bottomRight">
+                        <fa-icon [icon]="faEllipsisVertical"></fa-icon>
+                      </button>
+                      <nz-dropdown-menu #menuComentario="nzDropdownMenu">
+                        <ul nz-menu class="bg-surface border border-border rounded-xl shadow-lg w-28 overflow-hidden">
+                          <li nz-menu-item class="text-[10px] font-bold text-ink hover:bg-canvas px-3 py-2 flex items-center gap-2" (click)="iniciarEdicion(comentario)">
+                            <fa-icon [icon]="faPenToSquare" class="text-blue-500"></fa-icon> Editar
+                          </li>
+                          <li nz-menu-item class="text-[10px] font-bold text-red-600 hover:bg-red-50 px-3 py-2 flex items-center gap-2" (click)="eliminar(comentario.id!)">
+                            <fa-icon [icon]="faTrash"></fa-icon> Eliminar
+                          </li>
+                        </ul>
+                      </nz-dropdown-menu>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Input Comentario -->
+          <div class="bg-surface border border-border shadow-sm rounded-2xl p-2 flex gap-3 mt-2 items-center">
+             <div class="w-10 h-10 rounded-full bg-indigo-100 flex-shrink-0 ml-2 overflow-hidden border border-indigo-200">
+               <img [src]="miAvatar" class="w-full h-full object-cover" onerror="this.src='/img/placeholders/avatar.png'; this.onerror=null;">
+             </div>
+             <input type="text" 
+                    class="flex-1 min-w-0 bg-transparent border-0 px-2 py-3 text-sm text-ink outline-none focus:ring-0 placeholder:text-muted/60" 
+                    placeholder="Escribe un comentario alentador..." 
+                    [(ngModel)]="nuevoComentario" 
+                    (keyup.enter)="enviar()"
+                    [disabled]="enviandoComentario">
+             <div class="flex items-center gap-3 pr-2 shrink-0">
+               <span class="text-[10px] font-bold text-muted/50 whitespace-nowrap">{{ nuevoComentario.length }} / 300</span>
+               <button class="bg-primary hover:bg-primary-hover text-white font-bold py-2.5 px-6 rounded-xl text-xs transition-colors shadow-sm disabled:opacity-50"
+                       (click)="enviar()"
+                       [disabled]="enviandoComentario || !nuevoComentario.trim()">
+                 Enviar
+               </button>
+             </div>
+          </div>
+        </section>

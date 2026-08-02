@@ -127,11 +127,12 @@
    El layout agrega la clase al host del componente.
    ============================================================ */
 
-/* KIDS — cyan (sidebar KIDS) */
+/* KIDS — Púrpura de Cuentos (Estándar) con acento amarillo */
 .theme-kids {
-  --daemon-primary:      #00b4d8;
-  --daemon-primary-soft: #e8f9fc;
-  --daemon-primary-dark: #0077b6;
+  --daemon-primary:      #6c3fe8; /* Púrpura principal de Cuentos */
+  --daemon-primary-soft: #855ef0;
+  --daemon-primary-dark: #5b35c9;
+  --daemon-accent:       #ffc414; /* Amarillo DAEMONS/Estrellas */
 }
 
 /* TEENS — azul con acento amarillo (DAEMONS) */

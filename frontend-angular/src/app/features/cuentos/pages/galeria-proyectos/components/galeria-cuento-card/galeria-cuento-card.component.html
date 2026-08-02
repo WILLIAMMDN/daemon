@@ -1,0 +1,50 @@
+            <article class="story-card" [class.story-card--own]="cuento.esMio">
+              <div class="story-card__cover">
+                @if (portadaDisponible) {
+                  <img [src]="cuento.portadaUrl!" [alt]="'Portada de ' + cuento.tituloVista" loading="lazy" decoding="async" (error)="onPortadaFallida.emit(cuento.id)">
+                } @else {
+                  <div class="story-card__cover-placeholder" [attr.data-asset-name]="'story-' + cuento.id + '-cover.webp'">
+                    <fa-icon [icon]="faBookOpen" aria-hidden="true"></fa-icon>
+                    <span>Portada pendiente</span>
+                  </div>
+                }
+              </div>
+              <div class="story-card__body">
+                @if (cuento.esMio) {
+                  <span class="story-card__own-label">Tu historia</span>
+                }
+                <h2>{{ cuento.tituloVista }}</h2>
+                <div class="story-card__author-row">
+                  <div class="story-card__author" [style.backgroundColor]="cuento.colorAutor">
+                    @if (cuento.avatar) {
+                      <img [src]="cuento.avatar" [alt]="cuento.autorVista" class="story-card__avatar" />
+                    } @else {
+                      <span aria-hidden="true">{{ cuento.inicialAutor }}</span>
+                    }
+                  </div>
+                  <div class="story-card__author-info">
+                    <p>{{ cuento.autorVista }}</p>
+                  </div>
+                  <span class="story-card__date">{{ cuento.fechaVista }}</span>
+                </div>
+                <div class="story-card__tags">
+                  <span class="story-card__tag" [ngClass]="cuento.tagClase">{{ cuento.tagNombre }}</span>
+                </div>
+              </div>
+              <footer style="display: flex; gap: 8px; justify-content: space-between; align-items: center;">
+                <a [routerLink]="['/alumno/proyectos/cuentos', cuento.id]" class="btn-read" style="flex: 1; justify-content: center; text-decoration: none;">
+                  <fa-icon [icon]="faBookOpen" aria-hidden="true"></fa-icon>
+                  Leer
+                </a>
+                @if (cuento.esMio) {
+                  <div style="display: flex; gap: 4px;">
+                    <a [routerLink]="['/alumno/proyectos/cuentos/crear']" [queryParams]="{ id: cuento.id }" class="btn-read" style="background-color: #f3f4f6; color: #4b5563; padding: 0 12px; min-width: 40px; justify-content: center;" title="Editar">
+                      <fa-icon [icon]="faPen" aria-hidden="true"></fa-icon>
+                    </a>
+                    <button type="button" class="btn-read" style="background-color: #fee2e2; color: #b91c1c; padding: 0 12px; border: none; min-width: 40px; justify-content: center;" title="Borrar" (click)="onEliminar.emit(cuento.id)">
+                      <fa-icon [icon]="faTrash" aria-hidden="true"></fa-icon>
+                    </button>
+                  </div>
+                }
+              </footer>
+            </article>

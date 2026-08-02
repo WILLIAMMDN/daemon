@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, signal, HostListener } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, signal, HostListener, ViewEncapsulation } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
@@ -13,6 +13,8 @@ import {
   faQuoteLeft,
   faTimes,
   faPlus,
+  faPen,
+  faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import { finalize } from 'rxjs';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -25,13 +27,20 @@ import { Cuento } from '../../services/cuento';
 import { HeaderBannerComponent } from '../../../../shared/componentes/header-banner/header-banner';
 import { NgClass } from '@angular/common';
 
+import { GaleriaToolbarComponent } from './components/galeria-toolbar/galeria-toolbar.component';
+import { GaleriaCuentoCardComponent } from './components/galeria-cuento-card/galeria-cuento-card.component';
+import { GaleriaAsideComponent } from './components/galeria-aside/galeria-aside.component';
+
 type FiltroCuento = 'todos' | 'mio';
 type OrdenCuento = 'recientes' | 'antiguos' | 'titulo';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-galeria-proyectos',
-  imports: [RouterLink, FontAwesomeModule, NzButtonModule, EstadoVacio, NgClass, HeaderBannerComponent],
+  imports: [
+    RouterLink, FontAwesomeModule, NzButtonModule, EstadoVacio, NgClass, HeaderBannerComponent,
+    GaleriaToolbarComponent, GaleriaCuentoCardComponent, GaleriaAsideComponent
+  ],
   templateUrl: './galeria-proyectos.html',
   styleUrl: './galeria-proyectos.scss',
 })
@@ -56,6 +65,8 @@ export class GaleriaProyectos {
   readonly faQuoteLeft = faQuoteLeft;
   readonly faTimes = faTimes;
   readonly faPlus = faPlus;
+  readonly faPen = faPen;
+  readonly faTrash = faTrash;
   readonly cuentos = signal<CuentoRegistro[]>([]);
   readonly miCuento = signal<CuentoRegistro | null>(null);
   readonly miCuentoCargado = signal(false);
@@ -66,7 +77,7 @@ export class GaleriaProyectos {
   readonly filtro = signal<FiltroCuento>('todos');
   readonly orden = signal<OrdenCuento>('recientes');
   readonly busqueda = signal('');
-  readonly portadasInvalidas = signal<ReadonlySet<number>>(new Set());
+  readonly portadasInvalidas = signal<ReadonlySet<string | number>>(new Set());
   /** Mobile bottom-sheet state. Desktop ignores it entirely. */
   readonly asideAbierto = signal(false);
 
@@ -96,7 +107,8 @@ export class GaleriaProyectos {
     const busqueda = this.normalizar(this.busqueda());
     const orden = this.orden();
     const resultado = this.cuentosVista().filter((cuento) => {
-      const coincideFiltro = filtro === 'mio' ? cuento.esMio : true;
+      // 'todos' significa Comunidad (no míos), 'mio' significa Mis historias
+      const coincideFiltro = filtro === 'mio' ? cuento.esMio : !cuento.esMio;
       return coincideFiltro && (!busqueda || cuento.textoBusqueda.includes(busqueda));
     });
 
@@ -236,12 +248,75 @@ export class GaleriaProyectos {
     this.busqueda.set('');
   }
 
-  registrarPortadaFallida(id: number): void {
+  registrarPortadaFallida(id: string | number): void {
     this.portadasInvalidas.update((actuales) => new Set([...actuales, id]));
   }
 
   portadaDisponible(cuento: CuentoVista): boolean {
     return Boolean(cuento.portadaUrl) && !this.portadasInvalidas().has(cuento.id);
+  }
+
+  eliminarCuento(id: string | number): void {
+    if (confirm('¿Estás seguro de que quieres borrar esta historia? No podrás recuperarla.')) {
+      this.cuento.eliminar(String(id)).subscribe({
+        next: () => {
+          this.cuentos.update(actuales => actuales.filter(c => String(c.id) !== String(id)));
+          if (String(this.miCuento()?.id) === String(id)) {
+            this.miCuento.set(null);
+          }
+          alert('Historia borrada correctamente.');
+        },
+        error: (e) => {
+          console.error('Error borrando cuento:', e);
+          alert('Hubo un error al borrar. ¿Quizá las Reglas de Seguridad de Firestore te bloquearon? Revisa la consola.');
+        }
+      });
+    }
+  }
+
+  migrarBaseDeDatosAntigua(): void {
+    if (!confirm('¿Iniciar migración desde PostgreSQL (Supabase) a Firestore? Esto copiará todos los cuentos antiguos.')) return;
+    
+    // Hacemos fetch al antiguo backend de Laravel
+    fetch('https://daemon-5vo1.onrender.com/api/v1/cuentos')
+      .then(res => res.json())
+      .then(async (respuesta) => {
+        const cuentosAntiguos = respuesta.data || respuesta;
+        alert(`Se encontraron ${cuentosAntiguos.length} cuentos antiguos. Iniciando migración... mira la consola para el progreso.`);
+        
+        let migrados = 0;
+        for (const viejo of cuentosAntiguos) {
+          // Adaptamos el formato de Laravel al de Firestore
+          const cuentoFirestore = {
+            id_alumno: viejo.id_alumno || viejo.usuario?.id,
+            titulo: viejo.titulo,
+            contenido: viejo.data_1 || viejo.contenido || '', // El contenido viejo
+            autor: viejo.usuario?.nombre_completo || viejo.autor || 'Autor Antiguo',
+            avatar: viejo.usuario?.avatar || viejo.avatar || null,
+            fecha_creacion: viejo.created_at || new Date().toISOString(),
+            categoria: viejo.categoria || 'Migrado',
+            reacciones_count: viejo.reacciones_count || 0
+          };
+
+          // Inyección manual a Firestore saltando el método de sesión
+          const { collection, addDoc, getFirestore } = await import('firebase/firestore');
+          const { getApp } = await import('firebase/app');
+          // El servicio `Cuento` ya inyecta `FirestoreApp` internamente, pero
+          // no expone la instancia por seguridad. Aquí accedemos vía DI
+          // alternativa al SDK compartido de Firebase.
+          const db = getFirestore(getApp());
+          await addDoc(collection(db, 'cuentos'), cuentoFirestore);
+          migrados++;
+          console.log(`Migrado ${migrados}/${cuentosAntiguos.length}: ${viejo.titulo}`);
+        }
+        
+        alert(`¡Migración completada! Se copiaron ${migrados} cuentos a Firestore. Por favor, recarga la página.`);
+        this.cargar(true);
+      })
+      .catch(e => {
+        console.error('Error en migración:', e);
+        alert('Ocurrió un error en la migración. Mira la consola.');
+      });
   }
 
   private construirVista(cuento: CuentoRegistro): CuentoVista {
@@ -267,7 +342,14 @@ export class GaleriaProyectos {
     
     // Colores para el avatar
     const coloresAvatar = ['#1d4f91', '#0d9488', '#e11d48', '#9333ea', '#ca8a04', '#2563eb'];
-    const colorAutor = coloresAvatar[idNum % coloresAvatar.length];
+    
+    // Hash secundario para el avatar (usando el id que puede ser string o number)
+    let hashAvatar = 0;
+    const strId = String(cuento.id || 0);
+    for (let i = 0; i < strId.length; i++) {
+      hashAvatar = strId.charCodeAt(i) + ((hashAvatar << 5) - hashAvatar);
+    }
+    const colorAutor = coloresAvatar[Math.abs(hashAvatar) % coloresAvatar.length];
 
     return {
       ...cuento,
@@ -278,7 +360,7 @@ export class GaleriaProyectos {
       portadaUrl,
       fechaVista: timestamp ? this.fecha.format(fecha!) : 'Fecha no disponible',
       timestamp,
-      esMio: cuento.id_alumno === this.sesion.usuario()?.id,
+      esMio: String(cuento.id_alumno) === String(this.sesion.usuario()?.id),
       escenasConContenido: this.contarEscenas(cuento),
       textoBusqueda: this.normalizar(`${tituloVista} ${autorVista}`),
       tagNombre: categoriaReal,
