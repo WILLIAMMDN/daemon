@@ -7,7 +7,7 @@
 .register-page {
   align-items: center;
   background: #f4f6f8;
-  color: #111827;
+  color: var(--daemon-ink);
   display: grid;
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   min-height: 100vh;
@@ -23,7 +23,7 @@
 }
 
 .register-card {
-  background: #ffffff;
+  background: var(--daemon-on-primary);
   border: 1px solid #d7deea;
   border-radius: 6px;
   box-shadow: 0 10px 28px #1f2a4414;
@@ -82,7 +82,7 @@
 
 .register-form .classic-field input,
 .register-form .classic-field select {
-  background: #ffffff;
+  background: var(--daemon-on-primary);
   border: 0;
   color: #263244;
   font: inherit;
@@ -162,7 +162,7 @@
 
 .register-note {
   align-items: center;
-  background: #ffffff;
+  background: var(--daemon-on-primary);
   border: 1px solid #d7deea;
   border-radius: 6px;
   box-shadow: 0 12px 28px #11182712;

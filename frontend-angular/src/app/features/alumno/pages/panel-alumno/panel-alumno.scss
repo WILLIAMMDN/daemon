@@ -1,5 +1,5 @@
 :host {
-  --dashboard-xp: #1677ff;
+  --dashboard-xp: var(--daemon-teens);
   --dashboard-daemons: #9a5b00;
   --dashboard-card-radius: 16px;
   display: block;
@@ -12,8 +12,8 @@
 .secondary-grid { order: 4; }
 
 .dashboard-state {
-  background: #fff;
-  border: 1px solid #e4eaf2;
+  background: var(--daemon-on-primary);
+  border: 1px solid var(--daemon-border);
   border-radius: var(--dashboard-card-radius);
   min-height: 320px;
   padding: 1.5rem;
@@ -33,7 +33,7 @@
   padding: .75rem 1rem;
 }
 .offline-notice button {
-  background: #fff;
+  background: var(--daemon-on-primary);
   border: 1px solid #c98a12;
   border-radius: 9px;
   color: #744500;
@@ -60,7 +60,7 @@
   align-items: center;
   background: #5b3cc4;
   border-radius: 12px;
-  color: #fff;
+  color: var(--daemon-on-primary);
   display: flex;
   font-size: 1.15rem;
   height: 48px;
@@ -73,7 +73,7 @@
 .reward-reveal p { color: #5d4d8d; margin: 0; }
 .reward-close {
   align-items: center;
-  background: #fff;
+  background: var(--daemon-on-primary);
   border: 1px solid #cfc3f4;
   border-radius: 10px;
   color: #4e3698;

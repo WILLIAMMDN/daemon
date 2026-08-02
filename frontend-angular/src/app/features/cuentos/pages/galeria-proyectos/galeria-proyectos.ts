@@ -341,7 +341,7 @@ export class GaleriaProyectos {
     const indexTag = Math.abs(hash) % clases.length;
     
     // Colores para el avatar
-    const coloresAvatar = ['#1d4f91', '#0d9488', '#e11d48', '#9333ea', '#ca8a04', '#2563eb'];
+    const coloresAvatar = ['var(--daemon-info)', 'var(--daemon-success)', 'var(--daemon-danger)', 'var(--daemon-primary-soft)', 'var(--daemon-accent-dark)', 'var(--daemon-info)'];
     
     // Hash secundario para el avatar (usando el id que puede ser string o number)
     let hashAvatar = 0;

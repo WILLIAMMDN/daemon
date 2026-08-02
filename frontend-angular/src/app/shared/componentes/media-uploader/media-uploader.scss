@@ -21,7 +21,7 @@
   align-items: center;
   background: #eef4ff;
   border-radius: 999px;
-  color: #2563eb;
+  color: var(--daemon-info);
   display: inline-flex;
   font-size: 1.35rem;
   font-weight: 900;
@@ -50,5 +50,5 @@
 }
 
 :host ::ng-deep .ant-upload.ant-upload-drag:not(.ant-upload-disabled):hover {
-  border-color: #2563eb;
+  border-color: var(--daemon-info);
 }

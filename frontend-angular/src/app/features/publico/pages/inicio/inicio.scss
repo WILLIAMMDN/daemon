@@ -70,7 +70,7 @@
 .hero-cut-line {
   fill: none;
   opacity: .28;
-  stroke: #ffffff;
+  stroke: var(--daemon-on-primary);
   stroke-width: 1.4;
 }
 
@@ -148,7 +148,7 @@
 
 .inicio-google-button {
   align-items: center;
-  background: #ffffff;
+  background: var(--daemon-on-primary);
   border: 1px solid #dadce0;
   border-radius: 9999px;
   color: #1f1f1f;
@@ -167,7 +167,7 @@
 }
 
 .inicio-google-button:hover:not(:disabled) {
-  background: #f8f9fa;
+  background: var(--daemon-surface-muted);
   border-color: #d2e3fc;
   box-shadow: 0 1px 2px rgba(60, 64, 67, 0.15), 0 1px 3px 1px rgba(60, 64, 67, 0.08);
   transform: translateY(-1px);

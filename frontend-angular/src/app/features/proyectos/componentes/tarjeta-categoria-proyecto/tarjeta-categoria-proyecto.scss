@@ -4,8 +4,8 @@
 }
 
 .project-category-card {
-  background: var(--daemon-surface, #fff);
-  border: 1px solid var(--daemon-border, #e4eaf2);
+  background: var(--daemon-surface, var(--daemon-on-primary));
+  border: 1px solid var(--daemon-border, var(--daemon-border));
   border-radius: 16px;
   display: flex;
   flex-direction: column;
@@ -16,13 +16,13 @@
 }
 
 .project-category-card:hover {
-  border-color: #b7c8e5;
+  border-color: var(--daemon-border-strong);
   box-shadow: 0 10px 24px -20px rgba(23, 32, 51, .45);
 }
 
 .project-category-card__visual {
   background: #eef3fb;
-  border-bottom: 1px solid var(--daemon-border, #e4eaf2);
+  border-bottom: 1px solid var(--daemon-border, var(--daemon-border));
   min-height: 150px;
   overflow: hidden;
 }
@@ -45,7 +45,7 @@
 
 .project-category-card__heading {
   align-items: center;
-  color: #3157a5;
+  color: var(--daemon-info);
   display: flex;
   font-size: .7rem;
   font-weight: 800;
@@ -61,7 +61,7 @@
 }
 
 h2 {
-  color: var(--daemon-ink, #172033);
+  color: var(--daemon-ink, var(--daemon-ink));
   font-size: 1.25rem;
   letter-spacing: -.025em;
   line-height: 1.2;
@@ -69,14 +69,14 @@ h2 {
 }
 
 p {
-  color: var(--daemon-muted, #667085);
+  color: var(--daemon-muted, var(--daemon-muted));
   font-size: .86rem;
   line-height: 1.55;
   margin: .6rem 0 1.15rem;
 }
 
 .project-category-card__metrics {
-  border-top: 1px solid #edf1f6;
+  border-top: 1px solid var(--daemon-border);
   display: grid;
   gap: 1rem;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -85,12 +85,12 @@ p {
 }
 
 .project-category-card__metrics div + div {
-  border-left: 1px solid #e8edf4;
+  border-left: 1px solid var(--daemon-border);
   padding-left: 1rem;
 }
 
 .project-category-card__metrics dd {
-  color: #172033;
+  color: var(--daemon-ink);
   font-size: 1.15rem;
   font-weight: 800;
   line-height: 1;
@@ -105,7 +105,7 @@ p {
 
 footer {
   align-items: center;
-  border-top: 1px solid #e8edf4;
+  border-top: 1px solid var(--daemon-border);
   display: flex;
   gap: .75rem;
   justify-content: space-between;

@@ -20,7 +20,7 @@
               
               <!-- ───── EDITOR (Quill) + ILUSTRACIÓN DE PÁGINA ───── -->
               <div class="crear-pagina-editor">
-                <div class="quill-wrapper" [style.background-color]="paginaActiva?.colorFondo || '#ffffff'">
+                <div class="quill-wrapper" [style.background-color]="paginaActiva?.colorFondo || 'var(--daemon-on-primary)'">
 
                   <!-- TEXTO -->
                   @if (paginaActiva?.contenido) {

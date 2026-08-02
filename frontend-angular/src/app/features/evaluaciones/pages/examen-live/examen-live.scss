@@ -10,8 +10,8 @@
 
 .assessments-hero {
   align-items: center;
-  background: #fff;
-  border: 1px solid #e4eaf2;
+  background: var(--daemon-on-primary);
+  border: 1px solid var(--daemon-border);
   border-radius: 18px;
   display: grid;
   gap: 1rem;
@@ -44,14 +44,14 @@
 }
 
 .assessments-hero h1 {
-  color: #172033;
+  color: var(--daemon-ink);
   font-size: clamp(1.75rem, 3.5vw, 2.45rem);
   letter-spacing: -.04em;
   margin: .25rem 0;
 }
 
 .assessments-hero p {
-  color: #667085;
+  color: var(--daemon-muted);
   font-size: .86rem;
   line-height: 1.5;
   margin: 0;
@@ -77,8 +77,8 @@
 }
 
 .assessment-card {
-  background: #fff;
-  border: 1px solid #e4eaf2;
+  background: var(--daemon-on-primary);
+  border: 1px solid var(--daemon-border);
   border-radius: 16px;
   overflow: hidden;
 }
@@ -97,26 +97,26 @@
 }
 
 .assessment-card h2 {
-  color: #172033;
+  color: var(--daemon-ink);
   font-size: 1.25rem;
   margin: .3rem 0;
 }
 
 .assessment-card header p {
-  color: #667085;
+  color: var(--daemon-muted);
   font-size: .76rem;
   margin: 0;
 }
 
 .assessment-progress {
-  background: #e8edf4;
+  background: var(--daemon-border);
   border-radius: 999px;
   height: 8px;
   overflow: hidden;
 }
 
 .assessment-progress span {
-  background: #1677ff;
+  background: var(--daemon-teens);
   border-radius: inherit;
   display: block;
   height: 100%;
@@ -129,8 +129,8 @@
 }
 
 .question-card {
-  background: #f8fafc;
-  border: 1px solid #e4eaf2;
+  background: var(--daemon-surface-muted);
+  border: 1px solid var(--daemon-border);
   border-radius: 14px;
   margin: 0;
   min-width: 0;
@@ -151,9 +151,9 @@
 
 .question-card legend > span {
   align-items: center;
-  background: #1677ff;
+  background: var(--daemon-teens);
   border-radius: 8px;
-  color: #fff;
+  color: var(--daemon-on-primary);
   display: inline-flex;
   flex: 0 0 auto;
   font-size: .68rem;
@@ -170,7 +170,7 @@
 
 .question-options label {
   align-items: center;
-  background: #fff;
+  background: var(--daemon-on-primary);
   border: 1px solid #dce3ed;
   border-radius: 10px;
   color: #526174;
@@ -188,7 +188,7 @@
 }
 
 .question-options input {
-  accent-color: #1677ff;
+  accent-color: var(--daemon-teens);
   height: 18px;
   width: 18px;
 }
@@ -205,7 +205,7 @@
 }
 
 .question-text-answer input {
-  background: #fff;
+  background: var(--daemon-on-primary);
   border: 1px solid #d8e0eb;
   border-radius: 10px;
   color: #344054;
@@ -227,7 +227,7 @@
 
 .assessment-card form > footer > span {
   align-items: center;
-  color: #667085;
+  color: var(--daemon-muted);
   display: inline-flex;
   font-size: .75rem;
   font-weight: 650;
@@ -254,7 +254,7 @@
 
 .assessments-error > span {
   align-items: center;
-  background: #fee2e2;
+  background: var(--daemon-danger-soft);
   border-radius: 12px;
   color: #b42318;
   display: inline-flex;
@@ -273,8 +273,8 @@
 
 .assessments-loading article {
   animation: assessment-pulse 1.4s ease-in-out infinite;
-  background: #fff;
-  border: 1px solid #e4eaf2;
+  background: var(--daemon-on-primary);
+  border: 1px solid var(--daemon-border);
   border-radius: 16px;
   display: grid;
   gap: .8rem;
@@ -282,13 +282,13 @@
   padding: 1.2rem;
 }
 
-.assessments-loading span { background: #edf1f6; border-radius: 8px; display: block; height: 20px; }
+.assessments-loading span { background: var(--daemon-border); border-radius: 8px; display: block; height: 20px; }
 .assessments-loading span:nth-child(1) { width: 24%; }
 .assessments-loading span:nth-child(2) { height: 32px; width: 55%; }
 .assessments-loading span:nth-child(3) { height: 8px; }
 .assessments-loading span:nth-child(4) { height: 96px; }
 
-.assessments-empty { background: #fff; border: 1px solid #e4eaf2; border-radius: 16px; }
+.assessments-empty { background: var(--daemon-on-primary); border: 1px solid var(--daemon-border); border-radius: 16px; }
 .assessment-feedback { border-radius: 12px; }
 
 @keyframes assessment-pulse {

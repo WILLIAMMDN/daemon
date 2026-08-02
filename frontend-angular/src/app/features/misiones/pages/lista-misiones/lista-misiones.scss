@@ -4,10 +4,10 @@
 }
 
 .missions-page {
-  --missions-border: var(--daemon-border, #e4eaf2);
-  --missions-ink: var(--daemon-ink, #172033);
-  --missions-muted: var(--daemon-muted, #667085);
-  --missions-primary: var(--daemon-primary, #1677ff);
+  --missions-border: var(--daemon-border, var(--daemon-border));
+  --missions-ink: var(--daemon-ink, var(--daemon-ink));
+  --missions-muted: var(--daemon-muted, var(--daemon-muted));
+  --missions-primary: var(--daemon-primary, var(--daemon-teens));
   container-name: missions-page;
   container-type: inline-size;
   display: grid;
@@ -64,7 +64,7 @@
 }
 
 .missions-hero__meta {
-  background: #fff;
+  background: var(--daemon-on-primary);
   border: 1px solid #cfe3ff;
   border-radius: 999px;
   color: #174f91;
@@ -85,7 +85,7 @@
 
 .refresh-button.ant-btn {
   align-items: center;
-  background: #fff;
+  background: var(--daemon-on-primary);
   border-color: #cfe3ff;
   border-radius: 10px;
   color: #0958d9;
@@ -101,7 +101,7 @@
 
 .missions-toolbar {
   align-items: center;
-  background: #fff;
+  background: var(--daemon-on-primary);
   border: 1px solid var(--missions-border);
   border-radius: 16px;
   display: flex;
@@ -153,13 +153,13 @@
 .mission-filter--active {
   background: #0958d9;
   border-color: #0958d9;
-  color: #fff;
+  color: var(--daemon-on-primary);
 }
 
 .mission-filter--active:hover {
   background: #074f9f;
   border-color: #074f9f;
-  color: #fff;
+  color: var(--daemon-on-primary);
 }
 
 .mission-filter--active strong {
@@ -174,7 +174,7 @@
 }
 
 .mission-card {
-  background: #fff;
+  background: var(--daemon-on-primary);
   border: 1px solid var(--missions-border);
   border-radius: 16px;
   display: flex;
@@ -190,7 +190,7 @@
   box-shadow: 0 8px 22px rgba(25, 55, 95, .08);
 }
 
-.mission-card[data-state='approved'] { border-top: 4px solid #12a150; }
+.mission-card[data-state='approved'] { border-top: 4px solid var(--daemon-success); }
 .mission-card[data-state='pending'] { border-top: 4px solid #f5a000; }
 .mission-card[data-state='rejected'] { border-top: 4px solid #dc2626; }
 
@@ -252,7 +252,7 @@
 
 .dual-reward {
   align-items: center;
-  background: #f8fafc;
+  background: var(--daemon-surface-muted);
   border: 1px solid #edf1f5;
   border-radius: 10px;
   display: grid;
@@ -264,7 +264,7 @@
 
 .dual-reward > span {
   align-items: center;
-  color: #667085;
+  color: var(--daemon-muted);
   display: grid;
   gap: .1rem .4rem;
   grid-template-columns: auto 1fr;
@@ -298,14 +298,14 @@
   background: #f3f6fa;
   border: 1px solid var(--missions-border);
   border-radius: 9px;
-  color: #667085;
+  color: var(--daemon-muted);
   display: flex;
   flex: 0 0 42px;
   height: 42px;
   justify-content: center;
 }
 
-.detail-link:hover { background: #edf5ff; color: #1677ff; }
+.detail-link:hover { background: #edf5ff; color: var(--daemon-teens); }
 
 .missions-error {
   align-items: center;
@@ -320,7 +320,7 @@
 
 .missions-error__icon {
   align-items: center;
-  background: #fee2e2;
+  background: var(--daemon-danger-soft);
   border-radius: 12px;
   color: #b42318;
   display: inline-flex;
@@ -331,7 +331,7 @@
 
 .missions-error h2 { color: #7f1d1d; font-size: 1rem; margin: 0; }
 .missions-error p { color: #b42318; font-size: .82rem; margin: .25rem 0 0; }
-.missions-state { background: #fff; border: 1px solid var(--missions-border); border-radius: 16px; }
+.missions-state { background: var(--daemon-on-primary); border: 1px solid var(--missions-border); border-radius: 16px; }
 
 .missions-loading {
   display: grid;
@@ -341,7 +341,7 @@
 .missions-loading__toolbar,
 .mission-skeleton {
   animation: mission-pulse 1.4s ease-in-out infinite;
-  background: #fff;
+  background: var(--daemon-on-primary);
   border: 1px solid var(--missions-border);
   border-radius: 16px;
 }
@@ -355,7 +355,7 @@
   padding: 1.2rem;
 }
 
-.mission-skeleton span { background: #edf1f6; border-radius: 8px; display: block; height: 18px; }
+.mission-skeleton span { background: var(--daemon-border); border-radius: 8px; display: block; height: 18px; }
 .mission-skeleton span:nth-child(1) { width: 38%; }
 .mission-skeleton span:nth-child(2) { height: 30px; margin-top: 1rem; width: 72%; }
 .mission-skeleton span:nth-child(3) { height: 72px; }

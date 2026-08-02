@@ -14,7 +14,7 @@
 }
 
 .profile-dialog {
-  background: #ffffff;
+  background: var(--daemon-on-primary);
   border: 1px solid #cfd4dc;
   border-radius: 2px;
   box-shadow: 0 24px 70px #02061752;
@@ -40,7 +40,7 @@
 
 .google-mark {
   align-items: center;
-  background: #ffffff;
+  background: var(--daemon-on-primary);
   border: 1px solid #d6dbe3;
   border-radius: 50%;
   box-shadow: 0 8px 22px #11182714;
@@ -82,7 +82,7 @@
 }
 
 .verified-email {
-  background: #f8fafc;
+  background: var(--daemon-surface-muted);
   border: 1px solid #dbe2ec;
   display: grid;
   gap: .25rem;
@@ -143,7 +143,7 @@
 
 .classic-field input,
 .classic-field select {
-  background: #ffffff;
+  background: var(--daemon-on-primary);
   border: 0;
   color: #263244;
   font: inherit;
@@ -192,7 +192,7 @@
 }
 
 .secondary-button {
-  background: #ffffff;
+  background: var(--daemon-on-primary);
   border: 1px solid #cfd4dc;
   color: #22304a;
 }
@@ -200,7 +200,7 @@
 .submit-button {
   background: #0b5bd3;
   border: 0;
-  color: #ffffff;
+  color: var(--daemon-on-primary);
 }
 
 .submit-button:hover:not(:disabled) {
