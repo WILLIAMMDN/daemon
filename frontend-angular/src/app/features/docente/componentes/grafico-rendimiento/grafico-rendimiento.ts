@@ -21,15 +21,15 @@ export class GraficoRendimiento implements OnChanges {
       { 
         data: [], 
         label: 'Tokens generados',
-        backgroundColor: '#2563eb', // blue-600
+        backgroundColor: 'var(--daemon-info)', // blue-600
         hoverBackgroundColor: '#1d4ed8', // blue-700
-        borderColor: '#2563eb',
+        borderColor: 'var(--daemon-info)',
         borderWidth: 0,
         borderRadius: 4,
         barPercentage: 0.6,
         tension: 0.4, // Suavizado para line
-        pointBackgroundColor: '#2563eb',
-        pointBorderColor: '#ffffff',
+        pointBackgroundColor: 'var(--daemon-info)',
+        pointBorderColor: 'var(--daemon-on-primary)',
         pointBorderWidth: 2,
         pointRadius: 4,
         pointHoverRadius: 6,
@@ -58,9 +58,9 @@ export class GraficoRendimiento implements OnChanges {
       },
       y: {
         beginAtZero: true,
-        grid: { color: '#f1f5f9' }, // slate-100
+        grid: { color: 'var(--daemon-surface-muted)' }, // slate-100
         border: { display: false, dash: [4, 4] },
-        ticks: { font: { family: 'Inter, sans-serif', size: 12 }, color: '#94a3b8', stepSize: 10 } // slate-400
+        ticks: { font: { family: 'Inter, sans-serif', size: 12 }, color: 'var(--daemon-muted)', stepSize: 10 } // slate-400
       }
     }
   };

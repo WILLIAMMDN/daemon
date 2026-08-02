@@ -28,7 +28,7 @@
 }
 
 .account-email {
-  background: #f8fafc;
+  background: var(--daemon-surface-muted);
   border: 1px solid #dbe2ec;
   display: grid;
   gap: .18rem;

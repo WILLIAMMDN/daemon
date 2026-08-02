@@ -43,7 +43,7 @@
 }
 
 ::ng-deep .module-hero__tag {
-  color: #ffc414;
+  color: var(--daemon-accent);
   font-size: .7rem;
   font-weight: 800;
   letter-spacing: .1em;
@@ -53,7 +53,7 @@
 }
 
 ::ng-deep .module-hero__title {
-  color: #fff;
+  color: var(--daemon-on-primary);
   font-size: clamp(1.9rem, 3.2vw, 2.4rem);
   font-weight: 850;
   letter-spacing: -.03em;
@@ -62,7 +62,7 @@
 }
 
 ::ng-deep .module-hero__desc {
-  color: #dce2ff;
+  color: var(--daemon-teens-soft);
   font-size: .88rem;
   line-height: 1.5;
   margin: 0 0 1.25rem 0;

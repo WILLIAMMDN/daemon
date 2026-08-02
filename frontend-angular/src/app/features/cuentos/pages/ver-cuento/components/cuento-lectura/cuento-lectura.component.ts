@@ -70,7 +70,7 @@ export class CuentoLecturaComponent {
       return [{
         id: 'legacy-1',
         contenido: this.contenidoProcesado,
-        colorFondo: '#ffffff',
+        colorFondo: 'var(--daemon-on-primary)',
         ilustracion: null
       }];
     }

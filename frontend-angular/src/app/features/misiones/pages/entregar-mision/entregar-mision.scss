@@ -38,7 +38,7 @@
 }
 
 .delivery-hero h1 {
-  color: #172033;
+  color: var(--daemon-ink);
   font-size: clamp(1.8rem, 3.5vw, 2.8rem);
   letter-spacing: -.04em;
   line-height: 1.08;
@@ -46,7 +46,7 @@
 }
 
 .delivery-hero p {
-  color: #667085;
+  color: var(--daemon-muted);
   line-height: 1.55;
   margin: 0;
 }
@@ -79,7 +79,7 @@
 }
 
 :host ::ng-deep .delivery-card.ant-card {
-  border: 1px solid #e4eaf2;
+  border: 1px solid var(--daemon-border);
   border-radius: 16px;
   box-shadow: none;
   overflow: hidden;
@@ -106,7 +106,7 @@
 .delivery-form h2,
 .delivery-aside h2,
 .delivery-locked-card h2 {
-  color: #172033;
+  color: var(--daemon-ink);
   font-size: 1.15rem;
   margin: .25rem 0 0;
 }
@@ -123,7 +123,7 @@
 }
 
 .delivery-field textarea {
-  background: #f8fafc;
+  background: var(--daemon-surface-muted);
   border: 1px solid #d8e0eb;
   border-radius: 12px;
   color: #344054;
@@ -139,7 +139,7 @@
 }
 
 .delivery-field textarea:focus-visible {
-  border-color: #1677ff;
+  border-color: var(--daemon-teens);
   box-shadow: 0 0 0 3px rgba(22, 119, 255, .15);
 }
 
@@ -199,7 +199,7 @@
 }
 
 .delivery-reward {
-  background: #f8fafc;
+  background: var(--daemon-surface-muted);
   border: 1px solid #edf1f5;
   border-radius: 10px;
   display: grid;
@@ -211,7 +211,7 @@
 
 .delivery-reward span { display: grid; }
 .delivery-reward strong { color: #0958d9; font-size: 1.05rem; font-weight: 750; }
-.delivery-reward small { color: #667085; font-size: .64rem; font-weight: 650; }
+.delivery-reward small { color: var(--daemon-muted); font-size: .64rem; font-weight: 650; }
 .delivery-reward i { background: #dfe5ec; }
 
 .current-evidence {
@@ -247,7 +247,7 @@
 }
 
 .delivery-locked-card p {
-  color: #667085;
+  color: var(--daemon-muted);
   line-height: 1.6;
   margin: .65rem auto 1rem;
   max-width: 560px;
@@ -259,8 +259,8 @@
 
 .delivery-loading,
 .delivery-load-error {
-  background: #fff;
-  border: 1px solid #e4eaf2;
+  background: var(--daemon-on-primary);
+  border: 1px solid var(--daemon-border);
   border-radius: 16px;
   padding: 2rem;
 }

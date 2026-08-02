@@ -5,7 +5,7 @@
 
 .hero {
   align-items: center;
-  background: #ffffff;
+  background: var(--daemon-on-primary);
   border: 1px solid #dfe6f1;
   border-radius: 8px;
   display: flex;
@@ -23,7 +23,7 @@
 
 .scope-card {
   align-items: center;
-  background: #ffffff;
+  background: var(--daemon-on-primary);
   border: 1px solid #dfe6f1;
   border-radius: 8px;
   box-shadow: 0 8px 20px #2030550a;
@@ -50,7 +50,7 @@
 }
 
 .eyebrow {
-  color: #b45309;
+  color: var(--daemon-accent-dark);
   font-size: .75rem;
   font-weight: 800;
   letter-spacing: .08em;
@@ -94,7 +94,7 @@ small {
 .metricas article,
 .ranking,
 .acciones {
-  background: #ffffff;
+  background: var(--daemon-on-primary);
   border: 1px solid #dfe6f1;
   border-radius: 8px;
   box-shadow: 0 8px 20px #2030550a;
@@ -146,8 +146,8 @@ ol {
 
 li {
   align-items: center;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: var(--daemon-surface-muted);
+  border: 1px solid var(--daemon-border);
   border-radius: 8px;
   display: grid;
   gap: .75rem;
@@ -208,7 +208,7 @@ li b {
 }
 
 .estado {
-  background: #ffffff;
+  background: var(--daemon-on-primary);
   border: 1px solid #dfe6f1;
   border-radius: 8px;
   color: #61708d;
@@ -236,7 +236,7 @@ li b {
 .skeleton-line,
 .skeleton-dot {
   animation: shimmer 1.2s ease-in-out infinite;
-  background: linear-gradient(90deg, #eef3f9 0%, #f8fafc 50%, #eef3f9 100%);
+  background: linear-gradient(90deg, #eef3f9 0%, var(--daemon-surface-muted) 50%, #eef3f9 100%);
   background-size: 200% 100%;
   display: block;
 }

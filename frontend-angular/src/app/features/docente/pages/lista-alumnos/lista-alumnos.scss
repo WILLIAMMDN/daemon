@@ -4,7 +4,7 @@
 
 .scope-panel {
   align-items: center;
-  background: #fff;
+  background: var(--daemon-on-primary);
   border: 1px solid #dfe6f1;
   border-radius: 8px;
   box-shadow: 0 8px 24px #2030550b;
@@ -76,7 +76,7 @@
 }
 
 .aula-select {
-  background: #fff;
+  background: var(--daemon-on-primary);
   border: 1px solid #ccd6e6;
   border-radius: 8px;
   color: #1e293b;

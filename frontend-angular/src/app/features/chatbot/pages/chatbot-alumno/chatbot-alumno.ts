@@ -74,12 +74,12 @@ export class ChatbotAlumno {
       overscroll-behavior: contain;
     }
     #input {
-      background: #ffffff;
-      border-top: 1px solid #e4eaf2;
+      background: var(--daemon-on-primary);
+      border-top: 1px solid var(--daemon-border);
       flex: 0 0 auto;
     }
     #text-input-container {
-      border-color: #cbd5e1;
+      border-color: var(--daemon-border-strong);
       box-shadow: none;
       margin-block: 0.65rem;
       width: min(88%, 780px);
@@ -107,7 +107,7 @@ export class ChatbotAlumno {
         bubble: { backgroundColor: '#eff6ff', color: '#1e3a8a', border: '1px solid #bfdbfe' }
       },
       ai: {
-        bubble: { backgroundColor: '#f8fafc', color: '#334155', border: '1px solid #e2e8f0' }
+        bubble: { backgroundColor: 'var(--daemon-surface-muted)', color: 'var(--daemon-ink-soft)', border: '1px solid var(--daemon-border)' }
       }
     }
   };

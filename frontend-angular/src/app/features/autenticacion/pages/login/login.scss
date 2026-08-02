@@ -5,7 +5,7 @@
 .daemon-login {
   align-items: center;
   background: #f4f6f8;
-  color: #111827;
+  color: var(--daemon-ink);
   display: grid;
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   min-height: 100vh;
@@ -14,7 +14,7 @@
 
 .home-link {
   align-items: center;
-  background: #ffffff;
+  background: var(--daemon-on-primary);
   border: 1px solid #d9e1ec;
   border-radius: 6px;
   box-shadow: 0 8px 20px #11182712;
@@ -65,7 +65,7 @@
 }
 
 .login-card {
-  background: #ffffff;
+  background: var(--daemon-on-primary);
   border: 1px solid #d7deea;
   border-radius: 6px;
   box-shadow: 0 10px 28px #1f2a4414;
@@ -132,7 +132,7 @@
 
 .portal-switch .is-active {
   background: var(--daemon-primary-dark);
-  color: #ffffff;
+  color: var(--daemon-on-primary);
   box-shadow: 0 5px 14px color-mix(in srgb, var(--daemon-primary-dark) 15%, transparent);
 }
 
@@ -197,7 +197,7 @@
 
 .classic-field {
   align-items: stretch;
-  background: #ffffff;
+  background: var(--daemon-on-primary);
   border: 1px solid #c9d2df;
   border-radius: 6px;
   display: grid;
@@ -217,7 +217,7 @@
   align-items: center;
   background: #f6f8fb;
   border-right: 1px solid #dbe2ec;
-  color: #334155;
+  color: var(--daemon-ink-soft);
   display: inline-flex;
   justify-content: center;
 }
@@ -232,7 +232,7 @@
 }
 
 .classic-field input {
-  background: #ffffff;
+  background: var(--daemon-on-primary);
   border: 0;
   color: #263244;
   font: inherit;
@@ -254,7 +254,7 @@
 
 .field-action {
   align-items: center;
-  background: #ffffff;
+  background: var(--daemon-on-primary);
   border: 0;
   border-left: 1px solid #dbe2ec;
   color: #0f172a;
@@ -272,7 +272,7 @@
 }
 
 .field-error {
-  color: #b42331;
+  color: var(--daemon-danger);
   font-size: .82rem;
   font-weight: 700;
   margin: -.6rem 0 0;
@@ -309,7 +309,7 @@
   border: 0;
   border-radius: 6px;
   box-shadow: 0 12px 24px color-mix(in srgb, var(--daemon-primary-dark) 20%, transparent);
-  color: #ffffff;
+  color: var(--daemon-on-primary);
   cursor: pointer;
   font-size: 1.1rem;
   font-weight: 800;
@@ -334,7 +334,7 @@
 
 .firebase-google-button {
   align-items: center;
-  background: #ffffff;
+  background: var(--daemon-on-primary);
   border: 1px solid #dadce0;
   border-radius: 6px;
   color: #1f1f1f;
@@ -354,7 +354,7 @@
 }
 
 .firebase-google-button:hover:not(:disabled) {
-  background: #f8f9fa;
+  background: var(--daemon-surface-muted);
   border-color: #d2e3fc;
   box-shadow: 0 1px 2px rgba(60, 64, 67, 0.15), 0 1px 3px 1px rgba(60, 64, 67, 0.08);
   transform: translateY(-1px);
@@ -428,7 +428,7 @@
 
 .login-note {
   align-items: center;
-  background: #ffffff;
+  background: var(--daemon-on-primary);
   border: 1px solid #d7deea;
   border-radius: 6px;
   box-shadow: 0 12px 28px #11182712;

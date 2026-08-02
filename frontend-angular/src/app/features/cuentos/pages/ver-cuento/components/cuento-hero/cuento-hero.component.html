@@ -1,7 +1,7 @@
     <!-- Hero Banner -->
-    <div class="w-full bg-[#180a3a] text-white rounded-[24px] overflow-hidden relative shadow-lg flex flex-col mt-4 min-h-[200px]">
+    <div class="w-full bg-[var(--daemon-on-accent)] text-white rounded-[24px] overflow-hidden relative shadow-lg flex flex-col mt-4 min-h-[200px]">
       <div class="absolute inset-0 bg-cover bg-center bg-no-repeat" style="background-image: url('/img/headers/bg-cuento-banner.png');"></div>
-      <div class="absolute inset-0 bg-gradient-to-r from-[#0a0518]/80 via-[#180a3a]/40 to-transparent"></div>
+      <div class="absolute inset-0 daemon-grad-overlay"></div>
       
       <div class="relative z-10 w-full flex flex-col lg:flex-row justify-between items-start lg:items-center p-8 flex-1">
         
@@ -38,12 +38,12 @@
 
         <!-- Derecha: Botones -->
         <div class="flex flex-col gap-3 mt-8 lg:mt-0 items-center w-full lg:w-48 relative z-20">
-          <a class="bg-[#ffc414] hover:bg-[#ffd64f] border border-[#ffc414] text-[#1a1f36] hover:text-[#111827] shadow-[0_6px_14px_-8px_rgba(255,196,20,0.55)] font-bold px-5 py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 transition-all w-full" routerLink="/alumno/proyectos/cuentos">
+          <a class="bg-[var(--daemon-accent)] hover:bg-[var(--daemon-accent)] border border-[var(--daemon-accent)] text-[var(--daemon-ink)] hover:text-[var(--daemon-ink)] shadow-[0_6px_14px_-8px_rgba(255,196,20,0.55)] font-bold px-5 py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 transition-all w-full" routerLink="/alumno/proyectos/cuentos">
             <fa-icon [icon]="faArrowLeft"></fa-icon> Volver a galería
           </a>
           
           @if (esPropietario) {
-            <a class="bg-gradient-to-r from-amber-500 to-amber-600 border border-amber-400 text-white shadow-lg hover:shadow-amber-500/50 hover:-translate-y-0.5 font-bold px-5 py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 transition-all w-full" [routerLink]="['/alumno/proyectos/cuentos/crear', idCuento]">
+            <a class="daemon-grad-cta-amber border border-amber-400 text-white shadow-lg hover:shadow-amber-500/50 hover:-translate-y-0.5 font-bold px-5 py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 transition-all w-full" [routerLink]="['/alumno/proyectos/cuentos/crear', idCuento]">
               ✏️ Editar mi historia
             </a>
           } @else {

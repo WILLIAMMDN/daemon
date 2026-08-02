@@ -21,8 +21,8 @@
 }
 
 .asset-list a {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: var(--daemon-surface-muted);
+  border: 1px solid var(--daemon-border);
   border-radius: 8px;
   display: grid;
   gap: .25rem;

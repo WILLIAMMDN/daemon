@@ -61,7 +61,7 @@
         </p>
         
         <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-          <a nz-button class="bg-[#ffc414] hover:bg-[#f4a900] text-[#24194f] border-none rounded-xl font-extrabold h-11 sm:h-12 px-6 sm:px-8 shadow-sm transition-colors inline-flex items-center justify-center gap-2 w-full sm:w-auto" routerLink="/alumno/misiones">
+          <a nz-button class="bg-[var(--daemon-accent)] hover:bg-[#f4a900] text-[var(--daemon-on-accent)] border-none rounded-xl font-extrabold h-11 sm:h-12 px-6 sm:px-8 shadow-sm transition-colors inline-flex items-center justify-center gap-2 w-full sm:w-auto" routerLink="/alumno/misiones">
             <fa-icon [icon]="iconos.play" /> Continuar misión
           </a>
           <a nz-button class="bg-[#3730a3]/80 backdrop-blur-md hover:bg-[#312e81] border border-[#4f46e5] text-white rounded-xl font-semibold h-11 sm:h-12 px-6 sm:px-8 transition-colors inline-flex items-center justify-center gap-2 w-full sm:w-auto" routerLink="/alumno/perfil">
@@ -237,7 +237,7 @@
             <strong class="text-blue-600 font-black text-xl sm:text-2xl">{{ progreso(datos).progreso_porcentaje }}%</strong>
           </header>
           <div class="mt-3 sm:mt-4" role="progressbar" aria-label="Experiencia hacia el siguiente nivel" aria-valuemin="0" aria-valuemax="100" [attr.aria-valuenow]="progreso(datos).progreso_porcentaje">
-            <nz-progress aria-hidden="true" [nzPercent]="progreso(datos).progreso_porcentaje" [nzShowInfo]="false" [nzStrokeWidth]="8" nzStrokeColor="#1677ff" />
+            <nz-progress aria-hidden="true" [nzPercent]="progreso(datos).progreso_porcentaje" [nzShowInfo]="false" [nzStrokeWidth]="8" nzStrokeColor="var(--daemon-teens)" />
           </div>
           <div class="flex justify-between text-slate-500 text-[10px] sm:text-xs font-bold mt-2">
             <span>{{ progreso(datos).experiencia_nivel }} XP actuales</span>

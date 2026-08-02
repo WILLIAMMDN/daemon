@@ -32,7 +32,7 @@
           <div class="level-line">
             <span>Nivel {{ alumno.nivel_gamificacion }}</span>
             <div role="progressbar" aria-label="Progreso de nivel" aria-valuemin="0" aria-valuemax="100" [attr.aria-valuenow]="alumno.progreso_nivel?.progreso_porcentaje || 0">
-              <nz-progress aria-hidden="true" [nzPercent]="alumno.progreso_nivel?.progreso_porcentaje || 0" [nzShowInfo]="false" nzStrokeColor="#1677ff" />
+              <nz-progress aria-hidden="true" [nzPercent]="alumno.progreso_nivel?.progreso_porcentaje || 0" [nzShowInfo]="false" nzStrokeColor="var(--daemon-teens)" />
             </div>
           </div>
         </article>

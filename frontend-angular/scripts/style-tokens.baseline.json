@@ -14,20 +14,8 @@
   {
     "file": "src\\app\\features\\alumno\\pages\\editar-perfil\\editar-perfil.scss",
     "rule": "hex-literal",
-    "line": 42,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\editar-perfil\\editar-perfil.scss",
-    "rule": "hex-literal",
     "line": 58,
     "match": "#61708d"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\editar-perfil\\editar-perfil.scss",
-    "rule": "hex-literal",
-    "line": 62,
-    "match": "#fff"
   },
   {
     "file": "src\\app\\features\\alumno\\pages\\editar-perfil\\editar-perfil.scss",
@@ -40,12 +28,6 @@
     "rule": "hex-literal",
     "line": 77,
     "match": "#147d71"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\editar-perfil\\editar-perfil.scss",
-    "rule": "hex-literal",
-    "line": 88,
-    "match": "#f8fafc"
   },
   {
     "file": "src\\app\\features\\alumno\\pages\\editar-perfil\\editar-perfil.scss",
@@ -70,12 +52,6 @@
     "rule": "hex-literal",
     "line": 115,
     "match": "#64748b"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\editar-perfil\\editar-perfil.scss",
-    "rule": "hex-literal",
-    "line": 125,
-    "match": "#475569"
   },
   {
     "file": "src\\app\\features\\alumno\\pages\\panel-alumno\\panel-alumno.html",
@@ -105,19 +81,7 @@
     "file": "src\\app\\features\\alumno\\pages\\panel-alumno\\panel-alumno.html",
     "rule": "hex-literal",
     "line": 64,
-    "match": "#ffc414"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\panel-alumno\\panel-alumno.html",
-    "rule": "hex-literal",
-    "line": 64,
     "match": "#f4a900"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\panel-alumno\\panel-alumno.html",
-    "rule": "hex-literal",
-    "line": 64,
-    "match": "#24194f"
   },
   {
     "file": "src\\app\\features\\alumno\\pages\\panel-alumno\\panel-alumno.html",
@@ -169,12 +133,6 @@
   },
   {
     "file": "src\\app\\features\\alumno\\pages\\panel-alumno\\panel-alumno.html",
-    "rule": "hex-literal",
-    "line": 240,
-    "match": "#1677ff"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\panel-alumno\\panel-alumno.html",
     "rule": "tailwind-arbitrary-hex",
     "line": 50,
     "match": "bg-[#1f1f75]"
@@ -201,19 +159,7 @@
     "file": "src\\app\\features\\alumno\\pages\\panel-alumno\\panel-alumno.html",
     "rule": "tailwind-arbitrary-hex",
     "line": 64,
-    "match": "bg-[#ffc414]"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\panel-alumno\\panel-alumno.html",
-    "rule": "tailwind-arbitrary-hex",
-    "line": 64,
     "match": "bg-[#f4a900]"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\panel-alumno\\panel-alumno.html",
-    "rule": "tailwind-arbitrary-hex",
-    "line": 64,
-    "match": "text-[#24194f]"
   },
   {
     "file": "src\\app\\features\\alumno\\pages\\panel-alumno\\panel-alumno.html",
@@ -260,26 +206,8 @@
   {
     "file": "src\\app\\features\\alumno\\pages\\panel-alumno\\panel-alumno.scss",
     "rule": "hex-literal",
-    "line": 2,
-    "match": "#1677ff"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\panel-alumno\\panel-alumno.scss",
-    "rule": "hex-literal",
     "line": 3,
     "match": "#9a5b00"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\panel-alumno\\panel-alumno.scss",
-    "rule": "hex-literal",
-    "line": 15,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\panel-alumno\\panel-alumno.scss",
-    "rule": "hex-literal",
-    "line": 16,
-    "match": "#e4eaf2"
   },
   {
     "file": "src\\app\\features\\alumno\\pages\\panel-alumno\\panel-alumno.scss",
@@ -298,12 +226,6 @@
     "rule": "hex-literal",
     "line": 29,
     "match": "#744500"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\panel-alumno\\panel-alumno.scss",
-    "rule": "hex-literal",
-    "line": 36,
-    "match": "#fff"
   },
   {
     "file": "src\\app\\features\\alumno\\pages\\panel-alumno\\panel-alumno.scss",
@@ -344,12 +266,6 @@
   {
     "file": "src\\app\\features\\alumno\\pages\\panel-alumno\\panel-alumno.scss",
     "rule": "hex-literal",
-    "line": 63,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\panel-alumno\\panel-alumno.scss",
-    "rule": "hex-literal",
     "line": 71,
     "match": "#6b58a8"
   },
@@ -358,12 +274,6 @@
     "rule": "hex-literal",
     "line": 73,
     "match": "#5d4d8d"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\panel-alumno\\panel-alumno.scss",
-    "rule": "hex-literal",
-    "line": 76,
-    "match": "#fff"
   },
   {
     "file": "src\\app\\features\\alumno\\pages\\panel-alumno\\panel-alumno.scss",
@@ -402,12 +312,6 @@
     "match": "linear-gradient"
   },
   {
-    "file": "src\\app\\features\\alumno\\pages\\perfil-alumno\\perfil-alumno.html",
-    "rule": "hex-literal",
-    "line": 44,
-    "match": "#2563eb"
-  },
-  {
     "file": "src\\app\\features\\alumno\\pages\\perfil-alumno\\perfil-alumno.scss",
     "rule": "hex-literal",
     "line": 12,
@@ -422,92 +326,8 @@
   {
     "file": "src\\app\\features\\alumno\\pages\\perfil-alumno\\perfil-alumno.scss",
     "rule": "hex-literal",
-    "line": 30,
-    "match": "#1677ff"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\perfil-alumno\\perfil-alumno.scss",
-    "rule": "hex-literal",
-    "line": 31,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\perfil-alumno\\perfil-alumno.scss",
-    "rule": "hex-literal",
-    "line": 33,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\perfil-alumno\\perfil-alumno.scss",
-    "rule": "hex-literal",
-    "line": 43,
-    "match": "#667085"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\perfil-alumno\\perfil-alumno.scss",
-    "rule": "hex-literal",
-    "line": 49,
-    "match": "#172033"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\perfil-alumno\\perfil-alumno.scss",
-    "rule": "hex-literal",
-    "line": 50,
-    "match": "#667085"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\perfil-alumno\\perfil-alumno.scss",
-    "rule": "hex-literal",
-    "line": 52,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\perfil-alumno\\perfil-alumno.scss",
-    "rule": "hex-literal",
-    "line": 53,
-    "match": "#1677ff"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\perfil-alumno\\perfil-alumno.scss",
-    "rule": "hex-literal",
-    "line": 54,
-    "match": "#12a150"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\perfil-alumno\\perfil-alumno.scss",
-    "rule": "hex-literal",
-    "line": 57,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\perfil-alumno\\perfil-alumno.scss",
-    "rule": "hex-literal",
     "line": 58,
     "match": "#dce8f5"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\perfil-alumno\\perfil-alumno.scss",
-    "rule": "hex-literal",
-    "line": 65,
-    "match": "#667085"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\perfil-alumno\\perfil-alumno.scss",
-    "rule": "hex-literal",
-    "line": 66,
-    "match": "#172033"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\perfil-alumno\\perfil-alumno.scss",
-    "rule": "hex-literal",
-    "line": 82,
-    "match": "#172033"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\perfil-alumno\\perfil-alumno.scss",
-    "rule": "hex-literal",
-    "line": 84,
-    "match": "#667085"
   },
   {
     "file": "src\\app\\features\\alumno\\pages\\perfil-alumno\\perfil-alumno.scss",
@@ -560,44 +380,14 @@
   {
     "file": "src\\app\\features\\alumno\\pages\\perfil-alumno\\perfil-alumno.scss",
     "rule": "hex-literal",
-    "line": 91,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\perfil-alumno\\perfil-alumno.scss",
-    "rule": "hex-literal",
-    "line": 92,
-    "match": "#e4eaf2"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\perfil-alumno\\perfil-alumno.scss",
-    "rule": "hex-literal",
     "line": 97,
     "match": "#edf1f5"
   },
   {
     "file": "src\\app\\features\\alumno\\pages\\perfil-alumno\\perfil-alumno.scss",
     "rule": "hex-literal",
-    "line": 98,
-    "match": "#172033"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\perfil-alumno\\perfil-alumno.scss",
-    "rule": "hex-literal",
     "line": 99,
     "match": "#f3f6fa"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\perfil-alumno\\perfil-alumno.scss",
-    "rule": "hex-literal",
-    "line": 99,
-    "match": "#667085"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\perfil-alumno\\perfil-alumno.scss",
-    "rule": "hex-literal",
-    "line": 102,
-    "match": "#f8fafc"
   },
   {
     "file": "src\\app\\features\\alumno\\pages\\perfil-alumno\\perfil-alumno.scss",
@@ -610,12 +400,6 @@
     "rule": "hex-literal",
     "line": 103,
     "match": "#edf5ff"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\perfil-alumno\\perfil-alumno.scss",
-    "rule": "hex-literal",
-    "line": 103,
-    "match": "#1677ff"
   },
   {
     "file": "src\\app\\features\\alumno\\pages\\perfil-alumno\\perfil-alumno.scss",
@@ -633,25 +417,7 @@
     "file": "src\\app\\features\\alumno\\pages\\perfil-alumno\\perfil-alumno.scss",
     "rule": "hex-literal",
     "line": 111,
-    "match": "#f8fafc"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\perfil-alumno\\perfil-alumno.scss",
-    "rule": "hex-literal",
-    "line": 111,
     "match": "#edf1f5"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\perfil-alumno\\perfil-alumno.scss",
-    "rule": "hex-literal",
-    "line": 114,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\perfil-alumno\\perfil-alumno.scss",
-    "rule": "hex-literal",
-    "line": 114,
-    "match": "#e4eaf2"
   },
   {
     "file": "src\\app\\features\\alumno\\pages\\perfil-alumno\\perfil-alumno.scss",
@@ -672,18 +438,6 @@
     "match": "#7a8699"
   },
   {
-    "file": "src\\app\\features\\alumno\\pages\\perfil-alumno\\perfil-alumno.scss",
-    "rule": "hex-literal",
-    "line": 126,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\perfil-alumno\\perfil-alumno.scss",
-    "rule": "hex-literal",
-    "line": 126,
-    "match": "#e4eaf2"
-  },
-  {
     "file": "src\\app\\features\\alumno\\pages\\recursos\\recursos.html",
     "rule": "hex-literal",
     "line": 5,
@@ -698,44 +452,8 @@
   {
     "file": "src\\app\\features\\alumno\\pages\\recursos\\recursos.scss",
     "rule": "hex-literal",
-    "line": 8,
-    "match": "#1677ff"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\recursos\\recursos.scss",
-    "rule": "hex-literal",
     "line": 9,
     "match": "#0958d9"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\recursos\\recursos.scss",
-    "rule": "hex-literal",
-    "line": 10,
-    "match": "#e4eaf2"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\recursos\\recursos.scss",
-    "rule": "hex-literal",
-    "line": 11,
-    "match": "#f4f7fb"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\recursos\\recursos.scss",
-    "rule": "hex-literal",
-    "line": 12,
-    "match": "#172033"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\recursos\\recursos.scss",
-    "rule": "hex-literal",
-    "line": 13,
-    "match": "#667085"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\recursos\\recursos.scss",
-    "rule": "hex-literal",
-    "line": 14,
-    "match": "#ffffff"
   },
   {
     "file": "src\\app\\features\\alumno\\pages\\recursos\\recursos.scss",
@@ -812,12 +530,6 @@
   {
     "file": "src\\app\\features\\alumno\\pages\\recursos\\recursos.scss",
     "rule": "hex-literal",
-    "line": 186,
-    "match": "#fee2e2"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\recursos\\recursos.scss",
-    "rule": "hex-literal",
     "line": 201,
     "match": "#7f1d1d"
   },
@@ -842,12 +554,6 @@
   {
     "file": "src\\app\\features\\alumno\\pages\\recursos\\recursos.scss",
     "rule": "hex-literal",
-    "line": 283,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\recursos\\recursos.scss",
-    "rule": "hex-literal",
     "line": 287,
     "match": "#5e2bc1"
   },
@@ -856,24 +562,6 @@
     "rule": "hex-literal",
     "line": 288,
     "match": "#5e2bc1"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\recursos\\recursos.scss",
-    "rule": "hex-literal",
-    "line": 289,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\recursos\\recursos.scss",
-    "rule": "hex-literal",
-    "line": 294,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\recursos\\recursos.scss",
-    "rule": "hex-literal",
-    "line": 299,
-    "match": "#fff"
   },
   {
     "file": "src\\app\\features\\alumno\\pages\\recursos\\recursos.scss",
@@ -928,12 +616,6 @@
     "rule": "hex-literal",
     "line": 426,
     "match": "#edf0f5"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\recursos\\recursos.scss",
-    "rule": "hex-literal",
-    "line": 468,
-    "match": "#f1f5f9"
   },
   {
     "file": "src\\app\\features\\alumno\\pages\\recursos\\recursos.scss",
@@ -998,38 +680,14 @@
   {
     "file": "src\\app\\features\\alumno\\pages\\recursos\\recursos.scss",
     "rule": "hex-literal",
-    "line": 525,
-    "match": "#e8edf4"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\recursos\\recursos.scss",
-    "rule": "hex-literal",
     "line": 548,
     "match": "#dfe5ee"
   },
   {
     "file": "src\\app\\features\\alumno\\pages\\recursos\\recursos.scss",
     "rule": "hex-literal",
-    "line": 555,
-    "match": "#f8fafc"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\recursos\\recursos.scss",
-    "rule": "hex-literal",
-    "line": 570,
-    "match": "#f4f7fb"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\recursos\\recursos.scss",
-    "rule": "hex-literal",
     "line": 580,
     "match": "#25324a"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\recursos\\recursos.scss",
-    "rule": "hex-literal",
-    "line": 582,
-    "match": "#fff"
   },
   {
     "file": "src\\app\\features\\alumno\\pages\\recursos\\recursos.scss",
@@ -1130,12 +788,6 @@
   {
     "file": "src\\app\\features\\alumno\\pages\\recursos\\recursos.scss",
     "rule": "hex-literal",
-    "line": 719,
-    "match": "#f8fafc"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\recursos\\recursos.scss",
-    "rule": "hex-literal",
     "line": 748,
     "match": "#f7f5ff"
   },
@@ -1144,12 +796,6 @@
     "rule": "hex-literal",
     "line": 749,
     "match": "#e1daf8"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\recursos\\recursos.scss",
-    "rule": "hex-literal",
-    "line": 758,
-    "match": "#fff"
   },
   {
     "file": "src\\app\\features\\alumno\\pages\\recursos\\recursos.scss",
@@ -1174,18 +820,6 @@
     "rule": "hex-literal",
     "line": 802,
     "match": "#6f36dc"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\recursos\\recursos.scss",
-    "rule": "hex-literal",
-    "line": 832,
-    "match": "#f8fafc"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\recursos\\recursos.scss",
-    "rule": "hex-literal",
-    "line": 833,
-    "match": "#e4eaf2"
   },
   {
     "file": "src\\app\\features\\alumno\\pages\\recursos\\recursos.scss",
@@ -1231,18 +865,6 @@
   },
   {
     "file": "src\\app\\features\\alumno\\pages\\recursos\\recursos.scss",
-    "rule": "hex-literal",
-    "line": 971,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\recursos\\recursos.scss",
-    "rule": "hex-literal",
-    "line": 1005,
-    "match": "#edf1f6"
-  },
-  {
-    "file": "src\\app\\features\\alumno\\pages\\recursos\\recursos.scss",
     "rule": "outline-shortcut",
     "line": 1051,
     "match": "outline: 3px solid rgba(22, 119, 255, .28)"
@@ -1280,12 +902,6 @@
   {
     "file": "src\\app\\features\\autenticacion\\components\\completar-perfil-google\\completar-perfil-google.scss",
     "rule": "hex-literal",
-    "line": 17,
-    "match": "#ffffff"
-  },
-  {
-    "file": "src\\app\\features\\autenticacion\\components\\completar-perfil-google\\completar-perfil-google.scss",
-    "rule": "hex-literal",
     "line": 18,
     "match": "#cfd4dc"
   },
@@ -1300,12 +916,6 @@
     "rule": "hex-literal",
     "line": 29,
     "match": "#0b5bd3"
-  },
-  {
-    "file": "src\\app\\features\\autenticacion\\components\\completar-perfil-google\\completar-perfil-google.scss",
-    "rule": "hex-literal",
-    "line": 43,
-    "match": "#ffffff"
   },
   {
     "file": "src\\app\\features\\autenticacion\\components\\completar-perfil-google\\completar-perfil-google.scss",
@@ -1336,12 +946,6 @@
     "rule": "hex-literal",
     "line": 77,
     "match": "#4b5565"
-  },
-  {
-    "file": "src\\app\\features\\autenticacion\\components\\completar-perfil-google\\completar-perfil-google.scss",
-    "rule": "hex-literal",
-    "line": 85,
-    "match": "#f8fafc"
   },
   {
     "file": "src\\app\\features\\autenticacion\\components\\completar-perfil-google\\completar-perfil-google.scss",
@@ -1400,12 +1004,6 @@
   {
     "file": "src\\app\\features\\autenticacion\\components\\completar-perfil-google\\completar-perfil-google.scss",
     "rule": "hex-literal",
-    "line": 146,
-    "match": "#ffffff"
-  },
-  {
-    "file": "src\\app\\features\\autenticacion\\components\\completar-perfil-google\\completar-perfil-google.scss",
-    "rule": "hex-literal",
     "line": 148,
     "match": "#263244"
   },
@@ -1436,12 +1034,6 @@
   {
     "file": "src\\app\\features\\autenticacion\\components\\completar-perfil-google\\completar-perfil-google.scss",
     "rule": "hex-literal",
-    "line": 195,
-    "match": "#ffffff"
-  },
-  {
-    "file": "src\\app\\features\\autenticacion\\components\\completar-perfil-google\\completar-perfil-google.scss",
-    "rule": "hex-literal",
     "line": 196,
     "match": "#cfd4dc"
   },
@@ -1460,12 +1052,6 @@
   {
     "file": "src\\app\\features\\autenticacion\\components\\completar-perfil-google\\completar-perfil-google.scss",
     "rule": "hex-literal",
-    "line": 203,
-    "match": "#ffffff"
-  },
-  {
-    "file": "src\\app\\features\\autenticacion\\components\\completar-perfil-google\\completar-perfil-google.scss",
-    "rule": "hex-literal",
     "line": 207,
     "match": "#004fbd"
   },
@@ -1474,12 +1060,6 @@
     "rule": "hex-literal",
     "line": 18,
     "match": "#4d586b"
-  },
-  {
-    "file": "src\\app\\features\\autenticacion\\pages\\bienvenida\\bienvenida.scss",
-    "rule": "hex-literal",
-    "line": 31,
-    "match": "#f8fafc"
   },
   {
     "file": "src\\app\\features\\autenticacion\\pages\\bienvenida\\bienvenida.scss",
@@ -1544,18 +1124,6 @@
   {
     "file": "src\\app\\features\\autenticacion\\pages\\login\\login.scss",
     "rule": "hex-literal",
-    "line": 8,
-    "match": "#111827"
-  },
-  {
-    "file": "src\\app\\features\\autenticacion\\pages\\login\\login.scss",
-    "rule": "hex-literal",
-    "line": 17,
-    "match": "#ffffff"
-  },
-  {
-    "file": "src\\app\\features\\autenticacion\\pages\\login\\login.scss",
-    "rule": "hex-literal",
     "line": 18,
     "match": "#d9e1ec"
   },
@@ -1570,12 +1138,6 @@
     "rule": "hex-literal",
     "line": 21,
     "match": "#25324a"
-  },
-  {
-    "file": "src\\app\\features\\autenticacion\\pages\\login\\login.scss",
-    "rule": "hex-literal",
-    "line": 68,
-    "match": "#ffffff"
   },
   {
     "file": "src\\app\\features\\autenticacion\\pages\\login\\login.scss",
@@ -1622,12 +1184,6 @@
   {
     "file": "src\\app\\features\\autenticacion\\pages\\login\\login.scss",
     "rule": "hex-literal",
-    "line": 135,
-    "match": "#ffffff"
-  },
-  {
-    "file": "src\\app\\features\\autenticacion\\pages\\login\\login.scss",
-    "rule": "hex-literal",
     "line": 141,
     "match": "#f7f8fa"
   },
@@ -1664,12 +1220,6 @@
   {
     "file": "src\\app\\features\\autenticacion\\pages\\login\\login.scss",
     "rule": "hex-literal",
-    "line": 200,
-    "match": "#ffffff"
-  },
-  {
-    "file": "src\\app\\features\\autenticacion\\pages\\login\\login.scss",
-    "rule": "hex-literal",
     "line": 201,
     "match": "#c9d2df"
   },
@@ -1688,18 +1238,6 @@
   {
     "file": "src\\app\\features\\autenticacion\\pages\\login\\login.scss",
     "rule": "hex-literal",
-    "line": 220,
-    "match": "#334155"
-  },
-  {
-    "file": "src\\app\\features\\autenticacion\\pages\\login\\login.scss",
-    "rule": "hex-literal",
-    "line": 235,
-    "match": "#ffffff"
-  },
-  {
-    "file": "src\\app\\features\\autenticacion\\pages\\login\\login.scss",
-    "rule": "hex-literal",
     "line": 237,
     "match": "#263244"
   },
@@ -1712,12 +1250,6 @@
   {
     "file": "src\\app\\features\\autenticacion\\pages\\login\\login.scss",
     "rule": "hex-literal",
-    "line": 257,
-    "match": "#ffffff"
-  },
-  {
-    "file": "src\\app\\features\\autenticacion\\pages\\login\\login.scss",
-    "rule": "hex-literal",
     "line": 259,
     "match": "#dbe2ec"
   },
@@ -1726,12 +1258,6 @@
     "rule": "hex-literal",
     "line": 260,
     "match": "#0f172a"
-  },
-  {
-    "file": "src\\app\\features\\autenticacion\\pages\\login\\login.scss",
-    "rule": "hex-literal",
-    "line": 275,
-    "match": "#b42331"
   },
   {
     "file": "src\\app\\features\\autenticacion\\pages\\login\\login.scss",
@@ -1754,20 +1280,8 @@
   {
     "file": "src\\app\\features\\autenticacion\\pages\\login\\login.scss",
     "rule": "hex-literal",
-    "line": 312,
-    "match": "#ffffff"
-  },
-  {
-    "file": "src\\app\\features\\autenticacion\\pages\\login\\login.scss",
-    "rule": "hex-literal",
     "line": 325,
     "match": "#b8c7de"
-  },
-  {
-    "file": "src\\app\\features\\autenticacion\\pages\\login\\login.scss",
-    "rule": "hex-literal",
-    "line": 337,
-    "match": "#ffffff"
   },
   {
     "file": "src\\app\\features\\autenticacion\\pages\\login\\login.scss",
@@ -1780,12 +1294,6 @@
     "rule": "hex-literal",
     "line": 340,
     "match": "#1f1f1f"
-  },
-  {
-    "file": "src\\app\\features\\autenticacion\\pages\\login\\login.scss",
-    "rule": "hex-literal",
-    "line": 357,
-    "match": "#f8f9fa"
   },
   {
     "file": "src\\app\\features\\autenticacion\\pages\\login\\login.scss",
@@ -1828,12 +1336,6 @@
     "rule": "hex-literal",
     "line": 413,
     "match": "#687386"
-  },
-  {
-    "file": "src\\app\\features\\autenticacion\\pages\\login\\login.scss",
-    "rule": "hex-literal",
-    "line": 431,
-    "match": "#ffffff"
   },
   {
     "file": "src\\app\\features\\autenticacion\\pages\\login\\login.scss",
@@ -1922,18 +1424,6 @@
   {
     "file": "src\\app\\features\\autenticacion\\pages\\recuperar-clave\\recuperar-clave.scss",
     "rule": "hex-literal",
-    "line": 8,
-    "match": "#111827"
-  },
-  {
-    "file": "src\\app\\features\\autenticacion\\pages\\recuperar-clave\\recuperar-clave.scss",
-    "rule": "hex-literal",
-    "line": 17,
-    "match": "#ffffff"
-  },
-  {
-    "file": "src\\app\\features\\autenticacion\\pages\\recuperar-clave\\recuperar-clave.scss",
-    "rule": "hex-literal",
     "line": 18,
     "match": "#d9e1ec"
   },
@@ -1948,12 +1438,6 @@
     "rule": "hex-literal",
     "line": 21,
     "match": "#25324a"
-  },
-  {
-    "file": "src\\app\\features\\autenticacion\\pages\\recuperar-clave\\recuperar-clave.scss",
-    "rule": "hex-literal",
-    "line": 67,
-    "match": "#ffffff"
   },
   {
     "file": "src\\app\\features\\autenticacion\\pages\\recuperar-clave\\recuperar-clave.scss",
@@ -2000,12 +1484,6 @@
   {
     "file": "src\\app\\features\\autenticacion\\pages\\recuperar-clave\\recuperar-clave.scss",
     "rule": "hex-literal",
-    "line": 163,
-    "match": "#f8fafc"
-  },
-  {
-    "file": "src\\app\\features\\autenticacion\\pages\\recuperar-clave\\recuperar-clave.scss",
-    "rule": "hex-literal",
     "line": 164,
     "match": "#dbe2ec"
   },
@@ -2024,18 +1502,6 @@
   {
     "file": "src\\app\\features\\autenticacion\\pages\\recuperar-clave\\recuperar-clave.scss",
     "rule": "hex-literal",
-    "line": 206,
-    "match": "#ffffff"
-  },
-  {
-    "file": "src\\app\\features\\autenticacion\\pages\\recuperar-clave\\recuperar-clave.scss",
-    "rule": "hex-literal",
-    "line": 210,
-    "match": "#ffffff"
-  },
-  {
-    "file": "src\\app\\features\\autenticacion\\pages\\recuperar-clave\\recuperar-clave.scss",
-    "rule": "hex-literal",
     "line": 211,
     "match": "#cfd4dc"
   },
@@ -2044,12 +1510,6 @@
     "rule": "hex-literal",
     "line": 212,
     "match": "#22304a"
-  },
-  {
-    "file": "src\\app\\features\\autenticacion\\pages\\recuperar-clave\\recuperar-clave.scss",
-    "rule": "hex-literal",
-    "line": 223,
-    "match": "#ffffff"
   },
   {
     "file": "src\\app\\features\\autenticacion\\pages\\recuperar-clave\\recuperar-clave.scss",
@@ -2102,12 +1562,6 @@
   {
     "file": "src\\app\\features\\autenticacion\\pages\\recuperar-clave\\recuperar-clave.scss",
     "rule": "hex-literal",
-    "line": 316,
-    "match": "#ffffff"
-  },
-  {
-    "file": "src\\app\\features\\autenticacion\\pages\\recuperar-clave\\recuperar-clave.scss",
-    "rule": "hex-literal",
     "line": 317,
     "match": "#c9d2df"
   },
@@ -2126,18 +1580,6 @@
   {
     "file": "src\\app\\features\\autenticacion\\pages\\recuperar-clave\\recuperar-clave.scss",
     "rule": "hex-literal",
-    "line": 336,
-    "match": "#334155"
-  },
-  {
-    "file": "src\\app\\features\\autenticacion\\pages\\recuperar-clave\\recuperar-clave.scss",
-    "rule": "hex-literal",
-    "line": 350,
-    "match": "#ffffff"
-  },
-  {
-    "file": "src\\app\\features\\autenticacion\\pages\\recuperar-clave\\recuperar-clave.scss",
-    "rule": "hex-literal",
     "line": 352,
     "match": "#263244"
   },
@@ -2146,12 +1588,6 @@
     "rule": "hex-literal",
     "line": 362,
     "match": "#6c7482"
-  },
-  {
-    "file": "src\\app\\features\\autenticacion\\pages\\recuperar-clave\\recuperar-clave.scss",
-    "rule": "hex-literal",
-    "line": 367,
-    "match": "#b42331"
   },
   {
     "file": "src\\app\\features\\autenticacion\\pages\\recuperar-clave\\recuperar-clave.scss",
@@ -2198,26 +1634,8 @@
   {
     "file": "src\\app\\features\\autenticacion\\pages\\recuperar-clave\\recuperar-clave.scss",
     "rule": "hex-literal",
-    "line": 413,
-    "match": "#f1f5f9"
-  },
-  {
-    "file": "src\\app\\features\\autenticacion\\pages\\recuperar-clave\\recuperar-clave.scss",
-    "rule": "hex-literal",
-    "line": 414,
-    "match": "#cbd5e1"
-  },
-  {
-    "file": "src\\app\\features\\autenticacion\\pages\\recuperar-clave\\recuperar-clave.scss",
-    "rule": "hex-literal",
     "line": 416,
     "match": "#1f2937"
-  },
-  {
-    "file": "src\\app\\features\\autenticacion\\pages\\recuperar-clave\\recuperar-clave.scss",
-    "rule": "hex-literal",
-    "line": 433,
-    "match": "#ffffff"
   },
   {
     "file": "src\\app\\features\\autenticacion\\pages\\recuperar-clave\\recuperar-clave.scss",
@@ -2230,12 +1648,6 @@
     "rule": "hex-literal",
     "line": 451,
     "match": "#687386"
-  },
-  {
-    "file": "src\\app\\features\\autenticacion\\pages\\recuperar-clave\\recuperar-clave.scss",
-    "rule": "hex-literal",
-    "line": 474,
-    "match": "#ffffff"
   },
   {
     "file": "src\\app\\features\\autenticacion\\pages\\recuperar-clave\\recuperar-clave.scss",
@@ -2300,18 +1712,6 @@
   {
     "file": "src\\app\\features\\autenticacion\\pages\\registro\\registro.scss",
     "rule": "hex-literal",
-    "line": 10,
-    "match": "#111827"
-  },
-  {
-    "file": "src\\app\\features\\autenticacion\\pages\\registro\\registro.scss",
-    "rule": "hex-literal",
-    "line": 26,
-    "match": "#ffffff"
-  },
-  {
-    "file": "src\\app\\features\\autenticacion\\pages\\registro\\registro.scss",
-    "rule": "hex-literal",
     "line": 27,
     "match": "#d7deea"
   },
@@ -2326,12 +1726,6 @@
     "rule": "hex-literal",
     "line": 62,
     "match": "#020b18"
-  },
-  {
-    "file": "src\\app\\features\\autenticacion\\pages\\registro\\registro.scss",
-    "rule": "hex-literal",
-    "line": 85,
-    "match": "#ffffff"
   },
   {
     "file": "src\\app\\features\\autenticacion\\pages\\registro\\registro.scss",
@@ -2366,12 +1760,6 @@
   {
     "file": "src\\app\\features\\autenticacion\\pages\\registro\\registro.scss",
     "rule": "hex-literal",
-    "line": 165,
-    "match": "#ffffff"
-  },
-  {
-    "file": "src\\app\\features\\autenticacion\\pages\\registro\\registro.scss",
-    "rule": "hex-literal",
     "line": 166,
     "match": "#d7deea"
   },
@@ -2388,54 +1776,6 @@
     "match": "#1f2937"
   },
   {
-    "file": "src\\app\\features\\certificados\\pages\\imprimir-carnet\\imprimir-carnet.html",
-    "rule": "hex-literal",
-    "line": 78,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\chatbot\\pages\\chatbot-alumno\\chatbot-alumno.scss",
-    "rule": "hex-literal",
-    "line": 4,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\chatbot\\pages\\chatbot-alumno\\chatbot-alumno.scss",
-    "rule": "hex-literal",
-    "line": 4,
-    "match": "#e4eaf2"
-  },
-  {
-    "file": "src\\app\\features\\chatbot\\pages\\chatbot-alumno\\chatbot-alumno.scss",
-    "rule": "hex-literal",
-    "line": 6,
-    "match": "#f8fafc"
-  },
-  {
-    "file": "src\\app\\features\\chatbot\\pages\\chatbot-alumno\\chatbot-alumno.scss",
-    "rule": "hex-literal",
-    "line": 6,
-    "match": "#e4eaf2"
-  },
-  {
-    "file": "src\\app\\features\\chatbot\\pages\\chatbot-alumno\\chatbot-alumno.scss",
-    "rule": "hex-literal",
-    "line": 8,
-    "match": "#1677ff"
-  },
-  {
-    "file": "src\\app\\features\\chatbot\\pages\\chatbot-alumno\\chatbot-alumno.scss",
-    "rule": "hex-literal",
-    "line": 9,
-    "match": "#172033"
-  },
-  {
-    "file": "src\\app\\features\\chatbot\\pages\\chatbot-alumno\\chatbot-alumno.scss",
-    "rule": "hex-literal",
-    "line": 10,
-    "match": "#667085"
-  },
-  {
     "file": "src\\app\\features\\chatbot\\pages\\chatbot-alumno\\chatbot-alumno.scss",
     "rule": "hex-literal",
     "line": 16,
@@ -2446,60 +1786,12 @@
     "rule": "hex-literal",
     "line": 16,
     "match": "#0958d9"
-  },
-  {
-    "file": "src\\app\\features\\chatbot\\pages\\chatbot-alumno\\chatbot-alumno.scss",
-    "rule": "hex-literal",
-    "line": 16,
-    "match": "#fff"
   },
   {
     "file": "src\\app\\features\\chatbot\\pages\\chatbot-alumno\\chatbot-alumno.scss",
     "rule": "hex-literal",
     "line": 17,
     "match": "#0748b4"
-  },
-  {
-    "file": "src\\app\\features\\chatbot\\pages\\chatbot-alumno\\chatbot-alumno.scss",
-    "rule": "hex-literal",
-    "line": 17,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\chatbot\\pages\\chatbot-alumno\\chatbot-alumno.scss",
-    "rule": "hex-literal",
-    "line": 18,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\chatbot\\pages\\chatbot-alumno\\chatbot-alumno.scss",
-    "rule": "hex-literal",
-    "line": 18,
-    "match": "#cbd5e1"
-  },
-  {
-    "file": "src\\app\\features\\chatbot\\pages\\chatbot-alumno\\chatbot-alumno.scss",
-    "rule": "hex-literal",
-    "line": 18,
-    "match": "#334155"
-  },
-  {
-    "file": "src\\app\\features\\chatbot\\pages\\chatbot-alumno\\chatbot-alumno.scss",
-    "rule": "hex-literal",
-    "line": 19,
-    "match": "#f8fafc"
-  },
-  {
-    "file": "src\\app\\features\\chatbot\\pages\\chatbot-alumno\\chatbot-alumno.scss",
-    "rule": "hex-literal",
-    "line": 19,
-    "match": "#172033"
-  },
-  {
-    "file": "src\\app\\features\\chatbot\\pages\\chatbot-alumno\\chatbot-alumno.scss",
-    "rule": "hex-literal",
-    "line": 20,
-    "match": "#fff"
   },
   {
     "file": "src\\app\\features\\chatbot\\pages\\chatbot-alumno\\chatbot-alumno.scss",
@@ -2518,12 +1810,6 @@
     "rule": "hex-literal",
     "line": 21,
     "match": "#fef2f2"
-  },
-  {
-    "file": "src\\app\\features\\chatbot\\pages\\chatbot-alumno\\chatbot-alumno.scss",
-    "rule": "hex-literal",
-    "line": 23,
-    "match": "#fff"
   },
   {
     "file": "src\\app\\features\\chatbot\\pages\\chatbot-alumno\\chatbot-alumno.scss",
@@ -2558,30 +1844,6 @@
   {
     "file": "src\\app\\features\\chatbot\\pages\\chatbot-alumno\\chatbot-alumno.scss",
     "rule": "hex-literal",
-    "line": 26,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\chatbot\\pages\\chatbot-alumno\\chatbot-alumno.scss",
-    "rule": "hex-literal",
-    "line": 28,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\chatbot\\pages\\chatbot-alumno\\chatbot-alumno.scss",
-    "rule": "hex-literal",
-    "line": 28,
-    "match": "#e4eaf2"
-  },
-  {
-    "file": "src\\app\\features\\chatbot\\pages\\chatbot-alumno\\chatbot-alumno.scss",
-    "rule": "hex-literal",
-    "line": 29,
-    "match": "#e4eaf2"
-  },
-  {
-    "file": "src\\app\\features\\chatbot\\pages\\chatbot-alumno\\chatbot-alumno.scss",
-    "rule": "hex-literal",
     "line": 30,
     "match": "#eef8f2"
   },
@@ -2594,20 +1856,8 @@
   {
     "file": "src\\app\\features\\chatbot\\pages\\chatbot-alumno\\chatbot-alumno.scss",
     "rule": "hex-literal",
-    "line": 31,
-    "match": "#12a150"
-  },
-  {
-    "file": "src\\app\\features\\chatbot\\pages\\chatbot-alumno\\chatbot-alumno.scss",
-    "rule": "hex-literal",
     "line": 32,
     "match": "#eef1f5"
-  },
-  {
-    "file": "src\\app\\features\\chatbot\\pages\\chatbot-alumno\\chatbot-alumno.scss",
-    "rule": "hex-literal",
-    "line": 33,
-    "match": "#667085"
   },
   {
     "file": "src\\app\\features\\chatbot\\pages\\chatbot-alumno\\chatbot-alumno.scss",
@@ -2618,44 +1868,8 @@
   {
     "file": "src\\app\\features\\chatbot\\pages\\chatbot-alumno\\chatbot-alumno.scss",
     "rule": "hex-literal",
-    "line": 36,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\chatbot\\pages\\chatbot-alumno\\chatbot-alumno.scss",
-    "rule": "hex-literal",
-    "line": 36,
-    "match": "#e4eaf2"
-  },
-  {
-    "file": "src\\app\\features\\chatbot\\pages\\chatbot-alumno\\chatbot-alumno.scss",
-    "rule": "hex-literal",
-    "line": 45,
-    "match": "#334155"
-  },
-  {
-    "file": "src\\app\\features\\chatbot\\pages\\chatbot-alumno\\chatbot-alumno.scss",
-    "rule": "hex-literal",
     "line": 47,
     "match": "#eef1f5"
-  },
-  {
-    "file": "src\\app\\features\\chatbot\\pages\\chatbot-alumno\\chatbot-alumno.ts",
-    "rule": "hex-literal",
-    "line": 77,
-    "match": "#ffffff"
-  },
-  {
-    "file": "src\\app\\features\\chatbot\\pages\\chatbot-alumno\\chatbot-alumno.ts",
-    "rule": "hex-literal",
-    "line": 78,
-    "match": "#e4eaf2"
-  },
-  {
-    "file": "src\\app\\features\\chatbot\\pages\\chatbot-alumno\\chatbot-alumno.ts",
-    "rule": "hex-literal",
-    "line": 82,
-    "match": "#cbd5e1"
   },
   {
     "file": "src\\app\\features\\chatbot\\pages\\chatbot-alumno\\chatbot-alumno.ts",
@@ -2676,24 +1890,6 @@
     "match": "#bfdbfe"
   },
   {
-    "file": "src\\app\\features\\chatbot\\pages\\chatbot-alumno\\chatbot-alumno.ts",
-    "rule": "hex-literal",
-    "line": 110,
-    "match": "#f8fafc"
-  },
-  {
-    "file": "src\\app\\features\\chatbot\\pages\\chatbot-alumno\\chatbot-alumno.ts",
-    "rule": "hex-literal",
-    "line": 110,
-    "match": "#334155"
-  },
-  {
-    "file": "src\\app\\features\\chatbot\\pages\\chatbot-alumno\\chatbot-alumno.ts",
-    "rule": "hex-literal",
-    "line": 110,
-    "match": "#e2e8f0"
-  },
-  {
     "file": "src\\app\\features\\chatbot\\pages\\crear-bot\\crear-bot.scss",
     "rule": "hex-literal",
     "line": 29,
@@ -2708,26 +1904,8 @@
   {
     "file": "src\\app\\features\\chatbot\\pages\\crear-bot\\crear-bot.scss",
     "rule": "hex-literal",
-    "line": 39,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\chatbot\\pages\\crear-bot\\crear-bot.scss",
-    "rule": "hex-literal",
     "line": 52,
     "match": "#61708d"
-  },
-  {
-    "file": "src\\app\\features\\chatbot\\pages\\crear-bot\\crear-bot.scss",
-    "rule": "hex-literal",
-    "line": 62,
-    "match": "#f8fafc"
-  },
-  {
-    "file": "src\\app\\features\\chatbot\\pages\\crear-bot\\crear-bot.scss",
-    "rule": "hex-literal",
-    "line": 63,
-    "match": "#e2e8f0"
   },
   {
     "file": "src\\app\\features\\chatbot\\pages\\crear-bot\\crear-bot.scss",
@@ -2750,18 +1928,6 @@
   {
     "file": "src\\app\\features\\compartido\\pages\\notificaciones\\notificaciones.scss",
     "rule": "hex-literal",
-    "line": 3,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\compartido\\pages\\notificaciones\\notificaciones.scss",
-    "rule": "hex-literal",
-    "line": 3,
-    "match": "#e4eaf2"
-  },
-  {
-    "file": "src\\app\\features\\compartido\\pages\\notificaciones\\notificaciones.scss",
-    "rule": "hex-literal",
     "line": 5,
     "match": "#edf5ff"
   },
@@ -2770,36 +1936,6 @@
     "rule": "hex-literal",
     "line": 5,
     "match": "#cfe3ff"
-  },
-  {
-    "file": "src\\app\\features\\compartido\\pages\\notificaciones\\notificaciones.scss",
-    "rule": "hex-literal",
-    "line": 5,
-    "match": "#1677ff"
-  },
-  {
-    "file": "src\\app\\features\\compartido\\pages\\notificaciones\\notificaciones.scss",
-    "rule": "hex-literal",
-    "line": 6,
-    "match": "#1677ff"
-  },
-  {
-    "file": "src\\app\\features\\compartido\\pages\\notificaciones\\notificaciones.scss",
-    "rule": "hex-literal",
-    "line": 7,
-    "match": "#172033"
-  },
-  {
-    "file": "src\\app\\features\\compartido\\pages\\notificaciones\\notificaciones.scss",
-    "rule": "hex-literal",
-    "line": 8,
-    "match": "#667085"
-  },
-  {
-    "file": "src\\app\\features\\compartido\\pages\\notificaciones\\notificaciones.scss",
-    "rule": "hex-literal",
-    "line": 9,
-    "match": "#fff"
   },
   {
     "file": "src\\app\\features\\compartido\\pages\\notificaciones\\notificaciones.scss",
@@ -2822,24 +1958,6 @@
   {
     "file": "src\\app\\features\\compartido\\pages\\notificaciones\\notificaciones.scss",
     "rule": "hex-literal",
-    "line": 12,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\compartido\\pages\\notificaciones\\notificaciones.scss",
-    "rule": "hex-literal",
-    "line": 12,
-    "match": "#e4eaf2"
-  },
-  {
-    "file": "src\\app\\features\\compartido\\pages\\notificaciones\\notificaciones.scss",
-    "rule": "hex-literal",
-    "line": 13,
-    "match": "#667085"
-  },
-  {
-    "file": "src\\app\\features\\compartido\\pages\\notificaciones\\notificaciones.scss",
-    "rule": "hex-literal",
     "line": 14,
     "match": "#eef1f5"
   },
@@ -2858,24 +1976,6 @@
   {
     "file": "src\\app\\features\\compartido\\pages\\notificaciones\\notificaciones.scss",
     "rule": "hex-literal",
-    "line": 16,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\compartido\\pages\\notificaciones\\notificaciones.scss",
-    "rule": "hex-literal",
-    "line": 17,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\compartido\\pages\\notificaciones\\notificaciones.scss",
-    "rule": "hex-literal",
-    "line": 17,
-    "match": "#e4eaf2"
-  },
-  {
-    "file": "src\\app\\features\\compartido\\pages\\notificaciones\\notificaciones.scss",
-    "rule": "hex-literal",
     "line": 18,
     "match": "#eef1f5"
   },
@@ -2888,38 +1988,8 @@
   {
     "file": "src\\app\\features\\compartido\\pages\\notificaciones\\notificaciones.scss",
     "rule": "hex-literal",
-    "line": 20,
-    "match": "#1677ff"
-  },
-  {
-    "file": "src\\app\\features\\compartido\\pages\\notificaciones\\notificaciones.scss",
-    "rule": "hex-literal",
     "line": 21,
     "match": "#edf5ff"
-  },
-  {
-    "file": "src\\app\\features\\compartido\\pages\\notificaciones\\notificaciones.scss",
-    "rule": "hex-literal",
-    "line": 21,
-    "match": "#1677ff"
-  },
-  {
-    "file": "src\\app\\features\\compartido\\pages\\notificaciones\\notificaciones.scss",
-    "rule": "hex-literal",
-    "line": 22,
-    "match": "#f1f5f9"
-  },
-  {
-    "file": "src\\app\\features\\compartido\\pages\\notificaciones\\notificaciones.scss",
-    "rule": "hex-literal",
-    "line": 22,
-    "match": "#94a3b8"
-  },
-  {
-    "file": "src\\app\\features\\compartido\\pages\\notificaciones\\notificaciones.scss",
-    "rule": "hex-literal",
-    "line": 25,
-    "match": "#172033"
   },
   {
     "file": "src\\app\\features\\compartido\\pages\\notificaciones\\notificaciones.scss",
@@ -2943,12 +2013,6 @@
     "file": "src\\app\\features\\compartido\\pages\\notificaciones\\notificaciones.scss",
     "rule": "hex-literal",
     "line": 29,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\compartido\\pages\\notificaciones\\notificaciones.scss",
-    "rule": "hex-literal",
-    "line": 29,
     "match": "#fecaca"
   },
   {
@@ -2962,12 +2026,6 @@
     "rule": "hex-literal",
     "line": 31,
     "match": "#b42318"
-  },
-  {
-    "file": "src\\app\\features\\compartido\\pages\\notificaciones\\notificaciones.scss",
-    "rule": "hex-literal",
-    "line": 31,
-    "match": "#fff"
   },
   {
     "file": "src\\app\\features\\competencia\\pages\\competencia-control\\competencia-control.html",
@@ -3002,716 +2060,14 @@
   {
     "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
     "rule": "hex-literal",
-    "line": 10,
-    "match": "#1d4f91"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 20,
-    "match": "#f8fafc"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 45,
-    "match": "#172033"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 58,
-    "match": "#ffc414"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 59,
-    "match": "#ffc414"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 61,
-    "match": "#1a1f36"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 74,
-    "match": "#ffd64f"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 75,
-    "match": "#ffd64f"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 76,
-    "match": "#111827"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 87,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 101,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
     "line": 107,
     "match": "#66e5f1"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 117,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 118,
-    "match": "#f0b8b8"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 127,
-    "match": "#a61d24"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 131,
-    "match": "#7a3034"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 179,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 180,
-    "match": "#d8e0ec"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 182,
-    "match": "#4a5775"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 197,
-    "match": "#6e7c95"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 203,
-    "match": "#5f35d7"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 204,
-    "match": "#3f2e98"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 209,
-    "match": "#5f35d7"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 213,
-    "match": "#6c3fe8"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 213,
-    "match": "#4f2cc7"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 215,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 220,
-    "match": "#ffd166"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 232,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 233,
-    "match": "#ccd6e4"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 235,
-    "match": "#4d5b70"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 246,
-    "match": "#23314a"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 268,
-    "match": "#1677ff"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 280,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 281,
-    "match": "#e4eaf2"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 291,
-    "match": "#b7c8e5"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 296,
-    "match": "#8c76dd"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 301,
-    "match": "#edf2f8"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 302,
-    "match": "#e2e8f0"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 314,
-    "match": "#65748a"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 326,
-    "match": "#7359c8"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 338,
-    "match": "#5b35c9"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 347,
-    "match": "#172033"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 371,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 394,
-    "match": "#172033"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 404,
-    "match": "#6c788c"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 424,
-    "match": "#e8edf4"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 433,
-    "match": "#172033"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 444,
-    "match": "#1677ff"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 450,
-    "match": "#8c97a8"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 457,
-    "match": "#172033"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 470,
-    "match": "#d8e0ec"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 482,
-    "match": "#d8e0ec"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 489,
-    "match": "#b7c8e5"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 498,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 499,
-    "match": "#e4eaf2"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 518,
-    "match": "#172033"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 525,
-    "match": "#8c97a8"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 550,
-    "match": "#eee"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 558,
-    "match": "#5f35d7"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 563,
-    "match": "#172033"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 570,
-    "match": "#172033"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 577,
-    "match": "#53627a"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 588,
-    "match": "#edf1f6"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 593,
-    "match": "#edf1f6"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 600,
-    "match": "#172033"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 608,
-    "match": "#6c788c"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 618,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 637,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 645,
-    "match": "#dce2ff"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 655,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 695,
-    "match": "#5f35d7"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 713,
-    "match": "#f8fafc"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 715,
-    "match": "#edf1f6"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 736,
-    "match": "#f1f5fb"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 737,
-    "match": "#d6e0f0"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 741,
-    "match": "#f1f5fb"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 742,
-    "match": "#5f35d7"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 748,
-    "match": "#e8eef8"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 758,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 759,
-    "match": "#e2e8f0"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 772,
-    "match": "#172033"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 779,
-    "match": "#6c788c"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 784,
-    "match": "#fdfaf6"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 785,
-    "match": "#fce7db"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 802,
-    "match": "#fcd34d"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 819,
-    "match": "#475569"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 830,
-    "match": "#94a3b8"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 836,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 837,
-    "match": "#e4eaf2"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 846,
-    "match": "#e7ecf3"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 866,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 867,
-    "match": "#f0b8b8"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 874,
-    "match": "#a61d24"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 879,
-    "match": "#7a3034"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 883,
-    "match": "#3157a5"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 929,
-    "match": "#f4f7fb"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 953,
-    "match": "#cbd5e1"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 969,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 970,
-    "match": "#d8e0ec"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 972,
-    "match": "#4a5775"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 980,
-    "match": "#f1f5f9"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 981,
-    "match": "#172033"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 1037,
-    "match": "#e1e7f0"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 1107,
-    "match": "#6c3fe8"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 1107,
-    "match": "#4f2cc7"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "hex-literal",
-    "line": 1108,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "gradient-alumno-cuentos",
-    "line": 213,
-    "match": "linear-gradient"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.scss",
-    "rule": "gradient-alumno-cuentos",
-    "line": 1107,
-    "match": "linear-gradient"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.ts",
-    "rule": "hex-literal",
-    "line": 269,
-    "match": "#1d4f91"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.ts",
-    "rule": "hex-literal",
-    "line": 269,
-    "match": "#0d9488"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.ts",
-    "rule": "hex-literal",
-    "line": 269,
-    "match": "#e11d48"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.ts",
-    "rule": "hex-literal",
-    "line": 269,
-    "match": "#9333ea"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.ts",
-    "rule": "hex-literal",
-    "line": 269,
-    "match": "#ca8a04"
-  },
-  {
-    "file": "src\\app\\features\\cuentos\\pages\\galeria-proyectos\\galeria-proyectos.ts",
-    "rule": "hex-literal",
-    "line": 269,
-    "match": "#2563eb"
-  },
-  {
-    "file": "src\\app\\features\\docente\\componentes\\grafico-rendimiento\\grafico-rendimiento.ts",
-    "rule": "hex-literal",
-    "line": 24,
-    "match": "#2563eb"
   },
   {
     "file": "src\\app\\features\\docente\\componentes\\grafico-rendimiento\\grafico-rendimiento.ts",
     "rule": "hex-literal",
     "line": 25,
     "match": "#1d4ed8"
-  },
-  {
-    "file": "src\\app\\features\\docente\\componentes\\grafico-rendimiento\\grafico-rendimiento.ts",
-    "rule": "hex-literal",
-    "line": 26,
-    "match": "#2563eb"
-  },
-  {
-    "file": "src\\app\\features\\docente\\componentes\\grafico-rendimiento\\grafico-rendimiento.ts",
-    "rule": "hex-literal",
-    "line": 31,
-    "match": "#2563eb"
-  },
-  {
-    "file": "src\\app\\features\\docente\\componentes\\grafico-rendimiento\\grafico-rendimiento.ts",
-    "rule": "hex-literal",
-    "line": 32,
-    "match": "#ffffff"
   },
   {
     "file": "src\\app\\features\\docente\\componentes\\grafico-rendimiento\\grafico-rendimiento.ts",
@@ -3724,30 +2080,6 @@
     "rule": "hex-literal",
     "line": 57,
     "match": "#64748b"
-  },
-  {
-    "file": "src\\app\\features\\docente\\componentes\\grafico-rendimiento\\grafico-rendimiento.ts",
-    "rule": "hex-literal",
-    "line": 61,
-    "match": "#f1f5f9"
-  },
-  {
-    "file": "src\\app\\features\\docente\\componentes\\grafico-rendimiento\\grafico-rendimiento.ts",
-    "rule": "hex-literal",
-    "line": 63,
-    "match": "#94a3b8"
-  },
-  {
-    "file": "src\\app\\features\\docente\\pages\\gestionar-curriculo\\gestionar-curriculo.scss",
-    "rule": "hex-literal",
-    "line": 2,
-    "match": "#172033"
-  },
-  {
-    "file": "src\\app\\features\\docente\\pages\\gestionar-curriculo\\gestionar-curriculo.scss",
-    "rule": "hex-literal",
-    "line": 3,
-    "match": "#fff"
   },
   {
     "file": "src\\app\\features\\docente\\pages\\gestionar-curriculo\\gestionar-curriculo.scss",
@@ -3783,25 +2115,7 @@
     "file": "src\\app\\features\\docente\\pages\\gestionar-curriculo\\gestionar-curriculo.scss",
     "rule": "hex-literal",
     "line": 6,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\docente\\pages\\gestionar-curriculo\\gestionar-curriculo.scss",
-    "rule": "hex-literal",
-    "line": 6,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\docente\\pages\\gestionar-curriculo\\gestionar-curriculo.scss",
-    "rule": "hex-literal",
-    "line": 6,
     "match": "#243961"
-  },
-  {
-    "file": "src\\app\\features\\docente\\pages\\gestionar-curriculo\\gestionar-curriculo.scss",
-    "rule": "hex-literal",
-    "line": 7,
-    "match": "#fff"
   },
   {
     "file": "src\\app\\features\\docente\\pages\\gestionar-curriculo\\gestionar-curriculo.scss",
@@ -3855,12 +2169,6 @@
     "file": "src\\app\\features\\docente\\pages\\gestionar-curriculo\\gestionar-curriculo.scss",
     "rule": "hex-literal",
     "line": 9,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\docente\\pages\\gestionar-curriculo\\gestionar-curriculo.scss",
-    "rule": "hex-literal",
-    "line": 9,
     "match": "#cad5e5"
   },
   {
@@ -3879,31 +2187,13 @@
     "file": "src\\app\\features\\docente\\pages\\gestionar-curriculo\\gestionar-curriculo.scss",
     "rule": "hex-literal",
     "line": 10,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\docente\\pages\\gestionar-curriculo\\gestionar-curriculo.scss",
-    "rule": "hex-literal",
-    "line": 10,
     "match": "#ccd5e3"
   },
   {
     "file": "src\\app\\features\\docente\\pages\\gestionar-curriculo\\gestionar-curriculo.scss",
     "rule": "hex-literal",
     "line": 10,
-    "match": "#172033"
-  },
-  {
-    "file": "src\\app\\features\\docente\\pages\\gestionar-curriculo\\gestionar-curriculo.scss",
-    "rule": "hex-literal",
-    "line": 10,
     "match": "#315bea"
-  },
-  {
-    "file": "src\\app\\features\\docente\\pages\\gestionar-curriculo\\gestionar-curriculo.scss",
-    "rule": "hex-literal",
-    "line": 11,
-    "match": "#fff"
   },
   {
     "file": "src\\app\\features\\docente\\pages\\gestionar-curriculo\\gestionar-curriculo.scss",
@@ -3951,18 +2241,6 @@
     "file": "src\\app\\features\\docente\\pages\\gestionar-curriculo\\gestionar-curriculo.scss",
     "rule": "hex-literal",
     "line": 12,
-    "match": "#e1e7f0"
-  },
-  {
-    "file": "src\\app\\features\\docente\\pages\\gestionar-curriculo\\gestionar-curriculo.scss",
-    "rule": "hex-literal",
-    "line": 12,
-    "match": "#f8fafc"
-  },
-  {
-    "file": "src\\app\\features\\docente\\pages\\gestionar-curriculo\\gestionar-curriculo.scss",
-    "rule": "hex-literal",
-    "line": 12,
     "match": "#718096"
   },
   {
@@ -3988,12 +2266,6 @@
     "rule": "hex-literal",
     "line": 12,
     "match": "#6b7890"
-  },
-  {
-    "file": "src\\app\\features\\docente\\pages\\gestionar-curriculo\\gestionar-curriculo.scss",
-    "rule": "hex-literal",
-    "line": 12,
-    "match": "#fff"
   },
   {
     "file": "src\\app\\features\\docente\\pages\\gestionar-curriculo\\gestionar-curriculo.scss",
@@ -4040,26 +2312,8 @@
   {
     "file": "src\\app\\features\\docente\\pages\\gestionar-insignias\\gestionar-insignias.scss",
     "rule": "hex-literal",
-    "line": 60,
-    "match": "#e2e8f0"
-  },
-  {
-    "file": "src\\app\\features\\docente\\pages\\gestionar-insignias\\gestionar-insignias.scss",
-    "rule": "hex-literal",
     "line": 82,
     "match": "#61708d"
-  },
-  {
-    "file": "src\\app\\features\\docente\\pages\\lista-alumnos\\lista-alumnos.html",
-    "rule": "hex-literal",
-    "line": 280,
-    "match": "#cbd5e1"
-  },
-  {
-    "file": "src\\app\\features\\docente\\pages\\lista-alumnos\\lista-alumnos.scss",
-    "rule": "hex-literal",
-    "line": 7,
-    "match": "#fff"
   },
   {
     "file": "src\\app\\features\\docente\\pages\\lista-alumnos\\lista-alumnos.scss",
@@ -4106,12 +2360,6 @@
   {
     "file": "src\\app\\features\\docente\\pages\\lista-alumnos\\lista-alumnos.scss",
     "rule": "hex-literal",
-    "line": 79,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\docente\\pages\\lista-alumnos\\lista-alumnos.scss",
-    "rule": "hex-literal",
     "line": 80,
     "match": "#ccd6e6"
   },
@@ -4124,20 +2372,8 @@
   {
     "file": "src\\app\\features\\docente\\pages\\panel-docente\\panel-docente.scss",
     "rule": "hex-literal",
-    "line": 8,
-    "match": "#ffffff"
-  },
-  {
-    "file": "src\\app\\features\\docente\\pages\\panel-docente\\panel-docente.scss",
-    "rule": "hex-literal",
     "line": 9,
     "match": "#dfe6f1"
-  },
-  {
-    "file": "src\\app\\features\\docente\\pages\\panel-docente\\panel-docente.scss",
-    "rule": "hex-literal",
-    "line": 26,
-    "match": "#ffffff"
   },
   {
     "file": "src\\app\\features\\docente\\pages\\panel-docente\\panel-docente.scss",
@@ -4166,12 +2402,6 @@
   {
     "file": "src\\app\\features\\docente\\pages\\panel-docente\\panel-docente.scss",
     "rule": "hex-literal",
-    "line": 53,
-    "match": "#b45309"
-  },
-  {
-    "file": "src\\app\\features\\docente\\pages\\panel-docente\\panel-docente.scss",
-    "rule": "hex-literal",
     "line": 68,
     "match": "#17203a"
   },
@@ -4186,12 +2416,6 @@
     "rule": "hex-literal",
     "line": 81,
     "match": "#61708d"
-  },
-  {
-    "file": "src\\app\\features\\docente\\pages\\panel-docente\\panel-docente.scss",
-    "rule": "hex-literal",
-    "line": 97,
-    "match": "#ffffff"
   },
   {
     "file": "src\\app\\features\\docente\\pages\\panel-docente\\panel-docente.scss",
@@ -4216,18 +2440,6 @@
     "rule": "hex-literal",
     "line": 118,
     "match": "#17203a"
-  },
-  {
-    "file": "src\\app\\features\\docente\\pages\\panel-docente\\panel-docente.scss",
-    "rule": "hex-literal",
-    "line": 149,
-    "match": "#f8fafc"
-  },
-  {
-    "file": "src\\app\\features\\docente\\pages\\panel-docente\\panel-docente.scss",
-    "rule": "hex-literal",
-    "line": 150,
-    "match": "#e2e8f0"
   },
   {
     "file": "src\\app\\features\\docente\\pages\\panel-docente\\panel-docente.scss",
@@ -4286,12 +2498,6 @@
   {
     "file": "src\\app\\features\\docente\\pages\\panel-docente\\panel-docente.scss",
     "rule": "hex-literal",
-    "line": 211,
-    "match": "#ffffff"
-  },
-  {
-    "file": "src\\app\\features\\docente\\pages\\panel-docente\\panel-docente.scss",
-    "rule": "hex-literal",
     "line": 212,
     "match": "#dfe6f1"
   },
@@ -4317,25 +2523,7 @@
     "file": "src\\app\\features\\docente\\pages\\panel-docente\\panel-docente.scss",
     "rule": "hex-literal",
     "line": 239,
-    "match": "#f8fafc"
-  },
-  {
-    "file": "src\\app\\features\\docente\\pages\\panel-docente\\panel-docente.scss",
-    "rule": "hex-literal",
-    "line": 239,
     "match": "#eef3f9"
-  },
-  {
-    "file": "src\\app\\features\\evaluaciones\\pages\\examen-live\\examen-live.scss",
-    "rule": "hex-literal",
-    "line": 13,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\evaluaciones\\pages\\examen-live\\examen-live.scss",
-    "rule": "hex-literal",
-    "line": 14,
-    "match": "#e4eaf2"
   },
   {
     "file": "src\\app\\features\\evaluaciones\\pages\\examen-live\\examen-live.scss",
@@ -4364,86 +2552,8 @@
   {
     "file": "src\\app\\features\\evaluaciones\\pages\\examen-live\\examen-live.scss",
     "rule": "hex-literal",
-    "line": 47,
-    "match": "#172033"
-  },
-  {
-    "file": "src\\app\\features\\evaluaciones\\pages\\examen-live\\examen-live.scss",
-    "rule": "hex-literal",
-    "line": 54,
-    "match": "#667085"
-  },
-  {
-    "file": "src\\app\\features\\evaluaciones\\pages\\examen-live\\examen-live.scss",
-    "rule": "hex-literal",
-    "line": 80,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\evaluaciones\\pages\\examen-live\\examen-live.scss",
-    "rule": "hex-literal",
-    "line": 81,
-    "match": "#e4eaf2"
-  },
-  {
-    "file": "src\\app\\features\\evaluaciones\\pages\\examen-live\\examen-live.scss",
-    "rule": "hex-literal",
-    "line": 100,
-    "match": "#172033"
-  },
-  {
-    "file": "src\\app\\features\\evaluaciones\\pages\\examen-live\\examen-live.scss",
-    "rule": "hex-literal",
-    "line": 106,
-    "match": "#667085"
-  },
-  {
-    "file": "src\\app\\features\\evaluaciones\\pages\\examen-live\\examen-live.scss",
-    "rule": "hex-literal",
-    "line": 112,
-    "match": "#e8edf4"
-  },
-  {
-    "file": "src\\app\\features\\evaluaciones\\pages\\examen-live\\examen-live.scss",
-    "rule": "hex-literal",
-    "line": 119,
-    "match": "#1677ff"
-  },
-  {
-    "file": "src\\app\\features\\evaluaciones\\pages\\examen-live\\examen-live.scss",
-    "rule": "hex-literal",
-    "line": 132,
-    "match": "#f8fafc"
-  },
-  {
-    "file": "src\\app\\features\\evaluaciones\\pages\\examen-live\\examen-live.scss",
-    "rule": "hex-literal",
-    "line": 133,
-    "match": "#e4eaf2"
-  },
-  {
-    "file": "src\\app\\features\\evaluaciones\\pages\\examen-live\\examen-live.scss",
-    "rule": "hex-literal",
     "line": 142,
     "match": "#344054"
-  },
-  {
-    "file": "src\\app\\features\\evaluaciones\\pages\\examen-live\\examen-live.scss",
-    "rule": "hex-literal",
-    "line": 154,
-    "match": "#1677ff"
-  },
-  {
-    "file": "src\\app\\features\\evaluaciones\\pages\\examen-live\\examen-live.scss",
-    "rule": "hex-literal",
-    "line": 156,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\evaluaciones\\pages\\examen-live\\examen-live.scss",
-    "rule": "hex-literal",
-    "line": 173,
-    "match": "#fff"
   },
   {
     "file": "src\\app\\features\\evaluaciones\\pages\\examen-live\\examen-live.scss",
@@ -4478,18 +2588,6 @@
   {
     "file": "src\\app\\features\\evaluaciones\\pages\\examen-live\\examen-live.scss",
     "rule": "hex-literal",
-    "line": 191,
-    "match": "#1677ff"
-  },
-  {
-    "file": "src\\app\\features\\evaluaciones\\pages\\examen-live\\examen-live.scss",
-    "rule": "hex-literal",
-    "line": 208,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\evaluaciones\\pages\\examen-live\\examen-live.scss",
-    "rule": "hex-literal",
     "line": 209,
     "match": "#d8e0eb"
   },
@@ -4508,12 +2606,6 @@
   {
     "file": "src\\app\\features\\evaluaciones\\pages\\examen-live\\examen-live.scss",
     "rule": "hex-literal",
-    "line": 230,
-    "match": "#667085"
-  },
-  {
-    "file": "src\\app\\features\\evaluaciones\\pages\\examen-live\\examen-live.scss",
-    "rule": "hex-literal",
     "line": 246,
     "match": "#fff7f7"
   },
@@ -4522,12 +2614,6 @@
     "rule": "hex-literal",
     "line": 247,
     "match": "#fecaca"
-  },
-  {
-    "file": "src\\app\\features\\evaluaciones\\pages\\examen-live\\examen-live.scss",
-    "rule": "hex-literal",
-    "line": 257,
-    "match": "#fee2e2"
   },
   {
     "file": "src\\app\\features\\evaluaciones\\pages\\examen-live\\examen-live.scss",
@@ -4549,51 +2635,9 @@
   },
   {
     "file": "src\\app\\features\\evaluaciones\\pages\\examen-live\\examen-live.scss",
-    "rule": "hex-literal",
-    "line": 276,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\evaluaciones\\pages\\examen-live\\examen-live.scss",
-    "rule": "hex-literal",
-    "line": 277,
-    "match": "#e4eaf2"
-  },
-  {
-    "file": "src\\app\\features\\evaluaciones\\pages\\examen-live\\examen-live.scss",
-    "rule": "hex-literal",
-    "line": 285,
-    "match": "#edf1f6"
-  },
-  {
-    "file": "src\\app\\features\\evaluaciones\\pages\\examen-live\\examen-live.scss",
-    "rule": "hex-literal",
-    "line": 291,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\evaluaciones\\pages\\examen-live\\examen-live.scss",
-    "rule": "hex-literal",
-    "line": 291,
-    "match": "#e4eaf2"
-  },
-  {
-    "file": "src\\app\\features\\evaluaciones\\pages\\examen-live\\examen-live.scss",
     "rule": "outline-shortcut",
     "line": 198,
     "match": "outline: 3px solid rgba(22, 119, 255, .2)"
-  },
-  {
-    "file": "src\\app\\features\\evaluaciones\\pages\\resultados-examen\\resultados-examen.scss",
-    "rule": "hex-literal",
-    "line": 13,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\evaluaciones\\pages\\resultados-examen\\resultados-examen.scss",
-    "rule": "hex-literal",
-    "line": 14,
-    "match": "#e4eaf2"
   },
   {
     "file": "src\\app\\features\\evaluaciones\\pages\\resultados-examen\\resultados-examen.scss",
@@ -4618,30 +2662,6 @@
     "rule": "hex-literal",
     "line": 37,
     "match": "#6842d7"
-  },
-  {
-    "file": "src\\app\\features\\evaluaciones\\pages\\resultados-examen\\resultados-examen.scss",
-    "rule": "hex-literal",
-    "line": 46,
-    "match": "#172033"
-  },
-  {
-    "file": "src\\app\\features\\evaluaciones\\pages\\resultados-examen\\resultados-examen.scss",
-    "rule": "hex-literal",
-    "line": 53,
-    "match": "#667085"
-  },
-  {
-    "file": "src\\app\\features\\evaluaciones\\pages\\resultados-examen\\resultados-examen.scss",
-    "rule": "hex-literal",
-    "line": 80,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\evaluaciones\\pages\\resultados-examen\\resultados-examen.scss",
-    "rule": "hex-literal",
-    "line": 81,
-    "match": "#e4eaf2"
   },
   {
     "file": "src\\app\\features\\evaluaciones\\pages\\resultados-examen\\resultados-examen.scss",
@@ -4688,62 +2708,14 @@
   {
     "file": "src\\app\\features\\evaluaciones\\pages\\resultados-examen\\resultados-examen.scss",
     "rule": "hex-literal",
-    "line": 105,
-    "match": "#172033"
-  },
-  {
-    "file": "src\\app\\features\\evaluaciones\\pages\\resultados-examen\\resultados-examen.scss",
-    "rule": "hex-literal",
-    "line": 108,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\evaluaciones\\pages\\resultados-examen\\resultados-examen.scss",
-    "rule": "hex-literal",
-    "line": 109,
-    "match": "#e4eaf2"
-  },
-  {
-    "file": "src\\app\\features\\evaluaciones\\pages\\resultados-examen\\resultados-examen.scss",
-    "rule": "hex-literal",
     "line": 117,
     "match": "#edf0f5"
   },
   {
     "file": "src\\app\\features\\evaluaciones\\pages\\resultados-examen\\resultados-examen.scss",
     "rule": "hex-literal",
-    "line": 124,
-    "match": "#172033"
-  },
-  {
-    "file": "src\\app\\features\\evaluaciones\\pages\\resultados-examen\\resultados-examen.scss",
-    "rule": "hex-literal",
-    "line": 125,
-    "match": "#667085"
-  },
-  {
-    "file": "src\\app\\features\\evaluaciones\\pages\\resultados-examen\\resultados-examen.scss",
-    "rule": "hex-literal",
-    "line": 133,
-    "match": "#f8fafc"
-  },
-  {
-    "file": "src\\app\\features\\evaluaciones\\pages\\resultados-examen\\resultados-examen.scss",
-    "rule": "hex-literal",
-    "line": 134,
-    "match": "#667085"
-  },
-  {
-    "file": "src\\app\\features\\evaluaciones\\pages\\resultados-examen\\resultados-examen.scss",
-    "rule": "hex-literal",
     "line": 140,
     "match": "#526174"
-  },
-  {
-    "file": "src\\app\\features\\evaluaciones\\pages\\resultados-examen\\resultados-examen.scss",
-    "rule": "hex-literal",
-    "line": 144,
-    "match": "#172033"
   },
   {
     "file": "src\\app\\features\\evaluaciones\\pages\\resultados-examen\\resultados-examen.scss",
@@ -4766,12 +2738,6 @@
   {
     "file": "src\\app\\features\\evaluaciones\\pages\\resultados-examen\\resultados-examen.scss",
     "rule": "hex-literal",
-    "line": 160,
-    "match": "#fee2e2"
-  },
-  {
-    "file": "src\\app\\features\\evaluaciones\\pages\\resultados-examen\\resultados-examen.scss",
-    "rule": "hex-literal",
     "line": 162,
     "match": "#b42318"
   },
@@ -4788,52 +2754,10 @@
     "match": "#b42318"
   },
   {
-    "file": "src\\app\\features\\evaluaciones\\pages\\resultados-examen\\resultados-examen.scss",
-    "rule": "hex-literal",
-    "line": 180,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\evaluaciones\\pages\\resultados-examen\\resultados-examen.scss",
-    "rule": "hex-literal",
-    "line": 181,
-    "match": "#e4eaf2"
-  },
-  {
-    "file": "src\\app\\features\\evaluaciones\\pages\\resultados-examen\\resultados-examen.scss",
-    "rule": "hex-literal",
-    "line": 191,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\evaluaciones\\pages\\resultados-examen\\resultados-examen.scss",
-    "rule": "hex-literal",
-    "line": 191,
-    "match": "#e4eaf2"
-  },
-  {
     "file": "src\\app\\features\\familias\\pages\\acceso-familias\\acceso-familias.scss",
     "rule": "hex-literal",
     "line": 2,
     "match": "#f3f6fa"
-  },
-  {
-    "file": "src\\app\\features\\familias\\pages\\acceso-familias\\acceso-familias.scss",
-    "rule": "hex-literal",
-    "line": 2,
-    "match": "#172033"
-  },
-  {
-    "file": "src\\app\\features\\familias\\pages\\acceso-familias\\acceso-familias.scss",
-    "rule": "hex-literal",
-    "line": 3,
-    "match": "#334155"
-  },
-  {
-    "file": "src\\app\\features\\familias\\pages\\acceso-familias\\acceso-familias.scss",
-    "rule": "hex-literal",
-    "line": 4,
-    "match": "#fff"
   },
   {
     "file": "src\\app\\features\\familias\\pages\\acceso-familias\\acceso-familias.scss",
@@ -4850,18 +2774,6 @@
   {
     "file": "src\\app\\features\\familias\\pages\\acceso-familias\\acceso-familias.scss",
     "rule": "hex-literal",
-    "line": 5,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\familias\\pages\\acceso-familias\\acceso-familias.scss",
-    "rule": "hex-literal",
-    "line": 6,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\familias\\pages\\acceso-familias\\acceso-familias.scss",
-    "rule": "hex-literal",
     "line": 6,
     "match": "#163a5f"
   },
@@ -4870,12 +2782,6 @@
     "rule": "hex-literal",
     "line": 7,
     "match": "#b9d8f1"
-  },
-  {
-    "file": "src\\app\\features\\familias\\pages\\acceso-familias\\acceso-familias.scss",
-    "rule": "hex-literal",
-    "line": 8,
-    "match": "#fff"
   },
   {
     "file": "src\\app\\features\\familias\\pages\\acceso-familias\\acceso-familias.scss",
@@ -4905,19 +2811,7 @@
     "file": "src\\app\\features\\familias\\pages\\acceso-familias\\acceso-familias.scss",
     "rule": "hex-literal",
     "line": 15,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\familias\\pages\\acceso-familias\\acceso-familias.scss",
-    "rule": "hex-literal",
-    "line": 15,
     "match": "#163a5f"
-  },
-  {
-    "file": "src\\app\\features\\familias\\pages\\acceso-familias\\acceso-familias.scss",
-    "rule": "hex-literal",
-    "line": 17,
-    "match": "#667085"
   },
   {
     "file": "src\\app\\features\\familias\\pages\\acceso-familias\\acceso-familias.scss",
@@ -4929,25 +2823,7 @@
     "file": "src\\app\\features\\familias\\pages\\acceso-familias\\acceso-familias.scss",
     "rule": "hex-literal",
     "line": 20,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\familias\\pages\\acceso-familias\\acceso-familias.scss",
-    "rule": "hex-literal",
-    "line": 20,
     "match": "#cfd9e6"
-  },
-  {
-    "file": "src\\app\\features\\familias\\pages\\acceso-familias\\acceso-familias.scss",
-    "rule": "hex-literal",
-    "line": 21,
-    "match": "#1677ff"
-  },
-  {
-    "file": "src\\app\\features\\familias\\pages\\acceso-familias\\acceso-familias.scss",
-    "rule": "hex-literal",
-    "line": 22,
-    "match": "#172033"
   },
   {
     "file": "src\\app\\features\\familias\\pages\\acceso-familias\\acceso-familias.scss",
@@ -4976,12 +2852,6 @@
   {
     "file": "src\\app\\features\\familias\\pages\\acceso-familias\\acceso-familias.scss",
     "rule": "hex-literal",
-    "line": 26,
-    "match": "#a61d24"
-  },
-  {
-    "file": "src\\app\\features\\familias\\pages\\acceso-familias\\acceso-familias.scss",
-    "rule": "hex-literal",
     "line": 28,
     "match": "#0958d9"
   },
@@ -4990,18 +2860,6 @@
     "rule": "hex-literal",
     "line": 28,
     "match": "#0958d9"
-  },
-  {
-    "file": "src\\app\\features\\familias\\pages\\acceso-familias\\acceso-familias.scss",
-    "rule": "hex-literal",
-    "line": 28,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\familias\\pages\\acceso-familias\\acceso-familias.scss",
-    "rule": "hex-literal",
-    "line": 29,
-    "match": "#fff"
   },
   {
     "file": "src\\app\\features\\familias\\pages\\acceso-familias\\acceso-familias.scss",
@@ -5024,20 +2882,8 @@
   {
     "file": "src\\app\\features\\familias\\pages\\acceso-familias\\acceso-familias.scss",
     "rule": "hex-literal",
-    "line": 32,
-    "match": "#e4eaf2"
-  },
-  {
-    "file": "src\\app\\features\\familias\\pages\\acceso-familias\\acceso-familias.scss",
-    "rule": "hex-literal",
     "line": 33,
     "match": "#0958d9"
-  },
-  {
-    "file": "src\\app\\features\\familias\\pages\\panel-familias\\panel-familias.scss",
-    "rule": "hex-literal",
-    "line": 3,
-    "match": "#fff"
   },
   {
     "file": "src\\app\\features\\familias\\pages\\panel-familias\\panel-familias.scss",
@@ -5050,12 +2896,6 @@
     "rule": "hex-literal",
     "line": 6,
     "match": "#17603a"
-  },
-  {
-    "file": "src\\app\\features\\familias\\pages\\panel-familias\\panel-familias.scss",
-    "rule": "hex-literal",
-    "line": 7,
-    "match": "#667085"
   },
   {
     "file": "src\\app\\features\\familias\\pages\\panel-familias\\panel-familias.scss",
@@ -5084,32 +2924,14 @@
   {
     "file": "src\\app\\features\\familias\\pages\\panel-familias\\panel-familias.scss",
     "rule": "hex-literal",
-    "line": 9,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\familias\\pages\\panel-familias\\panel-familias.scss",
-    "rule": "hex-literal",
     "line": 13,
     "match": "#557087"
   },
   {
     "file": "src\\app\\features\\familias\\pages\\panel-familias\\panel-familias.scss",
     "rule": "hex-literal",
-    "line": 15,
-    "match": "#667085"
-  },
-  {
-    "file": "src\\app\\features\\familias\\pages\\panel-familias\\panel-familias.scss",
-    "rule": "hex-literal",
     "line": 16,
     "match": "#475467"
-  },
-  {
-    "file": "src\\app\\features\\familias\\pages\\panel-familias\\panel-familias.scss",
-    "rule": "hex-literal",
-    "line": 17,
-    "match": "#fff"
   },
   {
     "file": "src\\app\\features\\familias\\pages\\panel-familias\\panel-familias.scss",
@@ -5157,31 +2979,13 @@
     "file": "src\\app\\features\\familias\\pages\\panel-familias\\panel-familias.scss",
     "rule": "hex-literal",
     "line": 21,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\familias\\pages\\panel-familias\\panel-familias.scss",
-    "rule": "hex-literal",
-    "line": 21,
     "match": "#8a5700"
   },
   {
     "file": "src\\app\\features\\familias\\pages\\panel-familias\\panel-familias.scss",
     "rule": "hex-literal",
     "line": 23,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\familias\\pages\\panel-familias\\panel-familias.scss",
-    "rule": "hex-literal",
-    "line": 23,
     "match": "#eadcb5"
-  },
-  {
-    "file": "src\\app\\features\\familias\\pages\\panel-familias\\panel-familias.scss",
-    "rule": "hex-literal",
-    "line": 24,
-    "match": "#667085"
   },
   {
     "file": "src\\app\\features\\familias\\pages\\panel-familias\\panel-familias.scss",
@@ -5194,18 +2998,6 @@
     "rule": "hex-literal",
     "line": 25,
     "match": "#163a5f"
-  },
-  {
-    "file": "src\\app\\features\\familias\\pages\\panel-familias\\panel-familias.scss",
-    "rule": "hex-literal",
-    "line": 25,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\familias\\pages\\panel-familias\\panel-familias.scss",
-    "rule": "hex-literal",
-    "line": 26,
-    "match": "#fff"
   },
   {
     "file": "src\\app\\features\\familias\\pages\\panel-familias\\panel-familias.scss",
@@ -5234,18 +3026,6 @@
   {
     "file": "src\\app\\features\\familias\\pages\\panel-familias\\panel-familias.scss",
     "rule": "hex-literal",
-    "line": 27,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\familias\\pages\\panel-familias\\panel-familias.scss",
-    "rule": "hex-literal",
-    "line": 28,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\familias\\pages\\panel-familias\\panel-familias.scss",
-    "rule": "hex-literal",
     "line": 28,
     "match": "#dde5ef"
   },
@@ -5258,18 +3038,6 @@
   {
     "file": "src\\app\\features\\familias\\pages\\panel-familias\\panel-familias.scss",
     "rule": "hex-literal",
-    "line": 28,
-    "match": "#667085"
-  },
-  {
-    "file": "src\\app\\features\\familias\\pages\\panel-familias\\panel-familias.scss",
-    "rule": "hex-literal",
-    "line": 29,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\familias\\pages\\panel-familias\\panel-familias.scss",
-    "rule": "hex-literal",
     "line": 29,
     "match": "#dde5ef"
   },
@@ -5278,12 +3046,6 @@
     "rule": "hex-literal",
     "line": 29,
     "match": "#163a5f"
-  },
-  {
-    "file": "src\\app\\features\\familias\\pages\\panel-familias\\panel-familias.scss",
-    "rule": "hex-literal",
-    "line": 29,
-    "match": "#667085"
   },
   {
     "file": "src\\app\\features\\familias\\pages\\panel-familias\\panel-familias.scss",
@@ -5325,12 +3087,6 @@
     "file": "src\\app\\features\\familias\\pages\\panel-familias\\panel-familias.scss",
     "rule": "hex-literal",
     "line": 31,
-    "match": "#667085"
-  },
-  {
-    "file": "src\\app\\features\\familias\\pages\\panel-familias\\panel-familias.scss",
-    "rule": "hex-literal",
-    "line": 31,
     "match": "#17603a"
   },
   {
@@ -5354,26 +3110,8 @@
   {
     "file": "src\\app\\features\\familias\\pages\\panel-familias\\panel-familias.scss",
     "rule": "hex-literal",
-    "line": 32,
-    "match": "#667085"
-  },
-  {
-    "file": "src\\app\\features\\familias\\pages\\panel-familias\\panel-familias.scss",
-    "rule": "hex-literal",
     "line": 33,
     "match": "#475467"
-  },
-  {
-    "file": "src\\app\\features\\familias\\pages\\panel-familias\\panel-familias.scss",
-    "rule": "hex-literal",
-    "line": 33,
-    "match": "#667085"
-  },
-  {
-    "file": "src\\app\\features\\familias\\pages\\panel-familias\\panel-familias.scss",
-    "rule": "hex-literal",
-    "line": 33,
-    "match": "#667085"
   },
   {
     "file": "src\\app\\features\\familias\\pages\\panel-familias\\panel-familias.scss",
@@ -5403,25 +3141,7 @@
     "file": "src\\app\\features\\familias\\pages\\panel-familias\\panel-familias.scss",
     "rule": "hex-literal",
     "line": 34,
-    "match": "#667085"
-  },
-  {
-    "file": "src\\app\\features\\familias\\pages\\panel-familias\\panel-familias.scss",
-    "rule": "hex-literal",
-    "line": 34,
     "match": "#0958d9"
-  },
-  {
-    "file": "src\\app\\features\\familias\\pages\\panel-familias\\panel-familias.scss",
-    "rule": "hex-literal",
-    "line": 34,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\familias\\pages\\panel-familias\\panel-familias.scss",
-    "rule": "hex-literal",
-    "line": 34,
-    "match": "#fff"
   },
   {
     "file": "src\\app\\features\\familias\\pages\\panel-familias\\panel-familias.scss",
@@ -5434,12 +3154,6 @@
     "rule": "hex-literal",
     "line": 34,
     "match": "#0958d9"
-  },
-  {
-    "file": "src\\app\\features\\familias\\pages\\panel-familias\\panel-familias.scss",
-    "rule": "hex-literal",
-    "line": 34,
-    "match": "#667085"
   },
   {
     "file": "src\\app\\features\\herramientas\\pages\\herramientas\\herramientas.scss",
@@ -5456,12 +3170,6 @@
   {
     "file": "src\\app\\features\\herramientas\\pages\\herramientas\\herramientas.scss",
     "rule": "hex-literal",
-    "line": 18,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\herramientas\\pages\\herramientas\\herramientas.scss",
-    "rule": "hex-literal",
     "line": 61,
     "match": "#8ba8c7"
   },
@@ -5470,12 +3178,6 @@
     "rule": "hex-literal",
     "line": 68,
     "match": "#ff7a74"
-  },
-  {
-    "file": "src\\app\\features\\herramientas\\pages\\herramientas\\herramientas.scss",
-    "rule": "hex-literal",
-    "line": 72,
-    "match": "#ffd166"
   },
   {
     "file": "src\\app\\features\\herramientas\\pages\\herramientas\\herramientas.scss",
@@ -5498,12 +3200,6 @@
   {
     "file": "src\\app\\features\\herramientas\\pages\\herramientas\\herramientas.scss",
     "rule": "hex-literal",
-    "line": 107,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\herramientas\\pages\\herramientas\\herramientas.scss",
-    "rule": "hex-literal",
     "line": 116,
     "match": "#62c9ff"
   },
@@ -5512,12 +3208,6 @@
     "rule": "hex-literal",
     "line": 120,
     "match": "#d7e7f6"
-  },
-  {
-    "file": "src\\app\\features\\herramientas\\pages\\herramientas\\herramientas.scss",
-    "rule": "hex-literal",
-    "line": 149,
-    "match": "#fff"
   },
   {
     "file": "src\\app\\features\\herramientas\\pages\\herramientas\\herramientas.scss",
@@ -5546,20 +3236,8 @@
   {
     "file": "src\\app\\features\\herramientas\\pages\\herramientas\\herramientas.scss",
     "rule": "hex-literal",
-    "line": 157,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\herramientas\\pages\\herramientas\\herramientas.scss",
-    "rule": "hex-literal",
     "line": 165,
     "match": "#9eb9d5"
-  },
-  {
-    "file": "src\\app\\features\\herramientas\\pages\\herramientas\\herramientas.scss",
-    "rule": "hex-literal",
-    "line": 171,
-    "match": "#ffd166"
   },
   {
     "file": "src\\app\\features\\herramientas\\pages\\herramientas\\herramientas.scss",
@@ -5636,12 +3314,6 @@
   {
     "file": "src\\app\\features\\herramientas\\pages\\herramientas\\herramientas.scss",
     "rule": "hex-literal",
-    "line": 257,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\herramientas\\pages\\herramientas\\herramientas.scss",
-    "rule": "hex-literal",
     "line": 263,
     "match": "#eef4fa"
   },
@@ -5654,30 +3326,6 @@
   {
     "file": "src\\app\\features\\herramientas\\pages\\herramientas\\herramientas.scss",
     "rule": "hex-literal",
-    "line": 278,
-    "match": "#1677ff"
-  },
-  {
-    "file": "src\\app\\features\\herramientas\\pages\\herramientas\\herramientas.scss",
-    "rule": "hex-literal",
-    "line": 288,
-    "match": "#172033"
-  },
-  {
-    "file": "src\\app\\features\\herramientas\\pages\\herramientas\\herramientas.scss",
-    "rule": "hex-literal",
-    "line": 295,
-    "match": "#667085"
-  },
-  {
-    "file": "src\\app\\features\\herramientas\\pages\\herramientas\\herramientas.scss",
-    "rule": "hex-literal",
-    "line": 310,
-    "match": "#1677ff"
-  },
-  {
-    "file": "src\\app\\features\\herramientas\\pages\\herramientas\\herramientas.scss",
-    "rule": "hex-literal",
     "line": 311,
     "match": "#edf6ff"
   },
@@ -5686,12 +3334,6 @@
     "rule": "hex-literal",
     "line": 312,
     "match": "#0958d9"
-  },
-  {
-    "file": "src\\app\\features\\herramientas\\pages\\herramientas\\herramientas.scss",
-    "rule": "hex-literal",
-    "line": 313,
-    "match": "#fff"
   },
   {
     "file": "src\\app\\features\\herramientas\\pages\\herramientas\\herramientas.scss",
@@ -5780,24 +3422,6 @@
   {
     "file": "src\\app\\features\\herramientas\\pages\\herramientas\\herramientas.scss",
     "rule": "hex-literal",
-    "line": 404,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\herramientas\\pages\\herramientas\\herramientas.scss",
-    "rule": "hex-literal",
-    "line": 423,
-    "match": "#172033"
-  },
-  {
-    "file": "src\\app\\features\\herramientas\\pages\\herramientas\\herramientas.scss",
-    "rule": "hex-literal",
-    "line": 430,
-    "match": "#667085"
-  },
-  {
-    "file": "src\\app\\features\\herramientas\\pages\\herramientas\\herramientas.scss",
-    "rule": "hex-literal",
     "line": 446,
     "match": "#d9e1ea"
   },
@@ -5810,44 +3434,14 @@
   {
     "file": "src\\app\\features\\herramientas\\pages\\herramientas\\herramientas.scss",
     "rule": "hex-literal",
-    "line": 480,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\herramientas\\pages\\herramientas\\herramientas.scss",
-    "rule": "hex-literal",
-    "line": 494,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\herramientas\\pages\\herramientas\\herramientas.scss",
-    "rule": "hex-literal",
     "line": 572,
     "match": "#2e537b"
-  },
-  {
-    "file": "src\\app\\features\\herramientas\\pages\\herramientas\\herramientas.scss",
-    "rule": "outline-shortcut",
-    "line": 171,
-    "match": "outline: 3px solid #ffd166"
   },
   {
     "file": "src\\app\\features\\laboratorio\\pages\\defensa-ia\\defensa-ia.scss",
     "rule": "hex-literal",
     "line": 15,
     "match": "#61708d"
-  },
-  {
-    "file": "src\\app\\features\\laboratorio\\pages\\defensa-ia\\defensa-ia.scss",
-    "rule": "hex-literal",
-    "line": 24,
-    "match": "#f8fafc"
-  },
-  {
-    "file": "src\\app\\features\\laboratorio\\pages\\defensa-ia\\defensa-ia.scss",
-    "rule": "hex-literal",
-    "line": 25,
-    "match": "#e2e8f0"
   },
   {
     "file": "src\\app\\features\\laboratorio\\pages\\defensa-ia\\defensa-ia.scss",
@@ -5872,18 +3466,6 @@
     "rule": "hex-literal",
     "line": 15,
     "match": "#61708d"
-  },
-  {
-    "file": "src\\app\\features\\laboratorio\\pages\\neuro-maze\\neuro-maze.scss",
-    "rule": "hex-literal",
-    "line": 24,
-    "match": "#f8fafc"
-  },
-  {
-    "file": "src\\app\\features\\laboratorio\\pages\\neuro-maze\\neuro-maze.scss",
-    "rule": "hex-literal",
-    "line": 25,
-    "match": "#e2e8f0"
   },
   {
     "file": "src\\app\\features\\laboratorio\\pages\\neuro-maze\\neuro-maze.scss",
@@ -5918,26 +3500,8 @@
   {
     "file": "src\\app\\features\\mascota\\pages\\vestidor-mascota\\vestidor-mascota.scss",
     "rule": "hex-literal",
-    "line": 16,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\mascota\\pages\\vestidor-mascota\\vestidor-mascota.scss",
-    "rule": "hex-literal",
     "line": 17,
     "match": "#1668dc"
-  },
-  {
-    "file": "src\\app\\features\\mascota\\pages\\vestidor-mascota\\vestidor-mascota.scss",
-    "rule": "hex-literal",
-    "line": 19,
-    "match": "#172033"
-  },
-  {
-    "file": "src\\app\\features\\mascota\\pages\\vestidor-mascota\\vestidor-mascota.scss",
-    "rule": "hex-literal",
-    "line": 20,
-    "match": "#667085"
   },
   {
     "file": "src\\app\\features\\mascota\\pages\\vestidor-mascota\\vestidor-mascota.scss",
@@ -6008,18 +3572,6 @@
   {
     "file": "src\\app\\features\\mascota\\pages\\vestidor-mascota\\vestidor-mascota.scss",
     "rule": "hex-literal",
-    "line": 29,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\mascota\\pages\\vestidor-mascota\\vestidor-mascota.scss",
-    "rule": "hex-literal",
-    "line": 30,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\mascota\\pages\\vestidor-mascota\\vestidor-mascota.scss",
-    "rule": "hex-literal",
     "line": 30,
     "match": "#e1e8f0"
   },
@@ -6027,19 +3579,7 @@
     "file": "src\\app\\features\\mascota\\pages\\vestidor-mascota\\vestidor-mascota.scss",
     "rule": "hex-literal",
     "line": 33,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\mascota\\pages\\vestidor-mascota\\vestidor-mascota.scss",
-    "rule": "hex-literal",
-    "line": 33,
     "match": "#e1e8f0"
-  },
-  {
-    "file": "src\\app\\features\\mascota\\pages\\vestidor-mascota\\vestidor-mascota.scss",
-    "rule": "hex-literal",
-    "line": 35,
-    "match": "#172033"
   },
   {
     "file": "src\\app\\features\\mascota\\pages\\vestidor-mascota\\vestidor-mascota.scss",
@@ -6098,38 +3638,8 @@
   {
     "file": "src\\app\\features\\mascota\\pages\\vestidor-mascota\\vestidor-mascota.scss",
     "rule": "hex-literal",
-    "line": 44,
-    "match": "#1677ff"
-  },
-  {
-    "file": "src\\app\\features\\mascota\\pages\\vestidor-mascota\\vestidor-mascota.scss",
-    "rule": "hex-literal",
-    "line": 45,
-    "match": "#667085"
-  },
-  {
-    "file": "src\\app\\features\\mascota\\pages\\vestidor-mascota\\vestidor-mascota.scss",
-    "rule": "hex-literal",
     "line": 46,
     "match": "#111a68"
-  },
-  {
-    "file": "src\\app\\features\\mascota\\pages\\vestidor-mascota\\vestidor-mascota.scss",
-    "rule": "hex-literal",
-    "line": 46,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\mascota\\pages\\vestidor-mascota\\vestidor-mascota.scss",
-    "rule": "hex-literal",
-    "line": 50,
-    "match": "#667085"
-  },
-  {
-    "file": "src\\app\\features\\mascota\\pages\\vestidor-mascota\\vestidor-mascota.scss",
-    "rule": "hex-literal",
-    "line": 51,
-    "match": "#f8fafc"
   },
   {
     "file": "src\\app\\features\\mascota\\pages\\vestidor-mascota\\vestidor-mascota.scss",
@@ -6142,12 +3652,6 @@
     "rule": "hex-literal",
     "line": 51,
     "match": "#344054"
-  },
-  {
-    "file": "src\\app\\features\\mascota\\pages\\vestidor-mascota\\vestidor-mascota.scss",
-    "rule": "hex-literal",
-    "line": 52,
-    "match": "#1677ff"
   },
   {
     "file": "src\\app\\features\\mascota\\pages\\vestidor-mascota\\vestidor-mascota.scss",
@@ -6171,12 +3675,6 @@
     "file": "src\\app\\features\\mascota\\pages\\vestidor-mascota\\vestidor-mascota.scss",
     "rule": "hex-literal",
     "line": 57,
-    "match": "#f8fafc"
-  },
-  {
-    "file": "src\\app\\features\\mascota\\pages\\vestidor-mascota\\vestidor-mascota.scss",
-    "rule": "hex-literal",
-    "line": 57,
     "match": "#e8edf3"
   },
   {
@@ -6190,12 +3688,6 @@
     "rule": "hex-literal",
     "line": 60,
     "match": "#7b8798"
-  },
-  {
-    "file": "src\\app\\features\\mascota\\pages\\vestidor-mascota\\vestidor-mascota.scss",
-    "rule": "hex-literal",
-    "line": 61,
-    "match": "#172033"
   },
   {
     "file": "src\\app\\features\\mascota\\pages\\vestidor-mascota\\vestidor-mascota.scss",
@@ -6230,12 +3722,6 @@
   {
     "file": "src\\app\\features\\mascota\\pages\\vestidor-mascota\\vestidor-mascota.scss",
     "rule": "hex-literal",
-    "line": 68,
-    "match": "#667085"
-  },
-  {
-    "file": "src\\app\\features\\mascota\\pages\\vestidor-mascota\\vestidor-mascota.scss",
-    "rule": "hex-literal",
     "line": 69,
     "match": "#adcfff"
   },
@@ -6260,18 +3746,6 @@
   {
     "file": "src\\app\\features\\mascota\\pages\\vestidor-mascota\\vestidor-mascota.scss",
     "rule": "hex-literal",
-    "line": 70,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\mascota\\pages\\vestidor-mascota\\vestidor-mascota.scss",
-    "rule": "hex-literal",
-    "line": 72,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\mascota\\pages\\vestidor-mascota\\vestidor-mascota.scss",
-    "rule": "hex-literal",
     "line": 72,
     "match": "#e0e7ef"
   },
@@ -6280,12 +3754,6 @@
     "rule": "hex-literal",
     "line": 73,
     "match": "#a9ceff"
-  },
-  {
-    "file": "src\\app\\features\\mascota\\pages\\vestidor-mascota\\vestidor-mascota.scss",
-    "rule": "hex-literal",
-    "line": 74,
-    "match": "#1677ff"
   },
   {
     "file": "src\\app\\features\\mascota\\pages\\vestidor-mascota\\vestidor-mascota.scss",
@@ -6333,12 +3801,6 @@
     "file": "src\\app\\features\\mascota\\pages\\vestidor-mascota\\vestidor-mascota.scss",
     "rule": "hex-literal",
     "line": 84,
-    "match": "#f8fafc"
-  },
-  {
-    "file": "src\\app\\features\\mascota\\pages\\vestidor-mascota\\vestidor-mascota.scss",
-    "rule": "hex-literal",
-    "line": 84,
     "match": "#e0e7ef"
   },
   {
@@ -6362,12 +3824,6 @@
   {
     "file": "src\\app\\features\\mascota\\pages\\vestidor-mascota\\vestidor-mascota.scss",
     "rule": "hex-literal",
-    "line": 90,
-    "match": "#1677ff"
-  },
-  {
-    "file": "src\\app\\features\\mascota\\pages\\vestidor-mascota\\vestidor-mascota.scss",
-    "rule": "hex-literal",
     "line": 91,
     "match": "#7a38c2"
   },
@@ -6376,30 +3832,6 @@
     "rule": "hex-literal",
     "line": 92,
     "match": "#e9a100"
-  },
-  {
-    "file": "src\\app\\features\\mascota\\pages\\vestidor-mascota\\vestidor-mascota.scss",
-    "rule": "hex-literal",
-    "line": 94,
-    "match": "#1677ff"
-  },
-  {
-    "file": "src\\app\\features\\mascota\\pages\\vestidor-mascota\\vestidor-mascota.scss",
-    "rule": "hex-literal",
-    "line": 94,
-    "match": "#1677ff"
-  },
-  {
-    "file": "src\\app\\features\\mascota\\pages\\vestidor-mascota\\vestidor-mascota.scss",
-    "rule": "hex-literal",
-    "line": 94,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\mascota\\pages\\vestidor-mascota\\vestidor-mascota.scss",
-    "rule": "hex-literal",
-    "line": 95,
-    "match": "#fff"
   },
   {
     "file": "src\\app\\features\\mascota\\pages\\vestidor-mascota\\vestidor-mascota.scss",
@@ -6424,12 +3856,6 @@
     "rule": "hex-literal",
     "line": 101,
     "match": "#0958d9"
-  },
-  {
-    "file": "src\\app\\features\\mascota\\pages\\vestidor-mascota\\vestidor-mascota.scss",
-    "rule": "hex-literal",
-    "line": 103,
-    "match": "#e2e8f0"
   },
   {
     "file": "src\\app\\features\\mascota\\pages\\vestidor-mascota\\vestidor-mascota.scss",
@@ -6476,26 +3902,8 @@
   {
     "file": "src\\app\\features\\misiones\\pages\\detalle-mision\\detalle-mision.scss",
     "rule": "hex-literal",
-    "line": 5,
-    "match": "#172033"
-  },
-  {
-    "file": "src\\app\\features\\misiones\\pages\\detalle-mision\\detalle-mision.scss",
-    "rule": "hex-literal",
-    "line": 6,
-    "match": "#667085"
-  },
-  {
-    "file": "src\\app\\features\\misiones\\pages\\detalle-mision\\detalle-mision.scss",
-    "rule": "hex-literal",
     "line": 7,
     "match": "#0958d9"
-  },
-  {
-    "file": "src\\app\\features\\misiones\\pages\\detalle-mision\\detalle-mision.scss",
-    "rule": "hex-literal",
-    "line": 8,
-    "match": "#fff"
   },
   {
     "file": "src\\app\\features\\misiones\\pages\\detalle-mision\\detalle-mision.scss",
@@ -6506,38 +3914,8 @@
   {
     "file": "src\\app\\features\\misiones\\pages\\detalle-mision\\detalle-mision.scss",
     "rule": "hex-literal",
-    "line": 9,
-    "match": "#667085"
-  },
-  {
-    "file": "src\\app\\features\\misiones\\pages\\detalle-mision\\detalle-mision.scss",
-    "rule": "hex-literal",
-    "line": 11,
-    "match": "#172033"
-  },
-  {
-    "file": "src\\app\\features\\misiones\\pages\\detalle-mision\\detalle-mision.scss",
-    "rule": "hex-literal",
     "line": 12,
     "match": "#7a8699"
-  },
-  {
-    "file": "src\\app\\features\\misiones\\pages\\detalle-mision\\detalle-mision.scss",
-    "rule": "hex-literal",
-    "line": 13,
-    "match": "#e4eaf2"
-  },
-  {
-    "file": "src\\app\\features\\misiones\\pages\\detalle-mision\\detalle-mision.scss",
-    "rule": "hex-literal",
-    "line": 15,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\misiones\\pages\\detalle-mision\\detalle-mision.scss",
-    "rule": "hex-literal",
-    "line": 15,
-    "match": "#e4eaf2"
   },
   {
     "file": "src\\app\\features\\misiones\\pages\\detalle-mision\\detalle-mision.scss",
@@ -6550,24 +3928,6 @@
     "rule": "hex-literal",
     "line": 17,
     "match": "#344054"
-  },
-  {
-    "file": "src\\app\\features\\misiones\\pages\\detalle-mision\\detalle-mision.scss",
-    "rule": "hex-literal",
-    "line": 19,
-    "match": "#e4eaf2"
-  },
-  {
-    "file": "src\\app\\features\\misiones\\pages\\detalle-mision\\detalle-mision.scss",
-    "rule": "hex-literal",
-    "line": 23,
-    "match": "#1677ff"
-  },
-  {
-    "file": "src\\app\\features\\misiones\\pages\\detalle-mision\\detalle-mision.scss",
-    "rule": "hex-literal",
-    "line": 25,
-    "match": "#172033"
   },
   {
     "file": "src\\app\\features\\misiones\\pages\\detalle-mision\\detalle-mision.scss",
@@ -6602,12 +3962,6 @@
   {
     "file": "src\\app\\features\\misiones\\pages\\detalle-mision\\detalle-mision.scss",
     "rule": "hex-literal",
-    "line": 32,
-    "match": "#667085"
-  },
-  {
-    "file": "src\\app\\features\\misiones\\pages\\detalle-mision\\detalle-mision.scss",
-    "rule": "hex-literal",
     "line": 33,
     "match": "#edf5ff"
   },
@@ -6616,18 +3970,6 @@
     "rule": "hex-literal",
     "line": 33,
     "match": "#0958d9"
-  },
-  {
-    "file": "src\\app\\features\\misiones\\pages\\detalle-mision\\detalle-mision.scss",
-    "rule": "hex-literal",
-    "line": 34,
-    "match": "#f8fafc"
-  },
-  {
-    "file": "src\\app\\features\\misiones\\pages\\detalle-mision\\detalle-mision.scss",
-    "rule": "hex-literal",
-    "line": 34,
-    "match": "#1677ff"
   },
   {
     "file": "src\\app\\features\\misiones\\pages\\detalle-mision\\detalle-mision.scss",
@@ -6662,24 +4004,6 @@
   {
     "file": "src\\app\\features\\misiones\\pages\\detalle-mision\\detalle-mision.scss",
     "rule": "hex-literal",
-    "line": 40,
-    "match": "#f8fafc"
-  },
-  {
-    "file": "src\\app\\features\\misiones\\pages\\detalle-mision\\detalle-mision.scss",
-    "rule": "hex-literal",
-    "line": 45,
-    "match": "#1677ff"
-  },
-  {
-    "file": "src\\app\\features\\misiones\\pages\\detalle-mision\\detalle-mision.scss",
-    "rule": "hex-literal",
-    "line": 45,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\misiones\\pages\\detalle-mision\\detalle-mision.scss",
-    "rule": "hex-literal",
     "line": 46,
     "match": "#eef1f5"
   },
@@ -6688,18 +4012,6 @@
     "rule": "hex-literal",
     "line": 46,
     "match": "#536079"
-  },
-  {
-    "file": "src\\app\\features\\misiones\\pages\\detalle-mision\\detalle-mision.scss",
-    "rule": "hex-literal",
-    "line": 47,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\misiones\\pages\\detalle-mision\\detalle-mision.scss",
-    "rule": "hex-literal",
-    "line": 47,
-    "match": "#e4eaf2"
   },
   {
     "file": "src\\app\\features\\misiones\\pages\\detalle-mision\\detalle-mision.scss",
@@ -6746,44 +4058,14 @@
   {
     "file": "src\\app\\features\\misiones\\pages\\entregar-mision\\entregar-mision.scss",
     "rule": "hex-literal",
-    "line": 41,
-    "match": "#172033"
-  },
-  {
-    "file": "src\\app\\features\\misiones\\pages\\entregar-mision\\entregar-mision.scss",
-    "rule": "hex-literal",
-    "line": 49,
-    "match": "#667085"
-  },
-  {
-    "file": "src\\app\\features\\misiones\\pages\\entregar-mision\\entregar-mision.scss",
-    "rule": "hex-literal",
-    "line": 82,
-    "match": "#e4eaf2"
-  },
-  {
-    "file": "src\\app\\features\\misiones\\pages\\entregar-mision\\entregar-mision.scss",
-    "rule": "hex-literal",
     "line": 99,
     "match": "#edf0f5"
   },
   {
     "file": "src\\app\\features\\misiones\\pages\\entregar-mision\\entregar-mision.scss",
     "rule": "hex-literal",
-    "line": 109,
-    "match": "#172033"
-  },
-  {
-    "file": "src\\app\\features\\misiones\\pages\\entregar-mision\\entregar-mision.scss",
-    "rule": "hex-literal",
     "line": 120,
     "match": "#344054"
-  },
-  {
-    "file": "src\\app\\features\\misiones\\pages\\entregar-mision\\entregar-mision.scss",
-    "rule": "hex-literal",
-    "line": 126,
-    "match": "#f8fafc"
   },
   {
     "file": "src\\app\\features\\misiones\\pages\\entregar-mision\\entregar-mision.scss",
@@ -6796,12 +4078,6 @@
     "rule": "hex-literal",
     "line": 129,
     "match": "#344054"
-  },
-  {
-    "file": "src\\app\\features\\misiones\\pages\\entregar-mision\\entregar-mision.scss",
-    "rule": "hex-literal",
-    "line": 142,
-    "match": "#1677ff"
   },
   {
     "file": "src\\app\\features\\misiones\\pages\\entregar-mision\\entregar-mision.scss",
@@ -6860,12 +4136,6 @@
   {
     "file": "src\\app\\features\\misiones\\pages\\entregar-mision\\entregar-mision.scss",
     "rule": "hex-literal",
-    "line": 202,
-    "match": "#f8fafc"
-  },
-  {
-    "file": "src\\app\\features\\misiones\\pages\\entregar-mision\\entregar-mision.scss",
-    "rule": "hex-literal",
     "line": 203,
     "match": "#edf1f5"
   },
@@ -6874,12 +4144,6 @@
     "rule": "hex-literal",
     "line": 213,
     "match": "#0958d9"
-  },
-  {
-    "file": "src\\app\\features\\misiones\\pages\\entregar-mision\\entregar-mision.scss",
-    "rule": "hex-literal",
-    "line": 214,
-    "match": "#667085"
   },
   {
     "file": "src\\app\\features\\misiones\\pages\\entregar-mision\\entregar-mision.scss",
@@ -6914,24 +4178,6 @@
   {
     "file": "src\\app\\features\\misiones\\pages\\entregar-mision\\entregar-mision.scss",
     "rule": "hex-literal",
-    "line": 250,
-    "match": "#667085"
-  },
-  {
-    "file": "src\\app\\features\\misiones\\pages\\entregar-mision\\entregar-mision.scss",
-    "rule": "hex-literal",
-    "line": 262,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\misiones\\pages\\entregar-mision\\entregar-mision.scss",
-    "rule": "hex-literal",
-    "line": 263,
-    "match": "#e4eaf2"
-  },
-  {
-    "file": "src\\app\\features\\misiones\\pages\\entregar-mision\\entregar-mision.scss",
-    "rule": "hex-literal",
     "line": 270,
     "match": "#fff7f7"
   },
@@ -6956,30 +4202,6 @@
   {
     "file": "src\\app\\features\\misiones\\pages\\lista-misiones\\lista-misiones.scss",
     "rule": "hex-literal",
-    "line": 7,
-    "match": "#e4eaf2"
-  },
-  {
-    "file": "src\\app\\features\\misiones\\pages\\lista-misiones\\lista-misiones.scss",
-    "rule": "hex-literal",
-    "line": 8,
-    "match": "#172033"
-  },
-  {
-    "file": "src\\app\\features\\misiones\\pages\\lista-misiones\\lista-misiones.scss",
-    "rule": "hex-literal",
-    "line": 9,
-    "match": "#667085"
-  },
-  {
-    "file": "src\\app\\features\\misiones\\pages\\lista-misiones\\lista-misiones.scss",
-    "rule": "hex-literal",
-    "line": 10,
-    "match": "#1677ff"
-  },
-  {
-    "file": "src\\app\\features\\misiones\\pages\\lista-misiones\\lista-misiones.scss",
-    "rule": "hex-literal",
     "line": 22,
     "match": "#eef6ff"
   },
@@ -6998,12 +4220,6 @@
   {
     "file": "src\\app\\features\\misiones\\pages\\lista-misiones\\lista-misiones.scss",
     "rule": "hex-literal",
-    "line": 67,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\misiones\\pages\\lista-misiones\\lista-misiones.scss",
-    "rule": "hex-literal",
     "line": 68,
     "match": "#cfe3ff"
   },
@@ -7016,12 +4232,6 @@
   {
     "file": "src\\app\\features\\misiones\\pages\\lista-misiones\\lista-misiones.scss",
     "rule": "hex-literal",
-    "line": 88,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\misiones\\pages\\lista-misiones\\lista-misiones.scss",
-    "rule": "hex-literal",
     "line": 89,
     "match": "#cfe3ff"
   },
@@ -7030,12 +4240,6 @@
     "rule": "hex-literal",
     "line": 91,
     "match": "#0958d9"
-  },
-  {
-    "file": "src\\app\\features\\misiones\\pages\\lista-misiones\\lista-misiones.scss",
-    "rule": "hex-literal",
-    "line": 104,
-    "match": "#fff"
   },
   {
     "file": "src\\app\\features\\misiones\\pages\\lista-misiones\\lista-misiones.scss",
@@ -7076,12 +4280,6 @@
   {
     "file": "src\\app\\features\\misiones\\pages\\lista-misiones\\lista-misiones.scss",
     "rule": "hex-literal",
-    "line": 156,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\misiones\\pages\\lista-misiones\\lista-misiones.scss",
-    "rule": "hex-literal",
     "line": 160,
     "match": "#074f9f"
   },
@@ -7094,26 +4292,8 @@
   {
     "file": "src\\app\\features\\misiones\\pages\\lista-misiones\\lista-misiones.scss",
     "rule": "hex-literal",
-    "line": 162,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\misiones\\pages\\lista-misiones\\lista-misiones.scss",
-    "rule": "hex-literal",
-    "line": 177,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\misiones\\pages\\lista-misiones\\lista-misiones.scss",
-    "rule": "hex-literal",
     "line": 189,
     "match": "#b8d8ff"
-  },
-  {
-    "file": "src\\app\\features\\misiones\\pages\\lista-misiones\\lista-misiones.scss",
-    "rule": "hex-literal",
-    "line": 193,
-    "match": "#12a150"
   },
   {
     "file": "src\\app\\features\\misiones\\pages\\lista-misiones\\lista-misiones.scss",
@@ -7190,20 +4370,8 @@
   {
     "file": "src\\app\\features\\misiones\\pages\\lista-misiones\\lista-misiones.scss",
     "rule": "hex-literal",
-    "line": 255,
-    "match": "#f8fafc"
-  },
-  {
-    "file": "src\\app\\features\\misiones\\pages\\lista-misiones\\lista-misiones.scss",
-    "rule": "hex-literal",
     "line": 256,
     "match": "#edf1f5"
-  },
-  {
-    "file": "src\\app\\features\\misiones\\pages\\lista-misiones\\lista-misiones.scss",
-    "rule": "hex-literal",
-    "line": 267,
-    "match": "#667085"
   },
   {
     "file": "src\\app\\features\\misiones\\pages\\lista-misiones\\lista-misiones.scss",
@@ -7232,20 +4400,8 @@
   {
     "file": "src\\app\\features\\misiones\\pages\\lista-misiones\\lista-misiones.scss",
     "rule": "hex-literal",
-    "line": 301,
-    "match": "#667085"
-  },
-  {
-    "file": "src\\app\\features\\misiones\\pages\\lista-misiones\\lista-misiones.scss",
-    "rule": "hex-literal",
     "line": 308,
     "match": "#edf5ff"
-  },
-  {
-    "file": "src\\app\\features\\misiones\\pages\\lista-misiones\\lista-misiones.scss",
-    "rule": "hex-literal",
-    "line": 308,
-    "match": "#1677ff"
   },
   {
     "file": "src\\app\\features\\misiones\\pages\\lista-misiones\\lista-misiones.scss",
@@ -7258,12 +4414,6 @@
     "rule": "hex-literal",
     "line": 313,
     "match": "#fecaca"
-  },
-  {
-    "file": "src\\app\\features\\misiones\\pages\\lista-misiones\\lista-misiones.scss",
-    "rule": "hex-literal",
-    "line": 323,
-    "match": "#fee2e2"
   },
   {
     "file": "src\\app\\features\\misiones\\pages\\lista-misiones\\lista-misiones.scss",
@@ -7284,58 +4434,10 @@
     "match": "#b42318"
   },
   {
-    "file": "src\\app\\features\\misiones\\pages\\lista-misiones\\lista-misiones.scss",
-    "rule": "hex-literal",
-    "line": 334,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\misiones\\pages\\lista-misiones\\lista-misiones.scss",
-    "rule": "hex-literal",
-    "line": 344,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\misiones\\pages\\lista-misiones\\lista-misiones.scss",
-    "rule": "hex-literal",
-    "line": 358,
-    "match": "#edf1f6"
-  },
-  {
-    "file": "src\\app\\features\\proyectos\\componentes\\tarjeta-categoria-proyecto\\tarjeta-categoria-proyecto.scss",
-    "rule": "hex-literal",
-    "line": 7,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\proyectos\\componentes\\tarjeta-categoria-proyecto\\tarjeta-categoria-proyecto.scss",
-    "rule": "hex-literal",
-    "line": 8,
-    "match": "#e4eaf2"
-  },
-  {
-    "file": "src\\app\\features\\proyectos\\componentes\\tarjeta-categoria-proyecto\\tarjeta-categoria-proyecto.scss",
-    "rule": "hex-literal",
-    "line": 19,
-    "match": "#b7c8e5"
-  },
-  {
     "file": "src\\app\\features\\proyectos\\componentes\\tarjeta-categoria-proyecto\\tarjeta-categoria-proyecto.scss",
     "rule": "hex-literal",
     "line": 24,
     "match": "#eef3fb"
-  },
-  {
-    "file": "src\\app\\features\\proyectos\\componentes\\tarjeta-categoria-proyecto\\tarjeta-categoria-proyecto.scss",
-    "rule": "hex-literal",
-    "line": 25,
-    "match": "#e4eaf2"
-  },
-  {
-    "file": "src\\app\\features\\proyectos\\componentes\\tarjeta-categoria-proyecto\\tarjeta-categoria-proyecto.scss",
-    "rule": "hex-literal",
-    "line": 48,
-    "match": "#3157a5"
   },
   {
     "file": "src\\app\\features\\proyectos\\componentes\\tarjeta-categoria-proyecto\\tarjeta-categoria-proyecto.scss",
@@ -7346,44 +4448,8 @@
   {
     "file": "src\\app\\features\\proyectos\\componentes\\tarjeta-categoria-proyecto\\tarjeta-categoria-proyecto.scss",
     "rule": "hex-literal",
-    "line": 64,
-    "match": "#172033"
-  },
-  {
-    "file": "src\\app\\features\\proyectos\\componentes\\tarjeta-categoria-proyecto\\tarjeta-categoria-proyecto.scss",
-    "rule": "hex-literal",
-    "line": 72,
-    "match": "#667085"
-  },
-  {
-    "file": "src\\app\\features\\proyectos\\componentes\\tarjeta-categoria-proyecto\\tarjeta-categoria-proyecto.scss",
-    "rule": "hex-literal",
-    "line": 79,
-    "match": "#edf1f6"
-  },
-  {
-    "file": "src\\app\\features\\proyectos\\componentes\\tarjeta-categoria-proyecto\\tarjeta-categoria-proyecto.scss",
-    "rule": "hex-literal",
-    "line": 88,
-    "match": "#e8edf4"
-  },
-  {
-    "file": "src\\app\\features\\proyectos\\componentes\\tarjeta-categoria-proyecto\\tarjeta-categoria-proyecto.scss",
-    "rule": "hex-literal",
-    "line": 93,
-    "match": "#172033"
-  },
-  {
-    "file": "src\\app\\features\\proyectos\\componentes\\tarjeta-categoria-proyecto\\tarjeta-categoria-proyecto.scss",
-    "rule": "hex-literal",
     "line": 101,
     "match": "#69758a"
-  },
-  {
-    "file": "src\\app\\features\\proyectos\\componentes\\tarjeta-categoria-proyecto\\tarjeta-categoria-proyecto.scss",
-    "rule": "hex-literal",
-    "line": 108,
-    "match": "#e8edf4"
   },
   {
     "file": "src\\app\\features\\proyectos\\componentes\\tarjeta-categoria-proyecto\\tarjeta-categoria-proyecto.scss",
@@ -7406,30 +4472,6 @@
   {
     "file": "src\\app\\features\\proyectos\\pages\\proyectos\\proyectos.scss",
     "rule": "hex-literal",
-    "line": 7,
-    "match": "#172033"
-  },
-  {
-    "file": "src\\app\\features\\proyectos\\pages\\proyectos\\proyectos.scss",
-    "rule": "hex-literal",
-    "line": 31,
-    "match": "#5b35c9"
-  },
-  {
-    "file": "src\\app\\features\\proyectos\\pages\\proyectos\\proyectos.scss",
-    "rule": "hex-literal",
-    "line": 38,
-    "match": "#3157a5"
-  },
-  {
-    "file": "src\\app\\features\\proyectos\\pages\\proyectos\\proyectos.scss",
-    "rule": "hex-literal",
-    "line": 59,
-    "match": "#667085"
-  },
-  {
-    "file": "src\\app\\features\\proyectos\\pages\\proyectos\\proyectos.scss",
-    "rule": "hex-literal",
     "line": 76,
     "match": "#17156f"
   },
@@ -7442,128 +4484,14 @@
   {
     "file": "src\\app\\features\\proyectos\\pages\\proyectos\\proyectos.scss",
     "rule": "hex-literal",
-    "line": 101,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\proyectos\\pages\\proyectos\\proyectos.scss",
-    "rule": "hex-literal",
     "line": 109,
     "match": "#d8ddff"
   },
   {
     "file": "src\\app\\features\\proyectos\\pages\\proyectos\\proyectos.scss",
     "rule": "hex-literal",
-    "line": 118,
-    "match": "#ffc414"
-  },
-  {
-    "file": "src\\app\\features\\proyectos\\pages\\proyectos\\proyectos.scss",
-    "rule": "hex-literal",
-    "line": 119,
-    "match": "#ffc414"
-  },
-  {
-    "file": "src\\app\\features\\proyectos\\pages\\proyectos\\proyectos.scss",
-    "rule": "hex-literal",
-    "line": 121,
-    "match": "#172033"
-  },
-  {
-    "file": "src\\app\\features\\proyectos\\pages\\proyectos\\proyectos.scss",
-    "rule": "hex-literal",
-    "line": 130,
-    "match": "#ffd64f"
-  },
-  {
-    "file": "src\\app\\features\\proyectos\\pages\\proyectos\\proyectos.scss",
-    "rule": "hex-literal",
-    "line": 131,
-    "match": "#ffd64f"
-  },
-  {
-    "file": "src\\app\\features\\proyectos\\pages\\proyectos\\proyectos.scss",
-    "rule": "hex-literal",
-    "line": 132,
-    "match": "#111827"
-  },
-  {
-    "file": "src\\app\\features\\proyectos\\pages\\proyectos\\proyectos.scss",
-    "rule": "hex-literal",
-    "line": 151,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\proyectos\\pages\\proyectos\\proyectos.scss",
-    "rule": "hex-literal",
-    "line": 152,
-    "match": "#f0b8b8"
-  },
-  {
-    "file": "src\\app\\features\\proyectos\\pages\\proyectos\\proyectos.scss",
-    "rule": "hex-literal",
-    "line": 166,
-    "match": "#a61d24"
-  },
-  {
-    "file": "src\\app\\features\\proyectos\\pages\\proyectos\\proyectos.scss",
-    "rule": "hex-literal",
-    "line": 171,
-    "match": "#7a3034"
-  },
-  {
-    "file": "src\\app\\features\\proyectos\\pages\\proyectos\\proyectos.scss",
-    "rule": "hex-literal",
-    "line": 190,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\proyectos\\pages\\proyectos\\proyectos.scss",
-    "rule": "hex-literal",
-    "line": 191,
-    "match": "#e4eaf2"
-  },
-  {
-    "file": "src\\app\\features\\proyectos\\pages\\proyectos\\proyectos.scss",
-    "rule": "hex-literal",
-    "line": 199,
-    "match": "#e8edf4"
-  },
-  {
-    "file": "src\\app\\features\\proyectos\\pages\\proyectos\\proyectos.scss",
-    "rule": "hex-literal",
     "line": 211,
     "match": "#173d82"
-  },
-  {
-    "file": "src\\app\\features\\proyectos\\pages\\proyectos\\proyectos.scss",
-    "rule": "hex-literal",
-    "line": 218,
-    "match": "#667085"
-  },
-  {
-    "file": "src\\app\\features\\proyectos\\pages\\proyectos\\proyectos.scss",
-    "rule": "hex-literal",
-    "line": 246,
-    "match": "#3157a5"
-  },
-  {
-    "file": "src\\app\\features\\proyectos\\pages\\proyectos\\proyectos.scss",
-    "rule": "hex-literal",
-    "line": 264,
-    "match": "#e8edf4"
-  },
-  {
-    "file": "src\\app\\features\\proyectos\\pages\\proyectos\\proyectos.scss",
-    "rule": "hex-literal",
-    "line": 298,
-    "match": "#e8edf4"
-  },
-  {
-    "file": "src\\app\\features\\proyectos\\pages\\proyectos\\proyectos.scss",
-    "rule": "hex-literal",
-    "line": 359,
-    "match": "#e8edf4"
   },
   {
     "file": "src\\app\\features\\publico\\pages\\inicio\\inicio.html",
@@ -7952,12 +4880,6 @@
   {
     "file": "src\\app\\features\\publico\\pages\\inicio\\inicio.scss",
     "rule": "hex-literal",
-    "line": 73,
-    "match": "#ffffff"
-  },
-  {
-    "file": "src\\app\\features\\publico\\pages\\inicio\\inicio.scss",
-    "rule": "hex-literal",
     "line": 124,
     "match": "#ffc600"
   },
@@ -7970,12 +4892,6 @@
   {
     "file": "src\\app\\features\\publico\\pages\\inicio\\inicio.scss",
     "rule": "hex-literal",
-    "line": 151,
-    "match": "#ffffff"
-  },
-  {
-    "file": "src\\app\\features\\publico\\pages\\inicio\\inicio.scss",
-    "rule": "hex-literal",
     "line": 152,
     "match": "#dadce0"
   },
@@ -7984,12 +4900,6 @@
     "rule": "hex-literal",
     "line": 154,
     "match": "#1f1f1f"
-  },
-  {
-    "file": "src\\app\\features\\publico\\pages\\inicio\\inicio.scss",
-    "rule": "hex-literal",
-    "line": 170,
-    "match": "#f8f9fa"
   },
   {
     "file": "src\\app\\features\\publico\\pages\\inicio\\inicio.scss",
@@ -8016,12 +4926,6 @@
     "match": "#f1f3f4"
   },
   {
-    "file": "src\\app\\features\\ranking\\pages\\ranking\\ranking.html",
-    "rule": "hex-literal",
-    "line": 35,
-    "match": "#1677ff"
-  },
-  {
     "file": "src\\app\\features\\ranking\\pages\\ranking\\ranking.scss",
     "rule": "hex-literal",
     "line": 5,
@@ -8038,30 +4942,6 @@
     "rule": "hex-literal",
     "line": 14,
     "match": "#0958d9"
-  },
-  {
-    "file": "src\\app\\features\\ranking\\pages\\ranking\\ranking.scss",
-    "rule": "hex-literal",
-    "line": 15,
-    "match": "#172033"
-  },
-  {
-    "file": "src\\app\\features\\ranking\\pages\\ranking\\ranking.scss",
-    "rule": "hex-literal",
-    "line": 16,
-    "match": "#1677ff"
-  },
-  {
-    "file": "src\\app\\features\\ranking\\pages\\ranking\\ranking.scss",
-    "rule": "hex-literal",
-    "line": 17,
-    "match": "#667085"
-  },
-  {
-    "file": "src\\app\\features\\ranking\\pages\\ranking\\ranking.scss",
-    "rule": "hex-literal",
-    "line": 18,
-    "match": "#fff"
   },
   {
     "file": "src\\app\\features\\ranking\\pages\\ranking\\ranking.scss",
@@ -8096,30 +4976,6 @@
   {
     "file": "src\\app\\features\\ranking\\pages\\ranking\\ranking.scss",
     "rule": "hex-literal",
-    "line": 20,
-    "match": "#1677ff"
-  },
-  {
-    "file": "src\\app\\features\\ranking\\pages\\ranking\\ranking.scss",
-    "rule": "hex-literal",
-    "line": 20,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\ranking\\pages\\ranking\\ranking.scss",
-    "rule": "hex-literal",
-    "line": 23,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\ranking\\pages\\ranking\\ranking.scss",
-    "rule": "hex-literal",
-    "line": 23,
-    "match": "#e4eaf2"
-  },
-  {
-    "file": "src\\app\\features\\ranking\\pages\\ranking\\ranking.scss",
-    "rule": "hex-literal",
     "line": 24,
     "match": "#b8d8ff"
   },
@@ -8145,12 +5001,6 @@
     "file": "src\\app\\features\\ranking\\pages\\ranking\\ranking.scss",
     "rule": "hex-literal",
     "line": 28,
-    "match": "#1677ff"
-  },
-  {
-    "file": "src\\app\\features\\ranking\\pages\\ranking\\ranking.scss",
-    "rule": "hex-literal",
-    "line": 28,
     "match": "#d9eaff"
   },
   {
@@ -8158,12 +5008,6 @@
     "rule": "hex-literal",
     "line": 29,
     "match": "#f3f6fa"
-  },
-  {
-    "file": "src\\app\\features\\ranking\\pages\\ranking\\ranking.scss",
-    "rule": "hex-literal",
-    "line": 29,
-    "match": "#667085"
   },
   {
     "file": "src\\app\\features\\ranking\\pages\\ranking\\ranking.scss",
@@ -8186,12 +5030,6 @@
   {
     "file": "src\\app\\features\\ranking\\pages\\ranking\\ranking.scss",
     "rule": "hex-literal",
-    "line": 31,
-    "match": "#667085"
-  },
-  {
-    "file": "src\\app\\features\\ranking\\pages\\ranking\\ranking.scss",
-    "rule": "hex-literal",
     "line": 32,
     "match": "#fff3e8"
   },
@@ -8200,24 +5038,6 @@
     "rule": "hex-literal",
     "line": 32,
     "match": "#9a4d1f"
-  },
-  {
-    "file": "src\\app\\features\\ranking\\pages\\ranking\\ranking.scss",
-    "rule": "hex-literal",
-    "line": 33,
-    "match": "#1677ff"
-  },
-  {
-    "file": "src\\app\\features\\ranking\\pages\\ranking\\ranking.scss",
-    "rule": "hex-literal",
-    "line": 33,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\ranking\\pages\\ranking\\ranking.scss",
-    "rule": "hex-literal",
-    "line": 34,
-    "match": "#172033"
   },
   {
     "file": "src\\app\\features\\ranking\\pages\\ranking\\ranking.scss",
@@ -8240,44 +5060,8 @@
   {
     "file": "src\\app\\features\\ranking\\pages\\ranking\\ranking.scss",
     "rule": "hex-literal",
-    "line": 41,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\ranking\\pages\\ranking\\ranking.scss",
-    "rule": "hex-literal",
-    "line": 41,
-    "match": "#e4eaf2"
-  },
-  {
-    "file": "src\\app\\features\\ranking\\pages\\ranking\\ranking.scss",
-    "rule": "hex-literal",
-    "line": 43,
-    "match": "#1677ff"
-  },
-  {
-    "file": "src\\app\\features\\ranking\\pages\\ranking\\ranking.scss",
-    "rule": "hex-literal",
-    "line": 44,
-    "match": "#172033"
-  },
-  {
-    "file": "src\\app\\features\\ranking\\pages\\ranking\\ranking.scss",
-    "rule": "hex-literal",
     "line": 45,
     "match": "#f3f6fa"
-  },
-  {
-    "file": "src\\app\\features\\ranking\\pages\\ranking\\ranking.scss",
-    "rule": "hex-literal",
-    "line": 45,
-    "match": "#667085"
-  },
-  {
-    "file": "src\\app\\features\\ranking\\pages\\ranking\\ranking.scss",
-    "rule": "hex-literal",
-    "line": 48,
-    "match": "#f8fafc"
   },
   {
     "file": "src\\app\\features\\ranking\\pages\\ranking\\ranking.scss",
@@ -8302,18 +5086,6 @@
     "rule": "hex-literal",
     "line": 52,
     "match": "#edf6ff"
-  },
-  {
-    "file": "src\\app\\features\\ranking\\pages\\ranking\\ranking.scss",
-    "rule": "hex-literal",
-    "line": 52,
-    "match": "#1677ff"
-  },
-  {
-    "file": "src\\app\\features\\ranking\\pages\\ranking\\ranking.scss",
-    "rule": "hex-literal",
-    "line": 53,
-    "match": "#667085"
   },
   {
     "file": "src\\app\\features\\ranking\\pages\\ranking\\ranking.scss",
@@ -8360,36 +5132,6 @@
   {
     "file": "src\\app\\features\\ranking\\pages\\ranking\\ranking.scss",
     "rule": "hex-literal",
-    "line": 61,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\ranking\\pages\\ranking\\ranking.scss",
-    "rule": "hex-literal",
-    "line": 61,
-    "match": "#e4eaf2"
-  },
-  {
-    "file": "src\\app\\features\\ranking\\pages\\ranking\\ranking.scss",
-    "rule": "hex-literal",
-    "line": 62,
-    "match": "#b91c1c"
-  },
-  {
-    "file": "src\\app\\features\\ranking\\pages\\ranking\\ranking.scss",
-    "rule": "hex-literal",
-    "line": 63,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\ranking\\pages\\ranking\\ranking.scss",
-    "rule": "hex-literal",
-    "line": 63,
-    "match": "#b91c1c"
-  },
-  {
-    "file": "src\\app\\features\\ranking\\pages\\ranking\\ranking.scss",
-    "rule": "hex-literal",
     "line": 63,
     "match": "#991b1b"
   },
@@ -8414,30 +5156,6 @@
   {
     "file": "src\\app\\features\\tienda\\pages\\mis-canjes\\mis-canjes.scss",
     "rule": "hex-literal",
-    "line": 6,
-    "match": "#172033"
-  },
-  {
-    "file": "src\\app\\features\\tienda\\pages\\mis-canjes\\mis-canjes.scss",
-    "rule": "hex-literal",
-    "line": 7,
-    "match": "#667085"
-  },
-  {
-    "file": "src\\app\\features\\tienda\\pages\\mis-canjes\\mis-canjes.scss",
-    "rule": "hex-literal",
-    "line": 8,
-    "match": "#e4eaf2"
-  },
-  {
-    "file": "src\\app\\features\\tienda\\pages\\mis-canjes\\mis-canjes.scss",
-    "rule": "hex-literal",
-    "line": 11,
-    "match": "#f8fafc"
-  },
-  {
-    "file": "src\\app\\features\\tienda\\pages\\mis-canjes\\mis-canjes.scss",
-    "rule": "hex-literal",
     "line": 11,
     "match": "#7a8699"
   },
@@ -8446,12 +5164,6 @@
     "rule": "hex-literal",
     "line": 12,
     "match": "#edf1f5"
-  },
-  {
-    "file": "src\\app\\features\\tienda\\pages\\mis-canjes\\mis-canjes.scss",
-    "rule": "hex-literal",
-    "line": 12,
-    "match": "#667085"
   },
   {
     "file": "src\\app\\features\\tienda\\pages\\mis-canjes\\mis-canjes.scss",
@@ -8484,18 +5196,6 @@
     "match": "#0958d9"
   },
   {
-    "file": "src\\app\\features\\tienda\\pages\\mis-canjes\\mis-canjes.scss",
-    "rule": "hex-literal",
-    "line": 18,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\tienda\\pages\\mis-canjes\\mis-canjes.scss",
-    "rule": "hex-literal",
-    "line": 18,
-    "match": "#e4eaf2"
-  },
-  {
     "file": "src\\app\\features\\tienda\\pages\\tienda-alumno\\tienda-alumno.scss",
     "rule": "hex-literal",
     "line": 6,
@@ -8512,48 +5212,6 @@
     "rule": "hex-literal",
     "line": 16,
     "match": "#0958d9"
-  },
-  {
-    "file": "src\\app\\features\\tienda\\pages\\tienda-alumno\\tienda-alumno.scss",
-    "rule": "hex-literal",
-    "line": 17,
-    "match": "#172033"
-  },
-  {
-    "file": "src\\app\\features\\tienda\\pages\\tienda-alumno\\tienda-alumno.scss",
-    "rule": "hex-literal",
-    "line": 18,
-    "match": "#1677ff"
-  },
-  {
-    "file": "src\\app\\features\\tienda\\pages\\tienda-alumno\\tienda-alumno.scss",
-    "rule": "hex-literal",
-    "line": 19,
-    "match": "#667085"
-  },
-  {
-    "file": "src\\app\\features\\tienda\\pages\\tienda-alumno\\tienda-alumno.scss",
-    "rule": "hex-literal",
-    "line": 21,
-    "match": "#1677ff"
-  },
-  {
-    "file": "src\\app\\features\\tienda\\pages\\tienda-alumno\\tienda-alumno.scss",
-    "rule": "hex-literal",
-    "line": 21,
-    "match": "#1677ff"
-  },
-  {
-    "file": "src\\app\\features\\tienda\\pages\\tienda-alumno\\tienda-alumno.scss",
-    "rule": "hex-literal",
-    "line": 21,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\tienda\\pages\\tienda-alumno\\tienda-alumno.scss",
-    "rule": "hex-literal",
-    "line": 22,
-    "match": "#fff"
   },
   {
     "file": "src\\app\\features\\tienda\\pages\\tienda-alumno\\tienda-alumno.scss",
@@ -8584,12 +5242,6 @@
     "rule": "hex-literal",
     "line": 23,
     "match": "#0958d9"
-  },
-  {
-    "file": "src\\app\\features\\tienda\\pages\\tienda-alumno\\tienda-alumno.scss",
-    "rule": "hex-literal",
-    "line": 24,
-    "match": "#fff"
   },
   {
     "file": "src\\app\\features\\tienda\\pages\\tienda-alumno\\tienda-alumno.scss",
@@ -8672,48 +5324,6 @@
   {
     "file": "src\\app\\features\\tienda\\pages\\tienda-alumno\\tienda-alumno.scss",
     "rule": "hex-literal",
-    "line": 35,
-    "match": "#1677ff"
-  },
-  {
-    "file": "src\\app\\features\\tienda\\pages\\tienda-alumno\\tienda-alumno.scss",
-    "rule": "hex-literal",
-    "line": 36,
-    "match": "#172033"
-  },
-  {
-    "file": "src\\app\\features\\tienda\\pages\\tienda-alumno\\tienda-alumno.scss",
-    "rule": "hex-literal",
-    "line": 37,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\tienda\\pages\\tienda-alumno\\tienda-alumno.scss",
-    "rule": "hex-literal",
-    "line": 37,
-    "match": "#e4eaf2"
-  },
-  {
-    "file": "src\\app\\features\\tienda\\pages\\tienda-alumno\\tienda-alumno.scss",
-    "rule": "hex-literal",
-    "line": 37,
-    "match": "#667085"
-  },
-  {
-    "file": "src\\app\\features\\tienda\\pages\\tienda-alumno\\tienda-alumno.scss",
-    "rule": "hex-literal",
-    "line": 40,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\tienda\\pages\\tienda-alumno\\tienda-alumno.scss",
-    "rule": "hex-literal",
-    "line": 40,
-    "match": "#e4eaf2"
-  },
-  {
-    "file": "src\\app\\features\\tienda\\pages\\tienda-alumno\\tienda-alumno.scss",
-    "rule": "hex-literal",
     "line": 41,
     "match": "#b8d8ff"
   },
@@ -8721,43 +5331,7 @@
     "file": "src\\app\\features\\tienda\\pages\\tienda-alumno\\tienda-alumno.scss",
     "rule": "hex-literal",
     "line": 43,
-    "match": "#f4f7fb"
-  },
-  {
-    "file": "src\\app\\features\\tienda\\pages\\tienda-alumno\\tienda-alumno.scss",
-    "rule": "hex-literal",
-    "line": 43,
     "match": "#e8edf3"
-  },
-  {
-    "file": "src\\app\\features\\tienda\\pages\\tienda-alumno\\tienda-alumno.scss",
-    "rule": "hex-literal",
-    "line": 45,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\tienda\\pages\\tienda-alumno\\tienda-alumno.scss",
-    "rule": "hex-literal",
-    "line": 45,
-    "match": "#e4eaf2"
-  },
-  {
-    "file": "src\\app\\features\\tienda\\pages\\tienda-alumno\\tienda-alumno.scss",
-    "rule": "hex-literal",
-    "line": 45,
-    "match": "#1677ff"
-  },
-  {
-    "file": "src\\app\\features\\tienda\\pages\\tienda-alumno\\tienda-alumno.scss",
-    "rule": "hex-literal",
-    "line": 46,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\tienda\\pages\\tienda-alumno\\tienda-alumno.scss",
-    "rule": "hex-literal",
-    "line": 46,
-    "match": "#e4eaf2"
   },
   {
     "file": "src\\app\\features\\tienda\\pages\\tienda-alumno\\tienda-alumno.scss",
@@ -8770,24 +5344,6 @@
     "rule": "hex-literal",
     "line": 47,
     "match": "#6d28a8"
-  },
-  {
-    "file": "src\\app\\features\\tienda\\pages\\tienda-alumno\\tienda-alumno.scss",
-    "rule": "hex-literal",
-    "line": 49,
-    "match": "#172033"
-  },
-  {
-    "file": "src\\app\\features\\tienda\\pages\\tienda-alumno\\tienda-alumno.scss",
-    "rule": "hex-literal",
-    "line": 50,
-    "match": "#667085"
-  },
-  {
-    "file": "src\\app\\features\\tienda\\pages\\tienda-alumno\\tienda-alumno.scss",
-    "rule": "hex-literal",
-    "line": 51,
-    "match": "#f8fafc"
   },
   {
     "file": "src\\app\\features\\tienda\\pages\\tienda-alumno\\tienda-alumno.scss",
@@ -8830,18 +5386,6 @@
     "rule": "hex-literal",
     "line": 59,
     "match": "#08783a"
-  },
-  {
-    "file": "src\\app\\features\\tienda\\pages\\tienda-alumno\\tienda-alumno.scss",
-    "rule": "hex-literal",
-    "line": 60,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\features\\tienda\\pages\\tienda-alumno\\tienda-alumno.scss",
-    "rule": "hex-literal",
-    "line": 60,
-    "match": "#e4eaf2"
   },
   {
     "file": "src\\app\\shared\\componentes\\boton-accion\\boton-accion.html",
@@ -8924,18 +5468,6 @@
   {
     "file": "src\\app\\shared\\componentes\\cargando\\cargando.scss",
     "rule": "hex-literal",
-    "line": 15,
-    "match": "#ffffff"
-  },
-  {
-    "file": "src\\app\\shared\\componentes\\cargando\\cargando.scss",
-    "rule": "hex-literal",
-    "line": 15,
-    "match": "#e4eaf2"
-  },
-  {
-    "file": "src\\app\\shared\\componentes\\cargando\\cargando.scss",
-    "rule": "hex-literal",
     "line": 16,
     "match": "#e9eef5"
   },
@@ -8944,12 +5476,6 @@
     "rule": "hex-literal",
     "line": 17,
     "match": "#f4f8fc"
-  },
-  {
-    "file": "src\\app\\shared\\componentes\\cargando\\cargando.scss",
-    "rule": "hex-literal",
-    "line": 17,
-    "match": "#e4eaf2"
   },
   {
     "file": "src\\app\\shared\\componentes\\cargando\\cargando.scss",
@@ -8966,18 +5492,6 @@
   {
     "file": "src\\app\\shared\\componentes\\estado-vacio\\estado-vacio.scss",
     "rule": "hex-literal",
-    "line": 9,
-    "match": "#ffffff"
-  },
-  {
-    "file": "src\\app\\shared\\componentes\\estado-vacio\\estado-vacio.scss",
-    "rule": "hex-literal",
-    "line": 10,
-    "match": "#e4eaf2"
-  },
-  {
-    "file": "src\\app\\shared\\componentes\\estado-vacio\\estado-vacio.scss",
-    "rule": "hex-literal",
     "line": 64,
     "match": "#edf7ff"
   },
@@ -8986,24 +5500,6 @@
     "rule": "hex-literal",
     "line": 65,
     "match": "#cfe8f6"
-  },
-  {
-    "file": "src\\app\\shared\\componentes\\estado-vacio\\estado-vacio.scss",
-    "rule": "hex-literal",
-    "line": 67,
-    "match": "#1677ff"
-  },
-  {
-    "file": "src\\app\\shared\\componentes\\estado-vacio\\estado-vacio.scss",
-    "rule": "hex-literal",
-    "line": 86,
-    "match": "#172033"
-  },
-  {
-    "file": "src\\app\\shared\\componentes\\estado-vacio\\estado-vacio.scss",
-    "rule": "hex-literal",
-    "line": 95,
-    "match": "#667085"
   },
   {
     "file": "src\\app\\shared\\componentes\\estado-vacio\\estado-vacio.scss",
@@ -9044,12 +5540,6 @@
   {
     "file": "src\\app\\shared\\componentes\\estado-vacio\\estado-vacio.scss",
     "rule": "hex-literal",
-    "line": 212,
-    "match": "#ffffff"
-  },
-  {
-    "file": "src\\app\\shared\\componentes\\estado-vacio\\estado-vacio.scss",
-    "rule": "hex-literal",
     "line": 213,
     "match": "#d0bdf4"
   },
@@ -9076,24 +5566,6 @@
     "rule": "hex-literal",
     "line": 226,
     "match": "#6f36dc"
-  },
-  {
-    "file": "src\\app\\shared\\componentes\\header-banner\\header-banner.scss",
-    "rule": "hex-literal",
-    "line": 46,
-    "match": "#ffc414"
-  },
-  {
-    "file": "src\\app\\shared\\componentes\\header-banner\\header-banner.scss",
-    "rule": "hex-literal",
-    "line": 56,
-    "match": "#fff"
-  },
-  {
-    "file": "src\\app\\shared\\componentes\\header-banner\\header-banner.scss",
-    "rule": "hex-literal",
-    "line": 65,
-    "match": "#dce2ff"
   },
   {
     "file": "src\\app\\shared\\componentes\\illustration-slot\\illustration-slot.scss",
@@ -9164,12 +5636,6 @@
   {
     "file": "src\\app\\shared\\componentes\\media-uploader\\media-uploader.scss",
     "rule": "hex-literal",
-    "line": 24,
-    "match": "#2563eb"
-  },
-  {
-    "file": "src\\app\\shared\\componentes\\media-uploader\\media-uploader.scss",
-    "rule": "hex-literal",
     "line": 38,
     "match": "#61708d"
   },
@@ -9186,12 +5652,6 @@
     "match": "#cbd8ee"
   },
   {
-    "file": "src\\app\\shared\\componentes\\media-uploader\\media-uploader.scss",
-    "rule": "hex-literal",
-    "line": 53,
-    "match": "#2563eb"
-  },
-  {
     "file": "src\\app\\shared\\componentes\\moneda-daemon\\moneda-daemon.scss",
     "rule": "hex-literal",
     "line": 58,
@@ -9202,12 +5662,6 @@
     "rule": "hex-literal",
     "line": 58,
     "match": "#3b0f86"
-  },
-  {
-    "file": "src\\app\\shared\\componentes\\moneda-daemon\\moneda-daemon.scss",
-    "rule": "hex-literal",
-    "line": 60,
-    "match": "#ffffff"
   },
   {
     "file": "src\\app\\shared\\componentes\\moneda-daemon\\moneda-daemon.scss",
@@ -9238,11 +5692,5 @@
     "rule": "hex-literal",
     "line": 116,
     "match": "#6d28d9"
-  },
-  {
-    "file": "src\\app\\shared\\componentes\\moneda-daemon\\moneda-daemon.scss",
-    "rule": "hex-literal",
-    "line": 137,
-    "match": "#ffffff"
   }
 ]

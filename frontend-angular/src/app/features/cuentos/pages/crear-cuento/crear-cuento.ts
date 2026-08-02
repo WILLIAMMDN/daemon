@@ -174,7 +174,7 @@ export class CrearCuento implements OnInit {
 
   // ─── Páginas ────────────────────────────────────────────────────
   paginas = signal<PaginaCuento[]>([
-    { id: 'portada-interna', contenido: '', colorFondo: '#ffffff', ilustracion: null, ideaIA: null }
+    { id: 'portada-interna', contenido: '', colorFondo: 'var(--daemon-on-primary)', ilustracion: null, ideaIA: null }
   ]);
   paginaActivaIndex = signal<number>(0);
 
@@ -392,7 +392,7 @@ export class CrearCuento implements OnInit {
               c.paginas.map((p: any, idx: number) => ({
                 id: p.id ?? `page-${idx}`,
                 contenido: this.migrarContenidoLegacy(p.contenido),
-                colorFondo: p.colorFondo ?? '#ffffff',
+                colorFondo: p.colorFondo ?? 'var(--daemon-on-primary)',
                 plantilla: p.plantilla,
                 ilustracion: p.ilustracion ?? null,
                 ideaIA: p.ideaIA ?? null,
@@ -404,7 +404,7 @@ export class CrearCuento implements OnInit {
               {
                 id: 'page-migrada',
                 contenido: this.migrarContenidoLegacy(c.data_1 || c.contenido || ''),
-                colorFondo: '#ffffff',
+                colorFondo: 'var(--daemon-on-primary)',
                 ilustracion: c.img_1 || null,
                 ideaIA: null,
               },
@@ -430,7 +430,7 @@ export class CrearCuento implements OnInit {
         {
           id: 'page-1',
           contenido: initialContent,
-          colorFondo: '#ffffff',
+          colorFondo: 'var(--daemon-on-primary)',
           ilustracion: null,
           ideaIA: null,
         },
@@ -562,7 +562,7 @@ export class CrearCuento implements OnInit {
       {
         id: `page-${Date.now()}`,
         contenido: '<p></p>',
-        colorFondo: '#ffffff',
+        colorFondo: 'var(--daemon-on-primary)',
         ilustracion: null,
         ideaIA: null,
       },
@@ -906,8 +906,8 @@ export class CrearCuento implements OnInit {
     const actual = this.contenido() || '';
     const separador = '<p><br></p>';
     const encabezado = idea.modo === 'continuar'
-      ? '<p><strong style="color: #6a4cff;">✍️ Continuación sugerida por Dae-bot:</strong></p>'
-      : '<p><strong style="color: #6a4cff;">✨ Inspiración visual de Dae-bot:</strong></p>';
+      ? '<p><strong style="color: var(--daemon-primary-soft);">✍️ Continuación sugerida por Dae-bot:</strong></p>'
+      : '<p><strong style="color: var(--daemon-primary-soft);">✨ Inspiración visual de Dae-bot:</strong></p>';
     const nuevo = `${actual}${separador}${encabezado}<p>${this.escaparHtml(idea.texto)}</p>`;
     this.contenido.set(nuevo);
     this.onContentChange(nuevo);
@@ -1227,7 +1227,7 @@ export class CrearCuento implements OnInit {
           return;
         }
         // Fondo blanco para imágenes con transparencia (PNG → JPEG)
-        ctx.fillStyle = '#ffffff';
+        ctx.fillStyle = 'var(--daemon-on-primary)';
         ctx.fillRect(0, 0, width, height);
         ctx.drawImage(img, 0, 0, width, height);
 

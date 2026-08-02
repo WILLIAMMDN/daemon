@@ -10,8 +10,8 @@
 
 .results-hero {
   align-items: center;
-  background: #fff;
-  border: 1px solid #e4eaf2;
+  background: var(--daemon-on-primary);
+  border: 1px solid var(--daemon-border);
   border-radius: 18px;
   display: grid;
   gap: 1rem;
@@ -43,14 +43,14 @@
 }
 
 .results-hero h1 {
-  color: #172033;
+  color: var(--daemon-ink);
   font-size: clamp(1.75rem, 3.5vw, 2.45rem);
   letter-spacing: -.04em;
   margin: .25rem 0;
 }
 
 .results-hero p {
-  color: #667085;
+  color: var(--daemon-muted);
   font-size: .86rem;
   margin: 0;
 }
@@ -77,8 +77,8 @@
 
 .results-summary article {
   align-items: center;
-  background: #fff;
-  border: 1px solid #e4eaf2;
+  background: var(--daemon-on-primary);
+  border: 1px solid var(--daemon-border);
   border-radius: 14px;
   display: flex;
   gap: .8rem;
@@ -102,11 +102,11 @@
 .results-summary article:nth-child(3) > span { background: #edf9f1; color: #0a7f3d; }
 .results-summary div { display: grid; min-width: 0; }
 .results-summary small { color: #7a8699; font-size: .66rem; font-weight: 700; }
-.results-summary strong { color: #172033; font-size: 1.05rem; margin-top: .2rem; }
+.results-summary strong { color: var(--daemon-ink); font-size: 1.05rem; margin-top: .2rem; }
 
 .results-table-card {
-  background: #fff;
-  border: 1px solid #e4eaf2;
+  background: var(--daemon-on-primary);
+  border: 1px solid var(--daemon-border);
   border-radius: 16px;
   min-width: 0;
   overflow: hidden;
@@ -121,8 +121,8 @@
   padding: 1.1rem 1.2rem;
 }
 
-.results-table-card h2 { color: #172033; font-size: 1.05rem; margin: .25rem 0 0; }
-.results-table-card > header > small { color: #667085; font-size: .7rem; font-weight: 700; }
+.results-table-card h2 { color: var(--daemon-ink); font-size: 1.05rem; margin: .25rem 0 0; }
+.results-table-card > header > small { color: var(--daemon-muted); font-size: .7rem; font-weight: 700; }
 .results-table-scroll { min-width: 0; overflow-x: auto; }
 
 :host ::ng-deep .results-table-card .ant-table {
@@ -130,8 +130,8 @@
 }
 
 :host ::ng-deep .results-table-card th {
-  background: #f8fafc;
-  color: #667085;
+  background: var(--daemon-surface-muted);
+  color: var(--daemon-muted);
   font-size: .72rem;
   font-weight: 750;
 }
@@ -141,7 +141,7 @@
   font-size: .78rem;
 }
 
-:host ::ng-deep .results-table-card td strong { color: #172033; }
+:host ::ng-deep .results-table-card td strong { color: var(--daemon-ink); }
 .result-score { color: #0958d9; font-size: 1rem; font-weight: 800; }
 
 .results-error {
@@ -157,7 +157,7 @@
 
 .results-error > span {
   align-items: center;
-  background: #fee2e2;
+  background: var(--daemon-danger-soft);
   border-radius: 12px;
   color: #b42318;
   display: inline-flex;
@@ -177,8 +177,8 @@
 
 .results-loading div {
   animation: results-pulse 1.4s ease-in-out infinite;
-  background: #fff;
-  border: 1px solid #e4eaf2;
+  background: var(--daemon-on-primary);
+  border: 1px solid var(--daemon-border);
   border-radius: 16px;
   min-height: 120px;
 }
@@ -188,7 +188,7 @@
   min-height: 280px;
 }
 
-.results-empty { background: #fff; border: 1px solid #e4eaf2; border-radius: 16px; }
+.results-empty { background: var(--daemon-on-primary); border: 1px solid var(--daemon-border); border-radius: 16px; }
 
 @keyframes results-pulse {
   0%, 100% { opacity: .62; }
