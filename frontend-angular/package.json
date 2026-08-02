@@ -53,6 +53,7 @@
     "ngx-quill": "^29.2.0",
     "ngx-spinner": "^21.1.0",
     "pusher-js": "^8.5.0",
+    "zone.js": "~0.15.0",
     "quill": "^2.0.3",
     "rxjs": "~7.8.0",
     "tailwind-merge": "^3.5.0",
