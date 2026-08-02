@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, signal, HostListener, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, signal, HostListener } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
@@ -27,20 +27,13 @@ import { Cuento } from '../../services/cuento';
 import { HeaderBannerComponent } from '../../../../shared/componentes/header-banner/header-banner';
 import { NgClass } from '@angular/common';
 
-import { GaleriaToolbarComponent } from './components/galeria-toolbar/galeria-toolbar.component';
-import { GaleriaCuentoCardComponent } from './components/galeria-cuento-card/galeria-cuento-card.component';
-import { GaleriaAsideComponent } from './components/galeria-aside/galeria-aside.component';
-
 type FiltroCuento = 'todos' | 'mio';
 type OrdenCuento = 'recientes' | 'antiguos' | 'titulo';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-galeria-proyectos',
-  imports: [
-    RouterLink, FontAwesomeModule, NzButtonModule, EstadoVacio, NgClass, HeaderBannerComponent,
-    GaleriaToolbarComponent, GaleriaCuentoCardComponent, GaleriaAsideComponent
-  ],
+  imports: [RouterLink, FontAwesomeModule, NzButtonModule, EstadoVacio, NgClass, HeaderBannerComponent],
   templateUrl: './galeria-proyectos.html',
   styleUrl: './galeria-proyectos.scss',
 })
@@ -133,14 +126,6 @@ export class GaleriaProyectos {
   constructor() {
     this.cargar();
 
-    // Lock body scroll while the mobile bottom sheet is open so the page
-    // behind doesn't scroll when the user drags the sheet. We DO NOT rely on
-    // component teardown to remove the class — if the user navigates while
-    // the sheet is open (e.g. tapping a recommended template), the component
-    // is destroyed and any effect that only reads asideAbierto() can leave
-    // the body class behind, freezing the next page. We belt-and-suspenders
-    // this: the effect toggles the class, and DestroyRef guarantees it is
-    // cleared even if the effect is torn down mid-flight.
     effect(() => {
       if (typeof document === 'undefined') return;
       if (this.asideAbierto()) {
@@ -177,15 +162,7 @@ export class GaleriaProyectos {
     this.asideAbierto.update((abierto) => !abierto);
   }
 
-  /**
-   * Runs BEFORE the [routerLink] on the template <a> navigates. We close the
-   * mobile bottom sheet first so the body scroll-lock is released in the same
-   * tick as the navigation — otherwise iOS / Android can briefly show the
-   * next page with `body { overflow: hidden }` and look frozen.
-   *
-   * We respect modifier keys (cmd/ctrl/shift/middle-click) so users can still
-   * "open in new tab" without the sheet collapsing under their cursor.
-   */
+
   onTemplateClick(event: MouseEvent): void {
     if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
       return;
@@ -299,12 +276,8 @@ export class GaleriaProyectos {
           };
 
           // Inyección manual a Firestore saltando el método de sesión
-          const { collection, addDoc, getFirestore } = await import('firebase/firestore');
-          const { getApp } = await import('firebase/app');
-          // El servicio `Cuento` ya inyecta `FirestoreApp` internamente, pero
-          // no expone la instancia por seguridad. Aquí accedemos vía DI
-          // alternativa al SDK compartido de Firebase.
-          const db = getFirestore(getApp());
+          const { collection, addDoc } = await import('firebase/firestore');
+          const db = this.cuento['firestore'].db();
           await addDoc(collection(db, 'cuentos'), cuentoFirestore);
           migrados++;
           console.log(`Migrado ${migrados}/${cuentosAntiguos.length}: ${viejo.titulo}`);

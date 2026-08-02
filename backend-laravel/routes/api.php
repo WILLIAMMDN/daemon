@@ -30,8 +30,11 @@ use App\Http\Controllers\Api\V1\TiendaController;
 use App\Http\Controllers\Api\V1\TutorPortalController;
 use App\Http\Controllers\Api\V1\ProyectoController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Broadcast;
 
 Route::prefix('v1')->group(function (): void {
+    Broadcast::routes(['middleware' => ['auth:sanctum']]);
+    require base_path('routes/channels.php');
     Route::get('/salud', SaludController::class);
     Route::post('/auth/login', [AutenticacionController::class, 'login'])->middleware('throttle:10,1');
     Route::post('/auth/registro', [AutenticacionController::class, 'registro'])->middleware('throttle:5,1');

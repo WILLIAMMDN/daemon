@@ -916,9 +916,6 @@
 }
 
 @media (max-width: 1180px) {
-  /* Mobile: the aside is detached from the flow and rendered as a bottom sheet
-     so it never pushes the main content (hundreds of stories) below the fold.
-     Desktop layout (>=1181px) is untouched. */
   .story-layout {
     grid-template-columns: 1fr !important;
   }

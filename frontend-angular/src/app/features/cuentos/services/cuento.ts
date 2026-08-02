@@ -66,22 +66,14 @@ export class Cuento {
     const db = this.firestore.db();
     const cuentosRef = collection(db, this.coleccionCuentos);
 
-    // `id` es la llave del documento, no un campo del payload. Lo separamos
-    // para que Firestore no se queje y para que updateDoc no intente
-    // reescribir la clave.
     const { id: idCrudo, ...payloadSinId } = datos;
     const idLimpio = typeof idCrudo === 'string' && idCrudo ? idCrudo : null;
 
-    // Firestore rechaza `undefined`. `null` SÍ está permitido (en updateDoc
-    // borra el campo; en addDoc es un valor normal). Filtramos sólo undefined.
     const limpio = this.eliminarUndefined(payloadSinId);
 
     if (idLimpio) {
       const docRef = doc(db, this.coleccionCuentos, idLimpio);
-      // setDoc con merge: true crea el documento si no existe o lo
-      // actualiza si ya existe. Así un cuento nuevo puede "tener ID
-      // propio" desde antes de su primer guardado (necesario para subir
-      // la portada a Supabase con un ID estable).
+   
       return from(setDoc(docRef, limpio, { merge: true })).pipe(
         map(() => ({ id: idLimpio, ...limpio } as unknown as CuentoRegistro))
       );

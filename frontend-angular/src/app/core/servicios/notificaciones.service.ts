@@ -54,7 +54,7 @@ export class NotificacionesService {
       authorizer: (channel: any) => {
         return {
           authorize: (socketId: string, callback: Function) => {
-            const authUrl = environment.apiUrl.replace('/api/v1', '') + '/broadcasting/auth';
+            const authUrl = environment.apiUrl + '/broadcasting/auth';
             this.http.post(authUrl, {
               socket_id: socketId,
               channel_name: channel.name
