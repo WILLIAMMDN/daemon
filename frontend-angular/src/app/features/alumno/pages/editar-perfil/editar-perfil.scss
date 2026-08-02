@@ -29,8 +29,8 @@
 
 .profile-preview {
   align-items: center;
-  background: #edf6ff;
-  border: 1px solid #dfe8f8;
+  background: var(--daemon-teens-soft);
+  border: 1px solid var(--daemon-border);
   border-radius: 8px;
   display: grid;
   gap: .9rem;
@@ -55,12 +55,12 @@
 }
 
 .profile-preview small {
-  color: #61708d;
+  color: var(--daemon-muted);
 }
 
 .progress-block {
   background: var(--daemon-on-primary);
-  border: 1px solid #dfe6f1;
+  border: 1px solid var(--daemon-border);
   border-radius: 8px;
   display: grid;
   gap: .45rem;
@@ -74,7 +74,7 @@
 }
 
 .progress-block span {
-  color: #147d71;
+  color: var(--daemon-success);
   font-weight: 900;
 }
 
@@ -86,7 +86,7 @@
 
 .media-preview {
   background: var(--daemon-surface-muted);
-  border: 1px solid #dfe6f1;
+  border: 1px solid var(--daemon-border);
   border-radius: 8px;
   display: grid;
   gap: .45rem;
@@ -105,14 +105,14 @@
 }
 
 .media-preview img {
-  background: #eef2f7;
+  background: var(--daemon-teens-soft);
   object-fit: cover;
 }
 
 .media-preview-empty {
   align-items: center;
-  background: #f3f6fa;
-  color: #64748b;
+  background: var(--daemon-canvas);
+  color: var(--daemon-muted);
   display: flex;
   font-size: .72rem;
   font-weight: 800;

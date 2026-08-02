@@ -104,7 +104,7 @@ export class ChatbotAlumno {
         innerContainer: { borderRadius: '1rem', padding: '1rem', fontSize: '1rem', lineHeight: '1.5' }
       },
       user: {
-        bubble: { backgroundColor: '#eff6ff', color: '#1e3a8a', border: '1px solid #bfdbfe' }
+        bubble: { backgroundColor: 'var(--daemon-info-soft)', color: '#1e3a8a', border: '1px solid var(--daemon-teens-border)' }
       },
       ai: {
         bubble: { backgroundColor: 'var(--daemon-surface-muted)', color: 'var(--daemon-ink-soft)', border: '1px solid var(--daemon-border)' }

@@ -12,7 +12,7 @@
 }
 
 .status-panel p {
-  color: #61708d;
+  color: var(--daemon-muted);
 }
 
 .asset-list {
@@ -31,7 +31,7 @@
 }
 
 .asset-list span {
-  color: #61708d;
+  color: var(--daemon-muted);
   font-size: .75rem;
   font-weight: 850;
   letter-spacing: .07em;
@@ -39,6 +39,6 @@
 }
 
 .asset-list strong {
-  color: #17203a;
+  color: var(--daemon-ink);
   overflow-wrap: anywhere;
 }

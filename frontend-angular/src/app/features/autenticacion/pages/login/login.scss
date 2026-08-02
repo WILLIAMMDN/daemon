@@ -4,7 +4,7 @@
 
 .daemon-login {
   align-items: center;
-  background: #f4f6f8;
+  background: var(--daemon-canvas);
   color: var(--daemon-ink);
   display: grid;
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -15,10 +15,10 @@
 .home-link {
   align-items: center;
   background: var(--daemon-on-primary);
-  border: 1px solid #d9e1ec;
+  border: 1px solid var(--daemon-border);
   border-radius: 6px;
-  box-shadow: 0 8px 20px #11182712;
-  color: #25324a;
+  box-shadow: 0 8px 20px var(--daemon-ink);
+  color: var(--daemon-ink-soft);
   display: inline-flex;
   font-size: .92rem;
   font-weight: 760;
@@ -66,7 +66,7 @@
 
 .login-card {
   background: var(--daemon-on-primary);
-  border: 1px solid #d7deea;
+  border: 1px solid var(--daemon-border-strong);
   border-radius: 6px;
   box-shadow: 0 10px 28px #1f2a4414;
   padding: 0 clamp(1.5rem, 7vw, 3.15rem) clamp(1.25rem, 4vw, 1.65rem);
@@ -89,7 +89,7 @@
 }
 
 .eyebrow {
-  color: #516075;
+  color: var(--daemon-muted);
   font-size: .73rem;
   font-weight: 850;
   letter-spacing: 0;
@@ -98,7 +98,7 @@
 }
 
 .login-card-head h1 {
-  color: #020b18;
+  color: var(--daemon-ink);
   font-size: 1.9rem;
   font-weight: 880;
   line-height: 1.1;
@@ -107,8 +107,8 @@
 
 .portal-switch {
   align-items: center;
-  background: #f6f8fb;
-  border: 1px solid #dfe6f1;
+  background: var(--daemon-canvas);
+  border: 1px solid var(--daemon-border);
   border-radius: 6px;
   display: inline-flex;
   font-size: .9rem;
@@ -121,7 +121,7 @@
 .portal-switch a {
   align-items: center;
   border-radius: 4px;
-  color: #526075;
+  color: var(--daemon-muted);
   display: inline-flex;
   font-weight: 760;
   justify-content: center;
@@ -138,12 +138,12 @@
 
 .rive-medallion {
   align-items: center;
-  background: #f7f8fa;
-  border: 1px solid #d8dee8;
+  background: var(--daemon-surface-muted);
+  border: 1px solid var(--daemon-border-strong);
   border-radius: 50%;
   box-shadow:
-    inset 0 0 0 7px #f7f8fa,
-    0 8px 20px #11182718;
+    inset 0 0 0 7px var(--daemon-surface-muted),
+    0 8px 20px var(--daemon-ink);
   display: grid;
   height: 116px;
   justify-content: center;
@@ -154,7 +154,7 @@
 }
 
 .rive-medallion::after {
-  border: 1px solid #e3e7ee;
+  border: 1px solid var(--daemon-border);
   border-radius: 50%;
   content: "";
   inset: 7px;
@@ -164,7 +164,7 @@
 }
 
 .rive-medallion::before {
-  background: #eef2f6;
+  background: var(--daemon-canvas);
   border-radius: 50%;
   content: "";
   display: grid;
@@ -198,7 +198,7 @@
 .classic-field {
   align-items: stretch;
   background: var(--daemon-on-primary);
-  border: 1px solid #c9d2df;
+  border: 1px solid var(--daemon-border-strong);
   border-radius: 6px;
   display: grid;
   grid-template-columns: 66px minmax(0, 1fr) auto;
@@ -215,8 +215,8 @@
 
 .field-icon {
   align-items: center;
-  background: #f6f8fb;
-  border-right: 1px solid #dbe2ec;
+  background: var(--daemon-canvas);
+  border-right: 1px solid var(--daemon-border);
   color: var(--daemon-ink-soft);
   display: inline-flex;
   justify-content: center;
@@ -234,7 +234,7 @@
 .classic-field input {
   background: var(--daemon-on-primary);
   border: 0;
-  color: #263244;
+  color: var(--daemon-ink-soft);
   font: inherit;
   font-size: 1.12rem;
   font-weight: 500;
@@ -248,7 +248,7 @@
 }
 
 .classic-field input::placeholder {
-  color: #6c7482;
+  color: var(--daemon-muted);
   opacity: 1;
 }
 
@@ -256,8 +256,8 @@
   align-items: center;
   background: var(--daemon-on-primary);
   border: 0;
-  border-left: 1px solid #dbe2ec;
-  color: #0f172a;
+  border-left: 1px solid var(--daemon-border);
+  color: var(--daemon-ink);
   cursor: pointer;
   display: inline-flex;
   justify-content: center;
@@ -295,10 +295,10 @@
 }
 
 .form-alert {
-  background: #fff1f2;
-  border: 1px solid #fecdd3;
+  background: var(--daemon-danger-soft);
+  border: 1px solid var(--daemon-danger-soft);
   border-radius: 6px;
-  color: #be123c;
+  color: var(--daemon-danger);
   font-size: .9rem;
   font-weight: 850;
   padding: .85rem 1rem;
@@ -322,7 +322,7 @@
 }
 
 .submit-button:disabled {
-  background: #b8c7de;
+  background: var(--daemon-border-strong);
   cursor: not-allowed;
 }
 
@@ -335,9 +335,9 @@
 .firebase-google-button {
   align-items: center;
   background: var(--daemon-on-primary);
-  border: 1px solid #dadce0;
+  border: 1px solid var(--daemon-border-strong);
   border-radius: 6px;
-  color: #1f1f1f;
+  color: var(--daemon-ink);
   cursor: pointer;
   display: inline-flex;
   font-family: 'Google Sans', 'Roboto', system-ui, -apple-system, 'Segoe UI', sans-serif;
@@ -355,19 +355,19 @@
 
 .firebase-google-button:hover:not(:disabled) {
   background: var(--daemon-surface-muted);
-  border-color: #d2e3fc;
+  border-color: var(--daemon-teens-border);
   box-shadow: 0 1px 2px rgba(60, 64, 67, 0.15), 0 1px 3px 1px rgba(60, 64, 67, 0.08);
   transform: translateY(-1px);
 }
 
 .firebase-google-button:focus-visible {
-  border-color: #1a73e8;
-  box-shadow: 0 0 0 1px #1a73e8;
+  border-color: var(--daemon-info);
+  box-shadow: 0 0 0 1px var(--daemon-info);
   outline: 0;
 }
 
 .firebase-google-button:active:not(:disabled) {
-  background: #f1f3f4;
+  background: var(--daemon-canvas);
   transform: translateY(0);
 }
 
@@ -390,7 +390,7 @@
 
 .divider {
   align-items: center;
-  color: #7a8492;
+  color: var(--daemon-muted);
   display: grid;
   font-size: .78rem;
   font-weight: 800;
@@ -404,13 +404,13 @@
 
 .divider::before,
 .divider::after {
-  background: #e1e5eb;
+  background: var(--daemon-border);
   content: "";
   height: 1px;
 }
 
 .login-footer {
-  color: #687386;
+  color: var(--daemon-muted);
   font-size: 1rem;
   margin-top: .85rem;
   text-align: center;
@@ -429,9 +429,9 @@
 .login-note {
   align-items: center;
   background: var(--daemon-on-primary);
-  border: 1px solid #d7deea;
+  border: 1px solid var(--daemon-border-strong);
   border-radius: 6px;
-  box-shadow: 0 12px 28px #11182712;
+  box-shadow: 0 12px 28px var(--daemon-ink);
   display: grid;
   gap: .85rem;
   grid-template-columns: auto minmax(0, 1fr);
@@ -441,9 +441,9 @@
 
 .note-icon {
   align-items: center;
-  border: 2px solid #5d6878;
+  border: 2px solid var(--daemon-muted);
   border-radius: 4px;
-  color: #5d6878;
+  color: var(--daemon-muted);
   display: inline-flex;
   height: 34px;
   justify-content: center;
@@ -456,7 +456,7 @@
 }
 
 .login-note p {
-  color: #1f2937;
+  color: var(--daemon-ink);
   font-size: 1rem;
   line-height: 1.45;
   margin: 0;

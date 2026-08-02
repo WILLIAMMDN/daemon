@@ -23,10 +23,10 @@
 
 .offline-notice {
   align-items: center;
-  background: #fffbeb;
+  background: var(--daemon-tutor-soft);
   border: 1px solid #f5d77a;
   border-radius: 12px;
-  color: #744500;
+  color: var(--daemon-warning);
   display: flex;
   gap: 1rem;
   justify-content: space-between;
@@ -34,9 +34,9 @@
 }
 .offline-notice button {
   background: var(--daemon-on-primary);
-  border: 1px solid #c98a12;
+  border: 1px solid var(--daemon-accent-dark);
   border-radius: 9px;
-  color: #744500;
+  color: var(--daemon-warning);
   cursor: pointer;
   font-weight: 700;
   min-height: 44px;
@@ -45,10 +45,10 @@
 
 .reward-reveal {
   align-items: center;
-  background: #f3f0ff;
-  border: 1px solid #d7ccff;
+  background: var(--daemon-info-soft);
+  border: 1px solid var(--daemon-teens-border);
   border-radius: 14px;
-  color: #35216f;
+  color: var(--daemon-on-accent);
   display: grid;
   gap: 1rem;
   grid-template-columns: auto 1fr auto;
@@ -58,7 +58,7 @@
 }
 .reward-icon {
   align-items: center;
-  background: #5b3cc4;
+  background: var(--daemon-primary-dark);
   border-radius: 12px;
   color: var(--daemon-on-primary);
   display: flex;
@@ -68,13 +68,13 @@
   width: 48px;
 }
 .reward-reveal div { display: grid; gap: .18rem; }
-.reward-reveal small { color: #6b58a8; font-size: .75rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+.reward-reveal small { color: var(--daemon-primary-soft); font-size: .75rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
 .reward-reveal strong { font-size: 1rem; }
-.reward-reveal p { color: #5d4d8d; margin: 0; }
+.reward-reveal p { color: var(--daemon-muted); margin: 0; }
 .reward-close {
   align-items: center;
   background: var(--daemon-on-primary);
-  border: 1px solid #cfc3f4;
+  border: 1px solid var(--daemon-border-strong);
   border-radius: 10px;
   color: #4e3698;
   cursor: pointer;
@@ -83,14 +83,14 @@
   justify-content: center;
   width: 44px;
 }
-.reward-spark { animation: reward-pop .65s ease-out both; background: #f5a000; border-radius: 50%; height: 7px; position: absolute; width: 7px; }
+.reward-spark { animation: reward-pop .65s ease-out both; background: var(--daemon-warning); border-radius: 50%; height: 7px; position: absolute; width: 7px; }
 .reward-spark--one { left: 5%; top: 12%; }
 .reward-spark--two { left: 42%; top: 18%; }
 .reward-spark--three { right: 10%; top: 15%; }
 @keyframes reward-pop { from { opacity: 0; transform: scale(.2) translateY(12px); } to { opacity: 1; transform: scale(1) translateY(0); } }
 
 .student-hero-banner {
-  background-color: #10105d;
+  background-color: var(--daemon-on-accent);
   background-image: linear-gradient(to right, rgba(16, 16, 93, 0.7), rgba(16, 16, 93, 0.4)), url('/img/headers/story-header-bg.png');
   background-size: cover;
   background-position: center;

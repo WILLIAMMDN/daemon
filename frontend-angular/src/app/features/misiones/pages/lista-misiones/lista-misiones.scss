@@ -19,8 +19,8 @@
 
 .missions-hero {
   align-items: center;
-  background: #eef6ff;
-  border: 1px solid #d7eaff;
+  background: var(--daemon-info-soft);
+  border: 1px solid var(--daemon-teens-border);
   border-radius: 18px;
   display: grid;
   gap: 1.25rem;
@@ -39,7 +39,7 @@
 
 .page-kicker {
   align-items: center;
-  color: #0958d9;
+  color: var(--daemon-info);
   display: inline-flex;
   font-size: .68rem;
   font-weight: 800;
@@ -65,9 +65,9 @@
 
 .missions-hero__meta {
   background: var(--daemon-on-primary);
-  border: 1px solid #cfe3ff;
+  border: 1px solid var(--daemon-teens-border);
   border-radius: 999px;
-  color: #174f91;
+  color: var(--daemon-info);
   display: inline-flex;
   font-size: .7rem;
   font-weight: 750;
@@ -86,9 +86,9 @@
 .refresh-button.ant-btn {
   align-items: center;
   background: var(--daemon-on-primary);
-  border-color: #cfe3ff;
+  border-color: var(--daemon-teens-border);
   border-radius: 10px;
-  color: #0958d9;
+  color: var(--daemon-info);
   display: inline-flex;
   font-weight: 700;
   gap: .45rem;
@@ -120,7 +120,7 @@
   background: transparent;
   border: 1px solid transparent;
   border-radius: 10px;
-  color: #526174;
+  color: var(--daemon-muted);
   cursor: pointer;
   display: inline-flex;
   flex: 0 0 auto;
@@ -134,7 +134,7 @@
 
 .mission-filter strong {
   align-items: center;
-  background: #eef2f7;
+  background: var(--daemon-teens-soft);
   border-radius: 999px;
   display: inline-flex;
   font-size: .63rem;
@@ -145,20 +145,20 @@
 }
 
 .mission-filter:hover {
-  background: #f5f8fc;
-  border-color: #dce3ed;
+  background: var(--daemon-canvas);
+  border-color: var(--daemon-border);
   color: var(--missions-ink);
 }
 
 .mission-filter--active {
-  background: #0958d9;
-  border-color: #0958d9;
+  background: var(--daemon-info);
+  border-color: var(--daemon-info);
   color: var(--daemon-on-primary);
 }
 
 .mission-filter--active:hover {
-  background: #074f9f;
-  border-color: #074f9f;
+  background: var(--daemon-info);
+  border-color: var(--daemon-info);
   color: var(--daemon-on-primary);
 }
 
@@ -186,13 +186,13 @@
 }
 
 .mission-card:hover {
-  border-color: #b8d8ff;
+  border-color: var(--daemon-kids-border);
   box-shadow: 0 8px 22px rgba(25, 55, 95, .08);
 }
 
 .mission-card[data-state='approved'] { border-top: 4px solid var(--daemon-success); }
-.mission-card[data-state='pending'] { border-top: 4px solid #f5a000; }
-.mission-card[data-state='rejected'] { border-top: 4px solid #dc2626; }
+.mission-card[data-state='pending'] { border-top: 4px solid var(--daemon-warning); }
+.mission-card[data-state='rejected'] { border-top: 4px solid var(--daemon-danger); }
 
 .mission-card > header {
   align-items: center;
@@ -201,16 +201,16 @@
 }
 
 .mission-index {
-  color: #c2c9d3;
+  color: var(--daemon-border-strong);
   font-size: 1.15rem;
   font-weight: 750;
 }
 
 .status-pill {
   align-items: center;
-  background: #edf5ff;
+  background: var(--daemon-teens-soft);
   border-radius: 8px;
-  color: #0958d9;
+  color: var(--daemon-info);
   display: inline-flex;
   font-size: .62rem;
   font-weight: 750;
@@ -220,16 +220,16 @@
   text-transform: uppercase;
 }
 
-.status-pill[data-state='approved'] { background: #edf9f1; color: #0a7f3d; }
-.status-pill[data-state='pending'] { background: #fffbeb; color: #a86500; }
-.status-pill[data-state='rejected'] { background: #fff1f1; color: #b42318; }
+.status-pill[data-state='approved'] { background: var(--daemon-success-soft); color: var(--daemon-success); }
+.status-pill[data-state='pending'] { background: var(--daemon-tutor-soft); color: var(--daemon-warning); }
+.status-pill[data-state='rejected'] { background: var(--daemon-danger-soft); color: var(--daemon-danger); }
 
 .mission-copy {
   margin-top: 1.1rem;
 }
 
 .mission-copy small {
-  color: #0958d9;
+  color: var(--daemon-info);
   font-size: .64rem;
   font-weight: 750;
   letter-spacing: .07em;
@@ -253,7 +253,7 @@
 .dual-reward {
   align-items: center;
   background: var(--daemon-surface-muted);
-  border: 1px solid #edf1f5;
+  border: 1px solid var(--daemon-teens-soft);
   border-radius: 10px;
   display: grid;
   gap: .45rem;
@@ -271,9 +271,9 @@
 }
 
 .dual-reward > span > :first-child { grid-row: span 2; }
-.dual-reward strong { color: #344054; font-size: .86rem; }
-.dual-reward small { color: #8a94a3; font-size: .56rem; font-weight: 750; letter-spacing: .04em; }
-.dual-reward i { background: #dfe5ec; height: 30px; }
+.dual-reward strong { color: var(--daemon-ink-soft); font-size: .86rem; }
+.dual-reward small { color: var(--daemon-muted); font-size: .56rem; font-weight: 750; letter-spacing: .04em; }
+.dual-reward i { background: var(--daemon-border); height: 30px; }
 
 .mission-card footer {
   align-items: center;
@@ -295,7 +295,7 @@
 
 .detail-link {
   align-items: center;
-  background: #f3f6fa;
+  background: var(--daemon-canvas);
   border: 1px solid var(--missions-border);
   border-radius: 9px;
   color: var(--daemon-muted);
@@ -305,12 +305,12 @@
   justify-content: center;
 }
 
-.detail-link:hover { background: #edf5ff; color: var(--daemon-teens); }
+.detail-link:hover { background: var(--daemon-teens-soft); color: var(--daemon-teens); }
 
 .missions-error {
   align-items: center;
-  background: #fff7f7;
-  border: 1px solid #fecaca;
+  background: var(--daemon-surface-muted);
+  border: 1px solid var(--daemon-danger-soft);
   border-radius: 16px;
   display: grid;
   gap: 1rem;
@@ -322,15 +322,15 @@
   align-items: center;
   background: var(--daemon-danger-soft);
   border-radius: 12px;
-  color: #b42318;
+  color: var(--daemon-danger);
   display: inline-flex;
   height: 48px;
   justify-content: center;
   width: 48px;
 }
 
-.missions-error h2 { color: #7f1d1d; font-size: 1rem; margin: 0; }
-.missions-error p { color: #b42318; font-size: .82rem; margin: .25rem 0 0; }
+.missions-error h2 { color: var(--daemon-danger); font-size: 1rem; margin: 0; }
+.missions-error p { color: var(--daemon-danger); font-size: .82rem; margin: .25rem 0 0; }
 .missions-state { background: var(--daemon-on-primary); border: 1px solid var(--missions-border); border-radius: 16px; }
 
 .missions-loading {

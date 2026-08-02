@@ -21,8 +21,8 @@
 
 .insignia-preview {
   align-items: center;
-  background: #f8fbff;
-  border: 1px solid #dfe8f8;
+  background: var(--daemon-surface-muted);
+  border: 1px solid var(--daemon-border);
   border-radius: 8px;
   display: grid;
   gap: .85rem;
@@ -42,7 +42,7 @@
 }
 
 .insignia-preview small {
-  color: #61708d;
+  color: var(--daemon-muted);
 }
 
 .catalog-section {
@@ -56,7 +56,7 @@
 
 .insignia-figure {
   align-items: center;
-  background: #f8fbff;
+  background: var(--daemon-surface-muted);
   border: 1px solid var(--daemon-border);
   border-radius: 8px;
   display: inline-flex;
@@ -79,7 +79,7 @@
 }
 
 .insignia-desc {
-  color: #61708d;
+  color: var(--daemon-muted);
   margin: 0;
 }
 

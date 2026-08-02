@@ -15,9 +15,9 @@
 
 .profile-dialog {
   background: var(--daemon-on-primary);
-  border: 1px solid #cfd4dc;
+  border: 1px solid var(--daemon-border-strong);
   border-radius: 2px;
-  box-shadow: 0 24px 70px #02061752;
+  box-shadow: 0 24px 70px var(--daemon-on-accent);
   max-height: calc(100vh - 2.5rem);
   max-width: 600px;
   overflow: auto;
@@ -26,7 +26,7 @@
 }
 
 .dialog-accent {
-  background: #0b5bd3;
+  background: var(--daemon-info);
   height: 5px;
 }
 
@@ -41,9 +41,9 @@
 .google-mark {
   align-items: center;
   background: var(--daemon-on-primary);
-  border: 1px solid #d6dbe3;
+  border: 1px solid var(--daemon-border-strong);
   border-radius: 50%;
-  box-shadow: 0 8px 22px #11182714;
+  box-shadow: 0 8px 22px var(--daemon-ink);
   display: inline-flex;
   height: 52px;
   justify-content: center;
@@ -57,7 +57,7 @@
 }
 
 .eyebrow {
-  color: #5d6878;
+  color: var(--daemon-muted);
   font-size: .73rem;
   font-weight: 900;
   letter-spacing: .13em;
@@ -66,7 +66,7 @@
 }
 
 .dialog-head h2 {
-  color: #020b18;
+  color: var(--daemon-ink);
   font-size: clamp(1.55rem, 5vw, 1.95rem);
   font-weight: 900;
   line-height: 1.1;
@@ -74,7 +74,7 @@
 }
 
 .dialog-copy {
-  color: #4b5565;
+  color: var(--daemon-ink-soft);
   font-size: .98rem;
   line-height: 1.55;
   margin: 1rem 0 0;
@@ -83,7 +83,7 @@
 
 .verified-email {
   background: var(--daemon-surface-muted);
-  border: 1px solid #dbe2ec;
+  border: 1px solid var(--daemon-border);
   display: grid;
   gap: .25rem;
   margin: 1rem 2.2rem 0;
@@ -91,7 +91,7 @@
 }
 
 .verified-email span {
-  color: #687386;
+  color: var(--daemon-muted);
   font-size: .72rem;
   font-weight: 900;
   letter-spacing: .12em;
@@ -99,7 +99,7 @@
 }
 
 .verified-email strong {
-  color: #1f2937;
+  color: var(--daemon-ink);
   font-size: .96rem;
   font-weight: 800;
   overflow-wrap: anywhere;
@@ -113,7 +113,7 @@
 
 .classic-field {
   align-items: stretch;
-  border: 1px solid #c8ced8;
+  border: 1px solid var(--daemon-border-strong);
   display: grid;
   grid-template-columns: 60px minmax(0, 1fr);
   min-height: 58px;
@@ -121,15 +121,15 @@
 }
 
 .classic-field:focus-within {
-  border-color: #0b5bd3;
-  box-shadow: 0 0 0 1px #0b5bd3;
+  border-color: var(--daemon-info);
+  box-shadow: 0 0 0 1px var(--daemon-info);
 }
 
 .field-icon {
   align-items: center;
-  background: #fafafa;
-  border-right: 1px solid #d6dbe3;
-  color: #313842;
+  background: var(--daemon-surface-muted);
+  border-right: 1px solid var(--daemon-border-strong);
+  color: var(--daemon-ink-soft);
   display: inline-flex;
   justify-content: center;
 }
@@ -145,7 +145,7 @@
 .classic-field select {
   background: var(--daemon-on-primary);
   border: 0;
-  color: #263244;
+  color: var(--daemon-ink-soft);
   font: inherit;
   font-size: 1.08rem;
   font-weight: 500;
@@ -160,14 +160,14 @@
 }
 
 .classic-field input::placeholder {
-  color: #6c7482;
+  color: var(--daemon-muted);
   opacity: 1;
 }
 
 .form-alert {
-  background: #fff1f2;
-  border: 1px solid #fecdd3;
-  color: #be123c;
+  background: var(--daemon-danger-soft);
+  border: 1px solid var(--daemon-danger-soft);
+  color: var(--daemon-danger);
   font-size: .9rem;
   font-weight: 850;
   padding: .85rem 1rem;
@@ -193,12 +193,12 @@
 
 .secondary-button {
   background: var(--daemon-on-primary);
-  border: 1px solid #cfd4dc;
-  color: #22304a;
+  border: 1px solid var(--daemon-border-strong);
+  color: var(--daemon-on-accent);
 }
 
 .submit-button {
-  background: #0b5bd3;
+  background: var(--daemon-info);
   border: 0;
   color: var(--daemon-on-primary);
 }

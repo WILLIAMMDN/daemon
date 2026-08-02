@@ -61,8 +61,8 @@ nz-empty {
 
 .empty-state__fallback {
   align-items: center;
-  background: #edf7ff;
-  border: 1px solid #cfe8f6;
+  background: var(--daemon-teens-soft);
+  border: 1px solid var(--daemon-teens-border);
   border-radius: 24px;
   color: var(--daemon-primary, var(--daemon-teens));
   display: inline-flex;
@@ -189,10 +189,10 @@ nz-empty {
 :host ::ng-deep .empty-state__actions {
   .ant-btn-primary {
     align-items: center;
-    background-color: #fbbf24;
-    border-color: #fbbf24;
+    background-color: var(--daemon-accent);
+    border-color: var(--daemon-accent);
     border-radius: 9px;
-    color: #0f172a;
+    color: var(--daemon-ink);
     display: inline-flex;
     font-weight: 700;
     gap: .5rem;
@@ -201,18 +201,18 @@ nz-empty {
     padding: 0 1.5rem;
 
     &:hover, &:focus {
-      background-color: #f59e0b;
-      border-color: #f59e0b;
-      color: #0f172a;
+      background-color: var(--daemon-warning);
+      border-color: var(--daemon-warning);
+      color: var(--daemon-ink);
     }
   }
 
   .ant-btn-default {
     align-items: center;
     background-color: var(--daemon-on-primary);
-    border-color: #d0bdf4;
+    border-color: var(--daemon-border-strong);
     border-radius: 9px;
-    color: #6f36dc;
+    color: var(--daemon-primary);
     display: inline-flex;
     font-weight: 700;
     gap: .5rem;
@@ -221,9 +221,9 @@ nz-empty {
     padding: 0 1.5rem;
 
     &:hover, &:focus {
-      background-color: #f3e8ff;
+      background-color: var(--daemon-teens-soft);
       border-color: #b08ee6;
-      color: #6f36dc;
+      color: var(--daemon-primary);
     }
   }
 }

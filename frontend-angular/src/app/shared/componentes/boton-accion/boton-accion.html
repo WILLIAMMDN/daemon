@@ -3,7 +3,7 @@
           nz-popconfirm [nzPopconfirmTitle]="confirmacion" nzPopconfirmPlacement="left" (nzOnConfirm)="ejecutar()"
           [type]="esSubmit ? 'submit' : 'button'"
           [disabled]="deshabilitado" [nzLoading]="cargando"
-          class="!bg-[#ed1c24] !border-none !text-white !shadow-sm hover:!bg-red-600 transition-colors flex items-center gap-1.5 {{ claseExtra }}"
+          class="!bg-[var(--daemon-danger)] !border-none !text-white !shadow-sm hover:!bg-red-600 transition-colors flex items-center gap-1.5 {{ claseExtra }}"
           [class.w-full]="anchoCompleto">
     <fa-icon [icon]="iconos.eliminar"></fa-icon> <span>{{ texto || 'Eliminar' }}</span>
   </button>
@@ -11,7 +11,7 @@
   <button nz-button nzSize="small" (click)="ejecutar()" 
           [type]="esSubmit ? 'submit' : 'button'"
           [disabled]="deshabilitado" [nzLoading]="cargando"
-          class="!bg-[#f58220] !border-none !text-white !shadow-sm hover:!bg-orange-600 transition-colors flex items-center gap-1.5 {{ claseExtra }}"
+          class="!bg-[var(--daemon-warning)] !border-none !text-white !shadow-sm hover:!bg-orange-600 transition-colors flex items-center gap-1.5 {{ claseExtra }}"
           [class.w-full]="anchoCompleto">
     <fa-icon [icon]="iconos.editar"></fa-icon> <span>{{ texto || 'Editar' }}</span>
   </button>
@@ -19,7 +19,7 @@
   <button nz-button nzSize="small" (click)="ejecutar()" 
           [type]="esSubmit ? 'submit' : 'button'"
           [disabled]="deshabilitado" [nzLoading]="cargando"
-          class="!bg-[#00b4d8] !border-none !text-white !shadow-sm hover:!bg-cyan-600 transition-colors flex items-center gap-1.5 {{ claseExtra }}"
+          class="!bg-[var(--daemon-kids)] !border-none !text-white !shadow-sm hover:!bg-cyan-600 transition-colors flex items-center gap-1.5 {{ claseExtra }}"
           [class.w-full]="anchoCompleto">
     <fa-icon [icon]="iconos.detalles"></fa-icon> <span>{{ texto || (tipo === 'detalles' ? 'Detalles' : 'Revisar') }}</span>
   </button>
@@ -27,7 +27,7 @@
   <button nz-button nzType="primary" (click)="ejecutar()" 
           [type]="esSubmit ? 'submit' : 'button'"
           [disabled]="deshabilitado" [nzLoading]="cargando"
-          class="!bg-[#8dc63f] !border-none !text-white !shadow-sm hover:!bg-green-600 transition-colors flex items-center gap-1.5 {{ claseExtra }}"
+          class="!bg-[var(--daemon-success)] !border-none !text-white !shadow-sm hover:!bg-green-600 transition-colors flex items-center gap-1.5 {{ claseExtra }}"
           [class.w-full]="anchoCompleto">
     <fa-icon [icon]="iconos.crear"></fa-icon> <span>{{ texto || 'Crear' }}</span>
   </button>
@@ -43,7 +43,7 @@
   <button nz-button nzType="primary" nzSize="small" (click)="ejecutar()" 
           [type]="esSubmit ? 'submit' : 'button'"
           [disabled]="deshabilitado" [nzLoading]="cargando"
-          class="!bg-[#00b4d8] !border-none !text-white !shadow-sm hover:!bg-cyan-600 transition-colors flex items-center gap-1.5 {{ claseExtra }}"
+          class="!bg-[var(--daemon-kids)] !border-none !text-white !shadow-sm hover:!bg-cyan-600 transition-colors flex items-center gap-1.5 {{ claseExtra }}"
           [class.w-full]="anchoCompleto">
     <fa-icon [icon]="iconos.entregar"></fa-icon> <span>{{ texto || 'Entregar' }}</span>
   </button>
@@ -51,7 +51,7 @@
   <button nz-button nzType="primary" (click)="ejecutar()" 
           [type]="esSubmit ? 'submit' : 'button'"
           [disabled]="deshabilitado" [nzLoading]="cargando"
-          class="!bg-[#8dc63f] !border-none !text-white !shadow-sm hover:!bg-green-600 transition-colors flex items-center gap-1.5 {{ claseExtra }}"
+          class="!bg-[var(--daemon-success)] !border-none !text-white !shadow-sm hover:!bg-green-600 transition-colors flex items-center gap-1.5 {{ claseExtra }}"
           [class.w-full]="anchoCompleto">
     <fa-icon [icon]="iconos.guardar"></fa-icon> <span>{{ texto || 'Guardar' }}</span>
   </button>
