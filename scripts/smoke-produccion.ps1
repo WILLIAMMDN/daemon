@@ -88,11 +88,14 @@ Assert-Ok ((Get-HeaderValue $login.Headers 'Cache-Control') -match 'no-store') '
 Assert-Ok ($login.Content -match 'main-[A-Za-z0-9]+\.js') 'Frontend HTML references an Angular main bundle.'
 $releaseStamp = [regex]::Match($login.Content, '<meta name="daemon-release" content="(?<stamp>[^"]+)">').Groups['stamp'].Value
 Assert-Ok (-not [string]::IsNullOrWhiteSpace($releaseStamp)) 'Frontend app shell exposes the daemon-release meta tag.'
-# Acepta un SHA-1 de Git (40 hex) o un release stamp legible (ej. 2026-07-15-auth-csp-v2).
-# Si el dia de manana se restaura la inyeccion del SHA en build, este check sigue valiendo.
-$isSha1 = $releaseStamp -match '^[0-9a-f]{40}$'
-$isReadableStamp = $releaseStamp -match '^[0-9a-z][0-9a-z\-]{2,63}$'
-Assert-Ok ($isSha1 -or $isReadableStamp) ("Frontend daemon-release is a recognized stamp (got: '$releaseStamp').")
+# Debe ser un SHA-1 de Git (40 hex). El script de prebuild
+# (frontend-angular/scripts/inject-release-stamp.mjs) inyecta el SHA
+# real del HEAD en cada build. Si el placeholder __DAEMON_RELEASE_SHA__
+# aparece, el build se hizo sin el prebuild y eso es un bug de CI.
+if ($releaseStamp -eq '__DAEMON_RELEASE_SHA__') {
+    throw "Frontend daemon-release is the unresolved build placeholder. The prebuild script (inject-release-stamp.mjs) did not run. Build is invalid."
+}
+Assert-Ok ($releaseStamp -match '^[0-9a-f]{40}$') ("Frontend daemon-release is a 40-char hex SHA-1 (got: '$releaseStamp').")
 Assert-Ok ((Get-HeaderValue $login.Headers 'X-Content-Type-Options') -eq 'nosniff') 'Frontend sends X-Content-Type-Options nosniff.'
 
 $contentSecurityPolicy = Get-HeaderValue $login.Headers 'Content-Security-Policy'
