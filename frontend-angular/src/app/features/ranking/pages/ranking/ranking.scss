@@ -24,12 +24,12 @@
 .podium-card:hover { border-color: var(--daemon-kids-border); box-shadow: 0 8px 22px rgba(25, 55, 95, .08); transform: none; }
 .podium-card.champion { border-top: 4px solid var(--daemon-warning); }
 .podium-card.silver { border-top: 4px solid var(--daemon-muted); }
-.podium-card.bronze { border-top: 4px solid #c56a32; }
+.podium-card.bronze { border-top: 4px solid var(--daemon-accent-dark); }
 .podium-card.is-current { border-color: var(--daemon-teens); box-shadow: 0 0 0 2px var(--daemon-teens-border); }
 .position-badge { align-items: center; background: var(--daemon-canvas); border-radius: 7px; color: var(--daemon-muted); display: inline-flex; font-size: .7rem; font-weight: 700; gap: .35rem; margin-bottom: 1rem; padding: .38rem .55rem; }
 .champion .position-badge { background: var(--daemon-tutor-soft); color: var(--daemon-warning); }
 .silver .position-badge { background: var(--daemon-canvas); color: var(--daemon-muted); }
-.bronze .position-badge { background: var(--daemon-tutor-soft); color: #9a4d1f; }
+.bronze .position-badge { background: var(--daemon-tutor-soft); color: color-mix(in srgb, var(--daemon-accent-dark) 60%, var(--daemon-ink)); }
 :host ::ng-deep .podium-card .ant-avatar { background: var(--daemon-teens); color: var(--daemon-on-primary); font-weight: 700; }
 .podium-card h2 { color: var(--daemon-ink); font-size: 1rem; margin: .85rem 0 .2rem; }
 .podium-card > p { color: var(--daemon-muted); font-size: .74rem; margin: 0; }
