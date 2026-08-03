@@ -23,8 +23,8 @@ class CuentoService
             ->select('c.*', 'u.nombre_completo as autor', 'u.avatar')
             ->selectSub(function ($query) {
                 $query->selectRaw('count(*)')
-                      ->from('cuento_reacciones')
-                      ->whereColumn('cuento_id', 'c.id');
+                    ->from('cuento_reacciones')
+                    ->whereColumn('cuento_id', 'c.id');
             }, 'reacciones_count')
             ->orderByDesc('c.fecha_creacion')
             ->get()
@@ -56,6 +56,13 @@ class CuentoService
         // cualquier campo que pueda terminar renderizado en HTML.
         $datos['titulo'] = $this->sanitizarTextoPlano($datos['titulo'] ?? null);
         $datos['contenido'] = $this->sanitizer->sanitizar($datos['contenido'] ?? null);
+
+        foreach (range(1, 6) as $indice) {
+            $campo = 'data_'.$indice;
+            if (array_key_exists($campo, $datos)) {
+                $datos[$campo] = $this->sanitizer->sanitizar($datos[$campo]);
+            }
+        }
 
         return Cuento::updateOrCreate(['id_alumno' => $usuario->id], $datos);
     }

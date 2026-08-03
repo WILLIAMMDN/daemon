@@ -43,6 +43,7 @@ return [
 
     'firebase' => [
         'project_id' => env('FIREBASE_PROJECT_ID'),
+        'firestore_database' => env('FIRESTORE_DATABASE_ID', '(default)'),
         'certificates_url' => env('FIREBASE_CERTIFICATES_URL', 'https://www.googleapis.com/robot/v1/metadata/x509/securetoken@system.gserviceaccount.com'),
         'service_account_path' => env('FIREBASE_SERVICE_ACCOUNT_PATH'),
         'service_account_json' => env('FIREBASE_SERVICE_ACCOUNT_JSON'),

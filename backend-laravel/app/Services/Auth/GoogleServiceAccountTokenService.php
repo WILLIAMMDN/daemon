@@ -9,7 +9,7 @@ use RuntimeException;
 
 class GoogleServiceAccountTokenService
 {
-    private const SCOPE = 'https://www.googleapis.com/auth/identitytoolkit';
+    private const SCOPE = 'https://www.googleapis.com/auth/identitytoolkit https://www.googleapis.com/auth/datastore';
 
     public function token(): string
     {
