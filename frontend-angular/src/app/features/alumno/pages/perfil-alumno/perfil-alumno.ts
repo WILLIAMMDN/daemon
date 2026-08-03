@@ -16,6 +16,7 @@ import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
 import { MonedaDaemon } from '../../../../shared/componentes/moneda-daemon/moneda-daemon';
 import { Alumno } from '../../services/alumno';
+import { Insignia, PremioTienda } from '../../../../core/modelos/dto';
 
 interface UsuarioPerfil {
   id: number;
@@ -33,8 +34,8 @@ interface UsuarioPerfil {
 
 interface PerfilData {
   usuario: UsuarioPerfil;
-  insignias: any[];
-  mochila: any[];
+  insignias: Insignia[];
+  mochila: PremioTienda[];
 }
 
 @Component({

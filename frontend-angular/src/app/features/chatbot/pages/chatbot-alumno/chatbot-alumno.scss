@@ -14,7 +14,16 @@
 .danger-action,
 .chatbot-error button { align-items: center; appearance: none; border-radius: 9px; cursor: pointer; display: inline-flex; font: inherit; font-size: .86rem; font-weight: 700; justify-content: center; min-height: 42px; padding: .65rem 1rem; text-decoration: none; }
 .primary-action { background: var(--daemon-info); border: 1px solid var(--daemon-info); color: var(--daemon-on-primary); }
-.primary-action:hover { background: #0748b4; color: var(--daemon-on-primary); }
+.primary-action:hover { background: var(--daemon-info); color: var(--daemon-on-primary); }
+
+/* El iframe/canvas de deep-chat ocupa todo el área disponible. */
+.deep-chat-frame {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  border: none;
+}
 .secondary-action { background: var(--daemon-on-primary); border: 1px solid var(--daemon-border-strong); color: var(--daemon-ink-soft); }
 .secondary-action:hover { background: var(--daemon-surface-muted); color: var(--daemon-ink); }
 .danger-action { background: var(--daemon-on-primary); border: 1px solid var(--daemon-danger-soft); color: var(--daemon-danger); }

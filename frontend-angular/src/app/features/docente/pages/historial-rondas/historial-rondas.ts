@@ -1,5 +1,6 @@
 import { Component, signal , ChangeDetectionStrategy} from '@angular/core';
 import { Competencia } from '../../../competencia/services/competencia';
+import { RondaHistorial } from '../../../../core/modelos/dto';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 
 
@@ -18,7 +19,7 @@ import { BotonAccion } from '../../../../shared/componentes/boton-accion/boton-a
   styleUrl: './historial-rondas.scss',
 })
 export class HistorialRondas {
-  rondas = signal<any[]>([]);
+  rondas = signal<RondaHistorial[]>([]);
   cargando = signal(true);
   error = signal('');
 
@@ -30,8 +31,8 @@ export class HistorialRondas {
     this.cargando.set(true);
     this.error.set('');
     this.competencia.historial().subscribe({
-      next: (rondas) => {
-        this.rondas.set(rondas as any[]);
+      next: (rondas: RondaHistorial[]) => {
+        this.rondas.set(rondas);
         this.cargando.set(false);
       },
       error: (e) => {

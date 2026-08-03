@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit, signal, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Competencia } from '../../services/competencia';
+import { EstadoCompetencia } from '../../../../core/modelos/dto';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
@@ -16,7 +17,7 @@ import { Subscription } from 'rxjs';
   styleUrl: './votar.scss',
 })
 export class Votar implements OnInit, OnDestroy {
-  estado = signal<any | null>(null);
+  estado = signal<EstadoCompetencia | null>(null);
   cargando = signal(true);
   enviando = signal(false);
   mensaje = signal('');

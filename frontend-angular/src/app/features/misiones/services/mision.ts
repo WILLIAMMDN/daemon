@@ -33,6 +33,19 @@ export interface DetalleMisionRespuesta {
   entrega: EntregaMision | null;
 }
 
+/** Entrega con datos del alumno y la misión, como la devuelve /misiones/entregas. */
+export interface EntregaRevisable {
+  id: number;
+  alumno: string;
+  nivel: string;
+  mision: string;
+  estado: EstadoEntregaMision;
+  archivo_url?: string | null;
+  calificacion?: number | null;
+  comentario_docente?: string | null;
+  recompensa?: number;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -44,6 +57,6 @@ export class Mision {
   actualizar(id: number, datos: unknown) { return this.api.put(`/misiones/${id}`, datos); }
   eliminar(id: number) { return this.api.delete(`/misiones/${id}`); }
   entregar(id: number, datos: unknown) { return this.api.post<EntregaMision>(`/misiones/${id}/entregar`, datos); }
-  entregas() { return this.api.get('/misiones/entregas'); }
+  entregas() { return this.api.get<EntregaRevisable[]>('/misiones/entregas'); }
   revisar(id: number, datos: unknown) { return this.api.post(`/misiones/entregas/${id}/revisar`, datos); }
 }

@@ -1,6 +1,7 @@
 import { Component, signal , ChangeDetectionStrategy} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CertificadoService } from '../../services/certificado';
+import { CertificadoData } from '../../../../core/modelos/dto';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 
 
@@ -20,7 +21,7 @@ import { DatePipe, UpperCasePipe } from '@angular/common';
   styleUrl: './imprimir-carnet.scss',
 })
 export class ImprimirCarnet {
-  datos = signal<any | null>(null);
+  datos = signal<CertificadoData | null>(null);
   cargando = signal(true);
   error = signal('');
 

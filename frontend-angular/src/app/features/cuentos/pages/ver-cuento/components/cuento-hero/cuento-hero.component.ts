@@ -10,6 +10,7 @@ import { CuentoDetallePayload } from '../../../../models/cuento.models';
   standalone: true,
   imports: [CommonModule, RouterLink, FontAwesomeModule],
   templateUrl: './cuento-hero.component.html',
+  styleUrl: './cuento-hero.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CuentoHeroComponent {

@@ -18,9 +18,9 @@
 .page-kicker { align-items: center; display: inline-flex; gap: .4rem; }
 .hero-copy h1 { color: var(--daemon-ink); font-size: clamp(1.8rem, 4vw, 2.55rem); line-height: 1.05; margin: .35rem 0; }
 .hero-copy p { color: var(--daemon-muted); font-size: .86rem; line-height: 1.55; margin: 0; max-width: 650px; }
-.hero-balance { align-items: flex-end; background: var(--daemon-surface-muted); border: 1px solid #f3dc99; border-radius: 12px; display: grid; min-width: 190px; padding: .85rem 1rem; }
+.hero-balance { align-items: flex-end; background: var(--daemon-surface-muted); border: 1px solid color-mix(in srgb, var(--daemon-accent) 45%, var(--daemon-on-primary)); border-radius: 12px; display: grid; min-width: 190px; padding: .85rem 1rem; }
 .hero-balance > span { color: var(--daemon-warning); font-size: .65rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
-.hero-balance strong { color: #674000; font-size: 1.35rem; margin: .2rem 0; }
+.hero-balance strong { color: color-mix(in srgb, var(--daemon-accent-dark) 60%, var(--daemon-ink)); font-size: 1.35rem; margin: .2rem 0; }
 .hero-balance a { color: var(--daemon-info); font-size: .72rem; font-weight: 700; text-decoration: none; }
 
 .notice { align-items: center; border: 1px solid; border-radius: 10px; display: flex; font-size: .8rem; font-weight: 650; gap: .55rem; min-height: 42px; padding: .65rem .9rem; }
@@ -49,7 +49,7 @@
 .identity-controls label { display: grid; gap: .32rem; }
 .identity-controls label > span { color: var(--daemon-muted); font-size: .63rem; font-weight: 750; letter-spacing: .055em; text-transform: uppercase; }
 .identity-controls input, .identity-controls select { background: var(--daemon-surface-muted); border: 1px solid var(--daemon-border); border-radius: 8px; color: var(--daemon-ink-soft); font-family: Inter, sans-serif; font-size: .78rem; min-height: 40px; min-width: 0; padding: .55rem .65rem; width: 100%; }
-.identity-controls input:focus, .identity-controls select:focus { border-color: var(--daemon-teens); outline: 3px solid rgba(22, 119, 255, .12); }
+.identity-controls input:focus, .identity-controls select:focus { border-color: var(--daemon-teens); box-shadow: 0 0 0 3px rgba(22, 119, 255, .12); outline: none; }
 .input-action { display: grid; grid-template-columns: minmax(0, 1fr) auto; }
 .input-action input { border-radius: 8px 0 0 8px; }
 .input-action button { background: var(--daemon-teens-soft); border: 1px solid var(--daemon-teens-border); border-left: 0; border-radius: 0 8px 8px 0; color: var(--daemon-info); cursor: pointer; font-size: .7rem; font-weight: 750; padding: 0 .65rem; }

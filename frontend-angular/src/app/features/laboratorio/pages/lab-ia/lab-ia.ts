@@ -2,7 +2,7 @@ import { JsonPipe } from '@angular/common';
 import { Component, signal , ChangeDetectionStrategy} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { Chatbot } from '../../../chatbot/services/chatbot';
+import { Chatbot, CerebroIA } from '../../../chatbot/services/chatbot';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { CommonModule } from '@angular/common';
@@ -16,7 +16,7 @@ import { BotonAccion } from '../../../../shared/componentes/boton-accion/boton-a
   styleUrl: './lab-ia.scss',
 })
 export class LabIa {
-  cerebro = signal<any | null>(null);
+  cerebro = signal<CerebroIA | null>(null);
   cargando = signal(true);
   guardando = signal(false);
   mensaje = signal('');
@@ -31,7 +31,7 @@ export class LabIa {
     this.cargando.set(true);
     this.error.set('');
     this.chatbot.cerebro().subscribe({
-      next: (cerebro: any) => {
+      next: (cerebro: CerebroIA) => {
         this.cerebro.set(cerebro);
         this.matrizTexto = JSON.stringify(cerebro?.matriz_neural ?? {}, null, 2);
         this.cargando.set(false);

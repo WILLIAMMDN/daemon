@@ -26,7 +26,7 @@
   background: var(--daemon-on-primary);
   border: 1px solid var(--daemon-border-strong);
   border-radius: 6px;
-  box-shadow: 0 10px 28px #1f2a4414;
+  box-shadow: 0 10px 28px color-mix(in srgb, var(--daemon-ink) 8%, transparent);
   display: grid;
   grid-template-columns: minmax(420px, 1fr) minmax(330px, .78fr);
   grid-template-rows: 5px 1fr;

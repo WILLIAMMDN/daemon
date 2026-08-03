@@ -8,6 +8,7 @@ import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { Docente } from '../../services/docente';
+import { Aula, RespuestaLista } from '../../../../core/modelos/dto';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
 import { BotonAccion } from '../../../../shared/componentes/boton-accion/boton-accion';
@@ -22,7 +23,7 @@ import { OPCIONES_NIVEL_ALUMNO } from '../../../../core/dominio/nivel-alumno';
 })
 export class GestionarAulas {
   readonly nivelesAlumno = OPCIONES_NIVEL_ALUMNO;
-  aulas = signal<any[]>([]);
+  aulas = signal<Aula[]>([]);
   cargando = signal(true);
   guardando = signal(false);
   mensaje = signal('');
@@ -30,7 +31,7 @@ export class GestionarAulas {
   
   modalCrearVisible = signal(false);
   modalEditVisible = signal(false);
-  aulaEditando: any = null;
+  aulaEditando: Aula | null = null;
 
   nueva = {
     nombre: '',
@@ -45,8 +46,8 @@ export class GestionarAulas {
     this.cargando.set(true);
     this.error.set('');
     this.docente.aulas().subscribe({
-      next: (res: any) => {
-        this.aulas.set(res.data || []);
+      next: (res: RespuestaLista<Aula>) => {
+        this.aulas.set(Array.isArray(res) ? res : res.data ?? []);
         this.cargando.set(false);
       },
       error: (e) => {
@@ -83,7 +84,7 @@ export class GestionarAulas {
     });
   }
 
-  abrirEditar(a: any): void {
+  abrirEditar(a: Aula): void {
     this.aulaEditando = { ...a };
     this.modalEditVisible.set(true);
   }

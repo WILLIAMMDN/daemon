@@ -25,27 +25,7 @@ import { HeaderBannerComponent } from '../../../../shared/componentes/header-ban
 import { AlmacenamientoArchivos } from '../../../../core/servicios/almacenamiento-archivos';
 import { Activos } from '../../../../core/servicios/activos';
 import { migrarContenidoLegacy } from '../../utils/cuento-legacy';
-
-/**
- * Forma del payload que se envía al guardar un cuento.
- * Refleja los campos que Firestore persiste por documento.
- */
-export interface CuentoPayload {
-  id?: string | number;
-  titulo?: string | null;
-  descripcion?: string | null;
-  contenido?: string | null;
-  data_1?: string | null;
-  paginas?: Array<Record<string, unknown>>;
-  categoria?: string | null;
-  rango_edad?: string | null;
-  visibilidad?: 'privado' | 'publico';
-  estado?: 'borrador' | 'publicado';
-  portada?: string | null;
-  img_1?: string | null;
-  palabras?: number;
-  tiempo_lectura?: number;
-}
+import { CuentoPayload } from '../../models/cuento.models';
 
 /**
  * Una página del cuento. La ilustración y la respuesta de la IA viven

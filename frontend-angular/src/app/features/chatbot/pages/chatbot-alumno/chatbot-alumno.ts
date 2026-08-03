@@ -20,6 +20,11 @@ interface MensajeChat {
   content: string;
 }
 
+interface MensajeFormateado {
+  role: 'user' | 'ai';
+  text: string;
+}
+
 interface DeepChatRequestBody {
   messages?: Array<{ text?: string }>;
 }
@@ -41,7 +46,7 @@ export class ChatbotAlumno {
   cargando = signal(true);
   limpiando = signal(false);
   error = signal('');
-  mensajesFormateados = signal<any[]>([]);
+  mensajesFormateados = signal<MensajeFormateado[]>([]);
 
   // Binder para el handler de Deep Chat
   requestHandler = this.procesarMensaje.bind(this);
@@ -104,7 +109,7 @@ export class ChatbotAlumno {
         innerContainer: { borderRadius: '1rem', padding: '1rem', fontSize: '1rem', lineHeight: '1.5' }
       },
       user: {
-        bubble: { backgroundColor: 'var(--daemon-info-soft)', color: '#1e3a8a', border: '1px solid var(--daemon-teens-border)' }
+        bubble: { backgroundColor: 'var(--daemon-info-soft)', color: 'var(--daemon-info)', border: '1px solid var(--daemon-teens-border)' }
       },
       ai: {
         bubble: { backgroundColor: 'var(--daemon-surface-muted)', color: 'var(--daemon-ink-soft)', border: '1px solid var(--daemon-border)' }

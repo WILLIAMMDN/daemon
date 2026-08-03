@@ -124,10 +124,10 @@ describe('Recursos', () => {
     const element = fixture.nativeElement as HTMLElement;
 
     const estadoVacio = element.querySelector('.course-empty-state');
-    expect(estadoVacio?.textContent).toContain('Tu aprendizaje está preparándose');
+    expect(estadoVacio?.textContent).toContain('Tu ruta está preparándose');
     expect(estadoVacio?.querySelector<HTMLImageElement>('.empty-state__art img')?.getAttribute('src'))
       .toBe('/img/empty/empty-robot.webp');
-    expect(estadoVacio?.querySelector('.ant-btn-primary')?.textContent).toContain('Actualizar cursos');
+    expect(estadoVacio?.querySelector('.ant-btn-primary')?.textContent).toContain('Explorar catálogo');
     expect(element.querySelector('.course-summary-card')?.textContent).toContain('Aún no tienes cursos asignados');
   });
 

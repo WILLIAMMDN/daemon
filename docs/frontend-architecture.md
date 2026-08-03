@@ -35,8 +35,23 @@ dependencia incorrecta llegue al pipeline.
 | Capa | Contiene | No contiene |
 | --- | --- | --- |
 | `core/` | servicios singleton, sesión, autenticación, guards, interceptores, dominio compartido y shell de la aplicación | páginas de una feature o reglas visuales genéricas |
+| `ui/` | contenedores y encabezados de página reutilizables (`page-container`, `page-header`) que unifican el layout de módulos | estado de negocio, acceso a API o sesión |
 | `features/` | páginas, componentes, modelos y estado de un caso de uso | infraestructura global o componentes de otras features |
 | `shared/` | componentes, directivas y utilidades visuales reutilizables y sin estado de negocio | acceso a API, sesión, roles o navegación específica de un portal |
+
+### Capa `ui/`
+
+`src/app/ui/` aloja piezas de layout sin lógica de negocio que cualquier módulo
+puede usar (depende solo de Angular, tokens y Tailwind):
+
+- `ui/layouts/page-container.ts` — selector `daemon-page-container`: contenedor
+  con ancho máximo, padding responsive y transición de layout.
+- `ui/layouts/page-header.ts` — selector `daemon-page-header`: encabezado de
+  página con kicker, título y descripción, alineado al sistema de tokens
+  `--daemon-*` (sin colores hardcodeados).
+
+La capa `ui/` está en el mismo lado de la regla que `shared`: no importa `core`
+ni `features`. Sus estilos usan exclusivamente tokens del sistema de diseño.
 
 ## Ubicaciones vigentes
 
@@ -45,7 +60,9 @@ src/app/core/componentes/email-verification-banner/
 src/app/core/layouts/sidebar-portal/
 src/app/core/layouts/portal-sidebar.config.ts
 src/app/core/dominio/
+src/app/core/modelos/
 src/app/core/servicios/
+src/app/ui/layouts/
 src/app/features/<contexto>/pages/
 src/app/features/<contexto>/componentes/
 src/app/shared/componentes/
@@ -61,6 +78,11 @@ permanecen en `shared`.
 
 - Un modelo utilizado solo por una feature se coloca junto a esa feature.
 - Un tipo de dominio compartido por varios portales va en `core/dominio`.
+- Los DTOs que describen las respuestas del backend (tienda, docentes,
+  competencia, certificados, etc.) viven en `core/modelos/dto.ts`. Los
+  servicios de `features/` los importan para tipar sus métodos, y las páginas
+  tipan sus señales con ellos. No se redefinen los mismos campos en cada
+  página; si un endpoint cambia, el DTO es el único lugar a editar.
 - La configuración de arranque sigue en `app.config.ts`; las variables por
   entorno siguen en `src/environments`.
 - Una directiva compartida se crea cuando resuelve una conducta DOM repetida.

@@ -222,7 +222,7 @@ nz-empty {
 
     &:hover, &:focus {
       background-color: var(--daemon-teens-soft);
-      border-color: #b08ee6;
+      border-color: var(--daemon-primary-soft);
       color: var(--daemon-primary);
     }
   }

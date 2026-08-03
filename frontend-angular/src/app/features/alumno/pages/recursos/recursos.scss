@@ -148,23 +148,23 @@
 .course-load-error[data-problem='offline'],
 .course-load-error[data-problem='timeout'] {
   background: var(--daemon-surface-muted);
-  border-color: #f7d58a;
-  color: #8a4b08;
+  border-color: color-mix(in srgb, var(--daemon-accent) 45%, var(--daemon-on-primary));
+  color: color-mix(in srgb, var(--daemon-accent-dark) 60%, var(--daemon-ink));
 }
 
 .course-alert[data-problem='offline'] p,
 .course-alert[data-problem='timeout'] p,
 .course-load-error[data-problem='offline'] p,
 .course-load-error[data-problem='timeout'] p {
-  color: #9a5a13;
+  color: color-mix(in srgb, var(--daemon-accent-dark) 60%, var(--daemon-ink));
 }
 
 .course-success {
   align-items: center;
   background: var(--daemon-canvas);
-  border: 1px solid #a7e2bf;
+  border: 1px solid color-mix(in srgb, var(--daemon-success) 40%, var(--daemon-on-primary));
   border-radius: 14px;
-  color: #176b3a;
+  color: var(--daemon-success);
   display: flex;
   font-size: .84rem;
   font-weight: 700;
@@ -327,7 +327,7 @@
 }
 
 .course-search input::placeholder {
-  color: #8a96a8;
+  color: var(--daemon-muted);
 }
 
 .course-search input::-webkit-search-cancel-button {
@@ -365,9 +365,9 @@
 .course-stale {
   align-items: center;
   background: var(--daemon-tutor-soft);
-  border: 1px solid #f2d38c;
+  border: 1px solid color-mix(in srgb, var(--daemon-accent) 45%, var(--daemon-on-primary));
   border-radius: 999px;
-  color: #83510a;
+  color: color-mix(in srgb, var(--daemon-accent-dark) 60%, var(--daemon-ink));
   display: inline-flex;
   flex: 0 0 auto;
   font-size: .7rem;
@@ -478,7 +478,7 @@
 .course-status[data-status='inProgress'] {
   background: var(--daemon-teens-soft);
   border-color: var(--daemon-teens-border);
-  color: #1759a6;
+  color: var(--daemon-info);
 }
 
 .course-status[data-status='completed'] {
@@ -956,7 +956,7 @@
 }
 
 .course-recommendation-card a:hover {
-  color: #063f82;
+  color: var(--daemon-info);
   text-decoration: underline;
 }
 

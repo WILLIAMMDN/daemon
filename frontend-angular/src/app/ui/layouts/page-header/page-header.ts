@@ -6,12 +6,12 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <header class="py-6 mb-6 md:flex md:items-center md:justify-between border-b border-[var(--ds-color-border)]">
+    <header class="py-6 mb-6 md:flex md:items-center md:justify-between border-b border-border">
       <div class="min-w-0 flex-1">
-        <h2 class="text-2xl font-bold leading-7 text-[var(--ds-color-text-primary)] sm:truncate sm:text-3xl sm:tracking-tight">
+        <h2 class="text-2xl font-bold leading-7 text-ink sm:truncate sm:text-3xl sm:tracking-tight">
           {{ title }}
         </h2>
-        <p *ngIf="description" class="mt-1 text-sm text-[var(--ds-color-text-secondary)]">
+        <p *ngIf="description" class="mt-1 text-sm text-muted">
           {{ description }}
         </p>
       </div>

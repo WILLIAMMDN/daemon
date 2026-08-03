@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit, signal, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { Competencia } from '../../services/competencia';
+import { EstadoCompetencia } from '../../../../core/modelos/dto';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
@@ -15,7 +16,7 @@ import { CommonModule } from '@angular/common';
   styleUrl: './tv.scss',
 })
 export class Tv implements OnInit, OnDestroy {
-  estado = signal<any | null>(null);
+  estado = signal<EstadoCompetencia | null>(null);
   error = signal('');
   private subscripcionPusher?: Subscription;
 

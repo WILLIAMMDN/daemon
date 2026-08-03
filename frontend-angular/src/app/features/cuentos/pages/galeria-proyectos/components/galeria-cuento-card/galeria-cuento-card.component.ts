@@ -10,10 +10,8 @@ import { CuentoVista } from '../../../../models/cuento.models';
   standalone: true,
   imports: [CommonModule, RouterLink, FontAwesomeModule],
   templateUrl: './galeria-cuento-card.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  host: {
-    'style': 'display: contents'
-  }
+  styleUrl: './galeria-cuento-card.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GaleriaCuentoCardComponent {
   faBookOpen = faBookOpen;

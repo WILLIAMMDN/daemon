@@ -8,7 +8,7 @@ import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { Evaluacion } from '../../services/evaluacion';
+import { Evaluacion, EvaluacionDocente, PreguntaEvaluacionDocente } from '../../services/evaluacion';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
 import { BotonAccion } from '../../../../shared/componentes/boton-accion/boton-accion';
@@ -35,7 +35,7 @@ import { OPCIONES_NIVEL_ALUMNO } from '../../../../core/dominio/nivel-alumno';
 })
 export class GestionarEvaluacion {
   readonly nivelesAlumno = OPCIONES_NIVEL_ALUMNO;
-  evaluaciones = signal<any[]>([]);
+  evaluaciones = signal<EvaluacionDocente[]>([]);
   cargando = signal(true);
   guardando = signal(false);
   mensaje = signal('');
@@ -47,7 +47,7 @@ export class GestionarEvaluacion {
   modalCrearVisible = signal(false);
   modalAgregarPreguntaVisible = signal(false);
   modalEditVisible = signal(false);
-  evaluacionEditando: any = null;
+  evaluacionEditando: EvaluacionDocente | null = null;
 
   constructor(private evaluacion: Evaluacion, private message: NzMessageService) {
     this.cargar();
@@ -57,8 +57,8 @@ export class GestionarEvaluacion {
     this.cargando.set(true);
     this.error.set('');
     this.evaluacion.listarDocente().subscribe({
-      next: (evaluaciones) => {
-        this.evaluaciones.set(evaluaciones as any[]);
+      next: (evaluaciones: EvaluacionDocente[]) => {
+        this.evaluaciones.set(evaluaciones);
         this.cargando.set(false);
       },
       error: (e) => {
@@ -114,7 +114,7 @@ export class GestionarEvaluacion {
       opciones: this.pregunta.opciones.split(',').map((opcion) => opcion.trim()).filter(Boolean),
       respuesta_correcta: this.pregunta.respuesta_correcta,
     };
-    const preguntas = [...(examen.preguntas ?? []).map((item: any) => ({
+    const preguntas = [...(examen.preguntas ?? []).map((item: PreguntaEvaluacionDocente) => ({
       enunciado: item.enunciado,
       tipo: item.tipo,
       opciones: item.opciones ?? [],
@@ -137,7 +137,7 @@ export class GestionarEvaluacion {
     });
   }
 
-  abrirEditar(ev: any): void {
+  abrirEditar(ev: EvaluacionDocente): void {
     this.evaluacionEditando = { ...ev };
     this.modalEditVisible.set(true);
   }
@@ -176,7 +176,7 @@ export class GestionarEvaluacion {
     });
   }
 
-  alternarPublicacion(ev: any): void {
+  alternarPublicacion(ev: EvaluacionDocente): void {
     const solicitud = ev.estado === 'activo' ? this.evaluacion.despublicar(ev.id) : this.evaluacion.publicar(ev.id);
     solicitud.subscribe({
       next: () => {

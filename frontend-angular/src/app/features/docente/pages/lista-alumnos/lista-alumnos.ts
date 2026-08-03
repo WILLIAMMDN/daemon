@@ -13,22 +13,14 @@ import { BotonAccion } from '../../../../shared/componentes/boton-accion/boton-a
 import { MonedaDaemon } from '../../../../shared/componentes/moneda-daemon/moneda-daemon';
 import { OPCIONES_NIVEL_ALUMNO } from '../../../../core/dominio/nivel-alumno';
 import { Docente } from '../../services/docente';
-
-interface AulaResumen {
-  id: number;
-  nombre: string;
-  nivel?: string | null;
-  codigo?: string | null;
-  alumnos_count?: number;
-  docentes_count?: number;
-}
-
-interface AlcanceAcademico {
-  tipo: 'global' | 'aula' | 'sin_aula' | string;
-  titulo: string;
-  descripcion: string;
-  aula?: AulaResumen | null;
-}
+import {
+  AlumnoDocente,
+  Aula,
+  DocenteUsuario,
+  AlcanceAcademico,
+  RespuestaLista,
+  RespuestaColeccion,
+} from '../../../../core/modelos/dto';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -39,9 +31,9 @@ interface AlcanceAcademico {
 })
 export class ListaAlumnos {
   readonly nivelesAlumno = OPCIONES_NIVEL_ALUMNO;
-  alumnos = signal<any[]>([]);
-  docentes = signal<any[]>([]);
-  aulas = signal<AulaResumen[]>([]);
+  alumnos = signal<AlumnoDocente[]>([]);
+  docentes = signal<DocenteUsuario[]>([]);
+  aulas = signal<Aula[]>([]);
   alcance = signal<AlcanceAcademico | null>(null);
   cargando = signal(true);
   guardando = signal(false);
@@ -63,9 +55,9 @@ export class ListaAlumnos {
     this.error.set('');
 
     this.docente.alumnos().subscribe({
-      next: (respuesta: any) => {
+      next: (respuesta: RespuestaLista<AlumnoDocente>) => {
         this.alumnos.set(this.extraerLista(respuesta, 'alumnos'));
-        if (respuesta?.alcance) {
+        if (!Array.isArray(respuesta) && respuesta.alcance) {
           this.alcance.set(respuesta.alcance);
         }
 
@@ -83,9 +75,9 @@ export class ListaAlumnos {
 
   cargarAulas(): void {
     this.docente.aulas().subscribe({
-      next: (respuesta: any) => {
+      next: (respuesta: RespuestaLista<Aula>) => {
         this.aulas.set(this.extraerLista(respuesta, 'aulas'));
-        if (respuesta?.alcance) {
+        if (!Array.isArray(respuesta) && respuesta.alcance) {
           this.alcance.set(respuesta.alcance);
         }
       },
@@ -95,7 +87,7 @@ export class ListaAlumnos {
 
   cargarDocentes(): void {
     this.docente.docentes().subscribe({
-      next: (respuesta: any) => this.docentes.set(this.extraerLista(respuesta, 'docentes')),
+      next: (respuesta: RespuestaLista<DocenteUsuario>) => this.docentes.set(this.extraerLista(respuesta, 'docentes')),
       error: () => this.docentes.set([]),
     });
   }
@@ -164,7 +156,7 @@ export class ListaAlumnos {
     });
   }
 
-  asignarAula(usuario: any, idAula: string | number | null): void {
+  asignarAula(usuario: AlumnoDocente | DocenteUsuario, idAula: string | number | null): void {
     const valor = idAula ? Number(idAula) : null;
     this.asignando.set(usuario.id);
     this.mensaje.set('');
@@ -220,14 +212,15 @@ export class ListaAlumnos {
     return this.alcance()?.tipo === 'global';
   }
 
-  aulaNombre(usuario: any): string {
+  aulaNombre(usuario: AlumnoDocente | DocenteUsuario): string {
     return usuario.aula?.nombre || 'Sin aula';
   }
 
-  private extraerLista(respuesta: any, campo: string): any[] {
+  private extraerLista<T>(respuesta: RespuestaLista<T>, campo: keyof RespuestaColeccion<T>): T[] {
     if (Array.isArray(respuesta)) return respuesta;
     if (respuesta && Array.isArray(respuesta.data)) return respuesta.data;
-    if (respuesta && Array.isArray(respuesta[campo])) return respuesta[campo];
+    const lista = respuesta ? respuesta[campo] : undefined;
+    if (Array.isArray(lista)) return lista;
     return [];
   }
 }

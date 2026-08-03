@@ -48,3 +48,8 @@
     transform: scaleX(.82);
   }
 }
+
+/* Texto del spinner global: sobre el fondo oscuro de ngx-spinner. */
+.spinner-text {
+  color: var(--daemon-on-primary);
+}

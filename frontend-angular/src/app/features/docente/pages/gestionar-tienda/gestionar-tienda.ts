@@ -17,6 +17,16 @@ import { MonedaDaemon } from '../../../../shared/componentes/moneda-daemon/moned
 import { CATEGORIAS_PREMIO } from '../../../../core/dominio/nivel-alumno';
 import { Activos } from '../../../../core/servicios/activos';
 import { Sesion } from '../../../../core/servicios/sesion';
+import {
+  Canje,
+  ConfiguracionMascota,
+  CosmeticoPremio,
+  EspecieMascota,
+  PremioForm,
+  PremioTienda,
+  RespuestaAdministracionTienda,
+  SlotMascota,
+} from '../../../../core/modelos/dto';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -27,9 +37,9 @@ import { Sesion } from '../../../../core/servicios/sesion';
 })
 export class GestionarTienda {
   readonly categoriasPremio = CATEGORIAS_PREMIO;
-  premios = signal<any[]>([]);
-  canjes = signal<any[]>([]);
-  configuracionMascota = signal<any>({ especies: [], slots: [], rarezas: [] });
+  premios = signal<PremioTienda[]>([]);
+  canjes = signal<Canje[]>([]);
+  configuracionMascota = signal<ConfiguracionMascota>({ especies: [], slots: [], rarezas: [] });
   cargando = signal(true);
   guardando = signal(false);
   mensaje = signal('');
@@ -38,11 +48,16 @@ export class GestionarTienda {
   modalCrearVisible = signal(false);
   modalEditVisible = signal(false);
   modalEspecieVisible = signal(false);
-  premioEditando: any = null;
-  especieEditando: any = null;
+  /**
+   * Objeto en edición: `abrirEditar` garantiza que el cosmético siempre
+   * exista (usa `cosmeticoVacio()` como fallback), por eso el template
+   * puede acceder a `premioEditando.cosmetico.*` sin guard adicional.
+   */
+  premioEditando: (PremioTienda & { cosmetico: CosmeticoPremio }) | null = null;
+  especieEditando: EspecieMascota | null = null;
 
-  nuevo: any = this.premioVacio();
-  nuevaEspecie: any = this.especieVacia();
+  nuevo: PremioForm = this.premioVacio();
+  nuevaEspecie: EspecieMascota = this.especieVacia();
   readonly esAdmin = computed(() => this.sesion.usuario()?.rol === 'admin');
 
   constructor(private tienda: Tienda, private message: NzMessageService, private sesion: Sesion, private activos: Activos) {
@@ -53,7 +68,7 @@ export class GestionarTienda {
     this.cargando.set(true);
     this.error.set('');
     this.tienda.administrar().subscribe({
-      next: (datos: any) => {
+      next: (datos: RespuestaAdministracionTienda) => {
         this.premios.set(datos.premios ?? []);
         this.canjes.set(datos.canjes ?? []);
         this.configuracionMascota.set(datos.mascota ?? { especies: [], slots: [], rarezas: [] });
@@ -68,7 +83,7 @@ export class GestionarTienda {
 
   abrirCrear(): void {
     this.nuevo = this.premioVacio();
-    const primeraEspecie = this.configuracionMascota().especies?.find((especie: any) => especie.activo)?.id;
+    const primeraEspecie = this.configuracionMascota().especies?.find((especie: EspecieMascota) => especie.activo)?.id;
     if (primeraEspecie) this.nuevo.cosmetico.especies = [primeraEspecie];
     this.modalCrearVisible.set(true);
   }
@@ -81,8 +96,7 @@ export class GestionarTienda {
     this.guardando.set(true);
     this.mensaje.set('');
     this.error.set('');
-    const datos = { ...this.nuevo };
-    if (datos.tipo_entrega !== 'cosmetico') delete datos.cosmetico;
+    const datos: PremioForm | Omit<PremioForm, 'cosmetico'> = this.payloadPremio(this.nuevo);
     this.tienda.crearPremio(datos).subscribe({
       next: () => {
         this.message.success('Premio creado exitosamente.');
@@ -112,7 +126,7 @@ export class GestionarTienda {
     });
   }
 
-  abrirEditar(p: any): void {
+  abrirEditar(p: PremioTienda): void {
     this.premioEditando = {
       ...p,
       cosmetico: p.cosmetico ? { ...p.cosmetico, especies: [...(p.cosmetico.especies ?? [])] } : this.cosmeticoVacio(),
@@ -128,8 +142,7 @@ export class GestionarTienda {
   guardarEdicion(): void {
     if (!this.premioEditando) return;
     this.guardando.set(true);
-    const datos = { ...this.premioEditando };
-    if (datos.tipo_entrega !== 'cosmetico') delete datos.cosmetico;
+    const datos: PremioForm | Omit<PremioForm, 'cosmetico'> = this.payloadPremio(this.premioEditando);
     this.tienda.actualizarPremio(this.premioEditando.id, datos).subscribe({
       next: () => {
         this.message.success('Premio actualizado correctamente.');
@@ -156,7 +169,7 @@ export class GestionarTienda {
     });
   }
 
-  abrirEspecie(especie?: any): void {
+  abrirEspecie(especie?: EspecieMascota): void {
     this.especieEditando = especie ?? null;
     this.nuevaEspecie = especie ? { ...especie } : this.especieVacia();
     this.modalEspecieVisible.set(true);
@@ -169,8 +182,9 @@ export class GestionarTienda {
 
   guardarEspecie(): void {
     this.guardando.set(true);
-    const peticion = this.especieEditando
-      ? this.tienda.actualizarEspecie(this.especieEditando.id, this.nuevaEspecie)
+    const editando = this.especieEditando;
+    const peticion = editando && editando.id != null
+      ? this.tienda.actualizarEspecie(editando.id, this.nuevaEspecie)
       : this.tienda.crearEspecie(this.nuevaEspecie);
     peticion.subscribe({
       next: () => {
@@ -190,12 +204,27 @@ export class GestionarTienda {
     return this.activos.url(ruta);
   }
 
-  ordenSugerido(codigo: string, destino: any): void {
-    const slot = this.configuracionMascota().slots?.find((item: any) => item.codigo === codigo);
+  ordenSugerido(codigo: string, destino: CosmeticoPremio): void {
+    const slot = this.configuracionMascota().slots?.find((item: SlotMascota) => item.codigo === codigo);
     if (slot) destino.orden_capa = slot.orden_sugerido;
   }
 
-  private premioVacio(): any {
+  /**
+   * Envía el cosmético solo cuando el premio es de ese tipo. Evita que el
+   * backend cree registros huérfanos para premios físicos o digitales.
+   */
+  private payloadPremio(form: PremioForm | PremioTienda): PremioForm | Omit<PremioForm, 'cosmetico'> {
+    if (form.tipo_entrega !== 'cosmetico') {
+      const { cosmetico: _omitido, ...base } = form;
+      return base;
+    }
+    // PremioTienda es estructuralmente compatible con Omit<PremioForm,
+    // 'cosmetico'> + cosmetico; el payload conserva id/ya_posee que el
+    // backend ignora al crear/editar.
+    return form as PremioForm;
+  }
+
+  private premioVacio(): PremioForm {
     return {
       nombre: '',
       descripcion: '',
@@ -208,7 +237,7 @@ export class GestionarTienda {
     };
   }
 
-  private cosmeticoVacio(): any {
+  private cosmeticoVacio(): CosmeticoPremio {
     return {
       codigo: '',
       slot: 'cabeza',
@@ -221,7 +250,7 @@ export class GestionarTienda {
     };
   }
 
-  private especieVacia(): any {
+  private especieVacia(): EspecieMascota {
     return {
       codigo: '',
       nombre: '',

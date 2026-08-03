@@ -3,6 +3,8 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
 import { Cuento } from '../../services/cuento';
+import { CuentoComentario, CuentoDetallePayload } from '../../models/cuento.models';
+import { ChatbotRespuesta } from '../../../chatbot/services/chatbot';
 import { Sesion } from '../../../../core/servicios/sesion';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
@@ -25,8 +27,8 @@ import { CuentoComentariosComponent } from './components/cuento-comentarios/cuen
   styleUrl: './ver-cuento.scss',
 })
 export class VerCuento implements OnInit {
-  datos = signal<any | null>(null);
-  comentarios = signal<any[]>([]);
+  datos = signal<CuentoDetallePayload | null>(null);
+  comentarios = signal<CuentoComentario[]>([]);
   cargando = signal(true);
   error = signal('');
   id: string;
@@ -124,8 +126,8 @@ export class VerCuento implements OnInit {
     const prompt = `Dame un tip o frase motivadora muy corta (1 oración, máximo 15 palabras) dirigida al lector de un cuento llamado "${tituloReal}", para animarlo a disfrutar la lectura.`;
     
     this.chatbot.enviar(prompt).subscribe({
-      next: (res: any) => {
-        const mensaje = res?.respuesta || res?.content || res?.mensaje || res;
+      next: (res: ChatbotRespuesta) => {
+        const mensaje = res?.respuesta || res?.content || res?.mensaje || '';
         this.tipAsistente.set(mensaje);
       },
       error: () => this.tipAsistente.set('¡Fíjate en los detalles de la historia! ¿Qué te hacen sentir?')

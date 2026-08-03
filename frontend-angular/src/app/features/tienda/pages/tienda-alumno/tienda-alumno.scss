@@ -22,11 +22,11 @@
 .refresh-button { align-items: center; background: var(--daemon-on-primary); border: 1px solid var(--daemon-teens-border); border-radius: 8px; color: var(--daemon-info); display: inline-flex; font-weight: 600; gap: .45rem; }
 .refresh-button:hover { background: var(--daemon-surface-muted); border-color: var(--daemon-kids-border); color: var(--daemon-info); }
 .wardrobe-button { align-items: center; background: var(--daemon-on-primary); border: 1px solid var(--daemon-teens-border); border-radius: 8px; color: var(--daemon-info); display: inline-flex; font-weight: 650; gap: .45rem; }
-.balance-vault { background: var(--daemon-tutor-soft); border: 1px solid #f2d989; border-radius: 12px; display: grid; padding: 1.25rem; }
+.balance-vault { background: var(--daemon-tutor-soft); border: 1px solid color-mix(in srgb, var(--daemon-accent) 45%, var(--daemon-on-primary)); border-radius: 12px; display: grid; padding: 1.25rem; }
 .balance-vault > span { color: var(--daemon-warning); font-size: .67rem; font-weight: 700; letter-spacing: .075em; text-transform: uppercase; }
 .balance-vault > div { align-items: center; display: flex; gap: .7rem; margin: .7rem 0; }
-.balance-vault strong { color: #6e4500; font-family: Inter, sans-serif; font-size: clamp(2.4rem, 5vw, 3.6rem); font-weight: 700; line-height: 1; }
-.balance-vault small { align-items: center; color: #8a6a25; display: flex; font-size: .72rem; font-weight: 600; gap: .4rem; }
+.balance-vault strong { color: color-mix(in srgb, var(--daemon-accent-dark) 60%, var(--daemon-ink)); font-family: Inter, sans-serif; font-size: clamp(2.4rem, 5vw, 3.6rem); font-weight: 700; line-height: 1; }
+.balance-vault small { align-items: center; color: color-mix(in srgb, var(--daemon-accent-dark) 60%, var(--daemon-ink)); display: flex; font-size: .72rem; font-weight: 600; gap: .4rem; }
 
 .feedback { align-items: center; border: 1px solid; border-radius: 10px; display: flex; font-size: .82rem; font-weight: 600; gap: .6rem; padding: .85rem 1rem; }
 .feedback--success { background: var(--daemon-success-soft); border-color: var(--daemon-border); color: var(--daemon-success); }

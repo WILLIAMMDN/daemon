@@ -1,5 +1,6 @@
 import { Component, signal , ChangeDetectionStrategy} from '@angular/core';
 import { Tienda } from '../../services/tienda';
+import { Canje } from '../../../../core/modelos/dto';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
@@ -19,7 +20,7 @@ import { UpperCasePipe } from '@angular/common';
   styleUrl: './mis-canjes.scss',
 })
 export class MisCanjes {
-  canjes = signal<any[]>([]);
+  canjes = signal<Canje[]>([]);
   cargando = signal(true);
   error = signal('');
 
@@ -31,8 +32,8 @@ export class MisCanjes {
     this.cargando.set(true);
     this.error.set('');
     this.tienda.canjes().subscribe({
-      next: (canjes) => {
-        this.canjes.set(canjes as any[]);
+      next: (canjes: Canje[]) => {
+        this.canjes.set(canjes);
         this.cargando.set(false);
       },
       error: (e) => {

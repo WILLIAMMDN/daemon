@@ -37,6 +37,24 @@ export interface ResultadoEvaluacion {
   alumno?: string;
 }
 
+/** Evaluación en la gestión docente (incluye el banco de preguntas). */
+export interface EvaluacionDocente {
+  id: number;
+  titulo: string;
+  nivel: string;
+  estado: string;
+  fecha_creacion?: string | null;
+  preguntas?: PreguntaEvaluacionDocente[];
+}
+
+export interface PreguntaEvaluacionDocente {
+  id?: number;
+  enunciado: string;
+  tipo: string;
+  opciones?: string[] | null;
+  respuesta_correcta?: string | null;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -45,7 +63,7 @@ export class Evaluacion {
   activas() { return this.api.get<EvaluacionActiva[]>('/evaluaciones/activas'); }
   responder(id: number, respuestas: Record<string, string>) { return this.api.post<ResultadoRespuestaEvaluacion>(`/evaluaciones/${id}/responder`, { respuestas }); }
   resultados() { return this.api.get<ResultadoEvaluacion[]>('/evaluaciones/resultados'); }
-  listarDocente() { return this.api.get('/evaluaciones'); }
+  listarDocente() { return this.api.get<EvaluacionDocente[]>('/evaluaciones'); }
   crear(datos: unknown) { return this.api.post('/evaluaciones', datos); }
   actualizar(id: number, datos: unknown) { return this.api.put(`/evaluaciones/${id}`, datos); }
   eliminar(id: number) { return this.api.delete(`/evaluaciones/${id}`); }

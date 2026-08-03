@@ -92,7 +92,7 @@ export class GestionarCurriculo {
     this.guardando.set(true); this.error.set('');
     peticion.pipe(finalize(() => this.guardando.set(false))).subscribe({
       next: () => { this.mensaje.set(mensaje); this.cerrar(); this.reiniciarFormularios(); this.cargar(); },
-      error: (error: any) => this.error.set(error?.error?.message ?? 'No se pudo guardar el cambio.'),
+      error: (error: { error?: { message?: string } | null }) => this.error.set(error?.error?.message ?? 'No se pudo guardar el cambio.'),
     });
   }
 

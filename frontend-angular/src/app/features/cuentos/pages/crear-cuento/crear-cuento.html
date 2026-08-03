@@ -52,7 +52,7 @@
          HERO BANNER (carga / vista previa / galería)
          ───────────────────────────────────────────────────── -->
     <div class="crear-hero">
-      <div class="crear-hero__bg" style="background-image: url('/img/headers/bg-cuento-banner.png');"></div>
+      <div class="crear-hero__bg"></div>
       <div class="crear-hero__overlay"></div>
 
       <div class="crear-hero__content">
@@ -195,10 +195,13 @@
           </div>
         </div>
 
-        <!-- ───── EDITOR (Quill) + ILUSTRACIÓN DE PÁGINA ───── -->
+        <!-- ───── EDITOR (Quill) + ILUSTRACIÓN DE PÁGINA ─────
+             Layout 2 columnas en desktop (grid) y stack vertical en móvil/tablet.
+             Cada panel es una card independiente: nada de overlap ni curvas raras. -->
         <div class="crear-pagina-editor">
-          <div class="quill-wrapper" [style.background-color]="paginaActiva()?.colorFondo || 'var(--daemon-on-primary)'">
 
+          <!-- ─── COLUMNA IZQUIERDA: EDITOR DE TEXTO ─── -->
+          <div class="quill-wrapper" [style.background-color]="paginaActiva()?.colorFondo || 'var(--daemon-on-primary)'">
             <quill-editor
               class="custom-quill-page"
               [ngModel]="contenido()"
@@ -208,11 +211,23 @@
               theme="snow"
               placeholder="Escribe tu historia aquí..."
             ></quill-editor>
+          </div>
 
-            <!-- Panel de ilustración de la PÁGINA ACTIVA -->
-            <div class="pagina-illust">
-              <div class="pagina-illust__inner">
+          <!-- ─── COLUMNA DERECHA: ILUSTRACIÓN DE PÁGINA ─── -->
+          <div class="pagina-illust">
+            <div class="pagina-illust__inner">
 
+              <!-- Cabecera fija del panel (estructura profesional) -->
+              <header class="pagina-illust__header">
+                <span class="pagina-illust__header-title">
+                  <fa-icon [icon]="faImage"></fa-icon>
+                  Ilustración de página
+                </span>
+                <span class="pagina-illust__header-meta">PNG / JPG / WEBP</span>
+              </header>
+
+              <!-- Cuerpo del panel: imagen o placeholder -->
+              <div class="pagina-illust__body">
                 @if (ilustracionDisplayUrl(); as illust) {
                   <img [src]="illust" class="pagina-illust__img" alt="Ilustración de esta página" />
 
@@ -259,14 +274,14 @@
                     <div class="pagina-illust__icon">
                       <fa-icon [icon]="faImage" class="text-2xl"></fa-icon>
                     </div>
-                    <span class="pagina-illust__hint-title">Ilustración de esta página</span>
+                    <span class="pagina-illust__hint-title">Sube una imagen</span>
                     <span class="pagina-illust__hint-sub">
-                      Sube una imagen y ocupará todo este panel. Cada página puede tener la suya.
+                      Esta imagen acompañará el texto de la página actual.
                     </span>
                   </label>
                 }
-
               </div>
+
             </div>
           </div>
         </div>

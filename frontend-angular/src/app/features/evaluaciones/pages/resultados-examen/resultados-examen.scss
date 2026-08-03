@@ -98,7 +98,7 @@
   width: 42px;
 }
 
-.results-summary article:nth-child(2) > span { background: var(--daemon-tutor-soft); color: #b86e00; }
+.results-summary article:nth-child(2) > span { background: var(--daemon-tutor-soft); color: color-mix(in srgb, var(--daemon-accent-dark) 60%, var(--daemon-ink)); }
 .results-summary article:nth-child(3) > span { background: var(--daemon-success-soft); color: var(--daemon-success); }
 .results-summary div { display: grid; min-width: 0; }
 .results-summary small { color: var(--daemon-muted); font-size: .66rem; font-weight: 700; }
