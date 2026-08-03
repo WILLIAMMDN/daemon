@@ -31,17 +31,17 @@
                   <span class="story-card__tag" [ngClass]="cuento.tagClase">{{ cuento.tagNombre }}</span>
                 </div>
               </div>
-              <footer style="display: flex; gap: 8px; justify-content: space-between; align-items: center;">
-                <a [routerLink]="['/alumno/proyectos/cuentos', cuento.id]" class="btn-read" style="flex: 1; justify-content: center; text-decoration: none;">
+              <footer class="story-card__footer">
+                <a [routerLink]="['/alumno/proyectos/cuentos', cuento.id]" class="btn-read story-card__read">
                   <fa-icon [icon]="faBookOpen" aria-hidden="true"></fa-icon>
                   Leer
                 </a>
                 @if (cuento.esMio) {
-                  <div style="display: flex; gap: 4px;">
-                    <a [routerLink]="['/alumno/proyectos/cuentos/crear']" [queryParams]="{ id: cuento.id }" class="btn-read" style="background-color: var(--daemon-surface-muted); color: var(--daemon-ink-soft); padding: 0 12px; min-width: 40px; justify-content: center;" title="Editar">
+                  <div class="story-card__actions">
+                    <a [routerLink]="['/alumno/proyectos/cuentos/crear']" [queryParams]="{ id: cuento.id }" class="btn-read story-card__icon-action story-card__icon-action--edit" title="Editar">
                       <fa-icon [icon]="faPen" aria-hidden="true"></fa-icon>
                     </a>
-                    <button type="button" class="btn-read" style="background-color: var(--daemon-danger-soft); color: var(--daemon-danger); padding: 0 12px; border: none; min-width: 40px; justify-content: center;" title="Borrar" (click)="onEliminar.emit(cuento.id)">
+                    <button type="button" class="btn-read story-card__icon-action story-card__icon-action--delete" title="Borrar" (click)="onEliminar.emit(cuento.id)">
                       <fa-icon [icon]="faTrash" aria-hidden="true"></fa-icon>
                     </button>
                   </div>
