@@ -11,6 +11,19 @@ import { Sesion } from '../../../../core/servicios/sesion';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 import { MediaUploader } from '../../../../shared/componentes/media-uploader/media-uploader';
 import { Alumno } from '../../services/alumno';
+import { UsuarioSesion } from '../../../../core/servicios/sesion';
+
+interface PerfilEdicionData {
+  usuario?: {
+    nombre_completo?: string | null;
+    email?: string | null;
+    biografia?: string | null;
+    genero?: string | null;
+    avatar?: string | null;
+    fondo?: string | null;
+    heroe?: string | null;
+  } | null;
+}
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -58,8 +71,8 @@ export class EditarPerfil {
   cargar(): void {
     this.cargando.set(true);
     this.error.set('');
-    this.alumno.perfil().subscribe({
-      next: (datos: any) => {
+    this.alumno.perfil<PerfilEdicionData>().subscribe({
+      next: (datos: PerfilEdicionData) => {
         const usuario = datos.usuario ?? {};
         this.formulario = {
           nombre_completo: usuario.nombre_completo ?? '',
@@ -95,7 +108,7 @@ export class EditarPerfil {
     if (this.archivoHeroe) datos.append('heroe', this.archivoHeroe);
 
     this.alumno.actualizarPerfil(datos).subscribe({
-      next: (usuario) => {
+      next: (usuario: UsuarioSesion) => {
         this.sesion.actualizarUsuario(usuario);
         this.avatarActual.set(usuario.avatar ?? this.avatarActual());
         this.fondoActual.set(usuario.fondo ?? this.fondoActual());
