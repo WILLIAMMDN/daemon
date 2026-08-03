@@ -8,7 +8,7 @@ import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { Mision } from '../../../misiones/services/mision';
+import { Mision, MisionAlumno } from '../../../misiones/services/mision';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
 import { BotonAccion } from '../../../../shared/componentes/boton-accion/boton-accion';
@@ -24,7 +24,7 @@ import { NIVELES_CONTENIDO } from '../../../../core/dominio/nivel-alumno';
 })
 export class GestionarMisiones {
   readonly nivelesContenido = NIVELES_CONTENIDO;
-  misiones = signal<any[]>([]);
+  misiones = signal<MisionAlumno[]>([]);
   cargando = signal(true);
   guardando = signal(false);
   mensaje = signal('');
@@ -33,7 +33,7 @@ export class GestionarMisiones {
   // Modales
   modalCrearVisible = signal(false);
   modalEditVisible = signal(false);
-  misionEditando: any = null;
+  misionEditando: MisionAlumno | null = null;
 
   nueva = {
     titulo: '',
@@ -53,8 +53,8 @@ export class GestionarMisiones {
     this.cargando.set(true);
     this.error.set('');
     this.mision.listar().subscribe({
-      next: (misiones) => {
-        this.misiones.set(misiones as any[]);
+      next: (misiones: MisionAlumno[]) => {
+        this.misiones.set(misiones);
         this.cargando.set(false);
       },
       error: (e) => {
@@ -91,7 +91,7 @@ export class GestionarMisiones {
     });
   }
 
-  abrirEditar(m: any): void {
+  abrirEditar(m: MisionAlumno): void {
     this.misionEditando = { ...m };
     this.modalEditVisible.set(true);
   }
