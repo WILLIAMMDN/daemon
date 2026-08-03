@@ -223,3 +223,88 @@ $local -eq $deployed
 
 Debe devolver `True`. Esto confirma que Firebase sirve el mismo bundle que se
 validó localmente.
+## Verificación del fix "login local -> Firebase" (PR #60)
+
+Fecha de auditoría automática: 2026-08-03.
+
+### Estado verificado automáticamente
+
+| Check | Comando | Resultado | Conclusión |
+|---|---|---|---|
+| Frontend desplegado con el fix | `curl https://daemonestudiante.web.app/ \| grep daemon-release` | `740f77d...` | ✅ El frontend SÍ tiene el fix (release stamp = commit del PR #60) |
+| Endpoint del fix en backend | `curl -X POST https://daemon-5vo1.onrender.com/api/v1/auth/firebase-token` | `404` | ❌ El backend NO tiene el fix desplegado |
+| Commit desplegado en Render | `curl https://daemon-5vo1.onrender.com/api/v1/salud` | `7432305` (8 commits detrás de main) | ❌ Render está atrasado |
+
+### BLOQUEANTE: el backend de Render debe redeployarse
+
+Render usa `autoDeployTrigger: checksPass` sobre `main`. Al momento de la
+auditoría seguía en `7432305` y el endpoint `POST /auth/firebase-token`
+respondía `404` (en vez de `401` sin sesión). Mientras siga en 404:
+
+- El login local llamará al endpoint, fallará y caerá al *best-effort*:
+  el login no se rompe, pero la galería seguirá mostrando
+  «No hay una sesión de Firebase activa».
+- El login email y Google no dependen de este endpoint, así que esos dos
+  flujos deberían funcionar ya.
+
+Verificación de que el backend quedó al día (repetir hasta que pase):
+
+```bash
+curl https://daemon-5vo1.onrender.com/api/v1/salud | grep commit
+# debe mostrar 740f77d (o un descendiente de main)
+
+curl -o /dev/null -w '%{http_code}' \
+  -X POST https://daemon-5vo1.onrender.com/api/v1/auth/firebase-token
+# SIN sesión debe responder 401 (no 404)
+```
+
+### Plan manual de los 3 logins (ejecutar solo con cuentas de prueba)
+
+Reglas: usar exclusivamente cuentas de prueba (nunca menores reales), no
+canjear ni borrar datos, y anotar todo en la tabla de resultados.
+
+#### 1. Login local (usuario/contraseña de Laravel)
+
+1. Abrir `https://daemonestudiante.web.app/login` en ventana de incógnito.
+2. Entrar con usuario + contraseña de prueba (sin `@`).
+3. Confirmar que redirige a `/alumno`.
+4. Abrir `/alumno/proyectos/cuentos`.
+5. **Esperado:** la galería carga (tarjetas o estado vacío intencional).
+   **No esperado:** tarjeta roja «No hay una sesión de Firebase activa».
+6. Crear un cuento, añadir una página, guardar y recargar: el borrador debe
+   persistir (se crea el usuario Firebase `daemon-{id}` en el primer uso).
+7. Consola (F12): no debe aparecer el error de sesión de Firebase.
+
+#### 2. Login email (Firebase email/password)
+
+1. Ventana de incógnito nueva → `/login`.
+2. Entrar con una cuenta de prueba con `@` (usa Firebase Auth).
+3. Abrir `/alumno/proyectos/cuentos` → la galería debe cargar.
+4. Si esa cuenta de prueba comparte email con una cuenta local previa,
+   verificar que sus cuentos siguen siendo los mismos (reconciliación por
+   email: el fix adopta el UID existente en lugar de partir la identidad).
+
+#### 3. Login Google
+
+1. Ventana de incógnito nueva → `/login` → botón de Google.
+2. Entrar con una cuenta de prueba de Google.
+3. Abrir `/alumno/proyectos/cuentos` → la galería debe cargar.
+4. Reconciliación: si el email de Google coincide con una cuenta local,
+   los cuentos deben aparecer intactos (mismo UID).
+
+### Tabla de resultados (para llenar tras el redeploy del backend)
+
+| Login | ¿Redirige bien? | ¿Galería carga? | ¿Error de sesión Firebase? | ¿Persiste borrador? | Consola limpia (salvo 403 broadcasting conocido)? | Observaciones |
+|---|---|---|---|---|---|---|
+| Local | | | | | | |
+| Email | | | | | | |
+| Google | | | | | | |
+
+### Notas
+
+- El `403` de `/broadcasting/auth` en consola es el problema de websockets
+  ya conocido; no bloquea la galería.
+- El warning de `favicon.png` (512x512 declarado, 128x128 real) es
+  cosmético y se corrige aparte.
+- No probar los 3 logins con la misma cuenta real de un menor; usar cuentas
+  de prueba por cada flujo.
