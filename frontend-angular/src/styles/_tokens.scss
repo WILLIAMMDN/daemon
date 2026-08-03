@@ -156,3 +156,24 @@
   --daemon-primary-dark: #dca003;
   --daemon-ink:          #24194f;
 }
+
+/* PORTAL AULA — tema propio del layout de aula (grafito + bronce).
+   Vars de nivel 3/4 equivalentes a un portal theme: viven aquí, en la
+   fuente de verdad, y `_aula-theme.scss` solo consume las variables. */
+.aula-layout {
+  --aula-grafito-principal: rgb(32 37 42);
+  --aula-grafito-secundario: rgb(49 56 63);
+  --aula-bronce: rgb(184 132 53);
+  --aula-bronce-activo: rgb(154 107 39);
+  --aula-fondo: rgb(244 242 237);
+  --aula-superficie: rgb(255 255 255);
+  --aula-texto-principal: rgb(34 39 43);
+  --aula-texto-secundario: rgb(98 106 112);
+  --aula-texto-sobre-oscuro: rgb(244 242 237);
+  --aula-borde: rgb(216 213 206);
+  --aula-borde-sutil: rgb(234 231 224);
+  --aula-exito: rgb(57 114 87);
+  --aula-error: rgb(168 59 59);
+  --aula-advertencia: rgb(166 106 32);
+  --aula-info: rgb(46 90 136);
+}
