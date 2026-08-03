@@ -90,7 +90,7 @@
 }
 
 .projects-hero__copy > span {
-  color: #6ee7ef;
+  color: var(--daemon-kids);
   font-size: .72rem;
   font-weight: 800;
   letter-spacing: .1em;
@@ -208,7 +208,7 @@
 }
 
 .projects-summary strong {
-  color: #173d82;
+  color: var(--daemon-info);
   font-size: 1.5rem;
   line-height: 1;
 }
