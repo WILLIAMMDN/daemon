@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, computed, inject, Output, EventEmitter, signal } from '@angular/core';
-import '../../../../../node_modules/ng-zorro-antd/dropdown/style/index.min.css';
 import { Router, RouterLink } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faBell, faChevronDown, faHouse, faRightFromBracket, faTriangleExclamation, faUser } from '@fortawesome/free-solid-svg-icons';
