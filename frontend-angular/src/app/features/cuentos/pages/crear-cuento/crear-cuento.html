@@ -30,7 +30,7 @@
         <button
           type="button"
           class="crear-save-banner__close"
-          (click)="errorGuardado.set(null)"
+          (click)="limpiarErrorGuardado()"
           aria-label="Cerrar aviso"
         >
           <fa-icon [icon]="faClose"></fa-icon>
@@ -201,7 +201,7 @@
         <div class="crear-pagina-editor">
 
           <!-- ─── COLUMNA IZQUIERDA: EDITOR DE TEXTO ─── -->
-          <div class="quill-wrapper" [style.background-color]="paginaActiva()?.colorFondo || 'var(--daemon-on-primary)'">
+          <div class="quill-wrapper" [style.background-color]="paginaActiva().fondoToken || 'var(--daemon-on-primary)'">
             <quill-editor
               class="custom-quill-page"
               [ngModel]="contenido()"
@@ -305,18 +305,18 @@
                 [attr.aria-label]="'Ir a ' + (i === 0 ? 'portada' : 'página ' + i)"
                 [attr.aria-current]="paginaActivaIndex() === i ? 'page' : null"
               >
-                <div class="crear-paginas__item-bg" [style.background-color]="pagina.colorFondo"></div>
+                <div class="crear-paginas__item-bg" [style.background-color]="pagina.fondoToken"></div>
 
                 <!-- preview miniatura -->
-                @if (pagina.ilustracion) {
-                  <img [src]="pagina.ilustracion" alt="" class="crear-paginas__item-thumb" />
+                @if (pagina.ilustracionRef) {
+                  <img [src]="resolverActivo(pagina.ilustracionRef)" alt="" class="crear-paginas__item-thumb" />
                 }
 
                 <span class="crear-paginas__item-label">
                   {{ i === 0 ? 'PORTADA' : 'PÁG ' + i }}
                 </span>
 
-                @if (pagina.ideaIA) {
+                @if (pagina.sugerencia) {
                   <span class="crear-paginas__item-dot" title="Dae-bot dejó una sugerencia en esta página"></span>
                 }
 
@@ -386,7 +386,7 @@
                 <select
                   class="crear-detalle-row__select crear-detalle-row__select--primary"
                   [ngModel]="categoria()"
-                  (ngModelChange)="categoria.set($event); autoSaveSubject.next()"
+                  (ngModelChange)="onCategoriaChange($event)"
                 >
                   <option value="Sin clasificar">Sin clasificar</option>
                   <option value="Fantasía">Fantasía</option>
@@ -406,7 +406,7 @@
                 <select
                   class="crear-detalle-row__select crear-detalle-row__select--success"
                   [ngModel]="rangoEdad()"
-                  (ngModelChange)="rangoEdad.set($event); autoSaveSubject.next()"
+                  (ngModelChange)="onRangoEdadChange($event)"
                 >
                   <option value="3 - 5 años">3 - 5 años</option>
                   <option value="6 - 8 años">6 - 8 años</option>
@@ -625,7 +625,7 @@
                   (click)="guardar('publicado')"
                   [disabled]="!listoParaPublicar() || guardando()"
                 >
-                  <fa-icon [icon]="faCheckCircle"></fa-icon> Publicar
+                  <fa-icon [icon]="faCheckCircle"></fa-icon> Enviar a revisión
                 </button>
                 <button type="button" class="crear-btn crear-btn--outline crear-btn--sm" (click)="compartir()">
                   <fa-icon [icon]="faShareNodes"></fa-icon> Compartir
@@ -683,7 +683,7 @@
                 <span class="crear-progress__label"
                       [class.crear-progress__label--complete]="progresoPorcentaje() === 100">
                   @if (progresoPorcentaje() === 100) {
-                    ¡Completado! Listo para publicar.
+                    ¡Completado! Listo para revisión.
                   } @else {
                     Completado {{ progresoPorcentaje() }}%
                   }

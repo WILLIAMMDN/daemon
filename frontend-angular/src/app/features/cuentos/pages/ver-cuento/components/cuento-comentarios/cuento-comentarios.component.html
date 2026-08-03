@@ -70,10 +70,11 @@
                     class="flex-1 min-w-0 bg-transparent border-0 px-2 py-3 text-sm text-ink outline-none focus:ring-0 placeholder:text-muted/60" 
                     placeholder="Escribe un comentario alentador..." 
                     [(ngModel)]="nuevoComentario" 
+                    maxlength="1000"
                     (keyup.enter)="enviar()"
                     [disabled]="enviandoComentario">
              <div class="flex items-center gap-3 pr-2 shrink-0">
-               <span class="text-[10px] font-bold text-muted/50 whitespace-nowrap">{{ nuevoComentario.length }} / 300</span>
+               <span class="text-[10px] font-bold text-muted/50 whitespace-nowrap">{{ nuevoComentario.length }} / 1000</span>
                <button class="bg-primary hover:bg-primary-hover text-white font-bold py-2.5 px-6 rounded-xl text-xs transition-colors shadow-sm disabled:opacity-50"
                        (click)="enviar()"
                        [disabled]="enviandoComentario || !nuevoComentario.trim()">

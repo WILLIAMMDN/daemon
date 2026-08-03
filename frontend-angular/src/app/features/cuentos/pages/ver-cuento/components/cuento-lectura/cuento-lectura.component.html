@@ -25,7 +25,7 @@
 
                   <!-- TEXTO -->
                   @if (pagina.contenido) {
-                    <quill-view-html class="custom-quill-page block h-full w-full" [style.font-size.rem]="escalaFuente" [content]="pagina.contenido ?? ''" theme="snow"></quill-view-html>
+                    <quill-view-html class="custom-quill-page block h-full w-full" [style.font-size.rem]="escalaFuente" [content]="pagina.contenido" theme="snow"></quill-view-html>
                   } @else {
                     <div class="custom-quill-page p-8 text-center text-muted italic my-10">Página sin contenido.</div>
                   }

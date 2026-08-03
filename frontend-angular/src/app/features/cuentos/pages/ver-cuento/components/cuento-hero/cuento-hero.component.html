@@ -20,14 +20,14 @@
           
           <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-full bg-white/20 text-white flex items-center justify-center shrink-0 overflow-hidden border-2 border-white/30 shadow-md">
-              @if (datosCuento.autor?.avatar) {
-                <img [src]="datosCuento.autor.avatar" [alt]="datosCuento.autor?.nombre_completo" class="w-full h-full object-cover" />
+              @if (datosCuento.autor.avatar) {
+                <img [src]="datosCuento.autor.avatar" [alt]="datosCuento.autor.nombre_completo" class="w-full h-full object-cover" />
               } @else {
-                <span class="text-sm font-bold">{{ (datosCuento.autor?.nombre_completo || 'A').charAt(0) }}</span>
+                <span class="text-sm font-bold">{{ (datosCuento.autor.nombre_completo || 'A').charAt(0) }}</span>
               }
             </div>
             <div class="flex flex-col">
-              <p class="text-sm font-bold text-white leading-tight">{{ datosCuento.autor?.nombre_completo || 'Autor registrado' }}</p>
+              <p class="text-sm font-bold text-white leading-tight">{{ datosCuento.autor.nombre_completo || 'Autor registrado' }}</p>
             </div>
           </div>
           
@@ -43,7 +43,7 @@
           </a>
           
           @if (esPropietario) {
-            <a class="daemon-grad-cta-amber border border-amber-400 text-white shadow-lg hover:shadow-amber-500/50 hover:-translate-y-0.5 font-bold px-5 py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 transition-all w-full" [routerLink]="['/alumno/proyectos/cuentos/crear', idCuento]">
+            <a class="daemon-grad-cta-amber border border-amber-400 text-white shadow-lg hover:shadow-amber-500/50 hover:-translate-y-0.5 font-bold px-5 py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 transition-all w-full" routerLink="/alumno/proyectos/cuentos/crear" [queryParams]="{ id: idCuento }">
               ✏️ Editar mi historia
             </a>
           } @else {

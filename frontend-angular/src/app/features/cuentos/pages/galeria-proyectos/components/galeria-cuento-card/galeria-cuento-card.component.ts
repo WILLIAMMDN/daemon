@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faBookOpen, faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { CuentoVista } from '../../../../models/cuento.models';
+import { CuentoVista } from '../../../../presentacion/cuento-vista.modelo';
 
 @Component({
   selector: 'app-galeria-cuento-card',
@@ -21,6 +21,6 @@ export class GaleriaCuentoCardComponent {
   @Input({ required: true }) cuento!: CuentoVista;
   @Input({ required: true }) portadaDisponible = true;
 
-  @Output() onEliminar = new EventEmitter<string | number>();
-  @Output() onPortadaFallida = new EventEmitter<string | number>();
+  @Output() onEliminar = new EventEmitter<string>();
+  @Output() onPortadaFallida = new EventEmitter<string>();
 }

@@ -70,6 +70,13 @@
             </app-galeria-cuento-card>
           }
         </section>
+        @if (hayMas()) {
+          <div class="story-load-more">
+            <button nz-button nzType="default" type="button" (click)="cargarMas()" [disabled]="refrescando()">
+              Cargar más historias
+            </button>
+          </div>
+        }
       } @else if (cuentos().length) {
         <app-estado-vacio
           tamano="compact"
@@ -98,8 +105,8 @@
       [totalCuentos]="cuentos().length"
       [totalBorradores]="miCuentoVista() ? 1 : 0"
       [reaccionesRecibidas]="reaccionesRecibidas()"
-      [plantillasRecomendadas]="plantillasRecomendadas()"
-      [inspiracionDiaria]="inspiracionDiaria()"
+      [plantillasRecomendadas]="plantillasRecomendadas"
+      [inspiracionDiaria]="inspiracionDiaria"
       (onClose)="cerrarAside()"
       (onTemplateClick)="onTemplateClick($event)">
     </app-galeria-aside>
