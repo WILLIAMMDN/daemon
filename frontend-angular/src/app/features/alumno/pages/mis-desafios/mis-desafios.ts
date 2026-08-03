@@ -1,7 +1,7 @@
 import { Component, signal, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { UpperCasePipe } from '@angular/common';
-import { Mision } from '../../../misiones/services/mision';
+import { Mision, MisionAlumno } from '../../../misiones/services/mision';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -15,7 +15,7 @@ import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-
   styleUrl: './mis-desafios.scss',
 })
 export class MisDesafios {
-  misiones = signal<any[]>([]);
+  misiones = signal<MisionAlumno[]>([]);
   cargando = signal(true);
   error = signal('');
 
@@ -27,8 +27,8 @@ export class MisDesafios {
     this.cargando.set(true);
     this.error.set('');
     this.mision.listar().subscribe({
-      next: (misiones) => {
-        this.misiones.set(misiones as any[]);
+      next: (misiones: MisionAlumno[]) => {
+        this.misiones.set(misiones);
         this.cargando.set(false);
       },
       error: (e) => {
