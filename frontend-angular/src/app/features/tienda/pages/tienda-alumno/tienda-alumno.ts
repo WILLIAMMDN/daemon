@@ -10,6 +10,7 @@ import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
 import { MonedaDaemon } from '../../../../shared/componentes/moneda-daemon/moneda-daemon';
 import { Tienda } from '../../services/tienda';
+import { PremioTienda, RespuestaTienda, RespuestaCanje } from '../../../../core/modelos/dto';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -24,7 +25,7 @@ export class TiendaAlumno {
   private readonly sesion = inject(Sesion);
 
   readonly saldo = signal(0);
-  readonly premios = signal<any[]>([]);
+  readonly premios = signal<PremioTienda[]>([]);
   readonly imagenesInvalidas = signal<Set<number>>(new Set());
   readonly cargando = signal(true);
   readonly procesando = signal<number | null>(null);
@@ -40,7 +41,7 @@ export class TiendaAlumno {
     this.cargando.set(true);
     this.error.set('');
     this.tienda.premios().subscribe({
-      next: (datos: any) => {
+      next: (datos: RespuestaTienda) => {
         const saldo = Number(datos.saldo ?? 0);
         this.saldo.set(saldo);
         this.premios.set(datos.premios ?? []);
@@ -59,7 +60,7 @@ export class TiendaAlumno {
     this.mensaje.set('');
     this.error.set('');
     this.tienda.canjear(id).subscribe({
-      next: (respuesta: any) => {
+      next: (respuesta: RespuestaCanje) => {
         const saldo = Number(respuesta.saldo ?? this.saldo());
         this.saldo.set(saldo);
         this.sincronizarSaldo(saldo);
@@ -80,7 +81,7 @@ export class TiendaAlumno {
     });
   }
 
-  puedeCanjear(premio: any): boolean {
+  puedeCanjear(premio: PremioTienda): boolean {
     return !premio.ya_posee && this.saldo() >= Number(premio.precio ?? 0) && Number(premio.stock ?? 0) > 0;
   }
 
