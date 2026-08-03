@@ -6,7 +6,7 @@
 .hero {
   align-items: center;
   background: var(--daemon-on-primary);
-  border: 1px solid #dfe6f1;
+  border: 1px solid var(--daemon-border);
   border-radius: 8px;
   display: flex;
   gap: 1rem;
@@ -24,7 +24,7 @@
 .scope-card {
   align-items: center;
   background: var(--daemon-on-primary);
-  border: 1px solid #dfe6f1;
+  border: 1px solid var(--daemon-border);
   border-radius: 8px;
   box-shadow: 0 8px 20px #2030550a;
   display: grid;
@@ -38,7 +38,7 @@
 }
 
 .scope-card p:not(.eyebrow) {
-  color: #61708d;
+  color: var(--daemon-muted);
   margin-top: .35rem;
 }
 
@@ -65,20 +65,20 @@ p {
 }
 
 h1 {
-  color: #17203a;
+  color: var(--daemon-ink);
   font-size: clamp(1.7rem, 4vw, 2.45rem);
   line-height: 1.05;
 }
 
 h2 {
-  color: #17203a;
+  color: var(--daemon-ink);
   font-size: 1.2rem;
 }
 
 .hero p:not(.eyebrow),
 .vacio,
 small {
-  color: #61708d;
+  color: var(--daemon-muted);
 }
 
 .hero p:not(.eyebrow) {
@@ -95,7 +95,7 @@ small {
 .ranking,
 .acciones {
   background: var(--daemon-on-primary);
-  border: 1px solid #dfe6f1;
+  border: 1px solid var(--daemon-border);
   border-radius: 8px;
   box-shadow: 0 8px 20px #2030550a;
 }
@@ -107,7 +107,7 @@ small {
 }
 
 .metricas span {
-  color: #5d6f8d;
+  color: var(--daemon-muted);
   font-size: .75rem;
   font-weight: 800;
   letter-spacing: .07em;
@@ -115,7 +115,7 @@ small {
 }
 
 .metricas strong {
-  color: #17203a;
+  color: var(--daemon-ink);
   font-size: 2rem;
   line-height: 1;
 }
@@ -157,7 +157,7 @@ li {
 
 li span {
   align-items: center;
-  background: #fef3c7;
+  background: var(--daemon-accent-soft);
   border-radius: 8px;
   color: #92400e;
   display: inline-flex;
@@ -180,7 +180,7 @@ li small {
 }
 
 li b {
-  color: #0f766e;
+  color: var(--daemon-success);
 }
 
 .acciones {
@@ -193,8 +193,8 @@ li b {
 }
 
 .teacher-action--review.ant-btn-primary {
-  background: #0f766e;
-  border-color: #0f766e;
+  background: var(--daemon-success);
+  border-color: var(--daemon-success);
 }
 
 .teacher-action--eval.ant-btn-primary {
@@ -203,20 +203,20 @@ li b {
 }
 
 .teacher-action--store.ant-btn-primary {
-  background: #4c1d95;
-  border-color: #4c1d95;
+  background: var(--daemon-primary-dark);
+  border-color: var(--daemon-primary-dark);
 }
 
 .estado {
   background: var(--daemon-on-primary);
-  border: 1px solid #dfe6f1;
+  border: 1px solid var(--daemon-border);
   border-radius: 8px;
-  color: #61708d;
+  color: var(--daemon-muted);
   padding: 1rem;
 }
 
 .estado.error {
-  border-color: #fecdd3;
+  border-color: var(--daemon-danger-soft);
   display: grid;
   gap: .75rem;
 }
@@ -236,7 +236,7 @@ li b {
 .skeleton-line,
 .skeleton-dot {
   animation: shimmer 1.2s ease-in-out infinite;
-  background: linear-gradient(90deg, #eef3f9 0%, var(--daemon-surface-muted) 50%, #eef3f9 100%);
+  background: var(--daemon-grad-overlay);
   background-size: 200% 100%;
   display: block;
 }

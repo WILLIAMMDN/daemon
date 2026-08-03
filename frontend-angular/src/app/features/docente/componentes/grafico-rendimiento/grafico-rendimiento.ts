@@ -22,7 +22,7 @@ export class GraficoRendimiento implements OnChanges {
         data: [], 
         label: 'Tokens generados',
         backgroundColor: 'var(--daemon-info)', // blue-600
-        hoverBackgroundColor: '#1d4ed8', // blue-700
+        hoverBackgroundColor: 'var(--daemon-info)', // blue-700
         borderColor: 'var(--daemon-info)',
         borderWidth: 0,
         borderRadius: 4,
@@ -43,7 +43,7 @@ export class GraficoRendimiento implements OnChanges {
     plugins: {
       legend: { display: false },
       tooltip: {
-        backgroundColor: '#0f172a', // slate-900
+        backgroundColor: 'var(--daemon-ink)', // slate-900
         titleFont: { family: 'Inter, sans-serif', size: 14, weight: 'bold' as const },
         bodyFont: { family: 'Inter, sans-serif', size: 13 },
         padding: 12,
@@ -54,7 +54,7 @@ export class GraficoRendimiento implements OnChanges {
     scales: {
       x: {
         grid: { display: false },
-        ticks: { font: { family: 'Inter, sans-serif', size: 12 }, color: '#64748b' } // slate-500
+        ticks: { font: { family: 'Inter, sans-serif', size: 12 }, color: 'var(--daemon-muted)' } // slate-500
       },
       y: {
         beginAtZero: true,

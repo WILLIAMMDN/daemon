@@ -26,8 +26,8 @@
 
 .bot-preview {
   align-items: center;
-  background: #f8fbff;
-  border: 1px solid #dfe8f8;
+  background: var(--daemon-surface-muted);
+  border: 1px solid var(--daemon-border);
   border-radius: 8px;
   display: grid;
   gap: .85rem;
@@ -49,7 +49,7 @@
 .bot-preview small,
 .guide p,
 .guide small {
-  color: #61708d;
+  color: var(--daemon-muted);
 }
 
 .guide {
@@ -68,17 +68,17 @@
 }
 
 .guide strong {
-  color: #17203a;
+  color: var(--daemon-ink);
   overflow-wrap: anywhere;
 }
 
 .bot-score strong {
-  color: #147d71;
+  color: var(--daemon-success);
   font-size: 1.35rem;
 }
 
 .bot-score span {
-  color: #61708d;
+  color: var(--daemon-muted);
   font-size: .78rem;
   font-weight: 850;
   text-transform: uppercase;

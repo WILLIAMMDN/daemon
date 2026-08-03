@@ -121,7 +121,7 @@
 }
 
 .hero-arrow:hover {
-  background: #ffc600;
+  background: var(--daemon-accent);
   transform: translateY(-1px);
 }
 
@@ -142,16 +142,16 @@
 }
 
 .hero-dot.is-active {
-  background: #ffc600;
+  background: var(--daemon-accent);
   width: 1.75rem;
 }
 
 .inicio-google-button {
   align-items: center;
   background: var(--daemon-on-primary);
-  border: 1px solid #dadce0;
+  border: 1px solid var(--daemon-border-strong);
   border-radius: 9999px;
-  color: #1f1f1f;
+  color: var(--daemon-ink);
   cursor: pointer;
   display: inline-flex;
   font-family: 'Google Sans', 'Roboto', system-ui, -apple-system, 'Segoe UI', sans-serif;
@@ -168,19 +168,19 @@
 
 .inicio-google-button:hover:not(:disabled) {
   background: var(--daemon-surface-muted);
-  border-color: #d2e3fc;
+  border-color: var(--daemon-teens-border);
   box-shadow: 0 1px 2px rgba(60, 64, 67, 0.15), 0 1px 3px 1px rgba(60, 64, 67, 0.08);
   transform: translateY(-1px);
 }
 
 .inicio-google-button:focus-visible {
-  border-color: #1a73e8;
-  box-shadow: 0 0 0 1px #1a73e8;
+  border-color: var(--daemon-info);
+  box-shadow: 0 0 0 1px var(--daemon-info);
   outline: 0;
 }
 
 .inicio-google-button:active:not(:disabled) {
-  background: #f1f3f4;
+  background: var(--daemon-canvas);
   transform: translateY(0);
 }
 

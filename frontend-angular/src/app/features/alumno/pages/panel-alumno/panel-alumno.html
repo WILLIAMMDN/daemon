@@ -47,12 +47,12 @@
 
       <div class="relative z-10 flex-1 flex flex-col items-center lg:items-start text-center lg:text-left px-2 lg:px-8 w-full">
         <!-- Badge de nivel super compacto para móviles -->
-        <div class="flex lg:hidden items-center gap-1.5 bg-[#1f1f75]/80 backdrop-blur-sm border border-[#4f46e5]/50 rounded-full px-3 py-1 mb-3">
+        <div class="flex lg:hidden items-center gap-1.5 bg-[var(--daemon-on-accent)]/80 daemon-backdrop-sm border border-[var(--daemon-primary)]/50 rounded-full px-3 py-1 mb-3">
           <span class="text-indigo-200 text-[9px] font-extrabold uppercase tracking-widest">NIVEL</span>
-          <strong class="text-[#00f2fe] text-sm font-black">{{ progreso(datos).nivel }}</strong>
+          <strong class="text-[var(--daemon-kids)] text-sm font-black">{{ progreso(datos).nivel }}</strong>
         </div>
 
-        <small class="text-[#00F0FF] font-bold text-[10px] sm:text-xs tracking-widest uppercase mb-1 sm:mb-2 drop-shadow-md">RESUMEN DE APRENDIZAJE</small>
+        <small class="text-[var(--daemon-kids)] font-bold text-[10px] sm:text-xs tracking-widest uppercase mb-1 sm:mb-2 drop-shadow-md">RESUMEN DE APRENDIZAJE</small>
         <h1 id="dashboard-title" class="text-white text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-2 sm:mb-3 leading-tight drop-shadow-lg">
           Hola, {{ nombreCorto(datos.usuario) }}
         </h1>
@@ -61,10 +61,10 @@
         </p>
         
         <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-          <a nz-button class="bg-[var(--daemon-accent)] hover:bg-[#f4a900] text-[var(--daemon-on-accent)] border-none rounded-xl font-extrabold h-11 sm:h-12 px-6 sm:px-8 shadow-sm transition-colors inline-flex items-center justify-center gap-2 w-full sm:w-auto" routerLink="/alumno/misiones">
+          <a nz-button class="bg-[var(--daemon-accent)] hover:bg-[var(--daemon-warning)] text-[var(--daemon-on-accent)] border-none rounded-xl font-extrabold h-11 sm:h-12 px-6 sm:px-8 shadow-sm transition-colors inline-flex items-center justify-center gap-2 w-full sm:w-auto" routerLink="/alumno/misiones">
             <fa-icon [icon]="iconos.play" /> Continuar misión
           </a>
-          <a nz-button class="bg-[#3730a3]/80 backdrop-blur-md hover:bg-[#312e81] border border-[#4f46e5] text-white rounded-xl font-semibold h-11 sm:h-12 px-6 sm:px-8 transition-colors inline-flex items-center justify-center gap-2 w-full sm:w-auto" routerLink="/alumno/perfil">
+          <a nz-button class="bg-[var(--daemon-primary-dark)]/80 daemon-backdrop-md hover:bg-[var(--daemon-ink-soft)] border border-[var(--daemon-primary)] text-white rounded-xl font-semibold h-11 sm:h-12 px-6 sm:px-8 transition-colors inline-flex items-center justify-center gap-2 w-full sm:w-auto" routerLink="/alumno/perfil">
             <fa-icon [icon]="iconos.brillo" /> Ver mi ruta
           </a>
         </div>
@@ -73,7 +73,7 @@
       <!-- Círculo de progreso (Solo en Desktop/Tablet) -->
       <div class="hidden lg:flex relative z-10 flex-none ml-4 flex-col items-center">
         <div
-          class="relative flex items-center justify-center bg-[#1f1f75] border border-[#4f46e5] rounded-full w-[136px] h-[136px] shadow-sm"
+          class="relative flex items-center justify-center bg-[var(--daemon-on-accent)] border border-[var(--daemon-primary)] rounded-full w-[136px] h-[136px] shadow-sm"
           role="progressbar"
           aria-label="Progreso al siguiente nivel"
           aria-valuemin="0"
@@ -81,7 +81,7 @@
           [attr.aria-valuenow]="progreso(datos).progreso_porcentaje"
           [attr.aria-valuetext]="progreso(datos).progreso_porcentaje + '%; nivel ' + progreso(datos).nivel"
         >
-          <nz-progress class="hero-progress absolute inset-0" aria-hidden="true" nzType="circle" [nzPercent]="progreso(datos).progreso_porcentaje" [nzWidth]="136" [nzStrokeWidth]="8" nzStrokeColor="#00f2fe" />
+          <nz-progress class="hero-progress absolute inset-0" aria-hidden="true" nzType="circle" [nzPercent]="progreso(datos).progreso_porcentaje" [nzWidth]="136" [nzStrokeWidth]="8" nzStrokeColor="var(--daemon-kids)" />
           <div class="absolute flex flex-col items-center justify-center z-10">
             <small class="text-indigo-200 text-[0.7rem] font-extrabold tracking-widest uppercase drop-shadow-md">NIVEL</small>
             <strong class="text-white text-[3.5rem] font-extrabold leading-none drop-shadow-lg">{{ progreso(datos).nivel }}</strong>

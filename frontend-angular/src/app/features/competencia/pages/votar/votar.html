@@ -67,7 +67,7 @@
           </label>
         </div>
         <div class="p-6 pt-0 flex justify-end">
-          <button type="submit" nz-button [disabled]="enviando() || data.ronda.estado !== 'votacion' || !data.candidato" class="!bg-[#00b4d8] !border-none !text-white !shadow-sm hover:!bg-cyan-600 transition-colors">
+          <button type="submit" nz-button [disabled]="enviando() || data.ronda.estado !== 'votacion' || !data.candidato" class="!bg-[var(--daemon-kids)] !border-none !text-white !shadow-sm hover:!bg-cyan-600 transition-colors">
             Enviar voto
           </button>
         </div>

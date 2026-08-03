@@ -21,7 +21,7 @@
 }
 
 .project-category-card__visual {
-  background: #eef3fb;
+  background: var(--daemon-teens-soft);
   border-bottom: 1px solid var(--daemon-border, var(--daemon-border));
   min-height: 150px;
   overflow: hidden;
@@ -98,7 +98,7 @@ p {
 }
 
 .project-category-card__metrics dt {
-  color: #69758a;
+  color: var(--daemon-muted);
   font-size: .68rem;
   line-height: 1.35;
 }
@@ -113,14 +113,14 @@ footer {
 }
 
 .project-category-card__status {
-  color: #526174;
+  color: var(--daemon-muted);
   font-size: .7rem;
   font-weight: 700;
 }
 
 .project-category-card__action {
   align-items: center;
-  border-color: #b8c5d9;
+  border-color: var(--daemon-border-strong);
   border-radius: 9px;
   color: #173d82;
   display: inline-flex;

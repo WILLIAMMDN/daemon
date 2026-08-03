@@ -9,7 +9,7 @@
 
 .upload-drop {
   align-items: center;
-  color: #17243c;
+  color: var(--daemon-ink);
   display: grid;
   gap: .25rem;
   justify-items: center;
@@ -19,7 +19,7 @@
 
 .upload-mark {
   align-items: center;
-  background: #eef4ff;
+  background: var(--daemon-teens-soft);
   border-radius: 999px;
   color: var(--daemon-info);
   display: inline-flex;
@@ -35,7 +35,7 @@
 }
 
 .upload-drop small {
-  color: #61708d;
+  color: var(--daemon-muted);
   max-width: 28rem;
 }
 
@@ -44,8 +44,8 @@
 }
 
 :host ::ng-deep .ant-upload.ant-upload-drag {
-  background: #f8fbff;
-  border-color: #cbd8ee;
+  background: var(--daemon-surface-muted);
+  border-color: var(--daemon-border-strong);
   border-radius: 8px;
 }
 

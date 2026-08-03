@@ -25,10 +25,10 @@
 
 .illustration-slot__fallback {
   align-items: center;
-  background: #f3f5ff;
-  border: 1px dashed #c9d2ea;
+  background: var(--daemon-info-soft);
+  border: 1px dashed var(--daemon-border-strong);
   border-radius: 14px;
-  color: #63708a;
+  color: var(--daemon-muted);
   display: flex;
   flex-direction: column;
   font-size: .72rem;
@@ -50,15 +50,15 @@
 
 .illustration-slot[data-kind='hero'] .illustration-slot__fallback,
 .illustration-slot[data-kind='decorative'] .illustration-slot__fallback {
-  background: #f5f3ff;
-  border-color: #d9d2f3;
-  color: #6750a4;
+  background: var(--daemon-canvas);
+  border-color: var(--daemon-border-strong);
+  color: var(--daemon-primary-soft);
 }
 
 .illustration-slot[data-kind='empty-state'] .illustration-slot__fallback {
-  background: #f7f9ff;
-  border-color: #dbe3f2;
-  color: #526174;
+  background: var(--daemon-surface-muted);
+  border-color: var(--daemon-border);
+  color: var(--daemon-muted);
 }
 
 @media (prefers-reduced-motion: reduce) {

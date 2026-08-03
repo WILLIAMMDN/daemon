@@ -73,7 +73,7 @@
 
 .projects-hero {
   align-items: center;
-  background: #17156f;
+  background: var(--daemon-on-accent);
   border-radius: 18px;
   display: grid;
   grid-template-columns: minmax(0, 1.15fr) minmax(260px, .65fr);
@@ -106,7 +106,7 @@
 }
 
 .projects-hero p {
-  color: #d8ddff;
+  color: var(--daemon-teens-border);
   font-size: .92rem;
   line-height: 1.6;
   margin: 0 0 1.35rem;
