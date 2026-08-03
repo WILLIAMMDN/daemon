@@ -2,6 +2,7 @@ import { Component, signal , ChangeDetectionStrategy} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Competencia } from '../../services/competencia';
 import { Docente } from '../../../docente/services/docente';
+import { AlumnoDocente, EstadoCompetencia, RespuestaLista } from '../../../../core/modelos/dto';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
@@ -16,8 +17,8 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
   styleUrl: './competencia-control.scss',
 })
 export class CompetenciaControl {
-  estado = signal<any | null>(null);
-  alumnos = signal<any[]>([]);
+  estado = signal<EstadoCompetencia | null>(null);
+  alumnos = signal<AlumnoDocente[]>([]);
   cargando = signal(true);
   guardando = signal(false);
   mensaje = signal('');
@@ -41,7 +42,9 @@ export class CompetenciaControl {
         this.cargando.set(false);
       },
     });
-    this.docente.alumnos().subscribe({ next: (alumnos) => this.alumnos.set(alumnos as any[]) });
+    this.docente.alumnos().subscribe({
+      next: (alumnos: RespuestaLista<AlumnoDocente>) => this.alumnos.set(Array.isArray(alumnos) ? alumnos : alumnos.data ?? []),
+    });
   }
 
   ejecutar(): void {
