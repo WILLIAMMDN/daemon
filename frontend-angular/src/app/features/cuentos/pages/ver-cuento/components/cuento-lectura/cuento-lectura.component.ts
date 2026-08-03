@@ -4,6 +4,13 @@ import { QuillModule } from 'ngx-quill';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faBookOpenReader, faHeart, faBookmark, faShareNodes, faClock, faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { CuentoDetallePayload } from '../../../../models/cuento.models';
+
+interface PaginaCuento {
+  id?: string | number;
+  contenido?: string | null;
+  colorFondo?: string | null;
+  ilustracion?: string | null;
+}
 import { Activos } from '../../../../../../core/servicios/activos';
 import { migrarContenidoLegacy } from '../../../../utils/cuento-legacy';
 
@@ -60,10 +67,10 @@ export class CuentoLecturaComponent {
 
   @ViewChild('contenedorLectura') contenedorLectura!: ElementRef;
 
-  get paginasCuento(): any[] {
+  get paginasCuento(): PaginaCuento[] {
     const p = this.datosCuento?.cuento?.paginas;
     if (Array.isArray(p) && p.length > 0) {
-      return p;
+      return p as PaginaCuento[];
     }
     // Fallback
     if (this.contenidoProcesado) {
@@ -77,13 +84,19 @@ export class CuentoLecturaComponent {
     return [];
   }
 
-  get paginaActiva(): any {
+  get paginaActiva(): PaginaCuento {
     const paginas = this.paginasCuento;
     const index = this.paginaActualIndex();
     if (index >= 0 && index < paginas.length) {
       return paginas[index];
     }
-    return paginas[0] || null;
+    // Nunca devuelve null: sin páginas se muestra la página vacía por defecto.
+    return {
+      id: 'vacia',
+      contenido: '',
+      colorFondo: 'var(--daemon-on-primary)',
+      ilustracion: null,
+    };
   }
 
   siguientePagina() {
