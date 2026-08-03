@@ -67,7 +67,7 @@
   background: var(--daemon-on-primary);
   border: 1px solid var(--daemon-border-strong);
   border-radius: 6px;
-  box-shadow: 0 10px 28px #1f2a4414;
+  box-shadow: 0 10px 28px color-mix(in srgb, var(--daemon-ink) 8%, transparent);
   display: grid;
   grid-template-columns: minmax(320px, .86fr) minmax(360px, 1fr);
   grid-template-rows: 5px 1fr;
@@ -404,7 +404,7 @@
 }
 
 .pasos-restablecer li {
-  border-left: 2px solid #6ee7b7;
+  border-left: 2px solid color-mix(in srgb, var(--daemon-success) 40%, var(--daemon-on-primary));
   opacity: .9;
   padding: .15rem 0 .15rem .65rem;
 }
@@ -436,6 +436,15 @@
   font-weight: 800;
   min-height: 58px;
   transition: background .18s ease;
+}
+
+/* Variante enlace del botón primario (p.ej. "Solicitar un nuevo enlace"). */
+.submit-button--link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  text-decoration: none;
 }
 
 .submit-button:hover:not(:disabled) {
