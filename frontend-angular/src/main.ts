@@ -4,6 +4,7 @@ import { App } from './app/app';
 import * as Sentry from '@sentry/angular';
 import { environment } from './environments/environment';
 import { assertEnvironmentContract } from './environments/environment.assert';
+import { registrarManejadorError } from './app/core/servicios/observabilidad';
 
 assertEnvironmentContract(environment);
 
@@ -14,6 +15,19 @@ if (environment.observability.sentryEnabled) {
     integrations: [Sentry.browserTracingIntegration()],
     tracesSampleRate: environment.observability.tracesSampleRate,
     sendDefaultPii: false,
+  });
+
+  // La telemetría se registra aquí para no duplicar el SDK de Sentry en el
+  // bundle: observabilidad.ts nunca importa Sentry.
+  registrarManejadorError((error, contexto) => {
+    Sentry.captureException(error, {
+      tags: {
+        area: contexto.area,
+        operacion: contexto.operacion,
+        codigo: contexto.codigo,
+      },
+      extra: { recuperable: contexto.recuperable },
+    });
   });
 }
 

@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { Api } from '../../../../core/servicios/api';
+import { reportarError } from '../../../../core/servicios/observabilidad';
 import { ComentarioCuento } from '../../dominio/comentario-cuento.modelo';
 import { VERSION_ESQUEMA_CUENTO } from '../../dominio/cuento.modelo';
 import { ErrorCuento, normalizarErrorCuento } from '../../dominio/errores-cuento';
@@ -61,6 +62,7 @@ export class ApiComandosCuentoAdapter implements ComandosCuentoGateway {
       );
       return this.mapearComentario(respuesta);
     } catch (error) {
+      reportarError(error, { area: 'cuentos-comandos', recuperable: true });
       throw normalizarErrorCuento(error);
     }
   }
@@ -75,6 +77,7 @@ export class ApiComandosCuentoAdapter implements ComandosCuentoGateway {
       );
       return this.mapearComentario(respuesta);
     } catch (error) {
+      reportarError(error, { area: 'cuentos-comandos', recuperable: true });
       throw normalizarErrorCuento(error);
     }
   }
@@ -87,6 +90,7 @@ export class ApiComandosCuentoAdapter implements ComandosCuentoGateway {
         ),
       );
     } catch (error) {
+      reportarError(error, { area: 'cuentos-comandos', recuperable: true });
       throw normalizarErrorCuento(error);
     }
   }
@@ -101,6 +105,7 @@ export class ApiComandosCuentoAdapter implements ComandosCuentoGateway {
         this.api.post(`/cuentos-v2/${encodeURIComponent(cuentoId)}/reaccion`, { tipo, idempotencia }),
       );
     } catch (error) {
+      reportarError(error, { area: 'cuentos-comandos', recuperable: true });
       throw normalizarErrorCuento(error);
     }
   }
@@ -134,6 +139,7 @@ export class ApiComandosCuentoAdapter implements ComandosCuentoGateway {
         },
       };
     } catch (error) {
+      reportarError(error, { area: 'cuentos-comandos', recuperable: true });
       throw normalizarErrorCuento(error);
     }
   }
@@ -143,6 +149,7 @@ export class ApiComandosCuentoAdapter implements ComandosCuentoGateway {
       const respuesta = await firstValueFrom(this.api.post<RespuestaComando>(ruta, { idempotencia }));
       return { estado: respuesta.estado, repetido: respuesta.repetido === true };
     } catch (error) {
+      reportarError(error, { area: 'cuentos-comandos', recuperable: true });
       throw normalizarErrorCuento(error);
     }
   }
