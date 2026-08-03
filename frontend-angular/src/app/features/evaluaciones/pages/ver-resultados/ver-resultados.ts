@@ -1,5 +1,5 @@
 import { Component, signal , ChangeDetectionStrategy} from '@angular/core';
-import { Evaluacion } from '../../services/evaluacion';
+import { Evaluacion, ResultadoEvaluacion } from '../../services/evaluacion';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
@@ -17,7 +17,7 @@ import { NzCardModule } from 'ng-zorro-antd/card';
   styleUrl: './ver-resultados.scss',
 })
 export class VerResultados {
-  resultados = signal<any[]>([]);
+  resultados = signal<ResultadoEvaluacion[]>([]);
   cargando = signal(true);
   error = signal('');
 
@@ -29,8 +29,8 @@ export class VerResultados {
     this.cargando.set(true);
     this.error.set('');
     this.evaluacion.resultados().subscribe({
-      next: (resultados) => {
-        this.resultados.set(resultados as any[]);
+      next: (resultados: ResultadoEvaluacion[]) => {
+        this.resultados.set(resultados);
         this.cargando.set(false);
       },
       error: (e) => {
