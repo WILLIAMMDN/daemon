@@ -1,0 +1,42 @@
+:host {
+  display: contents;
+}
+
+/* Footer de acciones de la tarjeta (antes estilos inline). */
+.story-card__footer {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+}
+
+/* Grupo de botones de icono (editar / borrar). */
+.story-card__actions {
+  display: flex;
+  gap: 4px;
+}
+
+/* Enlace principal "Leer": ocupa el espacio disponible. */
+.story-card__read {
+  flex: 1;
+  justify-content: center;
+  text-decoration: none;
+}
+
+/* Acciones de icono compactas. */
+.story-card__icon-action {
+  justify-content: center;
+  min-width: 40px;
+  padding: 0 12px;
+}
+
+.story-card__icon-action--edit {
+  background-color: var(--daemon-surface-muted);
+  color: var(--daemon-ink-soft);
+}
+
+.story-card__icon-action--delete {
+  background-color: var(--daemon-danger-soft);
+  border: none;
+  color: var(--daemon-danger);
+}
