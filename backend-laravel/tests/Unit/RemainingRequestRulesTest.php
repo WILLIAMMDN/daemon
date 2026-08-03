@@ -71,12 +71,15 @@ class RemainingRequestRulesTest extends TestCase
         $this->assertContains('in:candidato,iniciar,cerrar,premiar,reiniciar', $controlRules['accion']);
     }
 
-    public function test_story_request_supports_six_scenes(): void
+    public function test_story_request_supports_rich_text_content(): void
     {
         $rules = (new GuardarCuentoRequest)->rules();
 
         $this->assertContains('required', $rules['titulo']);
-        $this->assertArrayHasKey('data_6', $rules);
-        $this->assertArrayHasKey('pos_6', $rules);
+        // Contrato actual: editor rich-text Quill con un único campo
+        // 'contenido' (la migración add_contenido_to_cuentos eliminó el
+        // esquema viejo de escenas data_1..6 / pos_1..6).
+        $this->assertContains('nullable', $rules['contenido']);
+        $this->assertContains('max:204800', $rules['contenido']);
     }
 }
