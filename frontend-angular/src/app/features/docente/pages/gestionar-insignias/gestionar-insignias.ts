@@ -13,6 +13,7 @@ import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-
 import { MediaUploader } from '../../../../shared/componentes/media-uploader/media-uploader';
 import { Docente } from '../../services/docente';
 import { BotonAccion } from '../../../../shared/componentes/boton-accion/boton-accion';
+import { AlumnoDocente, Insignia, RespuestaLista } from '../../../../core/modelos/dto';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -34,8 +35,8 @@ import { BotonAccion } from '../../../../shared/componentes/boton-accion/boton-a
   styleUrl: './gestionar-insignias.scss',
 })
 export class GestionarInsignias {
-  insignias = signal<any[]>([]);
-  alumnos = signal<any[]>([]);
+  insignias = signal<Insignia[]>([]);
+  alumnos = signal<AlumnoDocente[]>([]);
   cargando = signal(true);
   guardando = signal(false);
   mensaje = signal('');
@@ -50,7 +51,7 @@ export class GestionarInsignias {
   modalAsignarVisible = signal(false);
   modalEditVisible = signal(false);
   
-  insigniaEditando: any = null;
+  insigniaEditando: Insignia | null = null;
   imagenEditPreview = signal('');
   archivoEditImagen: File | null = null;
   uploadEditResetKey = signal(0);
@@ -64,7 +65,7 @@ export class GestionarInsignias {
     this.error.set('');
 
     this.docente.insignias().subscribe({
-      next: (respuesta: any) => {
+      next: (respuesta: RespuestaLista<Insignia>) => {
         if (Array.isArray(respuesta)) {
           this.insignias.set(respuesta);
         } else if (respuesta && Array.isArray(respuesta.data)) {
@@ -85,7 +86,7 @@ export class GestionarInsignias {
     });
 
     this.docente.alumnos().subscribe({
-      next: (respuesta: any) => {
+      next: (respuesta: RespuestaLista<AlumnoDocente>) => {
         if (Array.isArray(respuesta)) {
           this.alumnos.set(respuesta);
         } else if (respuesta && Array.isArray(respuesta.data)) {
@@ -196,7 +197,7 @@ export class GestionarInsignias {
     return this.activos.url(ruta);
   }
 
-  abrirEditar(insignia: any): void {
+  abrirEditar(insignia: Insignia): void {
     this.insigniaEditando = { ...insignia };
     this.imagenEditPreview.set('');
     this.archivoEditImagen = null;
