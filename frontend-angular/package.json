@@ -3,8 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --configuration cloud",
-    "start:cloud": "ng serve --configuration cloud",
+    "start": "npm run start:local",
     "start:local": "ng serve --configuration development",
     "prebuild": "node scripts/inject-release-stamp.mjs",
     "prebuild:ci": "node scripts/inject-release-stamp.mjs",
@@ -14,8 +13,12 @@
     "check:architecture": "node scripts/check-architecture.mjs",
     "check:style-tokens": "node scripts/check-style-tokens.mjs",
     "check:student-visual": "node scripts/check-student-visual.mjs",
+    "check:environment-safety": "node ../scripts/check-environment-safety.mjs --ci",
+    "test:environment-safety": "node --test ../scripts/check-environment-safety.test.mjs",
+    "test:firestore-rules:unit": "node --test tests/firestore/firestore.rules.test.mjs",
+    "test:firestore-rules": "cd .. && npx --yes firebase-tools@15.25.1 emulators:exec --only firestore --project demo-daemon-rules \"npm --prefix frontend-angular run test:firestore-rules:unit\"",
     "test": "jest",
-    "test:ci": "npm run check:architecture && npm run check:style-tokens && npm run check:student-visual && jest --runInBand --coverage",
+    "test:ci": "npm run check:environment-safety && npm run test:environment-safety && npm run check:architecture && npm run check:style-tokens && npm run check:student-visual && jest --runInBand --coverage",
     "test:watch": "jest --watch",
     "e2e": "playwright test",
     "e2e:public": "playwright test --project=public"
@@ -55,11 +58,11 @@
     "ngx-quill": "^29.2.0",
     "ngx-spinner": "^21.1.0",
     "pusher-js": "^8.5.0",
-    "zone.js": "~0.16.2",
     "quill": "^2.0.3",
     "rxjs": "~7.8.0",
     "tailwind-merge": "^3.5.0",
-    "tslib": "^2.3.0"
+    "tslib": "^2.3.0",
+    "zone.js": "~0.16.2"
   },
   "devDependencies": {
     "@angular/build": "^21.2.18",
@@ -69,6 +72,7 @@
     "@emnapi/core": "1.11.2",
     "@emnapi/runtime": "1.11.2",
     "@emnapi/wasi-threads": "1.2.2",
+    "@firebase/rules-unit-testing": "5.0.1",
     "@playwright/test": "^1.42.1",
     "@types/jest": "^30.0.0",
     "@types/quill": "^2.0.14",

@@ -1,0 +1,475 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function estaAutenticado() {
+      return request.auth != null;
+    }
+
+    function esCuentaDaemon() {
+      return estaAutenticado()
+        && request.auth.token.daemon == true
+        && request.auth.token.daemonClaimsVersion is int
+        && request.auth.token.daemonClaimsVersion >= 1;
+    }
+
+    function esEstudianteDaemon() {
+      return esCuentaDaemon()
+        && request.auth.token.daemonRole == 'estudiante'
+        && request.auth.token.daemonAudience in ['KIDS', 'TEENS'];
+    }
+
+    function uidValido(uid) {
+      return uid is string && uid.size() > 0 && uid.size() <= 128;
+    }
+
+    function textoValido(valor, maximo) {
+      return valor is string && valor.size() <= maximo;
+    }
+
+    function referenciaValida(valor) {
+      return valor == null || textoValido(valor, 512);
+    }
+
+    function timestampOpcionalValido(valor) {
+      return valor == null || valor is timestamp;
+    }
+
+    function consultaAcotada(maximo) {
+      return request.query.limit != null
+        && request.query.limit > 0
+        && request.query.limit <= maximo;
+    }
+
+    function esPropietario(datos) {
+      return esCuentaDaemon() && datos.autor_uid == request.auth.uid;
+    }
+
+    function puedeLeerPublicado(datos) {
+      return esCuentaDaemon()
+        && datos.schema_version == 2
+        && datos.estado == 'publicado'
+        && datos.moderacion_estado == 'aprobado'
+        && datos.version_publicada_id is string
+        && datos.version_publicada_id.size() > 0
+        && datos.deleted_at == null
+        && (
+          datos.visibilidad == 'comunidad'
+          || (
+            datos.visibilidad == 'aula'
+            && datos.aula_id is string
+            && request.auth.token.daemonClassroomId == datos.aula_id
+          )
+        );
+    }
+
+    function puedeLeerCuento(datos) {
+      return datos.schema_version == 2
+        && datos.estado != 'eliminado'
+        && (esPropietario(datos) || puedeLeerPublicado(datos));
+    }
+
+    // En list sólo se usan condiciones que una query puede demostrar. La
+    // integridad completa del documento se valida al escribir y en lecturas get.
+    function puedeListarCuento(datos) {
+      return esCuentaDaemon()
+        && datos.schema_version == 2
+        && (
+          (
+            datos.autor_uid == request.auth.uid
+            && datos.estado != 'eliminado'
+          )
+          || (
+            datos.estado == 'publicado'
+            && datos.moderacion_estado == 'aprobado'
+            && (
+              datos.visibilidad == 'comunidad'
+              || (
+                datos.visibilidad == 'aula'
+                && datos.aula_id == request.auth.token.daemonClassroomId
+              )
+            )
+          )
+        );
+    }
+
+    function estadisticasValidas(datos) {
+      return datos.get('stats', null) == null
+        || (
+          datos.stats is map
+          && datos.stats.keys().hasOnly(['comentarios', 'reacciones', 'lecturas'])
+          && datos.stats.get('comentarios', 0) is int
+          && datos.stats.get('comentarios', 0) >= 0
+          && datos.stats.get('reacciones', 0) is int
+          && datos.stats.get('reacciones', 0) >= 0
+          && datos.stats.get('lecturas', 0) is int
+          && datos.stats.get('lecturas', 0) >= 0
+        );
+    }
+
+    function cuentoValido(datos) {
+      return datos.keys().hasAll([
+          'schema_version',
+          'autor_uid',
+          'audiencia',
+          'estado',
+          'visibilidad',
+          'version_borrador_id',
+          'moderacion_estado',
+          'comentarios_bloqueados',
+          'created_at',
+          'updated_at'
+        ])
+        && datos.keys().hasOnly([
+          'schema_version',
+          'autor_uid',
+          'autor_usuario_id',
+          'autor_perfil',
+          'audiencia',
+          'aula_id',
+          'estado',
+          'visibilidad',
+          'version_borrador_id',
+          'version_publicada_id',
+          'moderacion_estado',
+          'titulo_publicado',
+          'sinopsis_publicada',
+          'categoria_publicada',
+          'rango_edad_publicado',
+          'paginas_publicadas',
+          'palabras_publicadas',
+          'portada_ref',
+          'stats',
+          'comentarios_bloqueados',
+          'created_at',
+          'updated_at',
+          'submitted_at',
+          'published_at',
+          'deleted_at',
+          'legacy'
+        ])
+        && datos.schema_version == 2
+        && uidValido(datos.autor_uid)
+        && datos.audiencia in ['KIDS', 'TEENS']
+        && datos.estado in ['borrador', 'en_revision', 'publicado', 'rechazado', 'archivado', 'eliminado']
+        && datos.visibilidad in ['privado', 'aula', 'comunidad']
+        && textoValido(datos.version_borrador_id, 128)
+        && datos.moderacion_estado in ['no_solicitada', 'pendiente', 'aprobado', 'rechazado']
+        && datos.comentarios_bloqueados is bool
+        && datos.created_at is timestamp
+        && datos.updated_at is timestamp
+        && (datos.get('autor_usuario_id', null) == null || datos.autor_usuario_id is int)
+        && (datos.get('autor_perfil', null) == null || (
+          datos.autor_perfil is map
+          && datos.autor_perfil.keys().hasOnly(['nombre', 'avatar_ref'])
+          && textoValido(datos.autor_perfil.nombre, 80)
+          && referenciaValida(datos.autor_perfil.get('avatar_ref', null))
+        ))
+        && (datos.get('aula_id', null) == null || textoValido(datos.aula_id, 128))
+        && (datos.get('version_publicada_id', null) == null || textoValido(datos.version_publicada_id, 128))
+        && (datos.get('titulo_publicado', null) == null || textoValido(datos.titulo_publicado, 120))
+        && (datos.get('sinopsis_publicada', null) == null || textoValido(datos.sinopsis_publicada, 500))
+        && (datos.get('categoria_publicada', null) == null || textoValido(datos.categoria_publicada, 50))
+        && (datos.get('rango_edad_publicado', null) == null || textoValido(datos.rango_edad_publicado, 30))
+        && (datos.get('paginas_publicadas', null) == null || (
+          datos.paginas_publicadas is int && datos.paginas_publicadas >= 1 && datos.paginas_publicadas <= 100
+        ))
+        && (datos.get('palabras_publicadas', null) == null || (
+          datos.palabras_publicadas is int && datos.palabras_publicadas >= 0
+        ))
+        && referenciaValida(datos.get('portada_ref', null))
+        && timestampOpcionalValido(datos.get('submitted_at', null))
+        && timestampOpcionalValido(datos.get('published_at', null))
+        && timestampOpcionalValido(datos.get('deleted_at', null))
+        && (datos.get('legacy', null) == null || datos.legacy is map)
+        && estadisticasValidas(datos);
+    }
+
+    function creacionCuentoClienteValida(datos) {
+      return esEstudianteDaemon()
+        && datos.keys().hasAll([
+          'schema_version',
+          'autor_uid',
+          'audiencia',
+          'estado',
+          'visibilidad',
+          'version_borrador_id',
+          'moderacion_estado',
+          'comentarios_bloqueados',
+          'created_at',
+          'updated_at'
+        ])
+        && datos.keys().hasOnly([
+          'schema_version',
+          'autor_uid',
+          'audiencia',
+          'estado',
+          'visibilidad',
+          'version_borrador_id',
+          'moderacion_estado',
+          'comentarios_bloqueados',
+          'created_at',
+          'updated_at'
+        ])
+        && cuentoValido(datos)
+        && datos.autor_uid == request.auth.uid
+        && datos.audiencia == request.auth.token.daemonAudience
+        && datos.estado == 'borrador'
+        && datos.visibilidad == 'privado'
+        && datos.moderacion_estado == 'no_solicitada'
+        && datos.comentarios_bloqueados == true
+        && datos.version_borrador_id.size() > 0
+        && datos.created_at == request.time
+        && datos.updated_at == request.time;
+    }
+
+    function puedeEditarRaizBorrador() {
+      return esEstudianteDaemon()
+        && esPropietario(resource.data)
+        && resource.data.estado == 'borrador'
+        && cuentoValido(request.resource.data)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['updated_at'])
+        && request.resource.data.updated_at == request.time;
+    }
+
+    function datosCuento(cuentoId) {
+      return get(/databases/$(database)/documents/cuentos/$(cuentoId)).data;
+    }
+
+    function datosCuentoDespues(cuentoId) {
+      return getAfter(/databases/$(database)/documents/cuentos/$(cuentoId)).data;
+    }
+
+    function puedeEditarVersion(cuentoId, versionId) {
+      let cuento = datosCuentoDespues(cuentoId);
+      return esEstudianteDaemon()
+        && cuento.schema_version == 2
+        && esPropietario(cuento)
+        && cuento.estado == 'borrador'
+        && cuento.version_borrador_id == versionId;
+    }
+
+    function puedeLeerVersion(cuentoId, versionId) {
+      let cuento = datosCuento(cuentoId);
+      return (
+          cuento.schema_version == 2
+          && esPropietario(cuento)
+          && cuento.estado != 'eliminado'
+        )
+        || (
+          puedeLeerPublicado(cuento)
+          && cuento.version_publicada_id == versionId
+        );
+    }
+
+    function versionValida(datos) {
+      return datos.keys().hasAll([
+          'schema_version',
+          'autor_uid',
+          'estado',
+          'titulo',
+          'sinopsis',
+          'categoria',
+          'rango_edad',
+          'portada_ref',
+          'paginas',
+          'idioma',
+          'palabras',
+          'tiempo_lectura',
+          'revision',
+          'created_at',
+          'updated_at'
+        ])
+        && datos.keys().hasOnly([
+          'schema_version',
+          'autor_uid',
+          'estado',
+          'titulo',
+          'sinopsis',
+          'categoria',
+          'rango_edad',
+          'portada_ref',
+          'paginas',
+          'idioma',
+          'palabras',
+          'tiempo_lectura',
+          'revision',
+          'created_at',
+          'updated_at'
+        ])
+        && datos.schema_version == 2
+        && uidValido(datos.autor_uid)
+        && datos.estado == 'borrador'
+        && textoValido(datos.titulo, 120)
+        && textoValido(datos.sinopsis, 500)
+        && textoValido(datos.categoria, 50)
+        && textoValido(datos.rango_edad, 30)
+        && referenciaValida(datos.portada_ref)
+        && datos.paginas is int
+        && datos.paginas >= 1
+        && datos.paginas <= 100
+        && datos.idioma is string
+        && datos.idioma.size() >= 2
+        && datos.idioma.size() <= 12
+        && datos.palabras is int
+        && datos.palabras >= 0
+        && datos.tiempo_lectura is int
+        && datos.tiempo_lectura >= 0
+        && datos.revision is int
+        && datos.revision >= 0
+        && datos.created_at is timestamp
+        && datos.updated_at is timestamp;
+    }
+
+    function paginaValida(datos) {
+      return datos.keys().hasAll([
+          'schema_version',
+          'autor_uid',
+          'orden',
+          'contenido',
+          'ilustracion_ref',
+          'texto_alternativo',
+          'fondo_token',
+          'created_at',
+          'updated_at'
+        ])
+        && datos.keys().hasOnly([
+          'schema_version',
+          'autor_uid',
+          'orden',
+          'contenido',
+          'ilustracion_ref',
+          'texto_alternativo',
+          'fondo_token',
+          'created_at',
+          'updated_at'
+        ])
+        && datos.schema_version == 2
+        && uidValido(datos.autor_uid)
+        && datos.orden is int
+        && datos.orden >= 1
+        && datos.orden <= 100
+        && textoValido(datos.contenido, 20000)
+        && referenciaValida(datos.ilustracion_ref)
+        && textoValido(datos.texto_alternativo, 250)
+        && textoValido(datos.fondo_token, 100)
+        && datos.fondo_token.matches('^var\\(--daemon-[a-z0-9-]+\\)$')
+        && datos.created_at is timestamp
+        && datos.updated_at is timestamp;
+    }
+
+    function comentarioVisibleValido(datos) {
+      return datos.keys().hasAll([
+          'schema_version',
+          'autor_uid',
+          'cuerpo',
+          'estado',
+          'created_at',
+          'updated_at'
+        ])
+        && datos.keys().hasOnly([
+          'schema_version',
+          'autor_uid',
+          'cuerpo',
+          'estado',
+          'created_at',
+          'updated_at'
+        ])
+        && datos.schema_version == 2
+        && uidValido(datos.autor_uid)
+        && datos.cuerpo is string
+        && datos.cuerpo.size() > 0
+        && datos.cuerpo.size() <= 1000
+        && datos.estado == 'visible'
+        && datos.created_at is timestamp
+        && datos.updated_at is timestamp;
+    }
+
+    function puedeLeerComentarios(cuentoId) {
+      let cuento = datosCuento(cuentoId);
+      return puedeLeerCuento(cuento) && cuento.comentarios_bloqueados == false;
+    }
+
+    match /cuentos/{cuentoId} {
+      allow get: if puedeLeerCuento(resource.data);
+      allow list: if consultaAcotada(50) && puedeListarCuento(resource.data);
+      allow create: if creacionCuentoClienteValida(request.resource.data);
+      allow update: if puedeEditarRaizBorrador();
+      allow delete: if false;
+
+      match /versiones/{versionId} {
+        allow get: if puedeLeerVersion(cuentoId, versionId);
+        allow list: if consultaAcotada(20)
+          && datosCuento(cuentoId).schema_version == 2
+          && esPropietario(datosCuento(cuentoId))
+          && datosCuento(cuentoId).estado != 'eliminado';
+        allow create: if puedeEditarVersion(cuentoId, versionId)
+          && versionValida(request.resource.data)
+          && request.resource.data.autor_uid == request.auth.uid
+          && request.resource.data.revision == 0
+          && request.resource.data.created_at == request.time
+          && request.resource.data.updated_at == request.time;
+        allow update: if puedeEditarVersion(cuentoId, versionId)
+          && resource.data.autor_uid == request.auth.uid
+          && versionValida(request.resource.data)
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+            'titulo', 'sinopsis', 'categoria', 'rango_edad', 'portada_ref', 'paginas',
+            'idioma', 'palabras', 'tiempo_lectura', 'revision', 'updated_at'
+          ])
+          && request.resource.data.revision == resource.data.revision + 1
+          && request.resource.data.updated_at == request.time;
+        allow delete: if false;
+
+        match /paginas/{paginaId} {
+          allow get: if puedeLeerVersion(cuentoId, versionId);
+          allow list: if consultaAcotada(100) && puedeLeerVersion(cuentoId, versionId);
+          allow create: if puedeEditarVersion(cuentoId, versionId)
+            && paginaValida(request.resource.data)
+            && request.resource.data.autor_uid == request.auth.uid
+            && request.resource.data.created_at == request.time
+            && request.resource.data.updated_at == request.time;
+          allow update: if puedeEditarVersion(cuentoId, versionId)
+            && resource.data.autor_uid == request.auth.uid
+            && paginaValida(request.resource.data)
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+              'orden', 'contenido', 'ilustracion_ref', 'texto_alternativo', 'fondo_token', 'updated_at'
+            ])
+            && request.resource.data.updated_at == request.time;
+          allow delete: if puedeEditarVersion(cuentoId, versionId)
+            && resource.data.autor_uid == request.auth.uid;
+        }
+      }
+
+      match /comentarios/{comentarioId} {
+        allow get: if comentarioVisibleValido(resource.data)
+          && puedeLeerComentarios(cuentoId);
+        allow list: if consultaAcotada(50)
+          && resource.data.schema_version == 2
+          && resource.data.estado == 'visible'
+          && puedeLeerComentarios(cuentoId);
+        allow create, update, delete: if false;
+      }
+
+      match /reacciones/{reaccionId} {
+        // Laravel usa IDs deterministas y aggregate queries. El cliente no
+        // puede exponer UIDs ni mantener contadores manipulables.
+        allow read, write: if false;
+      }
+    }
+
+    // Colecciones legacy: no se aceptan nuevas escrituras directas. El Paquete 4
+    // migra sus consumidores al agregado versionado antes de cualquier despliegue.
+    match /cuento_comentarios/{comentarioId} {
+      allow read, write: if false;
+    }
+
+    match /cuento_reacciones/{reaccionId} {
+      allow read, write: if false;
+    }
+
+    // Cualquier colección no declarada queda cerrada.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
