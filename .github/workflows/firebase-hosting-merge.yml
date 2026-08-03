@@ -32,6 +32,9 @@ jobs:
         run: npm audit --omit=dev --audit-level=high
         working-directory: frontend-angular
 
+      - name: Validate production environment contract
+        run: node scripts/check-environment-safety.mjs --ci
+
       # Tests y checks de codigo viven en frontend-ci.yml (corre en cada PR).
       # El deploy de Firebase solo audita, stampa, build, deploy y smoke.
       # Asi el style-tokens check no bloquea deploys por violaciones

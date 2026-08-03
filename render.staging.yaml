@@ -11,10 +11,12 @@ services:
     envVars:
       - key: APP_ENV
         value: staging
+      - key: DAEMON_ENVIRONMENT
+        value: staging
       - key: APP_DEBUG
-        value: 'false'
+        value: "false"
       - key: RUN_MIGRATIONS
-        value: 'true'
+        value: "true"
       - key: DB_CONNECTION
         value: pgsql
       - key: DB_SSLMODE
@@ -23,6 +25,8 @@ services:
         value: supabase
       - key: PRIVATE_UPLOADS_DISK
         value: supabase_private
+      - key: BROADCAST_CONNECTION
+        value: pusher
       - key: SUPABASE_STORAGE_BUCKET
         value: daemon-assets-staging
       - key: SUPABASE_PRIVATE_STORAGE_BUCKET
@@ -38,9 +42,9 @@ services:
       - key: AUTH_COOKIE_SAME_SITE
         value: none
       - key: AUTH_COOKIE_SECURE
-        value: 'true'
+        value: "true"
       - key: AUTH_EXPOSE_BEARER_TOKEN
-        value: 'false'
+        value: "false"
       - key: APP_URL
         sync: false
       - key: APP_KEY

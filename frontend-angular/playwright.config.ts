@@ -39,7 +39,7 @@ export default defineConfig({
     {
       name: 'authenticated',
       testIgnore: /auth\.spec\.ts/,
-      use: { 
+      use: {
         ...devices['Desktop Chrome'],
         storageState: 'playwright/.auth/user.json',
       },
@@ -49,7 +49,7 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: process.env['E2E_WEB_SERVER_COMMAND'] || 'npm run start:cloud',
+    command: process.env['E2E_WEB_SERVER_COMMAND'] || 'npm run start:local',
     url: 'http://localhost:4200',
     reuseExistingServer: !process.env['CI'],
   },

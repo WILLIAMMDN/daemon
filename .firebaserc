@@ -1,13 +1,13 @@
 {
   "projects": {
-    "default": "daemon-a41f8"
+    "default": "demo-daemon-local",
+    "development": "demo-daemon-local",
+    "production": "daemon-a41f8"
   },
   "targets": {
     "daemon-a41f8": {
       "hosting": {
-        "estudiante": [
-          "daemonestudiante"
-        ]
+        "estudiante": ["daemonestudiante"]
       }
     }
   },
