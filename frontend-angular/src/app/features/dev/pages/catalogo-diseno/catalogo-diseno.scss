@@ -1,0 +1,231 @@
+.catalogo {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+  display: grid;
+  gap: 2.5rem;
+
+  &__cabecera {
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  &__nota {
+    color: var(--daemon-ink-soft);
+    max-width: 70ch;
+  }
+
+  &__tokens {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 0.75rem;
+  }
+
+  &__token {
+    display: grid;
+    grid-template-columns: 2.5rem 1fr;
+    grid-template-rows: auto auto;
+    gap: 0.25rem 0.75rem;
+    align-items: center;
+    padding: 0.75rem;
+    border: 1px solid var(--daemon-border);
+    border-radius: var(--daemon-radius-md);
+    background: var(--daemon-surface);
+  }
+
+  &__muestra {
+    grid-row: 1 / 3;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: var(--daemon-radius-sm);
+    border: 1px solid var(--daemon-border);
+  }
+
+  &__nombre {
+    font-weight: 600;
+  }
+
+  code {
+    font-size: 0.72rem;
+    color: var(--daemon-ink-soft);
+    overflow-wrap: anywhere;
+  }
+
+  &__fila {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: flex-start;
+    margin-top: 0.5rem;
+  }
+
+  &__btn {
+    padding: 0.55rem 1rem;
+    border-radius: var(--daemon-radius-md);
+    border: 1px solid transparent;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+
+    &--primario {
+      background: var(--daemon-primary);
+      color: var(--daemon-on-primary);
+
+      &:hover {
+        background: var(--daemon-primary-dark);
+      }
+    }
+
+    &--secundario {
+      background: var(--daemon-surface-elevated);
+      color: var(--daemon-ink);
+      border-color: var(--daemon-border);
+
+      &:hover {
+        border-color: var(--daemon-primary);
+      }
+    }
+
+    &--peligro {
+      background: var(--daemon-danger);
+      color: var(--daemon-on-primary);
+    }
+
+    &:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    &:focus-visible {
+      outline-width: 2px;
+      outline-style: solid;
+      outline-color: var(--daemon-primary);
+      outline-offset: 2px;
+    }
+  }
+
+  &__campo {
+    display: grid;
+    gap: 0.25rem;
+    min-width: 240px;
+
+    input,
+    textarea {
+      padding: 0.5rem 0.75rem;
+      border: 1px solid var(--daemon-border);
+      border-radius: var(--daemon-radius-sm);
+      background: var(--daemon-surface-elevated);
+      color: var(--daemon-ink);
+
+      &:focus-visible {
+        outline-width: 2px;
+        outline-style: solid;
+        outline-color: var(--daemon-primary);
+        outline-offset: 1px;
+      }
+    }
+  }
+
+  &__tarjeta {
+    flex: 1 1 260px;
+    padding: 1rem;
+    border: 1px solid var(--daemon-border);
+    border-radius: var(--daemon-radius-md);
+    background: var(--daemon-surface-elevated);
+
+    h3 {
+      margin: 0 0 0.5rem;
+    }
+
+    p {
+      margin: 0;
+      color: var(--daemon-ink-soft);
+    }
+  }
+
+  &__badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+  }
+
+  &__badge {
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    border: 1px solid var(--daemon-border);
+    color: var(--daemon-ink-soft);
+
+    &--accent {
+      background: var(--daemon-accent);
+      border-color: transparent;
+      color: var(--daemon-on-accent);
+    }
+  }
+
+  &__esqueleto {
+    flex: 1 1 260px;
+    display: grid;
+    gap: 0.75rem;
+    padding: 1rem;
+  }
+
+  &__esqueleto-linea {
+    height: 0.9rem;
+    border-radius: var(--daemon-radius-sm);
+    background: var(--daemon-surface-muted);
+    animation: catalogo-pulso 1.2s ease-in-out infinite;
+
+    &--corta {
+      width: 60%;
+    }
+  }
+
+  &__vacio {
+    flex: 1 1 260px;
+    display: grid;
+    gap: 0.75rem;
+    justify-items: start;
+    padding: 1rem;
+    border: 1px dashed var(--daemon-border);
+    border-radius: var(--daemon-radius-md);
+
+    p {
+      margin: 0;
+      color: var(--daemon-ink-soft);
+    }
+  }
+
+  &__aviso {
+    flex: 1 1 260px;
+    padding: 0.75rem 1rem;
+    border-radius: var(--daemon-radius-md);
+    font-weight: 500;
+
+    &--exito {
+      background: var(--daemon-success-soft);
+      color: var(--daemon-success);
+    }
+
+    &--error {
+      background: var(--daemon-danger-soft);
+      color: var(--daemon-danger);
+    }
+  }
+}
+
+@keyframes catalogo-pulso {
+  50% {
+    opacity: 0.45;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .catalogo__esqueleto-linea {
+    animation: none;
+  }
+}

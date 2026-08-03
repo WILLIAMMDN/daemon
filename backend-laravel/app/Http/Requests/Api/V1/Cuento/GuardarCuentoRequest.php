@@ -13,7 +13,7 @@ class GuardarCuentoRequest extends FormRequest
 
     public function rules(): array
     {
-        return [
+        $rules = [
             'titulo' => ['required', 'string', 'max:150'],
             // Limite de tamano para evitar abuso / DoS de almacenamiento.
             // 200 KB alcanza para ~50k palabras en HTML rico, mucho mas
@@ -21,5 +21,13 @@ class GuardarCuentoRequest extends FormRequest
             // El sanitizer final aplica su propio limite (defensa en profundidad).
             'contenido' => ['nullable', 'string', 'max:204800'],
         ];
+
+        foreach (range(1, 6) as $indice) {
+            $rules['img_'.$indice] = ['nullable', 'string', 'max:255'];
+            $rules['pos_'.$indice] = ['nullable', 'string', 'max:20'];
+            $rules['data_'.$indice] = ['nullable', 'string', 'max:204800'];
+        }
+
+        return $rules;
     }
 }

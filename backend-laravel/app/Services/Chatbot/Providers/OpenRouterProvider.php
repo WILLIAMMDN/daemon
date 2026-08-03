@@ -11,7 +11,7 @@ class OpenRouterProvider implements AiProviderInterface
 {
     public function responder(BotAlumno $bot, array $mensajes): string
     {
-        $apiKey = env('OPENROUTER_API_KEY_NUEVA', base64_decode('QVEuQWI4Uk42SVZQQ3NTX1BDd3gyV3Qyc2lXYUV5ZDRHTlJaZkkxUVB3SVNhbFpkS3ZGYnc='));
+        $apiKey = env('OPENROUTER_API_KEY_NUEVA');
         if (empty($apiKey)) {
             throw new RuntimeException('La API Key de OpenRouter no esta configurada en el servidor.');
         }
@@ -22,7 +22,9 @@ class OpenRouterProvider implements AiProviderInterface
         ]);
 
         $respuesta = Http::withToken($apiKey)
-            ->timeout(120)
+            ->connectTimeout(10)
+            ->timeout(45)
+            ->retry(2, 250)
             ->post('https://openrouter.ai/api/v1/chat/completions', [
                 'model' => $bot->modelo_ia ?: 'meta-llama/llama-3.3-70b-instruct:free',
                 'messages' => $mensajes,

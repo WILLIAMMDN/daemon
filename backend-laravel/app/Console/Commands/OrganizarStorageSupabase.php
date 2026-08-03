@@ -2,12 +2,15 @@
 
 namespace App\Console\Commands;
 
+use App\Console\Commands\Concerns\ProtectsDestructiveOperations;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class OrganizarStorageSupabase extends Command
 {
+    use ProtectsDestructiveOperations;
+
     protected $signature = 'daemon:organizar-storage-supabase {--disk=supabase : Disco cloud destino} {--keep-unreferenced : No borrar objetos existentes del bucket que no esten referenciados por la BD} {--confirm : Ejecutar subidas, actualizar rutas en BD y limpiar objetos no referenciados}';
 
     protected $description = 'Ordena archivos referenciados por la base en carpetas de negocio y retira del bucket assets que pertenecen al hosting frontend.';
@@ -26,6 +29,13 @@ class OrganizarStorageSupabase extends Command
 
     public function handle(): int
     {
+        if (
+            $this->option('confirm')
+            && ! $this->authorizeDestructiveOperation((string) $this->getName())
+        ) {
+            return self::FAILURE;
+        }
+
         $disk = (string) $this->option('disk');
         $this->prepararMovimientos();
         $pendientes = collect($this->movimientos)

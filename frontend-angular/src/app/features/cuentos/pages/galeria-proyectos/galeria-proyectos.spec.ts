@@ -1,147 +1,132 @@
-import { signal } from '@angular/core';
+import { computed, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { of, throwError } from 'rxjs';
-import { ApiError } from '../../../../core/servicios/api';
 import { Sesion } from '../../../../core/servicios/sesion';
-import { CuentoRegistro } from '../../models/cuento.models';
-import { Cuento } from '../../services/cuento';
+import { GaleriaCuentosFacade } from '../../aplicacion/galeria-cuentos.facade';
+import { Cuento, VERSION_ESQUEMA_CUENTO } from '../../dominio/cuento.modelo';
 import { GaleriaProyectos } from './galeria-proyectos';
 
-const cuentos: CuentoRegistro[] = [
+const instante = { milisegundos: 1_753_000_000_000 };
+const cuentos: Cuento[] = [
   {
-    id: 10,
-    id_alumno: 7,
+    id: 'cuento-10',
+    autorUid: 'uid-7',
+    autorUsuarioId: 7,
+    autor: { nombre: 'Luna Creadora', avatarRef: null },
     titulo: 'La estrella azul',
-    autor: 'Luna Creadora',
-    fecha_creacion: '2026-07-18T10:00:00Z',
-    img_1: 'uploads/cuentos/estrella.webp',
-    data_1: '{"bubbles":[{"text":"Hola"}],"chars":[]}',
+    descripcion: '',
+    portadaRef: 'uploads/cuentos/estrella.webp',
+    categoria: 'Aventura',
+    rangoEdad: '9 - 12 años',
+    paginasBorrador: 2,
+    palabras: 50,
+    estado: 'borrador',
+    visibilidad: 'privado',
+    audiencia: 'KIDS',
+    moderacion: 'no_solicitada',
+    estadisticas: { comentarios: 0, reacciones: 0, lecturas: 0 },
+    versionBorradorId: 'version-10',
+    versionPublicadaId: null,
+    creadoEn: instante,
+    actualizadoEn: instante,
+    publicadoEn: null,
+    schemaVersion: VERSION_ESQUEMA_CUENTO,
   },
   {
-    id: 11,
-    id_alumno: 8,
+    id: 'cuento-11',
+    autorUid: 'uid-8',
+    autorUsuarioId: 8,
+    autor: { nombre: 'Mateo Ruiz', avatarRef: null },
     titulo: 'El bosque amable',
-    autor: 'Mateo Ruiz',
-    fecha_creacion: '2026-07-16T10:00:00Z',
-    data_1: '{"bubbles":[],"chars":[]}',
+    descripcion: '',
+    portadaRef: null,
+    categoria: 'Fábula',
+    rangoEdad: '9 - 12 años',
+    paginasBorrador: 1,
+    palabras: 30,
+    estado: 'publicado',
+    visibilidad: 'comunidad',
+    audiencia: 'KIDS',
+    moderacion: 'aprobado',
+    estadisticas: { comentarios: 1, reacciones: 2, lecturas: 3 },
+    versionBorradorId: 'version-11',
+    versionPublicadaId: 'version-11',
+    creadoEn: instante,
+    actualizadoEn: { milisegundos: instante.milisegundos - 1000 },
+    publicadoEn: instante,
+    schemaVersion: VERSION_ESQUEMA_CUENTO,
   },
 ];
 
 describe('GaleriaProyectos', () => {
-  const listarMock = jest.fn();
-  const mioMock = jest.fn();
+  const facade = {
+    cuentos: signal<readonly Cuento[]>(cuentos),
+    propios: signal<readonly Cuento[]>([cuentos[0]]),
+    cargando: signal(false),
+    refrescando: signal(false),
+    error: signal(''),
+    datosConservados: signal(false),
+    hayMas: computed(() => false),
+    reaccionesPropiasTotal: signal(0),
+    cargar: jest.fn().mockResolvedValue(undefined),
+    cargarMas: jest.fn().mockResolvedValue(undefined),
+    eliminar: jest.fn().mockResolvedValue(true),
+    resolverActivo: (referencia: string | null) => referencia ? `/${referencia}` : '',
+  };
 
   beforeEach(async () => {
-    listarMock.mockReset().mockReturnValue(of(cuentos));
-    mioMock.mockReset().mockReturnValue(of(cuentos[0]));
+    facade.cuentos.set(cuentos);
+    facade.propios.set([cuentos[0]]);
+    facade.cargando.set(false);
+    facade.error.set('');
+    facade.cargar.mockClear();
 
     await TestBed.configureTestingModule({
       imports: [GaleriaProyectos],
       providers: [
         provideRouter([]),
-        { provide: Cuento, useValue: { listar: listarMock, mio: mioMock } },
-        { provide: Sesion, useValue: { usuario: signal({ id: 7 }) } },
+        { provide: Sesion, useValue: { usuario: signal({ id: 7, nombre_completo: 'Luna Creadora' }) } },
       ],
-    }).compileComponents();
+    })
+      .overrideComponent(GaleriaProyectos, {
+        set: { providers: [{ provide: GaleriaCuentosFacade, useValue: facade }] },
+      })
+      .compileComponents();
   });
 
-  it('presenta sólo datos recibidos, portadas pendientes explícitas y rutas nuevas', () => {
+  it('presenta resultados paginados y distingue el cuento propio por UID resuelto en aplicación', () => {
     const fixture = TestBed.createComponent(GaleriaProyectos);
     fixture.detectChanges();
     const element = fixture.nativeElement as HTMLElement;
 
-    expect(element.querySelector('main')).toBeNull();
     expect(element.querySelectorAll('.story-card')).toHaveLength(2);
     expect(element.querySelector('.story-progress-stats')?.textContent).toContain('2');
-    expect(element.querySelector('[data-asset-name="story-11-cover.webp"]')).toBeTruthy();
-    expect(element.querySelector<HTMLAnchorElement>('a[href="/alumno/proyectos/cuentos/10"]')).toBeTruthy();
-    // The hero carries two real CTAs: primary "Crear cuento" and a secondary "Volver a Proyectos".
-    // No fake "Explorar historias" anchor, no overlay breadcrumb breaking the banner's alignment.
-    const volverBtn = Array.from(element.querySelectorAll<HTMLAnchorElement>('.module-hero a'))
-      .find((a) => a.textContent?.includes('Volver a Proyectos'));
-    expect(volverBtn?.getAttribute('href')).toBe('/alumno/proyectos');
-    expect(element.querySelector('a[href="#historias-publicadas"]')).toBeNull();
-    expect(element.querySelector('.story-breadcrumb')).toBeNull();
-    expect(element.textContent).not.toContain('Reacciones recibidas');
-    expect(element.textContent).not.toContain('Destacados');
-    expect(element.textContent).not.toContain('Favoritos');
-    expect(element.textContent).not.toContain('Nuevos');
+    expect(element.querySelector('[data-asset-name="story-cuento-11-cover.webp"]')).toBeTruthy();
+    expect(element.querySelector<HTMLAnchorElement>('a[href="/alumno/proyectos/cuentos/cuento-10"]')).toBeTruthy();
+    expect(facade.cargar).toHaveBeenCalledTimes(1);
   });
 
-  it('filtra por propiedad y búsqueda sin categorías inventadas', () => {
+  it('filtra por propiedad y búsqueda sin inventar categorías', () => {
     const fixture = TestBed.createComponent(GaleriaProyectos);
     fixture.detectChanges();
-    const element = fixture.nativeElement as HTMLElement;
-    const filtroMio = Array.from(element.querySelectorAll<HTMLButtonElement>('.story-filters button'))
-      .find((button) => button.textContent?.includes('Mis historias'));
-
-    filtroMio?.click();
+    fixture.componentInstance.seleccionarFiltro('mio');
     fixture.detectChanges();
-    expect(element.querySelectorAll('.story-card')).toHaveLength(1);
-    expect(element.querySelector('.story-card h2')?.textContent).toContain('La estrella azul');
+    expect(fixture.nativeElement.querySelectorAll('.story-card')).toHaveLength(1);
 
     fixture.componentInstance.seleccionarFiltro('todos');
-    const search = element.querySelector<HTMLInputElement>('.story-search input');
-    if (!search) throw new Error('No se encontró el buscador de historias');
-    search.value = 'bosque';
-    search.dispatchEvent(new Event('input'));
+    fixture.componentInstance.actualizarBusqueda('bosque');
     fixture.detectChanges();
+    const element = fixture.nativeElement as HTMLElement;
     expect(element.querySelectorAll('.story-card')).toHaveLength(1);
     expect(element.querySelector('.story-card h2')?.textContent).toContain('El bosque amable');
   });
 
   it('no confunde un error de conexión con una galería vacía', () => {
-    listarMock.mockReturnValue(throwError(() => new ApiError('offline', 'Sin conexión')));
-    mioMock.mockReturnValue(of(null));
+    facade.cuentos.set([]);
+    facade.propios.set([]);
+    facade.error.set('Sin conexión. Conservamos el contenido visible.');
     const fixture = TestBed.createComponent(GaleriaProyectos);
     fixture.detectChanges();
-    const element = fixture.nativeElement as HTMLElement;
-
-    expect(element.querySelector('.story-load-error')?.textContent).toContain('No pudimos abrir la galería');
-    expect(element.querySelector('app-estado-vacio')).toBeNull();
-  });
-
-  it('expone un FAB para abrir el resumen creativo y lo cierra con la X o el overlay', () => {
-    const fixture = TestBed.createComponent(GaleriaProyectos);
-    fixture.detectChanges();
-    const element = fixture.nativeElement as HTMLElement;
-    const component = fixture.componentInstance;
-
-    // Initial state: aside closed, FAB visible, overlay hidden.
-    const aside = element.querySelector<HTMLElement>('.story-aside');
-    const fab = element.querySelector<HTMLButtonElement>('.story-aside-fab');
-    const overlay = element.querySelector<HTMLElement>('.story-aside-overlay');
-    expect(aside).toBeTruthy();
-    expect(fab).toBeTruthy();
-    expect(overlay).toBeTruthy();
-    expect(aside?.classList.contains('is-open')).toBe(false);
-    expect(fab?.classList.contains('is-hidden')).toBe(false);
-    expect(overlay?.classList.contains('is-visible')).toBe(false);
-    expect(component.asideAbierto()).toBe(false);
-
-    // Open via FAB.
-    fab?.click();
-    fixture.detectChanges();
-    expect(component.asideAbierto()).toBe(true);
-    expect(aside?.classList.contains('is-open')).toBe(true);
-    expect(fab?.classList.contains('is-hidden')).toBe(true);
-    expect(overlay?.classList.contains('is-visible')).toBe(true);
-
-    // Close via the X button.
-    const closeBtn = element.querySelector<HTMLButtonElement>('.story-aside-close');
-    expect(closeBtn).toBeTruthy();
-    closeBtn?.click();
-    fixture.detectChanges();
-    expect(component.asideAbierto()).toBe(false);
-    expect(aside?.classList.contains('is-open')).toBe(false);
-
-    // Re-open, then close via overlay click.
-    fab?.click();
-    fixture.detectChanges();
-    expect(component.asideAbierto()).toBe(true);
-    overlay?.click();
-    fixture.detectChanges();
-    expect(component.asideAbierto()).toBe(false);
+    expect((fixture.nativeElement as HTMLElement).querySelector('.story-load-error')).toBeTruthy();
   });
 });

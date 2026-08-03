@@ -8,6 +8,10 @@
   <span></span>
 </div>
 
+@if (environmentIndicator.visible) {
+  <div class="environment-indicator" role="status">Entorno: {{ environmentIndicator.label }}</div>
+}
+
 <router-outlet />
 
 <ngx-spinner

@@ -2,6 +2,11 @@
 
 namespace App\Providers;
 
+use App\Contracts\Cuento\CuentoDocumentoGateway;
+use App\Contracts\Cuento\GeneradorTextoCuento;
+use App\Services\Cuento\FirestoreRestCuentoGateway;
+use App\Services\Cuento\ProveedorChatCuentoAdapter;
+use App\Support\EnvironmentSafety;
 use Illuminate\Database\Console\Migrations\FreshCommand;
 use Illuminate\Database\Console\Migrations\RefreshCommand;
 use Illuminate\Database\Console\Migrations\ResetCommand;
@@ -17,7 +22,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(CuentoDocumentoGateway::class, FirestoreRestCuentoGateway::class);
+        $this->app->bind(GeneradorTextoCuento::class, ProveedorChatCuentoAdapter::class);
     }
 
     /**
@@ -25,6 +31,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        EnvironmentSafety::fromApplication()->assertRuntimeSafe();
+
         Model::preventLazyLoading(! app()->isProduction());
 
         // Una etiqueta APP_ENV incorrecta nunca debe habilitar comandos que

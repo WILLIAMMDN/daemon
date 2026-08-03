@@ -3,14 +3,7 @@ import { CommonModule } from '@angular/common';
 import { QuillModule } from 'ngx-quill';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faBookOpenReader, faHeart, faBookmark, faShareNodes, faClock, faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
-import { CuentoDetallePayload } from '../../../../models/cuento.models';
-
-interface PaginaCuento {
-  id?: string | number;
-  contenido?: string | null;
-  colorFondo?: string | null;
-  ilustracion?: string | null;
-}
+import { CuentoDetalleVista, PaginaCuentoVista } from '../../../../presentacion/cuento-detalle-vista.modelo';
 import { Activos } from '../../../../../../core/servicios/activos';
 import { migrarContenidoLegacy } from '../../../../utils/cuento-legacy';
 
@@ -33,14 +26,14 @@ export class CuentoLecturaComponent {
   faChevronLeft = faChevronLeft;
   faChevronRight = faChevronRight;
 
-  @Input({ required: true }) set datosCuento(val: CuentoDetallePayload) {
+  @Input({ required: true }) set datosCuento(val: CuentoDetalleVista) {
     this._datosCuento = val;
     this.paginaActualIndex.set(0);
   }
-  get datosCuento(): CuentoDetallePayload {
+  get datosCuento(): CuentoDetalleVista {
     return this._datosCuento;
   }
-  private _datosCuento!: CuentoDetallePayload;
+  private _datosCuento!: CuentoDetalleVista;
   @Input() modoLectura = false;
   @Input() escalaFuente = 1;
   @Input() guardado = false;
@@ -67,10 +60,10 @@ export class CuentoLecturaComponent {
 
   @ViewChild('contenedorLectura') contenedorLectura!: ElementRef;
 
-  get paginasCuento(): PaginaCuento[] {
+  get paginasCuento(): readonly PaginaCuentoVista[] {
     const p = this.datosCuento?.cuento?.paginas;
     if (Array.isArray(p) && p.length > 0) {
-      return p as PaginaCuento[];
+      return p;
     }
     // Fallback
     if (this.contenidoProcesado) {
@@ -78,13 +71,14 @@ export class CuentoLecturaComponent {
         id: 'legacy-1',
         contenido: this.contenidoProcesado,
         colorFondo: 'var(--daemon-on-primary)',
-        ilustracion: null
+        ilustracion: null,
+        textoAlternativo: '',
       }];
     }
     return [];
   }
 
-  get paginaActiva(): PaginaCuento {
+  get paginaActiva(): PaginaCuentoVista {
     const paginas = this.paginasCuento;
     const index = this.paginaActualIndex();
     if (index >= 0 && index < paginas.length) {
@@ -96,6 +90,7 @@ export class CuentoLecturaComponent {
       contenido: '',
       colorFondo: 'var(--daemon-on-primary)',
       ilustracion: null,
+      textoAlternativo: '',
     };
   }
 

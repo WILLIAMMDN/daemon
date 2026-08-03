@@ -1,0 +1,46 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "cuentos",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "schema_version", "order": "ASCENDING" },
+        { "fieldPath": "estado", "order": "ASCENDING" },
+        { "fieldPath": "visibilidad", "order": "ASCENDING" },
+        { "fieldPath": "moderacion_estado", "order": "ASCENDING" },
+        { "fieldPath": "updated_at", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "cuentos",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "schema_version", "order": "ASCENDING" },
+        { "fieldPath": "autor_uid", "order": "ASCENDING" },
+        { "fieldPath": "estado", "order": "ASCENDING" },
+        { "fieldPath": "updated_at", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "comentarios",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "schema_version", "order": "ASCENDING" },
+        { "fieldPath": "estado", "order": "ASCENDING" },
+        { "fieldPath": "created_at", "order": "ASCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": [
+    {
+      "collectionGroup": "paginas",
+      "fieldPath": "contenido",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "versiones",
+      "fieldPath": "sinopsis",
+      "indexes": []
+    }
+  ]
+}

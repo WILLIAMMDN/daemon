@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faArrowLeft, faShareNodes, faBookmark } from '@fortawesome/free-solid-svg-icons';
-import { CuentoDetallePayload } from '../../../../models/cuento.models';
+import { CuentoDetalleVista } from '../../../../presentacion/cuento-detalle-vista.modelo';
 
 @Component({
   selector: 'app-cuento-hero',
@@ -18,7 +18,7 @@ export class CuentoHeroComponent {
   faShareNodes = faShareNodes;
   faBookmark = faBookmark;
 
-  @Input({ required: true }) datosCuento!: CuentoDetallePayload;
+  @Input({ required: true }) datosCuento!: CuentoDetalleVista;
   @Input({ required: true }) esPropietario = false;
   @Input({ required: true }) idCuento!: string;
   @Input() guardado = false;

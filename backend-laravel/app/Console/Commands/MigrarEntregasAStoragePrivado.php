@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Console\Commands\Concerns\ProtectsDestructiveOperations;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -9,6 +10,8 @@ use RuntimeException;
 
 class MigrarEntregasAStoragePrivado extends Command
 {
+    use ProtectsDestructiveOperations;
+
     protected $signature = 'daemon:migrar-entregas-privadas
         {--confirm : Copia y verifica los objetos en el bucket privado}
         {--delete-source : Elimina el objeto publico solo despues de verificar la copia}';
@@ -19,6 +22,10 @@ class MigrarEntregasAStoragePrivado extends Command
     {
         $confirm = (bool) $this->option('confirm');
         $deleteSource = (bool) $this->option('delete-source');
+
+        if ($confirm && ! $this->authorizeDestructiveOperation((string) $this->getName())) {
+            return self::FAILURE;
+        }
 
         if ($deleteSource && ! $confirm) {
             $this->error('--delete-source requiere --confirm.');

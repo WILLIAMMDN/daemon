@@ -6,6 +6,7 @@ import {
   GoogleAuthProvider,
   User,
   confirmPasswordReset,
+  connectAuthEmulator,
   createUserWithEmailAndPassword,
   getAuth,
   onAuthStateChanged,
@@ -19,15 +20,25 @@ import {
 } from 'firebase/auth';
 import { environment } from '../../../environments/environment';
 
+const authConEmulador = new WeakSet<Auth>();
+
 @Injectable({
   providedIn: 'root',
 })
 export class FirebaseAuth {
   private readonly app: FirebaseApp | null = this.crearApp();
-  private readonly auth: Auth | null = this.app ? getAuth(this.app) : null;
+  private readonly auth: Auth | null = this.crearAuth();
 
   disponible(): boolean {
     return this.auth !== null;
+  }
+
+  async uidActual(): Promise<string> {
+    const usuario = await this.usuarioActual();
+    if (!usuario?.uid) {
+      throw new Error('No hay una sesión de Firebase activa.');
+    }
+    return usuario.uid;
   }
 
   async loginGoogle(): Promise<string> {
@@ -59,7 +70,11 @@ export class FirebaseAuth {
     return credencial.user.getIdToken(true);
   }
 
-  async crearCuentaEmail(email: string, password: string, returnUrl = '/alumno?verificacion=firebase'): Promise<string> {
+  async crearCuentaEmail(
+    email: string,
+    password: string,
+    returnUrl = '/alumno?verificacion=firebase',
+  ): Promise<string> {
     const credencial = await createUserWithEmailAndPassword(this.requerirAuth(), email, password);
 
     // Firebase se encarga del correo real de verificacion para evitar
@@ -69,7 +84,10 @@ export class FirebaseAuth {
     return credencial.user.getIdToken();
   }
 
-  async enviarVerificacionCorreo(emailEsperado?: string | null, returnUrl = '/alumno?verificacion=firebase'): Promise<'enviado' | 'ya-verificado' | 'sin-sesion'> {
+  async enviarVerificacionCorreo(
+    emailEsperado?: string | null,
+    returnUrl = '/alumno?verificacion=firebase',
+  ): Promise<'enviado' | 'ya-verificado' | 'sin-sesion'> {
     const usuario = await this.usuarioActual();
 
     if (!this.emailCoincide(usuario, emailEsperado)) {
@@ -139,7 +157,7 @@ export class FirebaseAuth {
   }
 
   async logout(): Promise<void> {
-    if (! this.auth) {
+    if (!this.auth) {
       return;
     }
 
@@ -149,15 +167,32 @@ export class FirebaseAuth {
   private crearApp(): FirebaseApp | null {
     const config = environment.firebase;
 
-    if (! config?.apiKey || ! config.projectId || ! config.appId) {
+    if (!config?.apiKey || !config.projectId || !config.appId) {
       return null;
     }
 
     return getApps()[0] ?? initializeApp(config);
   }
 
+  private crearAuth(): Auth | null {
+    if (!this.app) {
+      return null;
+    }
+
+    const auth = getAuth(this.app);
+    const emulator = environment.firebaseEmulators;
+    if (emulator.enabled && !authConEmulador.has(auth)) {
+      connectAuthEmulator(auth, `http://${emulator.authHost}:${emulator.authPort}`, {
+        disableWarnings: true,
+      });
+      authConEmulador.add(auth);
+    }
+
+    return auth;
+  }
+
   private requerirAuth(): Auth {
-    if (! this.auth) {
+    if (!this.auth) {
       throw new Error('Firebase Auth todavia no esta configurado.');
     }
 

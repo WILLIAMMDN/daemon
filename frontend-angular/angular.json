@@ -74,10 +74,7 @@
               "node_modules/driver.js/dist/driver.css",
               "src/styles.scss"
             ],
-            "allowedCommonJsDependencies": [
-              "@rive-app/canvas",
-              "pusher-js"
-            ]
+            "allowedCommonJsDependencies": ["@rive-app/canvas", "pusher-js"]
           },
           "configurations": {
             "production": {
@@ -99,16 +96,11 @@
                   "maximumError": "48kB"
                 }
               ],
-              "outputHashing": "all"
-            },
-            "cloud": {
-              "optimization": false,
-              "extractLicenses": false,
-              "sourceMap": true,
+              "outputHashing": "all",
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.cloud.ts"
+                  "with": "src/environments/environment.production.ts"
                 }
               ]
             },
@@ -158,9 +150,6 @@
           "configurations": {
             "production": {
               "buildTarget": "frontend-angular:build:production"
-            },
-            "cloud": {
-              "buildTarget": "frontend-angular:build:cloud"
             },
             "staging": {
               "buildTarget": "frontend-angular:build:staging"

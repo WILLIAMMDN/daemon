@@ -4,6 +4,7 @@ import { alumnoGuard } from './core/guards/alumno-guard';
 import { docenteGuard } from './core/guards/docente-guard';
 import { tutorGuard } from './core/guards/tutor-guard';
 import { CATEGORIAS_PREMIO, NIVELES_ALUMNO, NIVELES_CONTENIDO } from './core/dominio/nivel-alumno';
+import { soloDesarrolloGuard } from './core/guards/solo-desarrollo.guard';
 
 export const routes: Routes = [
   { path: '', loadComponent: () => import('./features/publico/pages/inicio/inicio').then((m) => m.Inicio) },
@@ -86,5 +87,6 @@ export const routes: Routes = [
       { path: 'tokens', loadComponent: () => import('./features/docente/pages/historial-tokens/historial-tokens').then((m) => m.HistorialTokens), data: { titulo: 'Historial de tokens', descripcion: 'Auditoría de todos los movimientos.', endpoint: '/docente/historial-tokens' } },
     ],
   },
+  { path: 'dev/design-system', canActivate: [soloDesarrolloGuard], loadComponent: () => import('./features/dev/pages/catalogo-diseno/catalogo-diseno').then((m) => m.CatalogoDiseno) },
   { path: '**', redirectTo: '' },
 ];

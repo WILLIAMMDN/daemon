@@ -2,7 +2,7 @@ import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from 
 import { CommonModule, DatePipe } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faBookmark, faClock, faCalendarDays, faHeart, faCommentDots, faRobot } from '@fortawesome/free-solid-svg-icons';
-import { CuentoDetallePayload } from '../../../../models/cuento.models';
+import { CuentoDetalleVista } from '../../../../presentacion/cuento-detalle-vista.modelo';
 
 @Component({
   selector: 'app-cuento-sidebar',
@@ -20,7 +20,7 @@ export class CuentoSidebarComponent {
   faCommentDots = faCommentDots;
   faRobot = faRobot;
 
-  @Input({ required: true }) datosCuento!: CuentoDetallePayload;
+  @Input({ required: true }) datosCuento!: CuentoDetalleVista;
   @Input() modoLectura = false;
   @Input() tipAsistente = 'Cargando tip...';
   @Input() reaccionesCount: Record<string, number> = {};

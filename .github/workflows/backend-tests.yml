@@ -38,10 +38,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v4
 
+      - name: Validate environment isolation
+        working-directory: .
+        run: |
+          node scripts/check-environment-safety.mjs --ci
+          node --test scripts/check-environment-safety.test.mjs
+
       - name: Setup PHP
         uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
         with:
-          php-version: '8.3'
+          php-version: "8.3"
           extensions: mbstring, xml, ctype, iconv, intl, pdo, pdo_pgsql, pgsql, pdo_sqlite, sqlite3
           coverage: pcov
 
@@ -58,6 +64,8 @@ jobs:
 
       - name: Run Migrations
         env:
+          APP_ENV: testing
+          DAEMON_ENVIRONMENT: testing
           DB_CONNECTION: pgsql
           DB_HOST: 127.0.0.1
           DB_PORT: 5432
@@ -69,7 +77,9 @@ jobs:
 
       - name: Execute tests via Artisan
         env:
+          APP_ENV: testing
+          DAEMON_ENVIRONMENT: testing
           DB_CONNECTION: sqlite
-          DB_DATABASE: ':memory:'
-          DB_URL: ''
+          DB_DATABASE: ":memory:"
+          DB_URL: ""
         run: php artisan test --coverage --min=20

@@ -1,0 +1,87 @@
+<main class="catalogo" aria-labelledby="titulo">
+  <header class="catalogo__cabecera">
+    <h1 id="titulo">Catálogo del sistema de diseño</h1>
+    <p class="catalogo__nota">Solo disponible en desarrollo. Tokens, botones,
+      campos, tarjetas, badges, estados y cargando del portal estudiante.</p>
+  </header>
+
+  <section aria-labelledby="tokens">
+    <h2 id="tokens">Tokens de color</h2>
+    <ul class="catalogo__tokens">
+      @for (token of tokens; track token.variable) {
+        <li class="catalogo__token">
+          <span class="catalogo__muestra" [style.background]="token.variable"></span>
+          <span class="catalogo__nombre">{{ token.nombre }}</span>
+          <code>{{ token.variable }}</code>
+        </li>
+      }
+    </ul>
+  </section>
+
+  <section aria-labelledby="botones">
+    <h2 id="botones">Botones</h2>
+    <div class="catalogo__fila">
+      <button type="button" class="catalogo__btn catalogo__btn--primario">Primario</button>
+      <button type="button" class="catalogo__btn catalogo__btn--secundario">Secundario</button>
+      <button type="button" class="catalogo__btn catalogo__btn--peligro">Peligro</button>
+    </div>
+    <div class="catalogo__fila">
+      <button type="button" class="catalogo__btn catalogo__btn--primario" disabled>Primario deshabilitado</button>
+      <button type="button" class="catalogo__btn catalogo__btn--secundario" disabled>Secundario deshabilitado</button>
+    </div>
+  </section>
+
+  <section aria-labelledby="campos">
+    <h2 id="campos">Campos</h2>
+    <div class="catalogo__fila">
+      <label class="catalogo__campo">
+        <span>Texto</span>
+        <input type="text" placeholder="Escribe aquí" />
+      </label>
+      <label class="catalogo__campo">
+        <span>Área</span>
+        <textarea rows="3" placeholder="Descripción"></textarea>
+      </label>
+    </div>
+  </section>
+
+  <section aria-labelledby="tarjetas">
+    <h2 id="tarjetas">Tarjetas</h2>
+    <div class="catalogo__fila">
+      <article class="catalogo__tarjeta">
+        <h3>Título de la tarjeta</h3>
+        <p>Contenido de ejemplo para validar jerarquía y contraste sobre
+          superficies elevadas.</p>
+      </article>
+      <article class="catalogo__tarjeta">
+        <h3>Con badge</h3>
+        <p class="catalogo__badges">
+          <span class="catalogo__badge catalogo__badge--accent">Recompensa</span>
+          <span class="catalogo__badge">Neutro</span>
+        </p>
+      </article>
+    </div>
+  </section>
+
+  <section aria-labelledby="estados">
+    <h2 id="estados">Estados y cargando</h2>
+    <div class="catalogo__fila">
+      <div class="catalogo__esqueleto" aria-hidden="true">
+        <span class="catalogo__esqueleto-linea"></span>
+        <span class="catalogo__esqueleto-linea catalogo__esqueleto-linea--corta"></span>
+      </div>
+      <div class="catalogo__vacio">
+        <p>Estado vacío con mensaje accionable.</p>
+        <button type="button" class="catalogo__btn catalogo__btn--secundario">Reintentar</button>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="avisos">
+    <h2 id="avisos">Avisos</h2>
+    <div class="catalogo__fila">
+      <div class="catalogo__aviso catalogo__aviso--exito" role="status">Cambios guardados.</div>
+      <div class="catalogo__aviso catalogo__aviso--error" role="alert">No pudimos guardar. Reintenta.</div>
+    </div>
+  </section>
+</main>

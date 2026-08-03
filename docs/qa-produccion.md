@@ -11,10 +11,11 @@ cd C:\laragon\www\daemon
 
 cd C:\laragon\www\daemon\frontend-angular
 npm test -- --runInBand
+npm run test:firestore-rules
 npm run build
 
 cd C:\laragon\www\daemon\backend-laravel
-php artisan test
+php artisan test --env=testing
 
 cd C:\laragon\www\daemon
 ```
@@ -24,6 +25,8 @@ Resultado esperado:
 - `smoke-produccion.ps1` termina con `Production smoke test finished successfully`.
 - El build Angular termina sin errores.
 - Las pruebas Jest y Laravel pasan.
+- Las pruebas Firestore Rules pasan contra `demo-daemon-rules` y generan
+  `reports/firestore-rules/rule-coverage-summary.json`.
 - `/api/v1/salud` responde `ok: true`, base de datos OK y `uploads_disk: supabase`.
 - `ngsw-worker.js` responde JavaScript y `ngsw.json` responde JSON.
 - Los bundles desplegados contienen `verificacion=firebase` y `reset=firebase`.
@@ -33,25 +36,30 @@ Resultado esperado:
 
 ## Modos de ejecucion local
 
-El modo local predeterminado usa la infraestructura cloud de DAEMON:
+El modo local predeterminado usa exclusivamente infraestructura local:
 
 ```powershell
 cd C:\laragon\www\daemon\frontend-angular
 npm run start
 ```
 
-Este comando inicia Angular con `environment.cloud.ts` y conecta con Render,
-Supabase Storage y Firebase. No necesita Laravel en `localhost:8000`.
+Este comando usa `environment.development.ts`, requiere la API en
+`http://localhost:8000/api/v1` y conecta Firebase Auth/Firestore a emuladores.
+`npm run start:local` es un alias explícito del mismo perfil. Antes de arrancar,
+seguir el precheck de [`ENVIRONMENTS.md`](ENVIRONMENTS.md).
 
-Para trabajar intencionalmente con un backend Laravel local:
+## Firestore Rules local
 
-```powershell
-npm run start:local
-```
+`npm run test:firestore-rules` requiere Java 21 o superior, fija Firebase CLI y
+arranca sólo Firestore Emulator con un project ID `demo-*`. El comando debe
+mostrar que los servicios no emulados del proyecto demo fallan cerrados. Nunca
+sustituir ese ID por `daemon-a41f8` para pruebas.
 
-`start:local` usa `environment.development.ts` y requiere la API en
-`http://localhost:8000/api/v1`. Como `npm run start` consume servicios reales,
-no ejecutar canjes, entregas, eliminaciones ni cambios destructivos durante QA.
+La suite exporta el JSON crudo y el resumen de cobertura bajo
+`frontend-angular/reports/firestore-rules/`. CI conserva el artefacto 14 días.
+No ejecutar `firebase deploy` desde la rama de refactor; el gate de despliegue
+está documentado en
+[`03-firestore-security.md`](transformacion-estudiante/03-firestore-security.md).
 
 ## QA visual del portal alumno
 

@@ -5,6 +5,8 @@ export interface ChatbotRespuesta {
   respuesta?: string;
   content?: string;
   mensaje?: string;
+  texto?: string;
+  text?: string;
 }
 
 export interface CerebroIA {
@@ -16,9 +18,19 @@ export interface CerebroIA {
 })
 export class Chatbot {
   constructor(private api: Api) {}
-  bot() { return this.api.get('/chatbot/bot'); }
-  mensajes() { return this.api.get('/chatbot/mensajes'); }
-  enviar(content: string) { return this.api.post<ChatbotRespuesta>('/chatbot/mensajes', { content }); }
-  cerebro() { return this.api.get<CerebroIA>('/chatbot/cerebro'); }
-  guardarCerebro(matriz_neural: unknown) { return this.api.post('/chatbot/cerebro', { matriz_neural }); }
+  bot() {
+    return this.api.get('/chatbot/bot');
+  }
+  mensajes() {
+    return this.api.get('/chatbot/mensajes');
+  }
+  enviar(content: string) {
+    return this.api.post<ChatbotRespuesta>('/chatbot/mensajes', { content });
+  }
+  cerebro() {
+    return this.api.get<CerebroIA>('/chatbot/cerebro');
+  }
+  guardarCerebro(matriz_neural: unknown) {
+    return this.api.post('/chatbot/cerebro', { matriz_neural });
+  }
 }

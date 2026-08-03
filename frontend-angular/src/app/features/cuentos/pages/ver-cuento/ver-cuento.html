@@ -46,6 +46,16 @@
           (onEditarComentario)="editarComentario($event)"
           (onEliminarComentario)="eliminarComentario($event)">
         </app-cuento-comentarios>
+        @if (hayMasComentarios()) {
+          <button
+            type="button"
+            class="self-center rounded-xl border border-[var(--daemon-border)] bg-[var(--daemon-surface)] px-4 py-2 text-xs font-bold text-[var(--daemon-primary)]"
+            (click)="cargarMasComentarios()"
+            [disabled]="cargandoMasComentarios()"
+          >
+            {{ cargandoMasComentarios() ? 'Cargando…' : 'Cargar más comentarios' }}
+          </button>
+        }
 
       </div>
 
@@ -59,7 +69,7 @@
         [tipAsistente]="tipAsistente()"
         [reaccionesCount]="reaccionesCount()"
         [miReaccion]="miReaccion()"
-        [comentariosCount]="comentarios().length"
+        [comentariosCount]="comentariosCount()"
         (onReaccionar)="reaccionar($event)">
       </app-cuento-sidebar>
 

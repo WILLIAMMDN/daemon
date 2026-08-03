@@ -1,31 +1,49 @@
+import type { DaemonEnvironment } from './environment.model';
+
 export const environment = {
+  environmentName: 'development',
+  environmentIndicator: {
+    visible: true,
+    label: 'LOCAL',
+  },
   production: false,
   // Mantener el mismo hostname que usa Angular en desarrollo. Mezclar
-  // localhost con 127.0.0.1 convierte la cookie HttpOnly en cross-site y el
-  // navegador descarta la sesión justo después de un login exitoso.
+  // localhost con 127.0.0.1 rompe la cookie HttpOnly del API local.
   apiUrl: 'http://localhost:8000/api/v1',
-  assetBaseUrl: 'https://lbxdcvsrmkkynttgwblc.supabase.co/storage/v1/object/public/daemon-assets',
+  assetBaseUrl: 'http://127.0.0.1:54321/storage/v1/object/public/daemon-assets-local',
+  storage: {
+    provider: 'supabase',
+    environment: 'development',
+  },
   observability: {
     sentryEnabled: false,
     sentryDsn: '',
     tracesSampleRate: 0,
   },
   firebase: {
-    apiKey: 'AIzaSyCarHu8PP3LR7mcNHLk_FTN2rhfnUf4FD4',
-    authDomain: 'daemon-a41f8.firebaseapp.com',
-    projectId: 'daemon-a41f8',
-    storageBucket: 'daemon-a41f8.firebasestorage.app',
-    messagingSenderId: '516236234992',
-    appId: '1:516236234992:web:7811801e0441ee2d46f235',
+    apiKey: 'demo-api-key',
+    authDomain: 'localhost',
+    projectId: 'demo-daemon-local',
+    storageBucket: 'demo-daemon-local.appspot.com',
+    messagingSenderId: '000000000000',
+    appId: '1:000000000000:web:daemon-local',
+  },
+  firebaseEmulators: {
+    enabled: true,
+    authHost: '127.0.0.1',
+    authPort: 9099,
+    firestoreHost: '127.0.0.1',
+    firestorePort: 8080,
   },
   pusher: {
-    key: '921d28612ceab3864425',
-    cluster: 'sa1',
+    enabled: false,
+    key: '',
+    cluster: '',
   },
   supabase: {
-    url: 'https://lbxdcvsrmkkynttgwblc.supabase.co',
-    bucket: 'daemon-assets',
+    url: 'http://127.0.0.1:54321',
+    bucket: 'daemon-assets-local',
     uploadsPath: 'uploads',
-    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxieGRjdnNybWtreW50dGd3YmxjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI1OTQ0MTQsImV4cCI6MjA5ODE3MDQxNH0.457VHljBnyK-0sUXFni7fG_y_BczZUBgOL7Dtu3NVZU',
+    anonKey: 'local-not-configured',
   },
-};
+} satisfies DaemonEnvironment;
