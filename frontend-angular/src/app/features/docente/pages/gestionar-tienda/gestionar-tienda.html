@@ -249,7 +249,7 @@
   </ng-container>
 </nz-modal>
 
-<nz-modal [(nzVisible)]="modalEspecieVisible" [nzTitle]="especieEditando ? 'Editar criatura base' : 'Nueva criatura base'" (nzOnCancel)="cerrarEspecie()" (nzOnOk)="guardarEspecie()" [nzOkLoading]="guardando()" [nzOkDisabled]="!nuevaEspecie.nombre.trim() || !nuevaEspecie.codigo.trim() || !nuevaEspecie.asset_base.trim()" nzOkText="Guardar criatura" nzCancelText="Cancelar" nzCentered nzWidth="700px">
+<nz-modal [(nzVisible)]="modalEspecieVisible" [nzTitle]="especieEditando ? 'Editar criatura base' : 'Nueva criatura base'" (nzOnCancel)="cerrarEspecie()" (nzOnOk)="guardarEspecie()" [nzOkLoading]="guardando()" [nzOkDisabled]="!nuevaEspecie.nombre.trim() || !nuevaEspecie.codigo.trim() || !nuevaEspecie.asset_base?.trim()" nzOkText="Guardar criatura" nzCancelText="Cancelar" nzCentered nzWidth="700px">
   <ng-container *nzModalContent>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
       <div class="md:col-span-2 rounded-xl border border-violet-200 bg-violet-50 p-4 text-xs text-slate-600"><strong class="text-violet-800">Contrato visual:</strong> base y accesorios deben compartir exactamente el mismo tamaño de lienzo, origen y encuadre. No recortes automáticamente el espacio transparente.</div>
