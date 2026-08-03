@@ -16,24 +16,25 @@
 
           <!-- Contenido del Cuento (Libro Interactivo Calcando crear-cuento) -->
           <div class="p-4 md:p-6 relative flex-1 flex flex-col w-full" #contenedorLectura>
-            <section class="crear-editor w-full border-none shadow-none" style="padding: 0; max-width: 100%;">
+            <section class="crear-editor w-full border-none shadow-none p-0 max-w-full">
               
               <!-- ───── EDITOR (Quill) + ILUSTRACIÓN DE PÁGINA ───── -->
               <div class="crear-pagina-editor">
-                <div class="quill-wrapper" [style.background-color]="paginaActiva?.colorFondo || 'var(--daemon-on-primary)'">
+                @let pagina = paginaActiva;
+                <div class="quill-wrapper" [style.background-color]="pagina.colorFondo || 'var(--daemon-on-primary)'">
 
                   <!-- TEXTO -->
-                  @if (paginaActiva?.contenido) {
-                    <quill-view-html class="custom-quill-page block h-full w-full" [style.font-size.rem]="escalaFuente" [content]="paginaActiva.contenido" theme="snow"></quill-view-html>
+                  @if (pagina.contenido) {
+                    <quill-view-html class="custom-quill-page block h-full w-full" [style.font-size.rem]="escalaFuente" [content]="pagina.contenido ?? ''" theme="snow"></quill-view-html>
                   } @else {
                     <div class="custom-quill-page p-8 text-center text-muted italic my-10">Página sin contenido.</div>
                   }
 
                   <!-- Panel de ilustración de la PÁGINA ACTIVA -->
-                  <div class="pagina-illust" [class.hidden]="!paginaActiva?.ilustracion">
+                  <div class="pagina-illust" [class.hidden]="!pagina.ilustracion">
                     <div class="pagina-illust__inner bg-transparent shadow-none">
-                      @if (paginaActiva?.ilustracion) {
-                        <img [src]="resolverImagen(paginaActiva.ilustracion)" class="pagina-illust__img object-cover h-full w-full" alt="Ilustración" />
+                      @if (pagina.ilustracion) {
+                        <img [src]="resolverImagen(pagina.ilustracion)" class="pagina-illust__img object-cover h-full w-full" alt="Ilustración" />
                       }
                     </div>
                   </div>
