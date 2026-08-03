@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { catchError, from, map, Observable, of, switchMap, tap, throwError, timeout, TimeoutError } from 'rxjs';
+import { catchError, firstValueFrom, from, map, Observable, of, switchMap, tap, throwError, timeout, TimeoutError } from 'rxjs';
 import { NivelAlumno } from '../dominio/nivel-alumno';
 import { Api } from './api';
 import { FirebaseAuth } from './firebase-auth';
@@ -48,7 +48,31 @@ export class Autenticacion {
 
   login(datos: { usuario: string; password: string }) {
     return this.api.post<AuthRespuesta>('/auth/login', datos)
-      .pipe(tap((respuesta) => this.sesion.guardar(respuesta.usuario)));
+      .pipe(
+        tap((respuesta) => this.sesion.guardar(respuesta.usuario)),
+        switchMap((respuesta) =>
+          from(this.vincularSesionFirebase()).pipe(
+            map(() => respuesta),
+            // Best-effort: si Firebase no esta configurado o el endpoint
+            // falla, el login local nunca se rompe por la vinculacion.
+            catchError(() => of(respuesta)),
+          ),
+        ),
+      );
+  }
+
+  /**
+   * Tras el login local, pide un custom token al backend y lo intercambia
+   * con Firebase Auth para que Firestore Rules v2 autoricen al alumno.
+   * No lanza: los errores se silencian para no romper el login legacy.
+   */
+  private async vincularSesionFirebase(): Promise<void> {
+    if (!this.firebaseAuth.disponible()) {
+      return;
+    }
+
+    const respuesta = await firstValueFrom(this.api.post<{ token: string }>('/auth/firebase-token', {}));
+    await this.firebaseAuth.iniciarConCustomToken(respuesta.token);
   }
 
   registro(datos: Record<string, unknown>) {

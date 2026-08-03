@@ -25,6 +25,27 @@ class GoogleServiceAccountTokenService
     }
 
     /**
+     * Emite un Firebase custom token para un UID concreto. El cliente lo
+     * intercambia con signInWithCustomToken() para que Firestore Rules v2
+     * (request.auth.uid) autorice al usuario. Se firma con la misma cuenta
+     * de servicio y caduca en una hora.
+     */
+    public function customToken(string $uid): string
+    {
+        $cuenta = $this->serviceAccount();
+        $ahora = time();
+
+        return JWT::encode([
+            'iss' => $cuenta['client_email'],
+            'sub' => $cuenta['client_email'],
+            'aud' => 'https://identitytoolkit.googleapis.com/google.identity.identitytoolkit.v1.IdentityToolkit',
+            'iat' => $ahora,
+            'exp' => $ahora + 3600,
+            'uid' => $uid,
+        ], $cuenta['private_key'], 'RS256');
+    }
+
+    /**
      * @return array{client_email: string, private_key: string, token_uri?: string}
      */
     private function serviceAccount(): array

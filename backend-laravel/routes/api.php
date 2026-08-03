@@ -57,6 +57,7 @@ Route::prefix('v1')->group(function (): void {
         Route::patch('/auth/me/perfil', [AutenticacionController::class, 'completarPerfil'])->middleware('throttle:10,1');
         Route::post('/auth/me/tour', [AutenticacionController::class, 'completarTour'])->middleware('throttle:10,1');
         Route::post('/auth/me/sync-password', [AutenticacionController::class, 'sincronizarClave'])->middleware('throttle:5,1');
+        Route::post('/auth/firebase-token', [AutenticacionController::class, 'firebaseToken'])->middleware('throttle:10,1');
         Route::get('/privacidad/exportar', [PrivacidadController::class, 'exportar'])->middleware('throttle:3,60');
         Route::post('/privacidad/eliminacion', [PrivacidadController::class, 'solicitarEliminacion'])->middleware('throttle:3,60');
         Route::post('/auth/google/perfil', [AutenticacionController::class, 'completarPerfilGoogle'])->middleware('throttle:10,1');

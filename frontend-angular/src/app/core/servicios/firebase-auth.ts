@@ -13,6 +13,7 @@ import {
   sendEmailVerification,
   sendPasswordResetEmail,
   signInWithCredential,
+  signInWithCustomToken,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
@@ -68,6 +69,17 @@ export class FirebaseAuth {
     await credencial.user.reload();
 
     return credencial.user.getIdToken(true);
+  }
+
+  /**
+   * Intercambia un custom token emitido por el backend de DAEMON (login
+   * local con usuario/contrasena) por una sesion de Firebase Auth. Asi
+   * Firestore Rules v2 (request.auth.uid) autorizan al alumno sin tocar
+   * las reglas.
+   */
+  async iniciarConCustomToken(token: string): Promise<void> {
+    const auth = this.requerirAuth();
+    await signInWithCustomToken(auth, token);
   }
 
   async crearCuentaEmail(
