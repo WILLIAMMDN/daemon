@@ -1,8 +1,4 @@
 import { Component, ChangeDetectionStrategy, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
-import '../../../../../node_modules/ng-zorro-antd/descriptions/style/index.min.css';
-import '../../../../../node_modules/ng-zorro-antd/statistic/style/index.min.css';
-import '../../../../../node_modules/ng-zorro-antd/table/style/index.min.css';
-import '../../../../../node_modules/ng-zorro-antd/upload/style/index.min.css';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
