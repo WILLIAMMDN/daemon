@@ -218,16 +218,28 @@ There is no local/staging DB. So:
   without talking to the owner. Current phase: **Phase 0 closed, Phase 1
   pending start** (token consolidation + style-tokens linter).
 
-## Arquitectura y Diseño Premium (DAEMON)
+## Sistema de diseño (DAEMON)
 
-El sistema de diseño de DAEMON está diseñado para ser inmersivo, gamificado y de calidad "Enterprise", no un simple panel básico.
+La fuente de verdad de la estética es el **sistema de tokens `--daemon-*`**
+definido en `frontend-angular/src/styles/_tokens.scss` y los manuales de UI/UX
+en `docs/sistema-diseno/` (leer `00-resumen-ejecutivo.md` primero).
 
-Para construir interfaces en este proyecto, **DEBES referirte a los manuales maestros de estética y distribución**. No impongas reglas básicas que limiten la calidad del producto.
+Reglas obligatorias al construir UI:
 
-Las guías supremas para el desarrollo de UI/UX son:
-1. `docs/SISTEMA_DISENO_PREMIUM.md` (Para la estética, uso de 3D, contrastes y gradientes profundos).
-2. `docs/ESTRUCTURA_COMPONENTES.md` (Para los Layouts asimétricos, CSS Grid y Responsividad corporativa).
-
-**Referencia Canónica:** La galería de historias (`/alumno/proyectos/cuentos`) es el estándar visual supremo que todos los demás módulos deben alcanzar o superar en cuanto a calidad de assets, paleta de colores inmersiva y distribución de tarjetas.
-
-Las herramientas base son Tailwind CSS y NG-ZORRO, pero deben aplicarse con un criterio arquitectónico avanzado (Sistemas de Componentes, no solo clases amontonadas).
+- Usar siempre tokens `--daemon-*` para colores, bordes y superficies. Prohibido
+  hex literales, gradientes hardcodeados u `outline` sin token: el check
+  `npm run check:style-tokens` (CI) los bloquea.
+- El contrato visual del portal alumno se valida con `scripts/check-student-visual.mjs`.
+- Las guías de estilo de referencia son:
+  1. `docs/sistema-diseno/` — sistema de diseño vigente (decisiones D-01 a D-10 cerradas).
+  2. `docs/SISTEMA_DISENO_PREMIUM.md` — referencias estéticas de alto nivel
+     (3D, gradientes profundos, contrastes) para módulos premium.
+  3. `docs/ESTRUCTURA_COMPONENTES.md` — layouts asimétricos, CSS Grid y responsividad.
+- **Referencia canónica visual:** la galería de historias
+  (`/alumno/proyectos/cuentos`) es el estándar de calidad de assets y
+distribución de tarjetas.
+- Herramientas base: Tailwind CSS y NG-ZORRO, aplicadas como sistemas de
+  componentes, no como clases amontonadas.
+- Si un módulo usa `style=` inline o un color fuera del token, se corrige antes
+  de commitear (la capa `ui/` y `core/modelos/dto.ts` son los puntos de
+  reutilización, ver `docs/frontend-architecture.md`).
