@@ -1,5 +1,6 @@
 import { Component, signal , ChangeDetectionStrategy} from '@angular/core';
 import { Docente } from '../../services/docente';
+import { MovimientoToken } from '../../../../core/modelos/dto';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 
 
@@ -20,7 +21,7 @@ import { MonedaDaemon } from '../../../../shared/componentes/moneda-daemon/moned
   styleUrl: './historial-tokens.scss',
 })
 export class HistorialTokens {
-  movimientos = signal<any[]>([]);
+  movimientos = signal<MovimientoToken[]>([]);
   cargando = signal(true);
   error = signal('');
 
@@ -32,8 +33,8 @@ export class HistorialTokens {
     this.cargando.set(true);
     this.error.set('');
     this.docente.historialTokens().subscribe({
-      next: (movimientos) => {
-        this.movimientos.set(movimientos as any[]);
+      next: (movimientos: MovimientoToken[]) => {
+        this.movimientos.set(movimientos);
         this.cargando.set(false);
       },
       error: (e) => {
