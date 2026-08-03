@@ -4,7 +4,7 @@
 
 .profile-overlay {
   align-items: center;
-  background: #0b1220a8;
+  background: color-mix(in srgb, var(--daemon-on-accent) 66%, transparent);
   display: grid;
   inset: 0;
   justify-items: center;
@@ -204,7 +204,7 @@
 }
 
 .submit-button:hover:not(:disabled) {
-  background: #004fbd;
+  background: var(--daemon-info);
 }
 
 .secondary-button:disabled,
