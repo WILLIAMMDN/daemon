@@ -68,7 +68,7 @@
   background: var(--daemon-on-primary);
   border: 1px solid var(--daemon-border-strong);
   border-radius: 6px;
-  box-shadow: 0 10px 28px #1f2a4414;
+  box-shadow: 0 10px 28px color-mix(in srgb, var(--daemon-ink) 8%, transparent);
   padding: 0 clamp(1.5rem, 7vw, 3.15rem) clamp(1.25rem, 4vw, 1.65rem);
   position: relative;
   width: 100%;
@@ -284,6 +284,15 @@
   font-weight: 720;
   justify-self: end;
   margin-top: -.35rem;
+  text-decoration: none;
+}
+
+.forgot-password {
+  align-self: flex-start;
+  color: var(--daemon-primary);
+  font-size: .75rem;
+  font-weight: bold;
+  margin-top: -.5rem;
   text-decoration: none;
 }
 
