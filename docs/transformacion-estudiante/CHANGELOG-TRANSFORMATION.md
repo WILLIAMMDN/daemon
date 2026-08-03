@@ -104,3 +104,24 @@ production-ready.
 - Configuraciones de desarrollo/cloud conectadas a producción.
 - Doble autoridad mutable de cuentos y baja cobertura del módulo.
 - Riesgo crítico de credencial IA versionada, pendiente de rotación externa.
+
+## 2026-08-03 — Paquete 4/5: cierre documental, KIDS/TEENS, observabilidad y pruebas
+
+### Añadido
+
+- Informes 04 a 10 de la transformación y `docs/MIGRACION-CUENTOS.md`.
+- `scripts/migrar-cuentos-dry-run.mjs` (solo emulador, no escribe) y
+  `scripts/scan-secretos.mjs` (auditoría de secretos en CI).
+- Contrato `perfil-experiencia-estudiante.ts` (KIDS/TEENS) con spec.
+- Wrapper `core/servicios/observabilidad.ts` (Sentry sin PII) y cableado en el
+  adaptador de comandos de cuentos.
+- Specs de converters (cuento, página, comentario, reacción) y de casos de uso
+  (crear/actualizar borrador, publicar, comentar, reaccionar).
+- E2E `e2e/cuentos.spec.ts` con mocks estables.
+- Catálogo interno `/dev/design-system` con guard de solo desarrollo.
+
+### Reglas operativas
+
+- Ningún comando tocó producción; el deploy de reglas v2 sigue bloqueado hasta
+  migrar datos legacy y decidir el proveedor de Storage (bloque 1 diferido por
+  el dueño).
