@@ -195,10 +195,13 @@
           </div>
         </div>
 
-        <!-- ───── EDITOR (Quill) + ILUSTRACIÓN DE PÁGINA ───── -->
+        <!-- ───── EDITOR (Quill) + ILUSTRACIÓN DE PÁGINA ─────
+             Layout 2 columnas en desktop (grid) y stack vertical en móvil/tablet.
+             Cada panel es una card independiente: nada de overlap ni curvas raras. -->
         <div class="crear-pagina-editor">
-          <div class="quill-wrapper" [style.background-color]="paginaActiva()?.colorFondo || 'var(--daemon-on-primary)'">
 
+          <!-- ─── COLUMNA IZQUIERDA: EDITOR DE TEXTO ─── -->
+          <div class="quill-wrapper" [style.background-color]="paginaActiva()?.colorFondo || 'var(--daemon-on-primary)'">
             <quill-editor
               class="custom-quill-page"
               [ngModel]="contenido()"
@@ -208,65 +211,65 @@
               theme="snow"
               placeholder="Escribe tu historia aquí..."
             ></quill-editor>
+          </div>
 
-            <!-- Panel de ilustración de la PÁGINA ACTIVA -->
-            <div class="pagina-illust">
-              <div class="pagina-illust__inner">
+          <!-- ─── COLUMNA DERECHA: ILUSTRACIÓN DE PÁGINA ─── -->
+          <div class="pagina-illust">
+            <div class="pagina-illust__inner">
 
-                @if (ilustracionDisplayUrl(); as illust) {
-                  <img [src]="illust" class="pagina-illust__img" alt="Ilustración de esta página" />
+              @if (ilustracionDisplayUrl(); as illust) {
+                <img [src]="illust" class="pagina-illust__img" alt="Ilustración de esta página" />
 
-                  @if (subiendoIlustracion()) {
-                    <div class="pagina-illust__uploading">
-                      <span class="crear-spinner crear-spinner--light"></span>
-                      <span>Subiendo…</span>
-                    </div>
-                  } @else {
-                    <!-- Overlay con "Cambiar" (cubre toda la imagen al hacer hover) -->
-                    <label class="pagina-illust__overlay" aria-label="Cambiar ilustración de esta página">
-                      <input
-                        type="file"
-                        (change)="onSubirIlustracion($event)"
-                        accept="image/png,image/jpeg,image/webp,image/gif"
-                        class="pagina-illust__file-input"
-                      />
-                      <span class="pagina-illust__overlay-btn">
-                        <fa-icon [icon]="faUpload"></fa-icon> Cambiar
-                      </span>
-                    </label>
-
-                    <!-- Botón X flotante para eliminar (siempre visible, esquina sup-der) -->
-                    <button
-                      type="button"
-                      class="pagina-illust__remove"
-                      (click)="quitarIlustracion()"
-                      aria-label="Quitar ilustración de esta página"
-                      title="Quitar ilustración"
-                    >
-                      <fa-icon [icon]="faTimes"></fa-icon>
-                    </button>
-                  }
+                @if (subiendoIlustracion()) {
+                  <div class="pagina-illust__uploading">
+                    <span class="crear-spinner crear-spinner--light"></span>
+                    <span>Subiendo…</span>
+                  </div>
                 } @else {
-                  <label class="pagina-illust__placeholder">
+                  <!-- Overlay con "Cambiar" (cubre toda la imagen al hacer hover) -->
+                  <label class="pagina-illust__overlay" aria-label="Cambiar ilustración de esta página">
                     <input
                       type="file"
                       (change)="onSubirIlustracion($event)"
                       accept="image/png,image/jpeg,image/webp,image/gif"
                       class="pagina-illust__file-input"
-                      aria-label="Subir ilustración para esta página"
-                      [disabled]="subiendoIlustracion()"
                     />
-                    <div class="pagina-illust__icon">
-                      <fa-icon [icon]="faImage" class="text-2xl"></fa-icon>
-                    </div>
-                    <span class="pagina-illust__hint-title">Ilustración de esta página</span>
-                    <span class="pagina-illust__hint-sub">
-                      Sube una imagen y ocupará todo este panel. Cada página puede tener la suya.
+                    <span class="pagina-illust__overlay-btn">
+                      <fa-icon [icon]="faUpload"></fa-icon> Cambiar
                     </span>
                   </label>
-                }
 
-              </div>
+                  <!-- Botón X flotante para eliminar (siempre visible, esquina sup-der) -->
+                  <button
+                    type="button"
+                    class="pagina-illust__remove"
+                    (click)="quitarIlustracion()"
+                    aria-label="Quitar ilustración de esta página"
+                    title="Quitar ilustración"
+                  >
+                    <fa-icon [icon]="faTimes"></fa-icon>
+                  </button>
+                }
+              } @else {
+                <label class="pagina-illust__placeholder">
+                  <input
+                    type="file"
+                    (change)="onSubirIlustracion($event)"
+                    accept="image/png,image/jpeg,image/webp,image/gif"
+                    class="pagina-illust__file-input"
+                    aria-label="Subir ilustración para esta página"
+                    [disabled]="subiendoIlustracion()"
+                  />
+                  <div class="pagina-illust__icon">
+                    <fa-icon [icon]="faImage" class="text-2xl"></fa-icon>
+                  </div>
+                  <span class="pagina-illust__hint-title">Ilustración de esta página</span>
+                  <span class="pagina-illust__hint-sub">
+                    Sube una imagen y ocupará todo este panel. Cada página puede tener la suya.
+                  </span>
+                </label>
+              }
+
             </div>
           </div>
         </div>
