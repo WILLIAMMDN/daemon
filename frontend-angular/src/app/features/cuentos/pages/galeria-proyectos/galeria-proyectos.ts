@@ -26,6 +26,9 @@ import { CuentoRegistro, CuentoVista } from '../../models/cuento.models';
 import { Cuento } from '../../services/cuento';
 import { HeaderBannerComponent } from '../../../../shared/componentes/header-banner/header-banner';
 import { NgClass } from '@angular/common';
+import { GaleriaToolbarComponent } from './components/galeria-toolbar/galeria-toolbar.component';
+import { GaleriaCuentoCardComponent } from './components/galeria-cuento-card/galeria-cuento-card.component';
+import { GaleriaAsideComponent } from './components/galeria-aside/galeria-aside.component';
 
 type FiltroCuento = 'todos' | 'mio';
 type OrdenCuento = 'recientes' | 'antiguos' | 'titulo';
@@ -33,7 +36,7 @@ type OrdenCuento = 'recientes' | 'antiguos' | 'titulo';
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-galeria-proyectos',
-  imports: [RouterLink, FontAwesomeModule, NzButtonModule, EstadoVacio, NgClass, HeaderBannerComponent],
+  imports: [RouterLink, FontAwesomeModule, NzButtonModule, EstadoVacio, NgClass, HeaderBannerComponent, GaleriaToolbarComponent, GaleriaCuentoCardComponent, GaleriaAsideComponent],
   templateUrl: './galeria-proyectos.html',
   styleUrl: './galeria-proyectos.scss',
 })
@@ -100,8 +103,9 @@ export class GaleriaProyectos {
     const busqueda = this.normalizar(this.busqueda());
     const orden = this.orden();
     const resultado = this.cuentosVista().filter((cuento) => {
-      // 'todos' significa Comunidad (no míos), 'mio' significa Mis historias
-      const coincideFiltro = filtro === 'mio' ? cuento.esMio : !cuento.esMio;
+      // 'todos' muestra la galería completa (incluye las propias publicadas);
+      // 'mio' filtra únicamente las del usuario.
+      const coincideFiltro = filtro === 'mio' ? cuento.esMio : true;
       return coincideFiltro && (!busqueda || cuento.textoBusqueda.includes(busqueda));
     });
 
