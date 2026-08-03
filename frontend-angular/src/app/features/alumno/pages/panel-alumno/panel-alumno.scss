@@ -1,6 +1,6 @@
 :host {
   --dashboard-xp: var(--daemon-teens);
-  --dashboard-daemons: #9a5b00;
+  --dashboard-daemons: color-mix(in srgb, var(--daemon-accent-dark) 60%, var(--daemon-ink));
   --dashboard-card-radius: 16px;
   display: block;
 }
@@ -24,7 +24,7 @@
 .offline-notice {
   align-items: center;
   background: var(--daemon-tutor-soft);
-  border: 1px solid #f5d77a;
+  border: 1px solid color-mix(in srgb, var(--daemon-accent) 45%, var(--daemon-on-primary));
   border-radius: 12px;
   color: var(--daemon-warning);
   display: flex;
@@ -76,7 +76,7 @@
   background: var(--daemon-on-primary);
   border: 1px solid var(--daemon-border-strong);
   border-radius: 10px;
-  color: #4e3698;
+  color: var(--daemon-primary-dark);
   cursor: pointer;
   display: flex;
   height: 44px;
@@ -91,7 +91,8 @@
 
 .student-hero-banner {
   background-color: var(--daemon-on-accent);
-  background-image: linear-gradient(to right, rgba(16, 16, 93, 0.7), rgba(16, 16, 93, 0.4)), url('/img/headers/story-header-bg.png');
+  background-image: url('/img/headers/story-header-bg.png');
+  background-blend-mode: multiply;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -104,8 +105,9 @@
     /* Evitar que 'cover' haga un zoom enorme a la imagen horizontal en contenedores verticales */
     background-size: auto;
     background-position: center top;
-    /* Gradiente vertical para fusionar suavemente la imagen con el color de fondo en la parte inferior */
-    background-image: linear-gradient(to bottom, rgba(16, 16, 93, 0.2) 0%, rgba(16, 16, 93, 1) 85%), url('/img/headers/story-header-bg.png');
+    /* Mezcla sólida para mantener legibilidad del texto sin degradados (D-06) */
+    background-image: url('/img/headers/story-header-bg.png');
+    background-blend-mode: multiply;
   }
 }
 
