@@ -20,6 +20,7 @@ use App\Http\Requests\Api\V1\Auth\SyncPasswordRequest;
 use App\Http\Resources\Api\V1\UsuarioResource;
 use App\Services\Auth\AutenticacionService;
 use App\Services\Auth\EmailVerificationService;
+use App\Services\Auth\FirebaseCustomTokenService;
 use App\Services\Auth\FirebaseTokenVerifier;
 use App\Services\Auth\RecuperacionClaveService;
 use App\Services\Privacidad\PrivacidadService;
@@ -39,6 +40,7 @@ class AutenticacionController extends Controller
     public function __construct(
         private readonly AutenticacionService $autenticacion,
         private readonly FirebaseTokenVerifier $firebase,
+        private readonly FirebaseCustomTokenService $firebaseToken,
         private readonly RecuperacionClaveService $recuperacionClave,
         private readonly EmailVerificationService $verificacionCorreo,
         private readonly PrivacidadService $privacidad,
@@ -263,6 +265,23 @@ class AutenticacionController extends Controller
 
             return response()->json(['message' => 'No se pudo validar la cuenta familiar.'], 422);
         }
+    }
+
+    /**
+     * Emite un Firebase custom token para el usuario autenticado por
+     * Sanctum (login local con usuario/contrasena). El frontend lo usa
+     * con signInWithCustomToken() para que Firestore Rules v2 autoricen
+     * al alumno sin debilitar la seguridad.
+     */
+    public function firebaseToken(Request $request)
+    {
+        if (! $this->firebaseToken->configurado()) {
+            return response()->json(['message' => 'La vinculacion con Firebase no esta configurada.'], 503);
+        }
+
+        $token = $this->firebaseToken->customTokenPara($request->user());
+
+        return response()->json(['token' => $token]);
     }
 
     public function cambiarClave(CambiarClaveRequest $request)
