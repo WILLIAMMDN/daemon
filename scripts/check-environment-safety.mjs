@@ -303,9 +303,16 @@ export function inspectStaticDocuments(documents, options = {}) {
       issues.push(`render.staging.yaml no declara ${required}.`);
     }
   }
-  if ((documents.prWorkflow ?? "").includes("--project daemon-a41f8")) {
+  // Los PRs pueden desplegar un preview channel (hosting:channel:deploy pr-N),
+  // un canal temporal que expira y no es escritura productiva. Un deploy
+  // productivo real desde un PR sí se bloquea.
+  const prWorkflow = documents.prWorkflow ?? "";
+  const prDespliegaProductivo =
+    prWorkflow.includes("--project daemon-a41f8") &&
+    !prWorkflow.includes("hosting:channel:deploy");
+  if (prDespliegaProductivo) {
     issues.push(
-      "El workflow de PR intenta desplegar sobre el proyecto Firebase productivo.",
+      "El workflow de PR intenta un deploy productivo (no preview channel) sobre Firebase.",
     );
   }
   const productionWorkflow = documents.productionWorkflow ?? "";
