@@ -55,7 +55,7 @@
 /* Fallback (si el SVG no carga): medallón con la D de DAEMON */
 .moneda-fallback {
   align-items: center;
-  background: linear-gradient(140deg, var(--daemon-primary) 0%, #3b0f86 100%);
+  background: linear-gradient(140deg, var(--daemon-primary) 0%, var(--daemon-primary-dark) 100%);
   border-radius: 50%;
   color: var(--daemon-on-primary);
   display: inline-flex;
