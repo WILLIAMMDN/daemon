@@ -2,18 +2,29 @@
 
 namespace App\Console\Commands;
 
+use App\Console\Commands\Concerns\ProtectsDestructiveOperations;
 use Illuminate\Console\Command;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 class AplicarRetencionPrivacidad extends Command
 {
+    use ProtectsDestructiveOperations;
+
     protected $signature = 'daemon:aplicar-retencion {--confirm : Eliminar los registros elegibles}';
 
     protected $description = 'Aplica la retencion de datos efimeros sin tocar historial academico';
 
     public function handle(): int
     {
+        if (
+            $this->option('confirm')
+            && ! $this->authorizeDestructiveOperation((string) $this->getName())
+        ) {
+            return self::FAILURE;
+        }
+
         $consultas = $this->consultas();
 
         $this->table(
@@ -39,7 +50,7 @@ class AplicarRetencionPrivacidad extends Command
         return self::SUCCESS;
     }
 
-    /** @return array<string, \Illuminate\Database\Query\Builder> */
+    /** @return array<string, Builder> */
     private function consultas(): array
     {
         $consultas = [];

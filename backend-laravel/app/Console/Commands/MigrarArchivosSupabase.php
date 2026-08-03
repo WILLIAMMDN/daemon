@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Console\Commands\Concerns\ProtectsDestructiveOperations;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
 use RecursiveDirectoryIterator;
@@ -11,6 +12,8 @@ use Throwable;
 
 class MigrarArchivosSupabase extends Command
 {
+    use ProtectsDestructiveOperations;
+
     protected $signature = 'daemon:migrar-archivos-supabase {--frontend-public=../frontend-angular/public : Carpeta public del frontend} {--backend-public=storage/app/public : Carpeta public del backend} {--disk=supabase : Disco cloud destino} {--confirm : Ejecutar la subida real; sin esto solo revisa}';
 
     protected $description = 'Sube assets publicos y uploads locales a Supabase Storage conservando rutas y evitando extensiones peligrosas.';
@@ -38,6 +41,13 @@ class MigrarArchivosSupabase extends Command
     public function handle(): int
     {
         $disk = (string) $this->option('disk');
+
+        if (
+            $this->option('confirm')
+            && ! $this->authorizeDestructiveOperation((string) $this->getName())
+        ) {
+            return self::FAILURE;
+        }
 
         if ($this->option('confirm') && ! $this->storageConfigurado($disk)) {
             return self::FAILURE;

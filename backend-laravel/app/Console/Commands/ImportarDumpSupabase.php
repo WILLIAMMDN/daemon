@@ -2,7 +2,9 @@
 
 namespace App\Console\Commands;
 
+use App\Console\Commands\Concerns\ProtectsDestructiveOperations;
 use Illuminate\Console\Command;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use RuntimeException;
@@ -10,6 +12,8 @@ use Throwable;
 
 class ImportarDumpSupabase extends Command
 {
+    use ProtectsDestructiveOperations;
+
     protected $signature = 'daemon:importar-dump-supabase {--file=database/iaparateens_db.sql : Dump MySQL de DAEMON} {--target=pgsql : Conexion PostgreSQL/Supabase de destino} {--truncate-target : Vaciar tablas DAEMON del destino antes de importar} {--confirm : Ejecutar la importacion real; sin esto solo revisa}';
 
     protected $description = 'Importa el dump MySQL incluido en el proyecto hacia PostgreSQL/Supabase sin necesitar MySQL local encendido.';
@@ -56,6 +60,13 @@ class ImportarDumpSupabase extends Command
 
     public function handle(): int
     {
+        if (
+            $this->option('confirm')
+            && ! $this->authorizeDestructiveOperation((string) $this->getName())
+        ) {
+            return self::FAILURE;
+        }
+
         $target = (string) $this->option('target');
         $archivo = base_path((string) $this->option('file'));
 
@@ -450,7 +461,7 @@ class ImportarDumpSupabase extends Command
     }
 
     /**
-     * @param  \Illuminate\Support\Collection<int, int>  $ids
+     * @param  Collection<int, int>  $ids
      */
     private function idExiste($ids, mixed $id): bool
     {

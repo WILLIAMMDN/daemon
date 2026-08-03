@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Console\Commands\Concerns\ProtectsDestructiveOperations;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -9,6 +10,8 @@ use Throwable;
 
 class MigrarMysqlASupabase extends Command
 {
+    use ProtectsDestructiveOperations;
+
     protected $signature = 'daemon:migrar-a-supabase {--source=legacy_mysql : Conexion MySQL/MariaDB de origen} {--target=pgsql : Conexion PostgreSQL/Supabase de destino} {--chunk=500 : Filas por lote} {--truncate-target : Vaciar tablas DAEMON del destino antes de copiar} {--confirm : Ejecutar la copia real; sin esto solo revisa}';
 
     protected $description = 'Copia los datos actuales de DAEMON desde MySQL/MariaDB hacia PostgreSQL/Supabase sin tocar la base de origen.';
@@ -55,6 +58,13 @@ class MigrarMysqlASupabase extends Command
 
     public function handle(): int
     {
+        if (
+            $this->option('confirm')
+            && ! $this->authorizeDestructiveOperation((string) $this->getName())
+        ) {
+            return self::FAILURE;
+        }
+
         $source = (string) $this->option('source');
         $target = (string) $this->option('target');
         $chunk = max(1, (int) $this->option('chunk'));
