@@ -16,7 +16,9 @@ class OllamaProvider implements AiProviderInterface
             'content' => trim(($bot->system_prompt ?: 'Eres un tutor educativo amable para estudiantes rurales.')."\nConocimiento del bot: ".($bot->conocimiento ?: 'general')),
         ]);
 
-        $respuesta = Http::timeout(120)
+        $respuesta = Http::connectTimeout(10)
+            ->timeout(45)
+            ->retry(2, 250)
             ->post(rtrim(env('OLLAMA_URL', 'http://127.0.0.1:11434'), '/').'/api/chat', [
                 'model' => $bot->modelo_ia ?: 'gemma2:9b',
                 'messages' => $mensajes,
