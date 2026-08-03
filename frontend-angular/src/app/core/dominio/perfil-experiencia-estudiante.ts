@@ -24,7 +24,7 @@ export interface PerfilExperienciaEstudiante {
   readonly tonoContenido: TonoContenidoExperiencia;
 }
 
-export const PERFIL_KIDS: PerfilExperienciaEstudiante = {
+export const PERFIL_KIDS: PerfilExperienciaEstudiante = Object.freeze({
   audiencia: 'kids',
   tema: 'kids',
   densidad: 'comoda',
@@ -33,9 +33,9 @@ export const PERFIL_KIDS: PerfilExperienciaEstudiante = {
   frecuenciaIlustracion: 'alta',
   movimiento: 'expresivo',
   tonoContenido: 'infantil-claro',
-};
+});
 
-export const PERFIL_TEENS: PerfilExperienciaEstudiante = {
+export const PERFIL_TEENS: PerfilExperienciaEstudiante = Object.freeze({
   audiencia: 'teens',
   tema: 'teens',
   densidad: 'estandar',
@@ -44,12 +44,12 @@ export const PERFIL_TEENS: PerfilExperienciaEstudiante = {
   frecuenciaIlustracion: 'selectiva',
   movimiento: 'sutil',
   tonoContenido: 'juvenil-directo',
-};
+});
 
-export const PERFILES_EXPERIENCIA: Readonly<Record<AudienciaExperiencia, PerfilExperienciaEstudiante>> = {
+export const PERFILES_EXPERIENCIA: Readonly<Record<AudienciaExperiencia, PerfilExperienciaEstudiante>> = Object.freeze({
   kids: PERFIL_KIDS,
   teens: PERFIL_TEENS,
-};
+});
 
 export function esAudienciaExperiencia(valor: unknown): valor is AudienciaExperiencia {
   return valor === 'kids' || valor === 'teens';

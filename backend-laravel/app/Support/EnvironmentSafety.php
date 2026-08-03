@@ -124,11 +124,11 @@ final class EnvironmentSafety
         }
 
         if ($appEnvironment === 'testing') {
-            if (
-                strtolower($this->string('db_connection')) !== 'sqlite'
-                || $this->string('db_database') !== ':memory:'
-            ) {
-                $issues[] = 'Testing debe usar SQLite en memoria.';
+            $connection = strtolower($this->string('db_connection'));
+            $usesSqliteMemory = $connection === 'sqlite' && $this->string('db_database') === ':memory:';
+            $usesEphemeralPgsql = $connection === 'pgsql' && $this->isLoopback($this->databaseHost());
+            if (! $usesSqliteMemory && ! $usesEphemeralPgsql) {
+                $issues[] = 'Testing debe usar SQLite en memoria o PostgreSQL efimero en loopback.';
             }
 
             if (! in_array($this->string('uploads_disk'), ['local', 'public'], true)) {

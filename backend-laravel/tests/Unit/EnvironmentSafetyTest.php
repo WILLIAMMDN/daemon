@@ -79,6 +79,19 @@ class EnvironmentSafetyTest extends TestCase
         $safety->assertDestructiveOperationAllowed('daemon:aplicar-retencion');
     }
 
+    public function test_testing_allows_ephemeral_postgres_on_loopback(): void
+    {
+        $safety = new EnvironmentSafety($this->snapshot([
+            'app_environment' => 'testing',
+            'environment_name' => 'testing',
+            'db_connection' => 'pgsql',
+            'db_host' => '127.0.0.1',
+            'db_database' => 'daemon_test',
+        ]));
+
+        $this->assertSame([], $safety->issues());
+    }
+
     /** @param array<string, mixed> $overrides
      * @return array<string, mixed>
      */
