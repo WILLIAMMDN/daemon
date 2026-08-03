@@ -176,7 +176,7 @@
 
 .teacher-feedback {
   background: var(--daemon-surface-muted);
-  border: 1px solid #f5d08a;
+  border: 1px solid color-mix(in srgb, var(--daemon-accent) 45%, var(--daemon-on-primary));
   border-left: 4px solid var(--daemon-warning);
   border-radius: 0 10px 10px 0;
   margin: 0;
@@ -184,7 +184,7 @@
 }
 
 .teacher-feedback small {
-  color: #9a5c00;
+  color: color-mix(in srgb, var(--daemon-accent-dark) 60%, var(--daemon-ink));
   font-size: .64rem;
   font-weight: 750;
   letter-spacing: .06em;
@@ -192,7 +192,7 @@
 }
 
 .teacher-feedback p {
-  color: #654b21;
+  color: color-mix(in srgb, var(--daemon-accent-dark) 60%, var(--daemon-ink));
   font-size: .8rem;
   line-height: 1.5;
   margin: .35rem 0 0;
