@@ -1,6 +1,7 @@
 import { Component, signal , ChangeDetectionStrategy} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CertificadoService } from '../../services/certificado';
+import { CertificadoData } from '../../../../core/modelos/dto';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
@@ -18,7 +19,7 @@ import { MonedaDaemon } from '../../../../shared/componentes/moneda-daemon/moned
   styleUrl: './certificado.scss',
 })
 export class Certificado {
-  datos = signal<any | null>(null);
+  datos = signal<CertificadoData | null>(null);
   cargando = signal(true);
   error = signal('');
 
