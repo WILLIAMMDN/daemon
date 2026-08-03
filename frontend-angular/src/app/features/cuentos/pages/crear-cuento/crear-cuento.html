@@ -217,58 +217,70 @@
           <div class="pagina-illust">
             <div class="pagina-illust__inner">
 
-              @if (ilustracionDisplayUrl(); as illust) {
-                <img [src]="illust" class="pagina-illust__img" alt="Ilustración de esta página" />
+              <!-- Cabecera fija del panel (estructura profesional) -->
+              <header class="pagina-illust__header">
+                <span class="pagina-illust__header-title">
+                  <fa-icon [icon]="faImage"></fa-icon>
+                  Ilustración de página
+                </span>
+                <span class="pagina-illust__header-meta">PNG / JPG / WEBP</span>
+              </header>
 
-                @if (subiendoIlustracion()) {
-                  <div class="pagina-illust__uploading">
-                    <span class="crear-spinner crear-spinner--light"></span>
-                    <span>Subiendo…</span>
-                  </div>
+              <!-- Cuerpo del panel: imagen o placeholder -->
+              <div class="pagina-illust__body">
+                @if (ilustracionDisplayUrl(); as illust) {
+                  <img [src]="illust" class="pagina-illust__img" alt="Ilustración de esta página" />
+
+                  @if (subiendoIlustracion()) {
+                    <div class="pagina-illust__uploading">
+                      <span class="crear-spinner crear-spinner--light"></span>
+                      <span>Subiendo…</span>
+                    </div>
+                  } @else {
+                    <!-- Overlay con "Cambiar" (cubre toda la imagen al hacer hover) -->
+                    <label class="pagina-illust__overlay" aria-label="Cambiar ilustración de esta página">
+                      <input
+                        type="file"
+                        (change)="onSubirIlustracion($event)"
+                        accept="image/png,image/jpeg,image/webp,image/gif"
+                        class="pagina-illust__file-input"
+                      />
+                      <span class="pagina-illust__overlay-btn">
+                        <fa-icon [icon]="faUpload"></fa-icon> Cambiar
+                      </span>
+                    </label>
+
+                    <!-- Botón X flotante para eliminar (siempre visible, esquina sup-der) -->
+                    <button
+                      type="button"
+                      class="pagina-illust__remove"
+                      (click)="quitarIlustracion()"
+                      aria-label="Quitar ilustración de esta página"
+                      title="Quitar ilustración"
+                    >
+                      <fa-icon [icon]="faTimes"></fa-icon>
+                    </button>
+                  }
                 } @else {
-                  <!-- Overlay con "Cambiar" (cubre toda la imagen al hacer hover) -->
-                  <label class="pagina-illust__overlay" aria-label="Cambiar ilustración de esta página">
+                  <label class="pagina-illust__placeholder">
                     <input
                       type="file"
                       (change)="onSubirIlustracion($event)"
                       accept="image/png,image/jpeg,image/webp,image/gif"
                       class="pagina-illust__file-input"
+                      aria-label="Subir ilustración para esta página"
+                      [disabled]="subiendoIlustracion()"
                     />
-                    <span class="pagina-illust__overlay-btn">
-                      <fa-icon [icon]="faUpload"></fa-icon> Cambiar
+                    <div class="pagina-illust__icon">
+                      <fa-icon [icon]="faImage" class="text-2xl"></fa-icon>
+                    </div>
+                    <span class="pagina-illust__hint-title">Sube una imagen</span>
+                    <span class="pagina-illust__hint-sub">
+                      Esta imagen acompañará el texto de la página actual.
                     </span>
                   </label>
-
-                  <!-- Botón X flotante para eliminar (siempre visible, esquina sup-der) -->
-                  <button
-                    type="button"
-                    class="pagina-illust__remove"
-                    (click)="quitarIlustracion()"
-                    aria-label="Quitar ilustración de esta página"
-                    title="Quitar ilustración"
-                  >
-                    <fa-icon [icon]="faTimes"></fa-icon>
-                  </button>
                 }
-              } @else {
-                <label class="pagina-illust__placeholder">
-                  <input
-                    type="file"
-                    (change)="onSubirIlustracion($event)"
-                    accept="image/png,image/jpeg,image/webp,image/gif"
-                    class="pagina-illust__file-input"
-                    aria-label="Subir ilustración para esta página"
-                    [disabled]="subiendoIlustracion()"
-                  />
-                  <div class="pagina-illust__icon">
-                    <fa-icon [icon]="faImage" class="text-2xl"></fa-icon>
-                  </div>
-                  <span class="pagina-illust__hint-title">Ilustración de esta página</span>
-                  <span class="pagina-illust__hint-sub">
-                    Sube una imagen y ocupará todo este panel. Cada página puede tener la suya.
-                  </span>
-                </label>
-              }
+              </div>
 
             </div>
           </div>
