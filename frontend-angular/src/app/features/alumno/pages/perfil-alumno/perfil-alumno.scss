@@ -83,7 +83,7 @@
 .stat-card strong small { font-size: .7rem; letter-spacing: .04em; }
 .stat-card p { color: var(--daemon-muted); font-size: .72rem; margin: .35rem 0 0; }
 .stat-card--blue { background: var(--daemon-teens-soft); border-color: var(--daemon-teens-border); }
-.stat-card--amber { background: var(--daemon-tutor-soft); border-color: #f5e3a7; }
+.stat-card--amber { background: var(--daemon-tutor-soft); border-color: color-mix(in srgb, var(--daemon-accent) 45%, var(--daemon-on-primary)); }
 .stat-card--green { background: var(--daemon-success-soft); border-color: var(--daemon-border); }
 .stat-card--violet { background: var(--daemon-canvas); border-color: var(--daemon-border); }
 
