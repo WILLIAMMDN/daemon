@@ -88,7 +88,7 @@ Configura el backend:
 ```powershell
 cd backend-laravel
 composer install
-Copy-Item .env.example .env
+if (-not (Test-Path .env)) { Copy-Item .env.example .env }
 php artisan key:generate
 ```
 
@@ -98,20 +98,28 @@ En `backend-laravel/.env`, revisa estos valores:
 APP_NAME=DAEMON
 APP_URL=http://localhost:8000
 DB_CONNECTION=pgsql
-DB_HOST=aws-1-sa-east-1.pooler.supabase.com
+DB_HOST=127.0.0.1
 DB_PORT=5432
-DB_DATABASE=postgres
-DB_USERNAME=postgres.lbxdcvsrmkkynttgwblc
-DB_PASSWORD=tu_password_de_supabase
-DB_SSLMODE=require
+DB_DATABASE=daemon_local
+DB_USERNAME=daemon_local
+DB_PASSWORD=
+DB_SSLMODE=prefer
 FRONTEND_URL=http://localhost:4200
+FIREBASE_PROJECT_ID=demo-daemon-local
 ```
 
-Ejecuta migraciones sobre Supabase:
+Valida el aislamiento antes de arrancar o migrar la base local:
 
 ```powershell
+php artisan daemon:check-environment-safety
+php artisan migrate:status
+php artisan migrate --pretend
 php artisan migrate
 ```
+
+El último comando solo se ejecuta contra `daemon_local`. Nunca uses el pooler
+Supabase productivo para desarrollo. Consulta
+[`docs/ENVIRONMENTS.md`](docs/ENVIRONMENTS.md).
 
 Configura el frontend:
 

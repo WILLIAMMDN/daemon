@@ -30,7 +30,10 @@ Firebase Hosting -> Angular -> Render/Laravel -> Supabase PostgreSQL
 
 ## Runtime de Render
 
-El entrypoint invalida caches cuando cambian variables, ejecuta `php artisan migrate --force --no-interaction` y entrega PID 1 a Supervisor. Supervisor mantiene:
+El entrypoint invalida caches cuando cambian variables, ejecuta
+`daemon:check-environment-safety --operation=deploy` y solo después ejecuta la
+migración incremental configurada. Luego entrega PID 1 a Supervisor. Supervisor
+mantiene:
 
 - Apache;
 - `queue:work` con reciclaje cada hora;
@@ -96,4 +99,9 @@ Para activar staging se deben crear recursos distintos y registrar variables/sec
 - app Pusher;
 - opcionalmente proyecto Sentry.
 
-El workflow requiere `STAGING_FIREBASE_PROJECT_ID`, `STAGING_FIREBASE_SITE_ID`, `STAGING_FRONTEND_URL`, `STAGING_API_URL`, `STAGING_ASSET_BASE_URL`, `STAGING_PUSHER_KEY`, `STAGING_PUSHER_CLUSTER` y `STAGING_FIREBASE_CONFIG_JSON`.
+El workflow requiere `STAGING_FIREBASE_PROJECT_ID`, `STAGING_FIREBASE_SITE_ID`,
+`STAGING_FRONTEND_URL`, `STAGING_API_URL`, `STAGING_ASSET_BASE_URL`,
+`STAGING_SUPABASE_URL`, `STAGING_SUPABASE_BUCKET`,
+`STAGING_SUPABASE_ANON_KEY`, `STAGING_PUSHER_KEY`,
+`STAGING_PUSHER_CLUSTER` y `STAGING_FIREBASE_CONFIG_JSON`. Ver el contrato
+completo en [`ENVIRONMENTS.md`](ENVIRONMENTS.md).
