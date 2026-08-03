@@ -10,17 +10,33 @@
   overflow: hidden;
   pointer-events: none;
   position: fixed;
-  transition: opacity .12s ease;
+  transition: opacity 0.12s ease;
   z-index: 10000;
 }
 
 .route-progress span {
-  background: #1677ff;
+  background: var(--daemon-info);
   display: block;
   height: 100%;
-  transform: scaleX(.08);
+  transform: scaleX(0.08);
   transform-origin: left center;
   width: 100%;
+}
+
+.environment-indicator {
+  background: var(--daemon-warning-soft);
+  border: 1px solid var(--daemon-warning);
+  border-radius: var(--daemon-radius-md);
+  box-shadow: var(--daemon-shadow-soft);
+  color: var(--daemon-ink);
+  font-size: 0.75rem;
+  font-weight: 800;
+  inset: var(--daemon-space-3) var(--daemon-space-3) auto auto;
+  letter-spacing: 0.08em;
+  padding: var(--daemon-space-2) var(--daemon-space-3);
+  pointer-events: none;
+  position: fixed;
+  z-index: var(--daemon-z-toast);
 }
 
 .route-progress--active {
@@ -28,13 +44,19 @@
 }
 
 .route-progress--active span {
-  animation: daemon-route-progress 1.15s cubic-bezier(.2, .7, .25, 1) infinite;
+  animation: daemon-route-progress 1.15s cubic-bezier(0.2, 0.7, 0.25, 1) infinite;
 }
 
 @keyframes daemon-route-progress {
-  0% { transform: scaleX(.08); }
-  55% { transform: scaleX(.72); }
-  100% { transform: scaleX(.92); }
+  0% {
+    transform: scaleX(0.08);
+  }
+  55% {
+    transform: scaleX(0.72);
+  }
+  100% {
+    transform: scaleX(0.92);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -45,7 +67,7 @@
   }
 
   .route-progress--active span {
-    transform: scaleX(.82);
+    transform: scaleX(0.82);
   }
 }
 

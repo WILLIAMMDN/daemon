@@ -1,16 +1,17 @@
-import { Component, OnDestroy, inject , ChangeDetectionStrategy} from '@angular/core';
+import { Component, OnDestroy, inject, ChangeDetectionStrategy } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { NgxSpinnerComponent } from 'ngx-spinner';
 import { KeepAlive } from './core/servicios/keep-alive';
 import { ActualizacionApp } from './core/servicios/actualizacion-app';
 import { NavegacionApp } from './core/servicios/navegacion-app';
+import { environment } from '../environments/environment';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-root',
   imports: [RouterOutlet, NgxSpinnerComponent],
   templateUrl: './app.html',
-  styleUrl: './app.scss'
+  styleUrl: './app.scss',
 })
 export class App implements OnDestroy {
   private readonly keepAlive = inject(KeepAlive);
@@ -18,6 +19,7 @@ export class App implements OnDestroy {
   private readonly navegacionApp = inject(NavegacionApp);
 
   readonly navegando = this.navegacionApp.activa;
+  readonly environmentIndicator = environment.environmentIndicator;
 
   constructor() {
     // Mantiene Render despierto mientras alguien usa el portal.

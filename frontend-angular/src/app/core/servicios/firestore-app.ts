@@ -3,6 +3,8 @@ import { FirebaseApp, getApps, initializeApp } from 'firebase/app';
 import type { Firestore } from 'firebase/firestore';
 import { environment } from '../../../environments/environment';
 
+const firestoreConEmulador = new WeakSet<Firestore>();
+
 @Injectable({
   providedIn: 'root',
 })
@@ -16,8 +18,14 @@ export class FirestoreApp {
 
     const app = this.obtenerApp();
     if (app) {
-      const { getFirestore } = await import('firebase/firestore');
+      const { connectFirestoreEmulator, getFirestore } = await import('firebase/firestore');
       this.instancia = getFirestore(app);
+
+      const emulator = environment.firebaseEmulators;
+      if (emulator.enabled && !firestoreConEmulador.has(this.instancia)) {
+        connectFirestoreEmulator(this.instancia, emulator.firestoreHost, emulator.firestorePort);
+        firestoreConEmulador.add(this.instancia);
+      }
     }
   }
 
