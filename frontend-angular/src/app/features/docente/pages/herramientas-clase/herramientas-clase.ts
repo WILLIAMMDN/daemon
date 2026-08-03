@@ -1,6 +1,6 @@
 import { Component, signal , ChangeDetectionStrategy} from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Mision } from '../../../misiones/services/mision';
+import { Mision, EntregaRevisable } from '../../../misiones/services/mision';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 
 
@@ -21,7 +21,7 @@ import { BotonAccion } from '../../../../shared/componentes/boton-accion/boton-a
   styleUrl: './herramientas-clase.scss',
 })
 export class HerramientasClase {
-  entregas = signal<any[]>([]);
+  entregas = signal<EntregaRevisable[]>([]);
   cargando = signal(true);
   guardando = signal(false);
   mensaje = signal('');
@@ -36,8 +36,8 @@ export class HerramientasClase {
     this.cargando.set(true);
     this.error.set('');
     this.mision.entregas().subscribe({
-      next: (entregas) => {
-        this.entregas.set(entregas as any[]);
+      next: (entregas: EntregaRevisable[]) => {
+        this.entregas.set(entregas);
         this.cargando.set(false);
       },
       error: (e) => {
@@ -47,7 +47,7 @@ export class HerramientasClase {
     });
   }
 
-  seleccionar(entrega: any): void {
+  seleccionar(entrega: EntregaRevisable): void {
     this.revision = {
       id: entrega.id,
       estado: entrega.estado === 'rechazado' ? 'rechazado' : 'aprobado',
