@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { catchError, firstValueFrom, from, map, Observable, of, switchMap, tap, throwError, timeout, TimeoutError } from 'rxjs';
+import { catchError, from, map, Observable, of, switchMap, tap, throwError, timeout, TimeoutError } from 'rxjs';
 import { NivelAlumno } from '../dominio/nivel-alumno';
 import { Api } from './api';
 import { FirebaseAuth } from './firebase-auth';
@@ -7,6 +7,12 @@ import { Sesion, UsuarioSesion } from './sesion';
 
 export interface AuthRespuesta {
   usuario: UsuarioSesion;
+  /**
+   * Custom token de Firebase para que el cliente haga signInWithCustomToken()
+   * y las reglas de Firestore v2 autoricen al alumno. Solo presente cuando
+   * Firebase esta configurado en el backend.
+   */
+  firebase_token?: string;
 }
 
 export interface CompletarPerfilGoogleDatos {
@@ -51,7 +57,7 @@ export class Autenticacion {
       .pipe(
         tap((respuesta) => this.sesion.guardar(respuesta.usuario)),
         switchMap((respuesta) =>
-          from(this.vincularSesionFirebase()).pipe(
+          from(this.vincularFirebase(respuesta.firebase_token)).pipe(
             map(() => respuesta),
             // Best-effort: si Firebase no esta configurado o el endpoint
             // falla, el login local nunca se rompe por la vinculacion.
@@ -62,17 +68,20 @@ export class Autenticacion {
   }
 
   /**
-   * Tras el login local, pide un custom token al backend y lo intercambia
-   * con Firebase Auth para que Firestore Rules v2 autoricen al alumno.
+   * Si la respuesta del login incluye firebase_token, lo canjea con
+   * signInWithCustomToken() para que Firestore Rules v2 autoricen al alumno.
    * No lanza: los errores se silencian para no romper el login legacy.
    */
-  private async vincularSesionFirebase(): Promise<void> {
-    if (!this.firebaseAuth.disponible()) {
+  private async vincularFirebase(token: string | undefined): Promise<void> {
+    if (!token || !this.firebaseAuth.disponible()) {
       return;
     }
-
-    const respuesta = await firstValueFrom(this.api.post<{ token: string }>('/auth/firebase-token', {}));
-    await this.firebaseAuth.iniciarConCustomToken(respuesta.token);
+    try {
+      await this.firebaseAuth.iniciarConCustomToken(token);
+    } catch {
+      // Best-effort: si falla, el login local sigue funcionando
+      // pero las consultas a Firestore no tendran sesion de Firebase.
+    }
   }
 
   registro(datos: Record<string, unknown>) {

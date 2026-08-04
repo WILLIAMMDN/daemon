@@ -428,6 +428,10 @@ class AutenticacionController extends Controller
             'usuario' => UsuarioResource::make($usuario),
         ];
 
+        if ($this->firebaseToken->configurado()) {
+            $payload['firebase_token'] = $this->firebaseToken->customTokenPara($usuario);
+        }
+
         if (config('daemon.auth_cookie.expose_bearer_token')) {
             $payload['token'] = $token;
         }
