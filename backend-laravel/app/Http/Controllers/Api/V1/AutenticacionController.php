@@ -272,6 +272,12 @@ class AutenticacionController extends Controller
      * Sanctum (login local con usuario/contrasena). El frontend lo usa
      * con signInWithCustomToken() para que Firestore Rules v2 autoricen
      * al alumno sin debilitar la seguridad.
+     *
+     * @deprecated 2026-08-04 Desde PR #66, el token viaja en la misma
+     *   respuesta de /auth/login (campo `firebase_token`), por lo que
+     *   esta segunda llamada es redundante. El endpoint se conserva por
+     *   compatibilidad con clientes externos y sera removido en una
+     *   version futura. Migrar a /auth/login.
      */
     public function firebaseToken(Request $request)
     {
@@ -281,7 +287,10 @@ class AutenticacionController extends Controller
 
         $token = $this->firebaseToken->customTokenPara($request->user());
 
-        return response()->json(['token' => $token]);
+        return response()
+            ->json(['token' => $token, 'deprecated' => true])
+            ->header('Deprecation', 'true')
+            ->header('Link', '</api/v1/auth/login>; rel="successor-version"; title="Login que ya incluye firebase_token"');
     }
 
     public function cambiarClave(CambiarClaveRequest $request)
