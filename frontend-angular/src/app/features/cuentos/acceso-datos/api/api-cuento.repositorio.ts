@@ -163,6 +163,11 @@ export class ApiCuentoRepositorio implements CuentoRepositorio {
   }
 
   async crearBorrador(datos: DatosBorradorCuento, _audiencia: AudienciaCuento): Promise<CuentoDetalle> {
+    // Los cuentos legacy (PostgreSQL) nunca deben pasar por los endpoints
+    // v2 de Firestore: se guardan directo en la ruta legacy.
+    if (datos.cuentoId.startsWith('legacy-')) {
+      return this.guardarEnLegacy(datos);
+    }
     try {
       await firstValueFrom(
         this.api.post('/cuentos-v2/borradores', {
@@ -185,6 +190,11 @@ export class ApiCuentoRepositorio implements CuentoRepositorio {
   }
 
   async actualizarBorrador(datos: DatosBorradorCuento): Promise<CuentoDetalle> {
+    // Los cuentos legacy (PostgreSQL) nunca deben pasar por los endpoints
+    // v2 de Firestore: se guardan directo en la ruta legacy.
+    if (datos.cuentoId.startsWith('legacy-')) {
+      return this.guardarEnLegacy(datos);
+    }
     try {
       return await this.guardarVersion(datos);
     } catch (error) {
