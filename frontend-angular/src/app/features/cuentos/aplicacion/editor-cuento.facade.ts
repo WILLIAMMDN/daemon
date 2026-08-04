@@ -382,6 +382,13 @@ export class EditorCuentoFacade {
       return false;
     }
     if (!(await this.guardar(true))) return false;
+    // En modo legacy (PostgreSQL) el cuento ya queda visible en la galería
+    // pública al guardarlo; no existe flujo de revisión por moderación.
+    if (this.cuentoId()?.startsWith('legacy-')) {
+      this.tieneCambiosSinGuardar.set(false);
+      this.estadoPersistencia.set({ tipo: 'guardado', texto: 'Publicado en la galería' });
+      return true;
+    }
     try {
       await this.publicarCuento.ejecutar(this.requerirCuentoId());
       this.tieneCambiosSinGuardar.set(false);
@@ -492,6 +499,12 @@ export class EditorCuentoFacade {
           : await this.crearBorrador.ejecutar(datos, this.requerirAudiencia());
         this.persistido = true;
         this.revision.set(detalle.version.revision);
+        // Si el backend degradó al guardado legacy (PostgreSQL), el ID real
+        // del cuento es legacy-{n}. Se adopta para que la sesión, la galería
+        // y las acciones posteriores apunten al mismo recurso.
+        if (detalle.cuento.id.startsWith('legacy-')) {
+          this.cuentoId.set(detalle.cuento.id);
+        }
         if (secuencia === this.secuenciaCambios) {
           this.tieneCambiosSinGuardar.set(false);
           this.borradorLocal.limpiar(this.uid, datos.cuentoId);

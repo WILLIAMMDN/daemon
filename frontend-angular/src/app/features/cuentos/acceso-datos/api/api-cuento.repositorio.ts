@@ -162,7 +162,7 @@ export class ApiCuentoRepositorio implements CuentoRepositorio {
     return { cuentoId, versionId };
   }
 
-  async crearBorrador(datos: DatosBorradorCuento, audiencia: AudienciaCuento): Promise<CuentoDetalle> {
+  async crearBorrador(datos: DatosBorradorCuento, _audiencia: AudienciaCuento): Promise<CuentoDetalle> {
     try {
       await firstValueFrom(
         this.api.post('/cuentos-v2/borradores', {
@@ -172,7 +172,15 @@ export class ApiCuentoRepositorio implements CuentoRepositorio {
       );
       return await this.guardarVersion(datos);
     } catch (error) {
-      throw normalizarErrorCuento(error);
+      // El backend v2 depende de Firestore y puede no estar operativo (p.ej.
+      // el rol de la cuenta de servicio aún no se concede). Se degrada al
+      // guardado legacy de PostgreSQL que siempre estuvo en producción, pero
+      // SOLO ante fallos de disponibilidad; los errores de dominio (422/409)
+      // deben mostrarse tal cual, no enmascararse.
+      if (!this.esErrorDisponibilidad(error)) {
+        throw normalizarErrorCuento(error);
+      }
+      return this.guardarEnLegacy(datos);
     }
   }
 
@@ -180,8 +188,52 @@ export class ApiCuentoRepositorio implements CuentoRepositorio {
     try {
       return await this.guardarVersion(datos);
     } catch (error) {
-      throw normalizarErrorCuento(error);
+      if (!this.esErrorDisponibilidad(error)) {
+        throw normalizarErrorCuento(error);
+      }
+      return this.guardarEnLegacy(datos);
     }
+  }
+
+  /**
+   * true solo cuando el fallo viene de la disponibilidad del servicio
+   * (503/5xx, sin conexión o timeout). Los errores 4xx son decisiones del
+   * servidor sobre los datos y no deben provocar la degradación.
+   */
+  private esErrorDisponibilidad(error: unknown): boolean {
+    const candidato = error as { status?: unknown; kind?: unknown };
+    if (typeof candidato.status === 'number') {
+      return candidato.status === 0 || candidato.status >= 500;
+    }
+    return candidato.kind === 'timeout' || candidato.kind === 'offline';
+  }
+
+  /**
+   * Respaldo del editor: guarda el borrador en la tabla legacy (PostgreSQL)
+   * mediante POST /cuentos. Un cuento por alumno, hasta 6 páginas en
+   * data_1..6 e imágenes en img_1..6, igual que antes del refactor v2.
+   */
+  private async guardarEnLegacy(datos: DatosBorradorCuento): Promise<CuentoDetalle> {
+    // El esquema legacy guarda hasta 6 páginas (data_1..6) y limita cada
+    // campo a 200 KB. Las páginas adicionales se conservan en "contenido".
+    const paginas = datos.paginas.slice(0, 6);
+    const cuerpo: Record<string, string | null> = {
+      titulo: datos.titulo.trim().slice(0, 150),
+      contenido: paginas.map((pagina) => pagina.contenido ?? '').join('\n\n').slice(0, 200_000) || null,
+    };
+    paginas.forEach((pagina, indice) => {
+      cuerpo[`data_${indice + 1}`] = (pagina.contenido ?? '').slice(0, 200_000) || null;
+      cuerpo[`img_${indice + 1}`] = pagina.ilustracionRef
+        || (indice === 0 ? datos.portadaRef : null);
+    });
+    const respuesta = await firstValueFrom(
+      this.api.post<{ id: number }>('/cuentos', cuerpo),
+    );
+    if (!respuesta || !Number.isInteger(respuesta.id) || respuesta.id <= 0) {
+      throw new ErrorCuento('DATOS_INVALIDOS', 'El servidor no confirmó el guardado.', false);
+    }
+
+    return this.obtenerDetalleLegacy(`legacy-${respuesta.id}`);
   }
 
   /**

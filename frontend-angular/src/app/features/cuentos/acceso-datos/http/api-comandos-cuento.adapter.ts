@@ -66,8 +66,17 @@ export class ApiComandosCuentoAdapter implements ComandosCuentoGateway {
     return this.comando(`/cuentos-v2/${encodeURIComponent(cuentoId)}/publicacion`, idempotencia);
   }
 
-  eliminar(cuentoId: string, idempotencia: string): Promise<ResultadoComandoCuento> {
-    if (this.esLegacy(cuentoId)) return Promise.reject(this.noDisponibleLegacy());
+  async eliminar(cuentoId: string, idempotencia: string): Promise<ResultadoComandoCuento> {
+    // Los cuentos legacy viven en PostgreSQL: se eliminan con la ruta legacy.
+    if (this.esLegacy(cuentoId)) {
+      try {
+        await firstValueFrom(this.api.delete<void>('/cuentos/mio'));
+        return { estado: 'eliminado', repetido: false };
+      } catch (error) {
+        reportarError(error, { area: 'cuentos-comandos', recuperable: true });
+        throw normalizarErrorCuento(error);
+      }
+    }
     return this.comando(`/cuentos-v2/${encodeURIComponent(cuentoId)}/eliminacion`, idempotencia);
   }
 
