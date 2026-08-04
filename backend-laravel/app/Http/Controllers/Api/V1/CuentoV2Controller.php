@@ -33,12 +33,24 @@ class CuentoV2Controller extends Controller
 
     public function galeria(Request $request)
     {
-        $v2 = $this->cuentos->galeria((int) $request->query('limite', 24));
+        // Si Firestore (v2) no está disponible — p.ej. la cuenta de servicio
+        // aún no tiene el rol Cloud Datastore User — la galería NO debe caer:
+        // se sirve únicamente el legado PostgreSQL con 200. El cliente hace
+        // una sola llamada y siempre recibe tarjetas.
+        $v2 = [];
+        try {
+            $v2 = $this->cuentos->galeria((int) $request->query('limite', 24));
+        } catch (Throwable $exception) {
+            Log::warning('Galeria v2 (Firestore) no disponible; se sirve solo el legado.', [
+                'exception_type' => $exception::class,
+                'message' => $exception->getMessage(),
+            ]);
+        }
         $legacy = [];
         try {
             $legacy = $this->cuentosLegacy->galeria();
         } catch (Throwable $exception) {
-            // La galería v2 no debe caerse si el legado PostgreSQL falla
+            // La galería no debe caerse si el legado PostgreSQL falla
             // (ej. tabla pendiente de migración). Se loguea y se omite.
             Log::warning('Galeria legacy no disponible para fusionar.', [
                 'exception_type' => $exception::class,
