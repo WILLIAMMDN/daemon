@@ -40,6 +40,11 @@ if [ "$NEED_CACHE" = "1" ]; then
     rm -f bootstrap/cache/config.php bootstrap/cache/routes-v7.php 2>/dev/null || true
     php artisan config:cache
     php artisan route:cache
+    # El Dockerfile construye con --no-scripts (ver Dockerfile), asi que el
+    # package manifest no existe en la imagen: lo generamos aqui con las env
+    # vars reales ya inyectadas, para que package:discover no bootee Laravel
+    # en build sin .env.
+    php artisan package:discover --ansi
     echo "${RENDER_GIT_COMMIT:-unknown}" > bootstrap/cache/.config-cached
     echo "${CURRENT_ENV_HASH}" > "$ENV_HASH_FILE"
     echo "[entrypoint] Cache listo."

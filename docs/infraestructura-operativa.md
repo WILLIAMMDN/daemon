@@ -41,6 +41,24 @@ mantiene:
 
 No existe una ruta HTTP para ejecutar migraciones.
 
+## Deploy Hook de Render
+
+Ademas del auto-deploy por `checksPass`, el servicio `daemon` tiene un
+**Deploy Hook** que permite disparar un deploy manual sin entrar al dashboard.
+
+- **Helper reutilizable:** `scripts/render-deploy-hook.sh`
+  - `bash scripts/render-deploy-hook.sh` — dispara deploy del ultimo commit de main.
+  - `bash scripts/render-deploy-hook.sh --verify` — ademas monitorea `/salud` hasta que el commit cambie.
+- **Credencial local (gitignored):** `scripts/render-deploy-hook.url` contiene la
+  URL completa del hook. **Nunca committear ese archivo**: es una credencial que
+  permite disparar deploys. Ya esta excluida en `.gitignore`.
+- **CI/entorno:** el script tambien lee la variable `RENDER_DEPLOY_HOOK_URL`
+  (o el secret de GitHub del mismo nombre) si el archivo local no existe.
+- **Respuesta esperada:** `200` con `{"deploy":{"id":"dep-..."}}`.
+
+Si el auto-deploy de Render se desconecta de GitHub, este hook es la via de
+escape para actualizar el backend a `main` sin esperar a la integracion.
+
 ## Backups
 
 `.github/workflows/supabase-backup.yml` ejecuta diariamente:

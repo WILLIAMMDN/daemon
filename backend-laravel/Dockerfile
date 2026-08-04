@@ -36,8 +36,15 @@ RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist
 # Ahora copia el resto del codigo del proyecto
 COPY . .
 
-# Optimiza el autoloader de Composer para produccion
-RUN composer dump-autoload --optimize --no-dev
+# Optimiza el autoloader de Composer para produccion.
+# --no-scripts es OBLIGATORIO: el post-autoload-dump ejecuta package:discover,
+# que arranca Laravel y dispara AppServiceProvider::boot() ->
+# EnvironmentSafety::assertRuntimeSafe(). En build aun no existen las env
+# vars reales de Render (no hay .env) y el check lanza LogicException,
+# rompiendo el build ("Exited with status 1 while building your code").
+# El package manifest se regenera en docker/entrypoint.sh, con las env vars
+# ya inyectadas por Render.
+RUN composer dump-autoload --optimize --no-dev --no-scripts
 
 # NO corremos config:cache / route:cache aqui:
 #   - En build time no existen las ENV vars reales de Render

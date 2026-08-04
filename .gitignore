@@ -27,3 +27,6 @@ firestore-debug.log
 *.7z
 .storage-quarantine/
 .runtime-logs/
+
+# Credenciales locales (deploy hooks, API keys locales)
+scripts/render-deploy-hook.url
