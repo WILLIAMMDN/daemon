@@ -4,6 +4,15 @@ namespace Tests\Feature;
 
 use Tests\TestCase;
 
+/**
+ * Tests del endpoint POST /api/v1/auth/firebase-token.
+ *
+ * @deprecated 2026-08-04 El token ahora viaja en la respuesta de
+ *   /api/v1/auth/login (campo `firebase_token`, ver PR #66). Este
+ *   endpoint se conserva por compatibilidad con clientes externos.
+ *   Se mantiene la suite minima para no perder la cobertura del
+ *   contrato 401 JSON que ya valida el QA.
+ */
 class FirebaseTokenEndpointTest extends TestCase
 {
     public function test_endpoint_sin_sesion_responde_401_json_con_accept_header(): void
