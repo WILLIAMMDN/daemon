@@ -385,3 +385,65 @@ Bajo: no hay migraciones nuevas entre el commit desplegado y main; la suite
 backend pasa (150 tests); el entrypoint solo cachea config y ejecuta
 `migrate --force` (no-op). Si el usuario ya registró una cuenta de Firebase con
 el mismo email, la reconciliación adopta ese UID (no se parte la identidad).
+
+---
+
+## SEGUIMIENTO 2026-08-04 (build arreglado, falta contrato de entorno)
+
+### 1. Build de Docker — RESUELTO (PR #62, `3f5e595`)
+
+El build fallaba con `Exited with status 1 while building your code` porque
+`composer dump-autoload` corría `post-autoload-dump` → `package:discover` →
+arrancaba Laravel sin `.env` → `EnvironmentSafety::assertRuntimeSafe()` lanzaba
+`LogicException`.
+
+Fix: `--no-scripts` en el `composer dump-autoload` del Dockerfile y
+`php artisan package:discover --ansi` en `docker/entrypoint.sh` (con las env
+vars reales ya inyectadas). Reproducido localmente sin `.env`: antes fallaba,
+con el fix `EXIT=0`. El dashboard ahora muestra `while running your code` en
+vez de `while building your code` → el build YA PASA.
+
+### 2. Runtime — BLOQUEADO por el contrato de entorno (accion del usuario)
+
+El entrypoint ejecuta `daemon:check-environment-safety --operation=deploy`,
+que exige que las env vars de Render cumplan el contrato de produccion. El
+dashboard NO esta sincronizado con `render.yaml` (evidencia: `/salud` reporta
+`version: development` en vez de `2026.07`).
+
+Simulaciones del check (solo lectura):
+
+| Escenario | Resultado |
+|---|---|
+| Con todas las vars de `render.yaml` | `OK: el entorno Laravel es coherente` |
+| Sin `APP_URL` | `Produccion no coincide con el fingerprint esperado de api` |
+| Con `APP_DEBUG=true` | `APP_DEBUG debe estar desactivado en produccion` |
+| Sin `DAEMON_ENVIRONMENT` (con RENDER=true) | OK (Render inyecta RENDER=true) |
+
+**Accion en el dashboard de Render** (servicio `daemon` → Environment):
+agregar/verificar como minimo:
+
+```text
+APP_URL=https://daemon-5vo1.onrender.com
+APP_VERSION=2026.07
+DAEMON_ENVIRONMENT=production
+APP_DEBUG=false
+FRONTEND_URL=https://daemonestudiante.web.app
+FIREBASE_PROJECT_ID=daemon-a41f8
+```
+
+Y confirmar que el resto de `render.yaml` (DB, Storage, Pusher, Firebase
+service account) este presente. Luego re-disparar:
+
+```bash
+bash scripts/render-deploy-hook.sh
+```
+
+Verificar:
+
+```bash
+curl -s https://daemon-5vo1.onrender.com/api/v1/salud | grep -oE '"(version|commit)":"[^"]+"'
+# version debe ser 2026.07 y commit 3f5e595 (o descendiente)
+curl -s -o /dev/null -w '%{http_code}' -X POST \
+  https://daemon-5vo1.onrender.com/api/v1/auth/firebase-token
+# 401 (existe y exige sesion), ya NO 404
+```
