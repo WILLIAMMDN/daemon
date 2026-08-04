@@ -41,9 +41,13 @@ BODY="$(echo "$RESPONSE" | head -n -1)"
 echo "HTTP $HTTP_CODE"
 echo "$BODY"
 
-if [ "$HTTP_CODE" != "200" ] && [ "$HTTP_CODE" != "201" ]; then
+if [ "$HTTP_CODE" != "200" ] && [ "$HTTP_CODE" != "201" ] && [ "$HTTP_CODE" != "202" ]; then
   echo "ERROR: el deploy hook respondio $HTTP_CODE" >&2
   exit 1
+fi
+
+if [ "$HTTP_CODE" = "202" ]; then
+  echo "==> Deploy aceptado y encolado (202 Accepted)."
 fi
 
 if [ "$VERIFY" = "1" ]; then
