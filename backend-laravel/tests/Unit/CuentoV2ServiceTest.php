@@ -117,6 +117,45 @@ class CuentoV2ServiceTest extends TestCase
         $this->assertSame(0, $servicio->estadisticas($lector, 'publicado-2')['reacciones']['total']);
     }
 
+    public function test_guardar_borrador_vacio_aplica_defaults_y_no_usa_variables_cerradas_por_la_clausura(): void
+    {
+        // Regresión: la clausura de Cache::lock no capturaba $usuario y
+        // detalle() (línea final) lanzaba "Undefined variable $usuario"
+        // -> 500. Además valida que un borrador vacío se guarda con defaults.
+        $gateway = new CuentoDocumentoGatewayMemoria;
+        $gateway->sembrar('cuentos/cuento-vacio', [
+            'schema_version' => 2,
+            'autor_uid' => 'uid-owner',
+            'estado' => 'borrador',
+            'visibilidad' => 'privado',
+            'version_borrador_id' => 'version-1',
+        ]);
+        $servicio = new CuentoV2Service($gateway);
+
+        $detalle = $servicio->guardarBorrador($this->usuario('uid-owner'), [
+            'cuento_id' => 'cuento-vacio',
+            'version_id' => 'version-1',
+            'titulo' => '',
+            'sinopsis' => '',
+            'categoria' => '',
+            'rango_edad' => '',
+            'portada_ref' => null,
+            'revision_esperada' => 0,
+            'paginas' => [[
+                'id' => 'p1',
+                'orden' => 1,
+                'contenido' => '',
+                'ilustracion_ref' => null,
+                'texto_alternativo' => '',
+                'fondo_token' => 'var(--daemon-surface)',
+            ]],
+        ]);
+
+        $this->assertSame('Historia sin título', $detalle['version']['titulo']);
+        $this->assertSame('Sin clasificar', $detalle['version']['categoria']);
+        $this->assertSame('version-1', $detalle['cuento']['version_borrador_id']);
+    }
+
     private function usuario(string $uid): Usuario
     {
         $usuario = new Usuario;

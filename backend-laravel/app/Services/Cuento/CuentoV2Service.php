@@ -185,7 +185,7 @@ class CuentoV2Service
         $versionId = $datos['version_id'];
         $uid = $this->uidParaEscritura($usuario);
 
-        return Cache::lock($this->lockKey($cuentoId), 10)->block(3, function () use ($datos, $cuentoId, $versionId, $uid): array {
+        return Cache::lock($this->lockKey($cuentoId), 10)->block(3, function () use ($datos, $cuentoId, $versionId, $uid, $usuario): array {
             $cuento = $this->documentos->obtener($this->cuentoPath($cuentoId));
             if ($cuento === null || (int) ($cuento['fields']['schema_version'] ?? 0) !== 2) {
                 throw new CuentoV2Exception('El cuento no existe.', 404, 'CUENTO_NO_ENCONTRADO');
