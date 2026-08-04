@@ -90,10 +90,8 @@ class FirestoreRestCuentoGateway implements CuentoDocumentoGateway
             throw new CuentoV2Exception('No se pudo consultar Firestore.', 503, 'FIRESTORE_NO_DISPONIBLE');
         }
         $this->asegurarRespuesta($respuesta);
-        $lineas = preg_split('/\r?\n/', trim($respuesta->body())) ?: [];
-        foreach ($lineas as $linea) {
-            $resultado = json_decode($linea, true);
-            $valor = $resultado['result']['aggregateFields']['total']['integerValue'] ?? null;
+        foreach ($this->decodificarFilas($respuesta->body()) as $fila) {
+            $valor = $fila['result']['aggregateFields']['total']['integerValue'] ?? null;
             if (is_numeric($valor)) {
                 return (int) $valor;
             }
@@ -152,15 +150,44 @@ class FirestoreRestCuentoGateway implements CuentoDocumentoGateway
         $this->asegurarRespuesta($respuesta);
 
         $documentos = [];
-        $lineas = preg_split('/\r?\n/', trim($respuesta->body())) ?: [];
-        foreach ($lineas as $linea) {
-            $fila = json_decode($linea, true);
+        foreach ($this->decodificarFilas($respuesta->body()) as $fila) {
             if (isset($fila['document']) && is_array($fila['document'])) {
                 $documentos[] = $this->decodificarDocumento($fila['document']);
             }
         }
 
         return $documentos;
+    }
+
+    /**
+     * Decodifica el cuerpo de una respuesta de Firestore en una lista de
+     * filas. Firestore puede responder como NDJSON (una fila por línea) o
+     * como un JSON array completo indentado; este método acepta ambos.
+     *
+     * @return list<array<string, mixed>>
+     */
+    private function decodificarFilas(string $cuerpo): array
+    {
+        $json = json_decode($cuerpo, true);
+        if (is_array($json)) {
+            // JSON array completo ([{...}, {...}]) o un único objeto
+            // (NDJSON de una sola línea como la agregación).
+            return array_is_list($json) ? $json : [$json];
+        }
+
+        $filas = [];
+        $lineas = preg_split('/\r?\n/', trim($cuerpo)) ?: [];
+        foreach ($lineas as $linea) {
+            if (trim($linea) === '') {
+                continue;
+            }
+            $fila = json_decode($linea, true);
+            if (is_array($fila)) {
+                $filas[] = $fila;
+            }
+        }
+
+        return $filas;
     }
 
     /**
