@@ -48,6 +48,53 @@ class ReservarBorradorEndpointTest extends TestCase
     }
 
     /**
+     * Guardar un borrador vacío (título/categoría/páginas sin contenido)
+     * es legítimo: "Guardar borrador" guarda progreso. Regresión: el
+     * request exigía titulo/categoria/contenido y el editor mostraba
+     * "No pudimos guardar el cuento" al guardar un cuento nuevo vacío.
+     */
+    public function test_guardar_borrador_v2_acepta_un_borrador_vacio(): void
+    {
+        $usuario = new Usuario(['id' => 1, 'rol' => 'alumno']);
+
+        $this->mock(CuentoV2Service::class, function ($mock): void {
+            $mock->shouldReceive('guardarBorrador')
+                ->once()
+                ->andReturn([
+                    'cuento' => ['id' => 'abc123'],
+                    'version' => ['id' => 'ver-1'],
+                    'paginas' => [],
+                ]);
+        });
+        $this->mock(CuentoService::class);
+        $this->mock(AsistenteCuentoService::class);
+        $this->mock(ActivosCuentoService::class);
+
+        Sanctum::actingAs($usuario);
+
+        $respuesta = $this->putJson('/api/v1/cuentos-v2/borradores/abc123', [
+            'cuento_id' => 'abc123',
+            'version_id' => 'ver-1',
+            'titulo' => '',
+            'sinopsis' => '',
+            'categoria' => '',
+            'rango_edad' => '',
+            'portada_ref' => null,
+            'revision_esperada' => 0,
+            'paginas' => [[
+                'id' => 'p1',
+                'orden' => 1,
+                'contenido' => '',
+                'ilustracion_ref' => null,
+                'texto_alternativo' => '',
+                'fondo_token' => 'var(--daemon-surface)',
+            ]],
+        ]);
+
+        $respuesta->assertStatus(200);
+    }
+
+    /**
      * El request class debe validar: faltan cuento_id/version_id -> 422.
      * También prueba que el route despacha hasta la capa de validación.
      */

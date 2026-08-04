@@ -218,9 +218,13 @@ class CuentoV2Service
                 'schema_version' => 2,
                 'autor_uid' => $uid,
                 'estado' => 'borrador',
-                'titulo' => trim((string) $datos['titulo']),
+                'titulo' => trim((string) ($datos['titulo'] ?? '')) !== ''
+                    ? trim((string) $datos['titulo'])
+                    : 'Historia sin título',
                 'sinopsis' => (string) ($datos['sinopsis'] ?? ''),
-                'categoria' => (string) ($datos['categoria'] ?? ''),
+                'categoria' => trim((string) ($datos['categoria'] ?? '')) !== ''
+                    ? trim((string) $datos['categoria'])
+                    : 'Sin clasificar',
                 'rango_edad' => (string) ($datos['rango_edad'] ?? ''),
                 'portada_ref' => $datos['portada_ref'] ?? null,
                 'paginas' => count($datos['paginas']),
