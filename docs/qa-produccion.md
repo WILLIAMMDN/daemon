@@ -447,3 +447,96 @@ curl -s -o /dev/null -w '%{http_code}' -X POST \
   https://daemon-5vo1.onrender.com/api/v1/auth/firebase-token
 # 401 (existe y exige sesion), ya NO 404
 ```
+
+## Incidente de deploy de Render: resolucion 2026-08-03/04
+
+### Sintoma
+
+Todos los deploys de Render posteriores al commit `7432305` fallaban con
+`Exited with status 1 while building your code` en el dashboard. El servicio
+seguia sirviendo el ultimo build bueno, por lo que `/salud` no cambiaba de
+commit y el endpoint `/auth/firebase-token` respondia `404`.
+
+### Causa raiz 1 (build): `package:discover` sin env vars
+
+El refactor anadio `EnvironmentSafety::assertRuntimeSafe()` al `boot()` de
+`AppServiceProvider`. En el Dockerfile, `composer dump-autoload` disparaba el
+script `post-autoload-dump` -> `package:discover`, que arranca Laravel **sin
+`.env` ni env vars reales** durante el build -> `LogicException` -> exit 1.
+
+Fix (PR #62, commit `3f5e595`): `--no-scripts` en `composer dump-autoload` del
+Dockerfile y `package:discover` ejecutado en `entrypoint.sh` con las env vars
+ya inyectadas por Render. Reproducido localmente: antes fallaba, despues el
+paso del build termina en `EXIT=0`.
+
+### Causa raiz 2 (runtime): contrato de entorno no sincronizado
+
+Con el build reparado, el contenedor moria al arrancar (`while running`): el
+entrypoint ejecuta `daemon:check-environment-safety --operation=deploy`, y el
+dashboard de Render no estaba sincronizado con `render.yaml` (evidencia:
+`/salud` reportaba `version: development`).
+
+Fix (dashboard de Render): agregar/verificar las vars de `render.yaml`:
+
+```text
+APP_URL=https://daemon-5vo1.onrender.com
+APP_VERSION=2026.07
+DAEMON_ENVIRONMENT=production
+APP_DEBUG=false
+FRONTEND_URL=https://daemonestudiante.web.app
+FIREBASE_PROJECT_ID=daemon-a41f8
+```
+
+### Causa raiz 3: 500 sin `Accept: application/json`
+
+Verificado en produccion que el endpoint respondia `401` con header `Accept`
+pero `500` sin el: el middleware `Authenticate` resolvia `route('login')` (ruta
+inexistente en una SPA API-first) **antes** de lanzar
+`AuthenticationException` -> `RouteNotFoundException`.
+
+Fix (PR #64, commit `fc39d19`):
+
+- `redirectGuestsTo(fn => $request->is('api/*') ? null : route('login'))` en
+  `bootstrap/app.php` -- los guests de `/api/*` ya no resuelven rutas inexistentes.
+- `shouldRenderJsonWhen(fn => $request->is('api/*') || $request->expectsJson())`
+  -- fuerza JSON en `/api/*` sin depender del header.
+
+Test de caracterizacion: `backend-laravel/tests/Feature/FirebaseTokenEndpointTest.php`
+(401 JSON con y sin `Accept`). Suite completa: **152 passed (519 assertions)**.
+
+### Verificacion final en produccion (2026-08-04 01:24 UTC)
+
+| Check | Resultado |
+|---|---|
+| `/api/v1/salud` | `version: 2026.07`, `commit: fc39d19`, `database.ok: true`, `uploads_disk: supabase` |
+| `POST /api/v1/auth/firebase-token` con `Accept: application/json` | `401` |
+| `POST /api/v1/auth/firebase-token` sin `Accept` | `401` (antes `500`) |
+| Backend Tests (Laravel) post-merge | `success` |
+| Deploy to Firebase Hosting on merge | `success` |
+| Production Monitor | `success` |
+| `https://daemonestudiante.web.app` | `HTTP 200` |
+
+### Operacion: Deploy Hook de Render
+
+La URL del Deploy Hook del servicio `daemon` esta guardada localmente en
+`scripts/render-deploy-hook.url` (**gitignored, nunca se commitea** -- es una
+credencial). Cualquier agente puede disparar un redeploy sin abrir el
+dashboard:
+
+```bash
+bash scripts/render-deploy-hook.sh
+# HTTP 202 Accepted = deploy encolado correctamente
+```
+
+El helper acepta `200/201/202` y solo imprime la URL host, nunca la clave.
+Para monitorear el resultado:
+
+```bash
+curl -s https://daemon-5vo1.onrender.com/api/v1/salud | grep -oE '"(version|commit)":"[^"]+"'
+curl -s -o /dev/null -w '%{http_code}' -X POST https://daemon-5vo1.onrender.com/api/v1/auth/firebase-token
+# 401 (existe y exige sesion)
+```
+
+Nota: en el plan free de Render el build Docker tarda 5-15 min y mientras
+construye `/salud` puede no responder momentaneamente; el servicio sigue
+sirviendo el ultimo build bueno hasta que el nuevo completa.
