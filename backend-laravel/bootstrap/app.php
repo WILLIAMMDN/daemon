@@ -34,7 +34,22 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => EnsureRole::class,
             'oneroster' => EnsureOneRosterToken::class,
         ]);
+
+        // API-first: los guests de /api/* nunca se redirigen a route('login')
+        // (esa ruta no existe en esta SPA y route() lanza RouteNotFoundException
+        // dentro del middleware, antes de la AuthenticationException). Al
+        // devolver null se lanza la excepcion y shouldRenderJsonWhen responde
+        // 401 JSON sin depender del header Accept.
+        $middleware->redirectGuestsTo(
+            static fn ($request): ?string => $request->is('api/*') ? null : route('login'),
+        );
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        // API-first: las rutas /api/* deben responder JSON aunque la peticion
+        // no mande Accept: application/json. Sin esto, una AuthenticationException
+        // intenta redirigir a route('login') (que no existe en una SPA) y devuelve
+        // 500 en vez de 401 para clientes sin header Accept.
+        $exceptions->shouldRenderJsonWhen(
+            static fn ($request, $e): bool => $request->is('api/*') || $request->expectsJson(),
+        );
     })->create();
