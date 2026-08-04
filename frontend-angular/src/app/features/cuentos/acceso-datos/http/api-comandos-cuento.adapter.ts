@@ -44,15 +44,35 @@ interface RespuestaEstadisticas {
 export class ApiComandosCuentoAdapter implements ComandosCuentoGateway {
   private readonly api = inject(Api);
 
+  /**
+   * Los cuentos legacy (v1, PostgreSQL) no viven en Firestore y no admiten
+   * interacciones v2. Devuelve true para no llamar nunca a los endpoints v2
+   * con un ID `legacy-*`, evitando errores 503 en la galería y la lectura.
+   */
+  private esLegacy(cuentoId: string): boolean {
+    return cuentoId.startsWith('legacy-');
+  }
+
+  private noDisponibleLegacy(): never {
+    throw new ErrorCuento(
+      'OPERACION_NO_DISPONIBLE',
+      'Las historias antiguas se pueden leer, pero no admiten comentarios ni reacciones en esta versión.',
+      false,
+    );
+  }
+
   solicitarPublicacion(cuentoId: string, idempotencia: string): Promise<ResultadoComandoCuento> {
+    if (this.esLegacy(cuentoId)) return Promise.reject(this.noDisponibleLegacy());
     return this.comando(`/cuentos-v2/${encodeURIComponent(cuentoId)}/publicacion`, idempotencia);
   }
 
   eliminar(cuentoId: string, idempotencia: string): Promise<ResultadoComandoCuento> {
+    if (this.esLegacy(cuentoId)) return Promise.reject(this.noDisponibleLegacy());
     return this.comando(`/cuentos-v2/${encodeURIComponent(cuentoId)}/eliminacion`, idempotencia);
   }
 
   async comentar(cuentoId: string, cuerpo: string, idempotencia: string): Promise<ComentarioCuento> {
+    if (this.esLegacy(cuentoId)) throw this.noDisponibleLegacy();
     try {
       const respuesta = await firstValueFrom(
         this.api.post<RespuestaComentario>(`/cuentos-v2/${encodeURIComponent(cuentoId)}/comentarios`, {
@@ -68,6 +88,7 @@ export class ApiComandosCuentoAdapter implements ComandosCuentoGateway {
   }
 
   async editarComentario(cuentoId: string, comentarioId: string, cuerpo: string): Promise<ComentarioCuento> {
+    if (this.esLegacy(cuentoId)) throw this.noDisponibleLegacy();
     try {
       const respuesta = await firstValueFrom(
         this.api.patch<RespuestaComentario>(
@@ -83,6 +104,7 @@ export class ApiComandosCuentoAdapter implements ComandosCuentoGateway {
   }
 
   async eliminarComentario(cuentoId: string, comentarioId: string): Promise<void> {
+    if (this.esLegacy(cuentoId)) throw this.noDisponibleLegacy();
     try {
       await firstValueFrom(
         this.api.delete<void>(
@@ -100,6 +122,7 @@ export class ApiComandosCuentoAdapter implements ComandosCuentoGateway {
     tipo: TipoReaccionCuento | null,
     idempotencia: string,
   ): Promise<void> {
+    if (this.esLegacy(cuentoId)) throw this.noDisponibleLegacy();
     try {
       await firstValueFrom(
         this.api.post(`/cuentos-v2/${encodeURIComponent(cuentoId)}/reaccion`, { tipo, idempotencia }),
@@ -111,6 +134,14 @@ export class ApiComandosCuentoAdapter implements ComandosCuentoGateway {
   }
 
   async obtenerEstadisticas(cuentoId: string): Promise<EstadisticasInteraccionCuento> {
+    if (this.esLegacy(cuentoId)) {
+      // Las historias antiguas no tienen interacciones en Firestore; se
+      // devuelven contadores en cero sin llamar al servidor.
+      const porTipo = Object.fromEntries(
+        TIPOS_REACCION_CUENTO.map((tipo) => [tipo, 0]),
+      ) as Record<TipoReaccionCuento, number>;
+      return { comentarios: 0, reacciones: { total: 0, propia: null, porTipo } };
+    }
     try {
       const respuesta = await firstValueFrom(
         this.api.get<RespuestaEstadisticas>(

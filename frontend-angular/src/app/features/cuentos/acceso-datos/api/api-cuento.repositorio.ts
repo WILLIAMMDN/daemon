@@ -452,8 +452,13 @@ export class ApiCuentoRepositorio implements CuentoRepositorio {
   async listarComentarios(
     cuentoId: string,
     _cursor?: CursorCuentos,
-    limite = 20,
+    _limite = 20,
   ): Promise<PaginaResultados<ComentarioCuento>> {
+    // Los cuentos legacy (v1, PostgreSQL) no viven en Firestore: no tienen
+    // comentarios v2. Devolvemos una página vacía sin llamar al servidor.
+    if (cuentoId.startsWith('legacy-')) {
+      return { elementos: [], siguienteCursor: null };
+    }
     try {
       const respuesta = await firstValueFrom(
         this.api.get<{ elementos: readonly ComentarioApiDto[]; siguiente_cursor: unknown }>(
