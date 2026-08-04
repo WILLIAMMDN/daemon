@@ -23,21 +23,17 @@ class CuentoV2Service
      */
     public function galeria(int $limite = 24): array
     {
-        $documentos = $this->documentos->listar(
-            'cuentos',
-            [
-                'schema_version' => 2,
-                'estado' => 'publicado',
-                'moderacion_estado' => 'aprobado',
-                'visibilidad' => 'comunidad',
-            ],
-            ['updated_at', 'DESC'],
-            max(1, min($limite, 50)),
-        );
+        // Un solo filtro de igualdad (estado) cubre ambos esquemas de
+        // Firestore sin exigir índice compuesto: el v2 nuevo (schema_version
+        // 2, visibilidad "comunidad") y el legado que escribía visibilidad
+        // "publico" con páginas embebidas en un array.
+        $documentos = $this->documentos->listar('cuentos', ['estado' => 'publicado']);
 
         return collect($documentos)
-            ->filter(fn (array $documento): bool => $this->esCuentoPublicado($documento['fields']))
+            ->filter(fn (array $documento): bool => $this->esVisibleEnGaleria($documento['fields']))
+            ->sortByDesc(fn (array $documento): string => (string) $documento['updateTime'])
             ->values()
+            ->take(max(1, min($limite, 50)))
             ->map(fn (array $documento): array => $this->cuentoPublico($documento))
             ->all();
     }
@@ -52,16 +48,14 @@ class CuentoV2Service
         // Si hay firebase_uid se usa; si no, el UID determinista (daemon-{id})
         // con el que el usuario creó sus borradores desde el editor.
         $uid = $this->uidParaEscritura($usuario);
-        $documentos = $this->documentos->listar(
-            'cuentos',
-            ['schema_version' => 2, 'autor_uid' => $uid],
-            ['updated_at', 'DESC'],
-            max(1, min($limite, 50)),
-        );
+        $documentos = $this->documentos->listar('cuentos');
 
         return collect($documentos)
+            ->filter(fn (array $documento): bool => $this->esCuentoDelUsuario($documento['fields'], $usuario, $uid))
             ->filter(fn (array $documento): bool => ($documento['fields']['estado'] ?? null) !== 'eliminado')
+            ->sortByDesc(fn (array $documento): string => (string) $documento['updateTime'])
             ->values()
+            ->take(max(1, min($limite, 50)))
             ->map(fn (array $documento): array => $this->cuentoCompleto($documento, $usuario))
             ->all();
     }
@@ -78,24 +72,37 @@ class CuentoV2Service
     public function detalle(Usuario $usuario, string $cuentoId): array
     {
         $cuento = $this->documentos->obtener($this->cuentoPath($cuentoId));
-        if ($cuento === null || (int) ($cuento['fields']['schema_version'] ?? 0) !== 2) {
+        if ($cuento === null) {
             throw new CuentoV2Exception('El cuento no existe.', 404, 'CUENTO_NO_ENCONTRADO');
         }
 
         $campos = $cuento['fields'];
-        $esPropio = ($campos['autor_uid'] ?? null) === $this->uidParaEscritura($usuario);
-        $versionId = $esPropio
-            ? ($campos['version_borrador_id'] ?? null)
-            : ($campos['version_publicada_id'] ?? null);
+        $esV2 = (int) ($campos['schema_version'] ?? 0) === 2;
+        if (! $esV2 && ! $this->tienePaginasLegado($campos)) {
+            throw new CuentoV2Exception('El cuento no existe.', 404, 'CUENTO_NO_ENCONTRADO');
+        }
+
+        $esPropio = ($campos['autor_uid'] ?? null) === $this->uidParaEscritura($usuario)
+            || (int) ($campos['id_alumno'] ?? 0) === (int) $usuario->id;
 
         $version = null;
         $paginas = [];
-        if (is_string($versionId) && $versionId !== '') {
-            $versionDoc = $this->documentos->obtener($this->versionPath($cuentoId, $versionId));
-            if ($versionDoc !== null) {
-                $version = $this->versionPublica($cuentoId, $versionId, $versionDoc['fields']);
-                $paginas = $this->paginasDeVersion($cuentoId, $versionId);
+        if ($esV2) {
+            $versionId = $esPropio
+                ? ($campos['version_borrador_id'] ?? null)
+                : ($campos['version_publicada_id'] ?? null);
+            if (is_string($versionId) && $versionId !== '') {
+                $versionDoc = $this->documentos->obtener($this->versionPath($cuentoId, $versionId));
+                if ($versionDoc !== null) {
+                    $version = $this->versionPublica($cuentoId, $versionId, $versionDoc['fields']);
+                    $paginas = $this->paginasDeVersion($cuentoId, $versionId);
+                }
             }
+        } else {
+            // Esquema legado de Firestore: páginas embebidas en el campo
+            // "paginas" (array de mapas con id/contenido/colorFondo/ilustracion).
+            $version = $this->versionLegado($cuentoId, $campos);
+            $paginas = $this->paginasLegado($cuentoId, $campos);
         }
 
         return [
@@ -288,6 +295,17 @@ class CuentoV2Service
 
             return $this->detalle($usuario, $cuentoId);
         });
+    }
+
+    /**
+     * true si el cuento de Firestore usa el esquema legado (publicado antes
+     * del paquete 4). Las operaciones de escritura v2 no aplican ahí.
+     */
+    private function esEsquemaLegado(string $cuentoId): bool
+    {
+        $cuento = $this->documentos->obtener($this->cuentoPath($cuentoId));
+
+        return $cuento !== null && (int) ($cuento['fields']['schema_version'] ?? 0) !== 2;
     }
 
     /** @return array{estado: string, repetido: bool} */
@@ -566,6 +584,27 @@ class CuentoV2Service
      */
     public function estadisticas(Usuario $usuario, string $cuentoId): array
     {
+        $cuento = $this->documentos->obtener($this->cuentoPath($cuentoId));
+        if ($cuento === null || (int) ($cuento['fields']['schema_version'] ?? 0) !== 2) {
+            // Cuento legado de Firestore: contadores en la cabecera o cero.
+            $reacciones = (int) ($cuento['fields']['reacciones_count'] ?? 0);
+            $porTipo = collect(self::TIPOS_REACCION)->mapWithKeys(
+                fn (string $tipo): array => [$tipo => 0],
+            )->all();
+            if ($reacciones > 0) {
+                $porTipo['encanto'] = $reacciones;
+            }
+
+            return [
+                'comentarios' => 0,
+                'reacciones' => [
+                    'total' => $reacciones,
+                    'propia' => null,
+                    'por_tipo' => $porTipo,
+                ],
+            ];
+        }
+
         $this->cuentoComentable($cuentoId);
         $porTipo = [];
         foreach (self::TIPOS_REACCION as $tipo) {
@@ -755,13 +794,99 @@ class CuentoV2Service
     }
 
     /** @param array<string, mixed> $campos */
-    private function esCuentoPublicado(array $campos): bool
+    private function esVisibleEnGaleria(array $campos): bool
     {
-        return ($campos['estado'] ?? null) === 'publicado'
-            && ($campos['moderacion_estado'] ?? null) === 'aprobado'
-            && ($campos['visibilidad'] ?? null) === 'comunidad'
-            && ($campos['version_publicada_id'] ?? null) !== null
-            && ($campos['deleted_at'] ?? null) === null;
+        if (($campos['estado'] ?? null) !== 'publicado' || ($campos['deleted_at'] ?? null) !== null) {
+            return false;
+        }
+        $visibilidad = (string) ($campos['visibilidad'] ?? '');
+        // Esquema nuevo usa "comunidad"; el legado de Firestore usaba "publico".
+        if ($visibilidad === 'comunidad' || $visibilidad === 'publico') {
+            return true;
+        }
+        // Fallback: publicado sin campo de visibilidad y con versión publicada.
+        return is_string($campos['version_publicada_id'] ?? null)
+            && ($campos['version_publicada_id'] ?? '') !== '';
+    }
+
+    /** @param array<string, mixed> $campos */
+    private function esCuentoDelUsuario(array $campos, Usuario $usuario, string $uid): bool
+    {
+        if (($campos['autor_uid'] ?? null) === $uid) {
+            return true;
+        }
+        // Esquema legado: id_alumno (entero) coincide con el id del usuario.
+        return (int) ($campos['id_alumno'] ?? 0) === (int) $usuario->id;
+    }
+
+    /** @param array<string, mixed> $campos */
+    private function tienePaginasLegado(array $campos): bool
+    {
+        return isset($campos['paginas']) && is_array($campos['paginas']) && $campos['paginas'] !== [];
+    }
+
+    /**
+     * @param  array<string, mixed>  $campos
+     * @return array<string, mixed>
+     */
+    private function versionLegado(string $cuentoId, array $campos): array
+    {
+        $paginas = $this->paginasLegado($cuentoId, $campos);
+        $contenido = (string) ($campos['contenido'] ?? '');
+        $autorUid = (string) ($campos['autor_uid'] ?? 'legacy-'.($campos['id_alumno'] ?? ''));
+
+        return [
+            'id' => 'legado-v1',
+            'cuento_id' => $cuentoId,
+            'autor_uid' => $autorUid,
+            'titulo' => (string) ($campos['titulo'] ?? 'Historia sin título'),
+            'sinopsis' => (string) ($campos['descripcion'] ?? mb_substr($contenido, 0, 200)),
+            'categoria' => (string) ($campos['categoria'] ?? 'Sin clasificar'),
+            'rango_edad' => (string) ($campos['rango_edad'] ?? ''),
+            'portada_ref' => $campos['portada'] ?? ($campos['img_1'] ?? null),
+            'paginas' => count($paginas),
+            'idioma' => 'es-PE',
+            'palabras' => (int) ($campos['palabras'] ?? 0),
+            'tiempo_lectura' => (int) ($campos['tiempo_lectura'] ?? max(1, count($paginas))),
+            'revision' => 0,
+            'created_at_ms' => $this->timestampValor($campos['fecha_creacion'] ?? null),
+            'updated_at_ms' => $this->timestampValor($campos['fecha_creacion'] ?? null),
+            'schema_version' => 2,
+        ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $campos
+     * @return list<array<string, mixed>>
+     */
+    private function paginasLegado(string $cuentoId, array $campos): array
+    {
+        $embebidas = $campos['paginas'] ?? [];
+        if (! is_array($embebidas)) {
+            return [];
+        }
+
+        $resultado = [];
+        foreach (array_values($embebidas) as $indice => $pagina) {
+            if (! is_array($pagina)) {
+                continue;
+            }
+            $resultado[] = [
+                'id' => (string) ($pagina['id'] ?? ('page-'.($indice + 1))),
+                'cuento_id' => $cuentoId,
+                'version_id' => 'legado-v1',
+                'orden' => $indice + 1,
+                'contenido' => (string) ($pagina['contenido'] ?? ''),
+                'ilustracion_ref' => $pagina['ilustracion'] ?? null,
+                'texto_alternativo' => '',
+                'fondo_token' => (string) ($pagina['colorFondo'] ?? 'var(--daemon-surface)'),
+                'created_at_ms' => $this->timestampValor($campos['fecha_creacion'] ?? null),
+                'updated_at_ms' => $this->timestampValor($campos['fecha_creacion'] ?? null),
+                'schema_version' => 2,
+            ];
+        }
+
+        return $resultado;
     }
 
     /**
@@ -772,6 +897,12 @@ class CuentoV2Service
     {
         $campos = $documento['fields'];
         $id = basename((string) $documento['name']);
+        $esLegado = (int) ($campos['schema_version'] ?? 0) !== 2;
+
+        if ($esLegado) {
+            return $this->cuentoPublicoLegado($id, $campos);
+        }
+
         $versionId = $campos['version_publicada_id'] ?? null;
         $titulo = $campos['titulo_publicado'] ?? '';
         $sinopsis = $campos['sinopsis_publicada'] ?? '';
@@ -807,6 +938,53 @@ class CuentoV2Service
             'created_at_ms' => $this->timestampValor($campos['created_at'] ?? null),
             'updated_at_ms' => $this->timestampValor($campos['updated_at'] ?? null),
             'published_at_ms' => $this->timestampValor($campos['published_at'] ?? null),
+            'schema_version' => 2,
+        ];
+    }
+
+    /**
+     * Cuento del esquema legado de Firestore: campos directos en la cabecera
+     * (titulo, portada, autor, avatar, reacciones_count, paginas embebidas).
+     *
+     * @param  array<string, mixed>  $campos
+     * @return array<string, mixed>
+     */
+    private function cuentoPublicoLegado(string $id, array $campos): array
+    {
+        $paginas = $campos['paginas'] ?? [];
+        $cantidadPaginas = is_array($paginas) ? count($paginas) : 0;
+        $timestamp = $this->timestampValor($campos['fecha_creacion'] ?? null);
+        $visibilidad = (string) ($campos['visibilidad'] ?? 'comunidad');
+
+        return [
+            'id' => $id,
+            'autor_uid' => (string) ($campos['autor_uid'] ?? 'legacy-'.($campos['id_alumno'] ?? '')),
+            'autor_usuario_id' => isset($campos['id_alumno']) ? (int) $campos['id_alumno'] : null,
+            'autor_perfil' => [
+                'nombre' => (string) ($campos['autor'] ?? 'Autor DAEMON'),
+                'avatar_ref' => $campos['avatar'] ?? null,
+            ],
+            'titulo' => (string) ($campos['titulo'] ?? 'Historia sin título'),
+            'descripcion' => (string) ($campos['descripcion'] ?? mb_substr((string) ($campos['contenido'] ?? ''), 0, 200)),
+            'portada_ref' => $campos['portada'] ?? ($campos['img_1'] ?? null),
+            'categoria' => (string) ($campos['categoria'] ?? 'Sin clasificar'),
+            'rango_edad' => (string) ($campos['rango_edad'] ?? ''),
+            'paginas_borrador' => $cantidadPaginas,
+            'palabras' => (int) ($campos['palabras'] ?? 0),
+            'estado' => (string) ($campos['estado'] ?? 'publicado'),
+            'visibilidad' => $visibilidad === 'publico' ? 'comunidad' : $visibilidad,
+            'audiencia' => (string) ($campos['audiencia'] ?? 'KIDS'),
+            'moderacion' => 'aprobado',
+            'estadisticas' => [
+                'comentarios' => 0,
+                'reacciones' => (int) ($campos['reacciones_count'] ?? 0),
+                'lecturas' => 0,
+            ],
+            'version_borrador_id' => '',
+            'version_publicada_id' => null,
+            'created_at_ms' => $timestamp,
+            'updated_at_ms' => $timestamp,
+            'published_at_ms' => $timestamp,
             'schema_version' => 2,
         ];
     }
