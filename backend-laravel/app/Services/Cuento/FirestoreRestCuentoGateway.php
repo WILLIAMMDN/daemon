@@ -103,6 +103,67 @@ class FirestoreRestCuentoGateway implements CuentoDocumentoGateway
     }
 
     /**
+     * Ejecuta una consulta sobre una colección y devuelve los documentos
+     * (mismo formato que obtener). Sólo soporta filtros de igualdad y un
+     * campo de orden; suficiente para la galería y los cuentos propios.
+     *
+     * @param  array<string, scalar|null>  $filtrosIgualdad
+     * @param  array{0: string, 1: string}|null  $orden  [campo, ASC|DESC]
+     * @return list<array{name: string, fields: array<string, mixed>, updateTime: string}>
+     */
+    public function listar(
+        string $rutaColeccion,
+        array $filtrosIgualdad = [],
+        ?array $orden = null,
+        int $limite = 30,
+    ): array {
+        [$rutaPadre, $coleccion] = $this->separarColeccion($rutaColeccion);
+        $consulta = ['from' => [['collectionId' => $coleccion]]];
+        $filtros = collect($filtrosIgualdad)
+            ->map(fn (mixed $valor, string $campo): array => [
+                'fieldFilter' => [
+                    'field' => ['fieldPath' => $campo],
+                    'op' => 'EQUAL',
+                    'value' => $this->codificarValor($valor),
+                ],
+            ])
+            ->values()
+            ->all();
+        if (count($filtros) === 1) {
+            $consulta['where'] = $filtros[0];
+        } elseif (count($filtros) > 1) {
+            $consulta['where'] = ['compositeFilter' => ['op' => 'AND', 'filters' => $filtros]];
+        }
+        if ($orden !== null) {
+            $consulta['orderBy'] = [[
+                'field' => ['fieldPath' => $orden[0]],
+                'direction' => strtoupper($orden[1]) === 'DESC' ? 'DESCENDING' : 'ASCENDING',
+            ]];
+        }
+        $consulta['limit'] = max(1, min($limite, 50));
+
+        try {
+            $respuesta = Http::withToken($this->google->token())
+                ->acceptJson()
+                ->post($this->runQueryUrl($rutaPadre), ['structuredQuery' => $consulta]);
+        } catch (Throwable $exception) {
+            throw new CuentoV2Exception('No se pudo consultar Firestore.', 503, 'FIRESTORE_NO_DISPONIBLE');
+        }
+        $this->asegurarRespuesta($respuesta);
+
+        $documentos = [];
+        $lineas = preg_split('/\r?\n/', trim($respuesta->body())) ?: [];
+        foreach ($lineas as $linea) {
+            $fila = json_decode($linea, true);
+            if (isset($fila['document']) && is_array($fila['document'])) {
+                $documentos[] = $this->decodificarDocumento($fila['document']);
+            }
+        }
+
+        return $documentos;
+    }
+
+    /**
      * @param  array<string, mixed>  $campos
      * @param  list<string>  $timestampsServidor
      * @param  array{updateTime?: string, exists?: bool}  $precondicion
@@ -237,6 +298,13 @@ class FirestoreRestCuentoGateway implements CuentoDocumentoGateway
         $sufijo = $rutaPadre === '' ? '' : '/'.$rutaPadre;
 
         return 'https://firestore.googleapis.com/v1/'.$this->baseNombre().$sufijo.':runAggregationQuery';
+    }
+
+    private function runQueryUrl(string $rutaPadre): string
+    {
+        $sufijo = $rutaPadre === '' ? '' : '/'.$rutaPadre;
+
+        return 'https://firestore.googleapis.com/v1/'.$this->baseNombre().$sufijo.':runQuery';
     }
 
     /** @return array{0: string, 1: string} */

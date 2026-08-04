@@ -188,21 +188,31 @@ class CuentoDocumentoGatewayMemoria implements CuentoDocumentoGateway
 
     public function contar(string $rutaColeccion, array $filtrosIgualdad = []): int
     {
-        $prefijo = rtrim($rutaColeccion, '/').'/';
+        return count($this->listar($rutaColeccion, $filtrosIgualdad));
+    }
 
-        return count(array_filter($this->datos, function (array $documento, string $ruta) use ($prefijo, $filtrosIgualdad): bool {
+    public function listar(
+        string $rutaColeccion,
+        array $filtrosIgualdad = [],
+        ?array $orden = null,
+        int $limite = 30,
+    ): array {
+        $prefijo = rtrim($rutaColeccion, '/').'/';
+        $resultados = [];
+        foreach ($this->datos as $ruta => $documento) {
             if (! str_starts_with($ruta, $prefijo)
                 || str_contains(substr($ruta, strlen($prefijo)), '/')) {
-                return false;
+                continue;
             }
             foreach ($filtrosIgualdad as $campo => $valor) {
                 if (($documento['fields'][$campo] ?? null) !== $valor) {
-                    return false;
+                    continue 2;
                 }
             }
+            $resultados[] = $documento;
+        }
 
-            return true;
-        }, ARRAY_FILTER_USE_BOTH));
+        return array_slice($resultados, 0, max(1, min($limite, 50)));
     }
 
     /** @return array<string, mixed> */

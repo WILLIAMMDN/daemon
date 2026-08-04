@@ -1,7 +1,6 @@
 import { DestroyRef, Injectable, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subject, debounceTime, filter } from 'rxjs';
-import { FirebaseAuth } from '../../../core/servicios/firebase-auth';
 import { Sesion } from '../../../core/servicios/sesion';
 import { ACTIVOS_CUENTO_REPOSITORIO } from '../acceso-datos/activos-cuento.repositorio';
 import { ASISTENTE_CUENTO_GATEWAY } from '../acceso-datos/asistente-cuento.gateway';
@@ -35,7 +34,6 @@ export class EditorCuentoFacade {
   private readonly publicarCuento = inject(PublicarCuentoCasoUso);
   private readonly eliminarCuentoCasoUso = inject(EliminarCuentoCasoUso);
   private readonly borradorLocal = inject(BorradorLocalCuento);
-  private readonly firebaseAuth = inject(FirebaseAuth);
   private readonly sesion = inject(Sesion);
   private readonly activos = inject(ACTIVOS_CUENTO_REPOSITORIO);
   private readonly asistente = inject(ASISTENTE_CUENTO_GATEWAY);
@@ -129,8 +127,12 @@ export class EditorCuentoFacade {
   async inicializar(cuentoId: string | null, plantillaId: string | null): Promise<void> {
     this.estadoPersistencia.set({ tipo: 'cargando' });
     try {
-      this.uid = await this.firebaseAuth.uidActual();
-      const nivel = this.sesion.usuario()?.nivel;
+      // El UID local es una clave de caché para el borrador local. No es
+      // necesario exigir una sesión de Firebase activa: la autoridad de
+      // datos es Laravel (vía API), que identifica al usuario por Sanctum.
+      const usuario = this.sesion.usuario();
+      this.uid = String(usuario?.id ?? 'anonimo');
+      const nivel = usuario?.nivel;
       if (nivel !== 'KIDS' && nivel !== 'TEENS') {
         throw new ErrorCuento('NO_AUTORIZADO', 'Tu cuenta no tiene una audiencia estudiantil válida.', false);
       }

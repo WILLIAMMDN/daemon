@@ -49,12 +49,10 @@ export class LecturaCuentoFacade {
     }
     this.cuentoId = id;
     try {
-      const [uid, detalle] = await Promise.all([
-        this.firebaseAuth.uidActual(),
-        this.repositorio.obtenerDetalle(id),
-      ]);
+      const uid = await this.uidOpcional();
       this.miUid.set(uid);
-      this.esPropietario.set(detalle.cuento.autorUid === uid);
+      const detalle = await this.repositorio.obtenerDetalle(id);
+      this.esPropietario.set(uid !== null && detalle.cuento.autorUid === uid);
       this.datos.set({
         cuento: {
           id: detalle.cuento.id,
@@ -76,13 +74,13 @@ export class LecturaCuentoFacade {
         },
         autor: {
           nombre_completo: detalle.cuento.autor?.nombre
-            || (detalle.cuento.autorUid === uid
+            || (this.esPropietario()
               ? this.sesion.usuario()?.nombre_completo || this.sesion.usuario()?.usuario
               : null)
             || 'Autor DAEMON',
           avatar: this.activos.resolverUrl(
             detalle.cuento.autor?.avatarRef
-              ?? (detalle.cuento.autorUid === uid ? this.sesion.usuario()?.avatar ?? null : null),
+              ?? (this.esPropietario() ? this.sesion.usuario()?.avatar ?? null : null),
           ) || null,
         },
         autorUid: detalle.cuento.autorUid,
@@ -96,6 +94,19 @@ export class LecturaCuentoFacade {
       this.error.set(normalizarErrorCuento(error).message);
     } finally {
       this.cargando.set(false);
+    }
+  }
+
+  /**
+   * UID de Firebase si hay sesión activa; si no, null. La identidad real
+   * del usuario la resuelve Laravel por Sanctum; el UID aquí solo sirve
+   * para marcar comentarios y propiedad en la UI.
+   */
+  private async uidOpcional(): Promise<string | null> {
+    try {
+      return await this.firebaseAuth.uidActual();
+    } catch {
+      return null;
     }
   }
 

@@ -22,6 +22,15 @@
       ]
     },
     {
+      "collectionGroup": "cuentos",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "schema_version", "order": "ASCENDING" },
+        { "fieldPath": "autor_uid", "order": "ASCENDING" },
+        { "fieldPath": "updated_at", "order": "DESCENDING" }
+      ]
+    },
+    {
       "collectionGroup": "comentarios",
       "queryScope": "COLLECTION",
       "fields": [

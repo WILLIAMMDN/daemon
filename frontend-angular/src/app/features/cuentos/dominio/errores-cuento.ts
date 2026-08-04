@@ -47,5 +47,16 @@ export function normalizarErrorCuento(error: unknown): ErrorCuento {
     return new ErrorCuento('DATOS_INVALIDOS', mensaje || 'Los datos del cuento no son válidos.', false, { cause: error });
   }
 
+  // Error del Firestore emulator: indice compuesto faltante. El emulador
+  // devuelve SQLSTATE[42S22] con create_composite=... en el mensaje.
+  if (mensaje.includes('SQLSTATE') || mensaje.includes('create_composite')) {
+    return new ErrorCuento(
+      'OPERACION_NO_DISPONIBLE',
+      'La galería no está disponible ahora. Vuelve a intentar en unos segundos.',
+      true,
+      { cause: error },
+    );
+  }
+
   return new ErrorCuento('DESCONOCIDO', mensaje || 'No pudimos completar la operación.', true, { cause: error });
 }

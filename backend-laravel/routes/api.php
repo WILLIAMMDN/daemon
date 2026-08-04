@@ -48,6 +48,8 @@ Route::prefix('v1')->group(function (): void {
     Route::post('/auth/google', [AutenticacionController::class, 'google'])->middleware('throttle:10,1');
     Route::get('/cuentos', [CuentoController::class, 'index']);
     Route::get('/cuentos/{cuento}', [CuentoController::class, 'show']);
+    Route::get('/cuentos-v2/galeria', [CuentoV2Controller::class, 'galeria'])->middleware('throttle:30,1');
+    Route::get('/cuentos-v2/{cuentoId}/comentarios', [CuentoV2Controller::class, 'comentarios'])->middleware('throttle:60,1');
 
     Route::middleware('auth:sanctum')->group(function (): void {
         Route::get('/auth/yo', [AutenticacionController::class, 'yo']);
@@ -74,6 +76,10 @@ Route::prefix('v1')->group(function (): void {
         Route::get('/notificaciones', [NotificacionController::class, 'index']);
         Route::post('/notificaciones/marcar-todas', [NotificacionController::class, 'marcarTodasLeidas']);
         Route::post('/notificaciones/{notificacion}/marcar-leida', [NotificacionController::class, 'marcarLeida']);
+        Route::get('/cuentos-v2/mios', [CuentoV2Controller::class, 'mios'])->middleware('throttle:30,1');
+        Route::post('/cuentos-v2/borradores', [CuentoV2Controller::class, 'reservarBorrador'])->middleware('throttle:20,1');
+        Route::put('/cuentos-v2/borradores/{cuentoId}', [CuentoV2Controller::class, 'guardarBorrador'])->middleware('throttle:20,1');
+        Route::get('/cuentos-v2/{cuentoId}', [CuentoV2Controller::class, 'detalle'])->middleware('throttle:60,1');
 
         Route::middleware('role:alumno')->group(function (): void {
             Route::get('/alumno/panel', [AlumnoController::class, 'panel']);

@@ -12,7 +12,9 @@ use App\Http\Requests\Api\V1\Cuento\ReaccionarCuentoV2Request;
 use App\Http\Requests\Api\V1\Cuento\GestionarActivoCuentoV2Request;
 use App\Http\Requests\Api\V1\Cuento\LimpiarActivosCuentoV2Request;
 use App\Http\Requests\Api\V1\Cuento\SubirActivoCuentoV2Request;
+use App\Http\Requests\Api\V1\Cuento\GuardarBorradorCuentoV2Request;
 use App\Services\Cuento\CuentoV2Service;
+use App\Services\Cuento\CuentoService;
 use App\Services\Cuento\AsistenteCuentoService;
 use App\Services\Cuento\ActivosCuentoService;
 use App\Exceptions\CuentoV2Exception;
@@ -24,9 +26,121 @@ class CuentoV2Controller extends Controller
 {
     public function __construct(
         private readonly CuentoV2Service $cuentos,
+        private readonly CuentoService $cuentosLegacy,
         private readonly AsistenteCuentoService $asistente,
         private readonly ActivosCuentoService $activos,
     ) {}
+
+    public function galeria(Request $request)
+    {
+        $v2 = $this->cuentos->galeria((int) $request->query('limite', 24));
+        $legacy = [];
+        try {
+            $legacy = $this->cuentosLegacy->galeria();
+        } catch (Throwable $exception) {
+            // La galería v2 no debe caerse si el legado PostgreSQL falla
+            // (ej. tabla pendiente de migración). Se loguea y se omite.
+            Log::warning('Galeria legacy no disponible para fusionar.', [
+                'exception_type' => $exception::class,
+                'message' => $exception->getMessage(),
+            ]);
+        }
+        $elementos = $this->fusionarGaleria($v2, $legacy);
+
+        return response()->json([
+            'elementos' => $elementos,
+            'siguiente_cursor' => null,
+        ]);
+    }
+
+    /**
+     * Fusiona la galería v2 (Firestore) con los cuentos legacy (PostgreSQL).
+     * Los v2 van primero (son los más recientes); los legacy se incluyen
+     * como tarjetas públicas con identidad propia.
+     *
+     * @param  list<array<string, mixed>>  $v2
+     * @param  \Illuminate\Support\Collection<int, object>  $legacy
+     * @return list<array<string, mixed>>
+     */
+    private function fusionarGaleria(array $v2, $legacy): array
+    {
+        $legacyMap = [];
+        foreach ($legacy as $cuento) {
+            $portada = null;
+            foreach (range(1, 6) as $indice) {
+                $campo = 'img_'.$indice;
+                if (property_exists($cuento, $campo) && ! empty($cuento->{$campo})) {
+                    $portada = $cuento->{$campo};
+                    break;
+                }
+            }
+            $timestamp = strtotime((string) ($cuento->fecha_creacion ?? '')) ?: time();
+            $legacyMap['legacy-'.$cuento->id] = [
+                'id' => 'legacy-'.$cuento->id,
+                'autor_uid' => 'legacy-'.($cuento->id_alumno ?? 0),
+                'autor_usuario_id' => $cuento->id_alumno ?? null,
+                'autor_perfil' => [
+                    'nombre' => (string) ($cuento->autor ?? 'Autor DAEMON'),
+                    'avatar_ref' => $cuento->avatar ?? null,
+                ],
+                'titulo' => (string) ($cuento->titulo ?? 'Historia sin título'),
+                'descripcion' => mb_substr((string) ($cuento->contenido ?? ''), 0, 200),
+                'portada_ref' => $portada,
+                'categoria' => 'Sin clasificar',
+                'rango_edad' => '',
+                'paginas_borrador' => 0,
+                'palabras' => 0,
+                'estado' => 'publicado',
+                'visibilidad' => 'comunidad',
+                'audiencia' => 'TEENS',
+                'moderacion' => 'aprobado',
+                'estadisticas' => [
+                    'comentarios' => 0,
+                    'reacciones' => (int) ($cuento->reacciones_count ?? 0),
+                    'lecturas' => 0,
+                ],
+                'version_borrador_id' => '',
+                'version_publicada_id' => null,
+                'created_at_ms' => $timestamp * 1000,
+                'updated_at_ms' => $timestamp * 1000,
+                'published_at_ms' => $timestamp * 1000,
+                'schema_version' => 2,
+            ];
+        }
+
+        $v2Ids = array_map(fn (array $c): string => (string) $c['id'], $v2);
+        $soloLegacy = array_values(array_filter($legacyMap, fn (array $c): bool => ! in_array($c['id'], $v2Ids, true)));
+
+        return [...$v2, ...$soloLegacy];
+    }
+
+    public function mios(Request $request)
+    {
+        return response()->json($this->cuentos->mios($request->user(), (int) $request->query('limite', 20)));
+    }
+
+    public function detalle(Request $request, string $cuentoId)
+    {
+        return response()->json($this->cuentos->detalle($request->user(), $cuentoId));
+    }
+
+    public function comentarios(Request $request, string $cuentoId)
+    {
+        return response()->json([
+            'elementos' => $this->cuentos->comentarios($cuentoId, (int) $request->query('limite', 20)),
+            'siguiente_cursor' => null,
+        ]);
+    }
+
+    public function reservarBorrador(ReservarBorradorCuentoV2Request $request)
+    {
+        return response()->json($this->cuentos->reservarBorrador($request->user(), $request->validated()), 201);
+    }
+
+    public function guardarBorrador(GuardarBorradorCuentoV2Request $request, string $cuentoId)
+    {
+        return response()->json($this->cuentos->guardarBorrador($request->user(), $request->validated()));
+    }
 
     public function asistir(AsistirCuentoV2Request $request)
     {

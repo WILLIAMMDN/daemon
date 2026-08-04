@@ -15,6 +15,281 @@ class CuentoV2Service
 
     public function __construct(private readonly CuentoDocumentoGateway $documentos) {}
 
+    /**
+     * Galería pública: cuentos publicados, aprobados y visibles para la
+     * comunidad, ordenados por fecha de actualización descendente.
+     *
+     * @return list<array<string, mixed>>
+     */
+    public function galeria(int $limite = 24): array
+    {
+        $documentos = $this->documentos->listar(
+            'cuentos',
+            [
+                'schema_version' => 2,
+                'estado' => 'publicado',
+                'moderacion_estado' => 'aprobado',
+                'visibilidad' => 'comunidad',
+            ],
+            ['updated_at', 'DESC'],
+            max(1, min($limite, 50)),
+        );
+
+        return collect($documentos)
+            ->filter(fn (array $documento): bool => $this->esCuentoPublicado($documento['fields']))
+            ->values()
+            ->map(fn (array $documento): array => $this->cuentoPublico($documento))
+            ->all();
+    }
+
+    /**
+     * Cuentos del alumno autenticado (todos sus estados).
+     *
+     * @return list<array<string, mixed>>
+     */
+    public function mios(Usuario $usuario, int $limite = 20): array
+    {
+        // Si hay firebase_uid se usa; si no, el UID determinista (daemon-{id})
+        // con el que el usuario creó sus borradores desde el editor.
+        $uid = $this->uidParaEscritura($usuario);
+        $documentos = $this->documentos->listar(
+            'cuentos',
+            ['schema_version' => 2, 'autor_uid' => $uid],
+            ['updated_at', 'DESC'],
+            max(1, min($limite, 50)),
+        );
+
+        return collect($documentos)
+            ->filter(fn (array $documento): bool => ($documento['fields']['estado'] ?? null) !== 'eliminado')
+            ->values()
+            ->map(fn (array $documento): array => $this->cuentoCompleto($documento, $usuario))
+            ->all();
+    }
+
+    /**
+     * Detalle de un cuento: cabecera + versión visible + páginas.
+     *
+     * @return array{
+     *   cuento: array<string, mixed>,
+     *   version: array<string, mixed>|null,
+     *   paginas: list<array<string, mixed>>
+     * }
+     */
+    public function detalle(Usuario $usuario, string $cuentoId): array
+    {
+        $cuento = $this->documentos->obtener($this->cuentoPath($cuentoId));
+        if ($cuento === null || (int) ($cuento['fields']['schema_version'] ?? 0) !== 2) {
+            throw new CuentoV2Exception('El cuento no existe.', 404, 'CUENTO_NO_ENCONTRADO');
+        }
+
+        $campos = $cuento['fields'];
+        $esPropio = ($campos['autor_uid'] ?? null) === $this->uidParaEscritura($usuario);
+        $versionId = $esPropio
+            ? ($campos['version_borrador_id'] ?? null)
+            : ($campos['version_publicada_id'] ?? null);
+
+        $version = null;
+        $paginas = [];
+        if (is_string($versionId) && $versionId !== '') {
+            $versionDoc = $this->documentos->obtener($this->versionPath($cuentoId, $versionId));
+            if ($versionDoc !== null) {
+                $version = $this->versionPublica($cuentoId, $versionId, $versionDoc['fields']);
+                $paginas = $this->paginasDeVersion($cuentoId, $versionId);
+            }
+        }
+
+        return [
+            'cuento' => $this->cuentoPublico($cuento),
+            'version' => $version,
+            'paginas' => $paginas,
+        ];
+    }
+
+    /**
+     * Comentarios visibles de un cuento.
+     *
+     * @return list<array<string, mixed>>
+     */
+    public function comentarios(string $cuentoId, int $limite = 20): array
+    {
+        $documentos = $this->documentos->listar(
+            $this->comentariosPath($cuentoId),
+            ['schema_version' => 2, 'estado' => 'visible'],
+            ['created_at', 'ASC'],
+            max(1, min($limite, 50)),
+        );
+
+        return collect($documentos)
+            ->map(fn (array $documento): array => $this->comentarioPublico($cuentoId, $documento))
+            ->all();
+    }
+
+    /**
+     * Crea un borrador nuevo: reserva identidad, crea cabecera y versión.
+     *
+     * @param  array{cuento_id?: string, version_id?: string}  $datos
+     * @return array{cuento_id: string, version_id: string}
+     */
+    public function reservarBorrador(Usuario $usuario, array $datos): array
+    {
+        $uid = $this->uidParaEscritura($usuario);
+        $cuentoId = trim((string) ($datos['cuento_id'] ?? ''));
+        $versionId = trim((string) ($datos['version_id'] ?? ''));
+        if ($cuentoId === '' || $versionId === '') {
+            throw new CuentoV2Exception('Faltan los identificadores del borrador.', 422, 'BORRADOR_INVALIDO');
+        }
+
+        $existe = $this->documentos->obtener($this->cuentoPath($cuentoId));
+        if ($existe === null) {
+            $this->documentos->crear(
+                $this->cuentoPath($cuentoId),
+                [
+                    'schema_version' => 2,
+                    'autor_uid' => $uid,
+                    'audiencia' => $this->audiencia($usuario),
+                    'estado' => 'borrador',
+                    'visibilidad' => 'privado',
+                    'version_borrador_id' => $versionId,
+                    'moderacion_estado' => 'no_solicitada',
+                    'comentarios_bloqueados' => true,
+                ],
+                ['created_at', 'updated_at'],
+            );
+        }
+
+        return ['cuento_id' => $cuentoId, 'version_id' => $versionId];
+    }
+
+    /**
+     * Guarda (crea o actualiza) la versión de borrador y sus páginas.
+     * Idempotente: si la revisión coincide, escribe; si no, devuelve
+     * conflicto para que el cliente decida.
+     *
+     * @param  array{
+     *   cuento_id: string, version_id: string, titulo: string, sinopsis: string,
+     *   categoria: string, rango_edad: string, portada_ref: string|null,
+     *   revision_esperada: int, paginas: list<array<string, mixed>>
+     * }  $datos
+     * @return array<string, mixed>
+     */
+    public function guardarBorrador(Usuario $usuario, array $datos): array
+    {
+        $cuentoId = $datos['cuento_id'];
+        $versionId = $datos['version_id'];
+        $uid = $this->uidParaEscritura($usuario);
+
+        return Cache::lock($this->lockKey($cuentoId), 10)->block(3, function () use ($datos, $cuentoId, $versionId, $uid): array {
+            $cuento = $this->documentos->obtener($this->cuentoPath($cuentoId));
+            if ($cuento === null || (int) ($cuento['fields']['schema_version'] ?? 0) !== 2) {
+                throw new CuentoV2Exception('El cuento no existe.', 404, 'CUENTO_NO_ENCONTRADO');
+            }
+            if (($cuento['fields']['autor_uid'] ?? null) !== $uid) {
+                throw new CuentoV2Exception('No puedes modificar este cuento.', 403, 'CUENTO_AJENO');
+            }
+            if (($cuento['fields']['estado'] ?? null) !== 'borrador') {
+                throw new CuentoV2Exception('La versión ya no admite edición.', 409, 'TRANSICION_INVALIDA');
+            }
+
+            $versionRuta = $this->versionPath($cuentoId, $versionId);
+            $version = $this->documentos->obtener($versionRuta);
+            $revisionEsperada = (int) $datos['revision_esperada'];
+            $revisionActual = $version === null ? 0 : (int) ($version['fields']['revision'] ?? 0);
+            if ($version !== null && $revisionActual !== $revisionEsperada) {
+                throw new CuentoV2Exception(
+                    'El borrador cambió en otra pestaña. Recarga para ver la versión más reciente.',
+                    409,
+                    'CONFLICTO_REVISION',
+                );
+            }
+
+            $palabras = 0;
+            foreach ($datos['paginas'] as $pagina) {
+                $textoPlano = trim(strip_tags((string) ($pagina['contenido'] ?? '')));
+                $palabras += $textoPlano === '' ? 0 : count(preg_split('/\s+/u', $textoPlano));
+            }
+            $camposVersion = [
+                'schema_version' => 2,
+                'autor_uid' => $uid,
+                'estado' => 'borrador',
+                'titulo' => trim((string) $datos['titulo']),
+                'sinopsis' => (string) ($datos['sinopsis'] ?? ''),
+                'categoria' => (string) ($datos['categoria'] ?? ''),
+                'rango_edad' => (string) ($datos['rango_edad'] ?? ''),
+                'portada_ref' => $datos['portada_ref'] ?? null,
+                'paginas' => count($datos['paginas']),
+                'idioma' => 'es-PE',
+                'palabras' => $palabras,
+                'tiempo_lectura' => max(1, (int) ceil($palabras / 200)),
+                'revision' => $version === null ? 0 : $revisionActual + 1,
+            ];
+
+            if ($version === null) {
+                $this->documentos->crear($versionRuta, $camposVersion, ['created_at', 'updated_at']);
+            } else {
+                $this->documentos->actualizar(
+                    $versionRuta,
+                    $camposVersion,
+                    ['updated_at'],
+                    $version['updateTime'],
+                );
+            }
+
+            // Escribir páginas (upsert por orden/id).
+            $existentes = $this->documentos->listar(
+                $this->cuentoPath($cuentoId).'/versiones/'.$this->idSeguro($versionId).'/paginas',
+                [],
+                null,
+                100,
+            );
+            $existentesPorId = collect($existentes)
+                ->mapWithKeys(fn (array $doc): array => [basename((string) $doc['name']) => $doc])
+                ->all();
+            $idsNuevos = [];
+            foreach ($datos['paginas'] as $pagina) {
+                $paginaId = (string) $pagina['id'];
+                $idsNuevos[] = $paginaId;
+                $rutaPagina = $this->cuentoPath($cuentoId).'/versiones/'.$this->idSeguro($versionId).'/paginas/'.$this->idSeguro($paginaId);
+                $camposPagina = [
+                    'schema_version' => 2,
+                    'autor_uid' => $uid,
+                    'orden' => (int) $pagina['orden'],
+                    'contenido' => (string) $pagina['contenido'],
+                    'ilustracion_ref' => $pagina['ilustracion_ref'] ?? null,
+                    'texto_alternativo' => (string) ($pagina['texto_alternativo'] ?? ''),
+                    'fondo_token' => (string) ($pagina['fondo_token'] ?? 'var(--daemon-surface)'),
+                ];
+                if (isset($existentesPorId[$paginaId])) {
+                    $this->documentos->actualizar(
+                        $rutaPagina,
+                        $camposPagina,
+                        ['updated_at'],
+                        $existentesPorId[$paginaId]['updateTime'],
+                    );
+                } else {
+                    $this->documentos->crear($rutaPagina, $camposPagina, ['created_at', 'updated_at']);
+                }
+            }
+            foreach ($existentesPorId as $idExistente => $docExistente) {
+                if (! in_array($idExistente, $idsNuevos, true)) {
+                    $this->documentos->eliminar(
+                        $this->cuentoPath($cuentoId).'/versiones/'.$this->idSeguro($versionId).'/paginas/'.$this->idSeguro($idExistente),
+                        $docExistente['updateTime'],
+                    );
+                }
+            }
+
+            // Actualizar cabecera del cuento (timestamp de servidor).
+            $this->documentos->actualizar(
+                $this->cuentoPath($cuentoId),
+                ['version_borrador_id' => $versionId],
+                ['updated_at'],
+                $cuento['updateTime'],
+            );
+
+            return $this->detalle($usuario, $cuentoId);
+        });
+    }
+
     /** @return array{estado: string, repetido: bool} */
     public function solicitarPublicacion(Usuario $usuario, string $cuentoId): array
     {
@@ -322,7 +597,7 @@ class CuentoV2Service
         if ($cuento === null || (int) ($cuento['fields']['schema_version'] ?? 0) !== 2) {
             throw new CuentoV2Exception('El cuento no existe.', 404, 'CUENTO_NO_ENCONTRADO');
         }
-        if (($cuento['fields']['autor_uid'] ?? null) !== $this->uid($usuario)) {
+        if (($cuento['fields']['autor_uid'] ?? null) !== $this->uidParaEscritura($usuario)) {
             throw new CuentoV2Exception('No puedes modificar este cuento.', 403, 'CUENTO_AJENO');
         }
 
@@ -352,6 +627,27 @@ class CuentoV2Service
         }
 
         return $uid;
+    }
+
+    private function uidOpcional(Usuario $usuario): ?string
+    {
+        $uid = trim((string) $usuario->firebase_uid);
+
+        return $uid !== '' ? $uid : null;
+    }
+
+    /**
+     * UID para operaciones de escritura server-side. Si el usuario ya está
+     * enlazado con Firebase se usa su firebase_uid; si no, se usa un UID
+     * determinista estable (daemon-{id}) igual al que emite
+     * FirebaseCustomTokenService, para que el alumno conserve su identidad
+     * entre sesiones aunque aún no tenga cuenta Google.
+     */
+    private function uidParaEscritura(Usuario $usuario): string
+    {
+        $uid = trim((string) $usuario->firebase_uid);
+
+        return $uid !== '' ? $uid : 'daemon-'.$usuario->id;
     }
 
     private function sanitizarComentario(string $cuerpo): string
@@ -456,5 +752,186 @@ class CuentoV2Service
     private function lockKey(string $cuentoId): string
     {
         return 'cuentos:v2:'.hash('sha256', $cuentoId);
+    }
+
+    /** @param array<string, mixed> $campos */
+    private function esCuentoPublicado(array $campos): bool
+    {
+        return ($campos['estado'] ?? null) === 'publicado'
+            && ($campos['moderacion_estado'] ?? null) === 'aprobado'
+            && ($campos['visibilidad'] ?? null) === 'comunidad'
+            && ($campos['version_publicada_id'] ?? null) !== null
+            && ($campos['deleted_at'] ?? null) === null;
+    }
+
+    /**
+     * @param  array{name: string, fields: array<string, mixed>, updateTime: string}  $documento
+     * @return array<string, mixed>
+     */
+    private function cuentoPublico(array $documento): array
+    {
+        $campos = $documento['fields'];
+        $id = basename((string) $documento['name']);
+        $versionId = $campos['version_publicada_id'] ?? null;
+        $titulo = $campos['titulo_publicado'] ?? '';
+        $sinopsis = $campos['sinopsis_publicada'] ?? '';
+
+        // Enriquecer desde la versión publicada si falta la copia en cabecera.
+        if (is_string($versionId) && $versionId !== '' && ($titulo === '' || $sinopsis === '')) {
+            $version = $this->documentos->obtener($this->versionPath($id, $versionId));
+            if ($version !== null) {
+                $titulo = (string) ($version['fields']['titulo'] ?? $titulo);
+                $sinopsis = (string) ($version['fields']['sinopsis'] ?? $sinopsis);
+            }
+        }
+
+        return [
+            'id' => $id,
+            'autor_uid' => $campos['autor_uid'] ?? '',
+            'autor_usuario_id' => $campos['autor_usuario_id'] ?? null,
+            'autor_perfil' => $campos['autor_perfil'] ?? null,
+            'titulo' => (string) $titulo,
+            'descripcion' => (string) $sinopsis,
+            'portada_ref' => $campos['portada_ref'] ?? null,
+            'categoria' => (string) ($campos['categoria_publicada'] ?? 'Sin clasificar'),
+            'rango_edad' => (string) ($campos['rango_edad_publicado'] ?? ''),
+            'paginas_borrador' => (int) ($campos['paginas_publicadas'] ?? 0),
+            'palabras' => (int) ($campos['palabras_publicadas'] ?? 0),
+            'estado' => (string) ($campos['estado'] ?? 'borrador'),
+            'visibilidad' => (string) ($campos['visibilidad'] ?? 'privado'),
+            'audiencia' => (string) ($campos['audiencia'] ?? 'KIDS'),
+            'moderacion' => (string) ($campos['moderacion_estado'] ?? 'no_solicitada'),
+            'estadisticas' => $campos['stats'] ?? ['comentarios' => 0, 'reacciones' => 0, 'lecturas' => 0],
+            'version_borrador_id' => (string) ($campos['version_borrador_id'] ?? ''),
+            'version_publicada_id' => $versionId,
+            'created_at_ms' => $this->timestampValor($campos['created_at'] ?? null),
+            'updated_at_ms' => $this->timestampValor($campos['updated_at'] ?? null),
+            'published_at_ms' => $this->timestampValor($campos['published_at'] ?? null),
+            'schema_version' => 2,
+        ];
+    }
+
+    /**
+     * @param  array{name: string, fields: array<string, mixed>, updateTime: string}  $documento
+     * @return array<string, mixed>
+     */
+    private function cuentoCompleto(array $documento, Usuario $usuario): array
+    {
+        $campos = $documento['fields'];
+        $id = basename((string) $documento['name']);
+        $versionId = (string) ($campos['version_borrador_id'] ?? '');
+        $cuento = $this->cuentoPublico($documento);
+
+        if ($versionId !== '') {
+            $version = $this->documentos->obtener($this->versionPath($id, $versionId));
+            if ($version !== null) {
+                $camposVersion = $version['fields'];
+                $cuento['titulo'] = (string) ($camposVersion['titulo'] ?? $cuento['titulo']);
+                $cuento['descripcion'] = (string) ($camposVersion['sinopsis'] ?? $cuento['descripcion']);
+                $cuento['portada_ref'] = $camposVersion['portada_ref'] ?? $cuento['portada_ref'];
+                $cuento['categoria'] = (string) ($camposVersion['categoria'] ?? $cuento['categoria']);
+                $cuento['rango_edad'] = (string) ($camposVersion['rango_edad'] ?? $cuento['rango_edad']);
+                $cuento['paginas_borrador'] = (int) ($camposVersion['paginas'] ?? $cuento['paginas_borrador']);
+                $cuento['palabras'] = (int) ($camposVersion['palabras'] ?? $cuento['palabras']);
+                $cuento['version_detalle'] = $this->versionPublica($id, $versionId, $camposVersion);
+            }
+        }
+
+        return $cuento;
+    }
+
+    /**
+     * @param  array<string, mixed>  $campos
+     * @return array<string, mixed>
+     */
+    private function versionPublica(string $cuentoId, string $versionId, array $campos): array
+    {
+        return [
+            'id' => $versionId,
+            'cuento_id' => $cuentoId,
+            'autor_uid' => $campos['autor_uid'] ?? '',
+            'titulo' => (string) ($campos['titulo'] ?? ''),
+            'sinopsis' => (string) ($campos['sinopsis'] ?? ''),
+            'categoria' => (string) ($campos['categoria'] ?? ''),
+            'rango_edad' => (string) ($campos['rango_edad'] ?? ''),
+            'portada_ref' => $campos['portada_ref'] ?? null,
+            'paginas' => (int) ($campos['paginas'] ?? 0),
+            'idioma' => (string) ($campos['idioma'] ?? 'es-PE'),
+            'palabras' => (int) ($campos['palabras'] ?? 0),
+            'tiempo_lectura' => (int) ($campos['tiempo_lectura'] ?? 0),
+            'revision' => (int) ($campos['revision'] ?? 0),
+            'created_at_ms' => $this->timestampValor($campos['created_at'] ?? null),
+            'updated_at_ms' => $this->timestampValor($campos['updated_at'] ?? null),
+            'schema_version' => 2,
+        ];
+    }
+
+    /** @return list<array<string, mixed>> */
+    private function paginasDeVersion(string $cuentoId, string $versionId): array
+    {
+        $documentos = $this->documentos->listar(
+            $this->cuentoPath($cuentoId).'/versiones/'.$this->idSeguro($versionId).'/paginas',
+            [],
+            ['orden', 'ASC'],
+            100,
+        );
+
+        return collect($documentos)->map(function (array $documento) use ($cuentoId, $versionId): array {
+            $campos = $documento['fields'];
+
+            return [
+                'id' => basename((string) $documento['name']),
+                'cuento_id' => $cuentoId,
+                'version_id' => $versionId,
+                'orden' => (int) ($campos['orden'] ?? 1),
+                'contenido' => (string) ($campos['contenido'] ?? ''),
+                'ilustracion_ref' => $campos['ilustracion_ref'] ?? null,
+                'texto_alternativo' => (string) ($campos['texto_alternativo'] ?? ''),
+                'fondo_token' => (string) ($campos['fondo_token'] ?? 'var(--daemon-surface)'),
+                'created_at_ms' => $this->timestampValor($campos['created_at'] ?? null),
+                'updated_at_ms' => $this->timestampValor($campos['updated_at'] ?? null),
+                'schema_version' => 2,
+            ];
+        })->all();
+    }
+
+    /**
+     * @param  array{name: string, fields: array<string, mixed>, updateTime: string}  $documento
+     * @return array<string, mixed>
+     */
+    private function comentarioPublico(string $cuentoId, array $documento): array
+    {
+        $campos = $documento['fields'];
+
+        return [
+            'id' => basename((string) $documento['name']),
+            'cuento_id' => $cuentoId,
+            'autor_uid' => (string) ($campos['autor_uid'] ?? ''),
+            'cuerpo' => (string) ($campos['cuerpo'] ?? ''),
+            'estado' => (string) ($campos['estado'] ?? 'visible'),
+            'created_at_ms' => $this->timestampValor($campos['created_at'] ?? null),
+            'updated_at_ms' => $this->timestampValor($campos['updated_at'] ?? null),
+            'schema_version' => 2,
+        ];
+    }
+
+    private function audiencia(Usuario $usuario): string
+    {
+        $nivel = strtoupper((string) $usuario->nivel);
+
+        return $nivel === 'TEENS' ? 'TEENS' : 'KIDS';
+    }
+
+    private function timestampValor(mixed $valor): ?int
+    {
+        if (! is_string($valor) || $valor === '') {
+            return null;
+        }
+
+        try {
+            return CarbonImmutable::parse($valor)->getTimestampMs();
+        } catch (Throwable) {
+            return null;
+        }
     }
 }

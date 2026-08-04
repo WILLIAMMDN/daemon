@@ -42,12 +42,11 @@ service cloud.firestore {
     }
 
     function esPropietario(datos) {
-      return esCuentaDaemon() && datos.autor_uid == request.auth.uid;
+      return estaAutenticado() && datos.autor_uid == request.auth.uid;
     }
 
     function puedeLeerPublicado(datos) {
-      return esCuentaDaemon()
-        && datos.schema_version == 2
+      return datos.schema_version == 2
         && datos.estado == 'publicado'
         && datos.moderacion_estado == 'aprobado'
         && datos.version_publicada_id is string
@@ -58,6 +57,7 @@ service cloud.firestore {
           || (
             datos.visibilidad == 'aula'
             && datos.aula_id is string
+            && estaAutenticado()
             && request.auth.token.daemonClassroomId == datos.aula_id
           )
         );
@@ -72,11 +72,11 @@ service cloud.firestore {
     // En list sólo se usan condiciones que una query puede demostrar. La
     // integridad completa del documento se valida al escribir y en lecturas get.
     function puedeListarCuento(datos) {
-      return esCuentaDaemon()
-        && datos.schema_version == 2
+      return datos.schema_version == 2
         && (
           (
-            datos.autor_uid == request.auth.uid
+            estaAutenticado()
+            && datos.autor_uid == request.auth.uid
             && datos.estado != 'eliminado'
           )
           || (
@@ -86,6 +86,7 @@ service cloud.firestore {
               datos.visibilidad == 'comunidad'
               || (
                 datos.visibilidad == 'aula'
+                && estaAutenticado()
                 && datos.aula_id == request.auth.token.daemonClassroomId
               )
             )

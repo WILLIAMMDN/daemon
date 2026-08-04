@@ -29,9 +29,11 @@ export class GaleriaCuentosFacade {
     this.refrescando.set(conservaDatos);
     this.error.set('');
     try {
+      // Todo pasa por el API de Laravel: la galería pública y los cuentos
+      // propios se leen sin depender de una sesión de Firebase activa.
       const [galeria, propios] = await Promise.all([
         this.repositorio.listarGaleria(undefined, 24),
-        this.repositorio.listarPropios(20),
+        this.cargarPropiosSinFirebase(),
       ]);
       const porId = new Map(galeria.elementos.map((cuento) => [cuento.id, cuento]));
       propios.forEach((cuento) => porId.set(cuento.id, cuento));
@@ -46,6 +48,20 @@ export class GaleriaCuentosFacade {
     } finally {
       this.cargando.set(false);
       this.refrescando.set(false);
+    }
+  }
+
+  /**
+   * Carga los cuentos propios del usuario. Si no hay sesión de Firebase,
+   * devuelve un array vacío en lugar de lanzar error. Esto permite que la
+   * galería pública se muestre aunque el usuario no tenga sesión de Firebase
+   * (login local con usuario/contraseña).
+   */
+  private async cargarPropiosSinFirebase(): Promise<readonly Cuento[]> {
+    try {
+      return await this.repositorio.listarPropios(20);
+    } catch {
+      return [];
     }
   }
 
