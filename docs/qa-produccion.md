@@ -308,3 +308,80 @@ canjear ni borrar datos, y anotar todo en la tabla de resultados.
   cosmético y se corrige aparte.
 - No probar los 3 logins con la misma cuenta real de un menor; usar cuentas
   de prueba por cada flujo.
+
+---
+
+## Auditoría: por qué Render no desplegó `740f77d` (2026-08-03)
+
+### Estado verificado (automático, sin tocar el dashboard)
+
+| Check | Comando | Resultado | Conclusión |
+|---|---|---|---|
+| Commit desplegado en Render | `curl /api/v1/salud` | `743230502d8...` | Render está **10 commits atrás** de main |
+| Endpoint `POST /auth/firebase-token` | `curl -X POST` | `404` | El fix de auth NO está en producción |
+| Checks de GitHub en `740f77d` y `85e1f65` | `gh api .../check-runs` | `build_and_deploy` + `backend` verdes | `checksPass` está satisfecho del lado de GitHub |
+| Webhooks de repo | `gh api repos/WILLIAMMDN/daemon/hooks` | lista vacía | Render usa GitHub App (no webhook clásico); no verificable por API |
+| Migraciones nuevas `7432305..main` | `git diff --stat` | 0 archivos | Un redeploy **no ejecuta migraciones nuevas** (seguro) |
+| `APP_VERSION` en el contenedor vivo | `config('app.version')` en `/salud` | `development` | El servicio de Render **no se creó desde `render.yaml`** (o sus env vars difieren) |
+
+### Diagnóstico (CORREGIDO el 2026-08-03 tras el screenshot del dashboard)
+
+**Causa raíz real: el build de Docker falla**, no el webhook. El dashboard de
+Render muestra `Deploy failed for 740f77d` y `Deploy failed for 85e1f65` con
+`Exited with status 1 while building your code`. El auto-deploy SÍ funciona
+(`Deploy started for 740f77d` a las 18:30, disparado solo); lo que muere es el
+build.
+
+Reproducción local (sin `.env`, como en el build de Docker):
+
+```bash
+cd backend-laravel
+# sin .env presente:
+composer dump-autoload --optimize --no-dev   # ANTES: falla
+# -> post-autoload-dump -> package:discover -> arranca Laravel sin env vars
+# -> AppServiceProvider::boot() -> EnvironmentSafety::assertRuntimeSafe()
+# -> LogicException (APP_ENV=production por defecto, sin DAEMON_ENVIRONMENT)
+# -> exit 1  ===  "Exited with status 1 while building your code"
+
+composer dump-autoload --optimize --no-dev --no-scripts   # DESPUÉS: exit 0
+```
+
+El `EnvironmentSafety::assertRuntimeSafe()` es correcto en runtime (protege
+producción), pero rompía el **build** porque el Dockerfile corría los scripts
+de Composer sin las env vars reales de Render.
+
+### Fix aplicado (PR pendiente)
+
+- `backend-laravel/Dockerfile`: `composer dump-autoload --optimize --no-dev`
+  ahora incluye `--no-scripts` (no bootear Laravel en build).
+- `backend-laravel/docker/entrypoint.sh`: se añade `php artisan
+  package:discover --ansi` en el bloque de cache, con las env vars reales ya
+  inyectadas por Render.
+- Verificación local: `composer dump-autoload --optimize --no-dev --no-scripts`
+  sin `.env` termina con `EXIT=0` (7589 clases).
+
+### Acción requerida (tras merge del fix)
+
+1. Mergear el fix del Dockerfile/entrypoint a `main` (PR).
+2. Disparar el deploy:
+
+```bash
+bash scripts/render-deploy-hook.sh
+```
+
+3. Confirmar:
+
+```bash
+curl -s https://daemon-5vo1.onrender.com/api/v1/salud | grep commit
+# esperado: 85e1f65... (o descendiente)
+curl -s -o /dev/null -w '%{http_code}' -X POST \
+  https://daemon-5vo1.onrender.com/api/v1/auth/firebase-token
+# esperado: 401 (existe y exige sesión), ya NO 404
+```
+
+### Riesgo del redeploy
+
+Bajo: no hay migraciones nuevas entre el commit desplegado y main; la suite
+backend pasa (150 tests); el entrypoint solo cachea config y ejecuta
+`migrate --force` (no-op). Si el usuario ya registró una cuenta de Firebase con
+el mismo email, la reconciliación adopta ese UID (no se parte la identidad).
