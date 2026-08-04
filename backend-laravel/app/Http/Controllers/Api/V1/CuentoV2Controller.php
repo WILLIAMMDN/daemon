@@ -13,6 +13,7 @@ use App\Http\Requests\Api\V1\Cuento\GestionarActivoCuentoV2Request;
 use App\Http\Requests\Api\V1\Cuento\LimpiarActivosCuentoV2Request;
 use App\Http\Requests\Api\V1\Cuento\SubirActivoCuentoV2Request;
 use App\Http\Requests\Api\V1\Cuento\GuardarBorradorCuentoV2Request;
+use App\Http\Requests\Api\V1\Cuento\ReservarBorradorCuentoV2Request;
 use App\Services\Cuento\CuentoV2Service;
 use App\Services\Cuento\CuentoService;
 use App\Services\Cuento\AsistenteCuentoService;
