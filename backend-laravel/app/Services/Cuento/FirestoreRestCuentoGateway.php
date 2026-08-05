@@ -97,6 +97,43 @@ class FirestoreRestCuentoGateway implements CuentoDocumentoGateway
         ]]);
     }
 
+    public function commitVarias(array $operaciones): void
+    {
+        $writes = [];
+        foreach ($operaciones as $op) {
+            $nombre = $this->documentoNombre($op['ruta']);
+            if (! empty($op['eliminar'])) {
+                $writes[] = [
+                    'delete' => $nombre,
+                    'currentDocument' => ['updateTime' => $op['updateTime']],
+                ];
+                continue;
+            }
+            $campos = $op['campos'] ?? [];
+            $write = [
+                'update' => [
+                    'name' => $nombre,
+                    'fields' => $this->codificarCampos($campos),
+                ],
+                'updateMask' => ['fieldPaths' => array_keys($campos)],
+                'currentDocument' => isset($op['updateTime'])
+                    ? ['updateTime' => $op['updateTime']]
+                    : (($op['crearNuevo'] ?? false) ? ['exists' => false] : new \stdClass),
+            ];
+            if (($op['timestamps'] ?? []) !== []) {
+                $write['updateTransforms'] = array_map(
+                    fn (string $campo): array => [
+                        'fieldPath' => $campo,
+                        'setToServerValue' => 'REQUEST_TIME',
+                    ],
+                    $op['timestamps'],
+                );
+            }
+            $writes[] = $write;
+        }
+        $this->enviarCommit($writes);
+    }
+
     public function contar(string $rutaColeccion, array $filtrosIgualdad = []): int
     {
         [$rutaPadre, $coleccion] = $this->separarColeccion($rutaColeccion);

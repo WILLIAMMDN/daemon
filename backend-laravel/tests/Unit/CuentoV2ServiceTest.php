@@ -252,6 +252,23 @@ class CuentoDocumentoGatewayMemoria implements CuentoDocumentoGateway
         unset($this->datos[$ruta]);
     }
 
+    /** @param list<array<string, mixed>> $operaciones */
+    public function commitVarias(array $operaciones): void
+    {
+        foreach ($operaciones as $op) {
+            $ruta = (string) $op['ruta'];
+            if (! empty($op['eliminar'])) {
+                $this->eliminar($ruta, (string) $op['updateTime']);
+                continue;
+            }
+            if (isset($op['updateTime'])) {
+                $this->actualizar($ruta, (array) $op['campos'], (array) $op['timestamps'], (string) $op['updateTime']);
+            } else {
+                $this->crear($ruta, (array) $op['campos'], (array) $op['timestamps']);
+            }
+        }
+    }
+
     public function contar(string $rutaColeccion, array $filtrosIgualdad = []): int
     {
         return count($this->listar($rutaColeccion, $filtrosIgualdad));

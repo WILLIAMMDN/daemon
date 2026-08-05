@@ -30,6 +30,22 @@ interface CuentoDocumentoGateway
 
     public function eliminar(string $ruta, string $updateTime): void;
 
+    /**
+     * Escribe varias operaciones (crear/actualizar/eliminar) en una sola
+     * llamada :commit de Firestore (todo-o-nada). Reduce el guardado de
+     * borradores de N rondas a 1.
+     *
+     * @param  list<array{
+     *   ruta: string,
+     *   campos?: array<string, mixed>,
+     *   timestamps?: list<string>,
+     *   updateTime?: string,
+     *   crearNuevo?: bool,
+     *   eliminar?: bool,
+     * }>  $operaciones
+     */
+    public function commitVarias(array $operaciones): void;
+
     /** @param array<string, scalar|null> $filtrosIgualdad */
     public function contar(string $rutaColeccion, array $filtrosIgualdad = []): int;
 

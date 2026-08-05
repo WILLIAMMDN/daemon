@@ -208,6 +208,7 @@ class CuentoV2Service
         $uid = $this->uidParaEscritura($usuario);
 
         return Cache::lock($this->lockKey($cuentoId), 10)->block(3, function () use ($datos, $cuentoId, $versionId, $uid, $usuario): array {
+            // 1) Cabecera (1 llamada a Firestore).
             $cuento = $this->documentos->obtener($this->cuentoPath($cuentoId));
             if ($cuento === null || (int) ($cuento['fields']['schema_version'] ?? 0) !== 2) {
                 throw new CuentoV2Exception('El cuento no existe.', 404, 'CUENTO_NO_ENCONTRADO');
@@ -219,6 +220,7 @@ class CuentoV2Service
                 throw new CuentoV2Exception('La versión ya no admite edición.', 409, 'TRANSICION_INVALIDA');
             }
 
+            // 2) Versión actual + páginas existentes (2 llamadas).
             $versionRuta = $this->versionPath($cuentoId, $versionId);
             $version = $this->documentos->obtener($versionRuta);
             $revisionEsperada = (int) $datos['revision_esperada'];
@@ -230,7 +232,17 @@ class CuentoV2Service
                     'CONFLICTO_REVISION',
                 );
             }
+            $existentes = $this->documentos->listar(
+                $this->cuentoPath($cuentoId).'/versiones/'.$this->idSeguro($versionId).'/paginas',
+                [],
+                null,
+                100,
+            );
+            $existentesPorId = collect($existentes)
+                ->mapWithKeys(fn (array $doc): array => [basename((string) $doc['name']) => $doc])
+                ->all();
 
+            // 3) Campos calculados.
             $palabras = 0;
             foreach ($datos['paginas'] as $pagina) {
                 $textoPlano = trim(strip_tags((string) ($pagina['contenido'] ?? '')));
@@ -256,27 +268,25 @@ class CuentoV2Service
                 'revision' => $version === null ? 0 : $revisionActual + 1,
             ];
 
+            // 4) UNA sola escritura en lote (todo-o-nada): versión + páginas
+            //    + cabecera. Antes eran ~10 llamadas a Firestore (~12 s);
+            //    ahora 1.
+            $operaciones = [];
             if ($version === null) {
-                $this->documentos->crear($versionRuta, $camposVersion, ['created_at', 'updated_at']);
+                $operaciones[] = [
+                    'ruta' => $versionRuta,
+                    'campos' => $camposVersion,
+                    'timestamps' => ['created_at', 'updated_at'],
+                    'crearNuevo' => true,
+                ];
             } else {
-                $this->documentos->actualizar(
-                    $versionRuta,
-                    $camposVersion,
-                    ['updated_at'],
-                    $version['updateTime'],
-                );
+                $operaciones[] = [
+                    'ruta' => $versionRuta,
+                    'campos' => $camposVersion,
+                    'timestamps' => ['updated_at'],
+                    'updateTime' => $version['updateTime'],
+                ];
             }
-
-            // Escribir páginas (upsert por orden/id).
-            $existentes = $this->documentos->listar(
-                $this->cuentoPath($cuentoId).'/versiones/'.$this->idSeguro($versionId).'/paginas',
-                [],
-                null,
-                100,
-            );
-            $existentesPorId = collect($existentes)
-                ->mapWithKeys(fn (array $doc): array => [basename((string) $doc['name']) => $doc])
-                ->all();
             $idsNuevos = [];
             foreach ($datos['paginas'] as $pagina) {
                 $paginaId = (string) $pagina['id'];
@@ -292,34 +302,68 @@ class CuentoV2Service
                     'fondo_token' => (string) ($pagina['fondo_token'] ?? 'var(--daemon-surface)'),
                 ];
                 if (isset($existentesPorId[$paginaId])) {
-                    $this->documentos->actualizar(
-                        $rutaPagina,
-                        $camposPagina,
-                        ['updated_at'],
-                        $existentesPorId[$paginaId]['updateTime'],
-                    );
+                    $operaciones[] = [
+                        'ruta' => $rutaPagina,
+                        'campos' => $camposPagina,
+                        'timestamps' => ['updated_at'],
+                        'updateTime' => $existentesPorId[$paginaId]['updateTime'],
+                    ];
                 } else {
-                    $this->documentos->crear($rutaPagina, $camposPagina, ['created_at', 'updated_at']);
+                    $operaciones[] = [
+                        'ruta' => $rutaPagina,
+                        'campos' => $camposPagina,
+                        'timestamps' => ['created_at', 'updated_at'],
+                        'crearNuevo' => true,
+                    ];
                 }
             }
             foreach ($existentesPorId as $idExistente => $docExistente) {
                 if (! in_array($idExistente, $idsNuevos, true)) {
-                    $this->documentos->eliminar(
-                        $this->cuentoPath($cuentoId).'/versiones/'.$this->idSeguro($versionId).'/paginas/'.$this->idSeguro($idExistente),
-                        $docExistente['updateTime'],
-                    );
+                    $operaciones[] = [
+                        'ruta' => $this->cuentoPath($cuentoId).'/versiones/'.$this->idSeguro($versionId).'/paginas/'.$this->idSeguro($idExistente),
+                        'eliminar' => true,
+                        'updateTime' => $docExistente['updateTime'],
+                    ];
                 }
             }
+            $operaciones[] = [
+                'ruta' => $this->cuentoPath($cuentoId),
+                'campos' => ['version_borrador_id' => $versionId],
+                'timestamps' => ['updated_at'],
+                'updateTime' => $cuento['updateTime'],
+            ];
+            $this->documentos->commitVarias($operaciones);
 
-            // Actualizar cabecera del cuento (timestamp de servidor).
-            $this->documentos->actualizar(
-                $this->cuentoPath($cuentoId),
-                ['version_borrador_id' => $versionId],
-                ['updated_at'],
-                $cuento['updateTime'],
-            );
+            // 5) Respuesta construida localmente (0 llamadas extra): es lo
+            //    que acabamos de escribir. La relectura previa (detalle)
+            //    costaba 3 rondas a Firestore.
+            $ahora = CarbonImmutable::now();
+            if ($version !== null) {
+                $camposVersion['created_at'] = (string) ($version['fields']['created_at'] ?? $ahora->toIso8601String());
+            } else {
+                $camposVersion['created_at'] = $ahora->toIso8601String();
+            }
+            $camposVersion['updated_at'] = $ahora->toIso8601String();
+            $cuentoActualizado = $cuento;
+            $cuentoActualizado['fields']['version_borrador_id'] = $versionId;
 
-            return $this->detalle($usuario, $cuentoId);
+            return [
+                'cuento' => $this->cuentoPublico($cuentoActualizado),
+                'version' => $this->versionPublica($cuentoId, $versionId, $camposVersion),
+                'paginas' => array_map(fn (array $pagina, int $indice): array => [
+                    'id' => (string) $pagina['id'],
+                    'cuento_id' => $cuentoId,
+                    'version_id' => $versionId,
+                    'orden' => (int) ($pagina['orden'] ?? $indice + 1),
+                    'contenido' => (string) ($pagina['contenido'] ?? ''),
+                    'ilustracion_ref' => $pagina['ilustracion_ref'] ?? null,
+                    'texto_alternativo' => (string) ($pagina['texto_alternativo'] ?? ''),
+                    'fondo_token' => (string) ($pagina['fondo_token'] ?? 'var(--daemon-surface)'),
+                    'created_at_ms' => $ahora->getTimestampMs(),
+                    'updated_at_ms' => $ahora->getTimestampMs(),
+                    'schema_version' => 2,
+                ], $datos['paginas'], array_keys($datos['paginas'])),
+            ];
         });
     }
 
