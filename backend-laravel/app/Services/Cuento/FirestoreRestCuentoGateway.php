@@ -38,6 +38,10 @@ class FirestoreRestCuentoGateway implements CuentoDocumentoGateway
     private function peticion(string $metodo, string $url, array $datos = []): array
     {
         $opciones = [
+            // El gateway maneja códigos de estado (404 = no existe, 409 =
+            // conflicto); Guzzle con http_errors=true lanzaría excepción y
+            // el catch lo convertiría en 503.
+            'http_errors' => false,
             'headers' => ['Authorization' => 'Bearer '.$this->google->token()],
         ];
         if ($datos !== []) {
