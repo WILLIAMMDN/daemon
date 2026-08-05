@@ -5,20 +5,56 @@ namespace App\Services\Cuento;
 use App\Contracts\Cuento\CuentoDocumentoGateway;
 use App\Exceptions\CuentoV2Exception;
 use App\Services\Auth\GoogleServiceAccountTokenService;
-use Illuminate\Http\Client\Response;
-use Illuminate\Support\Facades\Http;
+use GuzzleHttp\Client as GuzzleClient;
 use Throwable;
 
 class FirestoreRestCuentoGateway implements CuentoDocumentoGateway
 {
-    public function __construct(private readonly GoogleServiceAccountTokenService $google) {}
+    public function __construct(
+        private readonly GoogleServiceAccountTokenService $google,
+        private readonly ?GuzzleClient $clienteHttp = null,
+    ) {}
+
+    /**
+     * Un único cliente Guzzle compartido: Laravel Http() crea un cliente
+     * nuevo por llamada (conexión TLS nueva cada vez, ~1 s desde Render a
+     * Google). Reutilizando el cliente, Guzzle reusa las conexiones y las
+     * operaciones con varias llamadas (guardar borrador ~6) bajan de 12 s
+     * a ~2 s.
+     */
+    private function clienteHttp(): GuzzleClient
+    {
+        return $this->clienteHttp ?? new GuzzleClient([
+            'timeout' => 20,
+            'connect_timeout' => 5,
+            'curl' => [CURLOPT_IPRESOLVE => CURL_IPRESOLVE_V4],
+        ]);
+    }
+
+    /**
+     * @param  array<string, mixed>  $datos
+     * @return array{estado: int, cuerpo: string}
+     */
+    private function peticion(string $metodo, string $url, array $datos = []): array
+    {
+        $opciones = [
+            'headers' => ['Authorization' => 'Bearer '.$this->google->token()],
+        ];
+        if ($datos !== []) {
+            $opciones['json'] = $datos;
+        }
+        $respuesta = $this->clienteHttp()->request($metodo, $url, $opciones);
+
+        return [
+            'estado' => $respuesta->getStatusCode(),
+            'cuerpo' => (string) $respuesta->getBody(),
+        ];
+    }
 
     public function obtener(string $ruta): ?array
     {
         try {
-            $respuesta = Http::withToken($this->google->token())
-                ->acceptJson()
-                ->get($this->documentoUrl($ruta));
+            $respuesta = $this->peticion('GET', $this->documentoUrl($ruta));
         } catch (Throwable $exception) {
             throw new CuentoV2Exception(
                 'No se pudo contactar al almacén de cuentos.',
@@ -27,12 +63,12 @@ class FirestoreRestCuentoGateway implements CuentoDocumentoGateway
             );
         }
 
-        if ($respuesta->status() === 404) {
+        if ($respuesta['estado'] === 404) {
             return null;
         }
-        $this->asegurarRespuesta($respuesta);
+        $this->asegurarRespuesta($respuesta['estado']);
 
-        return $this->decodificarDocumento($respuesta->json());
+        return $this->decodificarDocumento(json_decode($respuesta['cuerpo'], true));
     }
 
     public function actualizar(
@@ -78,19 +114,17 @@ class FirestoreRestCuentoGateway implements CuentoDocumentoGateway
         }
 
         try {
-            $respuesta = Http::withToken($this->google->token())
-                ->acceptJson()
-                ->post($this->agregacionUrl($rutaPadre), [
-                    'structuredAggregationQuery' => [
-                        'aggregations' => [['alias' => 'total', 'count' => new \stdClass]],
-                        'structuredQuery' => $consulta,
-                    ],
-                ]);
+            $respuesta = $this->peticion('POST', $this->agregacionUrl($rutaPadre), [
+                'structuredAggregationQuery' => [
+                    'aggregations' => [['alias' => 'total', 'count' => new \stdClass]],
+                    'structuredQuery' => $consulta,
+                ],
+            ]);
         } catch (Throwable $exception) {
             throw new CuentoV2Exception('No se pudo consultar Firestore.', 503, 'FIRESTORE_NO_DISPONIBLE');
         }
-        $this->asegurarRespuesta($respuesta);
-        foreach ($this->decodificarFilas($respuesta->body()) as $fila) {
+        $this->asegurarRespuesta($respuesta['estado']);
+        foreach ($this->decodificarFilas($respuesta['cuerpo']) as $fila) {
             $valor = $fila['result']['aggregateFields']['total']['integerValue'] ?? null;
             if (is_numeric($valor)) {
                 return (int) $valor;
@@ -141,16 +175,14 @@ class FirestoreRestCuentoGateway implements CuentoDocumentoGateway
         $consulta['limit'] = max(1, min($limite, 50));
 
         try {
-            $respuesta = Http::withToken($this->google->token())
-                ->acceptJson()
-                ->post($this->runQueryUrl($rutaPadre), ['structuredQuery' => $consulta]);
+            $respuesta = $this->peticion('POST', $this->runQueryUrl($rutaPadre), ['structuredQuery' => $consulta]);
         } catch (Throwable $exception) {
             throw new CuentoV2Exception('No se pudo consultar Firestore.', 503, 'FIRESTORE_NO_DISPONIBLE');
         }
-        $this->asegurarRespuesta($respuesta);
+        $this->asegurarRespuesta($respuesta['estado']);
 
         $documentos = [];
-        foreach ($this->decodificarFilas($respuesta->body()) as $fila) {
+        foreach ($this->decodificarFilas($respuesta['cuerpo']) as $fila) {
             if (isset($fila['document']) && is_array($fila['document'])) {
                 $documentos[] = $this->decodificarDocumento($fila['document']);
             }
@@ -222,9 +254,7 @@ class FirestoreRestCuentoGateway implements CuentoDocumentoGateway
         }
 
         try {
-            $respuesta = Http::withToken($this->google->token())
-                ->acceptJson()
-                ->post($this->commitUrl(), ['writes' => [$write]]);
+            $respuesta = $this->peticion('POST', $this->commitUrl(), ['writes' => [$write]]);
         } catch (Throwable $exception) {
             throw new CuentoV2Exception(
                 'No se pudo contactar al almacén de cuentos.',
@@ -233,14 +263,14 @@ class FirestoreRestCuentoGateway implements CuentoDocumentoGateway
             );
         }
 
-        if ($respuesta->status() === 409 || $respuesta->status() === 412) {
+        if ($respuesta['estado'] === 409 || $respuesta['estado'] === 412) {
             throw new CuentoV2Exception(
                 'El cuento cambió mientras se procesaba la operación. Inténtalo nuevamente.',
                 409,
                 'CONFLICTO_FIRESTORE',
             );
         }
-        $this->asegurarRespuesta($respuesta);
+        $this->asegurarRespuesta($respuesta['estado']);
 
         $documento = $this->obtener($ruta);
         if ($documento === null) {
@@ -254,29 +284,26 @@ class FirestoreRestCuentoGateway implements CuentoDocumentoGateway
     private function enviarCommit(array $writes): void
     {
         try {
-            $respuesta = Http::withToken($this->google->token())
-                ->acceptJson()
-                ->post($this->commitUrl(), ['writes' => $writes]);
+            $respuesta = $this->peticion('POST', $this->commitUrl(), ['writes' => $writes]);
         } catch (Throwable $exception) {
             throw new CuentoV2Exception('No se pudo contactar a Firestore.', 503, 'FIRESTORE_NO_DISPONIBLE');
         }
-        if ($respuesta->status() === 409 || $respuesta->status() === 412) {
+        if ($respuesta['estado'] === 409 || $respuesta['estado'] === 412) {
             throw new CuentoV2Exception(
                 'El documento cambiÃ³ mientras se procesaba la operaciÃ³n.',
                 409,
                 'CONFLICTO_FIRESTORE',
             );
         }
-        $this->asegurarRespuesta($respuesta);
+        $this->asegurarRespuesta($respuesta['estado']);
     }
 
-    private function asegurarRespuesta(Response $respuesta): void
+    private function asegurarRespuesta(int $estado): void
     {
-        if ($respuesta->successful()) {
+        if ($estado >= 200 && $estado < 300) {
             return;
         }
 
-        $estado = $respuesta->status();
         throw new CuentoV2Exception(
             $estado === 403
                 ? 'La credencial del servidor no puede operar sobre Firestore.'
