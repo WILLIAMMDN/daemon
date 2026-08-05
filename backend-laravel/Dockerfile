@@ -12,8 +12,13 @@ RUN apt-get update && apt-get install -y \
     supervisor \
     unzip \
     git \
-    && docker-php-ext-install pdo_pgsql pgsql intl zip bcmath \
+    && docker-php-ext-install pdo_pgsql pgsql intl zip bcmath opcache \
     && rm -rf /var/lib/apt/lists/*
+
+# Habilita OPcache: sin él, PHP recompila ~1.000 archivos de Laravel en
+# cada request (boot de ~1 s en instancias pequeñas de Render). Con
+# OPcache el boot baja a ~100-200 ms en todos los endpoints.
+COPY docker/opcache.ini /usr/local/etc/php/conf.d/opcache.ini
 
 # Habilita el módulo de rewrite de Apache (Laravel lo necesita para las rutas)
 RUN a2enmod rewrite

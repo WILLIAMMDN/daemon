@@ -23,19 +23,26 @@ class CuentoV2Service
      */
     public function galeria(int $limite = 24): array
     {
-        // Un solo filtro de igualdad (estado) cubre ambos esquemas de
-        // Firestore sin exigir índice compuesto: el v2 nuevo (schema_version
-        // 2, visibilidad "comunidad") y el legado que escribía visibilidad
-        // "publico" con páginas embebidas en un array.
-        $documentos = $this->documentos->listar('cuentos', ['estado' => 'publicado']);
+        // La galería es pública y cambia poco: se cachea en el servidor para
+        // no pagar una ronda a Firestore en cada carga. TTL corto (45 s)
+        // porque el frontend ya fuerza frescura con 30 s de ventana.
+        $clave = 'cuentos:galeria:v2:'.max(1, min($limite, 50));
 
-        return collect($documentos)
-            ->filter(fn (array $documento): bool => $this->esVisibleEnGaleria($documento['fields']))
-            ->sortByDesc(fn (array $documento): string => (string) $documento['updateTime'])
-            ->values()
-            ->take(max(1, min($limite, 50)))
-            ->map(fn (array $documento): array => $this->cuentoPublico($documento))
-            ->all();
+        return Cache::remember($clave, 45, function () use ($limite): array {
+            // Un solo filtro de igualdad (estado) cubre ambos esquemas de
+            // Firestore sin exigir índice compuesto: el v2 nuevo (schema_version
+            // 2, visibilidad "comunidad") y el legado que escribía visibilidad
+            // "publico" con páginas embebidas en un array.
+            $documentos = $this->documentos->listar('cuentos', ['estado' => 'publicado']);
+
+            return collect($documentos)
+                ->filter(fn (array $documento): bool => $this->esVisibleEnGaleria($documento['fields']))
+                ->sortByDesc(fn (array $documento): string => (string) $documento['updateTime'])
+                ->values()
+                ->take(max(1, min($limite, 50)))
+                ->map(fn (array $documento): array => $this->cuentoPublico($documento))
+                ->all();
+        });
     }
 
     /**
@@ -358,8 +365,21 @@ class CuentoV2Service
     public function eliminar(Usuario $usuario, string $cuentoId): array
     {
         return Cache::lock($this->lockKey($cuentoId), 10)->block(3, function () use ($usuario, $cuentoId): array {
-            $cuento = $this->cuentoPropio($usuario, $cuentoId);
-            if (($cuento['fields']['estado'] ?? null) === 'eliminado') {
+            $cuento = $this->documentos->obtener($this->cuentoPath($cuentoId));
+            if ($cuento === null) {
+                throw new CuentoV2Exception('El cuento no existe.', 404, 'CUENTO_NO_ENCONTRADO');
+            }
+            // Ownership: v2 por autor_uid; esquema legado por id_alumno.
+            // Los cuentos antiguos (schema 1, creados antes del paquete 4)
+            // también deben poder borrarse desde el portal.
+            $campos = $cuento['fields'];
+            $esLegacy = (int) ($campos['schema_version'] ?? 0) !== 2;
+            $esPropio = ($campos['autor_uid'] ?? null) === $this->uidParaEscritura($usuario)
+                || ($esLegacy && (int) ($campos['id_alumno'] ?? 0) === (int) $usuario->id);
+            if (! $esPropio) {
+                throw new CuentoV2Exception('No puedes eliminar este cuento.', 403, 'CUENTO_AJENO');
+            }
+            if (($campos['estado'] ?? null) === 'eliminado') {
                 return ['estado' => 'eliminado', 'repetido' => true];
             }
 

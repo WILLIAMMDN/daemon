@@ -117,6 +117,33 @@ class CuentoV2ServiceTest extends TestCase
         $this->assertSame(0, $servicio->estadisticas($lector, 'publicado-2')['reacciones']['total']);
     }
 
+    public function test_eliminar_cuento_legacy_por_id_alumno_y_rechaza_ajeno(): void
+    {
+        // Regresión: borrar un cuento del esquema legado (schema 1, id_alumno)
+        // devolvía 404 porque el v2 exigía schema_version 2. El dueño debe
+        // poder borrar sus cuentos antiguos; un ajeno debe recibir 403.
+        $gateway = new CuentoDocumentoGatewayMemoria;
+        $gateway->sembrar('cuentos/legacy-1', [
+            'autor_uid' => 'legacy-42',
+            'id_alumno' => 42,
+            'estado' => 'publicado',
+            'visibilidad' => 'publico',
+        ]);
+        $servicio = new CuentoV2Service($gateway);
+        $dueno = new Usuario;
+        $dueno->forceFill(['id' => 42, 'firebase_uid' => 'uid-42', 'rol' => 'alumno']);
+        $ajeno = new Usuario;
+        $ajeno->forceFill(['id' => 99, 'firebase_uid' => 'uid-99', 'rol' => 'alumno']);
+
+        $resultado = $servicio->eliminar($dueno, 'legacy-1');
+
+        $this->assertSame(['estado' => 'eliminado', 'repetido' => false], $resultado);
+        $this->assertSame('eliminado', $gateway->campos('cuentos/legacy-1')['estado']);
+
+        $this->expectException(CuentoV2Exception::class);
+        $servicio->eliminar($ajeno, 'legacy-1');
+    }
+
     public function test_guardar_borrador_vacio_aplica_defaults_y_no_usa_variables_cerradas_por_la_clausura(): void
     {
         // Regresión: la clausura de Cache::lock no capturaba $usuario y
