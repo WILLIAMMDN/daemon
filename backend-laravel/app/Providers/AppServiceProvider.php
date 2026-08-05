@@ -13,6 +13,7 @@ use Illuminate\Database\Console\Migrations\ResetCommand;
 use Illuminate\Database\Console\Migrations\RollbackCommand;
 use Illuminate\Database\Console\WipeCommand;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -32,6 +33,17 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         EnvironmentSafety::fromApplication()->assertRuntimeSafe();
+
+        // En el contenedor Docker de Render, cada llamada Http() de Laravel
+        // abre una conexion nueva (sin pool) y el intento IPv6 previo al
+        // fallback IPv4 puede tardar ~1.5 s por conexion. Forzar IPv4 y
+        // acotar timeouts evita que operaciones con varias llamadas a
+        // Firestore (guardar borrador ~6) tarden 10+ s.
+        Http::globalOptions([
+            'curl' => [CURLOPT_IPRESOLVE => CURL_IPRESOLVE_V4],
+            'connect_timeout' => 5,
+            'timeout' => 20,
+        ]);
 
         Model::preventLazyLoading(! app()->isProduction());
 
