@@ -4,9 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
+  faArrowLeft,
   faArrowRight,
   faCheck,
   faCheckCircle,
+  faChevronRight,
   faCircle,
   faCirclePlay,
   faClose,
@@ -119,7 +121,9 @@ export class CrearCuento implements OnInit {
   readonly faSpinner = faSpinner;
   readonly faShareNodes = faShareNodes;
   readonly faTrash = faTrash;
+  readonly faArrowLeft = faArrowLeft;
   readonly faArrowRight = faArrowRight;
+  readonly faChevronRight = faChevronRight;
   readonly faLightbulb = faLightbulb;
 
   readonly quillModules = {
