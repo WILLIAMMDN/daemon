@@ -17,7 +17,7 @@ import {
 } from '../comandos-cuento.gateway';
 
 interface RespuestaComando {
-  estado: 'en_revision' | 'eliminado';
+  estado: 'en_revision' | 'publicado' | 'eliminado';
   repetido?: boolean;
 }
 

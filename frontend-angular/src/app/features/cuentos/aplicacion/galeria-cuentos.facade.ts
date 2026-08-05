@@ -1,6 +1,5 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { ACTIVOS_CUENTO_REPOSITORIO } from '../acceso-datos/activos-cuento.repositorio';
-import { COMANDOS_CUENTO_GATEWAY } from '../acceso-datos/comandos-cuento.gateway';
 import { CUENTO_REPOSITORIO, CursorCuentos } from '../acceso-datos/cuento.repositorio';
 import { Cuento } from '../dominio/cuento.modelo';
 import { normalizarErrorCuento } from '../dominio/errores-cuento';
@@ -11,7 +10,6 @@ export class GaleriaCuentosFacade {
   private readonly repositorio = inject(CUENTO_REPOSITORIO);
   private readonly activos = inject(ACTIVOS_CUENTO_REPOSITORIO);
   private readonly eliminarCuento = inject(EliminarCuentoCasoUso);
-  private readonly comandos = inject(COMANDOS_CUENTO_GATEWAY);
 
   readonly cuentos = signal<readonly Cuento[]>([]);
   readonly propios = signal<readonly Cuento[]>([]);
@@ -39,7 +37,13 @@ export class GaleriaCuentosFacade {
       propios.forEach((cuento) => porId.set(cuento.id, cuento));
       this.cuentos.set([...porId.values()]);
       this.propios.set(propios);
-      void this.cargarReaccionesPropias(propios);
+      // Los contadores de reacciones viajan en cada documento (stats), así
+      // que no se hacen llamadas extra por cuento: la galería es una sola
+      // lectura de Firestore.
+      this.reaccionesPropiasTotal.set([...porId.values()].reduce(
+        (total, cuento) => total + (cuento.estadisticas.reacciones ?? 0),
+        0,
+      ));
       this.cursor.set(galeria.siguienteCursor);
       this.datosConservados.set(false);
     } catch (error) {
@@ -96,14 +100,5 @@ export class GaleriaCuentosFacade {
 
   resolverActivo(referencia: string | null): string {
     return this.activos.resolverUrl(referencia);
-  }
-
-  private async cargarReaccionesPropias(cuentos: readonly Cuento[]): Promise<void> {
-    const publicados = cuentos.filter((cuento) => cuento.estado === 'publicado');
-    const resultados = await Promise.allSettled(
-      publicados.map((cuento) => this.comandos.obtenerEstadisticas(cuento.id)),
-    );
-    this.reaccionesPropiasTotal.set(resultados.reduce((total, resultado) =>
-      resultado.status === 'fulfilled' ? total + resultado.value.reacciones.total : total, 0));
   }
 }

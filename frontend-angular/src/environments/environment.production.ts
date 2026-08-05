@@ -35,7 +35,10 @@ export const environment = {
     firestorePort: 0,
   },
   pusher: {
-    enabled: true,
+    // Desactivado: el auth del canal requiere sesión web de Laravel (403 en
+    // el cliente con Sanctum). Las notificaciones en tiempo real se
+    // reactivarán cuando exista un canal autorizado para el frontend.
+    enabled: false,
     key: '921d28612ceab3864425',
     cluster: 'sa1',
   },

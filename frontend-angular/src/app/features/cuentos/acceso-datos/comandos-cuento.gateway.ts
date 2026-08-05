@@ -3,7 +3,7 @@ import { ComentarioCuento } from '../dominio/comentario-cuento.modelo';
 import { TipoReaccionCuento } from '../dominio/reaccion-cuento.modelo';
 
 export interface ResultadoComandoCuento {
-  readonly estado: 'en_revision' | 'eliminado';
+  readonly estado: 'en_revision' | 'publicado' | 'eliminado';
   readonly repetido: boolean;
 }
 

@@ -392,7 +392,7 @@ export class EditorCuentoFacade {
     try {
       await this.publicarCuento.ejecutar(this.requerirCuentoId());
       this.tieneCambiosSinGuardar.set(false);
-      this.estadoPersistencia.set({ tipo: 'guardado', texto: 'Enviado a revisión' });
+      this.estadoPersistencia.set({ tipo: 'guardado', texto: 'Publicado en la galería' });
       return true;
     } catch (error) {
       this.establecerError(normalizarErrorCuento(error));

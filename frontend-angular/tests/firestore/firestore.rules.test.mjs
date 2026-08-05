@@ -314,11 +314,11 @@ after(async () => {
   await testEnv.cleanup();
 });
 
-test('usuario no autenticado no puede leer ni crear cuentos', async () => {
+test('usuario no autenticado lee la galería pública pero no crea cuentos', async () => {
   await seedPublished();
   const anonymousDb = testEnv.unauthenticatedContext().firestore();
 
-  await assertFails(getDoc(doc(anonymousDb, 'cuentos/published-story')));
+  await assertSucceeds(getDoc(doc(anonymousDb, 'cuentos/published-story')));
   await assertFails(setDoc(doc(anonymousDb, 'cuentos/new-story'), draftStoryPayload()));
 });
 
@@ -351,12 +351,14 @@ test('creación rechaza campos extra, privilegios y authorUid alternativo', asyn
   );
 });
 
-test('creación rechaza autor UID, audiencia, estado y visibilidad manipulados', async () => {
+test('creación rechaza autor UID, audiencia inválida, estado y visibilidad manipulados', async () => {
   const db = ownerDb();
 
   await assertFails(setDoc(doc(db, 'cuentos/wrong-owner'), draftStoryPayload(OTHER_UID)));
+  // La audiencia del token es refuerzo opcional (el custom token del login
+  // local solo transporta el UID), pero el enum debe ser válido.
   await assertFails(
-    setDoc(doc(db, 'cuentos/wrong-audience'), draftStoryPayload(OWNER_UID, { audiencia: 'TEENS' })),
+    setDoc(doc(db, 'cuentos/wrong-audience'), draftStoryPayload(OWNER_UID, { audiencia: 'ADULTOS' })),
   );
   await assertFails(
     setDoc(doc(db, 'cuentos/published'), draftStoryPayload(OWNER_UID, { estado: 'publicado' })),
@@ -390,15 +392,21 @@ test('creación rechaza tipos, enums, longitudes y timestamps no confiables', as
   );
 });
 
-test('docente y administrador no crean borradores en nombre de estudiantes', async () => {
-  await assertFails(
+test('cualquier usuario autenticado crea su propio borrador; nadie en nombre de otro', async () => {
+  // El custom token del login local solo transporta el UID, así que la
+  // autoridad es el ownership: cada usuario crea su borrador y jamás uno
+  // de otro autor.
+  await assertSucceeds(
     setDoc(
       doc(dbFor(TEACHER_UID, teacherClaims), 'cuentos/teacher-story'),
       draftStoryPayload(TEACHER_UID),
     ),
   );
-  await assertFails(
+  await assertSucceeds(
     setDoc(doc(dbFor(ADMIN_UID, adminClaims), 'cuentos/admin-story'), draftStoryPayload(ADMIN_UID)),
+  );
+  await assertFails(
+    setDoc(doc(dbFor(TEACHER_UID, teacherClaims), 'cuentos/forged'), draftStoryPayload(OTHER_UID)),
   );
 });
 
@@ -411,11 +419,13 @@ test('propietario lee su borrador y otro estudiante, docente y admin no', async 
   await assertFails(getDoc(doc(dbFor(ADMIN_UID, adminClaims), 'cuentos/draft-story')));
 });
 
-test('cuenta con claims ausentes u obsoletos no lee contenido publicado', async () => {
+test('cuenta con claims ausentes u obsoletos lee contenido comunitario pero no de aula', async () => {
   await seedPublished();
   const staleDb = dbFor('stale-user', { daemon: true, daemonRole: 'estudiante' });
 
-  await assertFails(getDoc(doc(staleDb, 'cuentos/published-story')));
+  await assertSucceeds(getDoc(doc(staleDb, 'cuentos/published-story')));
+  await seedPublished('classroom-story', { visibilidad: 'aula', aula_id: 'class-a' });
+  await assertFails(getDoc(doc(staleDb, 'cuentos/classroom-story')));
 });
 
 test('estudiante, docente y administrador leen cuento comunitario publicado y aprobado', async () => {
@@ -583,15 +593,43 @@ test('página rechaza edición ajena, orden fuera de rango y contenido excesivo'
   await assertFails(deleteDoc(doc(otherDb(), ownerRef.path)));
 });
 
-test('comentarios directos válidos, vacíos y excesivos son server-only', async () => {
+test('estudiante comenta, edita y oculta su comentario en cuento publicado', async () => {
   await seedPublished();
-  const comments = collection(otherDb(), 'cuentos/published-story/comentarios');
+  const db = otherDb();
+  const comments = collection(db, 'cuentos/published-story/comentarios');
 
-  await assertFails(setDoc(doc(comments, 'valid'), storedComment()));
-  await assertFails(setDoc(doc(comments, 'empty'), storedComment({ cuerpo: '' })));
-  await assertFails(setDoc(doc(comments, 'long'), storedComment({ cuerpo: 'x'.repeat(1001) })));
+  await assertSucceeds(setDoc(doc(comments, 'valid'), storedComment({
+    created_at: serverTimestamp(),
+    updated_at: serverTimestamp(),
+  })));
+  await assertFails(setDoc(doc(comments, 'empty'), storedComment({
+    cuerpo: '',
+    created_at: serverTimestamp(),
+    updated_at: serverTimestamp(),
+  })));
+  await assertFails(setDoc(doc(comments, 'long'), storedComment({
+    cuerpo: 'x'.repeat(1001),
+    created_at: serverTimestamp(),
+    updated_at: serverTimestamp(),
+  })));
+  await assertFails(setDoc(doc(comments, 'forged'), storedComment({
+    autor_uid: OWNER_UID,
+    created_at: serverTimestamp(),
+    updated_at: serverTimestamp(),
+  })));
   await seedDocument('cuentos/published-story/comentarios/existing', storedComment());
-  await assertFails(updateDoc(doc(comments, 'existing'), { cuerpo: 'Edición directa' }));
+  await assertSucceeds(
+    updateDoc(doc(comments, 'existing'), { cuerpo: 'Edición directa', updated_at: serverTimestamp() }),
+  );
+  await assertFails(
+    updateDoc(doc(ownerDb(), 'cuentos/published-story/comentarios/existing'), {
+      cuerpo: 'Intrusión',
+      updated_at: serverTimestamp(),
+    }),
+  );
+  await assertSucceeds(
+    updateDoc(doc(comments, 'existing'), { estado: 'eliminado', updated_at: serverTimestamp() }),
+  );
   await assertFails(deleteDoc(doc(comments, 'existing')));
 });
 
@@ -626,61 +664,163 @@ test('bloqueo de comentarios en el cuento impide su lectura directa', async () =
   await assertFails(getDoc(doc(otherDb(), 'cuentos/blocked-comments/comentarios/visible')));
 });
 
-test('reacciones se procesan solo por Laravel y no exponen UIDs al cliente', async () => {
+test('estudiante reacciona, cambia y retira su reacción en cuento publicado', async () => {
   await seedPublished();
   const db = otherDb();
-  const reactionRef = doc(db, `cuentos/published-story/reacciones/${OTHER_UID}`);
+  const reactionRef = doc(db, `cuentos/published-story/reacciones/published-story_${OTHER_UID}`);
 
-  await assertFails(setDoc(reactionRef, reactionPayload(OTHER_UID)));
-  await seedDocument(`cuentos/published-story/reacciones/${OTHER_UID}`, {
-    ...reactionPayload(OTHER_UID),
-    created_at: Timestamp.now(),
-    updated_at: Timestamp.now(),
-  });
-  await assertFails(getDoc(reactionRef));
-  await assertFails(
-    setDoc(reactionRef, { tipo: 'gusto', updated_at: serverTimestamp() }, { merge: true }),
+  await assertSucceeds(setDoc(reactionRef, reactionPayload(OTHER_UID)));
+  await assertSucceeds(getDoc(reactionRef));
+  await assertSucceeds(
+    updateDoc(reactionRef, { tipo: 'gusto', updated_at: serverTimestamp() }),
   );
-  await assertFails(
+  await assertSucceeds(
     getDocs(query(collection(db, 'cuentos/published-story/reacciones'), limit(100))),
   );
+  await assertSucceeds(deleteDoc(reactionRef));
 });
 
 test('reacción rechaza tipo, campos extra, UID de datos y doc ID ajenos', async () => {
   await seedPublished();
   const db = otherDb();
+  const propio = `published-story_${OTHER_UID}`;
 
   await assertFails(
     setDoc(
-      doc(db, `cuentos/published-story/reacciones/${OTHER_UID}`),
+      doc(db, `cuentos/published-story/reacciones/${propio}`),
       reactionPayload(OTHER_UID, 'me_enfada'),
     ),
   );
   await assertFails(
-    setDoc(doc(db, `cuentos/published-story/reacciones/${OTHER_UID}`), reactionPayload(OWNER_UID)),
+    setDoc(doc(db, `cuentos/published-story/reacciones/${propio}`), reactionPayload(OWNER_UID)),
   );
   await assertFails(
-    setDoc(doc(db, `cuentos/published-story/reacciones/${OWNER_UID}`), reactionPayload(OTHER_UID)),
+    setDoc(doc(db, `cuentos/published-story/reacciones/${OTHER_UID}`), reactionPayload(OTHER_UID)),
   );
   await assertFails(
     setDoc(
-      doc(db, `cuentos/published-story/reacciones/${OTHER_UID}`),
+      doc(db, `cuentos/published-story/reacciones/${propio}`),
       reactionPayload(OTHER_UID, 'encanto', { reacciones_count: 999 }),
     ),
   );
 });
 
-test('eliminación de reacción propia o ajena está reservada al servidor', async () => {
+test('autor elimina solo su propia reacción, nunca la ajena', async () => {
   await seedPublished();
-  await seedDocument(`cuentos/published-story/reacciones/${OTHER_UID}`, {
+  const ajena = `published-story_${OTHER_UID}`;
+  await seedDocument(`cuentos/published-story/reacciones/${ajena}`, {
     ...reactionPayload(OTHER_UID),
     created_at: Timestamp.now(),
     updated_at: Timestamp.now(),
   });
 
-  await assertFails(deleteDoc(doc(ownerDb(), `cuentos/published-story/reacciones/${OTHER_UID}`)));
+  await assertFails(deleteDoc(doc(ownerDb(), `cuentos/published-story/reacciones/${ajena}`)));
   await assertFails(
     deleteDoc(doc(otherDb(), `cuentos/published-story/reacciones/${OTHER_UID}`)),
+  );
+  await assertSucceeds(deleteDoc(doc(otherDb(), `cuentos/published-story/reacciones/${ajena}`)));
+});
+
+test('autor publica su borrador directo con snapshot válido de la versión', async () => {
+  await seedDraft();
+  await seedDocument('cuentos/draft-story/versiones/draft-v1', storedVersion());
+  const ref = doc(ownerDb(), 'cuentos/draft-story');
+  const ahora = serverTimestamp();
+
+  await assertSucceeds(updateDoc(ref, {
+    estado: 'publicado',
+    visibilidad: 'comunidad',
+    moderacion_estado: 'aprobado',
+    version_publicada_id: 'draft-v1',
+    titulo_publicado: 'Borrador',
+    sinopsis_publicada: '',
+    categoria_publicada: 'aventura',
+    rango_edad_publicado: '9 - 12 años',
+    paginas_publicadas: 1,
+    palabras_publicadas: 2,
+    portada_ref: null,
+    autor_perfil: { nombre: 'Estudiante', avatar_ref: null },
+    comentarios_bloqueados: false,
+    submitted_at: ahora,
+    published_at: ahora,
+    updated_at: ahora,
+  }));
+  await assertSucceeds(getDoc(doc(otherDb(), 'cuentos/draft-story')));
+});
+
+test('publicación rechaza snapshot distinto a la versión y autor ajeno', async () => {
+  await seedDraft();
+  await seedDocument('cuentos/draft-story/versiones/draft-v1', storedVersion());
+  const base = {
+    estado: 'publicado',
+    visibilidad: 'comunidad',
+    moderacion_estado: 'aprobado',
+    version_publicada_id: 'draft-v1',
+    sinopsis_publicada: '',
+    categoria_publicada: 'aventura',
+    rango_edad_publicado: '9 - 12 años',
+    paginas_publicadas: 1,
+    palabras_publicadas: 2,
+    portada_ref: null,
+    autor_perfil: { nombre: 'Estudiante', avatar_ref: null },
+    comentarios_bloqueados: false,
+    submitted_at: serverTimestamp(),
+    published_at: serverTimestamp(),
+    updated_at: serverTimestamp(),
+  };
+
+  await assertFails(updateDoc(doc(ownerDb(), 'cuentos/draft-story'), { ...base, titulo_publicado: 'Título falso' }));
+  await assertFails(updateDoc(doc(otherDb(), 'cuentos/draft-story'), { ...base, titulo_publicado: 'Borrador' }));
+});
+
+test('autor elimina (soft) su cuento y deja de ser legible incluso para él', async () => {
+  await seedDraft();
+  const ref = doc(ownerDb(), 'cuentos/draft-story');
+
+  await assertSucceeds(updateDoc(ref, {
+    estado: 'eliminado',
+    deleted_at: serverTimestamp(),
+    updated_at: serverTimestamp(),
+  }));
+  await assertFails(getDoc(doc(ownerDb(), 'cuentos/draft-story')));
+});
+
+test('estadísticas se actualizan solo en cuentos publicados y solo en stats', async () => {
+  await seedPublished();
+  await assertSucceeds(updateDoc(doc(otherDb(), 'cuentos/published-story'), {
+    stats: { comentarios: 2, reacciones: 1, lecturas: 0 },
+    updated_at: serverTimestamp(),
+  }));
+  await assertFails(updateDoc(doc(otherDb(), 'cuentos/published-story'), {
+    stats: { reacciones: 999 },
+    titulo_publicado: 'Hackeo',
+    updated_at: serverTimestamp(),
+  }));
+
+  await seedDraft();
+  await assertFails(updateDoc(doc(otherDb(), 'cuentos/draft-story'), {
+    stats: { comentarios: 5, reacciones: 0, lecturas: 0 },
+    updated_at: serverTimestamp(),
+  }));
+});
+
+test('autor edita la versión de un cuento publicado propio', async () => {
+  await seedPublished();
+  const versionRef = doc(ownerDb(), 'cuentos/published-story/versiones/published-v1');
+
+  await assertSucceeds(
+    updateDoc(versionRef, {
+      titulo: 'Edición posterior',
+      revision: 1,
+      updated_at: serverTimestamp(),
+    }),
+  );
+  await assertFails(
+    updateDoc(doc(otherDb(), 'cuentos/published-story/versiones/published-v1'), {
+      titulo: 'Intrusión',
+      revision: 1,
+      updated_at: serverTimestamp(),
+    }),
   );
 });
 

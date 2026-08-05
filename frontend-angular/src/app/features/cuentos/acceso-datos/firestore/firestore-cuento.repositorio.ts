@@ -155,7 +155,12 @@ export class FirestoreCuentoRepositorio implements CuentoRepositorio {
         if (cuento.autor_uid !== uid || version.autor_uid !== uid) {
           throw new ErrorCuento('NO_AUTORIZADO', 'Este borrador pertenece a otra cuenta.', false);
         }
-        if (cuento.estado !== 'borrador' || cuento.version_borrador_id !== datos.versionId) {
+        // El autor edita su borrador, y también la versión de un cuento
+        // publicado propio (borrador y publicada coinciden tras publicar).
+        const versionCoincide = cuento.estado === 'borrador'
+          ? cuento.version_borrador_id === datos.versionId
+          : cuento.estado === 'publicado' && cuento.version_publicada_id === datos.versionId;
+        if (!versionCoincide) {
           throw new ErrorCuento('NO_AUTORIZADO', 'La versión ya no admite edición.', false);
         }
         if (version.revision !== datos.revisionEsperada) {
@@ -319,7 +324,14 @@ export class FirestoreCuentoRepositorio implements CuentoRepositorio {
           : null,
       };
     } catch (error) {
-      throw normalizarErrorCuento(error);
+      // Un cuento con comentarios bloqueados (borrador propio, o moderado)
+      // no admite lista directa: se muestra como "sin comentarios" en vez
+      // de un error. Los errores reales (red, esquema) sí se propagan.
+      const normalizado = normalizarErrorCuento(error);
+      if (normalizado.codigo === 'NO_AUTORIZADO') {
+        return { elementos: [], siguienteCursor: null };
+      }
+      throw normalizado;
     }
   }
 

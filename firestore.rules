@@ -51,7 +51,7 @@ service cloud.firestore {
         && datos.moderacion_estado == 'aprobado'
         && datos.version_publicada_id is string
         && datos.version_publicada_id.size() > 0
-        && datos.deleted_at == null
+        && datos.get('deleted_at', null) == null
         && (
           datos.visibilidad == 'comunidad'
           || (
@@ -187,7 +187,11 @@ service cloud.firestore {
     }
 
     function creacionCuentoClienteValida(datos) {
-      return esEstudianteDaemon()
+      // Cualquier usuario autenticado puede crear un borrador propio. La
+      // autoridad real es el ownership (autor_uid == request.auth.uid); los
+      // claims daemon son refuerzo opcional y el custom token del login
+      // local solo transporta el UID (ADR-003).
+      return estaAutenticado()
         && datos.keys().hasAll([
           'schema_version',
           'autor_uid',
@@ -214,7 +218,6 @@ service cloud.firestore {
         ])
         && cuentoValido(datos)
         && datos.autor_uid == request.auth.uid
-        && datos.audiencia == request.auth.token.daemonAudience
         && datos.estado == 'borrador'
         && datos.visibilidad == 'privado'
         && datos.moderacion_estado == 'no_solicitada'
@@ -225,12 +228,149 @@ service cloud.firestore {
     }
 
     function puedeEditarRaizBorrador() {
-      return esEstudianteDaemon()
+      // El editor solo toca updated_at en la raíz. Se permite también sobre
+      // cuentos publicados propios: el borrador sigue siendo la versión
+      // publicada mientras no se cree una nueva, igual que antes del refactor.
+      // El diff restringido a updated_at (sobre un borrador validado al
+      // crear) garantiza la validez sin reevaluar el esquema completo, y
+      // mantiene el presupuesto de 1000 expresiones por request.
+      return estaAutenticado()
         && esPropietario(resource.data)
-        && resource.data.estado == 'borrador'
-        && cuentoValido(request.resource.data)
+        && resource.data.schema_version == 2
+        && resource.data.estado in ['borrador', 'publicado']
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['updated_at'])
         && request.resource.data.updated_at == request.time;
+    }
+
+    function versionCoincideConSnapshot(cuentoId, versionId, despues) {
+      let version = get(/databases/$(database)/documents/cuentos/$(cuentoId)/versiones/$(versionId)).data;
+      return version.schema_version == 2
+        && version.autor_uid == request.auth.uid
+        && version.estado == 'borrador'
+        && despues.titulo_publicado == version.titulo
+        && despues.sinopsis_publicada == version.sinopsis
+        && despues.categoria_publicada == version.categoria
+        && despues.rango_edad_publicado == version.rango_edad
+        && despues.paginas_publicadas == version.paginas
+        && despues.palabras_publicadas == version.palabras
+        && despues.portada_ref == version.portada_ref;
+    }
+
+    function autorPerfilValido(perfil) {
+      return perfil == null || (
+        perfil is map
+        && perfil.keys().hasOnly(['nombre', 'avatar_ref'])
+        && textoValido(perfil.nombre, 80)
+        && referenciaValida(perfil.get('avatar_ref', null))
+      );
+    }
+
+    function cuentoPublicadoValido(despues) {
+      // Validación liviana de la raíz publicada: los campos restantes ya
+      // fueron validados al crear el borrador y el diff limita qué cambia.
+      return despues.schema_version == 2
+        && uidValido(despues.autor_uid)
+        && despues.audiencia in ['KIDS', 'TEENS']
+        && despues.estado == 'publicado'
+        && despues.visibilidad == 'comunidad'
+        && despues.moderacion_estado == 'aprobado'
+        && textoValido(despues.version_publicada_id, 128)
+        && textoValido(despues.version_borrador_id, 128)
+        && (despues.get('aula_id', null) == null || textoValido(despues.aula_id, 128))
+        && textoValido(despues.titulo_publicado, 120)
+        && textoValido(despues.sinopsis_publicada, 500)
+        && textoValido(despues.categoria_publicada, 50)
+        && textoValido(despues.rango_edad_publicado, 30)
+        && despues.paginas_publicadas is int
+        && despues.paginas_publicadas >= 1
+        && despues.paginas_publicadas <= 100
+        && despues.palabras_publicadas is int
+        && despues.palabras_publicadas >= 0
+        && referenciaValida(despues.get('portada_ref', null))
+        && autorPerfilValido(despues.get('autor_perfil', null))
+        && despues.comentarios_bloqueados is bool
+        && despues.created_at is timestamp
+        && (despues.get('stats', null) == null || estadisticasValidas(despues))
+        && despues.get('deleted_at', null) == null
+        && despues.updated_at == request.time;
+    }
+
+    function puedeActualizarCuentoPublicacion(cuentoId) {
+      // Publicación directa del autor (borrador -> publicado, o re-publicación
+      // tras editar) con aprobación automática: la moderación manual se
+      // activará cuando exista un flujo de revisión. La raíz copia los campos
+      // de la versión, que queda como versión publicada.
+      let antes = resource.data;
+      let despues = request.resource.data;
+      return estaAutenticado()
+        && esPropietario(antes)
+        && antes.schema_version == 2
+        && despues.estado == 'publicado'
+        && despues.moderacion_estado == 'aprobado'
+        && despues.visibilidad == 'comunidad'
+        && (
+          (antes.estado == 'borrador' && despues.version_publicada_id == antes.version_borrador_id)
+          || (antes.estado == 'publicado' && despues.version_publicada_id == antes.version_publicada_id)
+        )
+        && despues.diff(antes).affectedKeys().hasOnly([
+          'estado', 'visibilidad', 'moderacion_estado', 'version_publicada_id',
+          'autor_perfil', 'titulo_publicado', 'sinopsis_publicada',
+          'categoria_publicada', 'rango_edad_publicado', 'paginas_publicadas',
+          'palabras_publicadas', 'portada_ref', 'comentarios_bloqueados',
+          'submitted_at', 'published_at', 'updated_at'
+        ])
+        && despues.submitted_at == request.time
+        && despues.published_at == request.time
+        && versionCoincideConSnapshot(cuentoId, despues.version_publicada_id, despues)
+        && cuentoPublicadoValido(despues);
+    }
+
+    function puedeEliminarCuento() {
+      let antes = resource.data;
+      let despues = request.resource.data;
+      return estaAutenticado()
+        && esPropietario(antes)
+        && antes.schema_version == 2
+        && antes.estado in ['borrador', 'en_revision', 'publicado', 'rechazado', 'archivado']
+        && despues.estado == 'eliminado'
+        && despues.diff(antes).affectedKeys().hasOnly(['estado', 'deleted_at', 'updated_at'])
+        && despues.deleted_at == request.time
+        && despues.updated_at == request.time;
+    }
+
+    function puedeActualizarEstadisticas() {
+      // Los contadores de interacción se mantienen con transacciones desde
+      // el cliente (comentar/reaccionar). Solo se permite tocar `stats` y
+      // `updated_at` sobre cuentos publicados y aprobados.
+      return estaAutenticado()
+        && resource.data.schema_version == 2
+        && resource.data.estado == 'publicado'
+        && resource.data.moderacion_estado == 'aprobado'
+        && resource.data.get('deleted_at', null) == null
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['stats', 'updated_at'])
+        && estadisticasValidas(request.resource.data)
+        && request.resource.data.updated_at == request.time;
+    }
+
+    function puedeComentarEn(cuentoId) {
+      let cuento = datosCuento(cuentoId);
+      return estaAutenticado()
+        && cuento.schema_version == 2
+        && cuento.estado == 'publicado'
+        && cuento.moderacion_estado == 'aprobado'
+        && cuento.get('deleted_at', null) == null
+        && cuento.comentarios_bloqueados == false;
+    }
+
+    function puedeEscribirReaccion(cuentoId, reaccionId) {
+      // Una reacción por usuario: el ID determinista es `{cuentoId}_{uid}`.
+      let cuento = datosCuento(cuentoId);
+      return estaAutenticado()
+        && reaccionId == cuentoId + '_' + request.auth.uid
+        && cuento.schema_version == 2
+        && cuento.estado == 'publicado'
+        && cuento.moderacion_estado == 'aprobado'
+        && cuento.get('deleted_at', null) == null;
     }
 
     function datosCuento(cuentoId) {
@@ -242,12 +382,18 @@ service cloud.firestore {
     }
 
     function puedeEditarVersion(cuentoId, versionId) {
+      // El autor edita su versión de borrador, y también la versión de un
+      // cuento publicado propio (la borrador y la publicada coinciden hasta
+      // que exista un flujo de nueva versión).
       let cuento = datosCuentoDespues(cuentoId);
-      return esEstudianteDaemon()
+      return estaAutenticado()
         && cuento.schema_version == 2
         && esPropietario(cuento)
-        && cuento.estado == 'borrador'
-        && cuento.version_borrador_id == versionId;
+        && cuento.estado in ['borrador', 'publicado']
+        && (
+          (cuento.estado == 'borrador' && cuento.version_borrador_id == versionId)
+          || (cuento.estado == 'publicado' && cuento.version_publicada_id == versionId)
+        );
     }
 
     function puedeLeerVersion(cuentoId, versionId) {
@@ -395,7 +541,10 @@ service cloud.firestore {
       allow get: if puedeLeerCuento(resource.data);
       allow list: if consultaAcotada(50) && puedeListarCuento(resource.data);
       allow create: if creacionCuentoClienteValida(request.resource.data);
-      allow update: if puedeEditarRaizBorrador();
+      allow update: if puedeEditarRaizBorrador()
+        || puedeActualizarCuentoPublicacion(cuentoId)
+        || puedeEliminarCuento()
+        || puedeActualizarEstadisticas();
       allow delete: if false;
 
       match /versiones/{versionId} {
@@ -448,13 +597,43 @@ service cloud.firestore {
           && resource.data.schema_version == 2
           && resource.data.estado == 'visible'
           && puedeLeerComentarios(cuentoId);
-        allow create, update, delete: if false;
+        allow create: if puedeComentarEn(cuentoId)
+          && comentarioVisibleValido(request.resource.data)
+          && request.resource.data.autor_uid == request.auth.uid
+          && request.resource.data.created_at == request.time
+          && request.resource.data.updated_at == request.time;
+        allow update: if puedeComentarEn(cuentoId)
+          && resource.data.autor_uid == request.auth.uid
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['cuerpo', 'estado', 'updated_at'])
+          && request.resource.data.cuerpo is string
+          && request.resource.data.cuerpo.size() > 0
+          && request.resource.data.cuerpo.size() <= 1000
+          && request.resource.data.estado in ['visible', 'eliminado', 'oculto']
+          && request.resource.data.updated_at == request.time;
+        allow delete: if false;
       }
 
       match /reacciones/{reaccionId} {
-        // Laravel usa IDs deterministas y aggregate queries. El cliente no
-        // puede exponer UIDs ni mantener contadores manipulables.
-        allow read, write: if false;
+        // Una reacción por usuario con ID determinista `{cuentoId}_{uid}`.
+        // Los contadores de la raíz se mantienen con transacciones.
+        allow get: if estaAutenticado() && puedeLeerPublicado(datosCuento(cuentoId));
+        allow list: if consultaAcotada(100)
+          && estaAutenticado()
+          && puedeLeerPublicado(datosCuento(cuentoId));
+        allow create: if puedeEscribirReaccion(cuentoId, reaccionId)
+          && request.resource.data.keys().hasOnly(['schema_version', 'usuario_uid', 'tipo', 'created_at', 'updated_at'])
+          && request.resource.data.schema_version == 2
+          && request.resource.data.usuario_uid == request.auth.uid
+          && request.resource.data.tipo in ['encanto', 'increible', 'gusto', 'sorprendio', 'interesante']
+          && request.resource.data.created_at == request.time
+          && request.resource.data.updated_at == request.time;
+        allow update: if puedeEscribirReaccion(cuentoId, reaccionId)
+          && resource.data.usuario_uid == request.auth.uid
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['tipo', 'updated_at'])
+          && request.resource.data.tipo in ['encanto', 'increible', 'gusto', 'sorprendio', 'interesante']
+          && request.resource.data.updated_at == request.time;
+        allow delete: if puedeEscribirReaccion(cuentoId, reaccionId)
+          && resource.data.usuario_uid == request.auth.uid;
       }
     }
 

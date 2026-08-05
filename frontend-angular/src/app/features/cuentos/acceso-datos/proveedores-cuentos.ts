@@ -10,14 +10,14 @@ import { ACTIVOS_CUENTO_REPOSITORIO } from './activos-cuento.repositorio';
 import { ASISTENTE_CUENTO_GATEWAY } from './asistente-cuento.gateway';
 import { COMANDOS_CUENTO_GATEWAY } from './comandos-cuento.gateway';
 import { CUENTO_REPOSITORIO } from './cuento.repositorio';
-import { ApiCuentoRepositorio } from './api/api-cuento.repositorio';
-import { ApiComandosCuentoAdapter } from './http/api-comandos-cuento.adapter';
+import { FirestoreCuentoRepositorio } from './firestore/firestore-cuento.repositorio';
+import { FirestoreComandosCuentoGateway } from './firestore/firestore-comandos-cuento.gateway';
 import { CuentosIaAdapter } from './http/cuentos-ia.adapter';
 import { SupabaseActivosCuentoAdapter } from './storage/supabase-activos-cuento.adapter';
 
 export const PROVEEDORES_CUENTOS: readonly Provider[] = [
-  ApiCuentoRepositorio,
-  ApiComandosCuentoAdapter,
+  FirestoreCuentoRepositorio,
+  FirestoreComandosCuentoGateway,
   CuentosIaAdapter,
   SupabaseActivosCuentoAdapter,
   ActualizarBorradorCasoUso,
@@ -27,8 +27,8 @@ export const PROVEEDORES_CUENTOS: readonly Provider[] = [
   EliminarCuentoCasoUso,
   PublicarCuentoCasoUso,
   ReaccionarCuentoCasoUso,
-  { provide: CUENTO_REPOSITORIO, useExisting: ApiCuentoRepositorio },
+  { provide: CUENTO_REPOSITORIO, useExisting: FirestoreCuentoRepositorio },
   { provide: ACTIVOS_CUENTO_REPOSITORIO, useExisting: SupabaseActivosCuentoAdapter },
-  { provide: COMANDOS_CUENTO_GATEWAY, useExisting: ApiComandosCuentoAdapter },
+  { provide: COMANDOS_CUENTO_GATEWAY, useExisting: FirestoreComandosCuentoGateway },
   { provide: ASISTENTE_CUENTO_GATEWAY, useExisting: CuentosIaAdapter },
 ];
