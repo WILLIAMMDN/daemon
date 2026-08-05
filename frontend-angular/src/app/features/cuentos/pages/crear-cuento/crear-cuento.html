@@ -208,100 +208,182 @@
           </div>
         </div>
 
+        <!-- ───── TOOLBAR DE FORMATO (fuera del libro, a ancho completo) ───── -->
+        <div id="cuento-toolbar" class="crear-toolbar" role="toolbar" aria-label="Herramientas de formato">
+          <span class="ql-formats">
+            <button type="button" class="ql-undo" title="Deshacer" aria-label="Deshacer"><fa-icon [icon]="faUndo"></fa-icon></button>
+            <button type="button" class="ql-redo" title="Rehacer" aria-label="Rehacer"><fa-icon [icon]="faRedo"></fa-icon></button>
+          </span>
+
+          <span class="ql-formats">
+            <select class="ql-header" aria-label="Estilo de texto">
+              <option value="">Texto</option>
+              <option value="1">Título 1</option>
+              <option value="2">Título 2</option>
+              <option value="3">Título 3</option>
+            </select>
+          </span>
+
+          <span class="ql-formats">
+            <button type="button" class="ql-bold" title="Negrita" aria-label="Negrita"><fa-icon [icon]="faBold"></fa-icon></button>
+            <button type="button" class="ql-italic" title="Cursiva" aria-label="Cursiva"><fa-icon [icon]="faItalic"></fa-icon></button>
+            <button type="button" class="ql-underline" title="Subrayado" aria-label="Subrayado"><fa-icon [icon]="faUnderline"></fa-icon></button>
+          </span>
+
+          <span class="ql-formats">
+            <!-- Quill llena la paleta de colores automáticamente cuando
+                 el select está vacío (no usar hex literales: el linter
+                 de tokens los bloquea). -->
+            <select class="ql-color" title="Color de texto" aria-label="Color de texto"></select>
+            <select class="ql-background" title="Color de fondo" aria-label="Color de fondo"></select>
+          </span>
+
+          <span class="ql-formats">
+            <select class="ql-align" title="Alineación" aria-label="Alineación">
+              <option value=""></option>
+              <option value="center"></option>
+              <option value="right"></option>
+              <option value="justify"></option>
+            </select>
+          </span>
+
+          <span class="ql-formats">
+            <button type="button" class="ql-list" value="ordered" title="Lista numerada" aria-label="Lista numerada"><fa-icon [icon]="faListOl"></fa-icon></button>
+            <button type="button" class="ql-list" value="bullet" title="Lista con viñetas" aria-label="Lista con viñetas"><fa-icon [icon]="faListUl"></fa-icon></button>
+          </span>
+
+          <span class="ql-formats">
+            <button type="button" class="ql-blockquote" title="Cita" aria-label="Cita"><fa-icon [icon]="faQuoteLeft"></fa-icon></button>
+            <button type="button" class="ql-link" title="Enlace" aria-label="Enlace"><fa-icon [icon]="faLink"></fa-icon></button>
+            <button type="button" class="ql-image" title="Imagen" aria-label="Imagen"><fa-icon [icon]="faImage"></fa-icon></button>
+          </span>
+
+          <span class="ql-formats">
+            <button type="button" class="ql-clean" title="Limpiar formato" aria-label="Limpiar formato"><fa-icon [icon]="faEraser"></fa-icon></button>
+          </span>
+        </div>
+
         <!-- ───── LIBRO ABIERTO: página de ilustración + página de texto ─────
-             Diseño tipo StoryJumper: un libro de dos hojas con lomo central.
-             Izquierda = ilustración de la página. Derecha = texto. -->
-        <div
-          class="crear-libro"
-          [style.--daemon-hoja-fondo]="paginaActiva().fondoToken || 'var(--daemon-on-primary)'"
-        >
+             Diseño tipo StoryJumper: un libro de dos hojas con lomo central
+             descansando sobre una base morada, como un libro físico. -->
+        <div class="crear-libro">
+          <div class="crear-libro__tapete">
+            <div
+              class="crear-libro__hoja crear-libro__hoja--ilustracion"
+              [style.--daemon-hoja-fondo]="paginaActiva().fondoToken || 'var(--daemon-on-primary)'"
+            >
+              @if (ilustracionDisplayUrl(); as illust) {
+                <img [src]="illust" class="crear-libro__img" alt="Ilustración de esta página" />
 
-          <!-- ─── PÁGINA IZQUIERDA: ILUSTRACIÓN ─── -->
-          <div class="crear-libro__hoja crear-libro__hoja--ilustracion">
-            @if (ilustracionDisplayUrl(); as illust) {
-              <img [src]="illust" class="crear-libro__img" alt="Ilustración de esta página" />
+                @if (subiendoIlustracion()) {
+                  <div class="crear-libro__subiendo">
+                    <span class="crear-spinner crear-spinner--light"></span>
+                    <span>Subiendo…</span>
+                  </div>
+                } @else {
+                  <label
+                    class="crear-libro__overlay"
+                    [class.crear-libro__overlay--drag]="arrastrandoIlustracion()"
+                    (dragover)="onDragOverIlustracionB($event)"
+                    (dragleave)="onDragLeaveIlustracionB()"
+                    (drop)="onDropIlustracionB($event)"
+                    aria-label="Cambiar ilustración de esta página"
+                  >
+                    <input
+                      type="file"
+                      (change)="onSubirIlustracion($event)"
+                      accept="image/png,image/jpeg,image/webp,image/gif"
+                      class="crear-libro__file-input"
+                    />
+                    <span class="crear-libro__overlay-btn">
+                      <fa-icon [icon]="faUpload"></fa-icon> Cambiar
+                    </span>
+                  </label>
 
-              @if (subiendoIlustracion()) {
-                <div class="crear-libro__subiendo">
-                  <span class="crear-spinner crear-spinner--light"></span>
-                  <span>Subiendo…</span>
-                </div>
+                  <button
+                    type="button"
+                    class="crear-libro__quitar"
+                    (click)="quitarIlustracion()"
+                    aria-label="Quitar ilustración de esta página"
+                    title="Quitar ilustración"
+                  >
+                    <fa-icon [icon]="faTimes"></fa-icon>
+                  </button>
+                }
               } @else {
                 <label
-                  class="crear-libro__overlay"
-                  [class.crear-libro__overlay--drag]="arrastrandoIlustracion()"
+                  class="crear-libro__placeholder"
+                  [class.crear-libro__placeholder--drag]="arrastrandoIlustracion()"
                   (dragover)="onDragOverIlustracionB($event)"
                   (dragleave)="onDragLeaveIlustracionB()"
                   (drop)="onDropIlustracionB($event)"
-                  aria-label="Cambiar ilustración de esta página"
                 >
                   <input
                     type="file"
                     (change)="onSubirIlustracion($event)"
                     accept="image/png,image/jpeg,image/webp,image/gif"
                     class="crear-libro__file-input"
+                    aria-label="Subir ilustración para esta página"
+                    [disabled]="subiendoIlustracion()"
                   />
-                  <span class="crear-libro__overlay-btn">
-                    <fa-icon [icon]="faUpload"></fa-icon> Cambiar
+                  <div class="crear-libro__icono">
+                    <fa-icon [icon]="faImage"></fa-icon>
+                  </div>
+                  <span class="crear-libro__hint-titulo">
+                    {{ arrastrandoIlustracion() ? '¡Suéltala aquí!' : 'La ilustración de esta página' }}
+                  </span>
+                  <span class="crear-libro__hint-sub">
+                    {{ arrastrandoIlustracion() ? 'Se colocará en la página.' : 'Arrastra una imagen aquí o haz clic para subirla.' }}
                   </span>
                 </label>
-
-                <button
-                  type="button"
-                  class="crear-libro__quitar"
-                  (click)="quitarIlustracion()"
-                  aria-label="Quitar ilustración de esta página"
-                  title="Quitar ilustración"
-                >
-                  <fa-icon [icon]="faTimes"></fa-icon>
-                </button>
               }
-            } @else {
-              <label
-                class="crear-libro__placeholder"
-                [class.crear-libro__placeholder--drag]="arrastrandoIlustracion()"
-                (dragover)="onDragOverIlustracionB($event)"
-                (dragleave)="onDragLeaveIlustracionB()"
-                (drop)="onDropIlustracionB($event)"
-              >
-                <input
-                  type="file"
-                  (change)="onSubirIlustracion($event)"
-                  accept="image/png,image/jpeg,image/webp,image/gif"
-                  class="crear-libro__file-input"
-                  aria-label="Subir ilustración para esta página"
-                  [disabled]="subiendoIlustracion()"
-                />
-                <div class="crear-libro__icono">
-                  <fa-icon [icon]="faImage"></fa-icon>
-                </div>
-                <span class="crear-libro__hint-titulo">
-                  {{ arrastrandoIlustracion() ? '¡Suéltala aquí!' : 'La ilustración de esta página' }}
-                </span>
-                <span class="crear-libro__hint-sub">
-                  {{ arrastrandoIlustracion() ? 'Se colocará en la página.' : 'Arrastra una imagen aquí o haz clic para subirla.' }}
-                </span>
-              </label>
-            }
 
-            <span class="crear-libro__folio">{{ paginaActivaIndex() + 1 }}</span>
+              <!-- Acciones de la ilustración: subir o crear con IA -->
+              <div class="crear-libro__acciones">
+                <label class="crear-libro__accion">
+                  <input
+                    type="file"
+                    (change)="onSubirIlustracion($event)"
+                    accept="image/png,image/jpeg,image/webp,image/gif"
+                    class="crear-libro__file-input"
+                    [disabled]="subiendoIlustracion()"
+                  />
+                  <fa-icon [icon]="faUpload"></fa-icon>
+                  <span>Subir imagen</span>
+                </label>
+                <button type="button" class="crear-libro__accion crear-libro__accion--ia" (click)="generarIdeas()" [disabled]="cargandoIdea()">
+                  @if (cargandoIdea()) {
+                    <fa-icon [icon]="faSpinner" class="animate-spin"></fa-icon>
+                  } @else {
+                    <fa-icon [icon]="faWandMagicSparkles"></fa-icon>
+                  }
+                  <span>Crear con IA</span>
+                </button>
+              </div>
+
+              <span class="crear-libro__folio">{{ paginaActivaIndex() + 1 }}</span>
+            </div>
+
+            <!-- ─── LOMO DEL LIBRO ─── -->
+            <div class="crear-libro__lomo" aria-hidden="true"></div>
+
+            <!-- ─── PÁGINA DERECHA: TEXTO ─── -->
+            <div class="crear-libro__hoja crear-libro__hoja--texto">
+              <quill-editor
+                class="custom-quill-page"
+                [ngModel]="contenido()"
+                (ngModelChange)="onContentChange($event)"
+                (onEditorCreated)="onEditorCreated($event)"
+                [modules]="quillModules"
+                theme="snow"
+                placeholder="Escribe tu historia aquí..."
+              ></quill-editor>
+              <span class="crear-libro__folio">{{ paginaActivaIndex() + 1 }}</span>
+            </div>
           </div>
 
-          <!-- ─── LOMO DEL LIBRO ─── -->
-          <div class="crear-libro__lomo" aria-hidden="true"></div>
-
-          <!-- ─── PÁGINA DERECHA: TEXTO ─── -->
-          <div class="crear-libro__hoja crear-libro__hoja--texto">
-            <quill-editor
-              class="custom-quill-page"
-              [ngModel]="contenido()"
-              (ngModelChange)="onContentChange($event)"
-              (onEditorCreated)="onEditorCreated($event)"
-              [modules]="quillModules"
-              theme="snow"
-              placeholder="Escribe tu historia aquí..."
-            ></quill-editor>
-          </div>
+          <!-- Base del libro: sombra morada inferior -->
+          <div class="crear-libro__base" aria-hidden="true"></div>
         </div>
 
         <!-- ───── GESTOR DE PÁGINAS ───── -->

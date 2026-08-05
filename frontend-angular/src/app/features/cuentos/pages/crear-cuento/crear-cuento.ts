@@ -4,8 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
+  faAlignCenter,
+  faAlignJustify,
+  faAlignLeft,
+  faAlignRight,
   faArrowLeft,
   faArrowRight,
+  faBold,
   faCheck,
   faCheckCircle,
   faChevronRight,
@@ -14,19 +19,31 @@ import {
   faClose,
   faCloudArrowUp,
   faCopy,
+  faEraser,
   faEye,
   faFileLines,
   faGear,
+  faHighlighter,
   faImage,
+  faItalic,
   faLightbulb,
+  faLink,
   faListCheck,
+  faListOl,
+  faListUl,
+  faPalette,
+  faQuoteLeft,
+  faRedo,
   faSave,
   faShareNodes,
   faSpinner,
   faStar,
   faTimes,
   faTrash,
+  faUnderline,
+  faUndo,
   faUpload,
+  faWandMagicSparkles,
 } from '@fortawesome/free-solid-svg-icons';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -34,6 +51,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
 import { QuillModule } from 'ngx-quill';
 import Quill from 'quill';
+import { PALETA_QUILL_CUENTOS } from '../../../../core/dominio/tema-portal-alumno';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 import { EditorCuentoFacade } from '../../aplicacion/editor-cuento.facade';
 import { PROVEEDORES_CUENTOS } from '../../acceso-datos/proveedores-cuentos';
@@ -125,23 +143,30 @@ export class CrearCuento implements OnInit {
   readonly faArrowRight = faArrowRight;
   readonly faChevronRight = faChevronRight;
   readonly faLightbulb = faLightbulb;
+  readonly faWandMagicSparkles = faWandMagicSparkles;
+  readonly faUndo = faUndo;
+  readonly faRedo = faRedo;
+  readonly faBold = faBold;
+  readonly faItalic = faItalic;
+  readonly faUnderline = faUnderline;
+  readonly faListUl = faListUl;
+  readonly faListOl = faListOl;
+  readonly faQuoteLeft = faQuoteLeft;
+  readonly faLink = faLink;
+  readonly faEraser = faEraser;
+  readonly faPalette = faPalette;
+  readonly faHighlighter = faHighlighter;
+  readonly faAlignLeft = faAlignLeft;
+  readonly faAlignCenter = faAlignCenter;
+  readonly faAlignRight = faAlignRight;
+  readonly faAlignJustify = faAlignJustify;
 
+  // La toolbar vive FUERA del editor, a ancho completo arriba del
+  // libro (patrón de la referencia). Quill 2 la toma por selector.
   readonly quillModules = {
     history: { delay: 1000, maxStack: 100, userOnly: true },
     toolbar: {
-      // Toolbar profesional y sobrio: sin selectores genéricos (fuente/tamaño),
-      // agrupado por función para una escritura enfocada en la historia.
-      container: [
-        ['undo', 'redo'],
-        [{ header: [1, 2, 3, false] }],
-        ['bold', 'italic', 'underline'],
-        [{ color: [] }, { background: [] }],
-        [{ align: [] }],
-        [{ list: 'ordered' }, { list: 'bullet' }],
-        ['blockquote'],
-        ['link', 'image'],
-        ['clean'],
-      ],
+      container: '#cuento-toolbar',
       handlers: {
         undo(this: { quill: Quill }) { this.quill.history.undo(); },
         redo(this: { quill: Quill }) { this.quill.history.redo(); },
@@ -256,6 +281,33 @@ export class CrearCuento implements OnInit {
       const indice = quill.getIndex(blot);
       quill.formatText(indice, blot.length(), 'blockquote', false);
     });
+
+    // Quill no rellena los selectores de color cuando la toolbar es un
+    // contenedor externo (#cuento-toolbar). Los poblamos con la paleta
+    // oficial de DAEMON para que el autor elija colores de la marca.
+    this.rellenarPaletaQuill();
+  }
+
+  /** Puebla los selectores de color/fondo de la toolbar con la paleta DAEMON. */
+  private rellenarPaletaQuill(): void {
+    const contenedor = document.getElementById('cuento-toolbar');
+    if (!(contenedor instanceof HTMLElement)) return;
+    contenedor
+      .querySelectorAll<HTMLSelectElement>('select.ql-color, select.ql-background')
+      .forEach((select) => {
+        if (select.options.length > 0) return; // no duplicar si se re-crea
+        PALETA_QUILL_CUENTOS.forEach((color) => {
+          const opcion = document.createElement('option');
+          if (color) {
+            opcion.value = color;
+            opcion.style.backgroundColor = color;
+            opcion.style.color = color;
+          } else {
+            opcion.setAttribute('selected', 'selected');
+          }
+          select.appendChild(opcion);
+        });
+      });
   }
 
   readonly onTituloChange = (valor: string) => this.editor.onTituloChange(valor);

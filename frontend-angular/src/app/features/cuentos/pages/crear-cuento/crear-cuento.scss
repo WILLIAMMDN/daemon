@@ -537,92 +537,101 @@
 // ════════════════════════════════════════════════════════════════
 //  LIBRO ABIERTO (ilustración + texto)
 //  ─────────────────────────────────────────────────────────────
-//  Dos hojas de libro con lomo central, estilo StoryJumper.
-//  La hoja izquierda muestra la ilustración de la página y la
-//  derecha el editor de texto. El color de fondo de cada hoja es
-//  el definido por el usuario (--daemon-hoja-fondo).
+//  Libro abierto de dos hojas descansando sobre una base morada,
+//  como un libro físico (patrón de StoryJumper). La hoja izquierda
+//  es la ilustración de la página y la derecha el editor de texto.
 // ════════════════════════════════════════════════════════════════
 
 .crear-libro {
+  position: relative;
+  width: 100%;
+}
+
+// Tapete/mesa sobre la que descansa el libro
+.crear-libro__tapete {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 14px minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) 22px minmax(0, 1fr);
   gap: 0;
   width: 100%;
-  min-height: 520px;
+  min-height: 540px;
+  padding: clamp(1.25rem, 3vw, 2rem);
   background: var(--daemon-canvas);
   border: 1px solid var(--daemon-border);
   border-radius: var(--daemon-radius-lg, 16px);
-  overflow: hidden;
   box-shadow: var(--daemon-shadow-soft, 0 2px 10px rgba(23, 36, 60, 0.04));
+  position: relative;
+  z-index: 1;
 
   // Móvil/tablet: las hojas se apilan, el lomo pasa a horizontal
   @media (max-width: 1023px) {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: auto 10px minmax(320px, auto);
+    grid-template-rows: auto 14px minmax(340px, auto);
+    padding: 1rem;
   }
 }
 
+// Lomo del libro: franja morada con doble línea dorada (acento DAEMON)
 .crear-libro__lomo {
   background: var(--daemon-primary-dark);
-  box-shadow: inset 0 0 8px rgba(23, 36, 60, 0.45);
+  box-shadow: inset 0 0 10px rgba(23, 36, 60, 0.5);
   position: relative;
+  z-index: 2;
 
-  // Doble línea dorada del lomo (acorde DAEMON)
   &::before,
   &::after {
     content: '';
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    width: 2px;
-    height: 18%;
+    width: 3px;
+    height: 16%;
     background: var(--daemon-accent);
-    opacity: 0.85;
+    opacity: 0.9;
+    border-radius: 999px;
   }
 
-  &::before { top: 2rem; }
-  &::after { bottom: 2rem; }
+  &::before { top: 2.5rem; }
+  &::after { bottom: 2.5rem; }
 
   @media (max-width: 1023px) {
-    box-shadow: inset 0 0 8px rgba(23, 36, 60, 0.45);
-
     &::before,
     &::after {
       left: 12%;
       right: 12%;
       width: auto;
-      height: 2px;
+      height: 3px;
       top: 50%;
       bottom: auto;
       transform: translateY(-50%);
     }
-
-    &::before { top: auto; }
-    &::after { bottom: auto; }
   }
 }
 
 .crear-libro__hoja {
   position: relative;
   min-width: 0;
-  min-height: 520px;
+  min-height: 500px;
   background: var(--daemon-hoja-fondo, var(--daemon-on-primary));
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  border: 1px solid var(--daemon-border);
 
   @media (max-width: 1023px) {
     min-height: 0;
   }
 }
 
-// Sombra interior: la hoja de texto y la de ilustración "se abren"
+// Esquinas exteriores redondeadas: la hoja izquierda curva a la
+// izquierda, la derecha a la derecha (páginas de un libro abierto).
 .crear-libro__hoja--ilustracion {
-  box-shadow: inset -18px 0 24px -20px rgba(23, 36, 60, 0.5);
+  border-radius: 6px 0 0 6px;
+  box-shadow: inset -22px 0 28px -24px rgba(23, 36, 60, 0.45);
 }
 
 .crear-libro__hoja--texto {
-  box-shadow: inset 18px 0 24px -20px rgba(23, 36, 60, 0.5);
+  border-radius: 0 6px 6px 0;
+  box-shadow: inset 22px 0 28px -24px rgba(23, 36, 60, 0.45);
 }
 
 // ── Hoja de ilustración ─────────────────────────────────────
@@ -733,15 +742,15 @@
   cursor: pointer;
   background: transparent;
   transition: background 0.18s ease;
+  flex: 1;
   width: 100%;
-  height: 100%;
   position: relative;
   z-index: 1;
 
   &::after {
     content: '';
     position: absolute;
-    inset: 1rem;
+    inset: 0.875rem;
     border-radius: var(--daemon-radius-md, 12px);
     border: 1.5px dashed var(--daemon-border-strong);
     pointer-events: none;
@@ -808,6 +817,58 @@
   z-index: 5;
 }
 
+// ── Acciones bajo la ilustración: Subir imagen / Crear con IA ──
+.crear-libro__acciones {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.7);
+  border-top: 1px solid var(--daemon-border);
+  position: relative;
+  z-index: 6;
+}
+
+.crear-libro__accion {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  flex: 1;
+  padding: 0.6rem 0.5rem;
+  border-radius: 999px;
+  border: 1.5px solid var(--daemon-border-strong);
+  background: var(--daemon-surface);
+  color: var(--daemon-ink);
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.15s ease;
+
+  &:hover:not(:disabled) {
+    border-color: var(--daemon-primary);
+    color: var(--daemon-primary);
+    box-shadow: 0 4px 12px -6px rgba(94, 52, 215, 0.45);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &--ia {
+    background: var(--daemon-primary);
+    border-color: var(--daemon-primary);
+    color: var(--daemon-on-primary);
+
+    &:hover:not(:disabled) {
+      background: var(--daemon-primary-dark);
+      border-color: var(--daemon-primary-dark);
+      color: var(--daemon-on-primary);
+    }
+  }
+}
+
 // Folio (número de página) en la esquina inferior de la hoja
 .crear-libro__folio {
   position: absolute;
@@ -825,6 +886,163 @@
   justify-content: center;
   box-shadow: 0 2px 6px rgba(94, 52, 215, 0.35);
   z-index: 6;
+}
+
+// Base del libro: sombra morada inferior que da el efecto de
+// grosor del libro descansando sobre la mesa.
+.crear-libro__base {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%) translateY(-0.6rem);
+  bottom: 0;
+  width: 66%;
+  height: 1.75rem;
+  background: rgba(36, 25, 79, 0.35);
+  filter: blur(6px);
+  border-radius: 999px;
+  z-index: 0;
+
+  @media (max-width: 1023px) {
+    display: none;
+  }
+}
+
+// ════════════════════════════════════════════════════════════════
+//  TOOLBAR DE FORMATO (fuera del libro, a ancho completo)
+//  La referencia coloca la toolbar arriba del libro; Quill 2 la
+//  toma por el selector #cuento-toolbar y le añade .ql-toolbar.
+// ════════════════════════════════════════════════════════════════
+
+.crear-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+  width: 100%;
+  padding: 0.6rem 0.875rem;
+  background: var(--daemon-surface);
+  border: 1px solid var(--daemon-border);
+  border-radius: var(--daemon-radius-lg, 16px);
+  box-shadow: var(--daemon-shadow-soft, 0 2px 10px rgba(23, 36, 60, 0.04));
+
+  // Quill agrega la clase al contenedor externo
+  &.ql-toolbar.ql-snow {
+    border: 1px solid var(--daemon-border) !important;
+    border-radius: var(--daemon-radius-lg, 16px) !important;
+    padding: 0.6rem 0.875rem !important;
+  }
+
+  ::ng-deep .ql-formats {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.15rem;
+    margin-right: 0;
+    padding-right: 0.75rem;
+    margin-left: 0.75rem;
+    border-right: 1px solid var(--daemon-border);
+
+    &:first-child {
+      margin-left: 0;
+    }
+
+    &:last-child {
+      border-right: 0;
+      padding-right: 0;
+    }
+  }
+
+  ::ng-deep button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.05rem;
+    height: 2.05rem;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--daemon-ink-soft);
+    cursor: pointer;
+    transition: all 0.15s ease;
+
+    &:hover {
+      background: var(--daemon-canvas);
+      color: var(--daemon-primary);
+    }
+
+    &.ql-active {
+      background: rgba(94, 52, 215, 0.12);
+      color: var(--daemon-primary);
+    }
+  }
+
+  ::ng-deep button svg {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  ::ng-deep .ql-picker {
+    color: var(--daemon-ink-soft);
+    height: 2.05rem;
+  }
+
+  ::ng-deep .ql-picker-label {
+    border: 0;
+    padding: 0.25rem 0.5rem;
+    border-radius: 8px;
+    color: var(--daemon-ink-soft);
+    font-size: 0.78rem;
+    font-weight: 700;
+
+    &:hover {
+      background: var(--daemon-canvas);
+      color: var(--daemon-primary);
+    }
+
+    &::before {
+      line-height: 1;
+    }
+  }
+
+  ::ng-deep .ql-header .ql-picker-label::before,
+  ::ng-deep .ql-header .ql-picker-item::before {
+    content: 'Texto' !important;
+  }
+
+  ::ng-deep .ql-header .ql-picker-label[data-value='1']::before,
+  ::ng-deep .ql-header .ql-picker-item[data-value='1']::before {
+    content: 'Título 1' !important;
+  }
+
+  ::ng-deep .ql-header .ql-picker-label[data-value='2']::before,
+  ::ng-deep .ql-header .ql-picker-item[data-value='2']::before {
+    content: 'Título 2' !important;
+  }
+
+  ::ng-deep .ql-header .ql-picker-label[data-value='3']::before,
+  ::ng-deep .ql-header .ql-picker-item[data-value='3']::before {
+    content: 'Título 3' !important;
+  }
+
+  ::ng-deep .ql-picker-options {
+    z-index: 60 !important;
+    border-color: var(--daemon-border) !important;
+    border-radius: var(--daemon-radius-md, 12px) !important;
+    box-shadow: var(--daemon-shadow-popover, 0 12px 32px rgba(0, 0, 0, 0.1)) !important;
+  }
+
+  ::ng-deep .ql-picker-item {
+    color: var(--daemon-ink) !important;
+    padding: 0.4rem 0.6rem !important;
+
+    &:hover {
+      color: var(--daemon-primary) !important;
+    }
+  }
+
+  ::ng-deep .ql-color-picker .ql-picker-label,
+  ::ng-deep .ql-background-picker .ql-picker-label {
+    padding: 0.25rem 0.35rem;
+  }
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -1942,13 +2160,18 @@
 }
 
 // ════════════════════════════════════════════════════════════════
-//  QUILL OVERRIDES (mantengo los estilos visuales del editor)
+//  QUILL OVERRIDES (editor de la hoja derecha del libro)
+//  La toolbar vive FUERA del editor (#cuento-toolbar), así que aquí
+//  solo queda el área de escritura: papel con el color de la página
+//  definido por el usuario (--daemon-hoja-fondo) y tipografía serif
+//  amplia y legible, como en un libro físico.
 // ════════════════════════════════════════════════════════════════
 
 quill-editor {
   display: flex;
   flex-direction: column;
   min-width: 0;
+  flex: 1;
 }
 
 .custom-quill-page {
@@ -1961,143 +2184,6 @@ quill-editor {
   min-width: 0;
   display: flex;
   flex-direction: column;
-
-  // Toolbar: una sola fila con scroll horizontal si no caben todos
-  // los controles. Esto evita que los botones se rompan en varias
-  // filas cuando la columna del editor se estrecha en desktop.
-  ::ng-deep .ql-toolbar.ql-snow {
-    background-color: var(--daemon-surface, var(--daemon-on-primary)) !important;
-    border: none !important;
-    border-bottom: 1px solid var(--daemon-border, var(--daemon-border)) !important;
-    border-radius: 0 !important;
-    padding: 8px 12px !important;
-    display: flex !important;
-    flex-wrap: nowrap !important;
-    align-items: center !important;
-    overflow-x: auto !important;
-    overflow-y: hidden !important;
-    white-space: nowrap !important;
-    scrollbar-width: thin;
-    scrollbar-color: var(--daemon-border-strong, var(--daemon-border-strong)) transparent;
-
-    &::-webkit-scrollbar { height: 4px; }
-    &::-webkit-scrollbar-thumb {
-      background: var(--daemon-border-strong, var(--daemon-border-strong));
-      border-radius: 999px;
-    }
-  }
-
-  // Cada grupo de controles se mantiene en su línea, sin envolver.
-  // Separador vertical sutil entre grupos (estilo Google Docs).
-  ::ng-deep .ql-toolbar.ql-snow .ql-formats {
-    display: inline-flex !important;
-    align-items: center !important;
-    flex-shrink: 0 !important;
-    margin-right: 0 !important;
-    padding-right: 10px !important;
-    border-right: 1px solid var(--daemon-border, var(--daemon-border)) !important;
-    margin-left: 10px !important;
-
-    &:first-child {
-      margin-left: 0 !important;
-    }
-
-    &:last-child {
-      border-right: 0 !important;
-    }
-  }
-
-  ::ng-deep .ql-toolbar.ql-snow button {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: 28px !important;
-    height: 28px !important;
-    min-height: 28px !important;
-    padding: 4px !important;
-    margin: 0 2px !important;
-    color: var(--daemon-ink-soft, var(--daemon-ink-soft));
-    background: transparent !important;
-    border: none !important;
-    border-radius: 4px !important;
-  }
-
-  ::ng-deep .ql-toolbar.ql-snow button svg {
-    width: 16px !important;
-    height: 16px !important;
-  }
-
-  ::ng-deep .ql-snow .ql-picker-label {
-    color: var(--daemon-ink-soft, var(--daemon-ink-soft));
-    border: 1px solid transparent;
-    border-radius: 6px;
-    background: transparent;
-    transition: all 0.2s;
-  }
-
-  ::ng-deep .ql-snow .ql-picker {
-    display: inline-flex !important;
-    align-items: center !important;
-    height: 30px !important;
-    border-radius: 6px !important;
-    padding: 0 4px !important;
-
-    &:hover {
-      background: var(--daemon-canvas, var(--daemon-canvas)) !important;
-    }
-  }
-
-  // Etiquetas de los pickers en español y legibles.
-  // El selector [data-value] cubre tanto el label activo como los
-  // items del menú desplegable (Quill los marca igual).
-  ::ng-deep .ql-snow .ql-picker.ql-header .ql-picker-label::before,
-  ::ng-deep .ql-snow .ql-picker.ql-header .ql-picker-item::before {
-    content: 'Texto' !important;
-    font-weight: 700 !important;
-    font-size: 0.78rem !important;
-  }
-
-  ::ng-deep .ql-snow .ql-picker.ql-header [data-value='1']::before {
-    content: 'Título 1' !important;
-  }
-
-  ::ng-deep .ql-snow .ql-picker.ql-header [data-value='2']::before {
-    content: 'Título 2' !important;
-  }
-
-  ::ng-deep .ql-snow .ql-picker.ql-header [data-value='3']::before {
-    content: 'Título 3' !important;
-  }
-
-  ::ng-deep .ql-snow .ql-stroke {
-    stroke: var(--daemon-ink-soft, var(--daemon-ink-soft));
-    stroke-width: 1.5;
-    transition: all 0.2s;
-  }
-
-  ::ng-deep .ql-snow .ql-fill {
-    fill: var(--daemon-ink-soft, var(--daemon-ink-soft));
-    transition: all 0.2s;
-  }
-
-  ::ng-deep button:hover .ql-stroke,
-  ::ng-deep .ql-picker-label:hover .ql-stroke,
-  ::ng-deep button.ql-active .ql-stroke {
-    stroke: var(--daemon-primary, var(--daemon-primary)) !important;
-  }
-
-  ::ng-deep button:hover .ql-fill,
-  ::ng-deep .ql-picker-label:hover .ql-fill,
-  ::ng-deep button.ql-active .ql-fill {
-    fill: var(--daemon-primary, var(--daemon-primary)) !important;
-  }
-
-  ::ng-deep button:hover,
-  ::ng-deep .ql-picker-label:hover {
-    color: var(--daemon-primary, var(--daemon-primary)) !important;
-    background-color: var(--daemon-canvas, var(--daemon-canvas));
-    border-radius: 6px;
-  }
 }
 
 // La hoja de texto del libro: papel con el color de la página
