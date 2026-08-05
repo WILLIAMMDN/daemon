@@ -18,7 +18,9 @@
 }
 
 // ════════════════════════════════════════════════════════════════
-//  BARRA SUPERIOR (breadcrumbs + estado + acciones)
+//  CABECERA DEL ESTUDIO (breadcrumbs + estado + acciones)
+//  Banda morada de la marca (token, sin degradados genéricos) que
+//  recupera la presencia de la cabecera original del editor.
 // ════════════════════════════════════════════════════════════════
 
 .crear-topbar {
@@ -27,18 +29,19 @@
   justify-content: space-between;
   gap: 1rem;
   flex-wrap: wrap;
-  padding: 0.875rem 1.25rem;
-  background: var(--daemon-surface);
-  border: 1px solid var(--daemon-border);
+  padding: 1rem 1.375rem;
+  background: var(--daemon-primary-dark);
+  border: 1px solid var(--daemon-primary-dark);
   border-radius: var(--daemon-radius-lg, 16px);
-  box-shadow: var(--daemon-shadow-soft, 0 2px 10px rgba(23, 36, 60, 0.04));
+  box-shadow: var(--daemon-shadow-soft, 0 10px 26px rgba(43, 20, 90, 0.22));
 }
 
 .crear-topbar__izq {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.875rem;
   min-width: 0;
+  flex: 1 1 0;
 }
 
 .crear-topbar__volver {
@@ -49,16 +52,16 @@
   height: 2.5rem;
   flex-shrink: 0;
   border-radius: 12px;
-  border: 1px solid var(--daemon-border);
-  background: var(--daemon-surface);
-  color: var(--daemon-ink-soft);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--daemon-on-primary);
   transition: all 0.15s ease;
   text-decoration: none;
 
   &:hover {
-    background: var(--daemon-canvas);
-    border-color: var(--daemon-border-strong);
-    color: var(--daemon-primary);
+    background: rgba(255, 255, 255, 0.22);
+    border-color: rgba(255, 255, 255, 0.34);
+    color: var(--daemon-on-primary);
   }
 }
 
@@ -66,31 +69,58 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
+  gap: 0.15rem;
 }
 
 .crear-topbar__breadcrumbs {
   font-size: 0.68rem;
   font-weight: 600;
-  color: var(--daemon-muted);
+  color: rgba(255, 255, 255, 0.66);
   letter-spacing: 0.02em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 
   span {
-    color: var(--daemon-primary);
+    color: var(--daemon-accent);
     font-weight: 700;
   }
 }
 
-.crear-topbar__titulo {
-  font-size: 1.1rem;
+.crear-topbar__titulo-row {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-width: 0;
+}
+
+.crear-topbar__tag {
+  flex-shrink: 0;
+  font-size: 0.6rem;
   font-weight: 800;
-  color: var(--daemon-ink);
-  margin: 0.1rem 0 0;
+  letter-spacing: 0.12em;
+  color: var(--daemon-accent-dark);
+  background: var(--daemon-accent);
+  padding: 0.22rem 0.6rem;
+  border-radius: 999px;
+  text-transform: uppercase;
+}
+
+.crear-topbar__titulo {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--daemon-on-primary);
+  margin: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.crear-topbar__desc {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.72);
+  margin: 0;
 }
 
 .crear-topbar__der {
@@ -106,15 +136,15 @@
   gap: 0.4rem;
   font-size: 0.72rem;
   font-weight: 700;
-  color: var(--daemon-muted);
-  background: var(--daemon-canvas);
+  color: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.14);
   padding: 0.4rem 0.85rem;
   border-radius: 999px;
   white-space: nowrap;
 
   &--ok {
-    color: var(--daemon-success);
-    background: var(--daemon-success-soft);
+    color: var(--daemon-on-primary);
+    background: rgba(18, 161, 80, 0.4);
   }
 }
 
@@ -133,16 +163,16 @@
   font-size: 0.78rem;
   padding: 0.55rem 1rem;
   border-radius: 10px;
-  border: 1px solid var(--daemon-border);
-  background: var(--daemon-surface);
-  color: var(--daemon-ink-soft);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--daemon-on-primary);
   cursor: pointer;
   transition: all 0.15s ease;
   min-height: 2.35rem;
 
   &:hover:not(:disabled) {
-    background: var(--daemon-canvas);
-    color: var(--daemon-ink);
+    background: rgba(255, 255, 255, 0.24);
+    color: var(--daemon-on-primary);
   }
 
   &:disabled {
@@ -157,13 +187,13 @@
   }
 
   &--primaria {
-    background: var(--daemon-primary);
-    border-color: var(--daemon-primary);
-    color: var(--daemon-on-primary);
+    background: var(--daemon-accent);
+    border-color: var(--daemon-accent);
+    color: var(--daemon-ink);
 
     &:hover:not(:disabled) {
-      background: var(--daemon-primary-dark);
-      border-color: var(--daemon-primary-dark);
+      background: var(--daemon-accent-dark);
+      border-color: var(--daemon-accent-dark);
       color: var(--daemon-on-primary);
     }
   }
@@ -818,10 +848,12 @@
 }
 
 // ── Acciones bajo la ilustración: Subir imagen / Crear con IA ──
+// El padding-izquierdo reserva la esquina del folio (número de
+// página) para que nunca se superponga a los botones.
 .crear-libro__acciones {
   display: flex;
   gap: 0.5rem;
-  padding: 0.75rem;
+  padding: 0.75rem 0.75rem 0.75rem 3.5rem;
   background: rgba(255, 255, 255, 0.7);
   border-top: 1px solid var(--daemon-border);
   position: relative;
@@ -867,13 +899,23 @@
       color: var(--daemon-on-primary);
     }
   }
+
+  // Móvil: icono sobre texto (píldora compacta sin cortes de palabra)
+  @media (max-width: 520px) {
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 0.45rem 0.4rem;
+    font-size: 0.68rem;
+    white-space: nowrap;
+  }
 }
 
-// Folio (número de página) en la esquina inferior de la hoja
+// Folio (número de página) en la esquina inferior EXTERNA de cada
+// hoja, como en un libro físico: hoja izquierda → abajo a la
+// izquierda; hoja derecha → abajo a la derecha.
 .crear-libro__folio {
   position: absolute;
   bottom: 0.75rem;
-  left: 0.75rem;
   width: 1.75rem;
   height: 1.75rem;
   border-radius: 50%;
@@ -886,6 +928,25 @@
   justify-content: center;
   box-shadow: 0 2px 6px rgba(94, 52, 215, 0.35);
   z-index: 6;
+}
+
+.crear-libro__hoja--ilustracion .crear-libro__folio {
+  left: 0.75rem;
+}
+
+.crear-libro__hoja--texto .crear-libro__folio {
+  right: 0.75rem;
+  left: auto;
+}
+
+@media (max-width: 1023px) {
+  // En móvil las hojas se apilan; el folio queda en la esquina
+  // externa de cada hoja (izquierda de la ilustración, derecha del
+  // texto) sin chocar con los botones de acción.
+  .crear-libro__hoja--texto .crear-libro__folio {
+    left: 0.75rem;
+    right: auto;
+  }
 }
 
 // Base del libro: sombra morada inferior que da el efecto de

@@ -49,7 +49,7 @@
     }
 
     <!-- ─────────────────────────────────────────────────────
-         BARRA SUPERIOR (breadcrumbs + estado + acciones)
+         CABECERA DEL ESTUDIO (breadcrumbs + estado + acciones)
          ───────────────────────────────────────────────────── -->
     <div class="crear-topbar">
       <div class="crear-topbar__izq">
@@ -58,7 +58,11 @@
         </a>
         <div class="crear-topbar__titulo-block">
           <div class="crear-topbar__breadcrumbs">Inicio › Cuentos › <span>Crear cuento</span></div>
-          <h1 class="crear-topbar__titulo">{{ titulo() || 'Mi historia' }}</h1>
+          <div class="crear-topbar__titulo-row">
+            <span class="crear-topbar__tag">HISTORIA</span>
+            <h1 class="crear-topbar__titulo">{{ titulo() || 'Mi historia' }}</h1>
+          </div>
+          <p class="crear-topbar__desc">Crea, edita y publica tu cuento con herramientas creativas.</p>
         </div>
       </div>
 
