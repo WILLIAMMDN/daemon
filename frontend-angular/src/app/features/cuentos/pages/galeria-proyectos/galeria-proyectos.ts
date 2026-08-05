@@ -68,7 +68,9 @@ export class GaleriaProyectos {
   });
 
   readonly cuentos = this.galeria.cuentos;
+  readonly propios = this.galeria.propios;
   readonly cargando = this.galeria.cargando;
+  readonly cargandoPropios = this.galeria.cargandoPropios;
   readonly refrescando = this.galeria.refrescando;
   readonly error = this.galeria.error;
   readonly datosConservados = this.galeria.datosConservados;
@@ -90,15 +92,19 @@ export class GaleriaProyectos {
   };
 
   readonly cuentosVista = computed(() => this.cuentos().map((cuento) => this.construirVista(cuento)));
+  readonly propiosVista = computed(() => this.propios().map((cuento) => this.construirVista(cuento)));
   readonly miCuentoVista = computed(() => {
     const propio = this.galeria.propios()[0];
     return propio ? this.construirVista(propio) : null;
   });
   readonly cuentosFiltrados = computed(() => {
     const consulta = this.normalizar(this.busqueda());
-    const filtrados = this.cuentosVista().filter((cuento) =>
-      (this.filtro() !== 'mio' || cuento.esMio)
-      && (!consulta || cuento.textoBusqueda.includes(consulta)),
+    // La vista principal (Comunidad) solo muestra lo publicado por los
+    // demás; los propios se listan desde galeria.propios() en "Mis
+    // historias". Así los borradores propios no invaden el foro.
+    const origen = this.filtro() === 'mio' ? this.propiosVista() : this.cuentosVista();
+    const filtrados = origen.filter((cuento) =>
+      (!consulta || cuento.textoBusqueda.includes(consulta)),
     );
     return [...filtrados].sort((a, b) => {
       if (this.orden() === 'antiguos') return a.timestamp - b.timestamp;
@@ -106,6 +112,7 @@ export class GaleriaProyectos {
       return b.timestamp - a.timestamp;
     });
   });
+  readonly mostrandoPropios = computed(() => this.filtro() === 'mio');
   readonly hayFiltros = computed(() => this.filtro() !== 'todos' || Boolean(this.busqueda().trim()));
   readonly progresoCreativo = computed(() => {
     const paginas = this.miCuentoVista()?.escenasConContenido ?? 0;
@@ -145,8 +152,12 @@ export class GaleriaProyectos {
   cerrarAside(): void { this.asideAbierto.set(false); }
   toggleAside(): void { this.asideAbierto.update((valor) => !valor); }
   cargar(refrescar = false): void { void this.galeria.cargar(refrescar); }
+  cargarPropios(refrescar = false): void { void this.galeria.cargarPropios(refrescar); }
   cargarMas(): void { void this.galeria.cargarMas(); }
-  seleccionarFiltro(valor: FiltroCuento): void { this.filtro.set(valor); }
+  seleccionarFiltro(valor: FiltroCuento): void {
+    this.filtro.set(valor);
+    if (valor === 'mio') void this.galeria.cargarPropios();
+  }
   actualizarBusqueda(valor: string): void { this.busqueda.set(valor); }
   actualizarOrden(valor: OrdenCuento): void { this.orden.set(valor); }
   limpiarFiltros(): void { this.filtro.set('todos'); this.busqueda.set(''); }

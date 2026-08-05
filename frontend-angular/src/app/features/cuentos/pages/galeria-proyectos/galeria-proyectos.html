@@ -53,14 +53,24 @@
             </div>
           }
         </section>
-      } @else if (error() && !cuentos().length) {
+      } @else if (mostrandoPropios() && cargandoPropios()) {
+        <section class="story-loading" aria-label="Cargando mis historias" aria-busy="true">
+          @for (item of [1, 2, 3, 4, 5, 6]; track item) {
+            <div class="story-skeleton">
+              <span></span>
+              <i></i>
+              <i></i>
+            </div>
+          }
+        </section>
+      } @else if (error() && !cuentos().length && !propios().length) {
         <section class="story-load-error" role="alert">
           <h2>No pudimos abrir la galería</h2>
           <p>{{ error() }}</p>
-          <button nz-button nzType="primary" type="button" (click)="cargar(true)">Volver a intentar</button>
+          <button nz-button nzType="primary" type="button" (click)="mostrandoPropios() ? cargarPropios(true) : cargar(true)">Volver a intentar</button>
         </section>
-      } @else if (cuentos().length && cuentosFiltrados().length) {
-        <section class="story-grid" aria-label="Historias publicadas">
+      } @else if (cuentosFiltrados().length) {
+        <section class="story-grid" aria-label="Historias">
           @for (cuento of cuentosFiltrados(); track cuento.id) {
             <app-galeria-cuento-card 
               [cuento]="cuento" 
@@ -70,13 +80,20 @@
             </app-galeria-cuento-card>
           }
         </section>
-        @if (hayMas()) {
+        @if (!mostrandoPropios() && hayMas()) {
           <div class="story-load-more">
             <button nz-button nzType="default" type="button" (click)="cargarMas()" [disabled]="refrescando()">
               Cargar más historias
             </button>
           </div>
         }
+      } @else if (mostrandoPropios()) {
+        <app-estado-vacio
+          titulo="Aún no tienes historias"
+          descripcion="Crea tu primer cuento y aparecerá aquí para que lo edites o publiques."
+        >
+          <a nz-button nzType="primary" routerLink="/alumno/proyectos/cuentos/crear">Crear mi cuento</a>
+        </app-estado-vacio>
       } @else if (cuentos().length) {
         <app-estado-vacio
           tamano="compact"
@@ -103,7 +120,7 @@
       [asideAbierto]="asideAbierto()"
       [progresoCreativo]="progresoCreativo()"
       [totalCuentos]="cuentos().length"
-      [totalBorradores]="miCuentoVista() ? 1 : 0"
+      [totalBorradores]="propios().length"
       [reaccionesRecibidas]="reaccionesRecibidas()"
       [plantillasRecomendadas]="plantillasRecomendadas"
       [inspiracionDiaria]="inspiracionDiaria"

@@ -11,39 +11,34 @@ export class GaleriaCuentosFacade {
   private readonly activos = inject(ACTIVOS_CUENTO_REPOSITORIO);
   private readonly eliminarCuento = inject(EliminarCuentoCasoUso);
 
+  /** Cuentos publicados de la comunidad (lectura pública). */
   readonly cuentos = signal<readonly Cuento[]>([]);
+  /** Cuentos del propio usuario (borradores y publicados). */
   readonly propios = signal<readonly Cuento[]>([]);
   readonly cargando = signal(true);
+  readonly cargandoPropios = signal(false);
   readonly refrescando = signal(false);
   readonly error = signal('');
   readonly datosConservados = signal(false);
   readonly reaccionesPropiasTotal = signal(0);
   readonly hayMas = computed(() => this.cursor() !== null);
   private readonly cursor = signal<CursorCuentos | null>(null);
+  private propiosCargados = false;
 
+  /**
+   * Carga la galería de la comunidad (una sola lectura de Firestore). Los
+   * cuentos propios NO se mezclan aquí: se cargan aparte con cargarPropios()
+   * cuando el usuario abre "Mis historias", para que la vista principal sea
+   * rápida y solo muestre lo publicado por los demás.
+   */
   async cargar(refrescar = false): Promise<void> {
     const conservaDatos = this.cuentos().length > 0;
     this.cargando.set(!conservaDatos);
     this.refrescando.set(conservaDatos);
     this.error.set('');
     try {
-      // Todo pasa por el API de Laravel: la galería pública y los cuentos
-      // propios se leen sin depender de una sesión de Firebase activa.
-      const [galeria, propios] = await Promise.all([
-        this.repositorio.listarGaleria(undefined, 24),
-        this.cargarPropiosSinFirebase(),
-      ]);
-      const porId = new Map(galeria.elementos.map((cuento) => [cuento.id, cuento]));
-      propios.forEach((cuento) => porId.set(cuento.id, cuento));
-      this.cuentos.set([...porId.values()]);
-      this.propios.set(propios);
-      // Los contadores de reacciones viajan en cada documento (stats), así
-      // que no se hacen llamadas extra por cuento: la galería es una sola
-      // lectura de Firestore.
-      this.reaccionesPropiasTotal.set([...porId.values()].reduce(
-        (total, cuento) => total + (cuento.estadisticas.reacciones ?? 0),
-        0,
-      ));
+      const galeria = await this.repositorio.listarGaleria(undefined, 24);
+      this.cuentos.set(galeria.elementos);
       this.cursor.set(galeria.siguienteCursor);
       this.datosConservados.set(false);
     } catch (error) {
@@ -56,16 +51,26 @@ export class GaleriaCuentosFacade {
   }
 
   /**
-   * Carga los cuentos propios del usuario. Si no hay sesión de Firebase,
-   * devuelve un array vacío en lugar de lanzar error. Esto permite que la
-   * galería pública se muestre aunque el usuario no tenga sesión de Firebase
-   * (login local con usuario/contraseña).
+   * Carga los cuentos propios bajo demanda (tab "Mis historias"). Es
+   * idempotente: solo hace la lectura la primera vez. Si no hay sesión de
+   * Firebase, devuelve vacío sin lanzar (login local con usuario/contraseña).
    */
-  private async cargarPropiosSinFirebase(): Promise<readonly Cuento[]> {
+  async cargarPropios(refrescar = false): Promise<void> {
+    if (this.propiosCargados && !refrescar) return;
+    this.cargandoPropios.set(true);
+    this.error.set('');
     try {
-      return await this.repositorio.listarPropios(20);
-    } catch {
-      return [];
+      const propios = await this.repositorio.listarPropios(50);
+      this.propios.set(propios);
+      this.propiosCargados = true;
+      this.reaccionesPropiasTotal.set(propios.reduce(
+        (total, cuento) => total + (cuento.estadisticas.reacciones ?? 0),
+        0,
+      ));
+    } catch (error) {
+      this.error.set(normalizarErrorCuento(error).message);
+    } finally {
+      this.cargandoPropios.set(false);
     }
   }
 
