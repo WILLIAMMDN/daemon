@@ -129,6 +129,10 @@
               class="crear-cover__dropzone"
               [class.crear-cover__dropzone--filled]="!!portada()"
               [class.crear-cover__dropzone--uploading]="subiendoPortada()"
+              [class.crear-cover__dropzone--drag]="arrastrandoPortada()"
+              (dragover)="onDragOverPortadaB($event)"
+              (dragleave)="onDragLeavePortadaB()"
+              (drop)="onDropPortadaB($event)"
               [attr.aria-busy]="subiendoPortada()"
               aria-label="Subir o cambiar imagen de portada"
             >
@@ -200,17 +204,19 @@
              Cada panel es una card independiente: nada de overlap ni curvas raras. -->
         <div class="crear-pagina-editor">
 
-          <!-- ─── COLUMNA IZQUIERDA: EDITOR DE TEXTO ─── -->
-          <div class="quill-wrapper" [style.background-color]="paginaActiva().fondoToken || 'var(--daemon-on-primary)'">
-            <quill-editor
-              class="custom-quill-page"
-              [ngModel]="contenido()"
-              (ngModelChange)="onContentChange($event)"
-              (onEditorCreated)="onEditorCreated($event)"
-              [modules]="quillModules"
-              theme="snow"
-              placeholder="Escribe tu historia aquí..."
-            ></quill-editor>
+          <!-- ─── COLUMNA IZQUIERDA: EDITOR DE TEXTO (hoja de libro) ─── -->
+          <div class="quill-wrapper" [style.--daemon-hoja-fondo]="paginaActiva().fondoToken || 'var(--daemon-on-primary)'">
+            <div class="quill-wrapper__desk">
+              <quill-editor
+                class="custom-quill-page"
+                [ngModel]="contenido()"
+                (ngModelChange)="onContentChange($event)"
+                (onEditorCreated)="onEditorCreated($event)"
+                [modules]="quillModules"
+                theme="snow"
+                placeholder="Escribe tu historia aquí..."
+              ></quill-editor>
+            </div>
           </div>
 
           <!-- ─── COLUMNA DERECHA: ILUSTRACIÓN DE PÁGINA ─── -->
@@ -218,7 +224,7 @@
             <div class="pagina-illust__inner">
 
               <!-- Cabecera fija del panel (estructura profesional) -->
-              <header class="pagina-illust__header">
+              <header class="pagina-illust__header daemon-grad-primary">
                 <span class="pagina-illust__header-title">
                   <fa-icon [icon]="faImage"></fa-icon>
                   Ilustración de página
@@ -238,7 +244,14 @@
                     </div>
                   } @else {
                     <!-- Overlay con "Cambiar" (cubre toda la imagen al hacer hover) -->
-                    <label class="pagina-illust__overlay" aria-label="Cambiar ilustración de esta página">
+                    <label
+                      class="pagina-illust__overlay"
+                      [class.pagina-illust__overlay--drag]="arrastrandoIlustracion()"
+                      (dragover)="onDragOverIlustracionB($event)"
+                      (dragleave)="onDragLeaveIlustracionB()"
+                      (drop)="onDropIlustracionB($event)"
+                      aria-label="Cambiar ilustración de esta página"
+                    >
                       <input
                         type="file"
                         (change)="onSubirIlustracion($event)"
@@ -262,7 +275,13 @@
                     </button>
                   }
                 } @else {
-                  <label class="pagina-illust__placeholder">
+                  <label
+                    class="pagina-illust__placeholder"
+                    [class.pagina-illust__placeholder--drag]="arrastrandoIlustracion()"
+                    (dragover)="onDragOverIlustracionB($event)"
+                    (dragleave)="onDragLeaveIlustracionB()"
+                    (drop)="onDropIlustracionB($event)"
+                  >
                     <input
                       type="file"
                       (change)="onSubirIlustracion($event)"
@@ -274,9 +293,11 @@
                     <div class="pagina-illust__icon">
                       <fa-icon [icon]="faImage" class="text-2xl"></fa-icon>
                     </div>
-                    <span class="pagina-illust__hint-title">Sube una imagen</span>
+                    <span class="pagina-illust__hint-title">
+                      {{ arrastrandoIlustracion() ? '¡Suéltala aquí!' : 'Sube una imagen' }}
+                    </span>
                     <span class="pagina-illust__hint-sub">
-                      Esta imagen acompañará el texto de la página actual.
+                      {{ arrastrandoIlustracion() ? 'La colocaremos en esta página.' : 'Arrastra o haz clic para elegir. Esta imagen acompañará el texto de la página actual.' }}
                     </span>
                   </label>
                 }

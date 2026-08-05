@@ -385,6 +385,11 @@
     box-shadow: inset 0 0 0 1px var(--daemon-border-strong, var(--daemon-border-strong));
   }
 
+  &--drag {
+    background: rgba(94, 52, 215, 0.08);
+    box-shadow: inset 0 0 0 2px var(--daemon-primary, var(--daemon-primary));
+  }
+
   &--filled {
     background: transparent;
     box-shadow: none;
@@ -570,7 +575,7 @@
   border: 1px solid var(--daemon-border, var(--daemon-border));
   border-radius: var(--daemon-radius-lg, 16px);
   overflow: hidden;
-  background: var(--daemon-surface, var(--daemon-on-primary));
+  background: var(--daemon-canvas, var(--daemon-canvas));
   min-height: 480px;
 
   // En móvil/tablet el editor es el alto principal; en desktop
@@ -578,6 +583,24 @@
   @media (min-width: 1024px) {
     height: 100%;
     min-height: 560px;
+  }
+}
+
+// "Escritorio" de la hoja: la hoja del libro centrada con sombra
+// de papel sobre un fondo de mesa. La hoja toma el color de la
+// página (--daemon-hoja-fondo) definido por el usuario.
+.quill-wrapper__desk {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(0.75rem, 2vw, 1.5rem);
+  overflow: hidden;
+
+  quill-editor {
+    max-width: 44rem;
+    width: 100%;
+    margin: 0 auto;
   }
 }
 
@@ -620,34 +643,37 @@
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
-  padding: 0.65rem 0.85rem;
-  background: var(--daemon-canvas, var(--daemon-canvas));
-  border-bottom: 1px solid var(--daemon-border, var(--daemon-border));
+  padding: 0.75rem 1rem;
+  color: var(--daemon-on-primary);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
   flex-shrink: 0;
 }
 
 .pagina-illust__header-title {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.45rem;
   font-size: 0.75rem;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--daemon-ink, var(--daemon-ink));
+  letter-spacing: 0.06em;
+  color: var(--daemon-on-primary);
 
   fa-icon {
-    color: var(--daemon-primary, var(--daemon-primary));
-    font-size: 0.85rem;
+    color: var(--daemon-accent, var(--daemon-accent));
+    font-size: 0.9rem;
   }
 }
 
 .pagina-illust__header-meta {
-  font-size: 0.65rem;
-  font-weight: 700;
-  color: var(--daemon-muted, var(--daemon-muted));
+  font-size: 0.62rem;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.85);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
 }
 
 // ── Cuerpo del panel (imagen o placeholder) ─────────────────
@@ -714,6 +740,11 @@
   z-index: 2;
   cursor: pointer;
 
+  &--drag {
+    opacity: 1;
+    background: rgba(94, 52, 215, 0.72);
+  }
+
   .pagina-illust__body:hover &,
   .pagina-illust__body:focus-within & {
     opacity: 1;
@@ -774,50 +805,76 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.6rem;
+  gap: 0.7rem;
   text-align: center;
   padding: 1.5rem;
   cursor: pointer;
   background: transparent;
-  transition: background 0.15s ease;
+  transition: background 0.18s ease, box-shadow 0.18s ease;
   width: 100%;
   height: 100%;
+  position: relative;
 
-  &:hover {
-    background: rgba(94, 52, 215, 0.04);
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 1rem;
+    border-radius: var(--daemon-radius-md, 12px);
+    border: 1.5px dashed var(--daemon-border-strong, var(--daemon-border-strong));
+    pointer-events: none;
+    transition: border-color 0.18s ease, background 0.18s ease;
+  }
+
+  &:hover,
+  &--drag {
+    background: rgba(94, 52, 215, 0.05);
+
+    &::after {
+      border-color: var(--daemon-primary, var(--daemon-primary));
+      background: rgba(94, 52, 215, 0.04);
+    }
   }
 }
 
 .pagina-illust__icon {
-  width: 3.25rem;
-  height: 3.25rem;
+  width: 3.5rem;
+  height: 3.5rem;
   border-radius: 50%;
-  background: rgba(94, 52, 215, 0.1);
+  background: rgba(94, 52, 215, 0.12);
   color: var(--daemon-primary, var(--daemon-primary));
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 0.25rem;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  transition: transform 0.18s ease;
+  box-shadow: 0 4px 12px -4px rgba(94, 52, 215, 0.35);
+  transition: transform 0.18s ease, background 0.18s ease;
+  position: relative;
+  z-index: 1;
 
-  .pagina-illust__placeholder:hover & {
-    transform: scale(1.08);
+  .pagina-illust__placeholder:hover &,
+  .pagina-illust__placeholder--drag & {
+    transform: scale(1.1);
+    background: var(--daemon-primary, var(--daemon-primary));
+    color: var(--daemon-on-primary);
   }
 }
 
 .pagina-illust__hint-title {
-  font-size: 0.875rem;
+  font-size: 0.9rem;
   font-weight: 800;
   color: var(--daemon-ink, var(--daemon-ink));
+  position: relative;
+  z-index: 1;
 }
 
 .pagina-illust__hint-sub {
-  font-size: 0.7rem;
+  font-size: 0.72rem;
   font-weight: 600;
   color: var(--daemon-muted, var(--daemon-muted));
-  max-width: 14rem;
-  line-height: 1.4;
+  max-width: 15rem;
+  line-height: 1.5;
+  position: relative;
+  z-index: 1;
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -1761,7 +1818,7 @@ quill-editor {
     border: none !important;
     border-bottom: 1px solid var(--daemon-border, var(--daemon-border)) !important;
     border-radius: 0 !important;
-    padding: 10px 16px !important;
+    padding: 8px 12px !important;
     display: flex !important;
     flex-wrap: nowrap !important;
     align-items: center !important;
@@ -1778,12 +1835,24 @@ quill-editor {
     }
   }
 
-  // Cada grupo de controles se mantiene en su línea, sin envolver
+  // Cada grupo de controles se mantiene en su línea, sin envolver.
+  // Separador vertical sutil entre grupos (estilo Google Docs).
   ::ng-deep .ql-toolbar.ql-snow .ql-formats {
     display: inline-flex !important;
     align-items: center !important;
     flex-shrink: 0 !important;
-    margin-right: 8px !important;
+    margin-right: 0 !important;
+    padding-right: 10px !important;
+    border-right: 1px solid var(--daemon-border, var(--daemon-border)) !important;
+    margin-left: 10px !important;
+
+    &:first-child {
+      margin-left: 0 !important;
+    }
+
+    &:last-child {
+      border-right: 0 !important;
+    }
   }
 
   ::ng-deep .ql-toolbar.ql-snow button {
@@ -1815,8 +1884,37 @@ quill-editor {
   }
 
   ::ng-deep .ql-snow .ql-picker {
-    display: inline-block !important;
-    height: 28px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    height: 30px !important;
+    border-radius: 6px !important;
+    padding: 0 4px !important;
+
+    &:hover {
+      background: var(--daemon-canvas, var(--daemon-canvas)) !important;
+    }
+  }
+
+  // Etiquetas de los pickers en español y legibles.
+  // El selector [data-value] cubre tanto el label activo como los
+  // items del menú desplegable (Quill los marca igual).
+  ::ng-deep .ql-snow .ql-picker.ql-header .ql-picker-label::before,
+  ::ng-deep .ql-snow .ql-picker.ql-header .ql-picker-item::before {
+    content: 'Texto' !important;
+    font-weight: 700 !important;
+    font-size: 0.78rem !important;
+  }
+
+  ::ng-deep .ql-snow .ql-picker.ql-header [data-value='1']::before {
+    content: 'Título 1' !important;
+  }
+
+  ::ng-deep .ql-snow .ql-picker.ql-header [data-value='2']::before {
+    content: 'Título 2' !important;
+  }
+
+  ::ng-deep .ql-snow .ql-picker.ql-header [data-value='3']::before {
+    content: 'Título 3' !important;
   }
 
   ::ng-deep .ql-snow .ql-stroke {
@@ -1850,24 +1948,28 @@ quill-editor {
   }
 }
 
+// La hoja: papel centrado con el color de la página definido por
+// el usuario (--daemon-hoja-fondo), sombra de libro y tipografía
+// serif amplia y legible como en un libro de verdad.
 ::ng-deep .ql-container.ql-snow {
   border: none !important;
   font-family: ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
   font-size: 1.15rem;
-  min-height: 400px;
-  background-color: transparent;
-  padding: 24px 32px;
+  min-height: 100%;
+  background-color: var(--daemon-hoja-fondo, var(--daemon-on-primary));
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+  border-radius: 6px;
+  box-shadow: var(--daemon-shadow-soft, 0 2px 10px rgba(23, 36, 60, 0.04));
 }
 
 ::ng-deep .ql-editor {
-  min-height: 400px;
+  min-height: 380px;
   padding: 0;
-  line-height: 1.8;
+  line-height: 1.85;
   color: var(--daemon-ink, var(--daemon-ink));
   font-weight: 400;
-  // El editor ya no comparte fila con la ilustración: la
-  // ilustración es una columna del grid, no un overlay. Por eso
-  // el texto fluye a ancho completo sin padding lateral artificial.
+  // La hoja de libro está centrada: el texto fluye a ancho de
+  // lectura confortable (~44rem), como en StoryJumper o Book Creator.
 
   blockquote {
     border: 1px dashed transparent !important;
@@ -1917,16 +2019,6 @@ quill-editor {
   blockquote:hover::after {
     opacity: 1;
   }
-}
-
-::ng-deep .ql-snow .ql-picker.ql-size .ql-picker-label[data-value]::before,
-::ng-deep .ql-snow .ql-picker.ql-size .ql-picker-item[data-value]::before {
-  content: attr(data-value) !important;
-}
-
-::ng-deep .ql-snow .ql-picker.ql-size .ql-picker-label:not([data-value])::before,
-::ng-deep .ql-snow .ql-picker.ql-size .ql-picker-item:not([data-value])::before {
-  content: 'Normal' !important;
 }
 
 ::ng-deep .ql-picker-options {

@@ -2,7 +2,7 @@ import { Component, Input, Output, EventEmitter, ElementRef, ViewChild, HostList
 import { CommonModule } from '@angular/common';
 import { QuillModule } from 'ngx-quill';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faBookOpenReader, faHeart, faBookmark, faShareNodes, faClock, faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { faBookOpenReader, faHeart, faBookmark, faShareNodes, faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { CuentoDetalleVista, PaginaCuentoVista } from '../../../../presentacion/cuento-detalle-vista.modelo';
 import { Activos } from '../../../../../../core/servicios/activos';
 import { migrarContenidoLegacy } from '../../../../utils/cuento-legacy';
@@ -12,7 +12,7 @@ import { migrarContenidoLegacy } from '../../../../utils/cuento-legacy';
   standalone: true,
   imports: [CommonModule, QuillModule, FontAwesomeModule],
   templateUrl: './cuento-lectura.component.html',
-  styleUrl: '../../../crear-cuento/crear-cuento.scss',
+  styleUrl: './cuento-lectura.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CuentoLecturaComponent {
@@ -22,7 +22,6 @@ export class CuentoLecturaComponent {
   faHeart = faHeart;
   faBookmark = faBookmark;
   faShareNodes = faShareNodes;
-  faClock = faClock;
   faChevronLeft = faChevronLeft;
   faChevronRight = faChevronRight;
 

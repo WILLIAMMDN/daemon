@@ -36,10 +36,6 @@ import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 import { EditorCuentoFacade } from '../../aplicacion/editor-cuento.facade';
 import { PROVEEDORES_CUENTOS } from '../../acceso-datos/proveedores-cuentos';
 
-const Size = Quill.import('attributors/style/size') as Record<string, unknown> & { whitelist: string[] };
-Size.whitelist = ['10px', '12px', '14px', '16px', '18px', '20px', '24px', '32px', '48px'];
-Quill.register('attributors/style/size', Size, true);
-
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-crear-cuento',
@@ -100,6 +96,10 @@ export class CrearCuento implements OnInit {
   readonly publicacionExpandido = signal(true);
   readonly progresoExpandido = signal(true);
 
+  /** Arrastrar y soltar imágenes (drag & drop nativo) */
+  readonly arrastrandoPortada = signal(false);
+  readonly arrastrandoIlustracion = signal(false);
+
   readonly faCheckCircle = faCheckCircle;
   readonly faCircle = faCircle;
   readonly faCloudArrowUp = faCloudArrowUp;
@@ -125,17 +125,17 @@ export class CrearCuento implements OnInit {
   readonly quillModules = {
     history: { delay: 1000, maxStack: 100, userOnly: true },
     toolbar: {
+      // Toolbar profesional y sobrio: sin selectores genéricos (fuente/tamaño),
+      // agrupado por función para una escritura enfocada en la historia.
       container: [
         ['undo', 'redo'],
-        [{ font: [] }, { size: Size.whitelist }],
-        [{ header: [1, 2, 3, 4, false] }],
-        ['bold', 'italic', 'underline', 'strike'],
+        [{ header: [1, 2, 3, false] }],
+        ['bold', 'italic', 'underline'],
         [{ color: [] }, { background: [] }],
-        [{ script: 'sub' }, { script: 'super' }],
         [{ align: [] }],
-        [{ list: 'ordered' }, { list: 'bullet' }, { indent: '-1' }, { indent: '+1' }],
-        ['blockquote', 'code-block'],
-        ['link', 'image', 'video'],
+        [{ list: 'ordered' }, { list: 'bullet' }],
+        ['blockquote'],
+        ['link', 'image'],
         ['clean'],
       ],
       handlers: {
@@ -144,6 +144,42 @@ export class CrearCuento implements OnInit {
       },
     },
   };
+
+  // ── Drag & drop nativo para imágenes ────────────────────────────
+
+  onDragOverPortada(evento: DragEvent): void {
+    evento.preventDefault();
+    this.arrastrandoPortada.set(true);
+  }
+
+  onDragLeavePortada(): void {
+    this.arrastrandoPortada.set(false);
+  }
+
+  onDropPortada(evento: DragEvent): void {
+    evento.preventDefault();
+    this.arrastrandoPortada.set(false);
+    const archivo = evento.dataTransfer?.files?.[0];
+    if (!archivo || this.subiendoPortada()) return;
+    void this.editor.onSubirPortada({ target: { files: [archivo], value: '' } } as unknown as Event);
+  }
+
+  onDragOverIlustracion(evento: DragEvent): void {
+    evento.preventDefault();
+    this.arrastrandoIlustracion.set(true);
+  }
+
+  onDragLeaveIlustracion(): void {
+    this.arrastrandoIlustracion.set(false);
+  }
+
+  onDropIlustracion(evento: DragEvent): void {
+    evento.preventDefault();
+    this.arrastrandoIlustracion.set(false);
+    const archivo = evento.dataTransfer?.files?.[0];
+    if (!archivo || this.subiendoIlustracion()) return;
+    void this.editor.onSubirIlustracion({ target: { files: [archivo], value: '' } } as unknown as Event);
+  }
 
   ngOnInit(): void {
     void this.editor.inicializar(
@@ -227,6 +263,12 @@ export class CrearCuento implements OnInit {
   readonly agregarPagina = () => this.editor.agregarPagina();
   readonly eliminarPagina = (indice: number) => this.editor.eliminarPagina(indice);
   readonly onSubirPortada = (evento: Event) => this.editor.onSubirPortada(evento);
+  readonly onDragOverPortadaB = (evento: DragEvent) => this.onDragOverPortada(evento);
+  readonly onDragLeavePortadaB = () => this.onDragLeavePortada();
+  readonly onDropPortadaB = (evento: DragEvent) => this.onDropPortada(evento);
+  readonly onDragOverIlustracionB = (evento: DragEvent) => this.onDragOverIlustracion(evento);
+  readonly onDragLeaveIlustracionB = () => this.onDragLeaveIlustracion();
+  readonly onDropIlustracionB = (evento: DragEvent) => this.onDropIlustracion(evento);
   readonly eliminarPortada = () => this.editor.eliminarPortada();
   readonly onSubirIlustracion = (evento: Event) => this.editor.onSubirIlustracion(evento);
   readonly quitarIlustracion = () => this.editor.quitarIlustracion();
