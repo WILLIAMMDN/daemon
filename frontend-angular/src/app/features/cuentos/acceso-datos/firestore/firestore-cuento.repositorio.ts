@@ -217,18 +217,22 @@ export class FirestoreCuentoRepositorio implements CuentoRepositorio {
       const esPropio = cuentoDto.autor_uid === uid;
       const versionId = esPropio ? cuentoDto.version_borrador_id : cuentoDto.version_publicada_id;
       if (!versionId) throw new ErrorCuento('NO_AUTORIZADO', 'El cuento todavía no tiene una versión visible.', false);
-      const versionSnapshot = await getDoc(
-        doc(db, 'cuentos', cuentoId, 'versiones', versionId).withConverter(versionCuentoConverter),
-      );
-      if (!versionSnapshot.exists()) throw new ErrorCuento('NO_ENCONTRADO', 'La versión del cuento no existe.', false);
-      const paginasSnapshot = await getDocs(
-        query(
-          collection(db, 'cuentos', cuentoId, 'versiones', versionId, 'paginas')
-            .withConverter(paginaCuentoConverter),
-          orderBy('orden', 'asc'),
-          limit(100),
+      // Versión y páginas se leen en paralelo: el detalle deja de esperar
+      // dos round-trips en serie y se muestra más rápido.
+      const [versionSnapshot, paginasSnapshot] = await Promise.all([
+        getDoc(
+          doc(db, 'cuentos', cuentoId, 'versiones', versionId).withConverter(versionCuentoConverter),
         ),
-      );
+        getDocs(
+          query(
+            collection(db, 'cuentos', cuentoId, 'versiones', versionId, 'paginas')
+              .withConverter(paginaCuentoConverter),
+            orderBy('orden', 'asc'),
+            limit(100),
+          ),
+        ),
+      ]);
+      if (!versionSnapshot.exists()) throw new ErrorCuento('NO_ENCONTRADO', 'La versión del cuento no existe.', false);
       const version = this.mapearVersion(cuentoId, versionSnapshot.id, versionSnapshot.data());
       return {
         cuento: this.enriquecerConVersion(this.mapearCuento(cuentoSnapshot.id, cuentoDto), version),

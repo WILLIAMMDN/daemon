@@ -1,4 +1,5 @@
 import { Injectable, inject, signal } from '@angular/core';
+import { reportarError } from '../../../core/servicios/observabilidad';
 import { FirebaseAuth } from '../../../core/servicios/firebase-auth';
 import { Sesion } from '../../../core/servicios/sesion';
 import { ACTIVOS_CUENTO_REPOSITORIO } from '../acceso-datos/activos-cuento.repositorio';
@@ -85,14 +86,17 @@ export class LecturaCuentoFacade {
         },
         autorUid: detalle.cuento.autorUid,
       });
-      await Promise.all([
+      // El cuento ya está listo: se muestra de inmediato. Comentarios,
+      // reacciones y el tip IA cargan en paralelo SIN bloquear la lectura
+      // (el tip va por HTTP y puede tardar o fallar; la historia no espera).
+      this.cargando.set(false);
+      void Promise.allSettled([
         this.cargarComentarios(),
         this.cargarReacciones(),
         this.generarTip(detalle.version.titulo, detalle.cuento.audiencia),
       ]);
     } catch (error) {
       this.error.set(normalizarErrorCuento(error).message);
-    } finally {
       this.cargando.set(false);
     }
   }
@@ -124,7 +128,9 @@ export class LecturaCuentoFacade {
       this.cursorComentarios = pagina.siguienteCursor;
       this.hayMasComentarios.set(Boolean(pagina.siguienteCursor));
     } catch (error) {
-      this.error.set(normalizarErrorCuento(error).message);
+      // Los comentarios no bloquean la lectura: un fallo aquí solo deja la
+      // sección vacía y se registra para diagnóstico.
+      reportarError(error, { area: 'cuentos-lectura-comentarios', recuperable: true });
     } finally {
       this.cargandoMasComentarios.set(false);
     }
@@ -183,10 +189,14 @@ export class LecturaCuentoFacade {
   }
 
   private async cargarEstadisticas(): Promise<void> {
-    const estadisticas = await this.comandos.obtenerEstadisticas(this.cuentoId);
-    this.comentariosCount.set(estadisticas.comentarios);
-    this.miReaccion.set(estadisticas.reacciones.propia);
-    this.reaccionesCount.set({ ...estadisticas.reacciones.porTipo });
+    try {
+      const estadisticas = await this.comandos.obtenerEstadisticas(this.cuentoId);
+      this.comentariosCount.set(estadisticas.comentarios);
+      this.miReaccion.set(estadisticas.reacciones.propia);
+      this.reaccionesCount.set({ ...estadisticas.reacciones.porTipo });
+    } catch (error) {
+      reportarError(error, { area: 'cuentos-lectura-estadisticas', recuperable: true });
+    }
   }
 
   private async generarTip(titulo: string, audiencia: 'KIDS' | 'TEENS'): Promise<void> {
