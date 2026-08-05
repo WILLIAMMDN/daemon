@@ -7,6 +7,7 @@ use App\Models\Usuario;
 use App\Services\Archivo\ArchivoUrlService;
 use App\Services\Contenido\ContenidoSanitizer;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class CuentoService
@@ -18,17 +19,21 @@ class CuentoService
 
     public function galeria(): Collection
     {
-        return DB::table('cuentos as c')
-            ->join('usuarios as u', 'u.id', '=', 'c.id_alumno')
-            ->select('c.*', 'u.nombre_completo as autor', 'u.avatar')
-            ->selectSub(function ($query) {
-                $query->selectRaw('count(*)')
-                    ->from('cuento_reacciones')
-                    ->whereColumn('cuento_id', 'c.id');
-            }, 'reacciones_count')
-            ->orderByDesc('c.fecha_creacion')
-            ->get()
-            ->map(fn ($cuento) => $this->cuentoConUrls($cuento));
+        // Galería pública: se cachea 45 s para no pagar la ronda a
+        // PostgreSQL en cada carga (la v2 de Firestore ya se cachea aparte).
+        return Cache::remember('cuentos:galeria:legacy', 45, function (): Collection {
+            return DB::table('cuentos as c')
+                ->join('usuarios as u', 'u.id', '=', 'c.id_alumno')
+                ->select('c.*', 'u.nombre_completo as autor', 'u.avatar')
+                ->selectSub(function ($query) {
+                    $query->selectRaw('count(*)')
+                        ->from('cuento_reacciones')
+                        ->whereColumn('cuento_id', 'c.id');
+                }, 'reacciones_count')
+                ->orderByDesc('c.fecha_creacion')
+                ->get()
+                ->map(fn ($cuento) => $this->cuentoConUrls($cuento));
+        });
     }
 
     public function detalle(Cuento $cuento): array

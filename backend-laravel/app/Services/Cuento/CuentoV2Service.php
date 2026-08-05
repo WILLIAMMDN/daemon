@@ -78,6 +78,14 @@ class CuentoV2Service
      */
     public function detalle(Usuario $usuario, string $cuentoId): array
     {
+        // El lector público (no dueño) de un cuento publicado ve la misma
+        // página para todos: se cachea 30 s para no pagar 3 rondas a
+        // Firestore (cabecera + versión + páginas) en cada visita.
+        $claveCache = 'cuentos:detalle:v2:'.$this->idSeguro($cuentoId);
+        if (Cache::has($claveCache)) {
+            return Cache::get($claveCache);
+        }
+
         $cuento = $this->documentos->obtener($this->cuentoPath($cuentoId));
         if ($cuento === null) {
             throw new CuentoV2Exception('El cuento no existe.', 404, 'CUENTO_NO_ENCONTRADO');
@@ -112,11 +120,18 @@ class CuentoV2Service
             $paginas = $this->paginasLegado($cuentoId, $campos);
         }
 
-        return [
+        $resultado = [
             'cuento' => $this->cuentoPublico($cuento),
             'version' => $version,
             'paginas' => $paginas,
         ];
+        // Solo se cachea para lectores que no son el dueño y cuando el
+        // cuento está publicado; el dueño siempre ve estado fresco.
+        if (! $esPropio && ($campos['estado'] ?? null) === 'publicado') {
+            Cache::put($claveCache, $resultado, 30);
+        }
+
+        return $resultado;
     }
 
     /**
