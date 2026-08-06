@@ -82,10 +82,10 @@ verifican para evitar regresiones.
 
 | Foreground | Background | Ratio | Decisión |
 |---|---|---|---|
-| `#14532D` (success-ink) | `#DCFCE7` (success-subtle) | **≥ 12** (estimado, verificar) | **APROBADA** (pendiente verificación exacta al implementar). |
-| `#7C2D12` (warning-ink) | `#FFF7ED` (warning-subtle) | **≥ 9** (estimado) | **APROBADA** (pendiente verificación exacta). |
-| `#7F1D1D` (danger-ink) | `#FEE2E2` (danger-subtle) | **≥ 9** (estimado) | **APROBADA** (pendiente verificación exacta). |
-| `#1E3A8A` (info-ink) | `#EFF6FF` (info-subtle) | **≥ 9** (estimado) | **APROBADA** (pendiente verificación exacta). |
+| `#14532D` (success-ink) | `#DCFCE7` (success-subtle) | **8.30** | **APROBADA** | |
+| `#7C2D12` (warning-ink) | `#FFF7ED` (warning-subtle) | **8.83** | **APROBADA** | |
+| `#7F1D1D` (danger-ink) | `#FEE2E2` (danger-subtle) | **8.20** | **APROBADA** | |
+| `#1E3A8A` (info-ink) | `#EFF6FF` (info-subtle) | **8.83** | **APROBADA** | |
 
 > Los ratios exactos se calculan al introducir los tokens en código
 > usando `node scripts/dev/wcag-contrast.mjs <fg> <bg>`. No se
@@ -209,3 +209,11 @@ Salida: `7.75` más las 4 verificaciones (AA-txt, AAA-txt, AA-big, UI).
   de la imagen.
 - No cubre **texto sobre gradientes** porque los gradientes están
   prohibidos en el portal del estudiante (Constitución §19.1).
+
+
+## 5. Contraste no textual (SC 1.4.11)
+| Elemento | Fondo | Ratio (Req >= 3.0:1) | Estado |
+|---|---|---|---|
+| Focus ring (`shadow-ring`) | Surface blanca | **TBD** | PROPUESTO |
+| Border strong | Surface blanca | **TBD** | APROBADO |
+| Iconos primarios | Variado | **TBD** | APROBADO |

@@ -1,3 +1,5 @@
+> **[ESTADO ACTUAL]** Ver `00-DOCUMENTATION-STATUS.md`
+
 ---
 title: Tokens y tema
 status: active

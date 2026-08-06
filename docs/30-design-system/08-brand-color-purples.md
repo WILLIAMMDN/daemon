@@ -1,3 +1,5 @@
+> **[ESTADO ACTUAL]** Ver `00-DOCUMENTATION-STATUS.md`
+
 ---
 title: DAEMON — Decisión de color de marca: morado + amarillo
 status: active

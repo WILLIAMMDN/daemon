@@ -1,7 +1,7 @@
 # DAEMON — Constitución Visual V1
 
 > **Documento normativo, no de implementación.**
-> **Versión:** 1.0 · **Fecha:** 2026-08-06 · **Estado:** VIGENTE
+> **Versión:** 1.0 · **Fecha:** 2026-08-06 · **Estado:** PENDIENTE DE APROBACIÓN
 > **Rama de origen:** `design/daemon-visual-constitution-v1`
 > **Audiencia:** equipo DAEMON, agentes de diseño e implementación,
 > revisores de PR, owner de marca.

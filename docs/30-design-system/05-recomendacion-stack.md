@@ -1,3 +1,5 @@
+> **[ESTADO ACTUAL]** Ver `00-DOCUMENTATION-STATUS.md`
+
 ---
 title: Recomendación de stack: Opción C (híbrido controlado)
 status: active

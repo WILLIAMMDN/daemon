@@ -1,3 +1,5 @@
+> **[ESTADO ACTUAL]** Ver `00-DOCUMENTATION-STATUS.md`
+
 ---
 title: DAEMON — Sistema de diseño · Plan maestro
 status: active

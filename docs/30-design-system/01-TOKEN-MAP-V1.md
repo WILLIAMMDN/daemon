@@ -223,11 +223,11 @@ mantener la coherencia institucional.
 
 | Token | Valor | Función | Estado |
 |---|---|---|---|
-| `shadow-xs` | `0 1px 2px rgba(16,16,93,0.04)` | Sombra mínima (separa cards del fondo). | **APROBADO** |
-| `shadow-sm` | `0 2px 6px rgba(16,16,93,0.06), 0 1px 2px rgba(16,16,93,0.04)` | Cards normales. | **APROBADO** |
-| `shadow-md` | `0 4px 12px rgba(16,16,93,0.08), 0 2px 4px rgba(16,16,93,0.04)` | Dropdowns, popovers, tooltips. | **APROBADO** |
-| `shadow-lg` | `0 12px 32px rgba(16,16,93,0.12), 0 4px 8px rgba(16,16,93,0.06)` | Modal, drawer, overlay. | **APROBADO** |
-| `shadow-ring` | `0 0 0 3px rgba(254,197,20,0.5)` | Foco visible (no decoración). | **APROBADO** (solo para `:focus-visible`). |
+| `shadow-xs` | `0 1px 2px rgba(0,0,0,0.04)` | Sombra mínima (separa cards del fondo). | **APROBADO** |
+| `shadow-sm` | `0 2px 6px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)` | Cards normales. | **APROBADO** |
+| `shadow-md` | `0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04)` | Dropdowns, popovers, tooltips. | **APROBADO** |
+| `shadow-lg` | `0 12px 32px rgba(0,0,0,0.12), 0 4px 8px rgba(0,0,0,0.06)` | Modal, drawer, overlay. | **APROBADO** |
+| `shadow-ring` | `0 0 0 3px rgba(254,197,20,0.5)` | Foco visible (no decoración). | **PROPUESTO** (hasta validar SC 1.4.11). |
 
 **Prohibido:** cualquier sombra con tinte de color (`box-shadow: 0 0
 20px #5630CE`), cualquier glow ornamental, sombras encadenadas que
@@ -255,7 +255,7 @@ en hover. Animación en bucle fuera de carga o espera.
 
 | Estado | Cantidad |
 |---|---|
-| APROBADO | 42 (5 marca + 7 derivados propuestos + 8 semánticos + 8 neutros + 16 tipografía + 12 espaciado + 6 radios + 5 sombras + 4 movimiento) |
+| APROBADO | 85 (recuento real) |
 | PROPUESTO | 9 (derivados de marca, hover, subtle, border, on-color — no se pre-aprueban) |
 | DEPRECADO | 0 (este mapa es V1) |
 | PROHIBIDO | 0 aquí (los antipatrones viven en Constitución §19, no como tokens) |
