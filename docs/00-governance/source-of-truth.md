@@ -17,7 +17,7 @@ applies_to: all
 | autenticación | `docs/50-security/firebase-auth.md` | security | 2026-08-06 |
 | datos | `docs/40-data/supabase-postgres.md` | data | 2026-08-06 |
 | Firebase | NO DEFINIDO — REQUIERE DOCUMENTO CANÓNICO | - | - |
-| diseño visual | `docs/30-design-system/00-resumen-ejecutivo.md` | design | 2026-08-06 |
+| diseño visual | `docs/30-design-system/README.md` | design | 2026-08-06 |
 | seguridad | `docs/50-security/privacidad-kids-teens.md` | security | 2026-08-06 |
 | privacidad | `docs/50-security/privacidad-kids-teens.md` | security | 2026-08-06 |
 | entornos | `docs/60-operations/ENVIRONMENTS.md` | devops | 2026-08-06 |

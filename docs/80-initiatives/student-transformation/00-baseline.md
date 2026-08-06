@@ -28,7 +28,7 @@ Por las reglas del encargo, no se crearon ADR-001 a ADR-006 ni se inició Packag
 Se leyó por completo el conjunto obligatorio indicado por el encargo:
 
 - `AGENTS.md` y `README.md`.
-- Todos los archivos de `docs/sistema-diseno/`.
+- Todos los archivos de `docs/30-design-system/`.
 - Configuración Angular/NPM real en `frontend-angular/`, Firebase y reglas locales existentes.
 - Tokens, rutas, dominio de nivel/tema, layout y sidebar del alumno.
 - Todo `frontend-angular/src/app/features/cuentos/` y todos los entornos Angular.
@@ -42,7 +42,7 @@ Se leyó por completo el conjunto obligatorio indicado por el encargo:
 
 ### Discrepancias documentales verificadas
 
-- `AGENTS.md` y `docs/sistema-diseno/00-resumen-ejecutivo.md` indican que Phase 1 está pendiente; `docs/sistema-diseno/08-brand-color-purples.md` y el código muestran tokens, linter y parte de Phase 1 ya implementados.
+- `AGENTS.md` indicaba que Phase 1 estaba pendiente; el código muestra tokens, linter y parte de Phase 1 ya implementados.
 - El documento obligatorio `docs/DAEMON-CURRENT-STATE.md` está ausente.
 - La configuración de staging contiene placeholders y el workflow impide reutilizar producción, pero el repositorio no demuestra que los recursos aislados requeridos estén aprovisionados.
 - La arquitectura declarada asigna Cuentos a Firestore, pero Laravel conserva rutas, modelo, migraciones y escrituras mutables sobre `cuentos` en PostgreSQL.

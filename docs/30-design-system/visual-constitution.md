@@ -11,17 +11,11 @@
 > prescribe la composición del dashboard ni del shell. Define **reglas,
 > decisiones y límites** que cualquier propuesta posterior debe respetar.
 >
-> **Documentos vigentes asociados (este paquete V1):**
-> - `00-DOCUMENTATION-STATUS.md` — auditoría del resto de la documentación.
-> - `01-TOKEN-MAP-V1.md` — mapa semántico de tokens (qué existe, qué se
+> **Documentos asociados del paquete candidato V1:**
+> - `token-map.md` — mapa semántico de tokens (qué existe, qué se
 >   propone, qué está prohibido).
-> - `02-COLOR-ACCESSIBILITY-REPORT-V1.md` — informe de contraste WCAG
+> - `color-accessibility.md` — informe de contraste WCAG
 >   verificado de las combinaciones definidas.
->
-> **Anexo informativo (no normativo):**
-> - `daemon-student-baseline-v1.md` — inventario de hallazgos del estado
->   actual del portal del estudiante (ramas previas). Útil para entender
->   el problema, no prescribe la solución.
 
 ---
 
@@ -184,7 +178,7 @@ hex sin pasar por gobernanza (§20).
 |---|---|---|---|
 | 1 | `#10105D` | navy-900 | Estructura institucional, navegación, sidebar, texto sobre fondos claros cuando corresponde, superficies oscuras controladas. |
 | 2 | `#76CF1A` | green-500 | Progreso, crecimiento de marca, avance del usuario, indicador de "completado" cuando comunica avance de marca (no es success automático). |
-| 3 | `#FEC514` | yellow-500 | Recompensa, DAEMONS, selección activa, item activo del sidebar, foco visible. Normalmente se combina con texto `#10105D`. |
+| 3 | `#FEC514` | yellow-500 | Recompensa, DAEMONS, selección activa, item activo del sidebar, foco sobre superficies oscuras, no un foco universal. Normalmente se combina con texto `#10105D`. |
 | 4 | `#EB590C` | orange-500 | Misión, reto, energía, advertencia motivacional. **No** sustituye a warning ni a danger. |
 | 5 | `#5630CE` | purple-600 | Creatividad, IA, logros, ranking, acento TEENS. |
 
@@ -200,7 +194,7 @@ hex sin pasar por gobernanza (§20).
    menos saturado si las comprobaciones de contraste lo requieren.
 4. **`#FEC514` no se usa como fondo bajo texto blanco**. El texto que
    acompaña a `#FEC514` es `#10105D` (ratio 10.53:1, ver
-   `02-COLOR-ACCESSIBILITY-REPORT-V1.md`).
+   `color-accessibility.md`).
 5. **`#EB590C` no se usa para errores ni para validaciones fallidas**.
    Es motivacional. El rojo danger es otro rol (§5.2).
 6. **`#5630CE` no se usa como fondo masivo de página**. Se usa como
@@ -274,7 +268,7 @@ por su función, no por su color.
 | `info` | Información neutral. | azul con buen contraste. |
 
 Los colores específicos de los roles semánticos se aprueban en el
-mapa de tokens (`01-TOKEN-MAP-V1.md`) tras verificar contraste.
+mapa de tokens (`token-map.md`) tras verificar contraste.
 
 ### 5.3 Prohibición explícita
 
@@ -295,7 +289,7 @@ cuando necesita un rol semántico. Por ejemplo:
 La Constitución **no prescribe** clases, componentes ni tokens finales.
 Prescribe **qué roles de interacción debe reconocer el sistema** y
 cuál es su color base aprobado. La implementación decidirá el nombre
-del token concreto (prefijo, sufijo, convención) en `01-TOKEN-MAP-V1.md`.
+del token concreto (prefijo, sufijo, convención) en `token-map.md`.
 
 ### 6.1 Roles canónicos
 
@@ -305,9 +299,9 @@ del token concreto (prefijo, sufijo, convención) en `01-TOKEN-MAP-V1.md`.
 | `--student-action-primary-hover` | Estado hover del primario. | derivado un paso más oscuro. | mismo on-color. |
 | `--student-action-primary-active` | Estado active/pressed. | derivado dos pasos más oscuro. | mismo on-color. |
 | `--student-on-action-primary` | Texto que va **encima** del fondo del CTA. | aprobado por contraste. | — |
-| `--student-progress` | Indicador de avance, completado, racha. | `#76CF1A` (green-500) como marca; rol semántico `success` aparte. | `#10105D` o `#FFFFFF` según fondo. |
+| `--student-progress` | Indicador de avance, completado, racha. | `#76CF1A` (green-500) como marca; rol semántico `success` aparte. | `#10105D` o `#172033`. |
 | `--student-mission` | Acción de misión, reto, energía. | `#EB590C` (orange-500). | `#FFFFFF` solo si se verifica contraste; alternativa más oscura. |
-| `--student-creative` | Creatividad, IA, logros, ranking. | `#5630CE` (purple-600). | `#FFFFFF` o `#10105D` según fondo. |
+| `--student-creative` | Creatividad, IA, logros, ranking. | `#5630CE` (purple-600). | únicamente `#FFFFFF`. |
 | `--student-reward` | DAEMONS, recompensa, foco amarillo. | `#FEC514` (yellow-500). | `#10105D` (única combinación aprobada). |
 | `--student-navigation` | Estructura del shell, sidebar, fondo institucional. | `#10105D` (navy-900). | `#F8FAFC` (sidebar-text) o `#B9C0E4` (sidebar-muted). |
 
@@ -594,8 +588,7 @@ de información por vista**. Tres niveles canónicos:
 - Borde con énfasis: `1 px solid var(--border-strong)` (`#CBD5E1`).
 - Los bordes son **neutros**. No se usa borde de color azul, morado,
   púrpura o navy para decorar.
-- El borde de foco es `outline` con `box-shadow` amarillo
-  (`student-reward` con opacidad reducida), no un cambio de `border-color`.
+- El borde de foco es: `focus-ring-light-surface` = `#10105D` en superficies claras, y `focus-ring-dark-surface` = `#FEC514` en superficies navy (contorno sólido, sin transparencia).
 - Los divisores de sección dentro de una card pueden ser
   `border-top: 1 px solid var(--border)`.
 
@@ -627,8 +620,7 @@ de información por vista**. Tres niveles canónicos:
 
 - ❌ `box-shadow: 0 0 20px #5630CE` (glow de marca).
 - ❌ `box-shadow: 0 10px 30px rgba(86, 48, 206, 0.3)` (tinte morado).
-- ❌ `box-shadow: 0 0 0 4px rgba(254, 197, 20, 0.5)` como decoración
-  (solo permitido como foco, no como ornamento).
+- ❌ `box-shadow: 0 0 0 4px rgba(254, 197, 20, 0.5)` como decoración o foco (el foco translúcido está prohibido).
 - ❌ Múltiples sombras encadenadas que produzcan "neón" o "resplandor".
 
 ---
@@ -637,14 +629,10 @@ de información por vista**. Tres niveles canónicos:
 
 ### 15.1 Estilo
 
-- **Una sola familia** de iconos (la vigente en el sistema, definida
-  en el mapa de tokens).
-- **Estilo sólido** (`solid` o `filled`). No se mezcla outline + solid
-  en la misma vista.
-- **Tamaño base** de iconos en cuerpo: 16 – 20 px.
-- **Tamaño medio**: 24 px.
-- **Tamaño destacado**: 32 – 48 px.
-- **Tamaño hero** (si aplica): 56 – 96 px.
+- **Ant Design Icons** mediante NG-ZORRO.
+- Estilo **outline** para navegación y acciones.
+- Estilo **filled** para selección y estados destacados.
+- **No mezclar** estilos arbitrariamente en la misma vista.
 
 ### 15.2 Prohibiciones
 
@@ -745,7 +733,7 @@ de información por vista**. Tres niveles canónicos:
 
 ### 18.3 Combinaciones prohibidas (texto normal)
 
-Ver `02-COLOR-ACCESSIBILITY-REPORT-V1.md` para el detalle. Reglas
+Ver `color-accessibility.md` para el detalle. Reglas
 generales:
 
 - ❌ Texto blanco sobre `#76CF1A` (green-500).
@@ -864,7 +852,7 @@ implementación DAEMON.
 
 - Cualquier miembro del equipo o agente.
 - Las propuestas se hacen como **PR a este directorio
-  `docs/sistema-diseno/`**.
+  `docs/30-design-system/`**.
 
 ### 20.3 Cómo se mide
 
@@ -880,7 +868,7 @@ implementación DAEMON.
 - Cambios incompatibles → bump mayor (`V1` → `V2`).
 - Cambios compatibles → bump menor (`V1.0` → `V1.1`).
 - Cada cambio queda registrado en el changelog de la Constitución
-  (sección 23 ampliada o anexo).
+  (sección 23 ampliada).
 
 ### 20.5 Linter de estilo
 
@@ -922,7 +910,7 @@ Solo cuando:
 
 ### 21.4 Cómo se introduce
 
-1. PR al `01-TOKEN-MAP-V1.md` con la fila nueva, estado `PROPUESTO`.
+1. PR al `token-map.md` con la fila nueva, estado `PROPUESTO`.
 2. Revisión de gobernanza (§20).
 3. Si se aprueba, el token se mueve a `APROBADO` y se documenta:
    - Función.
@@ -948,14 +936,7 @@ Una excepción a la Constitución se permite solo cuando:
 
 ### 22.2 Cómo se documenta una excepción
 
-- La excepción se registra como una **entrada explícita** en
-  `01-TOKEN-MAP-V1.md` con estado `PROHIBIDO` revertido a `EXCEPCIÓN`
-  en la columna de estado, con la justificación legal/técnica y la
-  aprobación de Max.
-- La excepción se lista en `00-DOCUMENTATION-STATUS.md` para que sea
-  visible en cualquier revisión.
-- La excepción **no escala**: no puede usarse como precedente para
-  nuevas excepciones.
+Toda excepción debe registrarse como una entrada explícita en `token-map.md` con la justificación técnica y la aprobación de Max, y nunca escala como precedente para nuevas excepciones.
 
 ### 22.3 Excepciones que la Constitución **nunca** concede
 
@@ -995,25 +976,7 @@ Un cambio a la Constitución se aprueba cuando:
 
 | Fecha | Versión | Cambio | Aprobado por |
 |---|---|---|---|
-| 2026-08-06 | V1.0 | Creación inicial de la Constitución. | Max (pendiente segundo revisor). |
+| 2026-08-06 | V1.0 | Creación inicial de la Constitución. | Max + revisión técnica final. |
 
 ---
 
-## Anexo A — referencias
-
-- `00-DOCUMENTATION-STATUS.md` — auditoría de toda la documentación
-  del sistema de diseño.
-- `01-TOKEN-MAP-V1.md` — mapa de tokens aprobados, propuestos,
-  deprecados y prohibidos.
-- `02-COLOR-ACCESSIBILITY-REPORT-V1.md` — informe de contraste WCAG
-  verificado.
-- `daemon-student-baseline-v1.md` — inventario del estado actual del
-  portal del estudiante (anexo informativo, no normativo).
-- `daemon-student-visual-v1.md` — marcado como
-  **BORRADOR NO APROBADO — NO IMPLEMENTAR** en su cabecera.
-- WCAG 2.2 — https://www.w3.org/TR/WCAG22/
-- WCAG 2.1 contrast ratio — https://www.w3.org/TR/WCAG21/#dfn-contrast-ratio
-
----
-
-**Fin del documento.** Constitución Visual DAEMON V1.0 — 2026-08-06.

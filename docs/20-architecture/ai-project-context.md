@@ -60,7 +60,7 @@ Main frontend stack:
 - Angular 21
 - Firebase JS SDK
 - NG-ZORRO as the preferred open-source Angular UI library for new professional
-  components; see `docs/frontend-ui-standard.md`
+  components; see `docs/30-design-system/visual-constitution.md`
 - Rive canvas mascot
 - Tailwind/DaisyUI utilities
 
@@ -94,17 +94,17 @@ permissions continue to come exclusively from `rol`.
 Student portal documentation:
 
 ```text
-docs/sistema-visual-portal-alumno.md
+docs/30-design-system/visual-constitution.md
 docs/portal-alumno.md
 docs/gamificacion-xp-daemons.md
-docs/plan-evolucion-visual-portal-alumno.md
+
 docs/release-2026-07-14-portal-alumno.md
 ```
 
 Current student visual direction:
 
 - Future portal work starts from `origin/main`; the Antigravity branches are
-  explicitly excluded from integration. See `docs/plan-evolucion-visual-portal-alumno.md`.
+  explicitly excluded from integration.
 
 - Inter only.
 - Solid colors; no gradients in the main student modules.

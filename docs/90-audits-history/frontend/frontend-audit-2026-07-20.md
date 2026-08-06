@@ -1,3 +1,8 @@
+---
+status: archived
+normative: false
+---
+
 > **[ESTADO ACTUAL]** Ver `00-DOCUMENTATION-STATUS.md`
 
 ---

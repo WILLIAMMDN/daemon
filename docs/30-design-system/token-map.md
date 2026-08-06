@@ -10,11 +10,10 @@
 > primera fase de implementación. Aquí se define el **qué** y el
 > **para qué**, no el **cómo** se llama en SCSS.
 >
-> **Anchor:** `00-DAEMON-VISUAL-CONSTITUTION-V1.md` (Constitución V1).
-> **Auditoría:** `00-DOCUMENTATION-STATUS.md`.
-> **Accesibilidad:** `02-COLOR-ACCESSIBILITY-REPORT-V1.md`.
+> **Anchor:** `visual-constitution.md` (Constitución V1).
+> **Accesibilidad:** `color-accessibility.md`.
 >
-> **Versión:** 1.0 · **Fecha:** 2026-08-06
+> **Versión:** 1.0 · **Fecha:** 2026-08-06 · **Estado:** VIGENTE
 > **Rama de origen:** `design/daemon-visual-constitution-v1`
 
 ---
@@ -39,16 +38,16 @@ de gobernanza que cambie la Constitución.
 | Token semántico | Categoría | Valor | Función | On-color | KIDS | TEENS | Estado |
 |---|---|---|---|---|---|---|---|
 | `marca-navy-900` | marca | `#10105D` | Estructura institucional: sidebar, navegación, texto sobre fondos claros, superficies oscuras controladas. | `#F8FAFC` texto, `#B9C0E4` muted. | sí | sí | **APROBADO** |
-| `marca-green-500` | marca | `#76CF1A` | Progreso y crecimiento de marca. Indicador de avance del usuario, completado de marca. NO es success automático. | `#10105D` o `#172033` (texto); sobre fondo blanco NO se usa como texto (contraste 1.96:1). | sí (acento éxito) | sí (uso contenido) | **APROBADO** |
+| `marca-green-500` | marca | `#76CF1A` | Progreso y crecimiento de marca. Indicador de avance del usuario, completado de marca. NO es success automático. | admite `#10105D` o `#172033`, nunca `#FFFFFF`. | sí (acento éxito) | sí (uso contenido) | **APROBADO** |
 | `marca-yellow-500` | marca | `#FEC514` | Recompensa, DAEMONS, item activo del sidebar, foco visible. Se combina con texto `#10105D`. | `#10105D` (única combinación aprobada). | sí (CTA, DAEMONS) | sí (DAEMONS, foco) | **APROBADO** |
 | `marca-orange-500` | marca | `#EB590C` | Misión, reto, energía, advertencia motivacional. NO es warning ni danger. | `#FFFFFF` solo si se verifica contraste en cada uso puntual. Texto blanco (3.52:1) no es válido para texto normal; requiere uso específico (botón con texto grande, no label pequeño). | sí (misiones) | sí (misiones, retos) | **APROBADO** |
-| `marca-purple-600` | marca | `#5630CE` | Creatividad, IA, logros, ranking, acento TEENS. | `#FFFFFF` (7.75:1) o `#10105D`. | sí (creatividad) | sí (acción principal, creatividad) | **APROBADO** |
+| `marca-purple-600` | marca | `#5630CE` | Creatividad, IA, logros, ranking, acento TEENS. | admite únicamente `#FFFFFF`. | sí (creatividad) | sí (acción principal, creatividad) | **APROBADO** |
 
 ### 1.1 Derivados aprobados (solo cuando sean necesarios)
 
 | Token | Categoría | Valor | Función | Justificación | Estado |
 |---|---|---|---|---|---|
-| `marca-navy-900-hover` | marca (derivado) | `#0C0C4A` (paso más oscuro) | Hover del fondo `marca-navy-900`. | Contraste contra texto `#F8FAFC` se mantiene alto. Delta L\* mayor que HSL simple. | **PROPUESTO** |
+| `marca-navy-900-hover` | marca (derivado) | `#0C0C4A` (paso más oscuro) | Hover del fondo `marca-navy-900`. | Contraste contra texto `#F8FAFC` se mantiene alto. Derivado provisional pendiente de validación perceptual y de contraste antes de su implementación. | **PROPUESTO** |
 | `marca-navy-900-active` | marca (derivado) | `#080834` (dos pasos más oscuro) | Estado pressed del fondo `marca-navy-900`. | Delta acumulativo respecto a base; verificación de contraste pendiente. | **PROPUESTO** |
 | `marca-green-500-hover` | marca (derivado) | `#62B315` (paso más oscuro) | Hover del acento verde. | Para usar como fondo; texto encima sigue siendo navy. | **PROPUESTO** |
 | `marca-yellow-500-hover` | marca (derivado) | `#E0AE00` (paso más oscuro) | Hover del foco amarillo / CTA KIDS. | Mantiene contraste navy-900 sobre yellow. | **PROPUESTO** |
@@ -65,6 +64,8 @@ de la base sirve para el derivado).
 
 ### 1.2 Prohibidos como texto
 
+- `#10105D` sobre `#5630CE` (2.16:1, PROHIBIDO).
+
 - `#76CF1A` (green-500) como texto sobre `surface` (1.96:1).
 - `#FEC514` (yellow-500) como texto sobre `surface` (1.59:1).
 - `#FEC514` como fondo bajo texto blanco.
@@ -79,7 +80,7 @@ de la base sirve para el derivado).
 Anclados en la Constitución V1 §5.2. Son **independientes de la marca**
 y se nombran por su función. Los valores específicos se aprueban
 cuando se verifique el contraste (ver
-`02-COLOR-ACCESSIBILITY-REPORT-V1.md`).
+`color-accessibility.md`).
 
 | Token semántico | Categoría | Valor | Función | On-color | Estado |
 |---|---|---|---|---|---|
@@ -114,7 +115,7 @@ Anclados en la Constitución V1 §4.4.
 | `neutral-text-secondary` | texto | `#667085` | Texto secundario, helper, labels. | sobre blanco (4.97:1, AA pero no AAA). | **APROBADO** |
 | `neutral-text-disabled` | texto | `#98A2B3` | Texto deshabilitado (solo controles disabled). | sobre blanco (2.58:1, NO AA). | **APROBADO** con restricción de uso (Constitución §7.3). |
 | `neutral-border` | borde | `#E4EAF2` | Borde estándar. | — | **APROBADO** |
-| `neutral-border-strong` | borde | `#CBD5E1` | Borde con énfasis. | — | **APROBADO** |
+| `neutral-border-strong` | borde | `#CBD5E1` | Borde con énfasis. No puede utilizarse como único límite visual de un control activo sobre blanco. | — | **APROBADO** |
 
 ---
 
@@ -132,7 +133,7 @@ referenciar cuando aplique.
 | `student-on-action-primary` | texto | aprobado por contraste contra el fondo del CTA. | Texto encima del CTA. | — | **PROPUESTO** (los valores exactos se aprueban al introducir el token en código, no antes). |
 | `student-progress` | interacción | `#76CF1A` (green-500) | Indicador de avance, marca de completado. | `#10105D` o `#172033` (sobre fondo del indicador). NO se usa como texto sobre surface. | **APROBADO** |
 | `student-mission` | interacción | `#EB590C` (orange-500) | Acción de misión, reto, energía. | `#FFFFFF` solo si el texto es grande (≥ 18.66 px bold o ≥ 24 px) o si se valida caso a caso. Para label pequeño, se usa un derivado más oscuro. | **APROBADO** con la salvedad de on-color. |
-| `student-creative` | interacción | `#5630CE` (purple-600) | Creatividad, IA, logros, ranking. | `#FFFFFF` (7.75:1) o `#10105D` (4.06:1 — verificar). | **APROBADO** |
+| `student-creative` | interacción | `#5630CE` (purple-600) | Creatividad, IA, logros, ranking. | `#FFFFFF` (7.75:1)  | **APROBADO** |
 | `student-reward` | interacción | `#FEC514` (yellow-500) | DAEMONS, recompensa, foco, item activo. | `#10105D` (10.53:1). | **APROBADO** |
 | `student-navigation` | interacción | `#10105D` (navy-900) | Estructura del shell, sidebar, fondo institucional. | `#F8FAFC` (sidebar-text), `#B9C0E4` (sidebar-muted), `#FEC514` (item activo, contraste 10.53:1). | **APROBADO** |
 
@@ -218,7 +219,7 @@ Anclados en la Constitución V1 §12.
 ## 8. Sombras
 
 Ancladas en la Constitución V1 §14. **Neutras y suaves, sin tinte de
-color.** Aprobadas como **rgba sobre navy 16,16,93** (NO negro puro) para
+color.** Aprobadas como **Sombras neutrales basadas en negro con baja opacidad** para
 mantener la coherencia institucional.
 
 | Token | Valor | Función | Estado |
@@ -227,7 +228,8 @@ mantener la coherencia institucional.
 | `shadow-sm` | `0 2px 6px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)` | Cards normales. | **APROBADO** |
 | `shadow-md` | `0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04)` | Dropdowns, popovers, tooltips. | **APROBADO** |
 | `shadow-lg` | `0 12px 32px rgba(0,0,0,0.12), 0 4px 8px rgba(0,0,0,0.06)` | Modal, drawer, overlay. | **APROBADO** |
-| `shadow-ring` | `0 0 0 3px rgba(254,197,20,0.5)` | Foco visible (no decoración). | **PROPUESTO** (hasta validar SC 1.4.11). |
+| `focus-ring-light-surface` | `#10105D` | Foco en fondos claros. | **PROPUESTO** |
+| `focus-ring-dark-surface` | `#FEC514` | Foco en navy. | **PROPUESTO** |
 
 **Prohibido:** cualquier sombra con tinte de color (`box-shadow: 0 0
 20px #5630CE`), cualquier glow ornamental, sombras encadenadas que
@@ -255,11 +257,14 @@ en hover. Animación en bucle fuera de carga o espera.
 
 | Estado | Cantidad |
 |---|---|
-| APROBADO | 85 (recuento real) |
-| PROPUESTO | 9 (derivados de marca, hover, subtle, border, on-color — no se pre-aprueban) |
+| APROBADO | 71 |
+| PROPUESTO | 15 |
+| TOTAL | 86 |
 | DEPRECADO | 0 (este mapa es V1) |
 | PROHIBIDO | 0 aquí (los antipatrones viven en Constitución §19, no como tokens) |
 | EXCEPCIÓN | 0 (no se han solicitado excepciones en V1) |
+
+> **Gate de vigencia:** Los tokens APROBADOS pueden pasar a implementación. Los tokens PROPUESTOS no pueden implementarse hasta completar su validación y aprobación individual.
 
 ---
 

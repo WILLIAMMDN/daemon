@@ -1,9 +1,8 @@
 # DAEMON — Informe de accesibilidad de color V1
 
-> **Anchor:** `00-DAEMON-VISUAL-CONSTITUTION-V1.md` §18.
-> **Tokens:** `01-TOKEN-MAP-V1.md`.
-> **Auditoría:** `00-DOCUMENTATION-STATUS.md`.
-> **Versión:** 1.0 · **Fecha:** 2026-08-06
+> **Anchor:** `visual-constitution.md` §18.
+> **Tokens:** `token-map.md`.
+> **Versión:** 1.0 · **Fecha:** 2026-08-06 · **Estado:** VIGENTE
 > **Rama de origen:** `design/daemon-visual-constitution-v1`
 >
 > **Estándar de referencia:** WCAG 2.2, SC 1.4.3 (Contrast Minimum) y
@@ -63,19 +62,21 @@ con `node scripts/dev/wcag-contrast.mjs`.
 
 ## 2. Combinaciones adicionales verificadas
 
-Estas combinaciones aparecen al combinar los tokens aprobados. Se
-verifican para evitar regresiones.
+Estas combinaciones aparecen al combinar los tokens aprobados. Se verifican para evitar regresiones.
 
 | Foreground | Background | Ratio | AA-txt | Decisión | Comentario |
 |---|---|---|---|---|---|
+| `#10105D` (navy-900) | `#5630CE` (purple-600) | **2.16:1** | ❌ | **PROHIBIDA** | |
+| `#10105D` (navy-900) | `#76CF1A` (green-500) | **8.54** | ✅ | **APROBADA** | Texto sobre progress. |
+| `#172033` (ink) | `#76CF1A` (green-500) | **8.30** | ✅ | **APROBADA** | Texto sobre progress. |
 | `#10105D` (navy-900) | `#FFFFFF` (surface) | **16.74** | ✅ | **APROBADA** | Texto principal sobre cualquier surface. |
 | `#5630CE` (purple-600) | `#FFFFFF` (surface) | **7.75** | ✅ | **APROBADA** | Label, kicker, eyebrow purple. |
 | `#5630CE` (purple-600) | `#FEC514` (yellow-500) | **4.88** | ✅ | **APROBADA** | Mini-progress en hero, fill con texto purple. |
 | `#172033` (ink) | `#FFFFFF` (surface) | **16.27** | ✅ | **APROBADA** | Texto por defecto. |
 | `#172033` (ink) | `#F4F7FB` (canvas) | **15.14** | ✅ | **APROBADA** | Texto por defecto sobre canvas. |
 | `#EB590C` (orange-500) | `#FFFFFF` (surface) | **3.52** | ❌ | **CONDICIONADA** | Mismo problema: solo texto grande o UI. |
-| `#16A34A` (success) | `#FFFFFF` (surface) | **3.30** | ❌ | **CONDICIONADA** | Solo texto grande, label o icon. |
-| `#667085` (muted) | `#10105D` (navy-900) | **3.37** | ❌ | **CONDICIONADA** | Muted sobre navy **NO** pasa para texto normal. Solo se permite como label pequeño o UI. |
+| `#16A34A` (success) | `#FFFFFF` (surface) | **3.30** | ❌ | **CONDICIONADA** | Solo texto grande o icon. |
+| `#667085` (muted) | `#10105D` (navy-900) | **3.37** | ❌ | **CONDICIONADA** | Muted sobre navy **NO** pasa para texto normal. Solo se permite como UI. |
 | `#CBD5E1` (border-strong) | `#10105D` (navy-900) | **11.28** | ✅ | **APROBADA** | Divisor visible sobre sidebar. |
 
 ### 2.1 Texto sobre `success-subtle` / `warning-subtle` / `danger-subtle` / `info-subtle`
@@ -85,7 +86,7 @@ verifican para evitar regresiones.
 | `#14532D` (success-ink) | `#DCFCE7` (success-subtle) | **8.30** | **APROBADA** | |
 | `#7C2D12` (warning-ink) | `#FFF7ED` (warning-subtle) | **8.83** | **APROBADA** | |
 | `#7F1D1D` (danger-ink) | `#FEE2E2` (danger-subtle) | **8.20** | **APROBADA** | |
-| `#1E3A8A` (info-ink) | `#EFF6FF` (info-subtle) | **8.83** | **APROBADA** | |
+| `#1E3A8A` (info-ink) | `#EFF6FF` (info-subtle) | **9.52** | **APROBADA** | |
 
 > Los ratios exactos se calculan al introducir los tokens en código
 > usando `node scripts/dev/wcag-contrast.mjs <fg> <bg>`. No se
@@ -94,6 +95,8 @@ verifican para evitar regresiones.
 ---
 
 ## 3. Reglas de uso (resumen)
+
+**Importante:** Labels y textos normales requieren al menos 4.5:1.
 
 ### 3.1 Aprobadas sin condición
 
@@ -113,10 +116,11 @@ verifican para evitar regresiones.
 
 - `#FFFFFF` sobre `#EB590C` (3.52). Solo ≥ 18.66 px bold o ≥ 24 px.
 - `#FFFFFF` sobre `#16A34A` (3.30). Solo ≥ 18.66 px bold o ≥ 24 px.
-- `#667085` sobre `#10105D` (3.37). Solo UI o label, no texto normal.
+- `#667085` sobre `#10105D` (3.37). Solo UI, no texto normal.
 
 ### 3.3 Prohibidas como texto
 
+- `#10105D` sobre `#5630CE` (2.16).
 - `#FFFFFF` sobre `#76CF1A` (1.96).
 - `#FFFFFF` sobre `#FEC514` (1.59).
 - `#76CF1A` sobre `#FFFFFF` (1.96).
@@ -198,7 +202,7 @@ Salida: `7.75` más las 4 verificaciones (AA-txt, AAA-txt, AA-big, UI).
 
 ## 7. Lo que este informe NO hace
 
-- No aprueba **ningún color** que no esté en `01-TOKEN-MAP-V1.md`.
+- No aprueba **ningún color** que no esté en `token-map.md`.
 - No calcula **derivados** (hover, subtle, border) sin que estén
   primero en el mapa como `PROPUESTO`. Cuando un derivado entre a
   implementación, se añade una fila a este informe con su ratio
@@ -211,9 +215,10 @@ Salida: `7.75` más las 4 verificaciones (AA-txt, AAA-txt, AA-big, UI).
   prohibidos en el portal del estudiante (Constitución §19.1).
 
 
-## 5. Contraste no textual (SC 1.4.11)
-| Elemento | Fondo | Ratio (Req >= 3.0:1) | Estado |
-|---|---|---|---|
-| Focus ring (`shadow-ring`) | Surface blanca | **TBD** | PROPUESTO |
-| Border strong | Surface blanca | **TBD** | APROBADO |
-| Iconos primarios | Variado | **TBD** | APROBADO |
+## 8. Contraste no textual (SC 1.4.11)
+| Elemento | Fondo | Ratio (Req >= 3.0:1) | Estado | Comentario |
+|---|---|---|---|---|
+| Focus ring (`focus-ring-light-surface`) | Surface blanca (`#FFFFFF`) | **16.74:1** (usando `#10105D`) | PROPUESTO | |
+| Focus ring (`focus-ring-dark-surface`) | Surface oscura (`#10105D`) | **10.53:1** (usando `#FEC514`) | PROPUESTO | |
+| Iconos primarios (`#10105D`) | Surface blanca (`#FFFFFF`) | **16.74:1** | APROBADO | |
+| Border strong (`#CBD5E1`) | Surface blanca (`#FFFFFF`) | **1.48:1** | CONDICIONADO | No puede ser el único límite visual de un control interactivo activo, ya que no alcanza 3.0:1. |

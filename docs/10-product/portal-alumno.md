@@ -251,7 +251,7 @@ de una cuenta real.
 - Imágenes con texto alternativo y fallback visual.
 - Encabezados semánticos y regiones con nombres accesibles.
 
-Leer `docs/sistema-visual-portal-alumno.md` antes de modificar la apariencia.
+Leer `docs/30-design-system/visual-constitution.md` antes de modificar la apariencia.
 
 ## Bienestar digital familiar
 
