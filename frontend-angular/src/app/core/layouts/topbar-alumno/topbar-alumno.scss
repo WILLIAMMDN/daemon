@@ -2,79 +2,98 @@
   display: block;
   position: sticky;
   top: 0;
-  z-index: 50; /* Z-index mayor que el sidebar para que cubra sus sombras/bordes */
+  z-index: 50; /* Mayor que el sidebar para cubrir sus sombras/bordes */
 }
 
-/* Base Clara para el Topbar */
+/* Shell del topbar: superficie blanca, borde inferior sutil y una
+   sombra ligera que lo separa del canvas. El shell no compite con
+   el contenido: estructura y orientación, no decoración. */
 .topbar-shell {
-  background: var(--student-surface, #ffffff);
-  padding: 0.8rem clamp(1rem, 2.2vw, 2rem);
-  min-height: 70px;
+  background: var(--daemon-neutral-surface);
+  border-bottom: 1px solid var(--daemon-neutral-border);
+  box-shadow: 0 4px 20px rgba(25, 42, 70, 0.04); /* legacy: sombra sutil del shell */
   display: flex;
+  min-height: 70px;
+  padding: var(--daemon-space-3) clamp(1rem, 2.2vw, 2rem);
   position: relative;
-  /* Sombra suave para separar sutilmente del área de contenido claro */
-  box-shadow: 0 4px 20px rgba(25, 42, 70, 0.04);
-  border-bottom: 1px solid var(--student-border, #e4eaf2);
 }
 
 .student-topbar-cards {
-  display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: 1rem;
+  display: flex;
+  gap: var(--daemon-space-4);
+  justify-content: space-between;
   width: 100%;
 }
 
+/* Jerarquía: LEFT / CONTEXTO · RIGHT / STATUS + ACCOUNT */
 .topbar-left,
 .topbar-right {
-  display: flex;
-  gap: 1.5rem;
   align-items: center;
+  display: flex;
+  gap: var(--daemon-space-6);
+  min-width: 0;
 }
 
-/* Las tarjetas ahora son contenedores invisibles y elegantes */
+.topbar-status,
+.topbar-account {
+  align-items: center;
+  display: flex;
+  gap: var(--daemon-space-2);
+  min-width: 0;
+}
+
+.topbar-divider {
+  background: var(--daemon-neutral-border);
+  height: 28px;
+  width: 1px;
+}
+
+/* Tarjetas invisibles: contenedores alineados, sin marco propio,
+   con hover sobrio de superficie. */
 .topbar-card {
   appearance: none;
   background: transparent;
   border: none;
+  border-radius: var(--daemon-radius-sm);
   color: inherit;
   display: flex;
   align-items: center;
-  gap: 0.8rem;
-  text-decoration: none;
-  transition: transform 0.2s ease, background 0.2s ease;
-  padding: 0.4rem;
-  border-radius: 12px;
-  font: inherit;
+  gap: var(--daemon-space-3);
+  padding: var(--daemon-space-2);
   text-align: left;
+  text-decoration: none;
+  transition:
+    background-color var(--daemon-motion-fast) var(--daemon-motion-ease),
+    border-color var(--daemon-motion-fast) var(--daemon-motion-ease),
+    color var(--daemon-motion-fast) var(--daemon-motion-ease);
 }
 
 .topbar-card:hover {
-  transform: translateY(-2px);
-  background: var(--student-surface-muted, #f8fafc);
+  background: var(--daemon-neutral-surface-subtle);
 }
 
-/* Nivel - Sin bordes, solo el hexágono limpio */
+/* Nivel — hexágono limpio con el dorado DAEMONS */
 .level-hexagon {
+  align-items: center;
+  color: var(--daemon-accent);
+  display: flex;
+  font-size: 1.2rem;
+  font-weight: var(--daemon-font-weight-extra);
+  height: 42px;
+  justify-content: center;
   position: relative;
   width: 42px;
-  height: 42px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #ffc414; /* Amarillo DAEMON */
-  font-weight: 900;
-  font-size: 1.2rem;
 }
 
 .level-hexagon .hex-bg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
   color: rgba(255, 196, 20, 0.1);
-  stroke: #ffc414;
   fill: currentColor;
+  height: 100%;
+  inset: 0;
+  position: absolute;
+  stroke: var(--daemon-accent);
+  width: 100%;
 }
 
 .level-copy {
@@ -83,22 +102,22 @@
 }
 
 .level-copy small {
-  color: var(--student-muted, #667085);
+  color: var(--daemon-neutral-text-secondary);
   font-size: 0.65rem;
-  font-weight: 800;
+  font-weight: var(--daemon-font-weight-extra);
   letter-spacing: 0.05em;
   text-transform: uppercase;
 }
 
 .level-copy strong {
-  color: var(--student-text, #172033);
+  color: var(--daemon-neutral-text-primary);
   font-size: 0.9rem;
-  font-weight: 800;
+  font-weight: var(--daemon-font-weight-extra);
 }
 
 .level-mini-bar {
-  background: #e2e8f0;
-  border-radius: 4px;
+  background: var(--daemon-neutral-border);
+  border-radius: var(--daemon-radius-xs);
   height: 6px;
   margin-top: 0.35rem;
   overflow: hidden;
@@ -106,22 +125,22 @@
 }
 
 .level-mini-bar .fill {
-  background: #ffc414;
+  background: var(--daemon-accent);
+  border-radius: var(--daemon-radius-xs);
   height: 100%;
-  border-radius: 4px;
 }
 
-/* Mensaje - Campus del estudiante */
+/* Mensaje — contexto del campus */
 .message-icon {
   align-items: center;
-  background: rgba(0, 0, 0, 0.05);
-  border-radius: 10px;
-  color: #172033;
+  background: var(--daemon-neutral-surface-subtle);
+  border-radius: var(--daemon-radius-sm);
+  color: var(--daemon-neutral-text-primary);
   display: flex;
+  font-size: 1.1rem;
   height: 40px;
   justify-content: center;
   width: 40px;
-  font-size: 1.1rem;
 }
 
 .message-copy {
@@ -130,31 +149,31 @@
 }
 
 .message-copy small {
-  color: var(--student-muted, #667085);
+  color: var(--daemon-neutral-text-secondary);
   font-size: 0.65rem;
-  font-weight: 800;
+  font-weight: var(--daemon-font-weight-extra);
   letter-spacing: 0.05em;
   text-transform: uppercase;
 }
 
 .message-copy strong {
-  color: #172033;
+  color: var(--daemon-neutral-text-primary);
   font-size: 0.9rem;
-  font-weight: 700;
+  font-weight: var(--daemon-font-weight-bold);
 }
 
-/* DAEMONS - Directo e impactante */
+/* DAEMONS — la moneda dorada, directa y legible */
 .token-card {
-  gap: 0.6rem;
+  gap: var(--daemon-space-2);
 }
 
 .token-card:hover {
-  background: rgba(255, 196, 20, 0.1);
+  background: color-mix(in srgb, var(--daemon-accent) 10%, transparent);
 }
 
 .token-glyph {
-  display: flex;
   align-items: center;
+  display: flex;
   justify-content: center;
 }
 
@@ -164,73 +183,78 @@
 }
 
 .token-copy small {
-  color: #ffc414;
+  color: var(--daemon-accent);
   font-size: 0.65rem;
-  font-weight: 800;
+  font-weight: var(--daemon-font-weight-extra);
   letter-spacing: 0.05em;
   text-transform: uppercase;
 }
 
 .token-copy strong {
-  color: var(--student-text, #172033);
+  color: var(--daemon-neutral-text-primary);
   font-size: 1.2rem;
-  font-weight: 900;
+  font-weight: var(--daemon-font-weight-extra);
   line-height: 1;
 }
 
-/* Campana y Perfil */
+/* Campana — botón circular de acción */
 .icon-card {
+  align-items: center;
+  background: var(--daemon-neutral-surface);
+  border: 1px solid var(--daemon-neutral-border);
+  border-radius: 50%;
+  color: var(--daemon-neutral-text-secondary);
+  cursor: pointer;
+  display: flex;
+  font-size: 1.25rem;
+  height: 44px;
   justify-content: center;
   padding: 0;
   width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  color: var(--student-muted, #667085);
-  font-size: 1.25rem;
-  cursor: pointer;
-  background: transparent;
-  border: 1px solid var(--student-border, #e4eaf2);
 }
 
 .icon-card:hover {
-  background: var(--student-surface-muted, #f8fafc);
-  color: #ffc414;
+  background: var(--daemon-neutral-surface-subtle);
+  border-color: var(--daemon-neutral-border-strong);
+  color: var(--daemon-accent);
 }
 
+/* Perfil — chip rectangular sobrio (sin pastilla masiva) */
 .profile-card {
+  background: var(--daemon-neutral-surface);
+  border: 1px solid var(--daemon-neutral-border);
+  border-radius: var(--daemon-radius-lg);
   cursor: pointer;
-  padding: 0.4rem 0.8rem 0.4rem 0.4rem;
-  background: transparent;
-  border: 1px solid var(--student-border, #e4eaf2);
-  border-radius: 99px; /* Aspecto de pastilla para el perfil */
+  padding: var(--daemon-space-1) var(--daemon-space-3) var(--daemon-space-1) var(--daemon-space-1);
 }
 
 .profile-card:hover {
-  background: var(--student-surface-muted, #f8fafc);
+  background: var(--daemon-neutral-surface-subtle);
+  border-color: var(--daemon-neutral-border-strong);
 }
 
 .profile-copy {
   display: flex;
   flex-direction: column;
-  margin-right: 0.5rem;
+  margin-right: var(--daemon-space-2);
 }
 
 .profile-copy strong {
-  color: var(--student-text, #172033);
+  color: var(--daemon-neutral-text-primary);
   font-size: 0.9rem;
-  font-weight: 800;
+  font-weight: var(--daemon-font-weight-extra);
   line-height: 1.2;
 }
 
 .profile-copy small {
-  color: var(--student-muted, #667085);
+  color: var(--daemon-neutral-text-secondary);
   font-size: 0.7rem;
-  font-weight: 800;
+  font-weight: var(--daemon-font-weight-extra);
   text-transform: uppercase;
 }
 
 .profile-chevron {
-  color: var(--student-muted, #667085);
+  color: var(--daemon-neutral-text-secondary);
   font-size: 0.8rem;
   margin-left: auto;
 }
@@ -238,10 +262,10 @@
 /* Menú móvil */
 .mobile-menu-trigger {
   align-items: center;
-  background: var(--student-primary-soft, #edf5ff);
-  border: 1px solid var(--student-primary-border, #cfe3ff);
-  border-radius: 10px;
-  color: var(--student-primary-dark, #0958d9);
+  background: var(--daemon-primary-soft);
+  border: 1px solid var(--daemon-border-strong);
+  border-radius: var(--daemon-radius-sm);
+  color: var(--daemon-primary-dark);
   cursor: pointer;
   display: none;
   flex-direction: column;
@@ -260,9 +284,10 @@
 }
 
 /*
- * Con el sidebar expandido, el ancho útil se reduce antes de que el viewport
- * llegue al breakpoint móvil. Compactamos contenido secundario por espacio
- * disponible para que el grid del portal no fuerce overflow horizontal.
+ * Con el sidebar expandido, el ancho útil se reduce antes de que el
+ * viewport llegue al breakpoint móvil. Compactamos contenido secundario
+ * por espacio disponible para que el grid del portal no fuerce overflow
+ * horizontal.
  */
 @media (max-width: 1160px) {
   .message-card,
@@ -272,7 +297,7 @@
 
   .topbar-left,
   .topbar-right {
-    gap: .75rem;
+    gap: var(--daemon-space-3);
   }
 }
 
@@ -280,72 +305,97 @@
   .student-topbar-cards {
     flex-wrap: nowrap;
   }
+
   .topbar-left {
     display: flex;
     flex: 0 0 auto;
-    gap: .5rem;
+    gap: var(--daemon-space-2);
   }
+
   .message-card {
     display: none;
   }
+
   .mobile-menu-trigger {
     display: flex;
     flex: 0 0 auto;
   }
+
   .mobile-menu-trigger:hover,
   .mobile-menu-trigger:focus-visible {
-    background: #dfeeff;
-    border-color: var(--student-primary, #1677ff);
-    color: var(--student-primary-dark, #0958d9);
+    background: var(--daemon-primary-soft);
+    border-color: var(--daemon-primary);
+    color: var(--daemon-primary-dark);
     outline: none;
   }
+
   .topbar-right {
     flex: 1;
-    gap: .65rem;
+    gap: var(--daemon-space-3);
     justify-content: flex-end;
     min-width: 0;
   }
-  .profile-copy, .profile-chevron {
+
+  .topbar-divider {
     display: none;
   }
+
+  .profile-copy,
+  .profile-chevron {
+    display: none;
+  }
+
   .profile-card {
-    padding: 0.4rem;
-    border-radius: 50%; /* Solo el avatar en móvil */
+    border-radius: 50%;
+    padding: var(--daemon-space-1);
   }
 }
 
 @media (max-width: 640px) {
   .topbar-shell {
     min-height: 64px;
-    padding: .55rem .75rem;
+    padding: var(--daemon-space-2) var(--daemon-space-3);
   }
+
   .student-topbar-cards {
-    gap: .45rem;
+    gap: var(--daemon-space-2);
   }
+
   .level-copy {
     display: none;
   }
+
   .level-card {
-    padding: .2rem;
+    padding: var(--daemon-space-1);
   }
+
   .level-hexagon {
     height: 38px;
     width: 38px;
   }
+
   .token-copy {
     display: none;
   }
+
   .topbar-right {
-    gap: .4rem;
+    gap: var(--daemon-space-2);
   }
+
   .token-card {
-    padding: .3rem;
+    padding: var(--daemon-space-2);
   }
 }
 
 @media (max-width: 420px) {
   .profile-card {
     display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .topbar-card {
+    transition: none;
   }
 }
 
