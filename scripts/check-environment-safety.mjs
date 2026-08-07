@@ -181,19 +181,52 @@ export function inspectStaticDocuments(documents, options = {}) {
   const production = documents.production ?? "";
   const backendExamples = `${documents.backendExample ?? ""}\n${documents.backendTesting ?? ""}`;
 
-  for (const marker of productionMatches(development)) {
-    issues.push(`Frontend development contiene ${marker.label}.`);
-  }
-  if (/https:\/\//i.test(development)) {
-    issues.push("Frontend development contiene una URL remota HTTPS.");
-  }
-  if (
-    !development.includes("projectId: 'demo-") ||
-    !development.includes("enabled: true")
-  ) {
-    issues.push(
-      "Frontend development no declara Firebase Emulator Suite con projectId demo.",
-    );
+  // Politica de development (decision del propietario, 2026-08-06):
+  // - Modo local: API/Storage loopback + Firebase Emulator (projectId demo).
+  // - Modo conectado a produccion: API Render + Firebase real + Supabase real,
+  //   todos juntos y sin emuladores, para probar credenciales reales en local.
+  // Cualquier otra combinacion (mezcla local/remoto, emulador con API remota)
+  // se considera incoherente y se bloquea.
+  const developmentConectadoAProduccion = development.includes(
+    "daemon-5vo1.onrender.com",
+  );
+  if (developmentConectadoAProduccion) {
+    for (const required of [
+      "daemon-5vo1.onrender.com",
+      "daemon-a41f8",
+      "lbxdcvsrmkkynttgwblc",
+    ]) {
+      if (!development.includes(required)) {
+        issues.push(
+          `Frontend development conectado a produccion no declara ${required}.`,
+        );
+      }
+    }
+    if (development.includes("enabled: true")) {
+      issues.push(
+        "Frontend development conectado a produccion no puede usar Firebase Emulator Suite.",
+      );
+    }
+    if (development.includes("projectId: 'demo-")) {
+      issues.push(
+        "Frontend development conectado a produccion no puede usar un proyecto Firebase demo.",
+      );
+    }
+  } else {
+    for (const marker of productionMatches(development)) {
+      issues.push(`Frontend development contiene ${marker.label}.`);
+    }
+    if (/https:\/\//i.test(development)) {
+      issues.push("Frontend development contiene una URL remota HTTPS.");
+    }
+    if (
+      !development.includes("projectId: 'demo-") ||
+      !development.includes("enabled: true")
+    ) {
+      issues.push(
+        "Frontend development no declara Firebase Emulator Suite con projectId demo.",
+      );
+    }
   }
 
   for (const marker of productionMatches(staging)) {
@@ -396,7 +429,9 @@ async function main() {
     return;
   }
 
-  console.log("OK: development, testing, staging y production estan aislados.");
+  console.log(
+    "OK: development (local o conectado a produccion), testing, staging y production son coherentes.",
+  );
 }
 
 const invokedPath = process.argv[1]
