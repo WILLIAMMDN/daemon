@@ -45,8 +45,8 @@ Regla: ante conflicto entre un documento de nivel inferior y uno superior, preva
 | Governance | `source-of-truth.md` | Existe (canonical) | — | Conservar; alinear frontmatter de canónicos | P0 |
 | Governance | `agent-reading-order.md` | Existe (canonical) | — | Conservar | P0 |
 | Governance | `documentation-policy.md` | Existe pero es stub (solo título) | — | Expandir con reglas reales (crear/modificar/obsolescer/deprecar) | P1 |
-| **Product** | `product-overview.md` | No existe | README, ai-project-context, portal-alumno, portal-familias | Crear (incluye users/portals, capability inventory de 25 filas y términos funcionales) | P1 |
-| Product | `business-rules.md` | No existe | gamificacion-xp-daemons, portal-familias, ADR-005 | Crear (invariantes de negocio) | P1 |
+| **Product — definición** | `product-overview.md` | Existe (canonical 1.0, FND-3B) | README, ai-project-context, portal-alumno, portal-familias | Canónico — alcance: identidad, actores, experiencias, capacidades y estado | Cerrado |
+| Product — reglas | `business-rules.md` | Existe (canonical 1.0, FND-3B) | gamificacion-xp-daemons, portal-familias, ADR-005 | Canónico — alcance: reglas, invariantes, transiciones e incertidumbres | Cerrado |
 | **Architecture** | `system-architecture.md` | No existe | ai-project-context, ADR-001, render.yaml, firebase.json | Crear en FND-4 (C4 system/container/deployment + integration map en un solo documento) | P1 |
 | Architecture | `frontend-architecture.md` | Existe (active, bien) | — | Conservar como canónico frontend | P0 |
 | Architecture | `backend-architecture.md` | No existe | api-crud (referencia, no arquitectura) | Crear; api-crud pasa a referencia API | P1 |
@@ -74,11 +74,11 @@ Nota: no se marca como "crear" ningún documento que ya exista y pueda consolida
 | `docs/00-governance/agent-reading-order.md` | Governance | canonical | Alta | agent-reading-order.md | Conservar |
 | `docs/00-governance/documentation-policy.md` | Governance | canonical | Alta | documentation-policy.md | **Expandir** (stub) |
 | `docs/00-governance/document-statuses.md` | Governance | canonical | Alta | document-statuses.md | Conservar |
-| `docs/10-product/portal-alumno.md` | Product | active | Fuente producto alumno | product-overview.md | Consolidar como referencia |
-| `docs/10-product/portal-familias.md` | Product | active | — | product-overview.md | Consolidar |
-| `docs/10-product/gamificacion-xp-daemons.md` | Product | active | Reglas economía | business-rules.md | Consolidar |
-| `docs/10-product/sistema-mascotas-cosmeticos.md` | Product | active | — | product-overview.md | Conservar como referencia |
-| `docs/10-product/crud-roadmap.md` | Product | active (desactualizado 2026-07-06) | — | product-overview.md (estado) | **Sustituir/archivar** |
+| `docs/10-product/portal-alumno.md` | Product | active | Referencia técnica portal estudiante | — | Conservar como referencia (canonical: product-overview.md) |
+| `docs/10-product/portal-familias.md` | Product | active | Referencia técnica portal familias | — | Conservar como referencia |
+| `docs/10-product/gamificacion-xp-daemons.md` | Product | active | Referencia técnica economía | — | Conservar como referencia (reglas: business-rules.md) |
+| `docs/10-product/sistema-mascotas-cosmeticos.md` | Product | active | Referencia técnica mascotas | — | Conservar como referencia |
+| `docs/10-product/crud-roadmap.md` | Product | superseded (2026-08-06, FND-3B) | — | product-overview.md | **Sustituido** por el inventario de capacidades y el estado funcional |
 | `docs/10-product/manual_programador.md` | Product | active | — | backend-architecture + quality-gates | Revisar/archivar (contradice tokens) |
 | `docs/10-product/manual_usuario.md` | Product | active | — | product-overview.md | Conservar como manual de usuario |
 | `docs/20-architecture/ai-project-context.md` | Architecture | active | Contexto IA | system-architecture.md | Consolidar; arreglar rutas viejas |

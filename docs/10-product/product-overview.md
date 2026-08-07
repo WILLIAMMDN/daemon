@@ -1,16 +1,17 @@
 ---
 title: DAEMON Product Overview
-status: draft
+status: canonical
 normative: true
-version: 1.0-candidate
+version: 1.0
 owner: product
-phase: FND-3A
+phase: FND-3B
 created: 2026-08-06
 last_reviewed: 2026-08-06
+approved_on: 2026-08-06
 applies_to: product
-approval_required:
-  - project-owner
-  - product-reviewer
+approvals:
+  project-owner: approved
+  product-reviewer: approved
 supersedes: null
 ---
 
@@ -18,17 +19,20 @@ supersedes: null
 
 ## 1. Autoridad, propósito y alcance
 
-1. Este documento es el candidato de definición global del producto DAEMON
-   (FND-3A). Mientras conserve `status: draft`, no autoriza implementación.
+1. Este documento es la **autoridad canónica raíz del dominio Producto**
+   de DAEMON. Define identidad del producto, actores, experiencias,
+   capacidades, estado funcional y prioridades. Fue aprobado y activado en
+   FND-3B.
 2. Describe producto, actores, experiencias, capacidades y estado funcional
    de toda la plataforma, no únicamente del portal estudiante.
 3. No modifica arquitectura, no diseña interfaces y no sustituye
-   `business-rules.md`.
+   `business-rules.md` (catálogo canónico de reglas de negocio).
 4. No sustituye la Constitución General del Proyecto
    (`docs/00-governance/project-constitution.md`), que tiene autoridad
    global.
-5. La activación como documento canónico requiere aprobación explícita del
-   `project-owner` y de `product-reviewer`; ningún agente puede autoaprobarlo.
+5. Los documentos anteriores de portales y módulos (portal-alumno,
+   portal-familias, gamificacion-xp-daemons, sistema-mascotas-cosmeticos)
+   son referencias técnicas activas, no autoridades canónicas globales.
 
 ## 2. Identidad del producto
 
@@ -499,6 +503,7 @@ Aclaraciones:
 | 2026-08-06 | 1.0-candidate | draft | Creación del candidato FND-3A | Pendiente |
 | 2026-08-06 | 1.0-candidate | draft | Corrección R1: taxonomía, matrices, despliegue, intenciones y prioridad | Pendiente |
 | 2026-08-06 | 1.0-candidate | draft | Corrección R2: autoridad de identidad, actores vs matrices, candidatas, invariantes y P0 | Pendiente |
+| 2026-08-06 | 1.0 | canonical | Aprobación y activación FND-3B | project-owner + product-reviewer |
 
 ## Apéndice A. Matriz de evidencia
 

@@ -1,16 +1,17 @@
 ---
 title: DAEMON Business Rules
-status: draft
+status: canonical
 normative: true
-version: 1.0-candidate
+version: 1.0
 owner: product
-phase: FND-3A
+phase: FND-3B
 created: 2026-08-06
 last_reviewed: 2026-08-06
+approved_on: 2026-08-06
 applies_to: product
-approval_required:
-  - project-owner
-  - product-reviewer
+approvals:
+  project-owner: approved
+  product-reviewer: approved
 supersedes: null
 ---
 
@@ -18,15 +19,21 @@ supersedes: null
 
 ## 1. Autoridad, propósito y alcance
 
-1. Este documento es el candidato de reglas de negocio de DAEMON (FND-3A).
-   Mientras conserve `status: draft`, no autoriza implementación.
+1. Este documento es el **catálogo canónico de reglas de negocio del
+   dominio Producto** de DAEMON. Fue aprobado y activado en FND-3B.
 2. Registra las reglas verificadas o documentadas que no deben romperse,
    con evidencia y estado.
-3. No sustituye la Constitución General ni `product-overview.md`.
-4. Complementa `product-overview.md`: allí se definen actores, experiencias
-   y capacidades; aquí se definen las reglas de negocio.
-5. La activación como documento canónico requiere aprobación explícita del
-   `project-owner` y de `product-reviewer`; ningún agente puede autoaprobarlo.
+3. Está subordinado a la Constitución General del Proyecto y complementa
+   `product-overview.md` (autoridad canónica raíz del dominio Producto):
+   allí se definen actores, experiencias y capacidades; aquí se definen las
+   reglas de negocio.
+4. Las reglas conservan sus estados individuales: `verified`, `accepted`,
+   `partial`, `pending`, `unknown`, `deprecated`. Activar el documento no
+   convierte automáticamente `partial` en `verified`, `pending` en
+   `accepted` ni `unknown` en resuelto.
+5. Las incertidumbres registradas (UNK-001..UNK-010), la desviación de
+   identidad UNK-009 y los GAP abiertos (GAP-005, GAP-009) permanecen
+   abiertos; esta activación no resuelve ninguna incertidumbre.
 
 ## 2. Convención de reglas
 
@@ -986,6 +993,7 @@ Aclaraciones:
 | 2026-08-06 | 1.0-candidate | draft | Creación del candidato FND-3A | Pendiente |
 | 2026-08-06 | 1.0-candidate | draft | Corrección R1: auditoría de evidencia, estados y tipos exactos, BR-001 y nuevos UNK | Pendiente |
 | 2026-08-06 | 1.0-candidate | draft | Corrección R2: BR-001 como autoridad normativa + desviación observada; invariantes y referencias | Pendiente |
+| 2026-08-06 | 1.0 | canonical | Aprobación y activación FND-3B | project-owner + product-reviewer |
 
 ## Apéndice A. Índice de reglas
 

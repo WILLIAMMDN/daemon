@@ -45,15 +45,15 @@ Estados posibles: `abierta`, `en curso`, `cerrada`, `consolidada`.
 
 - Dominio: Product
 - Prioridad: P1
-- Estado: abierta
-- Problema: No existen `product-overview.md` ni `business-rules.md` (conjunto objetivo reducido de producto). La información está dispersa en README, portal-alumno, portal-familias, gamificacion y rutas.
-- Evidencia: inventario de capabilities en foundation-assessment §5 (**25 filas preliminares**); `crud-roadmap.md` desactualizado (2026-07-06).
-- Riesgo: un agente no sabe qué módulos existen, cuáles están incompletos y qué reglas de negocio son invariantes.
-- Impacto para agentes: cold start Q6-Q7 → PASS/PARTIAL con fuentes dispersas.
-- Documento canónico afectado: `product-overview.md` (incluye users/portals y capability inventory), `business-rules.md`.
-- Resolución propuesta: FND-3 — consolidar el capability inventory de 25 filas del FND-1 dentro de `product-overview.md`, validarlo contra rutas y features, y publicar `business-rules.md` con los invariantes.
+- Estado: **cerrada**
+- Problema: No existían `product-overview.md` ni `business-rules.md` (conjunto objetivo reducido de producto). La información estaba dispersa en README, portal-alumno, portal-familias, gamificacion y rutas.
+- Evidencia: `product-overview.md` canonical 1.0; `business-rules.md` canonical 1.0; 25 capacidades verificadas contra rutas y features; 2 capacidades candidatas separadas (CAND-001/002); matrices actor-capacidad y portal-capacidad; 27 flujos transversales; 44 reglas BR; vocabulario funcional (Apéndice B); `crud-roadmap.md` retirado como especificación vigente (superseded).
+- Riesgo: resuelto — existe fuente única de definición y reglas del producto.
+- Impacto para agentes: cold start Q6-Q7 → PASS con fuentes canónicas.
+- Documento canónico afectado: `product-overview.md` (autoridad raíz del dominio Producto), `business-rules.md` (catálogo de reglas).
+- Resolución propuesta: ejecutada en FND-3 (candidato FND-3A + correcciones FND-3A-R1/R2) y FND-3B (activación).
 - Dependencias: FND-2.
-- Criterio de cierre: `product-overview.md` y `business-rules.md` publicados como canónicos; capability inventory (25 filas) verificado contra rutas API y features; crud-roadmap archivado o citado como histórico.
+- Criterio de cierre: **cumplido en FND-3B** — ambos documentos publicados como canónicos v1.0. No se declara que todas las capacidades estén implementadas.
 
 ---
 
@@ -141,15 +141,15 @@ Estados posibles: `abierta`, `en curso`, `cerrada`, `consolidada`.
 
 - Dominio: Governance/Product/Architecture
 - Prioridad: P1
-- Estado: abierta
-- Problema: `api-crud.md` §9 lista endpoints "pendientes" ya implementados (bulk-destroy, publicar evaluación, aulas PUT/DELETE, cuentos admin); `crud-roadmap.md` (2026-07-06) marca frontend U/D como ❌ cuando existen `gestionar-*`.
-- Evidencia: C-02, C-03 en foundation-assessment §9; comparación con `routes/api.php` y features/.
-- Riesgo: un agente reimplementa endpoints o reporta deuda inexistente.
-- Impacto para agentes: cold start Q7 → PARTIAL; trabajo duplicado.
-- Documento canónico afectado: api-crud.md, product-overview.md (estado).
-- Resolución propuesta: actualizar api-crud.md al estado real; sustituir crud-roadmap por la sección de estado en product-overview.md (FND-3).
-- Dependencias: FND-3.
-- Criterio de cierre: api-crud.md coincide con `php artisan route:list`; crud-roadmap archivado o reescrito.
+- Estado: **en curso** (el estado global del producto quedó consolidado en FND-3B; api-crud.md pendiente)
+- Problema: `api-crud.md` §9 lista endpoints "pendientes" ya implementados (bulk-destroy, publicar evaluación, aulas PUT/DELETE, cuentos admin); `crud-roadmap.md` (2026-07-06) marcaba frontend U/D como ❌ cuando existen `gestionar-*`.
+- Evidencia: C-02, C-03 en foundation-assessment §9; comparación con `routes/api.php` y features/. En FND-3B: `crud-roadmap.md` marcado superseded y sustituido por el inventario de capacidades y el estado funcional de `product-overview.md`; el estado global del producto quedó consolidado.
+- Riesgo: parcialmente resuelto — un agente ya no usa crud-roadmap como especificación; api-crud.md sigue pendiente de alineación.
+- Impacto para agentes: cold start Q7 → PASS para producto (inventario canónico); la referencia API permanece desalineada.
+- Documento canónico afectado: api-crud.md (referencia API), product-overview.md (estado, resuelto).
+- Resolución propuesta: actualizar api-crud.md al estado real contra `php artisan route:list` (parte API pendiente para FND-4).
+- Dependencias: FND-4 (parte API).
+- Criterio de cierre: api-crud.md coincide con `php artisan route:list`; crud-roadmap ya no es especificación vigente (cumplido).
 
 ---
 
@@ -190,13 +190,13 @@ Estados posibles: `abierta`, `en curso`, `cerrada`, `consolidada`.
 - Dominio: Governance
 - Prioridad: P2
 - Estado: **en curso**
-- Problema: source-of-truth.md declara "canonical" a documentos con frontmatter `status: active` (portal-alumno, ai-project-context, frontend-architecture, api-crud, firebase-auth, supabase-postgres, etc.). design-system auto-declara autoridad sin usar el sistema de estados.
-- Evidencia: C-05 en foundation-assessment §9; lectura de frontmatters. En FND-2B la gobernanza quedó definida (document-statuses expandido con transiciones y regla de coherencia).
-- Riesgo: ambigüedad sobre qué es normativo; un agente trata un "active" como no vinculante.
-- Impacto para agentes: cold start Q19 → PASS con matiz.
+- Problema: source-of-truth.md declara "canonical" a documentos con frontmatter `status: active` (ai-project-context, frontend-architecture, api-crud, firebase-auth, supabase-postgres, etc.). design-system auto-declara autoridad sin usar el sistema de estados.
+- Evidencia: C-05 en foundation-assessment §9; lectura de frontmatters. En FND-2B la gobernanza quedó definida (document-statuses expandido con transiciones y regla de coherencia). En FND-3B los documentos de producto quedaron alineados: `product-overview.md` y `business-rules.md` con `status: canonical`, y las referencias activas de producto (portal-alumno, portal-familias, gamificacion-xp-daemons, sistema-mascotas-cosmeticos) con `status: active` + `normative: false` sin autoridad global.
+- Riesgo: ambigüedad reducida en producto; otros dominios siguen pendientes.
+- Impacto para agentes: cold start Q19 → PASS con matiz en dominios no alineados.
 - Documento canónico afectado: source-of-truth.md, document-statuses.md.
-- Resolución propuesta: alinear frontmatter con la tabla de gobernanza; definir regla de correspondencia (regla ya definida en document-statuses FND-2B).
-- Dependencias: FND-2B completado; **pendiente**: migrar el frontmatter de los documentos de otros dominios (producto, arquitectura, datos, seguridad, operaciones, calidad) en fases posteriores.
+- Resolución propuesta: alinear frontmatter con la tabla de gobernanza (regla definida en document-statuses FND-2B).
+- Dependencias: FND-2B completado; FND-3B completado para producto; **pendiente**: migrar el frontmatter de los documentos de otros dominios (arquitectura, datos, seguridad, operaciones, calidad) en fases posteriores.
 - Criterio de cierre: todo canónico declarado tiene `status: canonical` coherente.
 
 ---
@@ -205,15 +205,15 @@ Estados posibles: `abierta`, `en curso`, `cerrada`, `consolidada`.
 
 - Dominio: Governance/Product
 - Prioridad: P3
-- Estado: **en curso** (vocabulario de gobernanza cubierto en FND-2B; vocabulario funcional pendiente hasta FND-3)
-- Problema: términos como XP, DAEMONS, KIDS/TEENS, rol vs nivel, racha, Núcleo DAEMON, progreso_nivel aparecen en múltiples docs sin definición central. **No se crea `glossary.md`:** los términos de gobernanza se definen en `project-constitution.md` y los términos funcionales en `product-overview.md`.
-- Evidencia: Sección 21 de project-constitution.md (vocabulario de gobernanza) aprobada en FND-2B; manual_usuario y portal-alumno usan la terminología funcional aún sin fuente central.
-- Riesgo: ambigüedad de vocabulario entre agentes y equipo.
-- Impacto para agentes: interpretación divergente de términos funcionales hasta FND-3.
-- Documento canónico afectado: project-constitution.md (vocabulario de gobernanza, cubierto), product-overview.md (vocabulario funcional, FND-3).
-- Resolución propuesta: incluir secciones de vocabulario en la Constitución (ejecutado) y en product-overview (FND-3); no crear documento separado.
-- Dependencias: FND-3 (parte funcional).
-- Criterio de cierre: constitution y product-overview incluyen sus secciones de términos; no existe glossary.md.
+- Estado: **cerrada**
+- Problema: términos como XP, DAEMONS, KIDS/TEENS, rol vs nivel, racha, Núcleo DAEMON, progreso_nivel aparecían en múltiples docs sin definición central. **No se crea `glossary.md`:** los términos de gobernanza se definen en `project-constitution.md` y los términos funcionales en `product-overview.md`.
+- Evidencia: Sección 21 de project-constitution.md (vocabulario de gobernanza, aprobada en FND-2B); Apéndice B de product-overview.md (términos funcionales, canonical v1.0, aprobado en FND-3B).
+- Riesgo: resuelto — vocabulario central definido sin documento separado.
+- Impacto para agentes: interpretación consistente de términos de gobernanza y funcionales.
+- Documento canónico afectado: project-constitution.md (vocabulario de gobernanza), product-overview.md (vocabulario funcional).
+- Resolución propuesta: ejecutada — Constitución en FND-2B y product-overview en FND-3.
+- Dependencias: FND-2, FND-3.
+- Criterio de cierre: **cumplido en FND-2B + FND-3B** — ambos documentos incluyen sus secciones de términos; no existe glossary.md.
 
 ---
 
@@ -386,8 +386,8 @@ Estados posibles: `abierta`, `en curso`, `cerrada`, `consolidada`.
 | 3 | GAP-004 seguridad (baseline/threat) | P0 | GAP-001 | FND-5 |
 | 4 | GAP-009 variable OpenRouter (código) | P0 | propietario | Fuera de fase (acción de código autorizada) |
 | 5 | GAP-005 `.env` local (operativo) | P0 | propietario | Fuera de fase (acción del propietario) |
-| 6 | GAP-002 Producto (overview + business rules) | P1 | GAP-001 (cerrado) | FND-3 |
-| 7 | GAP-008 Docs desactualizadas (api-crud, crud-roadmap) | P1 | GAP-002 | FND-3 |
+| 6 | GAP-002 Producto (overview + business rules) | P1 | GAP-001 (cerrado) | **cerrada (FND-3B)** |
+| 7 | GAP-008 Docs desactualizadas (api-crud, crud-roadmap) | P1 | GAP-002 | **en curso** (estado de producto consolidado FND-3B; api-crud pendiente FND-4) |
 | 8 | GAP-013 Arquitectura de sistema (C4) | P1 | GAP-002 | FND-4 |
 | 9 | GAP-014 backend-architecture | P1 | GAP-013 | FND-4 |
 | 10 | GAP-006 operations-runbook (incl. observabilidad) | P1 | GAP-013 | FND-5 |
@@ -398,20 +398,20 @@ Estados posibles: `abierta`, `en curso`, `cerrada`, `consolidada`.
 | 15 | GAP-016 política de migración (en data-ownership) | P2 | GAP-003 | FND-5 |
 | 16 | GAP-019 convención ramas/commits | P2 | GAP-001 | **cerrada (FND-2B)** |
 | 17 | GAP-020 openapi/routes | P2 | GAP-013 | FND-4 |
-| 18 | GAP-012 vocabulario (en constitution/product) | P3 | GAP-001/002 | FND-2/3 |
+| 18 | GAP-012 vocabulario (en constitution/product) | P3 | GAP-001/002 | **cerrada (FND-2B + FND-3B)** |
 | 19 | GAP-021 auditoría limpia | P3 | — | FND-6 |
-| 20 | GAP-022 manuales vigentes | P3 | GAP-002 | FND-3 |
+| 20 | GAP-022 manuales vigentes | P3 | GAP-002 | abierta (revisión puede reasignarse a UXA-1 o fase documental posterior; no se cierra en FND-3B) |
 | — | GAP-015 (consolidado en GAP-007) | — | GAP-007 | FND-6 |
 | — | GAP-018 (consolidado en GAP-006) | — | GAP-006 | FND-5 |
 
 ## 4. Roadmap documental recomendado
 
-> No se implementa en FND-1. Propuesta de fases posteriores para decisión del propietario.
-
 1. **FND-2 — Constitución del Proyecto.** `project-constitution.md` (identidad, alcance, jerarquía, gobernanza, vocabulario de gobernanza). **Ejecutado (FND-2A candidato + FND-2B activación).** Cierra GAP-001 y GAP-019; deja GAP-011 en curso y GAP-012 parcial (vocabulario de gobernanza cubierto) y corrige los enlaces principales de gobernanza de GAP-010.
-2. **FND-3 — Producto.** `product-overview.md` (incluye users/portals, capability inventory de 25 filas y vocabulario funcional) y `business-rules.md`. Cierra GAP-002, GAP-008, GAP-022 y la parte funcional de GAP-012.
-3. **FND-4 — Arquitectura.** `system-architecture.md` (C4 + deployment + integration map), `backend-architecture.md`, índice ADR, openapi regenerado. Cierra GAP-013, GAP-014, GAP-020.
+2. **FND-3 — Producto.** `product-overview.md` (incluye users/portals, capability inventory de 25 filas y vocabulario funcional) y `business-rules.md`. **Ejecutado y cerrado (FND-3A candidato + FND-3A-R1/R2 correcciones + FND-3B activación).** Cierra **GAP-002** y **GAP-012**; GAP-008 parcialmente atendido (estado de producto consolidado; api-crud pendiente para FND-4); GAP-022 permanece abierto.
+3. **FND-4 — Arquitectura.** `system-architecture.md` (C4 + deployment + integration map), `backend-architecture.md`, índice ADR, openapi regenerado, alineación de api-crud. Cierra GAP-013, GAP-014, GAP-020 y la parte API de GAP-008.
 4. **FND-5 — Datos, seguridad y operación.** `data-ownership.md` (incluye política de migración), `entity-catalog.md`, `security-baseline.md` (incluye autenticación/autorización y secretos), `threat-model.md`, `environments.md` (normalizar nombre), `operations-runbook.md` (deploy, backup, incidentes, observabilidad). Cierra GAP-003, GAP-004, GAP-006 (+GAP-018), GAP-016.
 5. **FND-6 — Calidad y Agent Readiness.** `quality-gates.md` (DoD, testing strategy, release checklist); AGENTS.md con archivos prohibidos + stop-condition + DoD; depuración de auditorías. Cierra GAP-007 (+GAP-015), GAP-017, GAP-021.
 6. **Cold Start final.** Re-ejecutar las 25 preguntas; objetivo ≥ 90 (mature).
 7. **Inicio de implementación.** Solo tras cerrar los P0 documentales y las acciones operativas del propietario (GAP-005, GAP-009).
+
+Los P0 restantes se mantienen sin cambios de prioridad: GAP-003 (ownership de datos), GAP-004 (seguridad baseline/threat model), GAP-005 (entorno local productivo) y GAP-009 (variable OpenRouter incoherente).

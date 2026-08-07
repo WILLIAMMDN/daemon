@@ -1,12 +1,18 @@
 ---
 title: DAEMON — Roadmap CRUD por módulo
-status: active
+status: superseded
+normative: false
 owner: -
 last_reviewed: 2026-08-06
 applies_to: DAEMON
 supersedes: 
+superseded_by: docs/10-product/product-overview.md
 related: 
 ---
+
+> Documento histórico sustituido por el inventario de capacidades y el
+> estado funcional de `product-overview.md`. No utilizar como especificación
+> vigente.
 
 # DAEMON — Roadmap CRUD por módulo
 

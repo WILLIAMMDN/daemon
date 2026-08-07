@@ -24,6 +24,15 @@ el orden de lectura.
 - [Mapa de Documentos Canónicos](00-governance/canonical-document-map.md)
 - [Registro de Brechas Documentales](00-governance/documentation-gap-register.md)
 
+## Producto
+
+- [DAEMON Product Overview](10-product/product-overview.md) — canonical v1.0 (autoridad canónica raíz del dominio Producto: identidad, actores, experiencias, capacidades y estado)
+- [DAEMON Business Rules](10-product/business-rules.md) — canonical v1.0 (catálogo canónico de reglas de negocio, invariantes y transiciones)
+
+Los documentos de portales y módulos (portal-alumno, portal-familias,
+gamificacion-xp-daemons, sistema-mascotas-cosmeticos) son referencias
+técnicas activas, no autoridades canónicas globales.
+
 ## Tipos de documentación
 
 - **Canónica:** autoridad de un dominio (`status: canonical`). La

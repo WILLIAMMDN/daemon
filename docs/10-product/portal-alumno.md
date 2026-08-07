@@ -1,12 +1,16 @@
 ---
 title: Portal alumno: estructura funcional
 status: active
+normative: false
 owner: -
 last_reviewed: 2026-08-06
 applies_to: DAEMON
 supersedes: 
 related: 
 ---
+
+> Referencia técnica de dominio. La definición canónica global se encuentra
+> en `product-overview.md` y las reglas canónicas en `business-rules.md`.
 
 # Portal alumno: estructura funcional
 

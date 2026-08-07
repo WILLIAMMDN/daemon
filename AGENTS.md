@@ -199,6 +199,8 @@ There is no local/staging DB. So:
 
 ## Docs to read by task
 
+- Product definition (canonical): `docs/10-product/product-overview.md`
+- Product business rules (canonical): `docs/10-product/business-rules.md`
 - Overall project state: `docs/20-architecture/ai-project-context.md`
 - Firebase/auth details: `docs/50-security/firebase-auth.md`
 - Supabase DB/storage: `docs/40-data/supabase-postgres.md`
