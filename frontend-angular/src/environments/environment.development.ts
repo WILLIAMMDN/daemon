@@ -1,9 +1,9 @@
 export const environment = {
   production: false,
-  // Mantener el mismo hostname que usa Angular en desarrollo. Mezclar
-  // localhost con 127.0.0.1 convierte la cookie HttpOnly en cross-site y el
-  // navegador descarta la sesión justo después de un login exitoso.
-  apiUrl: 'http://localhost:8000/api/v1',
+  // CONECTADO A PRODUCCIÓN (decisión del propietario, 2026-08-06): ng serve
+  // usa la API de Render y los servicios reales. Las escrituras desde este
+  // entorno afectan a la base de datos de PRODUCCIÓN.
+  apiUrl: 'https://daemon-5vo1.onrender.com/api/v1',
   assetBaseUrl: 'https://lbxdcvsrmkkynttgwblc.supabase.co/storage/v1/object/public/daemon-assets',
   observability: {
     sentryEnabled: false,
