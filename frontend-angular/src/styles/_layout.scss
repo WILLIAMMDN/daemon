@@ -29,7 +29,7 @@ button, input, textarea, select { font-family: inherit; }
 .page-header,
 .module-shell > header,
 .module-card {
-  background: #fff;
+  background: var(--daemon-neutral-surface);
   border: 1px solid #dfe6f1;
   border-radius: 16px;
   box-shadow: 0 8px 24px #2030550b;
@@ -64,7 +64,7 @@ button, input, textarea, select { font-family: inherit; }
 }
 
 .panel {
-  background: #fff;
+  background: var(--daemon-neutral-surface);
   border: 1px solid #dfe6f1;
   border-radius: 16px;
   box-shadow: 0 8px 24px #2030550b;
@@ -89,9 +89,9 @@ button, input, textarea, select { font-family: inherit; }
 }
 
 .stat {
-  background: #fff;
+  background: var(--daemon-neutral-surface);
   border: 1px solid #dfe6f1;
-  border-radius: 14px;
+  border-radius: var(--daemon-radius-md);
   padding: 1rem;
 }
 
@@ -120,7 +120,7 @@ button, input, textarea, select { font-family: inherit; }
 button {
   align-items: center;
   border: 0;
-  border-radius: 10px;
+  border-radius: var(--daemon-radius-sm);
   cursor: pointer;
   display: inline-flex;
   font-weight: 800;
@@ -168,9 +168,9 @@ button:disabled {
 .field input,
 .field select,
 .field textarea {
-  background: #fff;
+  background: var(--daemon-neutral-surface);
   border: 1px solid #ccd6e6;
-  border-radius: 10px;
+  border-radius: var(--daemon-radius-sm);
   color: #1e293b;
   font: inherit;
   min-width: 0;
@@ -208,7 +208,7 @@ th {
 
 .badge {
   background: #e7f8ef;
-  border-radius: 999px;
+  border-radius: var(--daemon-radius-pill);
   color: #047857;
   display: inline-flex;
   font-size: .78rem;
@@ -238,7 +238,7 @@ th {
 
 .state,
 .empty {
-  background: #fff;
+  background: var(--daemon-neutral-surface);
   color: #61708d;
 }
 
@@ -264,9 +264,9 @@ th {
 }
 
 .data-card {
-  background: #fff;
+  background: var(--daemon-neutral-surface);
   border: 1px solid #dfe6f1;
-  border-radius: 14px;
+  border-radius: var(--daemon-radius-md);
   display: grid;
   gap: .55rem;
   min-width: 0;
