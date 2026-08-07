@@ -15,6 +15,21 @@
 }
 
 /* ============================================================
+   Variantes de experiencia (EXP-01): base compartida arriba +
+   modifiers KIDS (Explore) / TEENS (Creator). Punto de extensión
+   limpio — sin cambios visuales en esta fase; la dirección de arte
+   se implementará en su fase correspondiente sin tocar la base.
+   ============================================================ */
+
+.student-dashboard--kids {
+  /* Dirección de arte KIDS · Explore (futura). */
+}
+
+.student-dashboard--teens {
+  /* Dirección de arte TEENS · Creator (futura). */
+}
+
+/* ============================================================
    Estados (loading / error / offline / celebración)
    ============================================================ */
 

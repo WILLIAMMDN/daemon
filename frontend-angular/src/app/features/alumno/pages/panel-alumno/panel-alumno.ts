@@ -24,6 +24,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { ApiError } from '../../../../core/servicios/api';
 import { Activos } from '../../../../core/servicios/activos';
 import { Sesion } from '../../../../core/servicios/sesion';
+import { experienciaDashboard } from './panel-alumno.experience';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 import { MonedaDaemon } from '../../../../shared/componentes/moneda-daemon/moneda-daemon';
 import {
@@ -60,6 +61,15 @@ export class PanelAlumno {
   });
   readonly actualizando = signal(false);
   readonly celebracion = signal<{ xp: number } | null>(null);
+
+  /**
+   * Variante de experiencia del dashboard (KIDS · Explore / TEENS · Creator),
+   * derivada del nivel runtime del estudiante vía tema-portal-alumno.
+   * Presentacional: no altera datos, rutas ni comportamiento.
+   */
+  readonly experiencia = computed(() => experienciaDashboard(this.sesion.usuario()?.nivel));
+  readonly esKids = computed(() => this.experiencia().experience === 'kids');
+  readonly esTeens = computed(() => this.experiencia().experience === 'teens');
 
   readonly iconos = {
     flecha: faArrowRight,

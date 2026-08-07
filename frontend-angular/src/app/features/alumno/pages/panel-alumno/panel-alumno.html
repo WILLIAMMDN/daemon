@@ -8,7 +8,12 @@
     </button>
   </section>
 } @else if (panel(); as datos) {
-  <section class="student-dashboard" aria-labelledby="dashboard-title">
+  <section
+    class="student-dashboard"
+    [class.student-dashboard--kids]="esKids()"
+    [class.student-dashboard--teens]="esTeens()"
+    aria-labelledby="dashboard-title"
+  >
     @if (estado(); as estadoActual) {
       @if (estadoActual.kind === 'ready' && estadoActual.stale) {
         <aside class="offline-notice" role="status" aria-live="polite">
