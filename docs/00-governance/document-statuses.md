@@ -12,7 +12,7 @@ applies_to: all
 | Estado | Normativo | Lectura por defecto | Puede autorizar implementación | Requiere reemplazo |
 |---|---|---|---|---|
 | `canonical` | Sí | Sí | Sí | No (autoridad única aprobada) |
-| `active` | Parcial | Sí | Depende del documento | No necesariamente |
+| `active` | Condicional: depende de `normative` y de su autoridad declarada | Sí | Depende del documento y de la fuente de verdad | No necesariamente |
 | `draft` | No | Bajo criterio | No | No |
 | `superseded` | No | No | No | Sí (debe indicar reemplazo) |
 | `archived` | No | No | No | No (histórico preservado) |
@@ -23,7 +23,10 @@ applies_to: all
 - **canonical:** autoridad única aprobada de un dominio o decisión. No se
   alcanza sin aprobación explícita.
 - **active:** documento operativo vigente, pero no necesariamente canónico
-  ni excluyente.
+  ni excluyente. Un documento `active` no adquiere autoridad normativa
+  únicamente por su estado. Para autorizar implementación debe declarar
+  `normative: true`, tener un propietario definido y estar reconocido por
+  la fuente de verdad del dominio correspondiente.
 - **draft:** candidato sin autoridad para implementar. No autoriza
   implementación.
 - **superseded:** sustituido por un documento explícito; debe apuntar al

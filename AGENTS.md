@@ -225,7 +225,12 @@ There is no local/staging DB. So:
 La Constitución General (`docs/00-governance/project-constitution.md`)
 tiene precedencia global: los documentos de dominio deben respetarla y
 ningún agente puede modificarla ni crear excepciones sin autorización
-explícita del propietario.
+explícita del propietario. La Constitución Visual
+(`docs/30-design-system/visual-constitution.md`) tiene autoridad
+únicamente dentro del dominio visual. Ante una contradicción de autoridad
+(una fuente inferior contra una superior, o dos del mismo nivel), el
+agente se detiene y eleva el conflicto en lugar de resolverlo por cuenta
+propia.
 
 **Prohibido usar como especificación:**
 - historial Git;
