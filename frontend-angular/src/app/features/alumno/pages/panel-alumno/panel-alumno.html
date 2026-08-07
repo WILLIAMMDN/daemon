@@ -37,14 +37,16 @@
       </aside>
     }
 
-    <!-- 1 · CONTEXT / WELCOME — introducción compacta -->
+    <!-- 1 · HERO — composición editorial con escenario ilustrado -->
     <section class="dashboard-welcome" aria-label="Bienvenida">
-      <div class="welcome-copy">
-        <span class="eyebrow eyebrow--navy">TU CAMPUS DE APRENDIZAJE</span>
+      <div class="welcome-content">
+        <span class="eyebrow eyebrow--navy">{{ eyebrowBienvenida(datos) }}</span>
         <h1 id="dashboard-title" class="welcome-title">Hola, {{ nombreCorto(datos.usuario) }}</h1>
         <p class="welcome-sub">{{ mensajeBienvenida(datos) }}</p>
       </div>
-      <img src="/img/hero-monster.png" alt="" aria-hidden="true" class="welcome-mascota" />
+      <div class="welcome-stage" aria-hidden="true">
+        <img src="/img/hero-monster.png" alt="" class="welcome-mascota" />
+      </div>
     </section>
 
     <!-- 2 · PRIMARY LEARNING ACTION -->
@@ -54,10 +56,7 @@
           <span class="eyebrow eyebrow--mission">PRÓXIMA MISIÓN</span>
           <h2 class="section-title">Tu siguiente reto</h2>
         </div>
-        <a class="text-link text-link--chip" routerLink="/alumno/misiones">
-          <span class="hidden sm:inline">Ver todas</span>
-          <fa-icon [icon]="iconos.flecha" />
-        </a>
+        <a class="section-action" routerLink="/alumno/misiones">Ver todas</a>
       </header>
 
       @if (datos.proxima_mision; as mision) {
@@ -202,9 +201,7 @@
         <strong>{{ datos.canjes_pendientes }}</strong>
         {{ datos.canjes_pendientes === 1 ? 'premio' : 'premios' }} por recoger
       </span>
-      <a class="text-link" routerLink="/alumno/perfil">
-        Ver mi perfil <fa-icon [icon]="iconos.flecha" />
-      </a>
+      <a class="section-action" routerLink="/alumno/perfil">Ver mi perfil</a>
     </footer>
   </section>
 }

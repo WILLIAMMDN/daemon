@@ -136,12 +136,16 @@ export class PanelAlumno {
   mensajeBienvenida(datos: PanelAlumnoDto): string {
     if (datos.misiones_pendientes > 0) {
       const pendientes = datos.misiones_pendientes;
-      return `Tienes ${pendientes} ${pendientes === 1 ? 'misión esperándote' : 'misiones esperándote'} en tu ruta.`;
+      return `Tienes ${pendientes} ${pendientes === 1 ? 'misión pendiente' : 'misiones pendientes'} en tu ruta. Continúa donde lo dejaste.`;
     }
     if (datos.proxima_mision) {
-      return 'Tu próxima misión ya está lista. ¡A seguir creciendo!';
+      return 'Tu próxima misión ya está lista.';
     }
-    return 'Completaste todas tus misiones. Tu Núcleo DAEMON sigue creciendo.';
+    return 'Estás al día con tus misiones. Explora un nuevo reto o revisa tu progreso.';
+  }
+
+  eyebrowBienvenida(datos: PanelAlumnoDto): string {
+    return datos.misiones_pendientes > 0 ? 'CONTINÚA APRENDIENDO' : 'TODO AL DÍA';
   }
 
   mensajeRacha(datos: PanelAlumnoDto): string {

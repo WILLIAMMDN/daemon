@@ -129,25 +129,23 @@
 }
 
 /* ============================================================
-   1 · CONTEXT / WELCOME — introducción compacta con mascota
+   1 · HERO — composición editorial con escenario ilustrado
    ============================================================ */
 
 .dashboard-welcome {
-  align-items: center;
   background: var(--daemon-neutral-surface);
   border: 1px solid var(--daemon-neutral-border);
   border-radius: var(--daemon-radius-lg);
-  display: flex;
+  display: grid;
   gap: var(--daemon-space-6);
-  justify-content: space-between;
-  overflow: hidden;
-  padding: var(--daemon-space-4) var(--daemon-space-6);
-  position: relative;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 300px);
+  padding: var(--daemon-space-5) var(--daemon-space-6);
 }
 
-.welcome-copy {
+.welcome-content {
+  align-content: center;
   display: grid;
-  gap: var(--daemon-space-1);
+  gap: var(--daemon-space-2);
 }
 
 .eyebrow {
@@ -160,6 +158,9 @@
 }
 .eyebrow--navy {
   color: var(--daemon-student-navigation);
+}
+.eyebrow--mission {
+  color: var(--daemon-student-mission);
 }
 
 .welcome-title {
@@ -176,20 +177,29 @@
   font-weight: var(--daemon-font-weight-medium);
   line-height: var(--daemon-line-height-body-lg);
   margin: 0;
-  max-width: 40rem;
+  max-width: 34rem;
 }
 
+/* Escenario visual de la mascota: zona navy estructural */
+.welcome-stage {
+  align-items: flex-end;
+  background: var(--daemon-student-navigation);
+  border-radius: var(--daemon-radius-md);
+  display: flex;
+  justify-content: center;
+  min-height: 150px;
+  overflow: hidden;
+  padding-bottom: var(--daemon-space-2);
+  position: relative;
+}
 .welcome-mascota {
-  align-self: center;
-  flex: none;
-  height: 132px;
+  height: 136px;
   object-fit: contain;
-  pointer-events: none;
-  width: 132px;
+  width: 136px;
 }
 
 /* ============================================================
-   2 · PRIMARY LEARNING ACTION — la próxima misión, compacta
+   2 · PRIMARY LEARNING ACTION — la próxima misión
    ============================================================ */
 
 .mission-panel {
@@ -218,32 +228,17 @@
   margin: var(--daemon-space-1) 0 0;
 }
 
-.eyebrow--mission {
-  color: var(--daemon-student-mission);
-}
-
-.text-link {
-  align-items: center;
+/* Acción secundaria de sección: texto discreto, sin cápsula ni flechas */
+.section-action {
   color: var(--daemon-student-navigation);
-  display: inline-flex;
   font-size: var(--daemon-font-size-small);
   font-weight: var(--daemon-font-weight-semibold);
-  gap: var(--daemon-space-2);
+  line-height: var(--daemon-line-height-small);
   text-decoration: none;
   transition: color var(--daemon-motion-fast) var(--daemon-motion-ease);
 }
-.text-link:hover {
+.section-action:hover {
   color: var(--daemon-student-action-primary);
-}
-.text-link--chip {
-  background: var(--daemon-neutral-surface-subtle);
-  border: 1px solid var(--daemon-neutral-border);
-  border-radius: var(--daemon-radius-pill);
-  min-height: 34px;
-  padding: var(--daemon-space-1) var(--daemon-space-3);
-}
-.text-link--chip:hover {
-  border-color: var(--daemon-neutral-border-strong);
 }
 
 .mission-body {
@@ -593,6 +588,16 @@
    ============================================================ */
 
 @media (max-width: 1023px) {
+  .dashboard-welcome {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 220px);
+  }
+  .welcome-stage {
+    min-height: 120px;
+  }
+  .welcome-mascota {
+    height: 108px;
+    width: 108px;
+  }
   .dashboard-metrics {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -608,12 +613,15 @@
     margin-left: 0;
     width: 100%;
   }
-  .welcome-mascota {
-    display: none;
-  }
 }
 
 @media (max-width: 767px) {
+  .dashboard-welcome {
+    grid-template-columns: 1fr;
+  }
+  .welcome-stage {
+    display: none;
+  }
   .dashboard-welcome {
     padding: var(--daemon-space-4) var(--daemon-space-5);
   }
