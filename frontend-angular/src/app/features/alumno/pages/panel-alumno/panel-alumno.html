@@ -37,10 +37,10 @@
       </aside>
     }
 
-    <!-- 1 · CONTEXT / WELCOME -->
+    <!-- 1 · CONTEXT / WELCOME — introducción compacta -->
     <section class="dashboard-welcome" aria-label="Bienvenida">
       <div class="welcome-copy">
-        <span class="eyebrow">TU CAMPUS DE APRENDIZAJE</span>
+        <span class="eyebrow eyebrow--navy">TU CAMPUS DE APRENDIZAJE</span>
         <h1 id="dashboard-title" class="welcome-title">Hola, {{ nombreCorto(datos.usuario) }}</h1>
         <p class="welcome-sub">{{ mensajeBienvenida(datos) }}</p>
       </div>
@@ -54,7 +54,7 @@
           <span class="eyebrow eyebrow--mission">PRÓXIMA MISIÓN</span>
           <h2 class="section-title">Tu siguiente reto</h2>
         </div>
-        <a class="text-link" routerLink="/alumno/misiones">
+        <a class="text-link text-link--chip" routerLink="/alumno/misiones">
           <span class="hidden sm:inline">Ver todas</span>
           <fa-icon [icon]="iconos.flecha" />
         </a>
@@ -67,10 +67,6 @@
             <h3 class="mission-title">{{ mision.titulo }}</h3>
             <p class="mission-meta">{{ mision.nivel_requerido }} · {{ mision.tipo_evidencia }}</p>
             <p class="mission-desc">{{ mision.descripcion || 'Tu docente preparó un nuevo reto para seguir avanzando.' }}</p>
-            <div class="mission-rewards">
-              <span class="chip chip--xp"><fa-icon [icon]="iconos.energia" /> +{{ mision.recompensa }} XP</span>
-              <span class="chip chip--daemons"><app-moneda-daemon [size]="14" /> +{{ mision.recompensa }} DAEMONS</span>
-            </div>
           </div>
           <div class="mission-cta">
             <div
@@ -88,6 +84,10 @@
               </span>
               <nz-progress aria-hidden="true" [nzPercent]="progreso(datos).progreso_porcentaje" [nzShowInfo]="false" [nzStrokeWidth]="6" nzStrokeColor="var(--daemon-student-progress)" />
             </div>
+            <div class="mission-rewards">
+              <span class="chip chip--xp"><fa-icon [icon]="iconos.energia" /> +{{ mision.recompensa }} XP</span>
+              <span class="chip chip--daemons"><app-moneda-daemon [size]="14" /> +{{ mision.recompensa }} DAEMONS</span>
+            </div>
             <a class="dashboard-cta" [routerLink]="['/alumno/misiones', mision.id]">
               <fa-icon [icon]="iconos.play" /> Continuar misión
             </a>
@@ -95,15 +95,15 @@
         </div>
       } @else {
         <div class="mission-empty">
-          <div>
-            <span class="mission-icon mission-icon--ok" aria-hidden="true"><fa-icon [icon]="iconos.bandera" /></span>
+          <span class="mission-icon mission-icon--ok" aria-hidden="true"><fa-icon [icon]="iconos.bandera" /></span>
+          <div class="mission-info">
             <h3 class="mission-title">Ruta completada</h3>
             <p class="mission-desc">No tienes misiones pendientes. Tu Núcleo sigue creciendo.</p>
-            <a class="dashboard-cta" routerLink="/alumno/misiones">
-              <fa-icon [icon]="iconos.play" /> Explorar misiones
-            </a>
           </div>
           <img src="/img/robot-mision.png" alt="Robot DAEMON celebrando" class="mission-empty__img" />
+          <a class="dashboard-cta dashboard-cta--sm" routerLink="/alumno/misiones">
+            <fa-icon [icon]="iconos.play" /> Explorar misiones
+          </a>
         </div>
       }
     </section>

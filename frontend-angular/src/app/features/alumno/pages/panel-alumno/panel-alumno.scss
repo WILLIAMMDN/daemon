@@ -11,7 +11,7 @@
 .student-dashboard {
   display: flex;
   flex-direction: column;
-  gap: var(--daemon-space-6);
+  gap: var(--daemon-space-5);
 }
 
 /* ============================================================
@@ -129,7 +129,7 @@
 }
 
 /* ============================================================
-   1 · CONTEXT / WELCOME — ligero, orientado a acción
+   1 · CONTEXT / WELCOME — introducción compacta con mascota
    ============================================================ */
 
 .dashboard-welcome {
@@ -138,16 +138,16 @@
   border: 1px solid var(--daemon-neutral-border);
   border-radius: var(--daemon-radius-lg);
   display: flex;
-  gap: var(--daemon-space-8);
+  gap: var(--daemon-space-6);
   justify-content: space-between;
   overflow: hidden;
-  padding: var(--daemon-space-6) var(--daemon-space-8);
+  padding: var(--daemon-space-4) var(--daemon-space-6);
   position: relative;
 }
 
 .welcome-copy {
   display: grid;
-  gap: var(--daemon-space-2);
+  gap: var(--daemon-space-1);
 }
 
 .eyebrow {
@@ -157,6 +157,9 @@
   letter-spacing: 0.08em;
   line-height: var(--daemon-line-height-mini);
   text-transform: uppercase;
+}
+.eyebrow--navy {
+  color: var(--daemon-student-navigation);
 }
 
 .welcome-title {
@@ -173,19 +176,20 @@
   font-weight: var(--daemon-font-weight-medium);
   line-height: var(--daemon-line-height-body-lg);
   margin: 0;
-  max-width: 42rem;
+  max-width: 40rem;
 }
 
 .welcome-mascota {
+  align-self: center;
   flex: none;
-  height: 128px;
+  height: 132px;
   object-fit: contain;
   pointer-events: none;
-  width: 128px;
+  width: 132px;
 }
 
 /* ============================================================
-   2 · PRIMARY LEARNING ACTION — la próxima misión
+   2 · PRIMARY LEARNING ACTION — la próxima misión, compacta
    ============================================================ */
 
 .mission-panel {
@@ -193,7 +197,7 @@
   border: 1px solid var(--daemon-neutral-border);
   border-radius: var(--daemon-radius-lg);
   box-shadow: var(--daemon-shadow-xs);
-  padding: var(--daemon-space-6) var(--daemon-space-8);
+  padding: var(--daemon-space-5) var(--daemon-space-6);
 }
 
 .section-head {
@@ -202,8 +206,8 @@
   display: flex;
   gap: var(--daemon-space-4);
   justify-content: space-between;
-  margin-bottom: var(--daemon-space-6);
-  padding-bottom: var(--daemon-space-4);
+  margin-bottom: var(--daemon-space-4);
+  padding-bottom: var(--daemon-space-3);
 }
 
 .section-title {
@@ -231,32 +235,43 @@
 .text-link:hover {
   color: var(--daemon-student-action-primary);
 }
+.text-link--chip {
+  background: var(--daemon-neutral-surface-subtle);
+  border: 1px solid var(--daemon-neutral-border);
+  border-radius: var(--daemon-radius-pill);
+  min-height: 34px;
+  padding: var(--daemon-space-1) var(--daemon-space-3);
+}
+.text-link--chip:hover {
+  border-color: var(--daemon-neutral-border-strong);
+}
 
 .mission-body {
-  align-items: flex-start;
+  align-items: center;
   display: flex;
-  gap: var(--daemon-space-6);
+  gap: var(--daemon-space-5);
 }
 
 .mission-icon {
   align-items: center;
-  background: var(--daemon-neutral-surface-subtle);
+  background: color-mix(in srgb, var(--daemon-student-mission) 14%, var(--daemon-neutral-surface));
   border-radius: var(--daemon-radius-md);
   color: var(--daemon-student-mission);
   display: flex;
   flex: none;
-  font-size: 1.25rem;
-  height: 56px;
+  font-size: 1.2rem;
+  height: 52px;
   justify-content: center;
-  width: 56px;
+  width: 52px;
 }
 .mission-icon--ok {
+  background: color-mix(in srgb, var(--daemon-student-progress) 14%, var(--daemon-neutral-surface));
   color: var(--daemon-student-progress);
 }
 
 .mission-info {
   display: grid;
-  gap: var(--daemon-space-2);
+  gap: var(--daemon-space-1);
   min-width: 0;
 }
 
@@ -279,7 +294,29 @@
   color: var(--daemon-neutral-text-secondary);
   font-size: var(--daemon-font-size-body);
   line-height: var(--daemon-line-height-body);
-  margin: 0;
+  margin: var(--daemon-space-1) 0 0;
+}
+
+.mission-cta {
+  align-items: flex-end;
+  display: flex;
+  flex-direction: column;
+  gap: var(--daemon-space-4);
+  margin-left: auto;
+  width: 264px;
+}
+
+.level-context {
+  align-self: stretch;
+  display: grid;
+  gap: var(--daemon-space-2);
+}
+.level-context__label {
+  color: var(--daemon-neutral-text-secondary);
+  display: flex;
+  font-size: var(--daemon-font-size-small);
+  font-weight: var(--daemon-font-weight-medium);
+  justify-content: space-between;
 }
 
 .mission-rewards {
@@ -306,27 +343,6 @@
   color: var(--daemon-student-reward);
 }
 
-.mission-cta {
-  display: flex;
-  flex-direction: column;
-  gap: var(--daemon-space-5);
-  margin-left: auto;
-  max-width: 280px;
-  min-width: 240px;
-}
-
-.level-context {
-  display: grid;
-  gap: var(--daemon-space-2);
-}
-.level-context__label {
-  color: var(--daemon-neutral-text-secondary);
-  display: flex;
-  font-size: var(--daemon-font-size-small);
-  font-weight: var(--daemon-font-weight-medium);
-  justify-content: space-between;
-}
-
 .dashboard-cta {
   align-items: center;
   background: var(--daemon-student-action-primary);
@@ -346,28 +362,34 @@
 .dashboard-cta:hover {
   box-shadow: var(--daemon-shadow-md);
 }
+.dashboard-cta--sm {
+  font-size: var(--daemon-font-size-small);
+  min-height: 40px;
+  padding: var(--daemon-space-2) var(--daemon-space-5);
+}
 
+/* Estado vacío compacto — banda, no card anidada */
 .mission-empty {
   align-items: center;
-  background: var(--daemon-neutral-surface-subtle);
-  border-radius: var(--daemon-radius-md);
   display: flex;
-  gap: var(--daemon-space-6);
-  justify-content: space-between;
-  padding: var(--daemon-space-6);
+  gap: var(--daemon-space-4);
+  padding: var(--daemon-space-2) 0 0;
+}
+.mission-empty .mission-info {
+  flex: 1;
 }
 .mission-empty__img {
-  height: 96px;
+  height: 64px;
   object-fit: contain;
 }
 
 /* ============================================================
-   3 · PROGRESS OVERVIEW — métricas del mismo lenguaje visual
+   3 · PROGRESS OVERVIEW — métricas compactas del mismo lenguaje
    ============================================================ */
 
 .dashboard-metrics {
   display: grid;
-  gap: var(--daemon-space-4);
+  gap: var(--daemon-space-3);
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
@@ -376,8 +398,8 @@
   border: 1px solid var(--daemon-neutral-border);
   border-radius: var(--daemon-radius-md);
   display: grid;
-  gap: var(--daemon-space-2);
-  padding: var(--daemon-space-4) var(--daemon-space-5);
+  gap: var(--daemon-space-1);
+  padding: var(--daemon-space-3) var(--daemon-space-4);
 }
 .metric--progreso { --metric-color: var(--daemon-student-progress); }
 .metric--racha   { --metric-color: var(--daemon-student-mission); }
@@ -386,15 +408,15 @@
 
 .metric-icon {
   align-items: center;
-  background: var(--daemon-neutral-surface-subtle);
+  background: color-mix(in srgb, var(--metric-color) 12%, var(--daemon-neutral-surface));
   border-radius: var(--daemon-radius-sm);
   color: var(--metric-color);
   display: flex;
-  font-size: 1rem;
-  height: 40px;
+  font-size: 0.95rem;
+  height: 36px;
   justify-content: center;
   margin-bottom: var(--daemon-space-1);
-  width: 40px;
+  width: 36px;
 }
 
 .metric-value {
@@ -408,7 +430,7 @@
   color: var(--daemon-neutral-text-secondary);
   font-size: var(--daemon-font-size-caption);
   font-weight: var(--daemon-font-weight-bold);
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
 }
 
@@ -419,12 +441,12 @@
 }
 
 /* ============================================================
-   4 · LEARNING CONTINUATION
+   4 · LEARNING CONTINUATION — densidad media
    ============================================================ */
 
 .dashboard-secondary {
   display: grid;
-  gap: var(--daemon-space-4);
+  gap: var(--daemon-space-3);
   grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
 }
 
@@ -432,7 +454,7 @@
   background: var(--daemon-neutral-surface);
   border: 1px solid var(--daemon-neutral-border);
   border-radius: var(--daemon-radius-lg);
-  padding: var(--daemon-space-6) var(--daemon-space-8);
+  padding: var(--daemon-space-5) var(--daemon-space-6);
 }
 
 .panel-percent {
@@ -453,15 +475,12 @@
 
 .level-note {
   align-items: center;
-  background: var(--daemon-neutral-surface-subtle);
-  border-radius: var(--daemon-radius-md);
   color: var(--daemon-neutral-text-secondary);
   display: flex;
   font-size: var(--daemon-font-size-small);
   font-weight: var(--daemon-font-weight-medium);
   gap: var(--daemon-space-2);
-  margin: var(--daemon-space-5) 0 0;
-  padding: var(--daemon-space-3) var(--daemon-space-4);
+  margin: var(--daemon-space-4) 0 0;
 }
 .level-note fa-icon {
   color: var(--daemon-student-progress);
@@ -474,14 +493,14 @@
 }
 .racha-icon {
   align-items: center;
-  background: var(--daemon-neutral-surface-subtle);
+  background: color-mix(in srgb, var(--daemon-student-mission) 12%, var(--daemon-neutral-surface));
   border-radius: var(--daemon-radius-md);
   color: var(--daemon-student-mission);
   display: flex;
   font-size: 1.1rem;
-  height: 48px;
+  height: 44px;
   justify-content: center;
-  width: 48px;
+  width: 44px;
 }
 .racha-value {
   color: var(--daemon-neutral-text-primary);
@@ -496,7 +515,7 @@
   font-weight: var(--daemon-font-weight-medium);
 }
 .racha-mascota {
-  height: 72px;
+  height: 64px;
   margin-left: auto;
   object-fit: contain;
 }
@@ -504,7 +523,7 @@
   color: var(--daemon-neutral-text-secondary);
   font-size: var(--daemon-font-size-small);
   line-height: var(--daemon-line-height-small);
-  margin: var(--daemon-space-4) 0 0;
+  margin: var(--daemon-space-3) 0 0;
 }
 
 .activity-dots {
@@ -513,8 +532,8 @@
   gap: var(--daemon-space-1);
   justify-content: space-between;
   list-style: none;
-  margin: var(--daemon-space-5) 0 0;
-  padding: var(--daemon-space-5) 0 0;
+  margin: var(--daemon-space-4) 0 0;
+  padding: var(--daemon-space-4) 0 0;
 }
 .activity-dot {
   align-items: center;
@@ -555,7 +574,7 @@
   display: flex;
   gap: var(--daemon-space-4);
   justify-content: space-between;
-  padding: var(--daemon-space-3) var(--daemon-space-6);
+  padding: var(--daemon-space-3) var(--daemon-space-5);
 }
 .foot-premios {
   align-items: center;
@@ -585,9 +604,8 @@
     flex-direction: column;
   }
   .mission-cta {
+    align-items: stretch;
     margin-left: 0;
-    max-width: none;
-    min-width: 0;
     width: 100%;
   }
   .welcome-mascota {
@@ -597,11 +615,11 @@
 
 @media (max-width: 767px) {
   .dashboard-welcome {
-    padding: var(--daemon-space-5) var(--daemon-space-6);
+    padding: var(--daemon-space-4) var(--daemon-space-5);
   }
   .mission-panel,
   .panel {
-    padding: var(--daemon-space-5) var(--daemon-space-4);
+    padding: var(--daemon-space-4) var(--daemon-space-4);
   }
   .welcome-title {
     font-size: var(--daemon-font-size-h2);
