@@ -76,7 +76,6 @@ module.exports = {
         /* === ROLES DE ESTUDIANTE (Token Map V1) === */
         student: {
           action:           'var(--daemon-student-action-primary)',
-          'action-on':      'var(--daemon-student-action-primary-on)',
           progress:         'var(--daemon-student-progress)',
           mission:          'var(--daemon-student-mission)',
           creative:         'var(--daemon-student-creative)',
