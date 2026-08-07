@@ -124,10 +124,10 @@ Roles verificados:
 | EXP-002 | Estudiante | Estudiante | Aprender, progresar, crear, canjear | portal visual | Panel, misiones, XP/DAEMONS, ranking, tienda, cuentos, mascota, chatbot, competencia, comunidad, certificados, laboratorio | implemented | rutas `/alumno/*`, layout-alumno |
 | EXP-003 | Docente | Docente, administrador | Gestionar académico, evaluar, acompañar | portal visual | Panel docente, aulas, currículo, misiones, entregas, insignias, tienda, evaluaciones, competencia, tokens | implemented | rutas `/docente/*`, layout-docente |
 | EXP-004 | Familia / tutor | Tutor | Supervisar progreso, bienestar, consentimiento | portal visual | Invitaciones, panel familiar, límite de pantalla | implemented | rutas `/familias`, `/tutor/*` |
-| EXP-005 | Funciones administrativas | Administrador | Control, auditoría, configuración, operación | función administrativa | Alumnos admin, IA admin, mascota admin, archivos admin, moderación, privacidad admin, interop admin | implemented (API) | grupos `role:admin` en API |
-| EXP-006 | Aula | Estudiante, docente | Interacción activa con estado en vivo | experiencia integrada | Layout aula con Firestore (inicio, cursos) | experimental | `layout-aula.ts`, `features/aula` sin páginas enrutadas en `app.routes.ts` |
-| EXP-007 | Integraciones institucionales | Servicio externo, administrador | Interoperabilidad OneRoster/LTI | integración | Clientes OneRoster, registros LTI, vínculos | experimental/parcial | `routes/interoperability.php` |
-| EXP-008 | Funciones internas | Operador, moderador, administrador | Moderación, soporte, seguridad, operación | función transversal | Reportes, bloqueos, solicitudes de privacidad, auditoría de tokens | implemented (API) | grupos `moderacion/admin`, `privacidad/admin` |
+| EXP-005 | Funciones administrativas | Administrador | Control, auditoría, configuración, operación | función administrativa | Alumnos admin, IA admin, mascota admin, archivos admin, moderación, privacidad admin, interop admin | implemented | grupos `role:admin` en API |
+| EXP-006 | Aula | Estudiante, docente | Interacción activa con estado en vivo | experiencia integrada | Layout aula con Firestore (inicio, cursos) | experimental | `layout-aula.ts`; `features/aula` sin páginas enrutadas en `app.routes.ts` |
+| EXP-007 | Integraciones institucionales | Servicio externo, administrador | Interoperabilidad OneRoster/LTI | integración | Clientes OneRoster, registros LTI, vínculos | partial | `routes/interoperability.php` |
+| EXP-008 | Funciones internas | Operador, moderador, administrador | Moderación, soporte, seguridad, operación | función transversal | Reportes, bloqueos, solicitudes de privacidad, auditoría de tokens | implemented | grupos `moderacion/admin`, `privacidad/admin` |
 
 Nota: `/dev/design-system` es una herramienta interna de desarrollo, no una
 experiencia de producto.
@@ -137,33 +137,36 @@ experiencia de producto.
 Revalidación de las 25 capacidades preliminares de FND-1 contra rutas,
 features, controladores y documentación vigente.
 
+Valores de las columnas Frontend, Backend, Datos e Integraciones:
+`verified`, `partial`, `absent`, `not applicable`, `unknown`.
+
 | ID | Capacidad | Dominio | Actores | Experiencia | Estado | Frontend | Backend | Datos | Integraciones | Evidencia | Riesgo |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| CAP-001 | Autenticación (Firebase + Sanctum) | Identidad | Todos | Público/Auth, todas | implemented | verified | verified | verified | Firebase Auth | `/auth/*`, firebase-auth.ts, FirebaseTokenVerifier | Bajo |
-| CAP-002 | Panel alumno (dashboard, perfil) | Alumno | Estudiante | Estudiante | implemented | verified | verified | verified | — | `/alumno`, AlumnoService | Bajo |
-| CAP-003 | Misiones y entregas | Académico | Estudiante, docente | Estudiante, Docente | implemented | verified | verified | verified | — | `/misiones*`, MisionController | Medio |
-| CAP-004 | XP / niveles / DAEMONS (ledger) | Economía | Estudiante, docente | Estudiante, Docente | implemented | verified | verified | verified | — | GamificacionService, `movimientos_economia` | Bajo |
-| CAP-005 | Ranking por XP | Alumno | Estudiante, familia | Estudiante, Familia | implemented | verified | verified | verified | — | `/ranking`, RankingController | Bajo |
-| CAP-006 | Tienda / stock / canjes | Economía | Estudiante, docente | Estudiante, Docente | implemented | verified | verified | verified | — | `/tienda*`, TiendaController | Medio |
-| CAP-007 | Insignias | Gamificación | Docente, estudiante | Docente, Estudiante | implemented | verified | verified | verified | — | `/docente/insignias*` | Bajo |
-| CAP-008 | Evaluaciones (live, resultados) | Académico | Estudiante, docente | Estudiante, Docente | implemented | verified | verified | verified | — | `/evaluaciones*`, EvaluacionController | Medio |
-| CAP-009 | Aulas / académico (cursos, lecciones) | Académico | Docente, estudiante | Docente, Estudiante | implemented | verified | verified | verified | — | `/academico`, `/docente/aulas` | Medio |
-| CAP-010 | Cuentos v1 (PostgreSQL legacy) | Creatividad | Estudiante | Estudiante | deprecated | partial | verified | verified | — | `/cuentos`, CuentoController | Bajo (transición) |
-| CAP-011 | Cuentos v2 (Firestore, galería, editor, IA) | Creatividad | Estudiante, moderador | Estudiante | partial (no desplegado el control plane completo) | partial | partial | partial | Firestore | `/cuentos-v2*`, CuentoV2Controller, ADR-002/003 | Alto (transición) |
-| CAP-012 | Comentarios / reacciones cuentos | Comunidad | Estudiante | Estudiante | partial (server-only, no desplegado) | partial | partial | partial | Firestore | ADR-003, firestore.rules v2 | Alto (no desplegado) |
-| CAP-013 | Chatbot IA (OpenRouter/Ollama) | IA | Estudiante | Estudiante | implemented | verified | verified | verified | OpenRouter/Ollama | `/chatbot*`, ChatbotService | Medio (variable) |
-| CAP-014 | Mascota y cosméticos | Gamificación | Estudiante, docente | Estudiante, Docente | implemented | verified | verified | verified | — | `/mascota*`, MascotaController | Bajo |
-| CAP-015 | Competencia en vivo | Gamificación | Estudiante, docente | Estudiante, Docente | implemented | verified | verified | verified | Pusher | `/competencia*`, CompetenciaLive | Medio |
-| CAP-016 | Comunidad | Comunidad | Estudiante, docente | Estudiante | implemented | verified | verified | verified | — | `/comunidad*` | Medio |
-| CAP-017 | Certificados | Académico | Estudiante | Estudiante | implemented (lectura) | verified | verified | verified | — | `/certificados`, CertificadoController | Bajo |
-| CAP-018 | Portal familias / tutor | Familia | Tutor | Familia | implemented | verified | verified | verified | Firebase (correo cifrado + HMAC) | `/tutor/*`, TutorPortalController | Medio |
-| CAP-019 | Bienestar digital (límites pantalla) | Privacidad | Tutor, estudiante | Familia, Estudiante | implemented | verified | verified | verified | — | `/bienestar-digital`, UsoPantallaDiario | Bajo |
-| CAP-020 | Privacidad (exportar, eliminar, retención) | Privacidad | Todos | Transversal | implemented | verified | verified | verified | — | `/privacidad*`, PrivacidadService | Bajo |
-| CAP-021 | Interoperabilidad OneRoster/LTI | Integración | Administrador, servicio externo | Integraciones | experimental/parcial | not applicable | partial | partial | OneRoster, LTI | `routes/interoperability.php` | Medio |
-| CAP-022 | Archivos (Supabase Storage) | Datos | Todos | Transversal | implemented | verified | verified | verified | Supabase Storage | `/archivos*`, ArchivoService, ADR-004 | Medio |
-| CAP-023 | Notificaciones | Comunicación | Todos | Transversal | implemented | verified | verified | verified | — | `/notificaciones*`, NotificacionController | Bajo |
-| CAP-024 | Telemetría (lista cerrada) | Privacidad | Sistema | Transversal | implemented | verified | verified | verified | — | `/telemetria/eventos` | Bajo |
-| CAP-025 | Seguridad comunidad (reportes/bloqueos) | Comunidad | Moderador, administrador | Funciones internas | implemented | verified | verified | verified | — | `/comunidad/reportes`, `/comunidad/bloqueos` | Medio |
+| CAP-001 | Autenticación (Firebase + Sanctum) | Identidad | Todos | Público/Auth, todas | implemented | verified | verified | verified | verified | `/auth/*`, firebase-auth.ts, FirebaseTokenVerifier; proveedor: Firebase Auth | Medio (autenticación local coexistente, ver BR-001) |
+| CAP-002 | Panel alumno (dashboard, perfil) | Alumno | Estudiante | Estudiante | implemented | verified | verified | verified | not applicable | `/alumno`, AlumnoService | Bajo |
+| CAP-003 | Misiones y entregas | Académico | Estudiante, docente | Estudiante, Docente | implemented | verified | verified | verified | not applicable | `/misiones*`, MisionController | Medio |
+| CAP-004 | XP / niveles / DAEMONS (ledger) | Economía | Estudiante, docente | Estudiante, Docente | implemented | verified | verified | verified | not applicable | GamificacionService, `movimientos_economia` | Bajo |
+| CAP-005 | Ranking por XP | Alumno | Estudiante, familia, docente | Estudiante, Familia, Docente | implemented | verified | verified | verified | not applicable | `/ranking`, RankingController | Bajo |
+| CAP-006 | Tienda / stock / canjes | Economía | Estudiante, docente | Estudiante, Docente | implemented | verified | verified | verified | not applicable | `/tienda*`, TiendaController | Medio |
+| CAP-007 | Insignias | Gamificación | Docente, estudiante | Docente, Estudiante | implemented | verified | verified | verified | not applicable | `/docente/insignias*` | Bajo |
+| CAP-008 | Evaluaciones (live, resultados) | Académico | Estudiante, docente | Estudiante, Docente | implemented | verified | verified | verified | not applicable | `/evaluaciones*`, EvaluacionController | Medio |
+| CAP-009 | Aulas / académico (cursos, lecciones) | Académico | Docente, estudiante | Docente, Estudiante | implemented | verified | verified | verified | not applicable | `/academico`, `/docente/aulas` | Medio |
+| CAP-010 | Cuentos v1 (PostgreSQL legacy) | Creatividad | Estudiante, docente, administrador | Estudiante, Docente, Administración | deprecated | partial | verified | verified | not applicable | `/cuentos`, CuentoController; sustituido por v2 (transición) | Bajo (transición) |
+| CAP-011 | Cuentos v2 (Firestore, galería, editor, IA) | Creatividad | Estudiante, moderador | Estudiante | partial | partial | partial | partial | partial | `/cuentos-v2*`, CuentoV2Controller, ADR-002/003; integración: Firestore; despliegue del control plane no verificado | Alto (transición; despliegue remoto unknown) |
+| CAP-012 | Comentarios / reacciones cuentos | Comunidad | Estudiante, moderador | Estudiante | partial | partial | partial | partial | partial | ADR-003, firestore.rules v2; comentarios server-only; despliegue de rules no verificado | Alto (rules v2 sin despliegue verificado) |
+| CAP-013 | Chatbot IA (OpenRouter/Ollama) | IA | Estudiante | Estudiante | implemented | verified | verified | verified | verified | `/chatbot*`, ChatbotService; proveedores: OpenRouter, Ollama | Medio (variable incoherente, GAP-009) |
+| CAP-014 | Mascota y cosméticos | Gamificación | Estudiante, docente | Estudiante, Docente | implemented | verified | verified | verified | not applicable | `/mascota*`, MascotaController | Bajo |
+| CAP-015 | Competencia en vivo | Gamificación | Estudiante, docente | Estudiante, Docente | implemented | verified | verified | verified | verified | `/competencia*`, CompetenciaLive; integración: Pusher | Medio |
+| CAP-016 | Comunidad | Comunidad | Estudiante, docente | Estudiante | implemented | verified | verified | verified | not applicable | `/comunidad*` | Medio |
+| CAP-017 | Certificados | Académico | Estudiante, docente | Estudiante, Docente | implemented | verified | verified | verified | not applicable | `/certificados`, CertificadoController | Bajo |
+| CAP-018 | Portal familias / tutor | Familia | Tutor, estudiante | Familia | implemented | verified | verified | verified | verified | `/tutor/*`, TutorPortalController; integración: Firebase (correo verificado) | Medio |
+| CAP-019 | Bienestar digital (límites pantalla) | Privacidad | Tutor, estudiante | Familia, Estudiante | implemented | verified | verified | verified | not applicable | `/bienestar-digital`, UsoPantallaDiario | Bajo |
+| CAP-020 | Privacidad (exportar, eliminar, retención) | Privacidad | Todos | Transversal | implemented | verified | verified | verified | not applicable | `/privacidad*`, PrivacidadService | Bajo |
+| CAP-021 | Interoperabilidad OneRoster/LTI | Integración | Administrador, servicio externo | Integraciones | partial | not applicable | partial | partial | partial | `routes/interoperability.php`; integración: OneRoster, LTI; cobertura funcional no consolidada | Medio |
+| CAP-022 | Archivos (Supabase Storage) | Datos | Todos | Transversal | implemented | verified | verified | verified | verified | `/archivos*`, ArchivoService, ADR-004; integración: Supabase Storage | Medio |
+| CAP-023 | Notificaciones | Comunicación | Todos | Transversal | implemented | verified | verified | verified | not applicable | `/notificaciones*`, NotificacionController | Bajo |
+| CAP-024 | Telemetría (lista cerrada) | Privacidad | Sistema | Transversal | implemented | verified | verified | verified | not applicable | `/telemetria/eventos`, `EVENTOS_PERMITIDOS` | Bajo |
+| CAP-025 | Seguridad comunidad (reportes/bloqueos) | Comunidad | Moderador, administrador, estudiante | Funciones internas | implemented | verified | verified | verified | not applicable | `/comunidad/reportes`, `/comunidad/bloqueos` | Medio |
 
 ### Capacidades candidatas fuera del inventario
 
@@ -177,75 +180,76 @@ incorporarse al inventario oficial.
 
 ## 8. Matriz actor-capacidad
 
-Valores: P = Primary, S = Supporting, R = Read-only, A = Administrative,
-Sys = System, NA = Not applicable, U = Unknown.
+Valores: `Primary`, `Supporting`, `Read-only`, `Administrative`, `System`,
+`Not applicable`, `Unknown`.
 
 | Capacidad | Visitante | Estudiante | Docente | Familia | Administrador | Operador interno | Servicio externo |
 |---|---|---|---|---|---|---|---|
-| CAP-001 Autenticación | S | P | P | P | P | Sys | NA |
-| CAP-002 Panel alumno | NA | P | R | R | R | NA | NA |
-| CAP-003 Misiones y entregas | NA | P | P | R | A | NA | NA |
-| CAP-004 XP / DAEMONS | NA | P | S | R | A | NA | NA |
-| CAP-005 Ranking | NA | P | S | R | R | NA | NA |
-| CAP-006 Tienda / canjes | NA | P | P | NA | A | NA | NA |
-| CAP-007 Insignias | NA | R | P | R | A | NA | NA |
-| CAP-008 Evaluaciones | NA | P | P | R | A | NA | NA |
-| CAP-009 Aulas / académico | NA | S | P | NA | A | NA | NA |
-| CAP-010 Cuentos v1 | R | S | A | NA | A | NA | NA |
-| CAP-011 Cuentos v2 | R | P | S | NA | A | S | NA |
-| CAP-012 Comentarios / reacciones | NA | P | S | NA | A | S | NA |
-| CAP-013 Chatbot IA | NA | P | S | NA | A | NA | NA |
-| CAP-014 Mascota y cosméticos | NA | P | A | NA | A | NA | NA |
-| CAP-015 Competencia en vivo | NA | P | P | NA | A | NA | NA |
-| CAP-016 Comunidad | NA | P | S | NA | A | S | NA |
-| CAP-017 Certificados | NA | P | R | NA | A | NA | NA |
-| CAP-018 Portal familias | NA | S | NA | P | A | NA | NA |
-| CAP-019 Bienestar digital | NA | S | NA | P | A | NA | NA |
-| CAP-020 Privacidad | NA | P | P | P | A | S | NA |
-| CAP-021 Interoperabilidad | NA | NA | NA | NA | A | NA | P |
-| CAP-022 Archivos | NA | S | S | NA | A | Sys | NA |
-| CAP-023 Notificaciones | NA | P | P | P | A | Sys | NA |
-| CAP-024 Telemetría | NA | S | NA | NA | Sys | NA | NA |
-| CAP-025 Seguridad comunidad | NA | S | S | NA | A | P | NA |
+| CAP-001 Autenticación | Supporting | Primary | Primary | Primary | Primary | System | Not applicable |
+| CAP-002 Panel alumno | Not applicable | Primary | Read-only | Read-only | Read-only | Not applicable | Not applicable |
+| CAP-003 Misiones y entregas | Not applicable | Primary | Primary | Read-only | Administrative | Not applicable | Not applicable |
+| CAP-004 XP / DAEMONS | Not applicable | Primary | Supporting | Read-only | Administrative | Not applicable | Not applicable |
+| CAP-005 Ranking | Not applicable | Primary | Supporting | Read-only | Read-only | Not applicable | Not applicable |
+| CAP-006 Tienda / canjes | Not applicable | Primary | Primary | Not applicable | Administrative | Not applicable | Not applicable |
+| CAP-007 Insignias | Not applicable | Read-only | Primary | Read-only | Administrative | Not applicable | Not applicable |
+| CAP-008 Evaluaciones | Not applicable | Primary | Primary | Read-only | Administrative | Not applicable | Not applicable |
+| CAP-009 Aulas / académico | Not applicable | Supporting | Primary | Not applicable | Administrative | Not applicable | Not applicable |
+| CAP-010 Cuentos v1 | Read-only | Supporting | Administrative | Not applicable | Administrative | Not applicable | Not applicable |
+| CAP-011 Cuentos v2 | Read-only | Primary | Supporting | Not applicable | Administrative | Supporting | Not applicable |
+| CAP-012 Comentarios / reacciones | Not applicable | Primary | Supporting | Not applicable | Administrative | Supporting | Not applicable |
+| CAP-013 Chatbot IA | Not applicable | Primary | Supporting | Not applicable | Administrative | Not applicable | Not applicable |
+| CAP-014 Mascota y cosméticos | Not applicable | Primary | Administrative | Not applicable | Administrative | Not applicable | Not applicable |
+| CAP-015 Competencia en vivo | Not applicable | Primary | Primary | Not applicable | Administrative | Not applicable | Not applicable |
+| CAP-016 Comunidad | Not applicable | Primary | Supporting | Not applicable | Administrative | Supporting | Not applicable |
+| CAP-017 Certificados | Not applicable | Primary | Read-only | Not applicable | Administrative | Not applicable | Not applicable |
+| CAP-018 Portal familias | Not applicable | Supporting | Not applicable | Primary | Administrative | Not applicable | Not applicable |
+| CAP-019 Bienestar digital | Not applicable | Supporting | Not applicable | Primary | Administrative | Not applicable | Not applicable |
+| CAP-020 Privacidad | Not applicable | Primary | Primary | Primary | Administrative | Supporting | Not applicable |
+| CAP-021 Interoperabilidad | Not applicable | Not applicable | Not applicable | Not applicable | Administrative | Not applicable | Primary |
+| CAP-022 Archivos | Not applicable | Supporting | Supporting | Not applicable | Administrative | System | Not applicable |
+| CAP-023 Notificaciones | Not applicable | Primary | Primary | Primary | Administrative | System | Not applicable |
+| CAP-024 Telemetría | Not applicable | Supporting | Not applicable | Not applicable | System | Not applicable | Not applicable |
+| CAP-025 Seguridad comunidad | Not applicable | Supporting | Supporting | Not applicable | Administrative | Primary | Not applicable |
 
 ## 9. Matriz portal-capacidad
 
-Valores: P = Primary, S = Supporting, R = Read-only, A = Administrative,
-Sys = System, NA = Not applicable, U = Unknown.
+Valores: `Primary`, `Supporting`, `Read-only`, `Administrative`, `System`,
+`Not applicable`, `Unknown`.
 
 | Capacidad | Público/Auth | Estudiante | Docente | Familia | Administración | Aula | Integraciones |
 |---|---|---|---|---|---|---|---|
-| CAP-001 Autenticación | P | P | P | P | P | P | NA |
-| CAP-002 Panel alumno | NA | P | NA | NA | NA | NA | NA |
-| CAP-003 Misiones y entregas | NA | P | P | R | A | S | NA |
-| CAP-004 XP / DAEMONS | NA | P | S | R | A | S | NA |
-| CAP-005 Ranking | NA | P | S | R | R | S | NA |
-| CAP-006 Tienda / canjes | NA | P | P | NA | A | NA | NA |
-| CAP-007 Insignias | NA | R | P | R | A | NA | NA |
-| CAP-008 Evaluaciones | NA | P | P | R | A | S | NA |
-| CAP-009 Aulas / académico | NA | S | P | NA | A | P | NA |
-| CAP-010 Cuentos v1 | R | S | A | NA | A | NA | NA |
-| CAP-011 Cuentos v2 | R | P | S | NA | A | S | NA |
-| CAP-012 Comentarios / reacciones | NA | P | S | NA | A | S | NA |
-| CAP-013 Chatbot IA | NA | P | S | NA | A | S | NA |
-| CAP-014 Mascota y cosméticos | NA | P | A | NA | A | NA | NA |
-| CAP-015 Competencia en vivo | NA | P | P | NA | A | P | NA |
-| CAP-016 Comunidad | NA | P | S | NA | A | NA | NA |
-| CAP-017 Certificados | NA | P | R | NA | A | NA | NA |
-| CAP-018 Portal familias | NA | S | NA | P | A | NA | NA |
-| CAP-019 Bienestar digital | NA | S | NA | P | A | NA | NA |
-| CAP-020 Privacidad | S | P | P | P | A | NA | NA |
-| CAP-021 Interoperabilidad | NA | NA | NA | NA | A | NA | P |
-| CAP-022 Archivos | NA | S | S | NA | A | S | NA |
-| CAP-023 Notificaciones | NA | P | P | P | A | S | NA |
-| CAP-024 Telemetría | NA | S | NA | NA | Sys | NA | NA |
-| CAP-025 Seguridad comunidad | NA | S | S | NA | A | S | NA |
+| CAP-001 Autenticación | Primary | Primary | Primary | Primary | Primary | Primary | Not applicable |
+| CAP-002 Panel alumno | Not applicable | Primary | Not applicable | Not applicable | Not applicable | Not applicable | Not applicable |
+| CAP-003 Misiones y entregas | Not applicable | Primary | Primary | Read-only | Administrative | Supporting | Not applicable |
+| CAP-004 XP / DAEMONS | Not applicable | Primary | Supporting | Read-only | Administrative | Supporting | Not applicable |
+| CAP-005 Ranking | Not applicable | Primary | Supporting | Read-only | Read-only | Supporting | Not applicable |
+| CAP-006 Tienda / canjes | Not applicable | Primary | Primary | Not applicable | Administrative | Not applicable | Not applicable |
+| CAP-007 Insignias | Not applicable | Read-only | Primary | Read-only | Administrative | Not applicable | Not applicable |
+| CAP-008 Evaluaciones | Not applicable | Primary | Primary | Read-only | Administrative | Supporting | Not applicable |
+| CAP-009 Aulas / académico | Not applicable | Supporting | Primary | Not applicable | Administrative | Primary | Not applicable |
+| CAP-010 Cuentos v1 | Read-only | Supporting | Administrative | Not applicable | Administrative | Not applicable | Not applicable |
+| CAP-011 Cuentos v2 | Read-only | Primary | Supporting | Not applicable | Administrative | Supporting | Not applicable |
+| CAP-012 Comentarios / reacciones | Not applicable | Primary | Supporting | Not applicable | Administrative | Supporting | Not applicable |
+| CAP-013 Chatbot IA | Not applicable | Primary | Supporting | Not applicable | Administrative | Supporting | Not applicable |
+| CAP-014 Mascota y cosméticos | Not applicable | Primary | Administrative | Not applicable | Administrative | Not applicable | Not applicable |
+| CAP-015 Competencia en vivo | Not applicable | Primary | Primary | Not applicable | Administrative | Primary | Not applicable |
+| CAP-016 Comunidad | Not applicable | Primary | Supporting | Not applicable | Administrative | Not applicable | Not applicable |
+| CAP-017 Certificados | Not applicable | Primary | Read-only | Not applicable | Administrative | Not applicable | Not applicable |
+| CAP-018 Portal familias | Not applicable | Supporting | Not applicable | Primary | Administrative | Not applicable | Not applicable |
+| CAP-019 Bienestar digital | Not applicable | Supporting | Not applicable | Primary | Administrative | Not applicable | Not applicable |
+| CAP-020 Privacidad | Supporting | Primary | Primary | Primary | Administrative | Not applicable | Not applicable |
+| CAP-021 Interoperabilidad | Not applicable | Not applicable | Not applicable | Not applicable | Administrative | Not applicable | Primary |
+| CAP-022 Archivos | Not applicable | Supporting | Supporting | Not applicable | Administrative | Supporting | Not applicable |
+| CAP-023 Notificaciones | Not applicable | Primary | Primary | Primary | Administrative | Supporting | Not applicable |
+| CAP-024 Telemetría | Not applicable | Supporting | Not applicable | Not applicable | System | Not applicable | Not applicable |
+| CAP-025 Seguridad comunidad | Not applicable | Supporting | Supporting | Not applicable | Administrative | Supporting | Not applicable |
 
 ## 10. Núcleo compartido de DAEMON
 
 Global obligatorio (verificado):
 
-- identidad y autenticación (Firebase Auth + Sanctum);
+- identidad y autenticación (Firebase Auth + Sanctum; login local
+  coexistente, ver BR-001);
 - autorización efectiva (Laravel, middleware `role:*`);
 - perfiles de usuario;
 - notificaciones;
@@ -272,7 +276,7 @@ Específico de experiencia:
 
 No verificado:
 
-- componentes de aula Firestore (layout-aula).
+- componentes de aula Firestore (layout-aula, CAND-002).
 
 Regla: compartir sistema no implica compartir composición. No se exige que
 todos los portales usen el mismo shell, dashboard ni navegación.
@@ -289,15 +293,16 @@ todos los portales usen el mismo shell, dashboard ni navegación.
 | Aula | Concentrar la actividad vigente, facilitar interacción, mostrar estado relevante, reducir distracción |
 | Integraciones | Interoperar, sincronizar, validar contratos, mantener trazabilidad |
 
-Estas son categorías de responsabilidad verificadas por rutas y controladores;
-no se declara funcionalidad no verificada.
+Estas responsabilidades combinan capacidades verificadas e intenciones de
+producto. El estado de implementación se determina exclusivamente en las
+Secciones 6, 7 y 13; esta tabla no declara funcionalidad no verificada.
 
 ## 12. Flujos transversales
 
 | FLW-ID | Flujo | Iniciador | Participantes | Experiencias | Autoridad de datos | Estado | Riesgo | Evidencia |
 |---|---|---|---|---|---|---|---|---|
-| FLW-001 | Registro | Visitante | Visitante, sistema | Público/Auth | PostgreSQL | implemented | Bajo | `/auth/registro` |
-| FLW-002 | Inicio de sesión | Usuario | Usuario, sistema | Público/Auth | Firebase Auth + PostgreSQL | implemented | Medio | `/auth/login`, `/auth/firebase`, `/auth/google` |
+| FLW-001 | Registro | Visitante | Visitante, sistema | Público/Auth | Firebase Auth (identidad) + PostgreSQL (perfil de negocio) | implemented | Bajo | `/auth/registro`, AutenticacionService::registrarAlumno |
+| FLW-002 | Inicio de sesión | Usuario | Usuario, sistema | Público/Auth | Firebase Auth (identidad) / PostgreSQL (credenciales locales) + Sanctum (sesión) | implemented | Medio | `/auth/login`, `/auth/firebase`, `/auth/google`; ver BR-001 |
 | FLW-003 | Recuperación de cuenta | Usuario | Usuario, sistema | Público/Auth | Firebase Auth | implemented | Medio | `/auth/recuperar`, recuperar-clave |
 | FLW-004 | Creación o vinculación de estudiante | Administrador | Admin, sistema | Administración | PostgreSQL | implemented | Bajo | `/auth/usuarios`, `alumnos/admin` |
 | FLW-005 | Matrícula / asignación a aula | Docente | Docente, estudiante | Docente, Estudiante | PostgreSQL | implemented | Medio | `/academico/aulas/{aula}/usuarios/{usuario}` |
@@ -306,11 +311,11 @@ no se declara funcionalidad no verificada.
 | FLW-008 | Revisión | Docente | Docente, sistema | Docente | PostgreSQL | implemented | Medio | `/misiones/entregas/{entrega}/revisar` |
 | FLW-009 | Evaluación | Estudiante | Estudiante, docente | Estudiante, Docente | PostgreSQL | implemented | Medio | `/evaluaciones/{evaluacion}/responder` |
 | FLW-010 | Publicación de resultados | Docente | Docente, estudiante | Docente, Estudiante | PostgreSQL | implemented | Medio | evaluaciones, resultados |
-| FLW-011 | Progreso / XP | Sistema | Sistema, estudiante | Estudiante, Docente | PostgreSQL (GamificacionService) | implemented | Bajo | gamificacion-xp-daemons.md |
-| FLW-012 | DAEMONS / economía | Sistema | Sistema, estudiante | Estudiante, Docente | PostgreSQL (`movimientos_economia`) | implemented | Bajo | gamificacion-xp-daemons.md |
+| FLW-011 | Progreso / XP | Sistema | Sistema, estudiante | Estudiante, Docente | PostgreSQL (GamificacionService) | implemented | Bajo | gamificacion-xp-daemons.md, GamificacionService |
+| FLW-012 | DAEMONS / economía | Sistema | Sistema, estudiante | Estudiante, Docente | PostgreSQL (`movimientos_economia`) | implemented | Bajo | gamificacion-xp-daemons.md, migración ledger |
 | FLW-013 | Tienda | Estudiante | Estudiante, sistema | Estudiante | PostgreSQL | implemented | Medio | `/tienda` |
 | FLW-014 | Canje | Estudiante | Estudiante, sistema | Estudiante | PostgreSQL | implemented | Medio | `/tienda/canjear/{premio}` |
-| FLW-015 | Cuentos (creación) | Estudiante | Estudiante, sistema | Estudiante | Firestore (v2) / PostgreSQL (v1) | partial | Alto | cuentos v2, ADR-002 |
+| FLW-015 | Cuentos (creación) | Estudiante | Estudiante, sistema | Estudiante | Firestore (v2) / PostgreSQL (v1) | partial | Alto | cuentos v2, ADR-002; despliegue no verificado |
 | FLW-016 | Publicación de cuentos | Estudiante, moderador | Estudiante, moderador | Estudiante | Firestore | partial | Alto | `/cuentos-v2/{id}/publicacion` |
 | FLW-017 | Comentarios | Estudiante | Estudiante, sistema | Estudiante | Firestore | partial | Alto | `/cuentos-v2/{id}/comentarios` |
 | FLW-018 | Reacciones | Estudiante | Estudiante, sistema | Estudiante | Firestore | partial | Alto | `/cuentos-v2/{id}/reaccion` |
@@ -318,50 +323,54 @@ no se declara funcionalidad no verificada.
 | FLW-020 | Vínculo familiar | Estudiante, tutor | Estudiante, tutor, sistema | Familia, Estudiante | PostgreSQL (HMAC) | implemented | Medio | portal-familias.md |
 | FLW-021 | Consentimiento | Tutor | Tutor, sistema | Familia | PostgreSQL | implemented | Medio | `/tutor/invitaciones/{id}/aceptar` |
 | FLW-022 | Notificaciones | Sistema | Sistema, usuarios | Transversal | PostgreSQL | implemented | Bajo | `/notificaciones*` |
-| FLW-023 | Privacidad / exportación | Usuario | Usuario, sistema | Transversal | PostgreSQL | implemented | Bajo | `/privacidad/exportar` |
-| FLW-024 | Eliminación | Usuario | Usuario, admin | Transversal | PostgreSQL | implemented | Bajo | `/privacidad/eliminacion` |
+| FLW-023 | Privacidad / exportación | Usuario | Usuario, sistema | Transversal | PostgreSQL | implemented | Bajo | `/privacidad/exportar` (throttle:3,60) |
+| FLW-024 | Eliminación | Usuario | Usuario, admin | Transversal | PostgreSQL | implemented | Bajo | `/privacidad/eliminacion` (throttle:3,60) |
 | FLW-025 | Archivos | Usuario | Usuario, sistema | Transversal | Supabase Storage + PostgreSQL | implemented | Medio | `/archivos*`, ADR-004 |
 | FLW-026 | Reportes / incidencias | Usuario | Usuario, moderador | Funciones internas | PostgreSQL | implemented | Medio | `/comunidad/reportes` |
-| FLW-027 | Integraciones institucionales | Sistema externo | Sistema externo, admin | Integraciones | PostgreSQL | experimental/parcial | Medio | `routes/interoperability.php` |
+| FLW-027 | Integraciones institucionales | Sistema externo | Sistema externo, admin | Integraciones | PostgreSQL | partial | Medio | `routes/interoperability.php`; cobertura funcional experimental, no consolidada |
 
 ## 13. Estado funcional del producto
 
 | Dominio | Implemented | Partial | Experimental | Deprecated | Planned | Unknown | Riesgo principal |
 |---|---|---|---|---|---|---|---|
-| Identidad y acceso | CAP-001 | — | — | — | — | — | Bajo |
+| Identidad y acceso | CAP-001 | — | — | — | — | — | Medio (login local coexistente) |
 | Alumno | CAP-002, 005, 013, 014, 016, 017 | — | CAND-001 | — | — | — | Bajo |
 | Académico | CAP-003, 008, 009 | — | — | — | — | — | Medio |
 | Economía | CAP-004, 006 | — | — | — | — | — | Bajo |
 | Gamificación | CAP-007, 015 | — | — | — | — | — | Bajo |
-| Creatividad (cuentos) | CAP-010 (v1) | CAP-011, 012 | — | — | — | — | Alto (transición Firestore) |
+| Creatividad (cuentos) | — | CAP-011, 012 | — | CAP-010 | — | — | Alto (transición Firestore; despliegue no verificado) |
 | Familia | CAP-018, 019 | — | — | — | — | — | Medio |
 | Privacidad | CAP-020, 024 | — | — | — | — | — | Bajo |
 | Comunidad | CAP-016, 025 | — | — | — | — | — | Medio |
 | Archivos | CAP-022 | — | — | — | — | — | Medio |
 | Comunicación | CAP-023 | — | — | — | — | — | Bajo |
 | Integraciones | — | CAP-021 | — | — | — | — | Medio |
-| Aula | — | — | EXP-006 | — | — | — | Medio (no enrutado) |
+| Aula (CAND-002) | — | — | candidata experimental | — | — | — | Medio (no enrutado; no pertenece al inventario oficial) |
 
-Esta tabla no constituye una estimación porcentual de madurez productiva y
-no declara producción remota verificada.
+Nota: la fila Aula usa la capacidad candidata CAND-002, que todavía no
+pertenece al inventario oficial de capacidades. Esta tabla no constituye una
+estimación porcentual de madurez productiva y no declara producción remota
+verificada.
 
 ## 14. Intenciones de experiencia por portal
 
-Cuando el valor es una recomendación de producto y no un estado verificado,
-se marca como "product intent".
+Los valores de frecuencia, densidad, gamificación, ilustración y tono son
+**intenciones de producto** ("product intent"), no resultados de analítica
+ni decisiones visuales finales.
 
 | Experiencia | Objetivo principal | Frecuencia estimada | Densidad necesaria | Criticidad de acciones | Gamificación | Ilustración | Tono | Evidencia |
 |---|---|---|---|---|---|---|---|---|
-| Público/Auth | Informar, acceder, registrar | baja | baja | media | no aplicable | contextual (product intent) | confiable | rutas públicas |
-| Estudiante | Aprender, progresar, crear | alta | media | media | central | prominente (product intent) | motivacional | portal-alumno.md |
-| Docente | Gestionar, evaluar, acompañar | alta | alta | alta | contextual (product intent) | mínima (product intent) | operativo, eficiente | rutas docente |
-| Familia | Comprender, supervisar, acompañar | media | baja | media | mínima (product intent) | contextual (product intent) | simple, confiable | portal-familias.md |
-| Administración | Controlar, auditar, operar | media | alta | alta | no aplicable | mínima (product intent) | denso, preciso | rutas admin |
-| Aula | Concentrar, interactuar | alta | media | alta | contextual (product intent) | mínima (product intent) | enfocado | layout-aula (experimental) |
-| Integraciones | Interoperar, sincronizar | baja | alta | media | no aplicable | no aplicable | técnico | interoperability.php |
+| Público/Auth | Informar, acceder, registrar | product intent: baja | product intent: baja | media | no aplicable (product intent) | contextual (product intent) | confiable (product intent) | rutas públicas |
+| Estudiante | Aprender, progresar, crear | product intent: alta | product intent: media | media | central (product intent) | prominente (product intent) | motivacional (product intent) | portal-alumno.md |
+| Docente | Gestionar, evaluar, acompañar | product intent: alta | product intent: alta | alta | contextual (product intent) | mínima (product intent) | operativo, eficiente (product intent) | rutas docente |
+| Familia | Comprender, supervisar, acompañar | product intent: media | product intent: baja | media | mínima (product intent) | contextual (product intent) | simple, confiable (product intent) | portal-familias.md |
+| Administración | Controlar, auditar, operar | product intent: media | product intent: alta | alta | no aplicable (product intent) | mínima (product intent) | denso, preciso (product intent) | rutas admin |
+| Aula | Concentrar, interactuar | product intent: alta | product intent: media | alta | contextual (product intent) | mínima (product intent) | enfocado (product intent) | layout-aula (experimental) |
+| Integraciones | Interoperar, sincronizar | product intent: baja | product intent: alta | media | no aplicable (product intent) | no aplicable (product intent) | técnico (product intent) | interoperability.php |
 
-No se declara dispositivo predominante ni frecuencia verificada sin
-evidencia.
+Las frecuencias, densidades, niveles de ilustración y tonos de esta tabla
+son intenciones de producto, no resultados de analítica ni decisiones
+visuales finales. No se declara dispositivo predominante sin evidencia.
 
 ## 15. Requisitos de diferenciación entre portales
 
@@ -398,7 +407,9 @@ wireframes ni componentes visuales definitivos en este documento.
 1. Constitución General (`project-constitution.md`, canonical v1.0).
 2. ADR vigentes (ADR-001..006).
 3. Fuente de verdad de datos (ADR-001: PostgreSQL negocio, Firestore cuentos
-   v2, Firebase Auth identidad, Supabase Storage archivos).
+   v2, Firebase Auth identidad, Supabase Storage archivos). Nota: el login
+   local por `password_hash` coexiste con Firebase Auth y se registra como
+   contradicción pendiente (ver `business-rules.md` BR-001 y UNK).
 4. Autenticación y autorización (Firebase Auth + Sanctum + middleware
    `role:*`).
 5. Protección de menores (privacidad-kids-teens.md).
@@ -411,7 +422,7 @@ wireframes ni componentes visuales definitivos en este documento.
 11. GAP-009 (variable de entorno IA incoherente: `OPENROUTER_API_KEY` vs
     `OPENROUTER_API_KEY_NUEVA`).
 12. Estado remoto no verificado: no se declara disponibilidad productiva de
-    los servicios.
+    los servicios ni despliegue de reglas o control plane no confirmados.
 
 Este documento no cierra brechas; solo registra dependencias.
 
@@ -419,33 +430,41 @@ Este documento no cierra brechas; solo registra dependencias.
 
 | ID | Riesgo o incertidumbre | Impacto | Evidencia faltante | Fase o responsable |
 |---|---|---|---|---|
-| R-01 | Cuentos v2 (control plane Firestore) no desplegado | Alto | Estado de despliegue remoto | FND-4/5 + propietario |
-| R-02 | Reglas Firestore v2 no desplegadas | Alto | Estado de despliegue | FND-5 |
+| R-01 | Cuentos v2 (control plane Firestore): despliegue no verificado | Alto | Estado de despliegue remoto (unknown) | FND-4/5 + propietario |
+| R-02 | Reglas Firestore v2: despliegue no verificado | Alto | Estado de despliegue (unknown) | FND-5 |
 | R-03 | Experiencia de aula Firestore sin páginas enrutadas | Medio | Ruta activa en frontend | FND-4 |
 | R-04 | Interoperabilidad OneRoster/LTI parcial | Medio | Cobertura funcional | FND-4/5 |
 | R-05 | Variable OpenRouter incoherente (GAP-009) | Medio | Variable real en Render | Propietario + FND-5 |
 | R-06 | Entorno local bloqueado (GAP-005) | Medio | Configuración local | Propietario |
 | R-07 | Estado remoto no validado | Alto | Verificación de producción | FND-5/operaciones |
 | R-08 | Capacidades candidatas CAND-001/002 no aprobadas | Bajo | Decisión del propietario | Propietario |
+| R-09 | Autenticación local coexistente con Firebase Auth (BR-001) | Medio | Decisión de gobernanza sobre identidad | Propietario + FND-4/5 |
 
 ## 18. Prioridad propuesta de transformación
 
-El orden se basa en dependencias, madurez real, riesgo, reutilización y
-alcance compartido; no en preferencia visual.
+Esta propuesta respeta los gates del plan de fundación. **No es una
+autorización de implementación.**
 
 | Orden | Frente | Alcance | Dependencias | Beneficio | Riesgo | Gate de inicio |
 |---|---|---|---|---|---|---|
-| 1 | Núcleo compartido | Identidad, autorización, privacidad, archivos, notificaciones, tokens | Constitución, ADR vigentes | Base estable para todas las experiencias | Bajo | Aprobación FND-3 |
-| 2 | Experiencia de aula y cuentos v2 | Aula (EXP-006), cuentos v2 (CAP-011/012) | Núcleo, arquitectura FND-4 | Cierra el riesgo más alto (Firestore) | Alto | FND-4 arquitectura |
-| 3 | Shell y navegación por experiencia | Shells de estudiante, docente, familia, administración | Núcleo, arquitectura de experiencia | Diferenciación sin duplicar lógica | Medio | FND-4 |
-| 4 | Portales con mayor madurez | Estudiante, docente | Shells, núcleo | Impacto visible y rápido | Medio | UXA-1 |
-| 5 | Flujos transversales | Economía, notificaciones, privacidad, archivos | Núcleo | Consistencia operativa | Medio | FND-5 |
-| 6 | Integraciones | OneRoster/LTI | Núcleo, arquitectura | Interoperabilidad institucional | Medio | FND-4/5 |
-| 7 | Riesgos de seguridad y datos | OpenRouter, entorno local, reglas Firestore | FND-5 | Reduce riesgos operativos | Alto | FND-5 |
-| 8 | Cobertura de pruebas | quality gates, tests por experiencia | FND-6 | Garantiza cambio seguro | Bajo | FND-6 |
+| 1 | FND-4 — Arquitectura global | system-architecture, backend-architecture, fronteras e integraciones, estado arquitectónico de cuentos y aula | Constitución, ADR vigentes, FND-3 aprobado | Resuelve incertidumbres estructurales (cuentos v2, aula, interop) | Alto | FND-3 aprobado |
+| 2 | FND-5 — Datos, seguridad y operaciones | data-ownership, entity-catalog, security-baseline, threat-model, environments, operations-runbook; GAP-005 y GAP-009 por el propietario | FND-4 | Reduce riesgos de datos, seguridad y operación | Alto | FND-4 |
+| 3 | FND-6 — Calidad y preparación de agentes | quality-gates, testing strategy, Definition of Done, archivos protegidos y stop conditions | FND-4/5 | Cambio seguro y agentes preparados | Bajo | FND-5 |
+| 4 | Cold Start final | Revalidación de preparación; objetivo documental de gobernanza | FND-2..6 | Confirma madurez de agentes | Bajo | FND-6 |
+| 5 | UXA-1 — Arquitectura de experiencias | Perfiles por portal, navegación, shells, jerarquía, responsive, componentes compartidos; diferenciación estudiante/docente/familia/admin/público/aula | FND-4..6, Constitución Visual | Define experiencia sin duplicar lógica | Medio | Cold Start final |
+| 6 | Implementación del sistema compartido | tokens, fundamentos, componentes base, seguridad y accesibilidad | UXA-1 | Base visual y funcional estable | Bajo | UXA-1 |
+| 7 | Transformación de portales | Orden decidido después de UXA-1; ningún portal se copia indiscriminadamente a otro | UXA-1, sistema compartido | Diferenciación por portal | Medio | Implementación compartida |
+| 8 | Transformación de módulos y flujos | Priorización por riesgo, dependencias, valor y evidencia | Portales | Mejora incremental | Medio | Portales |
 
-Nota: no se asume que el estudiante deba transformarse primero; el aula y
-cuentos v2 concentran el mayor riesgo y se priorizan por dependencia.
+Aclaraciones:
+
+- No se implementan shells antes de FND-4.
+- No se inicia transformación productiva completa antes de controlar los P0
+  documentales, técnicos y operativos aplicables (GAP-001..005, GAP-009 y
+  deuda técnica registrada).
+- El estudiante puede servir posteriormente como referencia de componentes,
+  pero su composición no se copia en docente, familia o administración.
+- No se redefinen colores ni interfaces en este documento.
 
 ## 19. Límites del documento
 
@@ -466,6 +485,7 @@ cuentos v2 concentran el mayor riesgo y se priorizan por dependencia.
 | Fecha | Versión | Estado | Cambio | Aprobaciones |
 |---|---|---|---|---|
 | 2026-08-06 | 1.0-candidate | draft | Creación del candidato FND-3A | Pendiente |
+| 2026-08-06 | 1.0-candidate | draft | Corrección R1: taxonomía, matrices, despliegue, intenciones y prioridad | Pendiente |
 
 ## Apéndice A. Matriz de evidencia
 
@@ -475,8 +495,9 @@ cuentos v2 concentran el mayor riesgo y se priorizan por dependencia.
 | Roles `alumno`, `docente`, `admin`, `tutor` | Verified code | `usuarios.rol`, middleware `role:*` | high |
 | Niveles `KIDS`/`TEENS` separados del rol | Verified code | `usuarios.nivel`, `nivel-alumno.ts` | high |
 | Firebase Auth como identidad | Accepted ADR | ADR-001, firebase-auth.md | high |
+| Login local coexistente (`password_hash`) | Verified code | `AutenticacionService::intentarLogin` | high (contradicción con ADR-001 registrada en BR-001) |
 | PostgreSQL como datos de negocio | Accepted ADR | ADR-001, supabase-postgres.md | high |
-| Firestore autoridad de cuentos v2 | Accepted ADR | ADR-002, ADR-003 | high (transición) |
+| Firestore autoridad de cuentos v2 | Accepted ADR | ADR-002, ADR-003 | high (transición; despliegue no verificado) |
 | Supabase Storage para archivos | Accepted ADR | ADR-004 | high |
 | Fail-closed de entornos | Accepted ADR | ADR-006, ENVIRONMENTS.md | high |
 | Portal alumno implementado | Verified code | `app.routes.ts`, features/alumno | high |
@@ -485,15 +506,17 @@ cuentos v2 concentran el mayor riesgo y se priorizan por dependencia.
 | Funciones administrativas por API | Verified code | grupos `role:admin` en api.php | high |
 | Aula Firestore experimental | Verified code | `layout-aula.ts`, features/aula sin rutas | medium |
 | Interoperabilidad parcial | Verified code | `routes/interoperability.php` | medium |
-| Cuentos v2 no desplegado | Active documentation | ADR-002/003, foundation-assessment | medium |
-| Variables OpenRouter incoherentes | Verified configuration | render.yaml vs OpenRouterProvider | high |
+| Ledger de movimientos con idempotencia | Verified data model | migración `movimientos_economia` (`clave_idempotencia` unique, sin `updated_at`) | high |
+| Lista cerrada de telemetría | Verified code | `ProductoAnalyticsService::EVENTOS_PERMITIDOS`, `TelemetriaController` | high |
+| Retención 45 días | Verified code | `AplicarRetencionPrivacidad`, `config/privacy.php` | high |
+| Cuentos v2: despliegue no verificado | Unknown | FND-1 limitación; sin prueba remota | low |
 | Estado remoto no verificado | Unknown | FND-1 limitación | low |
 
 ## Apéndice B. Términos funcionales
 
 | Término | Definición | Evidencia | Estado |
 |---|---|---|---|
-| XP | Experiencia permanente que ordena el ranking y calcula el nivel | gamificacion-xp-daemons.md | defined |
+| XP | Experiencia permanente que ordena el ranking y calcula el nivel | gamificacion-xp-daemons.md, GamificacionService | defined |
 | DAEMONS | Saldo gastable (`usuarios.tokens`), independiente de XP | gamificacion-xp-daemons.md | defined |
 | Misión | Tarea académica asignada al estudiante con recompensa dual | MisionController, portal-alumno | defined |
 | Entrega | Evidencia enviada por el estudiante para revisión | `/misiones/{id}/entregar` | defined |

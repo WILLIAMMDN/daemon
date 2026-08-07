@@ -38,32 +38,43 @@ Cada regla usa:
   evidencia, Estado, Riesgo si se incumple;
 - estados permitidos: `verified`, `accepted`, `partial`, `pending`,
   `unknown`, `deprecated`;
-- tipos de evidencia: Constitutional rule, Accepted ADR, Verified code,
-  Verified data model, Active documentation, Future dependency, Unknown.
+- tipos de evidencia permitidos: `Constitutional rule`, `Accepted ADR`,
+  `Verified code`, `Verified data model`, `Active documentation`,
+  `Future dependency`, `Unknown`.
 
 Cuando no aplique un campo, se usa "No aplica". Cuando no exista evidencia,
 se usa `Estado: unknown` y `Fuente: evidencia insuficiente`, registrando la
 dependencia necesaria.
 
+Una regla marcada `Tipo de evidencia: Verified code` debe citar al menos un
+artefacto técnico concreto (archivo, clase, servicio, controlador, modelo,
+migración, middleware, ruta, validador, comando o configuración vigente).
+
 ## 3. Identidad, usuarios y perfiles
 
-### BR-001 — Firebase Auth es la autoridad de identidad
+### BR-001 — Firebase Auth es la autoridad de identidad (coexistente con login local)
 
-- Regla: La identidad (credenciales, verificación de correo, Google) se
-  autentica mediante Firebase Auth; Laravel valida los tokens y emite
-  sesión Sanctum.
+- Regla: La identidad se autentica mediante Firebase Auth (credenciales
+  Firebase, verificación de correo, Google); Laravel valida los tokens y
+  emite sesión Sanctum. Se observa además un flujo de login local basado en
+  credenciales almacenadas en PostgreSQL (`usuarios.password_hash`), lo que
+  constituye una dualidad de identidad sin transición documentada.
 - Dominio: Identidad
 - Actores: Todos
-- Precondiciones: Cuenta Firebase existente
+- Precondiciones: Cuenta existente
 - Disparador: Inicio de sesión
-- Resultado esperado: Sesión válida tras validación del token
-- Datos afectados: `usuarios.firebase_uid`
-- Autoridad: Firebase Auth + Laravel
-- Excepciones: Login local por nombre de usuario llama a `/auth/login`
-- Fuente: firebase-auth.md, ADR-001
-- Tipo de evidencia: Accepted ADR
-- Estado: verified
-- Riesgo si se incumple: Identidad no verificable; sesiones falsas
+- Resultado esperado: Sesión válida tras validación
+- Datos afectados: `usuarios.firebase_uid`, `usuarios.password_hash`
+- Autoridad: Firebase Auth (ADR-001) + login local coexistente
+- Excepciones: `/auth/login` valida usuario + `password_hash` mediante
+  `Hash::check` en `AutenticacionService::intentarLogin`; `/auth/firebase` y
+  `/auth/google` validan tokens Firebase
+- Fuente: `app/Services/Auth/AutenticacionService.php` (línea 21),
+  firebase-auth.md, ADR-001
+- Tipo de evidencia: Verified code
+- Estado: partial
+- Riesgo si se incumple: Identidad dual sin control; contradicción con
+  ADR-001 (registrada como UNK-009; requiere decisión de gobernanza)
 
 ### BR-002 — Autorización efectiva en Laravel
 
@@ -77,7 +88,8 @@ dependencia necesaria.
 - Datos afectados: Acceso a rutas API
 - Autoridad: Laravel
 - Excepciones: No aplica
-- Fuente: rutas API (`role:*`), Constitución §11
+- Fuente: `app/Http/Middleware/EnsureRole.php`, rutas API (`role:*`),
+  Constitución §11
 - Tipo de evidencia: Verified code
 - Estado: verified
 - Riesgo si se incumple: Escalada de privilegios
@@ -95,8 +107,10 @@ dependencia necesaria.
 - Datos afectados: `usuarios.rol`, `usuarios.nivel`
 - Autoridad: Laravel
 - Excepciones: Valores históricos `PRO`/`DOCENTE` normalizados a TEENS sin
-  cambiar el rol
-- Fuente: portal-alumno.md, ADR-005
+  cambiar el rol (migración
+  `2026_07_14_000000_normalize_student_levels.php`)
+- Fuente: `app/Models/Usuario.php`, migración `normalize_student_levels`,
+  `app/Enums/NivelAlumno.php`, ADR-005
 - Tipo de evidencia: Verified code
 - Estado: verified
 - Riesgo si se incumple: Confusión de permisos y experiencia
@@ -113,7 +127,8 @@ dependencia necesaria.
 - Datos afectados: `usuarios` (perfil)
 - Autoridad: Laravel
 - Excepciones: No aplica
-- Fuente: portal-alumno.md
+- Fuente: `AlumnoController::actualizarPerfil`,
+  `app/Services/Alumno/AlumnoService.php`
 - Tipo de evidencia: Verified code
 - Estado: verified
 - Riesgo si se incumple: Autorización derivada de datos personales
@@ -132,7 +147,7 @@ dependencia necesaria.
 - Datos afectados: Acceso a API
 - Autoridad: Laravel
 - Excepciones: `docente,admin` comparten grupos administrativos
-- Fuente: `routes/api.php`
+- Fuente: `routes/api.php`, `app/Http/Middleware/EnsureRole.php`
 - Tipo de evidencia: Verified code
 - Estado: verified
 - Riesgo si se incumple: Acceso no autorizado
@@ -149,7 +164,7 @@ dependencia necesaria.
 - Datos afectados: No aplica
 - Autoridad: Laravel
 - Excepciones: No aplica
-- Fuente: Constitución §12, portal-alumno.md
+- Fuente: Constitución §12, ADR-005, `app/Enums/NivelAlumno.php`
 - Tipo de evidencia: Constitutional rule
 - Estado: verified
 - Riesgo si se incumple: Escalada de permisos por nivel
@@ -168,7 +183,7 @@ dependencia necesaria.
 - Datos afectados: No aplica
 - Autoridad: Constitución + diseño
 - Excepciones: Variación de tono, densidad y presentación
-- Fuente: Constitución §12, ADR-005
+- Fuente: Constitución §12, ADR-005, `tema-portal-alumno.ts`
 - Tipo de evidencia: Constitutional rule
 - Estado: verified
 - Riesgo si se incumple: Duplicación de producto
@@ -192,36 +207,43 @@ dependencia necesaria.
 
 ## 6. Registro, acceso y recuperación
 
-### BR-009 — Registro con verificación de correo
+### BR-009 — Registro con verificación de correo (enforcement parcial)
 
-- Regla: El registro con correo exige verificación antes de funciones
-  críticas; Google crea cuenta y completa perfil.
+- Regla: El registro con correo crea la cuenta y dispara el envío de
+  verificación; el correo queda pendiente de verificación. No se verificó un
+  middleware de backend que bloquee funciones específicas hasta verificar el
+  correo: el estado se sincroniza en `email_verified_at` y la UI muestra un
+  banner de verificación.
 - Dominio: Acceso
 - Actores: Visitante
 - Precondiciones: No aplica
 - Disparador: Registro
-- Resultado esperado: Cuenta creada; correo pendiente de verificación
-- Datos afectados: `usuarios`
+- Resultado esperado: Cuenta creada; envío de verificación en background
+- Datos afectados: `usuarios`, `email_verified_at`
 - Autoridad: Firebase Auth + Laravel
-- Excepciones: Login Google con perfil pendiente
-- Fuente: manual_usuario.md, rutas `/auth/registro`
+- Excepciones: Login Google con perfil pendiente (marca verificado)
+- Fuente: `AutenticacionService::registrarAlumno`,
+  `app/Services/Auth/EmailVerificationService.php`,
+  `app/Http/Middleware/` (sin middleware de enforcement verificado)
 - Tipo de evidencia: Verified code
-- Estado: verified
-- Riesgo si se incumple: Cuentas sin verificar con funciones críticas
+- Estado: partial
+- Riesgo si se incumple: Funciones críticas accesibles sin verificación;
+  depende de qué restricciones aplique la UI (UNK-010)
 
 ### BR-010 — Recuperación de cuenta vía Firebase
 
 - Regla: La recuperación de contraseña usa Firebase
-  `sendPasswordResetEmail` (frontend), no el endpoint de correos Resend.
+  `sendPasswordResetEmail` (frontend); el endpoint Laravel de recuperación
+  delega en Firebase y sincroniza la clave local.
 - Dominio: Acceso
 - Actores: Usuario
 - Precondiciones: Correo registrado
 - Disparador: Solicitud de recuperación
 - Resultado esperado: Correo de restablecimiento enviado por Firebase
-- Datos afectados: No aplica
+- Datos afectados: `usuarios.password_hash`
 - Autoridad: Firebase Auth
 - Excepciones: No aplica
-- Fuente: AGENTS.md, recuperar-clave
+- Fuente: `RecuperacionClaveService.php`, `recuperar-clave`, AGENTS.md
 - Tipo de evidencia: Verified code
 - Estado: verified
 - Riesgo si se incumple: Flujo de recuperación roto
@@ -240,7 +262,7 @@ dependencia necesaria.
 - Datos afectados: Tablas académicas
 - Autoridad: Laravel
 - Excepciones: No aplica
-- Fuente: `/academico`, AcademicoController
+- Fuente: `AcademicoController`, rutas `/academico`
 - Tipo de evidencia: Verified code
 - Estado: verified
 - Riesgo si se incumple: Currículo inconsistente
@@ -257,7 +279,8 @@ dependencia necesaria.
 - Datos afectados: Tablas de matrícula/aula
 - Autoridad: Laravel
 - Excepciones: No aplica
-- Fuente: `/academico/aulas/{aula}/usuarios/{usuario}`
+- Fuente: `AcademicoController::matricular`, ruta
+  `/academico/aulas/{aula}/usuarios/{usuario}`
 - Tipo de evidencia: Verified code
 - Estado: verified
 - Riesgo si se incumple: Asignaciones incorrectas
@@ -267,7 +290,8 @@ dependencia necesaria.
 ### BR-013 — Recompensa dual por misión aprobada
 
 - Regla: Una misión aprobada suma la misma cantidad a `experiencia` y
-  `tokens` mediante `GamificacionService`; no se incrementan desde Angular.
+  `tokens` mediante `GamificacionService::otorgarRecompensa`; no se
+  incrementan desde Angular.
 - Dominio: Académico/Economía
 - Actores: Docente, estudiante
 - Precondiciones: Entrega aprobada
@@ -275,9 +299,10 @@ dependencia necesaria.
 - Resultado esperado: XP y DAEMONS otorgados una sola vez
 - Datos afectados: `usuarios.experiencia`, `usuarios.tokens`,
   `movimientos_economia`
-- Autoridad: Laravel (`GamificacionService`)
+- Autoridad: Laravel (`GamificacionService` → `EconomiaService::otorgarDual`)
 - Excepciones: Ajustes manuales de moneda no otorgan XP
-- Fuente: gamificacion-xp-daemons.md
+- Fuente: `app/Services/Gamificacion/GamificacionService.php`,
+  `MisionController`, tests `GamificacionXpTest`
 - Tipo de evidencia: Verified code
 - Estado: verified
 - Riesgo si se incumple: Doble recompensa o XP inconsistente
@@ -294,7 +319,8 @@ dependencia necesaria.
 - Datos afectados: Entregas
 - Autoridad: Laravel
 - Excepciones: No aplica
-- Fuente: `/misiones/entregas/{id}/revisar`
+- Fuente: `MisionController::revisar`, ruta
+  `/misiones/entregas/{id}/revisar`
 - Tipo de evidencia: Verified code
 - Estado: verified
 - Riesgo si se incumple: Recompensas sin revisión
@@ -313,7 +339,7 @@ dependencia necesaria.
 - Datos afectados: Evaluaciones y respuestas
 - Autoridad: Laravel
 - Excepciones: No aplica
-- Fuente: `/evaluaciones*`, EvaluacionController
+- Fuente: `EvaluacionController`, rutas `/evaluaciones*`
 - Tipo de evidencia: Verified code
 - Estado: verified
 - Riesgo si se incumple: Resultados no confiables
@@ -332,7 +358,8 @@ dependencia necesaria.
 - Datos afectados: `usuarios.experiencia`
 - Autoridad: Laravel
 - Excepciones: No aplica
-- Fuente: gamificacion-xp-daemons.md
+- Fuente: `EconomiaService::otorgarDual`, `TiendaController::canjear`,
+  tests `GamificacionXpTest`
 - Tipo de evidencia: Verified code
 - Estado: verified
 - Riesgo si se incumple: Ranking y niveles corruptos
@@ -340,7 +367,7 @@ dependencia necesaria.
 ### BR-017 — El nivel se calcula en Laravel
 
 - Regla: El nivel de gamificación y el progreso del nivel se calculan en el
-  backend (`UsuarioResource`) y se exponen al frontend.
+  backend y se exponen al frontend.
 - Dominio: Economía
 - Actores: Sistema
 - Precondiciones: No aplica
@@ -349,7 +376,8 @@ dependencia necesaria.
 - Datos afectados: Proyección de progreso
 - Autoridad: Laravel
 - Excepciones: Valores de respaldo de UI durante la carga
-- Fuente: gamificacion-xp-daemons.md
+- Fuente: `app/Http/Resources/Api/V1/UsuarioResource.php`,
+  `GamificacionService::progreso`
 - Tipo de evidencia: Verified code
 - Estado: verified
 - Riesgo si se incumple: Fórmulas divergentes en pantallas
@@ -374,10 +402,14 @@ dependencia necesaria.
 
 ## 11. DAEMONS y economía
 
-### BR-019 — Ledger append-only de movimientos
+### BR-019 — Ledger de movimientos económicos con idempotencia
 
-- Regla: Cada cambio de saldo se registra en el ledger `movimientos_economia`
-  con saldo anterior/resultante, idempotencia, origen y actor.
+- Regla: Cada cambio de saldo se registra en `movimientos_economia` con
+  `uuid` único, `saldo_anterior`, `saldo_resultante`, `clave_idempotencia`
+  única, origen y actor. La tabla no define columnas de actualización
+  (`updated_at` ausente), por lo que se opera como registro de movimientos;
+  la garantía de append-only no está impuesta por una restricción de base de
+  datos explícita (se verifica como práctica de servicio).
 - Dominio: Economía
 - Actores: Sistema
 - Precondiciones: Cambio de saldo
@@ -386,7 +418,9 @@ dependencia necesaria.
 - Datos afectados: `movimientos_economia`
 - Autoridad: Laravel
 - Excepciones: No aplica
-- Fuente: gamificacion-xp-daemons.md
+- Fuente: migración `2026_07_19_000000_...learning_interoperability...php`
+  (tabla `movimientos_economia`), `app/Models/MovimientoEconomia.php`,
+  `EconomiaService::otorgarDual`
 - Tipo de evidencia: Verified data model
 - Estado: verified
 - Riesgo si se incumple: Fraude o pérdida de trazabilidad
@@ -394,7 +428,8 @@ dependencia necesaria.
 ### BR-020 — Una aprobación no otorga recompensa dos veces
 
 - Regla: La protección contra doble recompensa se basa en el estado de la
-  entrega; una entrega ya aprobada no vuelve a sumar saldos.
+  entrega y en la `clave_idempotencia` del movimiento; una entrega ya
+  aprobada no vuelve a sumar saldos.
 - Dominio: Economía
 - Actores: Sistema
 - Precondiciones: Entrega aprobada
@@ -403,7 +438,8 @@ dependencia necesaria.
 - Datos afectados: Saldos y ledger
 - Autoridad: Laravel
 - Excepciones: No aplica
-- Fuente: gamificacion-xp-daemons.md
+- Fuente: `EconomiaService::otorgarDual` (clave de idempotencia),
+  `MisionController::revisar`, tests `GamificacionXpTest`
 - Tipo de evidencia: Verified code
 - Estado: verified
 - Riesgo si se incumple: Inflación de saldos
@@ -420,7 +456,7 @@ dependencia necesaria.
 - Datos afectados: `usuarios.tokens`
 - Autoridad: Laravel
 - Excepciones: No aplica
-- Fuente: gamificacion-xp-daemons.md
+- Fuente: `DocenteController::asignarTokens`, ruta `/docente/tokens`
 - Tipo de evidencia: Verified code
 - Estado: verified
 - Riesgo si se incumple: Ranking manipulado
@@ -438,7 +474,7 @@ dependencia necesaria.
 - Datos afectados: `usuarios.tokens`, canjes, stock
 - Autoridad: Laravel (transacción)
 - Excepciones: No aplica
-- Fuente: gamificacion-xp-daemons.md, portal-alumno.md
+- Fuente: `TiendaController::canjear`, tests `GamificacionXpTest`
 - Tipo de evidencia: Verified code
 - Estado: verified
 - Riesgo si se incumple: Pérdida de XP o saldo incorrecto
@@ -455,7 +491,7 @@ dependencia necesaria.
 - Datos afectados: Stock y saldos
 - Autoridad: Laravel
 - Excepciones: No aplica
-- Fuente: gamificacion-xp-daemons.md
+- Fuente: `TiendaController::canjear`, `EconomiaService`
 - Tipo de evidencia: Verified code
 - Estado: verified
 - Riesgo si se incumple: Canjes inválidos
@@ -474,7 +510,7 @@ dependencia necesaria.
 - Datos afectados: Insignias
 - Autoridad: Laravel
 - Excepciones: No aplica
-- Fuente: `/docente/insignias*`
+- Fuente: `DocenteController`, rutas `/docente/insignias*`
 - Tipo de evidencia: Verified code
 - Estado: verified
 - Riesgo si se incumple: Reconocimientos sin control
@@ -491,7 +527,8 @@ dependencia necesaria.
 - Datos afectados: `mascota_inventario`, canjes, stock, `tokens`
 - Autoridad: Laravel
 - Excepciones: Compra repetida rechazada antes de descontar
-- Fuente: sistema-mascotas-cosmeticos.md
+- Fuente: `TiendaController::canjear` (entrega cosmético),
+  migraciones `mascota_*`, `sistema-mascotas-cosmeticos.md`
 - Tipo de evidencia: Verified code
 - Estado: verified
 - Riesgo si se incumple: Economía paralela o inventario duplicado
@@ -509,7 +546,8 @@ dependencia necesaria.
 - Datos afectados: `mascota_equipamientos`, `mascota_inventario`
 - Autoridad: Laravel
 - Excepciones: No aplica
-- Fuente: sistema-mascotas-cosmeticos.md
+- Fuente: `MascotaController::equipar`, migraciones `mascota_*`,
+  `sistema-mascotas-cosmeticos.md`
 - Tipo de evidencia: Verified code
 - Estado: verified
 - Riesgo si se incumple: Equipamiento inconsistente
@@ -519,7 +557,9 @@ dependencia necesaria.
 ### BR-027 — Cuentos v2 con autoridad Firestore
 
 - Regla: El agregado de cuentos v2 vive en Firestore según ADR-002/003; la
-  autoridad del control plane está en transición y no se declara desplegado.
+  autoridad del control plane está en transición. El despliegue del control
+  plane no está verificado como desplegado con la evidencia disponible; el
+  estado remoto es unknown.
 - Dominio: Creatividad
 - Actores: Estudiante, moderador
 - Precondiciones: No aplica
@@ -529,10 +569,12 @@ dependencia necesaria.
 - Autoridad: Firestore + Laravel (adaptador)
 - Excepciones: Cuentos v1 legacy en PostgreSQL siguen vigentes como
   transición
-- Fuente: ADR-002/003
+- Fuente: ADR-002/003, `CuentoV2Service.php`,
+  `FirestoreRestCuentoGateway.php`
 - Tipo de evidencia: Accepted ADR
-- Estado: partial (control plane no desplegado)
-- Riesgo si se incumple: Dual-write o pérdida de autoridad
+- Estado: partial
+- Riesgo si se incumple: Dual-write o pérdida de autoridad; despliegue
+  remoto no verificado
 
 ### BR-028 — Publicación con moderación
 
@@ -546,7 +588,8 @@ dependencia necesaria.
 - Datos afectados: Estado de publicación
 - Autoridad: Laravel + moderación
 - Excepciones: No aplica
-- Fuente: `/cuentos-v2/{id}/publicacion`, ADR-003
+- Fuente: `CuentoV2Controller`, rutas `/cuentos-v2/{id}/publicacion` y
+  `/cuentos-v2/admin/{id}/publicacion`
 - Tipo de evidencia: Verified code
 - Estado: partial
 - Riesgo si se incumple: Contenido no moderado
@@ -557,16 +600,17 @@ dependencia necesaria.
 
 - Regla: En el modelo Firestore v2, los comentarios se escriben a través de
   Laravel (server-only); las reglas v2 no autorizan escritura directa de
-  comentarios desde el cliente.
+  comentarios desde el cliente. El despliegue de las reglas v2 no está
+  verificado como desplegado; el estado remoto es unknown.
 - Dominio: Comunidad
 - Actores: Estudiante, moderador
-- Precondiciones: Reglas v2 desplegadas
+- Precondiciones: Reglas v2 desplegadas (no verificado)
 - Disparador: Comentar
 - Resultado esperado: Comentario creado por el backend
 - Datos afectados: Colecciones de comentarios
 - Autoridad: Firestore rules + Laravel
-- Excepciones: Reglas v2 no desplegadas (riesgo)
-- Fuente: ADR-003
+- Excepciones: Despliegue de rules sin verificar
+- Fuente: ADR-003, `firestore.rules`, `CuentoV2Service::comentar`
 - Tipo de evidencia: Accepted ADR
 - Estado: partial
 - Riesgo si se incumple: Escrituras no autorizadas
@@ -577,13 +621,13 @@ dependencia necesaria.
   (rules v2), impidiendo reacciones duplicadas.
 - Dominio: Comunidad
 - Actores: Estudiante
-- Precondiciones: Reglas v2
+- Precondiciones: Reglas v2 (despliegue no verificado)
 - Disparador: Reaccionar
 - Resultado esperado: Una reacción por usuario
 - Datos afectados: Colecciones de reacciones
 - Autoridad: Firestore rules
 - Excepciones: No aplica
-- Fuente: ADR-003
+- Fuente: ADR-003, `CuentoV2Service::reaccionesPath` (ID determinista)
 - Tipo de evidencia: Accepted ADR
 - Estado: partial
 - Riesgo si se incumple: Reacciones duplicadas
@@ -600,7 +644,8 @@ dependencia necesaria.
 - Datos afectados: Reportes y bloqueos
 - Autoridad: Laravel
 - Excepciones: No aplica
-- Fuente: `/comunidad/reportes`, `/moderacion/admin`
+- Fuente: `SeguridadComunidadController`, rutas `/comunidad/reportes`,
+  `/moderacion/admin`
 - Tipo de evidencia: Verified code
 - Estado: verified
 - Riesgo si se incumple: Contenido nocivo sin control
@@ -622,7 +667,8 @@ dependencia necesaria.
 - Datos afectados: `tutores_alumnos`, consentimiento
 - Autoridad: Laravel
 - Excepciones: No aplica
-- Fuente: portal-familias.md
+- Fuente: `TutorPortalService.php` (`asegurarTutorVerificado`,
+  `aceptar`), `app/Models/TutorAlumno.php`
 - Tipo de evidencia: Verified code
 - Estado: verified
 - Riesgo si se incumple: Acceso no autorizado al progreso de un menor
@@ -641,7 +687,8 @@ dependencia necesaria.
 - Datos afectados: Reporte del panel
 - Autoridad: Laravel
 - Excepciones: No aplica
-- Fuente: portal-familias.md
+- Fuente: `TutorPortalController::panel`, `TutorPortalService`,
+  `portal-familias.md`
 - Tipo de evidencia: Verified code
 - Estado: verified
 - Riesgo si se incumple: Exposición de datos de menores
@@ -660,52 +707,62 @@ dependencia necesaria.
 - Datos afectados: `uso_pantalla_diario`
 - Autoridad: Laravel
 - Excepciones: Falla abierta ante caída de red
-- Fuente: portal-familias.md, privacidad-kids-teens.md
+- Fuente: `BienestarDigitalController`, `app/Models/UsoPantallaDiario`,
+  `TutorPortalController::actualizarLimite`, `portal-familias.md`
 - Tipo de evidencia: Verified code
 - Estado: verified
 - Riesgo si se incumple: Vigilancia o corte injustificado de clase
 
 ## 17. Privacidad, bienestar y protección de menores
 
-### BR-035 — No se almacenan datos de pago
+### BR-035 — DAEMON no debe almacenar datos de pago (restricción futura)
 
-- Regla: DAEMON no almacena PAN, CVV ni datos de tarjeta; los pagos
-  familiares se realizan mediante checkout alojado por el proveedor.
+- Regla: DAEMON no debe almacenar PAN, CVV ni datos completos de tarjeta.
+  Una futura integración de pagos familiares debe utilizar checkout alojado
+  o tokenización del proveedor. No se declara un sistema de pagos
+  implementado; la integración real de cobros está desactivada hasta elegir
+  proveedor y validar webhooks.
 - Dominio: Privacidad
 - Actores: Tutor
-- Precondiciones: No aplica
-- Disparador: Pago familiar
-- Resultado esperado: Redirección a checkout del proveedor, sin datos de
-  tarjeta
+- Precondiciones: No aplica (sin sistema de pagos activo)
+- Disparador: Futura integración de pagos
+- Resultado esperado: Restricción respetada al integrar pagos
 - Datos afectados: No aplica (sin almacenamiento)
-- Autoridad: Proveedor + Laravel
-- Excepciones: Pagos desactivados hasta elegir proveedor
-- Fuente: portal-familias.md
-- Tipo de evidencia: Verified configuration
-- Estado: verified
+- Autoridad: Decisión de producto/privacidad
+- Excepciones: No aplica
+- Fuente: `portal-familias.md` (membresía y pagos),
+  `config/` (sin proveedor configurado; `FAMILY_PAYMENTS_PORTAL_URL` sin
+  valor)
+- Tipo de evidencia: Future dependency
+- Estado: pending
 - Riesgo si se incumple: Datos sensibles de pago
 
 ### BR-036 — Retención predeterminada de uso de pantalla
 
-- Regla: La retención predeterminada de `uso_pantalla_diario` es 45 días
-  mediante `daemon:aplicar-retencion`.
+- Regla: La retención de `uso_pantalla_diario` se configura mediante
+  `PRIVACY_SCREEN_USAGE_DAYS` con valor predeterminado 45 días y se ejecuta
+  mediante el comando `daemon:aplicar-retencion`, que elimina registros
+  elegibles solo con `--confirm` y no toca el historial académico.
 - Dominio: Privacidad
 - Actores: Sistema
 - Precondiciones: No aplica
-- Disparador: Tarea de retención
-- Resultado esperado: Datos agregados retenidos 45 días
+- Disparador: Comando programado o manual
+- Resultado esperado: Datos agregados retenidos según configuración
 - Datos afectados: `uso_pantalla_diario`
 - Autoridad: Laravel
 - Excepciones: Configuración `PRIVACY_SCREEN_USAGE_DAYS`
-- Fuente: portal-familias.md
-- Tipo de evidencia: Active documentation
+- Fuente: `app/Console/Commands/AplicarRetencionPrivacidad.php`,
+  `config/privacy.php` (línea 10), `.env.example`
+  (`PRIVACY_SCREEN_USAGE_DAYS=45`), `routes/console.php` (schedule)
+- Tipo de evidencia: Verified code
 - Estado: verified
 - Riesgo si se incumple: Retención excesiva
 
-### BR-037 — Exportación y eliminación de datos
+### BR-037 — Exportación y eliminación de datos con límite de frecuencia
 
 - Regla: El usuario puede solicitar exportación y eliminación de sus datos
-  mediante endpoints de privacidad con límite de frecuencia.
+  mediante endpoints de privacidad protegidos con límite de frecuencia
+  (`throttle:3,60`).
 - Dominio: Privacidad
 - Actores: Usuario
 - Precondiciones: Sesión válida
@@ -714,15 +771,17 @@ dependencia necesaria.
 - Datos afectados: Datos personales
 - Autoridad: Laravel
 - Excepciones: Resolución administrativa de solicitudes
-- Fuente: `/privacidad/exportar`, `/privacidad/eliminacion`
+- Fuente: `routes/api.php` (`throttle:3,60` en `/privacidad/exportar` y
+  `/privacidad/eliminacion`), `PrivacidadController`
 - Tipo de evidencia: Verified code
 - Estado: verified
 - Riesgo si se incumple: Incumplimiento de derechos de datos
 
-### BR-038 — Sin telemetría invasiva
+### BR-038 — Sin telemetría invasiva (lista cerrada)
 
 - Regla: No se registran páginas visitadas, teclas, capturas, chat ni
-  contenido; solo se permiten eventos de la lista cerrada de telemetría.
+  contenido; solo se permiten eventos de la lista cerrada
+  `EVENTOS_PERMITIDOS` validada con `Rule::in` en el controlador.
 - Dominio: Privacidad
 - Actores: Sistema
 - Precondiciones: No aplica
@@ -731,7 +790,9 @@ dependencia necesaria.
 - Datos afectados: Eventos de telemetría
 - Autoridad: Laravel
 - Excepciones: No aplica
-- Fuente: privacidad-kids-teens.md, AGENTS.md
+- Fuente: `app/Services/Analitica/ProductoAnalyticsService.php`
+  (`EVENTOS_PERMITIDOS`, `PROPIEDADES_PERMITIDAS`),
+  `app/Http/Controllers/Api/V1/TelemetriaController.php`
 - Tipo de evidencia: Verified code
 - Estado: verified
 - Riesgo si se incumple: Vigilancia de menores
@@ -750,27 +811,11 @@ dependencia necesaria.
 - Datos afectados: Storage + tablas de archivos
 - Autoridad: Laravel + Supabase Storage
 - Excepciones: No aplica
-- Fuente: ADR-004, `/archivos*`
+- Fuente: ADR-004, `ArchivoService`, `ArchivoAdminController`, rutas
+  `/archivos*`
 - Tipo de evidencia: Accepted ADR
 - Estado: verified
 - Riesgo si se incumple: Archivos huérfanos o sin ownership
-
-### BR-040 — No se usan credenciales productivas en desarrollo
-
-- Regla: Los entornos locales no deben apuntar a recursos productivos;
-  `EnvironmentSafety` bloquea ante configuración insegura.
-- Dominio: Operación
-- Actores: Desarrolladores, agentes
-- Precondiciones: No aplica
-- Disparador: Ejecución local
-- Resultado esperado: Bloqueo ante configuración productiva local
-- Datos afectados: Configuración
-- Autoridad: EnvironmentSafety
-- Excepciones: No aplica
-- Fuente: ADR-006, ENVIRONMENTS.md
-- Tipo de evidencia: Accepted ADR
-- Estado: verified
-- Riesgo si se incumple: Operaciones sobre producción desde local
 
 ## 19. Notificaciones y comunicaciones
 
@@ -786,7 +831,7 @@ dependencia necesaria.
 - Datos afectados: Notificaciones
 - Autoridad: Laravel
 - Excepciones: No aplica
-- Fuente: `/notificaciones*`
+- Fuente: `NotificacionController`, rutas `/notificaciones*`
 - Tipo de evidencia: Verified code
 - Estado: verified
 - Riesgo si se incumple: Comunicación poco confiable
@@ -805,7 +850,8 @@ dependencia necesaria.
 - Datos afectados: Comunidad, reportes, bloqueos
 - Autoridad: Laravel
 - Excepciones: No aplica
-- Fuente: `/comunidad*`, `/moderacion/admin`
+- Fuente: `SeguridadComunidadController`, rutas `/comunidad*`,
+  `/moderacion/admin`
 - Tipo de evidencia: Verified code
 - Estado: verified
 - Riesgo si se incumple: Entorno inseguro para menores
@@ -824,7 +870,7 @@ dependencia necesaria.
 - Datos afectados: Múltiples dominios
 - Autoridad: Laravel
 - Excepciones: `docente,admin` en grupos académicos
-- Fuente: grupos `role:admin` en api.php
+- Fuente: grupos `role:admin` en `routes/api.php`
 - Tipo de evidencia: Verified code
 - Estado: verified
 - Riesgo si se incumple: Acciones administrativas sin control
@@ -844,7 +890,8 @@ dependencia necesaria.
 - Datos afectados: Datos interoperables
 - Autoridad: Laravel + contrato externo
 - Excepciones: No aplica
-- Fuente: `routes/interoperability.php`, interoperabilidad-oneroster-lti.md
+- Fuente: `routes/interoperability.php`, `OneRosterAuthService`,
+  `interoperabilidad-oneroster-lti.md`
 - Tipo de evidencia: Verified code
 - Estado: partial
 - Riesgo si se incumple: Interoperabilidad insegura
@@ -853,13 +900,13 @@ dependencia necesaria.
 
 | Entidad o flujo | Estado origen | Acción | Estado destino | Actor autorizado | Evidencia |
 |---|---|---|---|---|---|
-| Entrega de misión | enviada | Revisar | aprobada / rechazada | Docente | `/misiones/entregas/{id}/revisar` |
-| Evaluación | borrador | Activar | activo | Docente | `/evaluaciones*` |
-| Evaluación | activo | Finalizar | finalizado | Docente | `/evaluaciones*` |
-| Cuento v2 | borrador | Solicitar publicación | en revisión | Estudiante | `/cuentos-v2/{id}/publicacion` |
-| Cuento v2 | en revisión | Publicar moderado | publicado | Moderador | `/cuentos-v2/admin/{id}/publicacion` |
-| Consentimiento familiar | pendiente | Aceptar | verificado | Tutor | `/tutor/invitaciones/{id}/aceptar` |
-| Reporte comunidad | abierto | Resolver | resuelto | Moderador | `/moderacion/admin/reportes` |
+| Entrega de misión | enviada | Revisar | aprobada / rechazada | Docente | `MisionController::revisar` |
+| Evaluación | borrador | Activar | activo | Docente | `EvaluacionController` |
+| Evaluación | activo | Finalizar | finalizado | Docente | `EvaluacionController` |
+| Cuento v2 | borrador | Solicitar publicación | en revisión | Estudiante | `CuentoV2Controller` |
+| Cuento v2 | en revisión | Publicar moderado | publicado | Moderador | `CuentoV2Controller::publicarModerado` |
+| Consentimiento familiar | pendiente | Aceptar | verificado | Tutor | `TutorPortalService::aceptar` |
+| Reporte comunidad | abierto | Resolver | resuelto | Moderador | `SeguridadComunidadController` |
 
 Nota: los estados implícitos de otras entidades no se inventan; se registran
 como partial hasta que FND-4/FND-5 los verifique.
@@ -881,6 +928,33 @@ como partial hasta que FND-4/FND-5 los verifique.
 13. Experiencias diferentes no duplican lógica (BR-007).
 14. Una capacidad no se declara productiva sin evidencia.
 
+### Restricción operativa derivada
+
+### BR-040 — No se usan credenciales productivas en desarrollo
+
+- Regla: Los entornos locales no deben apuntar a recursos productivos;
+  `EnvironmentSafety` bloquea ante configuración insegura.
+- Dominio: Operación (restricción constitucional/arquitectónica transversal)
+- Actores: Desarrolladores, agentes
+- Precondiciones: No aplica
+- Disparador: Ejecución local
+- Resultado esperado: Bloqueo ante configuración productiva local
+- Datos afectados: Configuración
+- Autoridad: `EnvironmentSafety` + ADR-006
+- Excepciones: No aplica
+- Fuente: `app/Services/Seguridad/EnvironmentSafety.php` (o equivalente),
+  ADR-006, `ENVIRONMENTS.md`
+- Tipo de evidencia: Accepted ADR
+- Estado: verified
+- Riesgo si se incumple: Operaciones sobre producción desde local
+
+Aclaraciones:
+
+- Esta restricción es transversal y no constituye una capability del
+  producto; su detalle canónico pertenecerá a FND-5 (`environments.md`).
+- GAP-005 permanece abierto: el entorno local real sigue bloqueado y no se
+  declara solucionado.
+
 ## 25. Casos desconocidos y decisiones pendientes
 
 | ID | Pregunta no resuelta | Impacto | Evidencia faltante | Fase o responsable |
@@ -893,6 +967,8 @@ como partial hasta que FND-4/FND-5 los verifique.
 | UNK-006 | Dispositivos predominantes por portal | Bajo | Telemetría/analítica autorizada | FND-5 |
 | UNK-007 | Cumplimiento legal específico | Medio | Revisión jurídica | Propietario |
 | UNK-008 | Definición de "logro" frente a "insignia" | Bajo | Código/documentación | FND-3 |
+| UNK-009 | Dualidad de autoridad de identidad: login local (`password_hash`) vs Firebase Auth | Alto | Decisión de gobernanza sobre ADR-001 | Propietario + FND-4/5 |
+| UNK-010 | Alcance del enforcement de verificación de correo (qué funciones se bloquean) | Medio | Middleware/guard de verificación | FND-4/5 |
 
 ## 26. Revisión, versionado y changelog
 
@@ -903,52 +979,53 @@ como partial hasta que FND-4/FND-5 los verifique.
 | Fecha | Versión | Estado | Cambio | Aprobaciones |
 |---|---|---|---|---|
 | 2026-08-06 | 1.0-candidate | draft | Creación del candidato FND-3A | Pendiente |
+| 2026-08-06 | 1.0-candidate | draft | Corrección R1: auditoría de evidencia, estados y tipos exactos, BR-001 y nuevos UNK | Pendiente |
 
 ## Apéndice A. Índice de reglas
 
 | ID | Nombre | Dominio | Estado | Actores | Fuente principal |
 |---|---|---|---|---|---|
-| BR-001 | Firebase Auth autoridad de identidad | Identidad | verified | Todos | ADR-001, firebase-auth.md |
-| BR-002 | Autorización efectiva en Laravel | Autorización | verified | Todos | rutas API |
-| BR-003 | `rol` y `nivel` separados | Identidad | verified | Todos | portal-alumno.md, ADR-005 |
-| BR-004 | Perfil no autoritativo | Identidad | verified | Estudiante, docente | portal-alumno.md |
-| BR-005 | Permisos por rol | Autorización | verified | Todos | routes/api.php |
+| BR-001 | Firebase Auth autoridad de identidad (login local coexistente) | Identidad | partial | Todos | `AutenticacionService`, ADR-001 |
+| BR-002 | Autorización efectiva en Laravel | Autorización | verified | Todos | `EnsureRole`, rutas API |
+| BR-003 | `rol` y `nivel` separados | Identidad | verified | Todos | `Usuario`, migración niveles |
+| BR-004 | Perfil no autoritativo | Identidad | verified | Estudiante, docente | `AlumnoController`, `AlumnoService` |
+| BR-005 | Permisos por rol | Autorización | verified | Todos | `routes/api.php` |
 | BR-006 | KIDS/TEENS no son roles | Autorización | verified | Estudiante | Constitución §12 |
 | BR-007 | Una única base compartida | Experiencia | verified | Estudiante | Constitución §12, ADR-005 |
 | BR-008 | Variantes no rompen reglas | Experiencia | verified | Estudiante | Constitución §12 |
-| BR-009 | Registro con verificación | Acceso | verified | Visitante | manual_usuario.md |
-| BR-010 | Recuperación vía Firebase | Acceso | verified | Usuario | AGENTS.md |
-| BR-011 | Currículo estructurado | Académico | verified | Docente, admin | AcademicoController |
-| BR-012 | Matrícula a aula | Académico | verified | Docente, admin | routes/api.php |
-| BR-013 | Recompensa dual por misión | Académico/Economía | verified | Docente, estudiante | gamificacion-xp-daemons.md |
-| BR-014 | Revisión autoridad del docente | Académico | verified | Docente | routes/api.php |
-| BR-015 | Evaluaciones con estados | Académico | verified | Estudiante, docente | EvaluacionController |
-| BR-016 | XP nunca se descuenta | Economía | verified | Estudiante, sistema | gamificacion-xp-daemons.md |
-| BR-017 | Nivel calculado en Laravel | Economía | verified | Sistema | gamificacion-xp-daemons.md |
+| BR-009 | Registro con verificación (enforcement parcial) | Acceso | partial | Visitante | `AutenticacionService`, `EmailVerificationService` |
+| BR-010 | Recuperación vía Firebase | Acceso | verified | Usuario | `RecuperacionClaveService` |
+| BR-011 | Currículo estructurado | Académico | verified | Docente, admin | `AcademicoController` |
+| BR-012 | Matrícula a aula | Académico | verified | Docente, admin | `AcademicoController::matricular` |
+| BR-013 | Recompensa dual por misión | Académico/Economía | verified | Docente, estudiante | `GamificacionService` |
+| BR-014 | Revisión autoridad del docente | Académico | verified | Docente | `MisionController::revisar` |
+| BR-015 | Evaluaciones con estados | Académico | verified | Estudiante, docente | `EvaluacionController` |
+| BR-016 | XP nunca se descuenta | Economía | verified | Estudiante, sistema | `EconomiaService`, `TiendaController` |
+| BR-017 | Nivel calculado en Laravel | Economía | verified | Sistema | `UsuarioResource`, `GamificacionService` |
 | BR-018 | Rachas | Gamificación | unknown | Estudiante | evidencia insuficiente |
-| BR-019 | Ledger append-only | Economía | verified | Sistema | gamificacion-xp-daemons.md |
-| BR-020 | Sin doble recompensa | Economía | verified | Sistema | gamificacion-xp-daemons.md |
-| BR-021 | Ajustes manuales sin XP | Economía | verified | Docente | gamificacion-xp-daemons.md |
-| BR-022 | Canje solo modifica tokens | Economía | verified | Estudiante | gamificacion-xp-daemons.md |
-| BR-023 | Validación de stock en backend | Economía | verified | Estudiante | gamificacion-xp-daemons.md |
-| BR-024 | Insignias gestionadas por docente | Gamificación | verified | Docente | routes/api.php |
-| BR-025 | Compra de cosméticos con DAEMONS | Economía/Gamificación | verified | Estudiante | sistema-mascotas-cosmeticos.md |
-| BR-026 | Backend autoridad de equipamiento | Gamificación | verified | Estudiante | sistema-mascotas-cosmeticos.md |
-| BR-027 | Cuentos v2 con autoridad Firestore | Creatividad | partial | Estudiante, moderador | ADR-002/003 |
-| BR-028 | Publicación con moderación | Creatividad | partial | Estudiante, moderador | routes/api.php |
-| BR-029 | Comentarios server-only | Comunidad | partial | Estudiante, moderador | ADR-003 |
-| BR-030 | Reacciones con ID determinista | Comunidad | partial | Estudiante | ADR-003 |
-| BR-031 | Moderación de reportes | Comunidad | verified | Moderador, admin | routes/api.php |
-| BR-032 | Vínculo tutor verificado | Familia | verified | Estudiante, tutor | portal-familias.md |
-| BR-033 | Tutor sin contenido privado | Familia | verified | Tutor | portal-familias.md |
-| BR-034 | Límite de pantalla | Bienestar | verified | Tutor, estudiante | portal-familias.md |
-| BR-035 | Sin datos de pago | Privacidad | verified | Tutor | portal-familias.md |
-| BR-036 | Retención 45 días | Privacidad | verified | Sistema | portal-familias.md |
-| BR-037 | Exportación y eliminación | Privacidad | verified | Usuario | routes/api.php |
-| BR-038 | Sin telemetría invasiva | Privacidad | verified | Sistema | privacidad-kids-teens.md |
-| BR-039 | Archivos con ownership | Datos | verified | Todos, admin | ADR-004 |
-| BR-040 | Sin credenciales productivas en dev | Operación | verified | Desarrolladores | ADR-006 |
-| BR-041 | Notificaciones con marcas | Comunicación | verified | Usuario | routes/api.php |
-| BR-042 | Comunidad moderada | Comunidad | verified | Usuario, moderador | routes/api.php |
-| BR-043 | Funciones admin con rol admin | Administración | verified | Administrador | routes/api.php |
-| BR-044 | Integraciones encapsuladas | Integración | partial | Servicio externo, admin | interoperability.php |
+| BR-019 | Ledger con idempotencia | Economía | verified | Sistema | migración `movimientos_economia` |
+| BR-020 | Sin doble recompensa | Economía | verified | Sistema | `EconomiaService`, `MisionController` |
+| BR-021 | Ajustes manuales sin XP | Economía | verified | Docente | `DocenteController::asignarTokens` |
+| BR-022 | Canje solo modifica tokens | Economía | verified | Estudiante | `TiendaController::canjear` |
+| BR-023 | Validación de stock en backend | Economía | verified | Estudiante | `TiendaController`, `EconomiaService` |
+| BR-024 | Insignias gestionadas por docente | Gamificación | verified | Docente | `DocenteController` |
+| BR-025 | Compra de cosméticos con DAEMONS | Economía/Gamificación | verified | Estudiante | `TiendaController`, migraciones mascota |
+| BR-026 | Backend autoridad de equipamiento | Gamificación | verified | Estudiante | `MascotaController` |
+| BR-027 | Cuentos v2 con autoridad Firestore | Creatividad | partial | Estudiante, moderador | ADR-002/003, `CuentoV2Service` |
+| BR-028 | Publicación con moderación | Creatividad | partial | Estudiante, moderador | `CuentoV2Controller` |
+| BR-029 | Comentarios server-only | Comunidad | partial | Estudiante, moderador | ADR-003, `firestore.rules` |
+| BR-030 | Reacciones con ID determinista | Comunidad | partial | Estudiante | ADR-003, `CuentoV2Service` |
+| BR-031 | Moderación de reportes | Comunidad | verified | Moderador, admin | `SeguridadComunidadController` |
+| BR-032 | Vínculo tutor verificado | Familia | verified | Estudiante, tutor | `TutorPortalService` |
+| BR-033 | Tutor sin contenido privado | Familia | verified | Tutor | `TutorPortalController` |
+| BR-034 | Límite de pantalla | Bienestar | verified | Tutor, estudiante | `BienestarDigitalController` |
+| BR-035 | Sin datos de pago (restricción futura) | Privacidad | pending | Tutor | `portal-familias.md` |
+| BR-036 | Retención 45 días | Privacidad | verified | Sistema | `AplicarRetencionPrivacidad`, `config/privacy.php` |
+| BR-037 | Exportación y eliminación con límite | Privacidad | verified | Usuario | `routes/api.php` (throttle) |
+| BR-038 | Sin telemetría invasiva | Privacidad | verified | Sistema | `ProductoAnalyticsService` |
+| BR-039 | Archivos con ownership | Datos | verified | Todos, admin | ADR-004, `ArchivoService` |
+| BR-040 | Sin credenciales productivas en dev | Operación | verified | Desarrolladores | ADR-006, `EnvironmentSafety` |
+| BR-041 | Notificaciones con marcas | Comunicación | verified | Usuario | `NotificacionController` |
+| BR-042 | Comunidad moderada | Comunidad | verified | Usuario, moderador | `SeguridadComunidadController` |
+| BR-043 | Funciones admin con rol admin | Administración | verified | Administrador | `routes/api.php` |
+| BR-044 | Integraciones encapsuladas | Integración | partial | Servicio externo, admin | `interoperability.php` |
