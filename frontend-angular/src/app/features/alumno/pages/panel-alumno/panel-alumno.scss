@@ -15,19 +15,47 @@
 }
 
 /* ============================================================
-   Variantes de experiencia (EXP-01): base compartida arriba +
-   modifiers KIDS (Explore) / TEENS (Creator). Punto de extensión
-   limpio — sin cambios visuales en esta fase; la dirección de arte
-   se implementará en su fase correspondiente sin tocar la base.
+   EXPERIENCIAS (EXP-01): MISMO DOM, distinta composición.
+   KIDS · Explore sigue el BLUEPRINT KIDS-03:
+   hero 220px → misión 66% + nivel 34% → métricas 88-100px →
+   actividad 59% + recompensas 41%. Gaps de 16px.
+   TEENS · Creator conserva la composición previa.
    ============================================================ */
 
 .student-dashboard--kids {
-  /* Dirección de arte KIDS · Explore (futura). */
+  display: grid;
+  gap: var(--daemon-space-4);
+  grid-template-areas:
+    'hero hero'
+    'mission nivel'
+    'metrics metrics'
+    'activity rewards';
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
 }
+.student-dashboard--kids .dashboard-welcome { grid-area: hero; }
+.student-dashboard--kids .mission-panel { grid-area: mission; }
+.student-dashboard--kids .dashboard-metrics { grid-area: metrics; }
+.student-dashboard--kids .panel--nivel { grid-area: nivel; }
+.student-dashboard--kids .panel--constancia { grid-area: activity; }
+.student-dashboard--kids .dashboard-foot { grid-area: rewards; }
 
 .student-dashboard--teens {
-  /* Dirección de arte TEENS · Creator (futura). */
+  display: grid;
+  gap: var(--daemon-space-5);
+  grid-template-areas:
+    'hero hero'
+    'mission mission'
+    'metrics metrics'
+    'nivel activity'
+    'foot foot';
+  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
 }
+.student-dashboard--teens .dashboard-welcome { grid-area: hero; }
+.student-dashboard--teens .mission-panel { grid-area: mission; }
+.student-dashboard--teens .dashboard-metrics { grid-area: metrics; }
+.student-dashboard--teens .panel--nivel { grid-area: nivel; }
+.student-dashboard--teens .panel--constancia { grid-area: activity; }
+.student-dashboard--teens .dashboard-foot { grid-area: foot; }
 
 /* ============================================================
    Estados (loading / error / offline / celebración)
@@ -144,7 +172,7 @@
 }
 
 /* ============================================================
-   1 · HERO — composición editorial con escenario ilustrado
+   1 · HERO
    ============================================================ */
 
 .dashboard-welcome {
@@ -195,7 +223,7 @@
   max-width: 34rem;
 }
 
-/* Escenario visual de la mascota: zona navy estructural */
+/* Escenario visual de la mascota: zona navy estructural (TEENS/base) */
 .welcome-stage {
   align-items: flex-end;
   background: var(--daemon-student-navigation);
@@ -214,7 +242,7 @@
 }
 
 /* ============================================================
-   2 · PRIMARY LEARNING ACTION — la próxima misión
+   2 · PRIMARY LEARNING ACTION
    ============================================================ */
 
 .mission-panel {
@@ -243,7 +271,6 @@
   margin: var(--daemon-space-1) 0 0;
 }
 
-/* Acción secundaria de sección: texto discreto, sin cápsula ni flechas */
 .section-action {
   color: var(--daemon-student-navigation);
   font-size: var(--daemon-font-size-small);
@@ -378,7 +405,6 @@
   padding: var(--daemon-space-2) var(--daemon-space-5);
 }
 
-/* Estado vacío compacto — banda, no card anidada */
 .mission-empty {
   align-items: center;
   display: flex;
@@ -394,7 +420,7 @@
 }
 
 /* ============================================================
-   3 · PROGRESS OVERVIEW — métricas compactas del mismo lenguaje
+   3 · PROGRESS OVERVIEW
    ============================================================ */
 
 .dashboard-metrics {
@@ -451,14 +477,8 @@
 }
 
 /* ============================================================
-   4 · LEARNING CONTINUATION — densidad media
+   4 · LEARNING CONTINUATION — núcleo / constancia
    ============================================================ */
-
-.dashboard-secondary {
-  display: grid;
-  gap: var(--daemon-space-3);
-  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
-}
 
 .panel {
   background: var(--daemon-neutral-surface);
@@ -573,7 +593,7 @@
 }
 
 /* ============================================================
-   5 · SECONDARY INFORMATION
+   5 · RECOMPENSAS
    ============================================================ */
 
 .dashboard-foot {
@@ -599,17 +619,19 @@
 }
 
 /* ============================================================
-   VARIANTE KIDS · EXPLORE — dirección de arte del dashboard
-   (EXP-01). TEENS conserva la base compartida de arriba.
+   VARIANTE KIDS · EXPLORE — BLUEPRINT KIDS-03
+   TEENS conserva la base compartida de arriba.
    ============================================================ */
 
+/* --- HERO: escena única de ~220px, contenido 42% / escena 58% --- */
 .student-dashboard--kids .dashboard-welcome {
   background: var(--daemon-student-navigation);
   border-color: var(--daemon-student-navigation);
-  gap: var(--daemon-space-5);
-  grid-template-columns: minmax(0, 1fr) minmax(0, 42%);
-  min-height: 280px;
+  gap: var(--daemon-space-6);
+  grid-template-columns: minmax(0, 42%) minmax(0, 58%);
+  min-height: 196px;
   overflow: hidden;
+  padding: var(--daemon-space-4) var(--daemon-space-6);
 }
 .student-dashboard--kids .eyebrow--navy {
   color: var(--daemon-student-progress);
@@ -617,57 +639,227 @@
 .student-dashboard--kids .welcome-title {
   color: var(--daemon-student-navigation-text);
 }
+.student-dashboard--kids .welcome-name {
+  color: var(--daemon-student-progress);
+}
 .student-dashboard--kids .welcome-sub {
   color: var(--daemon-on-navy-muted);
+  max-width: 30rem;
 }
 
-/* Escenario ilustrado: colinas (plano ambiental) + ground + bandera
-   + monstruo oficial. Capas absolutas sobre fondo navy; el monstruo
-   queda anclado sobre el terreno, no como sticker sobre blanco. */
 .student-dashboard--kids .kids-hero-scene {
-  min-height: 280px;
+  min-height: 196px;
   position: relative;
 }
 .student-dashboard--kids .kids-hero-layer {
   display: block;
   position: absolute;
 }
+/* Escenario integrado (pack KIDS recortado a su arte) — capas lógicas:
+   1) montañas: plano ambiental anclado abajo (~2/3 del stage);
+   2) nubes: flotan en el cielo navy (tercio superior);
+   3) terreno: plataforma amarilla anclada al borde inferior, bajo el personaje;
+   4) bandera: elemento secundario a la derecha, parcialmente tras el personaje;
+   5) personaje: anclado sobre el terreno, con aire de cielo sobre la cabeza. */
 .student-dashboard--kids .kids-hero-layer--bg {
   bottom: 0;
+  right: 0;
   height: 100%;
-  object-fit: cover;
-  object-position: center bottom;
   width: 100%;
+  object-fit: cover;
+  object-position: right bottom;
+  z-index: 0;
 }
-.student-dashboard--kids .kids-hero-layer--ground {
-  bottom: 0;
-  height: 76px;
-  object-fit: cover;
-  object-position: center;
-  width: 100%;
+.student-dashboard--kids .kids-hero-layer--cloud {
+  height: auto;
+  width: auto;
+  z-index: 1;
+}
+.student-dashboard--kids .kids-hero-layer--cloud-1 {
+  height: 42px;
+  left: 3%;
+  top: 4px;
+}
+.student-dashboard--kids .kids-hero-layer--cloud-2 {
+  height: 22px;
+  left: 28%;
+  top: 12px;
+}
+.student-dashboard--kids .kids-hero-layer--cloud-3 {
+  height: 36px;
+  right: 32%;
+  top: 20px;
+}
+.student-dashboard--kids .kids-hero-layer--cloud-4 {
+  height: 24px;
+  right: 8%;
+  top: 32px;
 }
 .student-dashboard--kids .kids-hero-layer--flag {
-  bottom: 96px;
-  height: 150px;
-  right: 10%;
+  bottom: 25px;
+  height: 140px;
+  right: 2%;
   width: auto;
+  z-index: 2;
+}
+.student-dashboard--kids .kids-hero-layer--ground {
+  bottom: -65px;
+  height: 130px;
+  right: -2%;
+  width: auto;
+  z-index: 3;
 }
 .student-dashboard--kids .kids-hero-layer--monster {
-  bottom: 60px;
-  height: 200px;
-  right: 5%;
+  bottom: 15px;
+  height: 175px;
+  right: 15%;
   width: auto;
+  z-index: 4;
 }
 
-/* Próxima misión: mantiene superficie clara; el CTA ya usa el rol
-   amarillo KIDS con on-color navy aprobado. */
+/* --- Misión: body horizontal + footer integrado, SIN card navy --- */
+.student-dashboard--kids .mission-panel {
+  padding: var(--daemon-space-4) var(--daemon-space-5);
+}
+.student-dashboard--kids .section-head {
+  margin-bottom: var(--daemon-space-2);
+  padding-bottom: var(--daemon-space-1);
+}
+.student-dashboard--kids .section-title {
+  font-size: var(--daemon-font-size-h3);
+  line-height: 1.2;
+  margin-top: 0;
+}
+.student-dashboard--kids .mission-body--kids {
+  display: grid;
+  gap: var(--daemon-space-1) var(--daemon-space-4);
+  grid-template-areas:
+    'icon head'
+    'icon desc'
+    'icon progress';
+  grid-template-columns: auto minmax(0, 1fr);
+}
+.student-dashboard--kids .mission-body--kids .mission-icon {
+  background: var(--daemon-student-mission);
+  border-radius: var(--daemon-radius-sm);
+  color: var(--daemon-on-warning);
+  font-size: 1.3rem;
+  grid-area: icon;
+  grid-row: 1 / -1;
+  height: 56px;
+  width: 56px;
+}
+.student-dashboard--kids .mission-head {
+  align-self: center;
+  display: grid;
+  gap: 2px;
+  grid-area: head;
+  min-width: 0;
+}
+.student-dashboard--kids .mission-title {
+  line-height: 1.25;
+}
+.student-dashboard--kids .mission-desc {
+  align-self: start;
+  font-size: var(--daemon-font-size-small);
+  grid-area: desc;
+  line-height: var(--daemon-line-height-small);
+  margin-top: 0;
+}
+.student-dashboard--kids .mission-progress {
+  display: grid;
+  gap: var(--daemon-space-1);
+  grid-area: progress;
+  margin-top: 0;
+  max-width: 320px;
+}
+.student-dashboard--kids .mission-progress__label {
+  color: var(--daemon-neutral-text-secondary);
+  display: flex;
+  font-size: var(--daemon-font-size-small);
+  font-weight: var(--daemon-font-weight-semibold);
+  justify-content: space-between;
+  line-height: 1.2;
+}
+.student-dashboard--kids .mission-progress nz-progress {
+  display: block;
+  line-height: 0;
+}
+.student-dashboard--kids .mission-foot {
+  align-items: center;
+  border-top: 1px solid var(--daemon-neutral-border);
+  display: flex;
+  gap: var(--daemon-space-4);
+  justify-content: space-between;
+  margin-top: var(--daemon-space-1);
+  padding-top: var(--daemon-space-2);
+}
+.student-dashboard--kids .mission-foot__rewards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--daemon-space-2);
+}
+.student-dashboard--kids .mission-foot .dashboard-cta {
+  min-height: 40px;
+  padding: var(--daemon-space-2) var(--daemon-space-5);
+}
 .student-dashboard--kids .dashboard-cta {
-  box-shadow: var(--daemon-shadow-md);
+  border-radius: var(--daemon-radius-sm);
 }
 
-/* Métricas: franja estructural navy compartida (no cuatro cards
-   SaaS independientes). Valores claros sobre navy; iconos con
-   tinte del rol sobre la base navy. */
+/* --- Núcleo: badge de nivel + headline + barra (sin círculo grande) --- */
+.student-dashboard--kids .panel--nivel {
+  align-content: space-between;
+  align-items: center;
+  display: grid;
+  gap: var(--daemon-space-2) var(--daemon-space-3);
+  grid-template-columns: auto minmax(0, 1fr);
+  padding: var(--daemon-space-4) var(--daemon-space-5);
+}
+.student-dashboard--kids .panel--nivel .section-head {
+  grid-column: 1 / -1;
+}
+.student-dashboard--kids .level-badge {
+  align-items: center;
+  background: var(--daemon-student-reward);
+  clip-path: polygon(25% 6.7%, 75% 6.7%, 100% 50%, 75% 93.3%, 25% 93.3%, 0 50%);
+  color: var(--daemon-on-yellow);
+  display: flex;
+  font-size: var(--daemon-font-size-h3);
+  font-weight: var(--daemon-font-weight-extra);
+  height: 48px;
+  justify-content: center;
+  width: 54px;
+}
+.student-dashboard--kids .level-headline {
+  display: grid;
+  gap: 2px;
+}
+.student-dashboard--kids .level-headline strong {
+  color: var(--daemon-neutral-text-primary);
+  font-size: var(--daemon-font-size-h3);
+  font-weight: var(--daemon-font-weight-bold);
+  line-height: 1.2;
+}
+.student-dashboard--kids .level-headline span {
+  color: var(--daemon-neutral-text-secondary);
+  font-size: var(--daemon-font-size-small);
+  line-height: var(--daemon-line-height-small);
+}
+.student-dashboard--kids .level-bar {
+  grid-column: 1 / -1;
+  margin-top: var(--daemon-space-1);
+}
+.student-dashboard--kids .xp-row {
+  grid-column: 1 / -1;
+  margin-top: 0;
+}
+.student-dashboard--kids .level-note {
+  grid-column: 1 / -1;
+  margin-top: var(--daemon-space-1);
+}
+
+/* --- Métricas: banda navy compacta (88-100px), icono + texto --- */
 .student-dashboard--kids .dashboard-metrics {
   background: var(--daemon-student-navigation);
   border: 1px solid var(--daemon-student-navigation);
@@ -676,60 +868,217 @@
   overflow: hidden;
 }
 .student-dashboard--kids .metric {
+  align-items: center;
+  align-content: center;
   background: transparent;
   border: 0;
   border-radius: 0;
+  gap: 2px;
+  grid-template-columns: auto minmax(0, 1fr);
+  padding: 16px var(--daemon-space-5);
 }
 .student-dashboard--kids .metric + .metric {
-  border-left: 1px solid var(--daemon-on-navy-muted);
+  border-left: 1px solid color-mix(in srgb, var(--daemon-on-navy-muted) 18%, var(--daemon-student-navigation));
 }
 .student-dashboard--kids .metric-icon {
-  background: color-mix(in srgb, var(--metric-color) 22%, var(--daemon-student-navigation));
+  background: transparent;
+  border: 2px solid var(--metric-color);
+  border-radius: 50%;
   color: var(--metric-color);
+  font-size: 1.05rem;
+  grid-row: 1 / span 3;
+  height: 40px;
+  margin: 0 var(--daemon-space-3) 0 0;
+  width: 40px;
 }
 .student-dashboard--kids .metric-value {
   color: var(--daemon-student-navigation-text);
+  font-size: var(--daemon-font-size-h3);
+  line-height: 1.2;
 }
 .student-dashboard--kids .metric-label {
   color: var(--daemon-on-navy-muted);
+  font-size: 11px;
+  line-height: 1.3;
 }
 .student-dashboard--kids .metric-sub {
   color: var(--daemon-on-navy-muted);
+  font-size: 11px;
+  line-height: 1.3;
 }
 
-@media (max-width: 1023px) {
-  .student-dashboard--kids .dashboard-welcome {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 240px);
-    min-height: 210px;
-  }
-  .student-dashboard--kids .kids-hero-scene {
-    min-height: 210px;
-  }
-  .student-dashboard--kids .kids-hero-layer--ground {
-    height: 56px;
-  }
-  .student-dashboard--kids .kids-hero-layer--flag {
-    bottom: 72px;
-    height: 110px;
-    right: 8%;
-  }
-  .student-dashboard--kids .kids-hero-layer--monster {
-    bottom: 48px;
-    height: 150px;
-    right: 4%;
-  }
+/* --- Constancia: 7 días + puntaje semanal + mensaje --- */
+.student-dashboard--kids .panel--constancia {
+  display: grid;
+  gap: var(--daemon-space-2) var(--daemon-space-4);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 170px);
+  padding: var(--daemon-space-4) var(--daemon-space-5);
+}
+.student-dashboard--kids .panel--constancia .section-head {
+  grid-column: 1 / -1;
+}
+.student-dashboard--kids .racha-summary {
+  display: none;
+}
+.student-dashboard--kids .activity-dots {
+  align-self: start;
+  border: 0;
+  border-top: 1px solid var(--daemon-neutral-border);
+  display: grid;
+  gap: var(--daemon-space-2);
+  grid-column: 1;
+  grid-row: 3;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  margin-top: 0;
+  padding-top: var(--daemon-space-2);
+}
+.student-dashboard--kids .activity-dot {
+  background: var(--daemon-neutral-surface-subtle);
+  border: 1px solid var(--daemon-neutral-border);
+  border-radius: var(--daemon-radius-sm);
+  gap: 2px;
+  padding: var(--daemon-space-1) var(--daemon-space-1);
+}
+.student-dashboard--kids .activity-dot.is-active {
+  background: var(--daemon-student-progress);
+  border-color: var(--daemon-student-progress);
+}
+.student-dashboard--kids .activity-dot span {
+  align-items: center;
+  display: inline-flex;
+  height: 16px;
+  justify-content: center;
+  width: 16px;
+}
+.student-dashboard--kids .activity-dot.is-active span {
+  background: var(--daemon-student-progress);
+  border-color: var(--daemon-student-progress);
+  color: var(--daemon-on-success);
+  font-size: 9px;
+}
+.student-dashboard--kids .activity-dot span {
+  height: 14px;
+  width: 14px;
+}
+.student-dashboard--kids .week-score strong {
+  font-size: var(--daemon-font-size-h3);
+  line-height: 1.15;
+}
+.student-dashboard--kids .week-score span {
+  font-size: 10px;
+  line-height: 1.25;
+}
+.student-dashboard--kids .racha-message {
+  font-size: var(--daemon-font-size-small);
+  line-height: 1.3;
+}
+.student-dashboard--kids .week-score {
+  align-self: start;
+  background: transparent;
+  border-top: 1px solid var(--daemon-neutral-border);
+  grid-column: 2;
+  grid-row: 3;
+  padding: var(--daemon-space-2) 0 0;
+  text-align: left;
+}
+.student-dashboard--kids .week-score strong {
+  color: var(--daemon-student-progress);
+  display: block;
+  font-size: var(--daemon-font-size-h3);
+  font-weight: var(--daemon-font-weight-bold);
+  line-height: 1.2;
+}
+.student-dashboard--kids .week-score span {
+  color: var(--daemon-neutral-text-secondary);
+  display: block;
+  font-size: 11px;
+  line-height: 1.3;
+}
+.student-dashboard--kids .racha-message {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  margin-top: 0;
 }
 
-@media (max-width: 767px) {
-  /* Mobile: el texto manda; el paisaje completo se oculta y el hero
-     navy conserva la identidad con la información prioritaria. */
-  .student-dashboard--kids .dashboard-welcome {
-    grid-template-columns: 1fr;
-    min-height: 0;
-  }
-  .student-dashboard--kids .kids-hero-scene {
-    display: none;
-  }
+/* --- Recompensas: módulo compacto con CTA Ver tienda --- */
+.student-dashboard--kids .dashboard-foot {
+  align-content: center;
+  border-radius: var(--daemon-radius-lg);
+  display: grid;
+  gap: var(--daemon-space-3);
+  padding: var(--daemon-space-4) var(--daemon-space-5);
+}
+.student-dashboard--kids .foot-head {
+  align-items: center;
+  display: flex;
+  gap: var(--daemon-space-4);
+  justify-content: space-between;
+}
+.student-dashboard--kids .foot-rewards {
+  display: grid;
+  gap: 2px;
+}
+.student-dashboard--kids .foot-eyebrow {
+  color: var(--daemon-student-mission);
+  font-size: var(--daemon-font-size-mini);
+  font-weight: var(--daemon-font-weight-extra);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.student-dashboard--kids .foot-premios {
+  color: var(--daemon-neutral-text-secondary);
+  font-size: var(--daemon-font-size-small);
+  font-weight: var(--daemon-font-weight-medium);
+  line-height: var(--daemon-line-height-small);
+}
+.student-dashboard--kids .foot-tiles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--daemon-space-3);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.student-dashboard--kids .foot-tile {
+  align-items: center;
+  background: var(--daemon-neutral-surface);
+  border: 1px solid var(--daemon-neutral-border);
+  border-radius: var(--daemon-radius-sm);
+  color: var(--daemon-student-reward);
+  display: flex;
+  height: 64px;
+  justify-content: center;
+  overflow: hidden;
+  width: 64px;
+}
+.student-dashboard--kids .foot-tile img {
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+.student-dashboard--kids .foot-empty {
+  color: var(--daemon-neutral-text-secondary);
+  font-size: var(--daemon-font-size-small);
+  line-height: var(--daemon-line-height-small);
+  max-width: 230px;
+}
+.student-dashboard--kids .foot-cta {
+  align-items: center;
+  background: var(--daemon-student-action-primary);
+  border-radius: var(--daemon-radius-sm);
+  box-shadow: var(--daemon-shadow-sm);
+  color: var(--cta-on);
+  display: inline-flex;
+  font-size: var(--daemon-font-size-small);
+  font-weight: var(--daemon-font-weight-bold);
+  justify-content: center;
+  min-height: 40px;
+  padding: var(--daemon-space-2) var(--daemon-space-5);
+  text-decoration: none;
+  transition: box-shadow var(--daemon-motion-fast) var(--daemon-motion-ease);
+}
+.student-dashboard--kids .foot-cta:hover {
+  box-shadow: var(--daemon-shadow-md);
 }
 
 /* ============================================================
@@ -737,6 +1086,57 @@
    ============================================================ */
 
 @media (max-width: 1023px) {
+  .student-dashboard--kids {
+    grid-template-areas:
+      'hero'
+      'mission'
+      'nivel'
+      'metrics'
+      'activity'
+      'rewards';
+    grid-template-columns: 1fr;
+  }
+  .student-dashboard--teens {
+    grid-template-areas:
+      'hero'
+      'mission'
+      'metrics'
+      'nivel'
+      'activity'
+      'foot';
+    grid-template-columns: 1fr;
+  }
+  .student-dashboard--kids .dashboard-welcome {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 260px);
+  }
+  .student-dashboard--kids .kids-hero-layer--bg {
+    height: 130px;
+    object-position: center top;
+  }
+  .student-dashboard--kids .kids-hero-layer--ground {
+    height: 56px;
+  }
+  .student-dashboard--kids .kids-hero-layer--monster {
+    bottom: 4px;
+    height: 118px;
+  }
+  .student-dashboard--kids .kids-hero-layer--flag {
+    bottom: 12px;
+    height: 100px;
+    right: 6%;
+  }
+  .student-dashboard--kids .kids-hero-layer--cloud-1 {
+    height: 30px;
+  }
+  .student-dashboard--kids .kids-hero-layer--cloud-2 {
+    height: 18px;
+  }
+  .student-dashboard--kids .kids-hero-layer--cloud-3 {
+    display: none;
+  }
+  .student-dashboard--kids .kids-hero-layer--cloud-4 {
+    display: none;
+  }
   .dashboard-welcome {
     grid-template-columns: minmax(0, 1fr) minmax(0, 220px);
   }
@@ -750,9 +1150,6 @@
   .dashboard-metrics {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  .dashboard-secondary {
-    grid-template-columns: 1fr;
-  }
   .mission-body {
     align-items: stretch;
     flex-direction: column;
@@ -765,6 +1162,121 @@
 }
 
 @media (max-width: 767px) {
+  /* Mobile: hero con texto arriba y PAISAJE a ancho completo abajo
+     (sin recortes laterales; el monstruo y el terreno se ven enteros). */
+  .student-dashboard--kids .dashboard-welcome {
+    gap: 0;
+    grid-template-columns: 1fr;
+    min-height: 252px;
+    padding: var(--daemon-space-5);
+    position: relative;
+  }
+  .student-dashboard--kids .welcome-content {
+    align-content: start;
+    background: transparent;
+    max-width: 100%;
+    padding-right: 0;
+    position: relative;
+    z-index: 1;
+  }
+  .student-dashboard--kids .kids-hero-scene {
+    bottom: 0;
+    display: block;
+    height: 104px;
+    left: 0;
+    min-height: 0;
+    overflow: hidden;
+    position: absolute;
+    right: 0;
+    top: auto;
+    width: 100%;
+  }
+  .student-dashboard--kids .kids-hero-layer--bg {
+    bottom: 0;
+    height: 104px;
+    left: 0;
+    object-position: center top;
+    right: 0;
+    width: 100%;
+  }
+  .student-dashboard--kids .kids-hero-layer--cloud {
+    display: none;
+  }
+  .student-dashboard--kids .kids-hero-layer--ground {
+    bottom: 0;
+    height: 48px;
+    object-fit: contain;
+    right: 6%;
+    width: auto;
+  }
+  .student-dashboard--kids .kids-hero-layer--flag {
+    display: none;
+  }
+  .student-dashboard--kids .kids-hero-layer--monster {
+    bottom: 2px;
+    height: 96px;
+    right: 8%;
+  }
+  .student-dashboard--kids .mission-body--kids {
+    gap: var(--daemon-space-2) var(--daemon-space-3);
+    grid-template-areas:
+      'icon head'
+      'desc desc'
+      'progress progress';
+  }
+  .student-dashboard--kids .mission-body--kids .mission-icon {
+    font-size: 1.15rem;
+    height: 48px;
+    width: 48px;
+  }
+  .student-dashboard--kids .mission-progress {
+    max-width: none;
+  }
+  .student-dashboard--kids .mission-foot {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .student-dashboard--kids .mission-foot__rewards {
+    justify-content: center;
+  }
+  .student-dashboard--kids .panel--constancia {
+    grid-template-columns: 1fr;
+  }
+  .student-dashboard--kids .activity-dots {
+    grid-column: 1;
+    grid-row: auto;
+  }
+  .student-dashboard--kids .week-score {
+    grid-column: 1;
+    grid-row: auto;
+    justify-self: start;
+  }
+  .student-dashboard--kids .racha-message {
+    grid-column: 1;
+    grid-row: auto;
+  }
+  .student-dashboard--kids .dashboard-foot {
+    align-items: stretch;
+  }
+  /* Orden visual mobile: cabecera → premios → CTA (Ver tienda al final).
+     display:contents aplana el head para que sus hijos entren al grid del foot. */
+  .student-dashboard--kids .foot-head {
+    display: contents;
+  }
+  .student-dashboard--kids .foot-rewards {
+    order: 1;
+  }
+  .student-dashboard--kids .foot-tiles,
+  .student-dashboard--kids .foot-empty {
+    order: 2;
+  }
+  .student-dashboard--kids .foot-cta {
+    order: 3;
+    justify-self: stretch;
+  }
+  .student-dashboard--kids .foot-tiles {
+    flex-wrap: wrap;
+  }
   .dashboard-welcome {
     grid-template-columns: 1fr;
   }

@@ -24,7 +24,9 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { ApiError } from '../../../../core/servicios/api';
 import { Activos } from '../../../../core/servicios/activos';
 import { Sesion } from '../../../../core/servicios/sesion';
-import { experienciaDashboard } from './panel-alumno.experience';
+import { PremioTienda } from '../../../../core/modelos/dto';
+import { Tienda } from '../../../tienda/services/tienda';
+import { experienciaDashboard, StudentDashboardHeroAsset } from './panel-alumno.experience';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 import { MonedaDaemon } from '../../../../shared/componentes/moneda-daemon/moneda-daemon';
 import {
@@ -48,6 +50,7 @@ export class PanelAlumno {
   private readonly alumno = inject(Alumno);
   private readonly sesion = inject(Sesion);
   private readonly activos = inject(Activos);
+  private readonly tienda = inject(Tienda);
 
   readonly estado = signal<EstadoPanelAlumno>({ kind: 'loading' });
   readonly panel = computed(() => {
@@ -61,6 +64,10 @@ export class PanelAlumno {
   });
   readonly actualizando = signal(false);
   readonly celebracion = signal<{ xp: number } | null>(null);
+
+  /** Premios destacados de la tienda (hasta 4, orden real). Presentacional: no modifica la tienda. */
+  readonly premiosDestacados = signal<PremioTienda[]>([]);
+  readonly premiosInvalidos = signal<Set<number>>(new Set());
 
   /**
    * Variante de experiencia del dashboard (KIDS · Explore / TEENS · Creator),
@@ -77,9 +84,16 @@ export class PanelAlumno {
    */
   readonly heroAssets = computed(() => {
     const lista = this.experiencia().heroAssets ?? [];
-    const ruta = (nombre: 'background' | 'ground' | 'flag'): string =>
+    const ruta = (nombre: StudentDashboardHeroAsset['nombre']): string =>
       lista.find((asset) => asset.nombre === nombre)?.ruta ?? '';
-    return { background: ruta('background'), ground: ruta('ground'), flag: ruta('flag') };
+    const clouds = lista.filter((asset) => asset.nombre === 'cloud').map((asset) => asset.ruta);
+    return {
+      background: ruta('background'),
+      ground: ruta('ground'),
+      flag: ruta('flag'),
+      monster: ruta('monster'),
+      clouds,
+    };
   });
 
   readonly iconos = {
@@ -99,6 +113,23 @@ export class PanelAlumno {
 
   constructor() {
     this.cargar(false);
+    this.cargarPremiosDestacados();
+  }
+
+  /** Lee los primeros 4 premios reales de la tienda; ante cualquier fallo el dashboard queda intacto. */
+  private cargarPremiosDestacados(): void {
+    this.tienda.premios().subscribe({
+      next: (datos) => this.premiosDestacados.set((datos.premios ?? []).slice(0, 4)),
+      error: () => this.premiosDestacados.set([]),
+    });
+  }
+
+  activosUrl(ruta?: string | null): string {
+    return this.activos.url(ruta);
+  }
+
+  marcarPremioInvalido(id: number): void {
+    this.premiosInvalidos.update((actuales) => new Set(actuales).add(id));
   }
 
   cargar(forzar = true): void {
@@ -180,6 +211,10 @@ export class PanelAlumno {
 
   descripcionDia(dia: ActividadDia): string {
     return `${dia.etiqueta}, ${dia.fecha}: ${dia.activo ? 'misión aprobada' : 'sin actividad registrada'}`;
+  }
+
+  diasActivos(datos: PanelAlumnoDto): number {
+    return datos.actividad_semana.filter((dia) => dia.activo).length;
   }
 
   cerrarCelebracion(): void {

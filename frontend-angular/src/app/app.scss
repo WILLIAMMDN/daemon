@@ -59,6 +59,15 @@
   }
 }
 
+/* El indicador de entorno es contextual/desarrollo y en pantallas móviles
+   interfiere con el topbar del estudiante; se oculta por completo a <= 767px.
+   Desktop conserva exactamente el comportamiento existente. */
+@media (max-width: 767px) {
+  .environment-indicator {
+    display: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .route-progress,
   .route-progress span {

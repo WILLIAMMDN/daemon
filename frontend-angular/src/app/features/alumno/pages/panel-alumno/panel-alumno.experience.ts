@@ -23,7 +23,7 @@ export type StudentDashboardExperience = 'kids' | 'teens';
 
 export interface StudentDashboardHeroAsset {
   /** Rol del asset dentro del escenario del hero. */
-  readonly nombre: 'background' | 'ground' | 'flag';
+  readonly nombre: 'background' | 'ground' | 'flag' | 'monster' | 'cloud';
   /** Ruta pública del asset (carpeta `public/` del frontend). */
   readonly ruta: string;
 }
@@ -40,9 +40,15 @@ export interface StudentDashboardExperienceConfig {
 }
 
 const ASSETS_HERO_KIDS: readonly StudentDashboardHeroAsset[] = [
+  // Escenario integrado: montañas → nubes → terreno → bandera → personaje.
   { nombre: 'background', ruta: '/img/alumno/dashboard/kids/daemon-dashboard-hero-background.png' },
+  { nombre: 'cloud', ruta: '/img/alumno/dashboard/kids/daemon-dashboard-hero-cloud-1.png' },
+  { nombre: 'cloud', ruta: '/img/alumno/dashboard/kids/daemon-dashboard-hero-cloud-2.png' },
+  { nombre: 'cloud', ruta: '/img/alumno/dashboard/kids/daemon-dashboard-hero-cloud-3.png' },
+  { nombre: 'cloud', ruta: '/img/alumno/dashboard/kids/daemon-dashboard-hero-cloud-4.png' },
   { nombre: 'ground', ruta: '/img/alumno/dashboard/kids/daemon-dashboard-hero-ground.png' },
   { nombre: 'flag', ruta: '/img/alumno/dashboard/kids/daemon-dashboard-hero-flag.png' },
+  { nombre: 'monster', ruta: '/img/alumno/dashboard/kids/daemon-dashboard-hero-monster.png' },
 ];
 
 const EXPERIENCIAS_DASHBOARD: Record<StudentDashboardExperience, StudentDashboardExperienceConfig> = {

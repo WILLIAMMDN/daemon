@@ -42,20 +42,31 @@
       </aside>
     }
 
-    <!-- 1 · HERO — composición editorial con escenario ilustrado -->
+    <!-- 1 · HERO — escena ilustrada KIDS / stage base TEENS -->
     <section class="dashboard-welcome" aria-label="Bienvenida">
       <div class="welcome-content">
         <span class="eyebrow eyebrow--navy">{{ eyebrowBienvenida(datos) }}</span>
-        <h1 id="dashboard-title" class="welcome-title">Hola, {{ nombreCorto(datos.usuario) }}</h1>
+        <h1 id="dashboard-title" class="welcome-title">Hola, <span class="welcome-name">{{ nombreCorto(datos.usuario) }}</span></h1>
         <p class="welcome-sub">{{ mensajeBienvenida(datos) }}</p>
       </div>
       @if (esKids()) {
         <!-- KIDS · Explore: escenario ilustrado integrado (assets aprobados EXP-01) -->
         <div class="kids-hero-scene" aria-hidden="true">
           <img [src]="heroAssets().background" alt="" class="kids-hero-layer kids-hero-layer--bg" />
+          @for (nube of heroAssets().clouds; track $index) {
+            <img
+              [src]="nube"
+              alt=""
+              class="kids-hero-layer kids-hero-layer--cloud"
+              [class.kids-hero-layer--cloud-1]="$index === 0"
+              [class.kids-hero-layer--cloud-2]="$index === 1"
+              [class.kids-hero-layer--cloud-3]="$index === 2"
+              [class.kids-hero-layer--cloud-4]="$index === 3"
+            />
+          }
           <img [src]="heroAssets().ground" alt="" class="kids-hero-layer kids-hero-layer--ground" />
           <img [src]="heroAssets().flag" alt="" class="kids-hero-layer kids-hero-layer--flag" />
-          <img src="/img/hero-monster.png" alt="" class="kids-hero-layer kids-hero-layer--monster" />
+          <img [src]="heroAssets().monster" alt="" class="kids-hero-layer kids-hero-layer--monster" />
         </div>
       } @else {
         <div class="welcome-stage" aria-hidden="true">
@@ -75,16 +86,17 @@
       </header>
 
       @if (datos.proxima_mision; as mision) {
-        <div class="mission-body">
-          <span class="mission-icon" aria-hidden="true"><fa-icon [icon]="iconos.cohete" /></span>
-          <div class="mission-info">
-            <h3 class="mission-title">{{ mision.titulo }}</h3>
-            <p class="mission-meta">{{ mision.nivel_requerido }} · {{ mision.tipo_evidencia }}</p>
+        @if (esKids()) {
+          <!-- KIDS · blueprint: body horizontal + footer integrado (sin card navy) -->
+          <div class="mission-body mission-body--kids">
+            <span class="mission-icon" aria-hidden="true"><fa-icon [icon]="iconos.cohete" /></span>
+            <div class="mission-head">
+              <h3 class="mission-title">{{ mision.titulo }}</h3>
+              <p class="mission-meta">{{ mision.nivel_requerido }} · {{ mision.tipo_evidencia }}</p>
+            </div>
             <p class="mission-desc">{{ mision.descripcion || 'Tu docente preparó un nuevo reto para seguir avanzando.' }}</p>
-          </div>
-          <div class="mission-cta">
             <div
-              class="level-context"
+              class="mission-progress"
               role="progressbar"
               aria-label="Progreso de nivel"
               aria-valuemin="0"
@@ -92,21 +104,56 @@
               [attr.aria-valuenow]="progreso(datos).progreso_porcentaje"
               [attr.aria-valuetext]="progreso(datos).progreso_porcentaje + '%; nivel ' + progreso(datos).nivel"
             >
-              <span class="level-context__label">
+              <span class="mission-progress__label">
                 <span>Nivel {{ progreso(datos).nivel }}</span>
                 <span>{{ progreso(datos).progreso_porcentaje }}%</span>
               </span>
               <nz-progress aria-hidden="true" [nzPercent]="progreso(datos).progreso_porcentaje" [nzShowInfo]="false" [nzStrokeWidth]="6" nzStrokeColor="var(--daemon-student-progress)" />
             </div>
-            <div class="mission-rewards">
+          </div>
+          <div class="mission-foot">
+            <span class="mission-foot__rewards">
               <span class="chip chip--xp"><fa-icon [icon]="iconos.energia" /> +{{ mision.recompensa }} XP</span>
               <span class="chip chip--daemons"><app-moneda-daemon [size]="14" /> +{{ mision.recompensa }} DAEMONS</span>
-            </div>
+            </span>
             <a class="dashboard-cta" [routerLink]="['/alumno/misiones', mision.id]">
               <fa-icon [icon]="iconos.play" /> Continuar misión
             </a>
           </div>
-        </div>
+        } @else {
+          <div class="mission-body">
+            <span class="mission-icon" aria-hidden="true"><fa-icon [icon]="iconos.cohete" /></span>
+            <div class="mission-info">
+              <h3 class="mission-title">{{ mision.titulo }}</h3>
+              <p class="mission-meta">{{ mision.nivel_requerido }} · {{ mision.tipo_evidencia }}</p>
+              <p class="mission-desc">{{ mision.descripcion || 'Tu docente preparó un nuevo reto para seguir avanzando.' }}</p>
+            </div>
+            <div class="mission-cta">
+              <div
+                class="level-context"
+                role="progressbar"
+                aria-label="Progreso de nivel"
+                aria-valuemin="0"
+                aria-valuemax="100"
+                [attr.aria-valuenow]="progreso(datos).progreso_porcentaje"
+                [attr.aria-valuetext]="progreso(datos).progreso_porcentaje + '%; nivel ' + progreso(datos).nivel"
+              >
+                <span class="level-context__label">
+                  <span>Nivel {{ progreso(datos).nivel }}</span>
+                  <span>{{ progreso(datos).progreso_porcentaje }}%</span>
+                </span>
+                <nz-progress aria-hidden="true" [nzPercent]="progreso(datos).progreso_porcentaje" [nzShowInfo]="false" [nzStrokeWidth]="6" nzStrokeColor="var(--daemon-student-progress)" />
+              </div>
+              <div class="mission-rewards">
+                <span class="chip chip--xp"><fa-icon [icon]="iconos.energia" /> +{{ mision.recompensa }} XP</span>
+                <span class="chip chip--daemons"><app-moneda-daemon [size]="14" /> +{{ mision.recompensa }} DAEMONS</span>
+              </div>
+              <a class="dashboard-cta" [routerLink]="['/alumno/misiones', mision.id]">
+                <fa-icon [icon]="iconos.play" /> Continuar misión
+              </a>
+            </div>
+          </div>
+        }
       } @else {
         <div class="mission-empty">
           <span class="mission-icon mission-icon--ok" aria-hidden="true"><fa-icon [icon]="iconos.bandera" /></span>
@@ -150,73 +197,110 @@
       </article>
     </section>
 
-    <!-- 4 · LEARNING CONTINUATION -->
-    <section class="dashboard-secondary">
-      <article class="panel">
-        <header class="section-head">
-          <div>
-            <span class="eyebrow">NÚCLEO DAEMON</span>
-            <h2 class="section-title">Próximo nivel</h2>
-          </div>
-          <strong class="panel-percent">{{ progreso(datos).progreso_porcentaje }}%</strong>
-        </header>
-        <div
-          role="progressbar"
-          aria-label="Experiencia hacia el siguiente nivel"
-          aria-valuemin="0"
-          aria-valuemax="100"
-          [attr.aria-valuenow]="progreso(datos).progreso_porcentaje"
-        >
-          <nz-progress aria-hidden="true" [nzPercent]="progreso(datos).progreso_porcentaje" [nzShowInfo]="false" [nzStrokeWidth]="8" nzStrokeColor="var(--daemon-student-progress)" />
+    <!-- 4 · LEARNING CONTINUATION: núcleo (nivel) + constancia (actividad) -->
+    <article class="panel panel--nivel">
+      <header class="section-head">
+        <div>
+          <span class="eyebrow">NÚCLEO DAEMON</span>
+          <h2 class="section-title">Próximo nivel</h2>
         </div>
-        <div class="xp-row">
-          <span>{{ progreso(datos).experiencia_nivel }} XP actuales</span>
-          <span>{{ progreso(datos).experiencia_meta }} XP meta</span>
+        <strong class="panel-percent">{{ progreso(datos).progreso_porcentaje }}%</strong>
+      </header>
+      @if (esKids()) {
+        <div class="level-badge" aria-hidden="true">{{ progreso(datos).nivel }}</div>
+        <div class="level-headline">
+          <strong>Nivel {{ progreso(datos).nivel }}</strong>
+          <span>{{ progreso(datos).experiencia_restante }} XP para el siguiente nivel</span>
         </div>
-        <p class="level-note">
-          <fa-icon [icon]="iconos.check" aria-hidden="true"></fa-icon> Tu XP nunca disminuye.
-        </p>
-      </article>
+      }
+      <div
+        class="level-bar"
+        role="progressbar"
+        aria-label="Experiencia hacia el siguiente nivel"
+        aria-valuemin="0"
+        aria-valuemax="100"
+        [attr.aria-valuenow]="progreso(datos).progreso_porcentaje"
+      >
+        <nz-progress aria-hidden="true" [nzPercent]="progreso(datos).progreso_porcentaje" [nzShowInfo]="false" [nzStrokeWidth]="esKids() ? 10 : 8" nzStrokeColor="var(--daemon-student-progress)" />
+      </div>
+      <div class="xp-row">
+        <span>{{ progreso(datos).experiencia_nivel }} XP actuales</span>
+        <span>{{ progreso(datos).experiencia_meta }} XP meta</span>
+      </div>
+      <p class="level-note">
+        <fa-icon [icon]="iconos.check" aria-hidden="true"></fa-icon> Tu XP nunca disminuye.
+      </p>
+    </article>
 
-      <article class="panel">
-        <header class="section-head">
-          <div>
-            <span class="eyebrow">CONSTANCIA</span>
-            <h2 class="section-title">Actividad</h2>
-          </div>
-        </header>
-        <div class="racha-summary">
-          <span class="racha-icon" aria-hidden="true"><fa-icon [icon]="iconos.fuego" /></span>
-          <div>
-            <strong class="racha-value">{{ datos.racha }}</strong>
-            <span class="racha-label">días de racha</span>
-          </div>
-          <img src="/img/monstruo-racha.png" alt="Monstruo Racha" class="racha-mascota" />
+    <article class="panel panel--constancia">
+      <header class="section-head">
+        <div>
+          <span class="eyebrow">@if (esKids()) { ACTIVIDAD SEMANAL } @else { CONSTANCIA }</span>
+          <h2 class="section-title">Actividad</h2>
         </div>
-        <p class="racha-message">{{ mensajeRacha(datos) }}</p>
-        <ul class="activity-dots" aria-label="Actividad real de los últimos siete días">
-          @for (dia of datos.actividad_semana; track dia.fecha) {
-            <li
-              class="activity-dot"
-              [class.is-active]="dia.activo"
-              [attr.aria-label]="descripcionDia(dia)"
-            >
-              <span aria-hidden="true"></span>
-              <small>{{ dia.etiqueta }}</small>
-            </li>
-          }
-        </ul>
-      </article>
-    </section>
+      </header>
+      <div class="racha-summary">
+        <span class="racha-icon" aria-hidden="true"><fa-icon [icon]="iconos.fuego" /></span>
+        <div>
+          <strong class="racha-value">{{ datos.racha }}</strong>
+          <span class="racha-label">días de racha</span>
+        </div>
+        <img src="/img/monstruo-racha.png" alt="Monstruo Racha" class="racha-mascota" />
+      </div>
+      <p class="racha-message">{{ mensajeRacha(datos) }}</p>
+      @if (esKids()) {
+        <div class="week-score" aria-label="Días activos esta semana">
+          <strong>{{ diasActivos(datos) }}</strong>
+          <span>de 7 días activos</span>
+        </div>
+      }
+      <ul class="activity-dots" aria-label="Actividad real de los últimos siete días">
+        @for (dia of datos.actividad_semana; track dia.fecha) {
+          <li
+            class="activity-dot"
+            [class.is-active]="dia.activo"
+            [attr.aria-label]="descripcionDia(dia)"
+          >
+            <span aria-hidden="true">@if (esKids() && dia.activo) { <fa-icon [icon]="iconos.check" /> }</span>
+            <small>{{ dia.etiqueta }}</small>
+          </li>
+        }
+      </ul>
+    </article>
 
-    <!-- 5 · SECONDARY INFORMATION -->
+    <!-- 5 · RECOMPENSAS -->
     <footer class="dashboard-foot">
-      <span class="foot-premios">
-        <fa-icon [icon]="iconos.regalo" aria-hidden="true"></fa-icon>
-        <strong>{{ datos.canjes_pendientes }}</strong>
-        {{ datos.canjes_pendientes === 1 ? 'premio' : 'premios' }} por recoger
-      </span>
-      <a class="section-action" routerLink="/alumno/perfil">Ver mi perfil</a>
+      @if (esKids()) {
+        <div class="foot-head">
+          <div class="foot-rewards">
+            <span class="foot-eyebrow">RECOMPENSAS DESTACADAS</span>
+            <span class="foot-premios">Canjea DAEMONS por beneficios</span>
+          </div>
+          <a class="foot-cta" routerLink="/alumno/tienda">Ver tienda</a>
+        </div>
+        @if (premiosDestacados().length) {
+          <ul class="foot-tiles" aria-label="Premios destacados de la tienda">
+            @for (premio of premiosDestacados(); track premio.id) {
+              <li class="foot-tile" [title]="premio.nombre">
+                @if (premio.imagen && !premiosInvalidos().has(premio.id)) {
+                  <img [src]="activosUrl(premio.imagen)" [alt]="premio.nombre" loading="lazy" (error)="marcarPremioInvalido(premio.id)" />
+                } @else {
+                  <fa-icon [icon]="iconos.regalo" aria-hidden="true"></fa-icon>
+                }
+              </li>
+            }
+          </ul>
+        } @else {
+          <span class="foot-empty">Explora la tienda y usa tus DAEMONS para conseguir recompensas.</span>
+        }
+      } @else {
+        <span class="foot-premios">
+          <fa-icon [icon]="iconos.regalo" aria-hidden="true"></fa-icon>
+          <strong>{{ datos.canjes_pendientes }}</strong>
+          {{ datos.canjes_pendientes === 1 ? 'premio' : 'premios' }} por recoger
+        </span>
+        <a class="section-action" routerLink="/alumno/perfil">Ver mi perfil</a>
+      }
     </footer>
   </section>
 }

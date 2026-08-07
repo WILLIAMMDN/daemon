@@ -387,6 +387,9 @@
   }
 }
 
+/* A <= 420px la cuenta queda accesible desde el menú hamburguesa
+   (sidebar: Mi perfil · Cerrar sesión), así que el avatar se oculta
+   deliberadamente para priorizar hamburger + nivel + DAEMONS + notificaciones. */
 @media (max-width: 420px) {
   .profile-card {
     display: none;
