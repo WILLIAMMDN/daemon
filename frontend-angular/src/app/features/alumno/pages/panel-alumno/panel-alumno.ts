@@ -71,6 +71,17 @@ export class PanelAlumno {
   readonly esKids = computed(() => this.experiencia().experience === 'kids');
   readonly esTeens = computed(() => this.experiencia().experience === 'teens');
 
+  /**
+   * Rutas de los assets aprobados del hero (solo KIDS tiene dirección
+   * artística; TEENS devuelve cadenas vacías y conserva su stage base).
+   */
+  readonly heroAssets = computed(() => {
+    const lista = this.experiencia().heroAssets ?? [];
+    const ruta = (nombre: 'background' | 'ground' | 'flag'): string =>
+      lista.find((asset) => asset.nombre === nombre)?.ruta ?? '';
+    return { background: ruta('background'), ground: ruta('ground'), flag: ruta('flag') };
+  });
+
   readonly iconos = {
     flecha: faArrowRight,
     energia: faBolt,

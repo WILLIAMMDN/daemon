@@ -49,9 +49,19 @@
         <h1 id="dashboard-title" class="welcome-title">Hola, {{ nombreCorto(datos.usuario) }}</h1>
         <p class="welcome-sub">{{ mensajeBienvenida(datos) }}</p>
       </div>
-      <div class="welcome-stage" aria-hidden="true">
-        <img src="/img/hero-monster.png" alt="" class="welcome-mascota" />
-      </div>
+      @if (esKids()) {
+        <!-- KIDS · Explore: escenario ilustrado integrado (assets aprobados EXP-01) -->
+        <div class="kids-hero-scene" aria-hidden="true">
+          <img [src]="heroAssets().background" alt="" class="kids-hero-layer kids-hero-layer--bg" />
+          <img [src]="heroAssets().ground" alt="" class="kids-hero-layer kids-hero-layer--ground" />
+          <img [src]="heroAssets().flag" alt="" class="kids-hero-layer kids-hero-layer--flag" />
+          <img src="/img/hero-monster.png" alt="" class="kids-hero-layer kids-hero-layer--monster" />
+        </div>
+      } @else {
+        <div class="welcome-stage" aria-hidden="true">
+          <img src="/img/hero-monster.png" alt="" class="welcome-mascota" />
+        </div>
+      }
     </section>
 
     <!-- 2 · PRIMARY LEARNING ACTION -->
