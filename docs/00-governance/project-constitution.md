@@ -1,29 +1,32 @@
 ---
 title: Constitución General del Proyecto DAEMON
-status: draft
+status: canonical
 normative: true
-version: 1.0-candidate
+version: 1.0
 owner: project-owner
-phase: FND-2A
+phase: FND-2B
 created: 2026-08-06
 last_reviewed: 2026-08-06
+approved_on: 2026-08-06
 applies_to: all
-approval_required:
-  - project-owner
-  - technical-reviewer
+approvals:
+  project-owner: approved
+  technical-reviewer: approved
 supersedes: null
 ---
 
 # Constitución General del Proyecto DAEMON
 
-Este documento es el candidato de la autoridad global del proyecto DAEMON
-(FND-2A). Mientras conserve `status: draft`, no autoriza implementación
-alguna y ninguna persona o agente puede considerarla vigente.
+Este documento es la autoridad global del proyecto DAEMON, aprobada por el
+propietario en FND-2B. Es normativa, tiene precedencia global y obliga a
+todos los dominios, personas y agentes. No sustituye los documentos
+especializados y no puede modificarse sin el proceso formal definido en la
+Sección 19.
 
 ## 1. Autoridad, propósito y alcance
 
-1. La Constitución será, una vez aprobada por el propietario del proyecto,
-   la autoridad global de mayor nivel de DAEMON.
+1. La Constitución es la autoridad global de mayor nivel de DAEMON,
+   aprobada por el propietario del proyecto (FND-2B).
 2. Obliga a todos los dominios —producto, arquitectura, datos, seguridad,
    diseño visual, operaciones, calidad— y a todas las personas y agentes
    (humanos o de IA) que trabajen en el repositorio.
@@ -33,19 +36,19 @@ alguna y ninguna persona o agente puede considerarla vigente.
 4. Ningún documento especializado puede contradecir la Constitución. Si un
    documento de dominio contradice una regla constitucional, prevalece la
    Constitución y el conflicto se resuelve según la Sección 20.
-5. Mientras tenga `status: draft`, no es normativa vigente: no obliga a
-   implementar cambios, no deroga reglas existentes y no puede citarse como
-   autoridad aprobada.
-6. Ningún agente (humano o de IA) puede autoaprobar la Constitución ni
-   modificar su estado documental. Su activación requiere aprobación
-   explícita del propietario (Sección 22).
+5. No puede ser modificada ni derogada sin el proceso formal definido en la
+   Sección 19. Un documento de dominio que la contradiga se marca como
+   conflicto y se resuelve según la Sección 20.
+6. Ningún agente (humano o de IA) puede autoaprobar la Constitución,
+   modificar su estado documental ni crear excepciones sin autorización
+   explícita del propietario.
 
 La Constitución distingue los siguientes tipos de autoridad documental:
 
 | Tipo | Descripción | Ejemplo |
 |---|---|---|
-| Autoridad global | Documento de mayor precedencia, una vez aprobado | Constitución General |
-| Autoridad de dominio | Documento canónico único de un dominio | portal-alumno, frontend-architecture, security-baseline (futuro) |
+| Autoridad global | Documento de mayor precedencia del proyecto | Constitución General |
+| Autoridad de dominio | Documento canónico único de un dominio | product-overview.md (futuro), frontend-architecture.md, security-baseline.md (futuro) |
 | Referencia técnica | Documento verificable que describe estado, no decisión | api-crud, supabase-postgres |
 | Iniciativa temporal | Documentación de trabajo en curso, no permanente | 80-initiatives/* |
 | Evidencia histórica | Registro del pasado, sin autoridad normativa | 90-audits-history, 99-archive |
@@ -63,7 +66,11 @@ La Constitución distingue los siguientes tipos de autoridad documental:
 5. La relación estudiante–docente–familia es parte central del producto:
    los docentes acompañan y evalúan; las familias supervisan y acompañan;
    los estudiantes avanzan y crean.
-6. DAEMON no es un videojuego, no es una red social de consumo infinito, no
+6. DAEMON ofrece experiencias diferenciadas para estudiantes, docentes,
+   familias y funciones de administración, además de experiencias públicas,
+   de aula e integraciones autorizadas cuando correspondan, sobre un núcleo
+   compartido de identidad, datos, seguridad, diseño y servicios.
+7. DAEMON no es un videojuego, no es una red social de consumo infinito, no
    es un sistema administrativo puro, no es una aplicación preescolar y no
    es una demostración técnica. Su tecnología (Angular, Laravel, Firebase,
    Supabase) sirve al producto; no lo define.
@@ -88,7 +95,11 @@ La lista detallada de capacidades del producto pertenece a
 6. La progresión es parte central del producto: el avance del estudiante es
    el eje que conecta misiones, experiencia, niveles, recompensas y
    seguimiento.
-7. Esta Constitución no declara métricas de impacto, alcance nacional o
+7. Para las funciones de administración, DAEMON ofrece control de usuarios,
+   permisos, configuración, supervisión y trazabilidad operativa conforme a
+   los permisos implementados. No se declara un portal administrativo
+   independiente más allá de lo que el código confirme.
+8. Esta Constitución no declara métricas de impacto, alcance nacional o
    internacional, ni inclusión territorial alguna, por no existir evidencia
    documental vigente y verificable que las sustente.
 
@@ -470,7 +481,7 @@ Requieren ADR los siguientes cambios:
 7. Nueva integración crítica.
 8. Cambio en seguridad estructural.
 9. Cambio incompatible de la experiencia KIDS/TEENS.
-10. Excepción estructural a la Constitución.
+10. Cambio estructural que requiera modificar la Constitución.
 
 Reglas de los ADR:
 
@@ -478,6 +489,10 @@ Reglas de los ADR:
 - Un ADR no puede contradecir la Constitución.
 - Un ADR puede ser superseded por otro ADR.
 - Un ADR debe registrar contexto, decisión, consecuencias y estado.
+- Un ADR por sí solo no puede autorizar una contradicción o excepción a la
+  Constitución. Una excepción constitucional requiere el procedimiento
+  formal de aprobación definido en la Sección 19. Cuando la excepción
+  también afecte la arquitectura, requiere además un ADR.
 
 Los ADR aceptados se mantienen en `docs/20-architecture/adr/` y se
 consideran autoridad de dominio dentro de su alcance.
@@ -491,9 +506,9 @@ Tipos de cambio:
 | Cambio menor | Corrección editorial, ajuste local sin efecto estructural | Revisión estándar de la tarea |
 | Cambio de dominio | Modificación dentro de un dominio canónico | Propietario del dominio |
 | Cambio estructural | Fronteras, autoridad de datos, seguridad estructural, KIDS/TEENS | ADR + propietario |
-| Cambio incompatible | Ruptura de invariantes o de la Constitución | Excepción formal (abajo) |
+| Cambio incompatible | Ruptura de invariantes o de la Constitución | Aprobación explícita del project-owner + revisión técnica + modificación constitucional o excepción temporal formal + ADR cuando afecte arquitectura, datos, identidad o seguridad estructural |
 | Excepción temporal | Desviación acotada en tiempo y alcance | Propietario + duración fija |
-| Excepción permanente | Desviación estructural durable | ADR + aprobación del propietario |
+| Excepción permanente | Desviación estructural durable | No existe como simple desviación: requiere modificación formal de la Constitución + aprobación del project-owner + revisión técnica + ADR cuando afecte arquitectura |
 
 Toda excepción debe:
 
@@ -502,7 +517,9 @@ Toda excepción debe:
 - tener propietario responsable;
 - tener motivo;
 - tener duración (o condición de cierre);
-- no convertirse automáticamente en precedente.
+- no convertirse automáticamente en precedente;
+- ser aprobadas siempre por una función con autoridad: ningún agente puede
+  aprobar una excepción.
 
 Están prohibidas las excepciones que:
 
@@ -590,19 +607,20 @@ detalle aquí.
 | Fecha | Versión | Estado | Cambio | Aprobaciones |
 |---|---|---|---|---|
 | 2026-08-06 | 1.0-candidate | draft | Creación del candidato FND-2A | Pendiente |
+| 2026-08-06 | 1.0 | canonical | Corrección, aprobación y activación FND-2B | project-owner + technical-reviewer |
 
 ## Apéndice A. Matriz de trazabilidad
 
 | Regla constitucional | Tipo | Fuente de evidencia | Estado |
 |---|---|---|---|
-| Autoridad global de la Constitución | Governance decision | FND-1 (foundation-assessment, canonical-document-map) | Draft — pendiente de aprobación |
-| KIDS y TEENS comparten base | Verified state / Accepted ADR | ADR-005, portal-alumno | Vigente |
+| Autoridad global de la Constitución | Governance decision | FND-1 (foundation-assessment, canonical-document-map) | Vigente — aprobada en FND-2B |
+| KIDS y TEENS comparten base | Accepted ADR | ADR-005, portal-alumno | Vigente |
 | `rol` y `nivel` separados | Verified state | Modelos `usuarios` (rol/nivel), ADR-005 | Vigente |
-| Firebase Auth como identidad | Verified state / Accepted ADR | firebase-auth.md, ADR-001 | Vigente |
+| Firebase Auth como identidad | Accepted ADR | ADR-001, firebase-auth.md | Vigente |
 | PostgreSQL como datos de negocio | Accepted ADR | ADR-001, supabase-postgres.md | Vigente |
 | Firestore como autoridad de cuentos v2 | Accepted ADR | ADR-002, ADR-003 | Vigente (transición) |
 | Supabase Storage para archivos | Accepted ADR | ADR-004 | Vigente |
-| Fail-closed de entornos | Domain rule | ADR-006, ENVIRONMENTS.md | Vigente |
+| Fail-closed de entornos | Accepted ADR | ADR-006, ENVIRONMENTS.md | Vigente |
 | Seguridad por defecto y secretos fuera del repo | Domain rule | SECURITY.md, firebase-auth.md, privacidad-kids-teens.md | Vigente |
 | Sistema visual con autoridad de dominio | Governance decision | visual-constitution.md, canonical-document-map.md | Vigente (V1 aprobada) |
 | Cambios estructurales requieren ADR | Governance decision | ADR-001..006 (práctica establecida) | Vigente |

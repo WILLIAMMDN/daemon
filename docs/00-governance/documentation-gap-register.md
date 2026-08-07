@@ -28,15 +28,15 @@ Estado posible: `abierta`, `en curso`, `cerrada`, `consolidada`.
 
 - Dominio: Governance
 - Prioridad: P0
-- Estado: abierta
-- Problema: No existe `project-constitution.md` que defina identidad, alcance, misión, usuarios, límites, jerarquía de autoridad y reglas de gobernanza del proyecto, incluidos los términos de gobernanza (rol vs nivel, autoridad, canónico, etc.).
-- Evidencia: `find docs` no muestra el archivo; `00-governance/` solo contiene source-of-truth, agent-reading-order, documentation-policy (stub) y document-statuses.
-- Riesgo: un agente nuevo no puede distinguir "qué es DAEMON" de "qué quiere ser"; decisiones de alcance se toman sin referencia.
-- Impacto para agentes: cold start Q1-Q2 solo PASS parcial vía README; sin autoridad única.
-- Documento canónico afectado: `project-constitution.md` (futuro).
-- Resolución propuesta: FND-2 — redactar Constitución General con identidad, propósito, usuarios, portales, límites, jerarquía de autoridad, reglas de decisión y aprobación, y vocabulario de gobernanza.
-- Dependencias: aprobación de FND-1.
-- Criterio de cierre: documento publicado, `status: canonical`, enlazado desde AGENTS.md y source-of-truth; cold start Q1-Q2 → PASS con fuente única.
+- Estado: **cerrada**
+- Problema: No existía `project-constitution.md` que defina identidad, alcance, misión, usuarios, límites, jerarquía de autoridad y reglas de gobernanza del proyecto, incluidos los términos de gobernanza (rol vs nivel, autoridad, canónico, etc.).
+- Evidencia: `project-constitution.md` versión 1.0 `status: canonical`, aprobada en FND-2B y enlazada desde AGENTS.md, docs/README y source-of-truth.
+- Riesgo: resuelto; ahora existe fuente única de identidad y gobernanza.
+- Impacto para agentes: cold start Q1-Q2 → PASS con fuente única.
+- Documento canónico afectado: `project-constitution.md` (creado y aprobado).
+- Resolución propuesta: ejecutada en FND-2 (candidato) y FND-2B (activación).
+- Dependencias: FND-1 aprobado.
+- Criterio de cierre: **cumplido** — documento publicado, `status: canonical`, enlazado desde AGENTS.md y source-of-truth; commit de la fase FND-2B.
 
 ---
 
@@ -172,11 +172,11 @@ Estado posible: `abierta`, `en curso`, `cerrada`, `consolidada`.
 
 - Dominio: Governance
 - Prioridad: P1
-- Estado: abierta
+- Estado: abierta (enlaces principales de gobernanza corregidos en FND-2B; pendientes en producto/arquitectura)
 - Problema: README.md, ai-project-context.md y documentación-audit/migration-map usan rutas pre-reorganización (`docs/portal-alumno.md`, `docs/qa-produccion.md`, `sistema-diseno/*`, `transformacion-estudiante/*`). route-inventory.md y frontend-audit apuntan a `00-DOCUMENTATION-STATUS.md` (eliminado).
-- Evidencia: C-04, C-06, C-07 en foundation-assessment §9; `grep` de rutas viejas.
+- Evidencia: C-04, C-06, C-07 en foundation-assessment §9; `grep` de rutas viejas. En FND-2B se corrigieron los enlaces de gobernanza (docs/README, source-of-truth, agent-reading-order).
 - Riesgo: un agente no encuentra la documentación vigente; usa mapas falsos.
-- Impacto para agentes: cold start Q19 → PASS pero con fricción; lecturas fallidas.
+- Impacto para agentes: cold start Q19 → PASS pero con fricción residual en producto/arquitectura.
 - Documento canónico afectado: README.md, ai-project-context.md, agent-reading-order.
 - Resolución propuesta: actualizar enlaces a rutas numeradas; archivar documentation-audit.md y documentation-migration-map.md en 90-audits-history.
 - Dependencias: ninguna (acción documental menor).
@@ -188,14 +188,14 @@ Estado posible: `abierta`, `en curso`, `cerrada`, `consolidada`.
 
 - Dominio: Governance
 - Prioridad: P2
-- Estado: abierta
+- Estado: **en curso**
 - Problema: source-of-truth.md declara "canonical" a documentos con frontmatter `status: active` (portal-alumno, ai-project-context, frontend-architecture, api-crud, firebase-auth, supabase-postgres, etc.). design-system auto-declara autoridad sin usar el sistema de estados.
-- Evidencia: C-05 en foundation-assessment §9; lectura de frontmatters.
+- Evidencia: C-05 en foundation-assessment §9; lectura de frontmatters. En FND-2B la gobernanza quedó definida (document-statuses expandido con transiciones y regla de coherencia).
 - Riesgo: ambigüedad sobre qué es normativo; un agente trata un "active" como no vinculante.
 - Impacto para agentes: cold start Q19 → PASS con matiz.
 - Documento canónico afectado: source-of-truth.md, document-statuses.md.
-- Resolución propuesta: alinear frontmatter con la tabla de gobernanza; definir regla de correspondencia.
-- Dependencias: FND-2.
+- Resolución propuesta: alinear frontmatter con la tabla de gobernanza; definir regla de correspondencia (regla ya definida en document-statuses FND-2B).
+- Dependencias: FND-2B completado; **pendiente**: migrar el frontmatter de los documentos de otros dominios (producto, arquitectura, datos, seguridad, operaciones, calidad) en fases posteriores.
 - Criterio de cierre: todo canónico declarado tiene `status: canonical` coherente.
 
 ---
@@ -204,14 +204,14 @@ Estado posible: `abierta`, `en curso`, `cerrada`, `consolidada`.
 
 - Dominio: Governance/Product
 - Prioridad: P3
-- Estado: abierta
+- Estado: parcial (vocabulario de gobernanza cubierto en FND-2B; vocabulario funcional pendiente hasta FND-3)
 - Problema: términos como XP, DAEMONS, KIDS/TEENS, rol vs nivel, racha, Núcleo DAEMON, progreso_nivel aparecen en múltiples docs sin definición central. **No se crea `glossary.md`:** los términos de gobernanza se definen en `project-constitution.md` y los términos funcionales en `product-overview.md`.
-- Evidencia: manual_usuario y portal-alumno usan la terminología; no existe glossary.
+- Evidencia: Sección 21 de project-constitution.md (vocabulario de gobernanza) aprobada en FND-2B; manual_usuario y portal-alumno usan la terminología funcional aún sin fuente central.
 - Riesgo: ambigüedad de vocabulario entre agentes y equipo.
-- Impacto para agentes: interpretación divergente de términos.
-- Documento canónico afectado: project-constitution.md (vocabulario de gobernanza), product-overview.md (vocabulario funcional).
-- Resolución propuesta: incluir secciones de vocabulario en la Constitución (FND-2) y en product-overview (FND-3); no crear documento separado.
-- Dependencias: FND-2/3.
+- Impacto para agentes: interpretación divergente de términos funcionales hasta FND-3.
+- Documento canónico afectado: project-constitution.md (vocabulario de gobernanza, cubierto), product-overview.md (vocabulario funcional, FND-3).
+- Resolución propuesta: incluir secciones de vocabulario en la Constitución (ejecutado) y en product-overview (FND-3); no crear documento separado.
+- Dependencias: FND-3 (parte funcional).
 - Criterio de cierre: constitution y product-overview incluyen sus secciones de términos; no existe glossary.md.
 
 ---
@@ -316,15 +316,15 @@ Estado posible: `abierta`, `en curso`, `cerrada`, `consolidada`.
 
 - Dominio: Governance
 - Prioridad: P2
-- Estado: abierta
-- Problema: CONTRIBUTING.md sugiere `feature/*` y Conventional Commits, pero no hay convención explícita para ramas de documentación (`docs/*`) ni para cambios de gobernanza.
-- Evidencia: CONTRIBUTING.md; ramas recientes usan `docs/*` de facto.
-- Riesgo: naming inconsistente.
-- Impacto para agentes: cold start Q21 → PARTIAL.
+- Estado: **cerrada**
+- Problema: CONTRIBUTING.md sugiere `feature/*` y Conventional Commits, pero no había convención explícita para ramas de documentación (`docs/*`) ni para cambios de gobernanza.
+- Evidencia: documentation-policy.md §9 (FND-2B) define ramas `docs/...` y Conventional Commits con convención `docs(scope): descripción imperativa`; CONTRIBUTING.md; ramas recientes usan `docs/*` de facto.
+- Riesgo: resuelto — naming consistente para tareas documentales.
+- Impacto para agentes: cold start Q21 → PASS para documentación.
 - Documento canónico afectado: documentation-policy.md, CONTRIBUTING.md.
-- Resolución propuesta: documentar convención de ramas por tipo (feature, fix, docs, refactor) y requisitos de commit.
+- Resolución propuesta: ejecutada en FND-2B (documentation-policy §9).
 - Dependencias: FND-2.
-- Criterio de cierre: convención documentada en documentation-policy.md.
+- Criterio de cierre: **cumplido** — convención documentada en documentation-policy.md.
 
 ---
 
@@ -380,22 +380,22 @@ Estado posible: `abierta`, `en curso`, `cerrada`, `consolidada`.
 
 | Orden | GAP | Prioridad | Dependencia | Fase propuesta |
 |---|---|---|---|---|
-| 1 | GAP-001 Constitución del Proyecto | P0 | — | FND-2 |
+| 1 | GAP-001 Constitución del Proyecto | P0 | — | **cerrada (FND-2B)** |
 | 2 | GAP-003 ownership de datos | P0 | GAP-013 | FND-5 |
 | 3 | GAP-004 seguridad (baseline/threat) | P0 | GAP-001 | FND-5 |
 | 4 | GAP-009 variable OpenRouter (código) | P0 | propietario | Fuera de fase (acción de código autorizada) |
 | 5 | GAP-005 `.env` local (operativo) | P0 | propietario | Fuera de fase (acción del propietario) |
-| 6 | GAP-002 Producto (overview + business rules) | P1 | GAP-001 | FND-3 |
+| 6 | GAP-002 Producto (overview + business rules) | P1 | GAP-001 (cerrado) | FND-3 |
 | 7 | GAP-008 Docs desactualizadas (api-crud, crud-roadmap) | P1 | GAP-002 | FND-3 |
 | 8 | GAP-013 Arquitectura de sistema (C4) | P1 | GAP-002 | FND-4 |
 | 9 | GAP-014 backend-architecture | P1 | GAP-013 | FND-4 |
 | 10 | GAP-006 operations-runbook (incl. observabilidad) | P1 | GAP-013 | FND-5 |
 | 11 | GAP-007 quality-gates (DoD/testing/release) | P1 | GAP-001 | FND-6 |
 | 12 | GAP-017 archivos prohibidos/stop-condition | P1 | GAP-001 | FND-6 |
-| 13 | GAP-010 enlaces rotos | P1 | — | FND-2/3 (temprano) |
-| 14 | GAP-011 frontmatter coherente | P2 | GAP-001 | FND-2 |
+| 13 | GAP-010 enlaces rotos | P1 | — | FND-2/3 (enlaces de gobernanza corregidos en FND-2B) |
+| 14 | GAP-011 frontmatter coherente | P2 | GAP-001 | **en curso** (gobernanza definida FND-2B; migración de estados por dominio pendiente) |
 | 15 | GAP-016 política de migración (en data-ownership) | P2 | GAP-003 | FND-5 |
-| 16 | GAP-019 convención ramas/commits | P2 | GAP-001 | FND-2 |
+| 16 | GAP-019 convención ramas/commits | P2 | GAP-001 | **cerrada (FND-2B)** |
 | 17 | GAP-020 openapi/routes | P2 | GAP-013 | FND-4 |
 | 18 | GAP-012 vocabulario (en constitution/product) | P3 | GAP-001/002 | FND-2/3 |
 | 19 | GAP-021 auditoría limpia | P3 | — | FND-6 |
@@ -407,7 +407,7 @@ Estado posible: `abierta`, `en curso`, `cerrada`, `consolidada`.
 
 > No se implementa en FND-1. Propuesta de fases posteriores para decisión del propietario.
 
-1. **FND-2 — Constitución del Proyecto.** `project-constitution.md` (identidad, alcance, jerarquía, gobernanza, vocabulario de gobernanza). Cierra GAP-001, GAP-011, GAP-019, parcial GAP-010 y GAP-012 (vocabulario de gobernanza).
+1. **FND-2 — Constitución del Proyecto.** `project-constitution.md` (identidad, alcance, jerarquía, gobernanza, vocabulario de gobernanza). **Ejecutado (FND-2A candidato + FND-2B activación).** Cierra GAP-001 y GAP-019; deja GAP-011 en curso y GAP-012 parcial (vocabulario de gobernanza cubierto) y corrige los enlaces principales de gobernanza de GAP-010.
 2. **FND-3 — Producto.** `product-overview.md` (incluye users/portals, capability inventory de 25 filas y vocabulario funcional) y `business-rules.md`. Cierra GAP-002, GAP-008, GAP-022 y la parte funcional de GAP-012.
 3. **FND-4 — Arquitectura.** `system-architecture.md` (C4 + deployment + integration map), `backend-architecture.md`, índice ADR, openapi regenerado. Cierra GAP-013, GAP-014, GAP-020.
 4. **FND-5 — Datos, seguridad y operación.** `data-ownership.md` (incluye política de migración), `entity-catalog.md`, `security-baseline.md` (incluye autenticación/autorización y secretos), `threat-model.md`, `environments.md` (normalizar nombre), `operations-runbook.md` (deploy, backup, incidentes, observabilidad). Cierra GAP-003, GAP-004, GAP-006 (+GAP-018), GAP-016.

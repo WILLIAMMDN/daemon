@@ -146,8 +146,9 @@ cd C:\laragon\www\daemon
 git status --short --branch
 ```
 
-The initial bundle stays under the configured 1 MB warning budget. Treat any
-new build warning as a regression to review instead of accepting it by default.
+The initial bundle currently stays around 1.28 MB, which exceeds the configured
+1 MB warning budget. The build passes, but treat any new or larger warning as a
+regression to review instead of accepting it by default.
 
 ## Deploy commands
 
@@ -214,10 +215,17 @@ There is no local/staging DB. So:
 **Orden obligatorio para cualquier agente:**
 1. `AGENTS.md`
 2. `docs/README.md`
-3. `docs/00-governance/source-of-truth.md`
-4. `docs/00-governance/agent-reading-order.md`
-5. documentación canónica del dominio asignado
-6. documentación activa de la iniciativa
+3. `docs/00-governance/project-constitution.md` (autoridad global)
+4. `docs/00-governance/source-of-truth.md`
+5. `docs/00-governance/agent-reading-order.md`
+6. documentación canónica del dominio asignado
+7. ADR aplicables
+8. documentación activa de la iniciativa
+
+La Constitución General (`docs/00-governance/project-constitution.md`)
+tiene precedencia global: los documentos de dominio deben respetarla y
+ningún agente puede modificarla ni crear excepciones sin autorización
+explícita del propietario.
 
 **Prohibido usar como especificación:**
 - historial Git;
