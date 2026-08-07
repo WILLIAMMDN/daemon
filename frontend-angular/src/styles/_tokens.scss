@@ -9,11 +9,15 @@
      - tailwind.config.js             (utility class theme)
      - src/app/core/dominio/tema-portal-alumno.ts (read at runtime)
 
-   ARQUITECTURA DE TOKENS (4 capas):
-     1. Universales        — no se sobreescriben nunca
-     2. Brand              — default en :root (morado DAEMON, la galería)
-     3. Niveles (KIDS/TEENS) — colores directos para uso específico
-     4. Portal themes      — reescriben --daemon-primary según el portal
+   ESTRUCTURA DE CAPAS:
+     CANÓNICA (Token Map V1) — tokens APROBADOS del sistema visual.
+       Autoridad: docs/30-design-system/token-map.md (V1, VIGENTE).
+       Solo tokens APROBADOS. Los PROPUESTOS NO se promocionan.
+     LEGACY (compatibilidad) — tokens previos a la fundación que
+       todavía consumen los componentes. No se eliminan hasta la
+       migración de consumidores. Cuando un legacy representa el
+       mismo concepto que un canónico con el mismo valor, se
+       conserva como alias temporal: --legacy-x: var(--canonical-x).
 
    Cómo se aplica el tema:
      - layout-alumno  agrega .theme-kids  o .theme-teens  al host
@@ -23,48 +27,162 @@
 
    RULES:
      - No hex values outside this file (except allowlist).
-     - No new tokens without a written reason in
-       docs/sistema-diseno/01-auditoria-frontend.md §6.
+     - No new tokens without a written reason in the Token Map V1.
      - Changing a token here propagates to all consumers.
    ============================================================ */
 
 :root {
-  /* === LAYER 1: SUPERFICIE === */
-  --daemon-canvas:           #f4f7fb;
-  --daemon-surface:          #ffffff;
-  --daemon-surface-muted:    #f8fafc;
-  --daemon-surface-elevated: #ffffff;
-  --daemon-border:           #e4eaf2;
-  --daemon-border-strong:    #cbd5e5;
+  /* ============================================================
+     CAPA CANÓNICA — TOKEN MAP V1 (aprobados)
+     ============================================================ */
 
-  /* === LAYER 1: TIPOGRAFÍA === */
-  --daemon-ink:        #172033;
-  --daemon-ink-soft:   #334155;
-  --daemon-muted:      #667085;
+  /* === A. BRAND — 5 colores núcleo (Constitución V1 §4) === */
+  --daemon-marca-navy-900:   #10105D;
+  --daemon-marca-green-500:  #76CF1A;
+  --daemon-marca-yellow-500: #FEC514;
+  --daemon-marca-orange-500: #EB590C;
+  --daemon-marca-purple-600: #5630CE;
+
+  /* === B. NEUTRALS (Constitución V1 §4.4) === */
+  --daemon-neutral-canvas:           #F4F7FB;
+  --daemon-neutral-surface:          #FFFFFF;
+  --daemon-neutral-surface-subtle:   #F8FAFC;
+  --daemon-neutral-text-primary:     #172033;
+  --daemon-neutral-text-secondary:   #667085;
+  --daemon-neutral-text-disabled:    #98A2B3;
+  --daemon-neutral-border:           #E4EAF2;
+  --daemon-neutral-border-strong:    #CBD5E1;
+
+  /* === C. SEMANTIC (Constitución V1 §5.2) === */
+  --daemon-semantic-success:        #16A34A;
+  --daemon-semantic-success-subtle: #DCFCE7;
+  --daemon-semantic-warning:        #B54708;
+  --daemon-semantic-warning-subtle: #FFF7ED;
+  --daemon-semantic-danger:         #B42331;
+  --daemon-semantic-danger-subtle:  #FEE2E2;
+  --daemon-semantic-info:           #2563EB;
+  --daemon-semantic-info-subtle:    #EFF6FF;
+
+  /* On-colors aprobados (combinaciones canónicas del Token Map V1) */
+  --daemon-on-navy:         #F8FAFC;  /* texto sobre marca-navy-900 */
+  --daemon-on-navy-muted:   #B9C0E4;  /* texto secundario sobre navy-900 */
+  --daemon-on-yellow:       #10105D;  /* única combinación aprobada sobre yellow-500 */
+  --daemon-on-purple:       #FFFFFF;  /* sobre marca-purple-600 (7.75:1) */
+  --daemon-on-success:      #FFFFFF;  /* solo UI no textual o texto grande */
+  --daemon-on-success-subtle: #14532D;
+  --daemon-on-warning:      #FFFFFF;  /* 4.5+:1 verificado */
+  --daemon-on-warning-subtle: #7C2D12;
+  --daemon-on-danger:       #FFFFFF;  /* 4.5+:1 verificado */
+  --daemon-on-danger-subtle: #7F1D1D;
+  --daemon-on-info:         #FFFFFF;  /* 4.5+:1 verificado */
+  --daemon-on-info-subtle:  #1E3A8A;
+
+  /* === D. STUDENT ROLES (Constitución V1 §6) ===
+     student-action-primary varía por nivel: KIDS yellow / TEENS purple.
+     El valor :root es el default de marca (TEENS); .theme-kids lo
+     sobreescribe. NO reemplaza a --daemon-primary (semántica distinta). */
+  --daemon-student-action-primary:      var(--daemon-marca-purple-600);
+  --daemon-student-action-primary-on:   var(--daemon-on-purple);
+  --daemon-student-progress:            var(--daemon-marca-green-500);
+  --daemon-student-mission:             var(--daemon-marca-orange-500);
+  --daemon-student-creative:            var(--daemon-marca-purple-600);
+  --daemon-student-reward:              var(--daemon-marca-yellow-500);
+  --daemon-student-navigation:          var(--daemon-marca-navy-900);
+  --daemon-student-navigation-text:     var(--daemon-on-navy);
+  --daemon-student-navigation-muted:    var(--daemon-on-navy-muted);
+
+  /* === E. TYPOGRAPHY (Constitución V1 §9) — escala aprobada === */
+  --daemon-font-family-ui: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --daemon-font-size-display: 40px; --daemon-font-weight-display: 700; --daemon-line-height-display: 1.1;
+  --daemon-font-size-h1:      32px; --daemon-font-weight-h1:      700; --daemon-line-height-h1:       1.15;
+  --daemon-font-size-h2:      24px; --daemon-font-weight-h2:      700; --daemon-line-height-h2:       1.2;
+  --daemon-font-size-h3:      20px; --daemon-font-weight-h3:      600; --daemon-line-height-h3:       1.3;
+  --daemon-font-size-body-lg: 16px; --daemon-font-weight-body-lg: 500; --daemon-line-height-body-lg:  1.5;
+  --daemon-font-size-body:    14px; --daemon-font-weight-body:    400; --daemon-line-height-body:     1.5;
+  --daemon-font-size-small:   13px; --daemon-font-weight-small:   400; --daemon-line-height-small:    1.4;
+  --daemon-font-size-caption: 12px; --daemon-font-weight-caption: 500; --daemon-line-height-caption:  1.3;
+  --daemon-font-size-mini:    10px; --daemon-font-weight-mini:    700; --daemon-line-height-mini:     1.3;
+  --daemon-font-weight-regular:  400;
+  --daemon-font-weight-medium:   500;
+  --daemon-font-weight-semibold: 600;
+  --daemon-font-weight-bold:     700;
+  --daemon-font-weight-extra:    800;
+
+  /* === F. SPACING (Constitución V1 §10) — escala de 4 px === */
+  --daemon-space-1:   4px;
+  --daemon-space-2:   8px;
+  --daemon-space-3:   12px;
+  --daemon-space-4:   16px;
+  --daemon-space-5:   20px;
+  --daemon-space-6:   24px;
+  --daemon-space-8:   32px;
+  --daemon-space-9:   40px;
+  --daemon-space-10:  48px;
+  --daemon-space-12:  64px;
+  --daemon-space-page-pad: clamp(1.5rem, 2.5vw, 2rem);
+  --daemon-space-page-max: 1280px;
+
+  /* === G. RADIUS (Constitución V1 §12) — escala aprobada === */
+  --daemon-radius-xs:   6px;
+  --daemon-radius-sm:   10px;
+  --daemon-radius-md:   14px;
+  --daemon-radius-lg:   18px;
+  --daemon-radius-xl:   24px;
+  --daemon-radius-pill: 999px;
+
+  /* === H. SHADOWS (Constitución V1 §14) — neutras, sin tinte === */
+  --daemon-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --daemon-shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --daemon-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
+  --daemon-shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.06);
+
+  /* === I. MOTION (Constitución V1 §17) — escala aprobada === */
+  --daemon-motion-fast:   120ms;
+  --daemon-motion-normal: 180ms;
+  --daemon-motion-slow:   240ms;
+  --daemon-motion-ease:   cubic-bezier(0.2, 0.7, 0.25, 1);
+
+  /* ============================================================
+     CAPA LEGACY — compatibilidad con consumidores actuales
+     (no eliminar; migrar en COD-1B2 y fases posteriores)
+     ============================================================ */
+
+  /* === SUPERFICIE === */
+  --daemon-canvas:           var(--daemon-neutral-canvas);
+  --daemon-surface:          var(--daemon-neutral-surface);
+  --daemon-surface-muted:    var(--daemon-neutral-surface-subtle);
+  --daemon-surface-elevated: var(--daemon-neutral-surface);
+  --daemon-border:           var(--daemon-neutral-border);
+  --daemon-border-strong:    #cbd5e5; /* legacy: difiere del canónico (#CBD5E1); mantener */
+
+  /* === TIPOGRAFÍA === */
+  --daemon-ink:        var(--daemon-neutral-text-primary);
+  --daemon-ink-soft:   #334155; /* legacy: sin equivalente directo en V1 */
+  --daemon-muted:      var(--daemon-neutral-text-secondary);
   --daemon-on-primary: #ffffff;
-  --daemon-on-accent:  #24194f;
+  --daemon-on-accent:  #24194f; /* legacy: on-color del accent legacy */
 
-  /* === LAYER 2: BRAND — primary morado DAEMON (la galería) === */
+  /* === BRAND LEGACY (semántica de portal, distinta de los marca canónicos) === */
   --daemon-primary:       #5e34d7;
   --daemon-primary-soft:  #7359c8;
   --daemon-primary-dark:  #5730cf;
 
-  /* === LAYER 1: ACENTO DAEMONS (universal, no cambia) === */
+  /* === ACENTO DAEMONS LEGACY === */
   --daemon-accent:      #ffc414;
   --daemon-accent-soft: #fff7d6;
   --daemon-accent-dark: #dca003;
 
-  /* === LAYER 1: SEMÁNTICOS === */
+  /* === SEMÁNTICOS LEGACY (conservan su valor; los canónicos viven arriba) === */
   --daemon-success:      #12a150;
   --daemon-success-soft: #e7f8ef;
   --daemon-warning:      #f5a000;
   --daemon-warning-soft: #fff4d7;
-  --daemon-danger:       #b42331;
+  --daemon-danger:       var(--daemon-semantic-danger);
   --daemon-danger-soft:  #ffe5e9;
-  --daemon-info:         #2563eb;
-  --daemon-info-soft:    #eff6ff;
+  --daemon-info:         var(--daemon-semantic-info);
+  --daemon-info-soft:    var(--daemon-semantic-info-subtle);
 
-  /* === LAYER 3: NIVELES (colores directos para uso específico) === */
+  /* === NIVELES LEGACY (KIDS/TEENS colores directos) === */
   --daemon-kids:        #00b4d8;
   --daemon-kids-soft:   #e8f9fc;
   --daemon-kids-border: #b8edf5;
@@ -72,31 +190,22 @@
   --daemon-teens-soft:  #edf5ff;
   --daemon-teens-border: #cfe3ff;
 
-  /* === LAYER 3: DOCENTE / TUTOR (colores directos) === */
+  /* === DOCENTE / TUTOR LEGACY === */
   --daemon-docente:      #19c1d0;
   --daemon-docente-soft: #e9fbfd;
   --daemon-tutor:        #ffc414;
   --daemon-tutor-soft:   #fff8dc;
   --daemon-tutor-ink:    #24194f;
 
-  /* === RADIO === */
-  --daemon-radius-sm:     8px;
-  --daemon-radius-md:     12px;
-  --daemon-radius-lg:     16px;
-  --daemon-radius-card:   14px;
-  --daemon-radius-banner: 22px;
+  /* === RADIO LEGACY (aliases cuando el valor coincide) === */
+  --daemon-radius-card:   var(--daemon-radius-md);
+  --daemon-radius-banner: 22px; /* legacy: fuera de la escala V1; mantener */
 
-  /* === ESPACIO === */
-  --daemon-space-1:  0.25rem;
-  --daemon-space-2:  0.5rem;
-  --daemon-space-3:  0.75rem;
-  --daemon-space-4:  1rem;
-  --daemon-space-6:  1.5rem;
-  --daemon-space-8:  2rem;
-  --daemon-page-pad: clamp(1rem, 2.5vw, 1.5rem);
-  --daemon-page-max: 1280px;
+  /* === ESPACIO LEGACY (página) === */
+  --daemon-page-pad: clamp(1rem, 2.5vw, 1.5rem); /* legacy: difiere del canónico; mantener */
+  --daemon-page-max: var(--daemon-space-page-max);
 
-  /* === SOMBRAS === */
+  /* === SOMBRAS LEGACY (conceptos propios, no alias) === */
   --daemon-shadow-soft:    0 2px 10px rgba(23, 36, 60, 0.04);
   --daemon-shadow-popover: 0 12px 32px rgba(0, 0, 0, 0.10);
   --daemon-shadow-premium: 0 4px 6px -1px rgba(0, 0, 0, 0.03),
@@ -104,13 +213,13 @@
                            0 24px 48px -12px rgba(0, 0, 0, 0.08);
   --daemon-shadow-bento:   0 24px 70px -34px rgba(30, 64, 175, 0.28);
 
-  /* === TRANSICIONES === */
-  --daemon-ease-out:        cubic-bezier(0.2, 0.7, 0.25, 1);
-  --daemon-duration-fast:   120ms;
-  --daemon-duration-base:   180ms;
-  --daemon-duration-slow:   280ms;
+  /* === MOTION LEGACY (aliases cuando el valor coincide) === */
+  --daemon-ease-out:        var(--daemon-motion-ease);
+  --daemon-duration-fast:   var(--daemon-motion-fast);
+  --daemon-duration-base:   var(--daemon-motion-normal);
+  --daemon-duration-slow:   280ms; /* legacy: difiere del canónico (240ms); mantener */
 
-  /* === Z-INDEX === */
+  /* === Z-INDEX LEGACY (escala existente; no forma parte del Token Map V1) === */
   --daemon-z-content:    1;
   --daemon-z-sticky:     100;
   --daemon-z-sidebar:    200;
@@ -122,8 +231,8 @@
 }
 
 /* ============================================================
-   LAYER 4: PORTAL THEMES
-   Reescriben --daemon-primary según el contexto.
+   PORTAL THEMES
+   Reescriben --daemon-primary y los roles canónicos por contexto.
    El layout agrega la clase al host del componente.
    ============================================================ */
 
@@ -133,6 +242,10 @@
   --daemon-primary-soft: #855ef0;
   --daemon-primary-dark: #5b35c9;
   --daemon-accent:       #ffc414; /* Amarillo DAEMONS/Estrellas */
+
+  /* ROL CANÓNICO — student-action-primary KIDS = yellow-500 (Token Map V1 §4) */
+  --daemon-student-action-primary:    var(--daemon-marca-yellow-500);
+  --daemon-student-action-primary-on: var(--daemon-on-yellow);
 }
 
 /* TEENS — azul con acento amarillo (DAEMONS) */
@@ -140,6 +253,10 @@
   --daemon-primary:      #1677ff;
   --daemon-primary-soft: #e8f1ff;
   --daemon-primary-dark: #0958d9;
+
+  /* ROL CANÓNICO — student-action-primary TEENS = purple-600 (Token Map V1 §4) */
+  --daemon-student-action-primary:    var(--daemon-marca-purple-600);
+  --daemon-student-action-primary-on: var(--daemon-on-purple);
 }
 
 /* DOCENTE — cyan-teal */
