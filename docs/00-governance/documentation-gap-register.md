@@ -2,11 +2,12 @@
 title: DAEMON Documentation Gap Register
 status: active
 normative: false
-phase: FND-1
-date: 2026-08-06
-branch: docs/foundation-assessment-v1
-commit_base: 1792933
-scope: Registro vivo de brechas documentales y de preparación para agentes (conjunto reducido). FND-1 solo lo crea; las resoluciones se ejecutan en fases posteriores.
+owner: governance
+phase: ongoing
+created: 2026-08-06
+last_reviewed: 2026-08-06
+applies_to: all
+scope: Registro vivo de brechas documentales, técnicas, operativas y de preparación para agentes. Se actualiza conforme se cierran las fases FND.
 ---
 
 # Documentation Gap Register
@@ -18,7 +19,7 @@ scope: Registro vivo de brechas documentales y de preparación para agentes (con
 - **P2 — Medium:** mejora de calidad/coherencia; no bloquea.
 - **P3 — Low:** pulido, normalización de nombres o enlaces menores.
 
-Estado posible: `abierta`, `en curso`, `cerrada`, `consolidada`.
+Estados posibles: `abierta`, `en curso`, `cerrada`, `consolidada`.
 
 ---
 
@@ -204,7 +205,7 @@ Estado posible: `abierta`, `en curso`, `cerrada`, `consolidada`.
 
 - Dominio: Governance/Product
 - Prioridad: P3
-- Estado: parcial (vocabulario de gobernanza cubierto en FND-2B; vocabulario funcional pendiente hasta FND-3)
+- Estado: **en curso** (vocabulario de gobernanza cubierto en FND-2B; vocabulario funcional pendiente hasta FND-3)
 - Problema: términos como XP, DAEMONS, KIDS/TEENS, rol vs nivel, racha, Núcleo DAEMON, progreso_nivel aparecen en múltiples docs sin definición central. **No se crea `glossary.md`:** los términos de gobernanza se definen en `project-constitution.md` y los términos funcionales en `product-overview.md`.
 - Evidencia: Sección 21 de project-constitution.md (vocabulario de gobernanza) aprobada en FND-2B; manual_usuario y portal-alumno usan la terminología funcional aún sin fuente central.
 - Riesgo: ambigüedad de vocabulario entre agentes y equipo.

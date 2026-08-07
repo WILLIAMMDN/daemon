@@ -465,8 +465,9 @@ Este contrato define reglas globales; el detalle operativo pertenece a
 12. Un documento canónico que contradiga la Constitución se marca como
     conflicto y se resuelve según la Sección 20; no se corrige en silencio.
 
-Esta sección no modifica `documentation-policy.md`; su ampliación detallada
-pertenece a una fase posterior autorizada.
+Esta sección se complementa con `documentation-policy.md`, ampliada y
+activada durante FND-2B. La Constitución fija las reglas globales y la
+política documental define su aplicación operativa.
 
 ## 18. Decisiones arquitectónicas y ADR
 
@@ -518,7 +519,7 @@ Toda excepción debe:
 - tener motivo;
 - tener duración (o condición de cierre);
 - no convertirse automáticamente en precedente;
-- ser aprobadas siempre por una función con autoridad: ningún agente puede
+- ser aprobada siempre por una función con autoridad: ningún agente puede
   aprobar una excepción.
 
 Están prohibidas las excepciones que:
@@ -564,7 +565,7 @@ Reglas:
 |---|---|
 | DAEMON | Plataforma educativa gamificada para niños y adolescentes (Sección 2) |
 | Constitución | Documento de autoridad global del proyecto; este documento |
-| Autoridad global | Precedencia máxima sobre todo el proyecto, una vez aprobada |
+| Autoridad global | Precedencia máxima aprobada sobre todo el proyecto |
 | Autoridad de dominio | Precedencia dentro de un dominio canónico |
 | Documento canónico | Fuente oficial única de un dominio o decisión |
 | Referencia | Documento verificable que describe estado, no decisión |

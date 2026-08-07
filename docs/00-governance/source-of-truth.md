@@ -22,20 +22,23 @@ dominio se sitúan por debajo de ella en precedencia.
 | Dominio | Documento canónico | Propietario | Última revisión | Estado |
 |---|---|---|---|---|
 | producto | `docs/10-product/portal-alumno.md` | product | 2026-08-06 | transicional (será consolidado en `product-overview.md`, FND-3) |
-| roles | NO DEFINIDO — REQUIERE DOCUMENTO CANÓNICO | - | - | pendiente (FND-3) |
 | arquitectura | `docs/20-architecture/ai-project-context.md` | architecture | 2026-08-06 | transicional (será consolidado en `system-architecture.md`, FND-4) |
 | frontend | `docs/20-architecture/frontend-architecture.md` | frontend | 2026-08-06 | vigente |
 | backend | `docs/20-architecture/api-crud.md` | backend | 2026-08-06 | transicional (referencia API; `backend-architecture.md` en FND-4) |
 | autenticación | `docs/50-security/firebase-auth.md` | security | 2026-08-06 | transicional (consolidado en `security-baseline.md`, FND-5) |
 | datos | `docs/40-data/supabase-postgres.md` | data | 2026-08-06 | transicional (consolidado en `data-ownership.md`/`entity-catalog.md`, FND-5) |
-| Firebase | NO DEFINIDO — REQUIERE DOCUMENTO CANÓNICO | - | - | pendiente |
 | diseño visual | `docs/30-design-system/README.md` + `visual-constitution.md` | design | 2026-08-06 | vigente |
 | seguridad | `docs/50-security/privacidad-kids-teens.md` | security | 2026-08-06 | vigente (será complementado por `security-baseline.md`, FND-5) |
 | privacidad | `docs/50-security/privacidad-kids-teens.md` | security | 2026-08-06 | vigente |
 | entornos | `docs/60-operations/ENVIRONMENTS.md` | devops | 2026-08-06 | transicional (normalizar a `environments.md`, FND-5) |
 | despliegue | `docs/60-operations/estado-nube-github-produccion.md` | devops | 2026-08-06 | transicional (consolidado en `operations-runbook.md`, FND-5) |
 | pruebas | `docs/70-quality/qa-produccion.md` | qa | 2026-08-06 | transicional (consolidado en `quality-gates.md`, FND-6) |
-| iniciativa del estudiante | `docs/80-initiatives/student-transformation/00-baseline.md` | product | 2026-08-06 | iniciativa temporal |
+
+## Iniciativas activas no normativas
+
+| Iniciativa | Estado | Nota |
+|---|---|---|
+| `docs/80-initiatives/student-transformation/00-baseline.md` | activa | Temporal; no canónica; sin precedencia sobre documentos de dominio; debe consolidarse en el canónico del dominio y archivarse al cerrar la iniciativa |
 
 ## Reglas de autoridad
 
@@ -56,6 +59,13 @@ dominio se sitúan por debajo de ella en precedencia.
    `entity-catalog.md`, `operations-runbook.md`, `quality-gates.md`).
 5. **Auditorías e historia no son normativa.** Los documentos de
    `90-audits-history/` y `99-archive/` no se usan como especificación.
-6. **Cualquier cambio de autoridad documental** requiere el proceso definido
+6. **Roles y permisos no requieren un documento canónico separado.** Se
+   consolidarán dentro del dominio Product: `product-overview.md` y
+   `business-rules.md` (FND-3).
+7. **Las responsabilidades de Firebase no requieren un documento canónico
+   independiente.** Se distribuyen entre `system-architecture.md` (FND-4),
+   `security-baseline.md` (FND-5), `data-ownership.md` (FND-5) y los
+   documentos y ADR vigentes correspondientes.
+8. **Cualquier cambio de autoridad documental** requiere el proceso definido
    en `documentation-policy.md` y, cuando afecte a la Constitución, su
    procedimiento formal (Sección 19 de la Constitución).
