@@ -133,6 +133,17 @@ export class PanelAlumno {
 
   formatoNivel = (): string => `${this.panel()?.progreso_nivel?.nivel ?? 1}`;
 
+  mensajeBienvenida(datos: PanelAlumnoDto): string {
+    if (datos.misiones_pendientes > 0) {
+      const pendientes = datos.misiones_pendientes;
+      return `Tienes ${pendientes} ${pendientes === 1 ? 'misión esperándote' : 'misiones esperándote'} en tu ruta.`;
+    }
+    if (datos.proxima_mision) {
+      return 'Tu próxima misión ya está lista. ¡A seguir creciendo!';
+    }
+    return 'Completaste todas tus misiones. Tu Núcleo DAEMON sigue creciendo.';
+  }
+
   mensajeRacha(datos: PanelAlumnoDto): string {
     if (datos.racha === 0) return 'Tu primera misión aprobada enciende la racha.';
 
