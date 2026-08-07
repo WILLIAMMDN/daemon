@@ -52,29 +52,32 @@ migración, middleware, ruta, validador, comando o configuración vigente).
 
 ## 3. Identidad, usuarios y perfiles
 
-### BR-001 — Firebase Auth es la autoridad de identidad (coexistente con login local)
+### BR-001 — Firebase Auth es la autoridad normativa de identidad; existe un login local no resuelto
 
-- Regla: La identidad se autentica mediante Firebase Auth (credenciales
-  Firebase, verificación de correo, Google); Laravel valida los tokens y
-  emite sesión Sanctum. Se observa además un flujo de login local basado en
-  credenciales almacenadas en PostgreSQL (`usuarios.password_hash`), lo que
-  constituye una dualidad de identidad sin transición documentada.
+- Regla: Firebase Auth es la autoridad normativa de identidad aprobada por
+  ADR-001 (credenciales Firebase, verificación de correo, Google). Laravel
+  valida los tokens Firebase y emite sesiones Sanctum. Existe además un
+  flujo local observado en `/auth/login` que valida `usuarios.password_hash`;
+  ese flujo NO constituye una segunda autoridad normativa aprobada: es una
+  desviación técnica o contradicción pendiente de decisión (UNK-009).
 - Dominio: Identidad
 - Actores: Todos
 - Precondiciones: Cuenta existente
 - Disparador: Inicio de sesión
 - Resultado esperado: Sesión válida tras validación
 - Datos afectados: `usuarios.firebase_uid`, `usuarios.password_hash`
-- Autoridad: Firebase Auth (ADR-001) + login local coexistente
-- Excepciones: `/auth/login` valida usuario + `password_hash` mediante
-  `Hash::check` en `AutenticacionService::intentarLogin`; `/auth/firebase` y
-  `/auth/google` validan tokens Firebase
-- Fuente: `app/Services/Auth/AutenticacionService.php` (línea 21),
-  firebase-auth.md, ADR-001
-- Tipo de evidencia: Verified code
+- Autoridad: Firebase Auth, según ADR-001
+- Desviación observada: `/auth/login` valida credenciales locales
+  almacenadas en PostgreSQL mediante `AutenticacionService::intentarLogin`
+- Excepciones: No aplica
+- Fuente: ADR-001, firebase-auth.md,
+  `app/Services/Auth/AutenticacionService.php` (línea 21, `Hash::check`
+  sobre `usuarios.password_hash`)
+- Tipo de evidencia: Accepted ADR
 - Estado: partial
-- Riesgo si se incumple: Identidad dual sin control; contradicción con
-  ADR-001 (registrada como UNK-009; requiere decisión de gobernanza)
+- Riesgo si se incumple: Dos rutas de identidad sin autoridad normativa
+  única; desviación pendiente (UNK-009, FND-4/FND-5 + decisión del
+  propietario)
 
 ### BR-002 — Autorización efectiva en Laravel
 
@@ -916,7 +919,9 @@ como partial hasta que FND-4/FND-5 los verifique.
 1. `rol` y `nivel` permanecen separados (BR-003).
 2. KIDS y TEENS no duplican producto (BR-007).
 3. Identidad no equivale a autorización (BR-002).
-4. El frontend no autoriza operaciones privilegiadas (BR-023).
+4. El frontend no autoriza operaciones privilegiadas (BR-002, BR-005).
+   BR-023 es un ejemplo específico de validación server-side en el canje,
+   no la fuente principal de este invariante.
 5. XP y DAEMONS usan servicios de dominio (BR-013, BR-019).
 6. Los movimientos económicos son trazables (BR-019).
 7. Una autoridad de datos por entidad (ADR-001).
@@ -967,7 +972,7 @@ Aclaraciones:
 | UNK-006 | Dispositivos predominantes por portal | Bajo | Telemetría/analítica autorizada | FND-5 |
 | UNK-007 | Cumplimiento legal específico | Medio | Revisión jurídica | Propietario |
 | UNK-008 | Definición de "logro" frente a "insignia" | Bajo | Código/documentación | FND-3 |
-| UNK-009 | Dualidad de autoridad de identidad: login local (`password_hash`) vs Firebase Auth | Alto | Decisión de gobernanza sobre ADR-001 | Propietario + FND-4/5 |
+| UNK-009 | Login local (`password_hash`) como desviación técnica frente a la autoridad normativa Firebase Auth (ADR-001) | Alto | Decisión de gobernanza sobre ADR-001 | Propietario + FND-4/5 |
 | UNK-010 | Alcance del enforcement de verificación de correo (qué funciones se bloquean) | Medio | Middleware/guard de verificación | FND-4/5 |
 
 ## 26. Revisión, versionado y changelog
@@ -980,12 +985,13 @@ Aclaraciones:
 |---|---|---|---|---|
 | 2026-08-06 | 1.0-candidate | draft | Creación del candidato FND-3A | Pendiente |
 | 2026-08-06 | 1.0-candidate | draft | Corrección R1: auditoría de evidencia, estados y tipos exactos, BR-001 y nuevos UNK | Pendiente |
+| 2026-08-06 | 1.0-candidate | draft | Corrección R2: BR-001 como autoridad normativa + desviación observada; invariantes y referencias | Pendiente |
 
 ## Apéndice A. Índice de reglas
 
 | ID | Nombre | Dominio | Estado | Actores | Fuente principal |
 |---|---|---|---|---|---|
-| BR-001 | Firebase Auth autoridad de identidad (login local coexistente) | Identidad | partial | Todos | `AutenticacionService`, ADR-001 |
+| BR-001 | Firebase Auth autoridad normativa (login local no resuelto) | Identidad | partial | Todos | ADR-001, `AutenticacionService` |
 | BR-002 | Autorización efectiva en Laravel | Autorización | verified | Todos | `EnsureRole`, rutas API |
 | BR-003 | `rol` y `nivel` separados | Identidad | verified | Todos | `Usuario`, migración niveles |
 | BR-004 | Perfil no autoritativo | Identidad | verified | Estudiante, docente | `AlumnoController`, `AlumnoService` |
