@@ -117,3 +117,47 @@ describe('PanelAlumno', () => {
     expect((fixture.nativeElement as HTMLElement).querySelector('.offline-notice')?.textContent).toContain('progreso sigue aquí');
   });
 });
+
+describe('PanelAlumno · TEENS Creator', () => {
+  const panelTeens: PanelAlumnoDto = {
+    ...panel,
+    usuario: { ...panel.usuario, nivel: 'TEENS' },
+  };
+
+  beforeEach(async () => {
+    localStorage.clear();
+    TestBed.resetTestingModule();
+
+    await TestBed.configureTestingModule({
+      imports: [PanelAlumno],
+      providers: [
+        provideRouter([]),
+        { provide: Alumno, useValue: { panel: jest.fn().mockReturnValue(of(panelTeens)) } },
+        { provide: Sesion, useValue: { usuario: signal(panelTeens.usuario), actualizarUsuario: jest.fn() } },
+        { provide: Activos, useValue: { url: (ruta: string | null | undefined) => ruta ?? '' } },
+      ],
+    }).compileComponents();
+  });
+
+  it('presenta el content experience TEENS (Creator Classes + Tech Legends) sin assets KIDS', () => {
+    const fixture = TestBed.createComponent(PanelAlumno);
+    fixture.detectChanges();
+    const el = fixture.nativeElement as HTMLElement;
+
+    // Variante TEENS activa y bloques DESCUBRE presentes.
+    expect(el.querySelector('.student-dashboard--teens')).not.toBeNull();
+    expect(el.querySelectorAll('.class-card')).toHaveLength(4);
+    expect(el.querySelector('.tech-legends')).not.toBeNull();
+    expect(el.querySelector('.class-card[data-clase="maker"] .class-card__micro')).not.toBeNull();
+
+    // Bienvenida sobria y copy TEENS.
+    expect(el.querySelector('.welcome-stage')).toBeNull();
+    expect(el.textContent).toContain('CONTINÚA CREANDO');
+    expect(el.textContent).toContain('Continuar proyecto');
+
+    // Ningún asset KIDS heredado en el DOM TEENS.
+    expect(el.querySelector('img[src*="hero-monster"]')).toBeNull();
+    expect(el.querySelector('img[src*="monstruo-racha"]')).toBeNull();
+    expect(el.querySelector('img[src*="robot-mision"]')).toBeNull();
+  });
+});

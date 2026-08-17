@@ -6,16 +6,21 @@ import {
   faArrowRight,
   faBolt,
   faCheck,
+  faCode,
   faFire,
+  faGamepad,
   faGift,
+  faHammer,
   faMedal,
   faRankingStar,
+  faRobot,
   faRocket,
   faWandMagicSparkles,
   faXmark,
   faFlag,
   faPlay,
 } from '@fortawesome/free-solid-svg-icons';
+import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -26,7 +31,11 @@ import { Activos } from '../../../../core/servicios/activos';
 import { Sesion } from '../../../../core/servicios/sesion';
 import { PremioTienda } from '../../../../core/modelos/dto';
 import { Tienda } from '../../../tienda/services/tienda';
-import { experienciaDashboard, StudentDashboardHeroAsset } from './panel-alumno.experience';
+import {
+  experienciaDashboard,
+  CreatorClassCard,
+  StudentDashboardHeroAsset,
+} from './panel-alumno.experience';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 import { MonedaDaemon } from '../../../../shared/componentes/moneda-daemon/moneda-daemon';
 import {
@@ -95,6 +104,20 @@ export class PanelAlumno {
       clouds,
     };
   });
+
+  /**
+   * Creator Classes editoriales (TEENS · DESCUBRE). Disciplinas para
+   * explorar; NO representan pertenencia del estudiante.
+   */
+  readonly creatorClasses = computed<readonly CreatorClassCard[]>(() => this.experiencia().creatorClasses ?? []);
+
+  /** Icono de disciplina por clase (sistema de iconos, no assets). */
+  readonly iconosClase: Record<CreatorClassCard['id'], IconDefinition> = {
+    code: faCode,
+    ai: faRobot,
+    games: faGamepad,
+    maker: faHammer,
+  };
 
   readonly iconos = {
     flecha: faArrowRight,
@@ -196,8 +219,11 @@ export class PanelAlumno {
     return 'Estás al día con tus misiones. Explora un nuevo reto o revisa tu progreso.';
   }
 
-  eyebrowBienvenida(datos: PanelAlumnoDto): string {
-    return datos.misiones_pendientes > 0 ? 'CONTINÚA APRENDIENDO' : 'TODO AL DÍA';
+  eyebrowBienvenida(datos: PanelAlumnoDto, tono: 'explore' | 'creator'): string {
+    if (datos.misiones_pendientes > 0) {
+      return tono === 'creator' ? 'CONTINÚA CREANDO' : 'CONTINÚA APRENDIENDO';
+    }
+    return 'TODO AL DÍA';
   }
 
   mensajeRacha(datos: PanelAlumnoDto): string {

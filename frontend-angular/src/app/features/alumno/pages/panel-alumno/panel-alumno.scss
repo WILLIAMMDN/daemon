@@ -19,7 +19,9 @@
    KIDS · Explore sigue el BLUEPRINT KIDS-03:
    hero 220px → misión 66% + nivel 34% → métricas 88-100px →
    actividad 59% + recompensas 41%. Gaps de 16px.
-   TEENS · Creator conserva la composición previa.
+   TEENS · Creator sigue el BLUEPRINT TEENS-DASH-02:
+   CREA (bienvenida + misión) → COMPITE (métricas + nivel/constancia)
+   → DESCUBRE (Creator Classes + Tech Legends) → recompensas.
    ============================================================ */
 
 .student-dashboard--kids {
@@ -39,6 +41,11 @@
 .student-dashboard--kids .panel--constancia { grid-area: activity; }
 .student-dashboard--kids .dashboard-foot { grid-area: rewards; }
 
+/* TEENS · Creator — Blueprint TEENS-DASH-01/02 (desktop):
+   CREA (bienvenida + misión) → COMPITE (métricas + nivel/constancia)
+   → DESCUBRE (Creator Classes + Tech Legends) → recompensas.
+   Solid Surface: superficies blancas/neutras; color DAEMON sólido
+   solo en acentos, indicadores y mini-bloques. */
 .student-dashboard--teens {
   display: grid;
   gap: var(--daemon-space-5);
@@ -47,6 +54,8 @@
     'mission mission'
     'metrics metrics'
     'nivel activity'
+    'classes classes'
+    'legends legends'
     'foot foot';
   grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
 }
@@ -55,6 +64,8 @@
 .student-dashboard--teens .dashboard-metrics { grid-area: metrics; }
 .student-dashboard--teens .panel--nivel { grid-area: nivel; }
 .student-dashboard--teens .panel--constancia { grid-area: activity; }
+.student-dashboard--teens .creator-classes { grid-area: classes; }
+.student-dashboard--teens .tech-legends { grid-area: legends; }
 .student-dashboard--teens .dashboard-foot { grid-area: foot; }
 
 /* ============================================================
@@ -223,22 +234,206 @@
   max-width: 34rem;
 }
 
-/* Escenario visual de la mascota: zona navy estructural (TEENS/base) */
-.welcome-stage {
-  align-items: flex-end;
-  background: var(--daemon-student-navigation);
+/* ============================================================
+   VARIANTE TEENS · CREATOR — Blueprint TEENS-DASH-02
+   Bienvenida sobria (sin escenario, sin personaje), misión como
+   acción principal, métricas con chips sólidos, constancia sin
+   ilustraciones KIDS, Creator Classes editoriales y Tech Legends
+   como capa secundaria. NO afecta la variante KIDS.
+   ============================================================ */
+
+/* --- Bienvenida: introducción editorial limpia, una sola columna --- */
+.student-dashboard--teens .dashboard-welcome {
+  align-items: center;
+  grid-template-columns: minmax(0, 1fr);
+  padding: var(--daemon-space-5) var(--daemon-space-6);
+}
+.student-dashboard--teens .welcome-sub {
+  max-width: 40rem;
+}
+
+/* --- Misión: icono sólido (color DAEMON, sin tintes) --- */
+.student-dashboard--teens .mission-icon {
+  background: var(--daemon-student-mission);
+  color: var(--daemon-on-warning);
+}
+
+/* --- Métricas: tiles blancos con icono en mini-bloque sólido --- */
+.student-dashboard--teens .metric-icon {
+  background: var(--metric-color);
+  border-radius: var(--daemon-radius-sm);
+}
+.student-dashboard--teens .metric--progreso .metric-icon { color: var(--daemon-student-navigation); }
+.student-dashboard--teens .metric--racha .metric-icon { color: var(--daemon-on-warning); }
+.student-dashboard--teens .metric--logros .metric-icon { color: var(--daemon-on-yellow); }
+.student-dashboard--teens .metric--ranking .metric-icon { color: var(--daemon-on-purple); }
+
+/* --- Constancia y vacíos: chips sólidos (sin tintes; Solid Surface) --- */
+.student-dashboard--teens .racha-icon {
+  background: var(--daemon-student-mission);
+  color: var(--daemon-on-warning);
+}
+.student-dashboard--teens .mission-icon--ok {
+  background: var(--daemon-student-progress);
+  color: var(--daemon-student-navigation);
+}
+
+/* --- Eyebrow de la sección DESCUBRE --- */
+.student-dashboard--teens .eyebrow--discover {
+  color: var(--daemon-student-creative);
+}
+
+/* ============================================================
+   5 · DESCUBRE — CREATOR CLASSES (TEENS)
+   Disciplinas editoriales, no pertenencia del estudiante.
+   Solid Surface: card blanca; color oficial solo en el indicador
+   y el mini-bloque sólido; placa neutra para el bust.
+   ============================================================ */
+.student-dashboard--teens .creator-classes {
+  background: var(--daemon-neutral-surface);
+  border: 1px solid var(--daemon-neutral-border);
+  border-radius: var(--daemon-radius-lg);
+  padding: var(--daemon-space-5) var(--daemon-space-6);
+}
+.student-dashboard--teens .section-note {
+  color: var(--daemon-neutral-text-secondary);
+  font-size: var(--daemon-font-size-small);
+  font-weight: var(--daemon-font-weight-medium);
+  line-height: var(--daemon-line-height-small);
+}
+.student-dashboard--teens .creator-classes__grid {
+  display: grid;
+  gap: var(--daemon-space-4);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.student-dashboard--teens .class-card {
+  --class-color: var(--daemon-student-creative); /* CODE por defecto */
+  background: var(--daemon-neutral-surface);
+  border: 1px solid var(--daemon-neutral-border);
   border-radius: var(--daemon-radius-md);
-  display: flex;
-  justify-content: center;
-  min-height: 150px;
+  display: grid;
+  gap: var(--daemon-space-3);
+  min-width: 0;
   overflow: hidden;
-  padding-bottom: var(--daemon-space-2);
+  padding: var(--daemon-space-4);
   position: relative;
 }
-.welcome-mascota {
+.student-dashboard--teens .class-card[data-clase='ai'] { --class-color: var(--daemon-student-progress); }
+.student-dashboard--teens .class-card[data-clase='games'] { --class-color: var(--daemon-student-mission); }
+.student-dashboard--teens .class-card[data-clase='maker'] { --class-color: var(--daemon-student-navigation); }
+
+.student-dashboard--teens .class-card__indicator {
+  background: var(--class-color);
+  display: block;
+  height: 4px;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+.student-dashboard--teens .class-card__plate {
+  align-items: center;
+  background: var(--daemon-neutral-surface-subtle);
+  border: 1px solid var(--daemon-neutral-border);
+  border-radius: var(--daemon-radius-sm);
+  display: flex;
+  justify-content: center;
+  padding: var(--daemon-space-2);
+}
+.student-dashboard--teens .class-card__plate img {
   height: 136px;
   object-fit: contain;
-  width: 136px;
+  width: auto;
+}
+.student-dashboard--teens .class-card__head {
+  align-items: center;
+  display: flex;
+  gap: var(--daemon-space-2);
+}
+.student-dashboard--teens .class-card__icon {
+  align-items: center;
+  background: var(--class-color);
+  border-radius: var(--daemon-radius-xs);
+  display: flex;
+  flex: none;
+  font-size: 0.95rem;
+  height: 30px;
+  justify-content: center;
+  width: 30px;
+}
+.student-dashboard--teens .class-card[data-clase='code'] .class-card__icon { color: var(--daemon-on-purple); }
+.student-dashboard--teens .class-card[data-clase='ai'] .class-card__icon { color: var(--daemon-student-navigation); }
+.student-dashboard--teens .class-card[data-clase='games'] .class-card__icon { color: var(--daemon-on-warning); }
+.student-dashboard--teens .class-card[data-clase='maker'] .class-card__icon { color: var(--daemon-student-navigation-text); }
+.student-dashboard--teens .class-card__titles {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.student-dashboard--teens .class-card__name {
+  color: var(--daemon-neutral-text-primary);
+  font-size: var(--daemon-font-size-body);
+  font-weight: var(--daemon-font-weight-bold);
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  margin: 0;
+  text-transform: uppercase;
+}
+/* MAKER: green únicamente como microacento técnico */
+.student-dashboard--teens .class-card__micro {
+  background: var(--daemon-student-progress);
+  border-radius: 50%;
+  display: inline-block;
+  height: 8px;
+  width: 8px;
+}
+.student-dashboard--teens .class-card__desc {
+  color: var(--daemon-neutral-text-secondary);
+  font-size: var(--daemon-font-size-small);
+  line-height: var(--daemon-line-height-small);
+  margin: 0;
+}
+
+/* ============================================================
+   6 · DESCUBRE — TECH LEGENDS (TEENS)
+   Capa editorial secundaria: strip sobrio, sin protagonismo.
+   ============================================================ */
+.student-dashboard--teens .tech-legends {
+  align-items: center;
+  background: var(--daemon-neutral-surface);
+  border: 1px solid var(--daemon-neutral-border);
+  border-radius: var(--daemon-radius-md);
+  display: flex;
+  gap: var(--daemon-space-4);
+  padding: var(--daemon-space-3) var(--daemon-space-5);
+}
+.student-dashboard--teens .tech-legends__art {
+  background: var(--daemon-neutral-surface-subtle);
+  border-radius: var(--daemon-radius-sm);
+  height: 56px;
+  object-fit: contain;
+  width: 76px;
+}
+.student-dashboard--teens .tech-legends__copy {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.student-dashboard--teens .tech-legends__copy .eyebrow {
+  color: var(--daemon-student-creative);
+}
+.student-dashboard--teens .tech-legends__copy p {
+  color: var(--daemon-neutral-text-secondary);
+  font-size: var(--daemon-font-size-small);
+  line-height: var(--daemon-line-height-small);
+  margin: 0;
+}
+.student-dashboard--teens .tech-legends__arrow {
+  color: var(--daemon-neutral-text-secondary);
+  margin-left: auto;
 }
 
 /* ============================================================
@@ -1103,8 +1298,13 @@
       'metrics'
       'nivel'
       'activity'
+      'classes'
+      'legends'
       'foot';
     grid-template-columns: 1fr;
+  }
+  .student-dashboard--teens .creator-classes__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .student-dashboard--kids .dashboard-welcome {
     grid-template-columns: minmax(0, 1fr) minmax(0, 260px);
@@ -1139,13 +1339,6 @@
   }
   .dashboard-welcome {
     grid-template-columns: minmax(0, 1fr) minmax(0, 220px);
-  }
-  .welcome-stage {
-    min-height: 120px;
-  }
-  .welcome-mascota {
-    height: 108px;
-    width: 108px;
   }
   .dashboard-metrics {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1279,11 +1472,6 @@
   }
   .dashboard-welcome {
     grid-template-columns: 1fr;
-  }
-  .welcome-stage {
-    display: none;
-  }
-  .dashboard-welcome {
     padding: var(--daemon-space-4) var(--daemon-space-5);
   }
   .mission-panel,
@@ -1301,6 +1489,9 @@
   .mission-empty {
     align-items: flex-start;
     flex-direction: column;
+  }
+  .student-dashboard--teens .creator-classes__grid {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 

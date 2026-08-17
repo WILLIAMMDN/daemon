@@ -42,10 +42,10 @@
       </aside>
     }
 
-    <!-- 1 · HERO — escena ilustrada KIDS / stage base TEENS -->
+    <!-- 1 · BIENVENIDA — KIDS escena ilustrada / TEENS introducción sobria -->
     <section class="dashboard-welcome" aria-label="Bienvenida">
       <div class="welcome-content">
-        <span class="eyebrow eyebrow--navy">{{ eyebrowBienvenida(datos) }}</span>
+        <span class="eyebrow eyebrow--navy">{{ eyebrowBienvenida(datos, esTeens() ? 'creator' : 'explore') }}</span>
         <h1 id="dashboard-title" class="welcome-title">Hola, <span class="welcome-name">{{ nombreCorto(datos.usuario) }}</span></h1>
         <p class="welcome-sub">{{ mensajeBienvenida(datos) }}</p>
       </div>
@@ -68,10 +68,6 @@
           <img [src]="heroAssets().flag" alt="" class="kids-hero-layer kids-hero-layer--flag" />
           <img [src]="heroAssets().monster" alt="" class="kids-hero-layer kids-hero-layer--monster" />
         </div>
-      } @else {
-        <div class="welcome-stage" aria-hidden="true">
-          <img src="/img/hero-monster.png" alt="" class="welcome-mascota" />
-        </div>
       }
     </section>
 
@@ -79,8 +75,8 @@
     <section class="mission-panel" aria-label="Prioridades de aprendizaje">
       <header class="section-head">
         <div>
-          <span class="eyebrow eyebrow--mission">PRÓXIMA MISIÓN</span>
-          <h2 class="section-title">Tu siguiente reto</h2>
+          <span class="eyebrow eyebrow--mission">@if (esKids()) { PRÓXIMA MISIÓN } @else { CREA · EN PROGRESO }</span>
+          <h2 class="section-title">@if (esKids()) { Tu siguiente reto } @else { Tu próximo proyecto }</h2>
         </div>
         <a class="section-action" routerLink="/alumno/misiones">Ver todas</a>
       </header>
@@ -149,7 +145,7 @@
                 <span class="chip chip--daemons"><app-moneda-daemon [size]="14" /> +{{ mision.recompensa }} DAEMONS</span>
               </div>
               <a class="dashboard-cta" [routerLink]="['/alumno/misiones', mision.id]">
-                <fa-icon [icon]="iconos.play" /> Continuar misión
+                <fa-icon [icon]="iconos.play" /> Continuar proyecto
               </a>
             </div>
           </div>
@@ -161,7 +157,9 @@
             <h3 class="mission-title">Ruta completada</h3>
             <p class="mission-desc">No tienes misiones pendientes. Tu Núcleo sigue creciendo.</p>
           </div>
-          <img src="/img/robot-mision.png" alt="Robot DAEMON celebrando" class="mission-empty__img" />
+          @if (esKids()) {
+            <img src="/img/robot-mision.png" alt="Robot DAEMON celebrando" class="mission-empty__img" />
+          }
           <a class="dashboard-cta dashboard-cta--sm" routerLink="/alumno/misiones">
             <fa-icon [icon]="iconos.play" /> Explorar misiones
           </a>
@@ -245,7 +243,6 @@
           <strong class="racha-value">{{ datos.racha }}</strong>
           <span class="racha-label">días de racha</span>
         </div>
-        <img src="/img/monstruo-racha.png" alt="Monstruo Racha" class="racha-mascota" />
       </div>
       <p class="racha-message">{{ mensajeRacha(datos) }}</p>
       @if (esKids()) {
@@ -268,7 +265,55 @@
       </ul>
     </article>
 
-    <!-- 5 · RECOMPENSAS -->
+    <!-- 5 · DESCUBRE — CREATOR CLASSES (TEENS): disciplinas editoriales -->
+    @if (esTeens()) {
+      <section class="creator-classes" aria-labelledby="creator-classes-title">
+        <header class="section-head">
+          <div>
+            <span class="eyebrow eyebrow--discover">DESCUBRE</span>
+            <h2 id="creator-classes-title" class="section-title">Creator Classes</h2>
+          </div>
+          <span class="section-note">Disciplinas para explorar</span>
+        </header>
+        <ul class="creator-classes__grid">
+          @for (clase of creatorClasses(); track clase.id) {
+            <li class="class-card" [attr.data-clase]="clase.id">
+              <span class="class-card__indicator" aria-hidden="true"></span>
+              <div class="class-card__plate">
+                <img [src]="clase.rutaBust" [alt]="clase.nombre + ' — bust de la disciplina'" loading="lazy" />
+              </div>
+              <div class="class-card__head">
+                <span class="class-card__icon" aria-hidden="true"><fa-icon [icon]="iconosClase[clase.id]" /></span>
+                <div class="class-card__titles">
+                  <h3 class="class-card__name">{{ clase.nombre }}</h3>
+                  @if (clase.microAcento) {
+                    <span class="class-card__micro" aria-hidden="true" title="Microacento técnico"></span>
+                  }
+                </div>
+              </div>
+              <p class="class-card__desc">{{ clase.descripcion }}</p>
+            </li>
+          }
+        </ul>
+      </section>
+
+      <!-- 6 · DESCUBRE — TECH LEGENDS (TEENS): capa editorial secundaria -->
+      <aside class="tech-legends" aria-label="Tech Legends — historias de creadores">
+        <img
+          src="/img/alumno/teens/creator-classes/maker/maker-accessories.webp"
+          alt=""
+          class="tech-legends__art"
+          loading="lazy"
+        />
+        <div class="tech-legends__copy">
+          <span class="eyebrow">TECH LEGENDS</span>
+          <p>Historias de creadores que convirtieron ideas en tecnología.</p>
+        </div>
+        <span class="tech-legends__arrow" aria-hidden="true"><fa-icon [icon]="iconos.flecha" /></span>
+      </aside>
+    }
+
+    <!-- 7 · RECOMPENSAS -->
     <footer class="dashboard-foot">
       @if (esKids()) {
         <div class="foot-head">
