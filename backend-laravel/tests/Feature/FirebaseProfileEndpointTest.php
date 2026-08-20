@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Usuario;
 use App\Services\Auth\FirebaseTokenVerifier;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
 use Mockery;
 use Tests\TestCase;
@@ -149,6 +150,40 @@ class FirebaseProfileEndpointTest extends TestCase
             ->assertUnprocessable()
             ->assertJsonPath('message', 'Ese nombre de usuario ya esta en uso.')
             ->assertJsonValidationErrors('usuario');
+    }
+
+    public function test_vincula_google_con_cuenta_legacy_y_emite_sesion(): void
+    {
+        $legacy = $this->usuario([
+            'nombre_completo' => 'Alumno Historico',
+            'email' => null,
+            'usuario' => 'historico123',
+            'password_hash' => Hash::make('clave-segura'),
+            'perfil_completo' => true,
+            'firebase_uid' => null,
+        ]);
+
+        $this->mockFirebaseClaims([
+            'uid' => 'firebase-historico',
+            'email' => 'historico@example.com',
+            'email_verified' => true,
+            'google_id' => 'google-historico',
+            'provider' => 'google.com',
+        ]);
+
+        $this->postJson('/api/v1/auth/firebase/vincular-legacy', [
+            'id_token' => 'firebase-token',
+            'usuario' => 'historico123',
+            'password' => 'clave-segura',
+        ])
+            ->assertOk()
+            ->assertJsonPath('usuario.usuario', 'historico123')
+            ->assertCookie(config('daemon.auth_cookie.name', 'daemon_access'));
+
+        $legacy->refresh();
+        $this->assertSame('firebase-historico', $legacy->firebase_uid);
+        $this->assertSame('historico@example.com', $legacy->email);
+        $this->assertNotNull($legacy->email_verified_at);
     }
 
     /**

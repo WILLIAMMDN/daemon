@@ -6,6 +6,7 @@ use App\Models\Usuario;
 use App\Services\Auth\AutenticacionService;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
 
@@ -264,6 +265,200 @@ class FirebaseAuthFlowTest extends TestCase
         $this->assertNull($usuario->nombre_completo);
         $this->assertNull($usuario->email);
         $this->assertNull($usuario->usuario);
+    }
+
+    public function test_vincula_firebase_a_cuenta_legacy_solo_con_clave_valida(): void
+    {
+        $legacy = Usuario::create([
+            'nombre_completo' => 'Alumno Legacy',
+            'email' => null,
+            'usuario' => 'legacy123',
+            'password_hash' => Hash::make('clave-segura'),
+            'nivel' => 'TEENS',
+            'perfil_completo' => true,
+            'rol' => 'alumno',
+            'tokens' => 100,
+        ]);
+
+        $usuario = app(AutenticacionService::class)->vincularCuentaLegacyFirebase([
+            'uid' => 'firebase-legacy',
+            'email' => 'legacy@example.com',
+            'email_verified' => true,
+            'google_id' => 'google-legacy',
+            'provider' => 'google.com',
+        ], [
+            'usuario' => 'legacy123',
+            'password' => 'clave-segura',
+        ]);
+
+        $this->assertSame($legacy->id, $usuario->id);
+        $this->assertSame('firebase-legacy', $usuario->firebase_uid);
+        $this->assertSame('google-legacy', $usuario->google_id);
+        $this->assertSame('legacy@example.com', $usuario->email);
+        $this->assertNotNull($usuario->email_verified_at);
+    }
+
+    public function test_vinculacion_reemplaza_placeholder_incompleto_sin_perder_cuenta_legacy(): void
+    {
+        $legacy = Usuario::create([
+            'nombre_completo' => 'Alumno con progreso',
+            'email' => null,
+            'usuario' => 'progreso123',
+            'password_hash' => Hash::make('clave-segura'),
+            'nivel' => 'TEENS',
+            'perfil_completo' => true,
+            'rol' => 'alumno',
+            'tokens' => 540,
+        ]);
+        $placeholder = Usuario::create([
+            'nombre_completo' => 'Google temporal',
+            'email' => 'google@example.com',
+            'usuario' => null,
+            'password_hash' => Hash::make('aleatoria'),
+            'nivel' => null,
+            'perfil_completo' => false,
+            'rol' => 'alumno',
+            'tokens' => 100,
+            'firebase_uid' => 'firebase-placeholder',
+            'google_id' => 'google-placeholder',
+        ]);
+
+        $usuario = app(AutenticacionService::class)->vincularCuentaLegacyFirebase([
+            'uid' => 'firebase-placeholder',
+            'email' => 'google@example.com',
+            'email_verified' => true,
+            'google_id' => 'google-placeholder',
+            'provider' => 'google.com',
+        ], [
+            'usuario' => 'progreso123',
+            'password' => 'clave-segura',
+        ]);
+
+        $this->assertSame($legacy->id, $usuario->id);
+        $this->assertSame(540, $usuario->tokens);
+        $this->assertDatabaseMissing('usuarios', ['id' => $placeholder->id]);
+        $this->assertSame('firebase-placeholder', $usuario->firebase_uid);
+    }
+
+    public function test_vinculacion_rechaza_clave_incorrecta(): void
+    {
+        Usuario::create([
+            'nombre_completo' => 'Legacy protegido',
+            'email' => null,
+            'usuario' => 'protegido123',
+            'password_hash' => Hash::make('clave-correcta'),
+            'nivel' => 'TEENS',
+            'perfil_completo' => true,
+            'rol' => 'alumno',
+            'tokens' => 100,
+        ]);
+
+        $service = app(AutenticacionService::class);
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Usuario o contrasena incorrectos.');
+
+        $service->vincularCuentaLegacyFirebase([
+            'uid' => 'firebase-protegido',
+            'email' => 'protegido@example.com',
+            'google_id' => 'google-protegido',
+            'provider' => 'google.com',
+        ], [
+            'usuario' => 'protegido123',
+            'password' => 'incorrecta',
+        ]);
+    }
+
+    public function test_vinculacion_no_absorbe_otra_cuenta_google_activa(): void
+    {
+        Usuario::create([
+            'nombre_completo' => 'Legacy protegido',
+            'email' => null,
+            'usuario' => 'legacy-activo',
+            'password_hash' => Hash::make('clave-correcta'),
+            'nivel' => 'TEENS',
+            'perfil_completo' => true,
+            'rol' => 'alumno',
+            'tokens' => 100,
+        ]);
+        Usuario::create([
+            'nombre_completo' => 'Google activo',
+            'email' => 'activo@example.com',
+            'usuario' => 'google-activo',
+            'password_hash' => Hash::make('otra-clave'),
+            'nivel' => 'TEENS',
+            'perfil_completo' => true,
+            'rol' => 'alumno',
+            'tokens' => 100,
+            'firebase_uid' => 'firebase-activo',
+        ]);
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Este Google ya esta vinculado a otra cuenta DAEMON.');
+
+        app(AutenticacionService::class)->vincularCuentaLegacyFirebase([
+            'uid' => 'firebase-activo',
+            'email' => 'activo@example.com',
+            'google_id' => 'google-activo',
+            'provider' => 'google.com',
+        ], [
+            'usuario' => 'legacy-activo',
+            'password' => 'clave-correcta',
+        ]);
+    }
+
+    public function test_vinculacion_rechaza_una_identidad_que_no_sea_google(): void
+    {
+        Usuario::create([
+            'nombre_completo' => 'Legacy protegido',
+            'email' => null,
+            'usuario' => 'legacy-email',
+            'password_hash' => Hash::make('clave-correcta'),
+            'nivel' => 'TEENS',
+            'perfil_completo' => true,
+            'rol' => 'alumno',
+            'tokens' => 100,
+        ]);
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('La vinculacion requiere una identidad de Google valida.');
+
+        app(AutenticacionService::class)->vincularCuentaLegacyFirebase([
+            'uid' => 'firebase-email',
+            'email' => 'email@example.com',
+            'provider' => 'password',
+        ], [
+            'usuario' => 'legacy-email',
+            'password' => 'clave-correcta',
+        ]);
+    }
+
+    public function test_vinculacion_no_reemplaza_otro_google_de_la_cuenta_legacy(): void
+    {
+        Usuario::create([
+            'nombre_completo' => 'Legacy ya vinculado',
+            'email' => null,
+            'usuario' => 'legacy-vinculado',
+            'password_hash' => Hash::make('clave-correcta'),
+            'nivel' => 'TEENS',
+            'perfil_completo' => true,
+            'rol' => 'alumno',
+            'tokens' => 100,
+            'google_id' => 'google-anterior',
+        ]);
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('La cuenta DAEMON ya esta vinculada a otro Google.');
+
+        app(AutenticacionService::class)->vincularCuentaLegacyFirebase([
+            'uid' => 'firebase-nuevo',
+            'email' => 'nuevo@example.com',
+            'google_id' => 'google-nuevo',
+            'provider' => 'google.com',
+        ], [
+            'usuario' => 'legacy-vinculado',
+            'password' => 'clave-correcta',
+        ]);
     }
 
     /**
