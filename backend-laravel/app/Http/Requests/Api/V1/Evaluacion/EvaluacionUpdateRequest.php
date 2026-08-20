@@ -19,6 +19,12 @@ class EvaluacionUpdateRequest extends FormRequest
             'titulo' => ['sometimes', 'string', 'max:100'],
             'nivel' => ['sometimes', Rule::in(NivelAlumno::values())],
             'estado' => ['sometimes', 'in:borrador,activo,finalizado'],
+            'id_institucion' => ['sometimes', 'nullable', 'integer', 'exists:instituciones,id'],
+            'id_aula' => ['sometimes', 'nullable', 'integer', 'exists:aulas,id'],
+            'id_leccion' => ['sometimes', 'nullable', 'integer', 'exists:lecciones,id'],
+            'puntaje_maximo' => ['sometimes', 'integer', 'min:1', 'max:10000'],
+            'objetivos' => ['sometimes', 'array', 'max:50'],
+            'objetivos.*' => ['integer', 'distinct', 'exists:objetivos_aprendizaje,id'],
         ];
     }
 }

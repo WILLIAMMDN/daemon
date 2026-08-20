@@ -11,6 +11,8 @@ use App\Http\Requests\Api\V1\Mision\RevisarEntregaRequest;
 use App\Models\Entrega;
 use App\Models\Mision;
 use App\Services\Academico\AcademicScopeService;
+use App\Services\Academico\AlineacionAcademicaService;
+use App\Services\Academico\LibroCalificacionesService;
 use App\Services\Archivo\ArchivoService;
 use App\Services\Gamificacion\GamificacionService;
 use Illuminate\Http\Request;
@@ -22,11 +24,16 @@ class MisionController extends Controller
         private readonly ArchivoService $archivos,
         private readonly AcademicScopeService $alcance,
         private readonly GamificacionService $gamificacion,
+        private readonly AlineacionAcademicaService $alineacion,
+        private readonly LibroCalificacionesService $libroCalificaciones,
     ) {}
 
     public function index(Request $request)
     {
-        $query = Mision::query()->orderByDesc('id');
+        $query = $this->alineacion->aplicarVisibilidad(
+            Mision::query()->with('objetivos')->orderByDesc('id'),
+            $request->user(),
+        );
         if ($request->user()->rol === 'alumno') {
             $query->where('estado', 'activo')->whereIn('nivel_requerido', ['TODOS', $request->user()->nivel]);
         }
@@ -37,8 +44,13 @@ class MisionController extends Controller
 
     public function show(Request $request, Mision $mision)
     {
+        abort_unless(
+            $this->alineacion->aplicarVisibilidad(Mision::query()->whereKey($mision->id), $request->user())->exists(),
+            404,
+        );
+
         return [
-            'mision' => $mision,
+            'mision' => $mision->load('objetivos'),
             'entrega' => $this->entregaConUrl(
                 Entrega::where('id_desafio', $mision->id)->where('id_alumno', $request->user()->id)->latest('id')->first()
             ),
@@ -47,20 +59,39 @@ class MisionController extends Controller
 
     public function store(MisionStoreRequest $request)
     {
-        return response()->json(Mision::create($request->validated()), 201);
+        $resuelto = $this->alineacion->resolver($request->user(), $request->validated());
+        $mision = DB::transaction(function () use ($resuelto): Mision {
+            $mision = Mision::create($resuelto['datos']);
+            $mision->objetivos()->sync($resuelto['objetivos'] ?? []);
+            $this->libroCalificaciones->sincronizarActividad($mision);
+
+            return $mision->fresh('objetivos');
+        });
+
+        return response()->json($mision, 201);
     }
 
     public function update(MisionUpdateRequest $request, Mision $mision)
     {
-        $mision->update($request->validated());
+        $this->alineacion->autorizarGestion($request->user(), $mision);
+        $resuelto = $this->alineacion->resolver($request->user(), $request->validated(), $mision);
+        DB::transaction(function () use ($mision, $resuelto): void {
+            $mision->update($resuelto['datos']);
+            if ($resuelto['objetivos'] !== null) {
+                $mision->objetivos()->sync($resuelto['objetivos']);
+            }
+            $this->libroCalificaciones->sincronizarActividad($mision->fresh());
+        });
 
-        return $mision->fresh();
+        return $mision->fresh('objetivos');
     }
 
-    public function destroy(Mision $mision)
+    public function destroy(Request $request, Mision $mision)
     {
+        $this->alineacion->autorizarGestion($request->user(), $mision);
         DB::transaction(function () use ($mision) {
             Entrega::where('id_desafio', $mision->id)->delete();
+            $this->libroCalificaciones->eliminarActividad($mision);
             $mision->delete();
         });
 
@@ -72,10 +103,15 @@ class MisionController extends Controller
         $ids = array_values(array_unique(array_map('intval', $request->validated()['ids'])));
         $eliminadas = 0;
         $entregasEliminadas = 0;
+        $misiones = Mision::whereIn('id', $ids)->get();
+        foreach ($misiones as $mision) {
+            $this->alineacion->autorizarGestion($request->user(), $mision);
+        }
 
-        DB::transaction(function () use ($ids, &$eliminadas, &$entregasEliminadas) {
-            foreach (Mision::whereIn('id', $ids)->get() as $mision) {
+        DB::transaction(function () use ($misiones, &$eliminadas, &$entregasEliminadas) {
+            foreach ($misiones as $mision) {
                 $entregasEliminadas += Entrega::where('id_desafio', $mision->id)->delete();
+                $this->libroCalificaciones->eliminarActividad($mision);
                 $mision->delete();
                 $eliminadas++;
             }
@@ -90,6 +126,12 @@ class MisionController extends Controller
 
     public function entregar(EntregarMisionRequest $request, Mision $mision)
     {
+        abort_unless(
+            $this->alineacion->aplicarVisibilidad(Mision::query()->whereKey($mision->id), $request->user())
+                ->where('estado', 'activo')
+                ->exists(),
+            404,
+        );
         $evidencia = $request->input('texto', 'Entrega registrada');
         if ($request->hasFile('archivo')) {
             $evidencia = $this->archivos->guardarRuta($request->user(), $request->file('archivo'), $this->archivos->directorioEntrega($request->user()));
@@ -115,6 +157,10 @@ class MisionController extends Controller
             ->select('e.*', 'd.titulo as mision', 'd.recompensa', 'd.es_mision_nivel', 'u.nombre_completo as alumno', 'u.nivel', 'u.id_aula');
 
         $this->alcance->aplicarAlumnosQuery($query, $request->user(), 'u.id_aula');
+        $misionesVisibles = $this->alineacion
+            ->aplicarVisibilidad(Mision::query(), $request->user())
+            ->select('desafios.id');
+        $query->whereIn('d.id', $misionesVisibles);
 
         return $query->orderByDesc('e.fecha_entrega')->get()
             ->map(fn ($entrega) => $this->entregaConUrl($entrega));
@@ -127,10 +173,12 @@ class MisionController extends Controller
         return DB::transaction(function () use ($request, $entrega, $datos) {
             $yaAprobada = $entrega->estado === 'aprobado';
             $mision = Mision::findOrFail($entrega->id_desafio);
+            $this->alineacion->autorizarGestion($request->user(), $mision);
             $puntos = $datos['calificacion'] ?? $mision->recompensa;
+            $puntajeAcademico = (float) ($datos['puntaje_academico'] ?? ($datos['estado'] === 'aprobado' ? 100 : 0));
             $alumno = $this->alcance->alumnoGestionable($request->user(), (int) $entrega->id_alumno, true);
 
-            $actualizacion = [...$datos, 'calificacion' => $puntos];
+            $actualizacion = [...$datos, 'calificacion' => $puntos, 'puntaje_academico' => $puntajeAcademico];
             if ($entrega->estado !== $datos['estado'] || ! $entrega->fecha_revision) {
                 $actualizacion['fecha_revision'] = now();
             }
@@ -150,6 +198,17 @@ class MisionController extends Controller
                 }
                 DB::table('historial_movimientos')->insert(['id_docente' => $request->user()->id, 'id_alumno' => $alumno->id, 'cantidad' => $puntos, 'id_operador' => $request->user()->id, 'motivo' => "Mision aprobada: {$mision->titulo}"]);
             }
+
+            $this->libroCalificaciones->registrarResultado(
+                $mision,
+                $alumno,
+                $puntajeAcademico,
+                $request->user(),
+                $datos['comentario_docente'] ?? null,
+                'entrega_mision',
+                $entrega->id,
+                $entrega->fecha_entrega,
+            );
 
             return $this->entregaConUrl($entrega->fresh());
         });

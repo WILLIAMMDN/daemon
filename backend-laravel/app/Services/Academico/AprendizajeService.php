@@ -59,6 +59,11 @@ class AprendizajeService
     {
         $this->autorizarInstitucion($actor, (int) $curso->id_institucion);
         $this->autorizarInstitucion($actor, (int) $datos['id_institucion']);
+        abort_if(
+            (int) $curso->id_institucion !== (int) $datos['id_institucion'],
+            422,
+            'Un curso no puede trasladarse entre instituciones. Crea una copia controlada en la institución destino.',
+        );
         $curso->fill($datos);
         if ($curso->isDirty(['titulo', 'codigo', 'descripcion', 'nivel'])) {
             $curso->version++;
@@ -99,6 +104,7 @@ class AprendizajeService
         $this->autorizarInstitucion($actor, (int) $unidad->curso->id_institucion);
         $objetivos = $datos['objetivos'] ?? [];
         unset($datos['objetivos']);
+        $this->validarObjetivosInstitucion($objetivos, (int) $unidad->curso->id_institucion);
 
         return DB::transaction(function () use ($unidad, $datos, $objetivos): Leccion {
             $leccion = Leccion::create([...$datos, 'id_unidad' => $unidad->id, 'uuid' => (string) Str::uuid()]);
@@ -114,6 +120,9 @@ class AprendizajeService
         $this->autorizarInstitucion($actor, (int) $leccion->unidad->curso->id_institucion);
         $objetivos = $datos['objetivos'] ?? null;
         unset($datos['objetivos']);
+        if ($objetivos !== null) {
+            $this->validarObjetivosInstitucion($objetivos, (int) $leccion->unidad->curso->id_institucion);
+        }
 
         return DB::transaction(function () use ($leccion, $datos, $objetivos): Leccion {
             $leccion->update($datos);
@@ -241,6 +250,20 @@ class AprendizajeService
             'completadas' => $completadas,
             'porcentaje' => $lecciones->count() ? (int) round($completadas * 100 / $lecciones->count()) : 0,
         ];
+    }
+
+    /** @param array<int, int|string> $objetivos */
+    private function validarObjetivosInstitucion(array $objetivos, int $institucionId): void
+    {
+        if ($objetivos === []) {
+            return;
+        }
+
+        $ids = array_values(array_unique(array_map('intval', $objetivos)));
+        $validos = ObjetivoAprendizaje::whereIn('id', $ids)
+            ->where('id_institucion', $institucionId)
+            ->count();
+        abort_unless($validos === count($ids), 422, 'Todos los objetivos deben pertenecer a la institución del curso.');
     }
 
     private function autorizarInstitucion(Usuario $actor, int $institucionId): void

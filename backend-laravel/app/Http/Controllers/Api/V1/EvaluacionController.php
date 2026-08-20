@@ -15,46 +15,46 @@ class EvaluacionController extends Controller
 {
     public function __construct(private readonly EvaluacionService $evaluaciones) {}
 
-    public function index()
+    public function index(Request $request)
     {
-        return $this->evaluaciones->listadoDocente();
+        return $this->evaluaciones->listadoDocente($request->user());
     }
 
     public function activas(Request $request)
     {
-        return $this->evaluaciones->activasParaNivel($request->user()->nivel);
+        return $this->evaluaciones->activasParaNivel($request->user());
     }
 
     public function store(EvaluacionStoreRequest $request)
     {
-        return response()->json($this->evaluaciones->crear($request->validated()), 201);
+        return response()->json($this->evaluaciones->crear($request->user(), $request->validated()), 201);
     }
 
     public function update(EvaluacionUpdateRequest $request, Evaluacion $evaluacion)
     {
-        return $this->evaluaciones->actualizar($evaluacion, $request->validated());
+        return $this->evaluaciones->actualizar($request->user(), $evaluacion, $request->validated());
     }
 
-    public function destroy(Evaluacion $evaluacion)
+    public function destroy(Request $request, Evaluacion $evaluacion)
     {
-        $this->evaluaciones->eliminar($evaluacion);
+        $this->evaluaciones->eliminar($request->user(), $evaluacion);
 
         return response()->noContent();
     }
 
-    public function publicar(Evaluacion $evaluacion)
+    public function publicar(Request $request, Evaluacion $evaluacion)
     {
-        return $this->evaluaciones->publicar($evaluacion);
+        return $this->evaluaciones->publicar($request->user(), $evaluacion);
     }
 
-    public function despublicar(Evaluacion $evaluacion)
+    public function despublicar(Request $request, Evaluacion $evaluacion)
     {
-        return $this->evaluaciones->despublicar($evaluacion);
+        return $this->evaluaciones->despublicar($request->user(), $evaluacion);
     }
 
     public function guardarPreguntas(GuardarPreguntasRequest $request, Evaluacion $evaluacion)
     {
-        $this->evaluaciones->guardarPreguntas($evaluacion, $request->validated()['preguntas']);
+        $this->evaluaciones->guardarPreguntas($request->user(), $evaluacion, $request->validated()['preguntas']);
 
         return ['ok' => true];
     }

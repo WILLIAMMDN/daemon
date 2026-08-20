@@ -31,6 +31,19 @@ Se acepta HTTP Basic o credenciales en el cuerpo. El secreto se guarda con
 hash y se devuelve una sola vez. El token opaco se guarda como SHA-256, dura
 una hora y usa el scope oficial de lectura de roster core.
 
+### Gradebook de solo lectura
+
+La base académica expone además `/ims/oneroster/gradebook/v1p2` para
+`categories`, `lineItems` y `results`, tanto colecciones como consulta por
+`sourcedId`. Requiere los scopes oficiales `gradebook.readonly` y
+`gradebook-core.readonly`; un token limitado a roster recibe 403. Los line items sin clase interoperable no se exportan y
+cada cliente continúa aislado por institución.
+
+Esta implementación es un proveedor inicial de lectura. Endpoints por clase,
+score scales, escritura y certificación formal siguen pendientes. El contrato,
+rollout y evidencia están en
+`docs/release-2026-07-20-academic-mastery.md`.
+
 Alta administrativa:
 
 ```text

@@ -23,6 +23,12 @@ class MisionUpdateRequest extends FormRequest
             'nivel_requerido' => ['sometimes', Rule::in(NivelAlumno::conAlcanceGeneral('TODOS'))],
             'estado' => ['nullable', 'in:activo,inactivo'],
             'es_mision_nivel' => ['nullable', 'boolean'],
+            'id_institucion' => ['sometimes', 'nullable', 'integer', 'exists:instituciones,id'],
+            'id_aula' => ['sometimes', 'nullable', 'integer', 'exists:aulas,id'],
+            'id_leccion' => ['sometimes', 'nullable', 'integer', 'exists:lecciones,id'],
+            'puntaje_maximo' => ['sometimes', 'integer', 'min:1', 'max:10000'],
+            'objetivos' => ['sometimes', 'array', 'max:50'],
+            'objetivos.*' => ['integer', 'distinct', 'exists:objetivos_aprendizaje,id'],
         ];
     }
 }

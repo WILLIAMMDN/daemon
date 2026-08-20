@@ -11,11 +11,18 @@ class OneRosterAuthService
 {
     public const SCOPE_ROSTER_READONLY = 'https://purl.imsglobal.org/spec/or/v1p2/scope/roster-core.readonly';
 
+    public const SCOPE_GRADEBOOK_READONLY = 'https://purl.imsglobal.org/spec/or/v1p2/scope/gradebook.readonly';
+
+    public const SCOPE_GRADEBOOK_CORE_READONLY = 'https://purl.imsglobal.org/spec/or/v1p2/scope/gradebook-core.readonly';
+
     public function crearCliente(int $institucionId, string $nombre, array $scopes = []): array
     {
         $clientId = 'daemon_or_'.Str::lower(Str::random(24));
         $clientSecret = Str::random(64);
         $scopes = $scopes ?: [self::SCOPE_ROSTER_READONLY];
+        if (array_intersect($scopes, [self::SCOPE_GRADEBOOK_READONLY, self::SCOPE_GRADEBOOK_CORE_READONLY])) {
+            $scopes = [...$scopes, self::SCOPE_GRADEBOOK_READONLY, self::SCOPE_GRADEBOOK_CORE_READONLY];
+        }
         $cliente = ClienteOneRoster::create([
             'id_institucion' => $institucionId,
             'nombre' => $nombre,

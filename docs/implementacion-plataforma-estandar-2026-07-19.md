@@ -40,6 +40,16 @@ PUT  /api/v1/alumno/aprendizaje/lecciones/{leccion}/progreso
 Los docentes quedan limitados a su institución. Un administrador conserva
 alcance global. Curso, período y aula deben pertenecer a la misma institución.
 
+### Continuación: evidencia, calificaciones y dominio
+
+La fase siguiente conecta misiones y evaluaciones con lecciones y objetivos,
+separa la nota académica de XP/DAEMONS e incorpora Category, LineItem y Result
+internos junto con dominio recalculable por objetivo. También añade un proveedor
+OneRoster Gradebook 1.2 de solo lectura y alcance OAuth independiente.
+
+Diseño, contratos, rollout y limitaciones:
+`docs/release-2026-07-20-academic-mastery.md`.
+
 ### Economía de gamificación
 
 `movimientos_economia` es un libro append-only con moneda `xp` o `daemons`,
