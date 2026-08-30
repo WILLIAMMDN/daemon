@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
+import { Title } from '@angular/platform-browser';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faArrowRightFromBracket, faShieldHeart } from '@fortawesome/free-solid-svg-icons';
 import { EmailVerificationBanner } from '../../componentes/email-verification-banner/email-verification-banner';
@@ -20,6 +21,11 @@ export class LayoutTutor {
   private readonly autenticacion = inject(Autenticacion);
   private readonly router = inject(Router);
   private readonly carga = inject(CargaGlobal);
+  private readonly titleService = inject(Title);
+
+  constructor() {
+    this.titleService.setTitle('DAEMON | Familias');
+  }
 
   salir(): void {
     const operacion = this.carga.mostrar('Cerrando el portal familiar...');

@@ -4,7 +4,7 @@
   <section class="access-card" aria-labelledby="family-access-title">
     <div class="trust-panel">
       <span class="trust-icon"><fa-icon [icon]="iconos.escudo" /></span>
-      <p>Portal para familias</p>
+      <p>DAEMON &middot; Familias</p>
       <h1 id="family-access-title">Acompaña sin invadir.</h1>
       <span>Consulta aprendizaje, establece pausas saludables y gestiona la membresía sin acceder a chats ni trabajos privados.</span>
       <ul>
@@ -15,7 +15,7 @@
     </div>
 
     <div class="access-form-shell">
-      <img src="/img/brand/daemon-transparent.png" alt="Academia DAEMON" class="family-logo">
+      <img src="/img/brand/daemon-transparent.png" alt="DAEMON" class="family-logo">
       <div class="mode-switch" aria-label="Tipo de acceso">
         <button type="button" [class.active]="modo() === 'ingresar'" (click)="cambiarModo('ingresar')">Ingresar</button>
         <button type="button" [class.active]="modo() === 'crear'" (click)="cambiarModo('crear')">Crear cuenta</button>
@@ -51,7 +51,7 @@
         }
 
         <button type="submit" class="primary-access" [disabled]="enviando()">
-          {{ enviando() ? 'Validando...' : (modo() === 'crear' ? 'Crear acceso familiar' : 'Ingresar al portal') }}
+          {{ enviando() ? 'Validando...' : (modo() === 'crear' ? 'Crear acceso familiar' : 'Ingresar a DAEMON') }}
         </button>
       </form>
 

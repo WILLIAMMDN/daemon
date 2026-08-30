@@ -3,7 +3,7 @@
     <div class="missions-hero__copy">
       <span class="page-kicker"><fa-icon [icon]="iconos.cohete" aria-hidden="true" /> Centro de misiones</span>
       <h1 id="missions-title">Convierte retos en progreso real</h1>
-      <p>Cada misión aprobada suma la misma recompensa a tu XP permanente y a tu saldo de DAEMONS.</p>
+      <p>Cada misión aprobada suma la misma recompensa a tu XP permanente y a tu saldo de Daems.</p>
       @if (!cargando() && !error()) {
         <span class="missions-hero__meta">{{ misiones().length }} {{ misiones().length === 1 ? 'misión en tu ruta' : 'misiones en tu ruta' }}</span>
       }
@@ -91,7 +91,7 @@
             <div class="dual-reward" aria-label="Recompensa al aprobar">
               <span><fa-icon [icon]="iconos.energia" aria-hidden="true" /><strong>+{{ mision.recompensa }}</strong><small>XP permanente</small></span>
               <i aria-hidden="true"></i>
-              <span><app-moneda-daemon [size]="20" /><strong>+{{ mision.recompensa }}</strong><small>DAEMONS</small></span>
+              <span><app-moneda-daemon [size]="20" /><strong>+{{ mision.recompensa }}</strong><small>Daems</small></span>
             </div>
 
             <footer>
