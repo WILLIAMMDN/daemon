@@ -63,7 +63,7 @@ jobs:
         shell: bash
         run: |
           set +e
-          npx firebase-tools@15.22.3 hosting:channel:deploy pr-${{ github.event.pull_request.number }} --project daemon-a41f8 --only estudiante --expires 7d --non-interactive 2>&1 | tee firebase-deploy.log
+          npx firebase-tools@15.22.3 hosting:channel:deploy pr-${{ github.event.pull_request.number }} --project daemon-a41f8 --only arc --expires 7d --non-interactive 2>&1 | tee firebase-deploy.log
           status=${PIPESTATUS[0]}
 
           if [ "$status" -ne 0 ]; then

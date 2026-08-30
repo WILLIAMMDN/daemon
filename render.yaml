@@ -20,9 +20,9 @@ services:
       - key: RUN_MIGRATIONS
         value: 'true'
       - key: FRONTEND_URL
-        value: https://daemonestudiante.web.app
+        value: https://daemonarc.web.app,https://daemonestudiante.web.app
       - key: FRONTEND_PRODUCTION_URL
-        value: https://daemonestudiante.web.app
+        value: https://daemonarc.web.app
       - key: CORS_SUPPORTS_CREDENTIALS
         value: 'true'
       - key: AUTH_COOKIE_SAME_SITE

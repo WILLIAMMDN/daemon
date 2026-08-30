@@ -7,7 +7,12 @@
   "targets": {
     "daemon-a41f8": {
       "hosting": {
-        "estudiante": ["daemonestudiante"]
+        "estudiante": [
+          "daemonestudiante"
+        ],
+        "arc": [
+          "daemonarc"
+        ]
       }
     }
   },

@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param(
-    [string] $FrontendUrl = 'https://daemonestudiante.web.app',
+    [string] $FrontendUrl = 'https://daemonarc.web.app',
     [string] $BackendHealthUrl = 'https://daemon-5vo1.onrender.com/api/v1/salud',
     [int] $TimeoutSec = 60,
     [int] $RetryCount = 3,
