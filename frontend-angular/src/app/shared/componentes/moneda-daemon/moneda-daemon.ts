@@ -99,8 +99,8 @@ export class MonedaDaemon {
   get tituloAccesible(): string {
     if (this.titulo) return this.titulo;
     if (this.etiqueta) return `${this.etiqueta}: ${this.cantidad ?? 0}`;
-    if (this.tieneCantidad) return `${this.cantidad} tokens DAEMON`;
-    return 'Moneda DAEMON';
+    if (this.tieneCantidad) return `${this.cantidad} Daems`;
+    return 'Daems';
   }
 
   /**

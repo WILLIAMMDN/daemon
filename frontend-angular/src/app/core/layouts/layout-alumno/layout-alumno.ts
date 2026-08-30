@@ -54,7 +54,7 @@ export class LayoutAlumno implements OnInit, OnDestroy {
   };
 
   constructor() {
-    this.titleService.setTitle('Portal Alumno | DAEMON');
+    this.titleService.setTitle('DAEMON ARC | Estudiante');
   }
 
   ngOnInit(): void {

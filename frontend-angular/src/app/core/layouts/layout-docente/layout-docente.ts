@@ -51,7 +51,7 @@ export class LayoutDocente implements OnInit {
   notificacionesNoLeidas = this.notificacionesService.noLeidas;
 
   constructor() {
-    this.titleService.setTitle('Panel Docente | DAEMON');
+    this.titleService.setTitle('DAEMON | Docente');
   }
 
   ngOnInit(): void {

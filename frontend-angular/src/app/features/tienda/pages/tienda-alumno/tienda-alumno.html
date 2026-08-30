@@ -1,14 +1,14 @@
 <main class="store-page">
   <header class="store-hero">
     <div class="store-copy">
-      <span class="page-kicker"><fa-icon [icon]="iconos.brillo" /> DAEMON Rewards</span>
+      <span class="page-kicker"><fa-icon [icon]="iconos.brillo" /> Daems Rewards</span>
       <h1>Convierte tu esfuerzo<br><span>en algo memorable.</span></h1>
-      <p>Gasta DAEMONS con tranquilidad: tu XP, nivel y posición en el ranking nunca bajan.</p>
+      <p>Gasta Daems con tranquilidad: tu XP, nivel y posición en el ranking nunca bajan.</p>
       <div class="hero-actions"><a nz-button nzType="primary" class="daemon-btn" routerLink="/alumno/canjes">Ver mis canjes <fa-icon [icon]="iconos.flecha" /></a><a nz-button class="wardrobe-button" routerLink="/alumno/mascota"><fa-icon [icon]="iconos.criatura" /> Mi criatura</a><button nz-button type="button" class="refresh-button" (click)="cargar()" [disabled]="cargando()"><fa-icon [icon]="iconos.actualizar" /> Actualizar</button></div>
     </div>
     <div class="balance-vault">
       <span>Saldo disponible</span>
-      <div><app-moneda-daemon [size]="42" titulo="DAEMONS" /><strong>{{ saldo() }}</strong></div>
+      <div><app-moneda-daemon [size]="42" titulo="Daems" /><strong>{{ saldo() }}</strong></div>
       <small><fa-icon [icon]="iconos.escudo" /> Tu progreso está protegido</small>
     </div>
   </header>
@@ -54,6 +54,6 @@
       }
     </section>
   } @else {
-    <section class="store-state"><app-estado-vacio titulo="Nuevos premios en camino" descripcion="La tienda se está preparando. Conserva tus DAEMONS para el próximo lanzamiento." /></section>
+    <section class="store-state"><app-estado-vacio titulo="Nuevos premios en camino" descripcion="La tienda se está preparando. Conserva tus Daems para el próximo lanzamiento." /></section>
   }
 </main>
