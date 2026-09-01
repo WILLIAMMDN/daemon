@@ -8,7 +8,7 @@ class ProgresoLeccion extends ModeloBase
 
     public $timestamps = true;
 
-    protected $fillable = ['id_leccion', 'id_alumno', 'estado', 'porcentaje', 'iniciado_at', 'completado_at', 'evidencia'];
+    protected $fillable = ['id_leccion', 'id_alumno', 'id_matricula', 'estado', 'porcentaje', 'iniciado_at', 'completado_at', 'evidencia'];
 
     protected function casts(): array
     {
