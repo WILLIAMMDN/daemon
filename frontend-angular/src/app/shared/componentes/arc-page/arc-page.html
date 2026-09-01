@@ -1,0 +1,38 @@
+<div class="arc-page">
+  @if (encabezado()) {
+    <header class="arc-page__header">
+      @if (migas().length) {
+        <nz-breadcrumb class="arc-page__migas">
+          @for (miga of migas(); track miga.etiqueta) {
+            <nz-breadcrumb-item>
+              @if (miga.ruta) {
+                <a [routerLink]="miga.ruta">{{ miga.etiqueta }}</a>
+              } @else {
+                <span>{{ miga.etiqueta }}</span>
+              }
+            </nz-breadcrumb-item>
+          }
+        </nz-breadcrumb>
+      }
+
+      <div class="arc-page__titulo">
+        <div class="arc-page__texto">
+          <h1>{{ titulo() }}</h1>
+          @if (descripcion(); as detalle) {
+            <p>{{ detalle }}</p>
+          }
+        </div>
+
+        <div class="arc-page__acciones">
+          <ng-content select="[acciones]" />
+        </div>
+      </div>
+    </header>
+  }
+
+  <ng-content select="[nav]" />
+
+  <div class="arc-page__contenido">
+    <ng-content />
+  </div>
+</div>

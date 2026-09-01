@@ -80,7 +80,7 @@ describe('Recursos', () => {
     const element = fixture.nativeElement as HTMLElement;
 
     expect(element.querySelector('main')).toBeNull();
-    expect(element.querySelector('h1')?.textContent).toContain('Mis cursos');
+    expect(element.querySelector('h1')?.textContent).toContain('Explorar cursos');
     expect(element.querySelectorAll('.course-card')).toHaveLength(3);
     expect(element.querySelectorAll('daemon-illustration-slot').length).toBeGreaterThanOrEqual(4);
     expect(element.querySelector('.course-summary-card')?.textContent).toContain('En progreso');
@@ -127,7 +127,7 @@ describe('Recursos', () => {
     expect(estadoVacio?.textContent).toContain('Tu ruta está preparándose');
     expect(estadoVacio?.querySelector<HTMLImageElement>('.empty-state__art img')?.getAttribute('src'))
       .toBe('/img/empty/empty-robot.webp');
-    expect(estadoVacio?.querySelector('.ant-btn-primary')?.textContent).toContain('Explorar catálogo');
+    expect(estadoVacio?.querySelector('.ant-btn-primary')?.textContent).toContain('Ver misiones disponibles');
     expect(element.querySelector('.course-summary-card')?.textContent).toContain('Aún no tienes cursos asignados');
   });
 

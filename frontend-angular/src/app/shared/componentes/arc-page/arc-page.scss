@@ -1,0 +1,78 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.arc-page {
+  display: grid;
+  gap: 1.5rem;
+  min-width: 0;
+}
+
+.arc-page__header {
+  display: grid;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.arc-page__migas {
+  font-size: 0.8125rem;
+}
+
+.arc-page__titulo {
+  align-items: end;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 1.5rem;
+  justify-content: space-between;
+  min-width: 0;
+}
+
+.arc-page__texto {
+  display: grid;
+  gap: 0.375rem;
+  max-width: 62ch;
+  min-width: 0;
+}
+
+.arc-page__texto h1 {
+  color: var(--daemon-ink);
+  font-size: clamp(1.5rem, 2.6vw, 2rem);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+  margin: 0;
+}
+
+.arc-page__texto p {
+  color: var(--daemon-muted);
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.arc-page__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.arc-page__acciones:empty {
+  display: none;
+}
+
+.arc-page__contenido {
+  display: grid;
+  gap: 1.5rem;
+  min-width: 0;
+}
+
+@media (max-width: 640px) {
+  .arc-page {
+    gap: 1.25rem;
+  }
+
+  .arc-page__acciones {
+    width: 100%;
+  }
+}

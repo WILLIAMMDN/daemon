@@ -1,0 +1,19 @@
+<nav class="arc-local-nav" [attr.aria-label]="ariaLabel()">
+  <ul>
+    @for (item of items(); track item.ruta) {
+      <li>
+        <a
+          [routerLink]="item.ruta"
+          routerLinkActive="is-active"
+          [routerLinkActiveOptions]="{ exact: !!item.exacto }"
+          ariaCurrentWhenActive="page"
+        >
+          <span class="arc-local-nav__etiqueta">{{ item.etiqueta }}</span>
+          @if (item.contador !== null && item.contador !== undefined) {
+            <span class="arc-local-nav__contador">{{ item.contador }}</span>
+          }
+        </a>
+      </li>
+    }
+  </ul>
+</nav>

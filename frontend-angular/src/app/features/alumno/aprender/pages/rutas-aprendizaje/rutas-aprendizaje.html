@@ -1,0 +1,46 @@
+@if (aprendizaje.cargando()) {
+  <nz-skeleton [nzActive]="true" [nzParagraph]="{ rows: 6 }" />
+} @else if (sinRutas()) {
+  <app-estado-vacio
+    titulo="Aún no hay rutas publicadas"
+    descripcion="Una ruta aparece cuando tu curso tiene unidades publicadas. Mientras tanto puedes revisar el catálogo."
+  >
+    <a nz-button nzType="primary" routerLink="../explorar">Ver el catálogo</a>
+  </app-estado-vacio>
+} @else {
+  @for (curso of rutas(); track curso.id) {
+    <app-arc-section [titulo]="curso.titulo" [descripcion]="curso.descripcion">
+      <a acciones nz-button nzType="default" nzSize="small" [routerLink]="['/alumno/aprender/curso', curso.id]">
+        Abrir curso
+      </a>
+
+      <ol class="ruta">
+        @for (unidad of curso.unidades; track unidad.id) {
+          <li class="ruta__paso" [attr.data-estado]="unidad.estado">
+            <span class="ruta__marca" aria-hidden="true">{{ unidad.orden }}</span>
+            <div class="ruta__cuerpo">
+              <div class="ruta__encabezado">
+                <h3>{{ unidad.titulo }}</h3>
+                <nz-tag
+                  [nzColor]="unidad.estado === 'completed' ? 'success' : unidad.estado === 'inProgress' ? 'processing' : 'default'"
+                >
+                  {{ unidad.leccionesCompletadas }} / {{ unidad.totalLecciones }} lecciones
+                </nz-tag>
+              </div>
+              @if (unidad.descripcion) {
+                <p>{{ unidad.descripcion }}</p>
+              }
+              <nz-progress
+                [nzPercent]="unidad.porcentaje"
+                nzStrokeColor="var(--arc-green)"
+                nzSize="small"
+                [nzShowInfo]="false"
+                [nzStrokeWidth]="6"
+              />
+            </div>
+          </li>
+        }
+      </ol>
+    </app-arc-section>
+  }
+}
