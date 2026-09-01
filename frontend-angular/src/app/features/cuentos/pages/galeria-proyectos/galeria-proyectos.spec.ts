@@ -55,12 +55,12 @@ describe('GaleriaProyectos', () => {
     expect(element.querySelectorAll('.story-card')).toHaveLength(2);
     expect(element.querySelector('.story-progress-stats')?.textContent).toContain('2');
     expect(element.querySelector('[data-asset-name="story-11-cover.webp"]')).toBeTruthy();
-    expect(element.querySelector<HTMLAnchorElement>('a[href="/alumno/proyectos/cuentos/10"]')).toBeTruthy();
+    expect(element.querySelector<HTMLAnchorElement>('a[href="/alumno/crear/historias/10"]')).toBeTruthy();
     // The hero carries two real CTAs: primary "Crear cuento" and a secondary "Volver a Proyectos".
     // No fake "Explorar historias" anchor, no overlay breadcrumb breaking the banner's alignment.
     const volverBtn = Array.from(element.querySelectorAll<HTMLAnchorElement>('.module-hero a'))
       .find((a) => a.textContent?.includes('Volver a Proyectos'));
-    expect(volverBtn?.getAttribute('href')).toBe('/alumno/proyectos');
+    expect(volverBtn?.getAttribute('href')).toBe('/alumno/crear/proyectos');
     expect(element.querySelector('a[href="#historias-publicadas"]')).toBeNull();
     expect(element.querySelector('.story-breadcrumb')).toBeNull();
     expect(element.textContent).not.toContain('Reacciones recibidas');
