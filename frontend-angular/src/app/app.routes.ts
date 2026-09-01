@@ -6,6 +6,8 @@ import { tutorGuard } from './core/guards/tutor-guard';
 import { CATEGORIAS_PREMIO, NIVELES_ALUMNO, NIVELES_CONTENIDO } from './core/dominio/nivel-alumno';
 import { soloDesarrolloGuard } from './core/guards/solo-desarrollo.guard';
 
+import { alumnoRoutes } from './features/alumno/alumno.routes';
+
 export const routes: Routes = [
   { path: '', loadComponent: () => import('./features/publico/pages/inicio/inicio').then((m) => m.Inicio) },
   { path: 'login', loadComponent: () => import('./features/autenticacion/pages/login/login').then((m) => m.Login) },
@@ -25,7 +27,7 @@ export const routes: Routes = [
     path: 'alumno',
     loadComponent: () => import('./core/layouts/layout-alumno/layout-alumno').then((m) => m.LayoutAlumno),
     canActivate: [authGuard, alumnoGuard],
-    loadChildren: () => import('./features/alumno/alumno.routes').then((m) => m.alumnoRoutes),
+    children: alumnoRoutes,
   },
   {
     path: 'docente', loadComponent: () => import('./core/layouts/layout-docente/layout-docente').then((m) => m.LayoutDocente), canActivate: [authGuard, docenteGuard], children: [

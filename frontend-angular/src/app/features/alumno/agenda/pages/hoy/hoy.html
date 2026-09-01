@@ -14,6 +14,27 @@
     </ng-template>
   }
 
+  @if (sesionesHoy().length) {
+    <app-arc-section titulo="Sesiones en vivo hoy" descripcion="Clases y talleres programados para hoy.">
+      <div class="sesiones-hoy">
+        @for (sesion of sesionesHoy(); track sesion.id) {
+          <article class="sesion-item">
+            <div>
+              <span class="sesion-item__tipo">{{ sesion.tipo | uppercase }}</span>
+              <strong>{{ sesion.titulo }}</strong>
+              <time>{{ sesion.fecha_inicio | date:'shortTime' }} - {{ sesion.fecha_fin | date:'shortTime' }}</time>
+            </div>
+            @if (sesion.enlace_sesion && sesion.estado !== 'finalizada') {
+              <a nz-button nzType="primary" nzSize="small" [href]="sesion.enlace_sesion" target="_blank" rel="noopener noreferrer">
+                Ingresar
+              </a>
+            }
+          </article>
+        }
+      </div>
+    </app-arc-section>
+  }
+
   @if (actividades.eventoEnVivo(); as evento) {
     <app-arc-section titulo="En vivo ahora" descripcion="Una ronda de competencia está abierta.">
       <div class="evento">

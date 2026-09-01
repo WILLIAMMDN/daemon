@@ -1,0 +1,40 @@
+@if (agendaService.cargando()) {
+  <nz-skeleton [nzActive]="true" [nzParagraph]="{ rows: 4 }" />
+} @else if (agendaService.sesiones().length === 0) {
+  <app-estado-vacio
+    titulo="No tienes sesiones programadas"
+    descripcion="Cuando tu docente o tutor agende una clase en vivo, taller o asesoría, aparecerá aquí."
+  />
+} @else {
+  <app-arc-section
+    titulo="Sesiones en vivo y talleres"
+    descripcion="Clases sincronizadas y asesorías académicas programadas para tu aula."
+  >
+    <div class="sesiones-lista">
+      @for (sesion of agendaService.sesiones(); track sesion.id) {
+        <article class="sesion-card" [attr.data-estado]="sesion.estado">
+          <div class="sesion-card__header">
+            <span class="sesion-card__tipo">{{ sesion.tipo | uppercase }}</span>
+            <nz-tag [nzColor]="sesion.estado === 'en_vivo' ? 'processing' : (sesion.estado === 'finalizada' ? 'default' : 'success')">
+              {{ sesion.estado }}
+            </nz-tag>
+          </div>
+          <h3 class="sesion-card__titulo">{{ sesion.titulo }}</h3>
+          @if (sesion.descripcion) {
+            <p class="sesion-card__desc">{{ sesion.descripcion }}</p>
+          }
+          <div class="sesion-card__footer">
+            <time class="sesion-card__fecha">
+              {{ sesion.fecha_inicio | date:'dd MMM yyyy, HH:mm' }}
+            </time>
+            @if (sesion.enlace_sesion && sesion.estado !== 'finalizada') {
+              <a nz-button nzType="primary" nzSize="small" [href]="sesion.enlace_sesion" target="_blank" rel="noopener noreferrer">
+                Ingresar a la sesión
+              </a>
+            }
+          </div>
+        </article>
+      }
+    </div>
+  </app-arc-section>
+}

@@ -2,7 +2,8 @@ module.exports = {
   preset: 'jest-preset-angular',
   setupFilesAfterEnv: ['<rootDir>/setup-jest.ts'],
   testEnvironment: 'jsdom',
-  testPathIgnorePatterns: ['<rootDir>/e2e/', '<rootDir>/playwright/', '<rootDir>/tests/firestore/'],
+  testMatch: ['<rootDir>/src/**/*.spec.ts', '**/src/**/*.spec.ts'],
+  testPathIgnorePatterns: ['/node_modules/', '/e2e/', '/playwright/', '/tests/firestore/', '\\\\e2e\\\\', '\\\\playwright\\\\'],
   moduleNameMapper: {
     '\\.(css)$': '<rootDir>/test-style-mock.js',
     '^deep-chat$': '<rootDir>/test-deep-chat-mock.js',

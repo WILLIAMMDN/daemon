@@ -81,7 +81,7 @@ describe('PanelAlumno', () => {
       imports: [PanelAlumno],
       providers: [
         provideRouter([]),
-        { provide: Alumno, useValue: { panel: panelMock } },
+        { provide: Alumno, useValue: { panel: panelMock, homeContext: jest.fn().mockReturnValue(of(null)) } },
         { provide: Sesion, useValue: sesionMock },
         { provide: Activos, useValue: { url: (ruta: string | null | undefined) => ruta ?? '' } },
       ],
@@ -132,7 +132,13 @@ describe('PanelAlumno · TEENS Creator', () => {
       imports: [PanelAlumno],
       providers: [
         provideRouter([]),
-        { provide: Alumno, useValue: { panel: jest.fn().mockReturnValue(of(panelTeens)) } },
+        {
+          provide: Alumno,
+          useValue: {
+            panel: jest.fn().mockReturnValue(of(panelTeens)),
+            homeContext: jest.fn().mockReturnValue(of(null)),
+          },
+        },
         { provide: Sesion, useValue: { usuario: signal(panelTeens.usuario), actualizarUsuario: jest.fn() } },
         { provide: Activos, useValue: { url: (ruta: string | null | undefined) => ruta ?? '' } },
       ],

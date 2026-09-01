@@ -90,10 +90,10 @@
   </app-arc-section>
 }
 
-@if (aprendizaje.cargado() && aprendizaje.mastery().totales > 0) {
+@if (aprendizaje.cargado() && aprendizaje.objetivosProgreso().totales > 0) {
   <app-arc-section
-    titulo="Mastery académico"
-    descripcion="Objetivos de aprendizaje con evidencia registrada. Se calcula desde tus cursos, no desde la XP."
+    titulo="Progreso de objetivos"
+    descripcion="Objetivos de aprendizaje trabajados con evidencia registrada. Se calcula desde tus cursos, no desde la XP."
   >
     <a acciones nz-button nzType="default" nzSize="small" routerLink="/alumno/aprender/mis-aprendizajes">
       Ir a Aprender

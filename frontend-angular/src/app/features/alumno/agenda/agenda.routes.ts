@@ -15,6 +15,10 @@ export const agendaRoutes: Routes = [
       { path: '', pathMatch: 'full', redirectTo: 'hoy' },
       { path: 'hoy', loadComponent: () => import('./pages/hoy/hoy').then((m) => m.Hoy) },
       {
+        path: 'sesiones',
+        loadComponent: () => import('./pages/sesiones/sesiones').then((m) => m.Sesiones),
+      },
+      {
         path: 'proximamente',
         loadComponent: () => import('./pages/proximamente/proximamente').then((m) => m.Proximamente),
       },

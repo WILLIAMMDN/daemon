@@ -111,6 +111,7 @@
               @for (hijo of item.hijos; track hijo.id) {
                 <a
                   class="submenu-item"
+                  id="sidebar-{{hijo.id}}"
                   [routerLink]="hijo.ruta"
                   routerLinkActive="active"
                   [routerLinkActiveOptions]="{ exact: hijo.exacto ?? false }"

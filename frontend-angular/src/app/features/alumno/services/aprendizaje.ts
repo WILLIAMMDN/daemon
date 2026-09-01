@@ -8,6 +8,10 @@ import {
   ProgresoLeccion,
   construirCursoVista,
 } from '../models/aprendizaje.model';
+import {
+  LearningContextResponse,
+  LearningMapResponse,
+} from '../models/contexto-alumno.model';
 
 export type MotivoErrorAprendizaje = 'offline' | 'timeout' | 'permission' | 'generic';
 
@@ -23,6 +27,8 @@ export class Aprendizaje {
   private readonly api = inject(Api);
 
   private readonly datos = signal<AprendizajeResponse | null>(null);
+  readonly learningContext = signal<LearningContextResponse | null>(null);
+  readonly mapa = signal<LearningMapResponse | null>(null);
 
   readonly cargando = signal(false);
   readonly refrescando = signal(false);
@@ -36,13 +42,16 @@ export class Aprendizaje {
   readonly porIniciar = computed(() => this.cursos().filter((curso) => curso.estado === 'notStarted'));
   readonly completados = computed(() => this.cursos().filter((curso) => curso.estado === 'completed'));
 
-  /** Objetivos de aprendizaje cubiertos por lecciones completadas (Mastery). */
-  readonly mastery = computed(() => {
+  /** Progreso académico por objetivos de aprendizaje cubiertos por lecciones completadas. */
+  readonly objetivosProgreso = computed(() => {
     const cursos = this.cursos();
     const totales = cursos.reduce((total, curso) => total + curso.objetivosTotales, 0);
     const logrados = cursos.reduce((total, curso) => total + curso.objetivosLogrados, 0);
     return { totales, logrados, porcentaje: totales ? Math.round((logrados * 100) / totales) : 0 };
   });
+
+  /** Alias para compatibilidad de vistas previas. */
+  readonly mastery = this.objetivosProgreso;
 
   curso(id: number): CursoVista | null {
     return this.cursos().find((curso) => curso.id === id) ?? null;
@@ -74,6 +83,16 @@ export class Aprendizaje {
         },
         error: (problema: unknown) => this.error.set(this.clasificar(problema)),
       });
+
+    this.api.get<LearningContextResponse>('/alumno/learning-context', { fresh }).subscribe({
+      next: (ctx) => this.learningContext.set(ctx),
+      error: () => this.learningContext.set(null),
+    });
+
+    this.api.get<LearningMapResponse>('/alumno/aprender/mapa', { fresh }).subscribe({
+      next: (mapa) => this.mapa.set(mapa),
+      error: () => this.mapa.set(null),
+    });
   }
 
   /** Marca una lección como completada y refleja el nuevo progreso en memoria. */

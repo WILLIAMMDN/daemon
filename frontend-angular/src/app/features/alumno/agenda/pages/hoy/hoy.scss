@@ -32,3 +32,40 @@
   color: var(--daemon-muted);
   font-size: 0.875rem;
 }
+
+.sesiones-hoy {
+  display: grid;
+  gap: var(--daemon-space-3);
+}
+
+.sesion-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--daemon-neutral-surface);
+  border: 1px solid var(--daemon-neutral-border);
+  border-radius: var(--daemon-radius-md);
+  padding: var(--daemon-space-3) var(--daemon-space-4);
+  gap: var(--daemon-space-3);
+
+  > div {
+    display: grid;
+    gap: var(--daemon-space-1);
+  }
+
+  &__tipo {
+    font-size: var(--daemon-font-size-caption);
+    font-weight: var(--daemon-font-weight-bold);
+    color: var(--daemon-semantic-info);
+  }
+
+  strong {
+    font-size: var(--daemon-font-size-body-lg);
+    color: var(--daemon-neutral-text-primary);
+  }
+
+  time {
+    font-size: var(--daemon-font-size-small);
+    color: var(--daemon-neutral-text-secondary);
+  }
+}
