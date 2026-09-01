@@ -1,14 +1,13 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NzButtonModule } from 'ng-zorro-antd/button';
-import { NzListModule } from 'ng-zorro-antd/list';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
-import { NzTagModule } from 'ng-zorro-antd/tag';
 import { ArcSection } from '../../../../../shared/componentes/arc-section/arc-section';
 import { EstadoVacio } from '../../../../../shared/componentes/estado-vacio/estado-vacio';
 import { Actividades } from '../../../services/actividades';
 import { Aprendizaje } from '../../../services/aprendizaje';
 import { TarjetaCurso } from '../../componentes/tarjeta-curso/tarjeta-curso';
+import { ListaActividades } from '../../../componentes/lista-actividades/lista-actividades';
 
 /**
  * Responde “¿qué estoy aprendiendo ahora?”: cursos en progreso, cursos que
@@ -18,7 +17,7 @@ import { TarjetaCurso } from '../../componentes/tarjeta-curso/tarjeta-curso';
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-mis-aprendizajes',
-  imports: [RouterLink, NzButtonModule, NzListModule, NzSkeletonModule, NzTagModule, ArcSection, EstadoVacio, TarjetaCurso],
+  imports: [RouterLink, NzButtonModule, NzSkeletonModule, ArcSection, EstadoVacio, TarjetaCurso, ListaActividades],
   templateUrl: './mis-aprendizajes.html',
   styleUrl: './mis-aprendizajes.scss',
 })

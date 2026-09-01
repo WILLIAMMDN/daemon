@@ -51,26 +51,7 @@
   @if (actividades.cargando() && !actividades.cargado()) {
     <nz-skeleton [nzActive]="true" [nzParagraph]="{ rows: 3 }" [nzTitle]="false" />
   } @else if (pendientes().length) {
-    <nz-list class="lista-actividades" nzBordered nzSize="small">
-      @for (actividad of pendientes(); track actividad.id) {
-        <nz-list-item>
-          <div class="actividad">
-            <div class="actividad__texto">
-              <a [routerLink]="actividad.ruta">{{ actividad.titulo }}</a>
-              <small>{{ actividad.tipo === 'mision' ? 'Misión' : 'Evaluación' }}</small>
-            </div>
-            <div class="actividad__estado">
-              @if (actividad.recompensa !== null) {
-                <span class="actividad__recompensa">{{ actividad.recompensa }} XP</span>
-              }
-              <nz-tag [nzColor]="actividad.estado === 'requiereCorreccion' ? 'error' : 'processing'">
-                {{ actividad.estadoLabel }}
-              </nz-tag>
-            </div>
-          </div>
-        </nz-list-item>
-      }
-    </nz-list>
+    <app-lista-actividades [actividades]="pendientes()" />
   } @else {
     <app-estado-vacio
       tamano="compact"

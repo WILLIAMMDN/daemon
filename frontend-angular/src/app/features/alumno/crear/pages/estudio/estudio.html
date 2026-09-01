@@ -1,0 +1,47 @@
+<app-arc-section
+  titulo="Empieza algo nuevo"
+  descripcion="Cada punto de partida abre la herramienta real que ya usas para crear."
+>
+  <ul class="partidas">
+    @for (partida of puntosDePartida; track partida.ruta) {
+      <li>
+        <article class="partida">
+          <nz-tag>{{ partida.etiqueta }}</nz-tag>
+          <h3><a [routerLink]="partida.ruta">{{ partida.titulo }}</a></h3>
+          <p>{{ partida.descripcion }}</p>
+        </article>
+      </li>
+    }
+  </ul>
+</app-arc-section>
+
+<app-arc-section
+  titulo="Continuar donde lo dejaste"
+  descripcion="Áreas de creación en las que ya tienes trabajo registrado."
+>
+  @if (cargando()) {
+    <nz-skeleton [nzActive]="true" [nzParagraph]="{ rows: 3 }" [nzTitle]="false" />
+  } @else if (areasConActividad().length) {
+    <ul class="areas">
+      @for (area of areasConActividad(); track area.slug) {
+        <li>
+          <a [routerLink]="area.ruta">
+            <strong>{{ area.nombre }}</strong>
+            <span>{{ area.descripcion }}</span>
+            @if (area.metricas.length) {
+              <small>
+                @for (metrica of area.metricas; track metrica.etiqueta) {
+                  {{ metrica.valor }} {{ metrica.etiqueta }}
+                }
+              </small>
+            }
+          </a>
+        </li>
+      }
+    </ul>
+  } @else {
+    <p class="vacio">
+      Todavía no tienes trabajo guardado en ningún área de creación. Empieza por uno de los puntos de partida.
+    </p>
+  }
+</app-arc-section>

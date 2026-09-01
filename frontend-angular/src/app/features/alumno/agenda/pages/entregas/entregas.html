@@ -1,0 +1,28 @@
+@if (actividades.cargando() && !actividades.cargado()) {
+  <nz-skeleton [nzActive]="true" [nzParagraph]="{ rows: 5 }" />
+} @else if (sinEntregas()) {
+  <app-estado-vacio
+    titulo="Todavía no has entregado nada"
+    descripcion="Cuando envíes la evidencia de una misión verás aquí su estado de revisión."
+  >
+    <a nz-button nzType="primary" routerLink="/alumno/aprender/misiones">Ver misiones</a>
+  </app-estado-vacio>
+} @else {
+  @if (actividades.enRevision().length) {
+    <app-arc-section titulo="En revisión" descripcion="Tu docente todavía no las ha calificado.">
+      <app-lista-actividades [actividades]="actividades.enRevision()" [mostrarFecha]="true" />
+    </app-arc-section>
+  }
+
+  @if (devueltas().length) {
+    <app-arc-section titulo="Devueltas" descripcion="Necesitan una corrección antes de volver a enviarse.">
+      <app-lista-actividades [actividades]="devueltas()" [mostrarFecha]="true" />
+    </app-arc-section>
+  }
+
+  @if (actividades.completadas().length) {
+    <app-arc-section titulo="Aprobadas" descripcion="Entregas aceptadas por tu docente.">
+      <app-lista-actividades [actividades]="actividades.completadas()" [mostrarFecha]="true" />
+    </app-arc-section>
+  }
+}

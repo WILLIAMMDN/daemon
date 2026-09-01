@@ -1,0 +1,67 @@
+@if (cargando()) {
+  <nz-skeleton [nzActive]="true" [nzParagraph]="{ rows: 5 }" />
+} @else if (error()) {
+  <nz-alert
+    nzType="warning"
+    nzShowIcon
+    nzMessage="No pudimos cargar tu portafolio"
+    nzDescription="Vuelve a intentarlo en unos momentos; tu obra publicada sigue guardada."
+    [nzAction]="reintentar"
+  />
+  <ng-template #reintentar>
+    <button nz-button nzSize="small" type="button" (click)="cargar()">Reintentar</button>
+  </ng-template>
+} @else if (!publicados().length && !borradores().length) {
+  <app-estado-vacio
+    titulo="Tu portafolio está vacío"
+    descripcion="Aquí aparecerá el trabajo que publiques. Empieza creando una historia en el Estudio."
+  >
+    <a nz-button nzType="primary" routerLink="/alumno/crear/historias/crear">Crear una historia</a>
+  </app-estado-vacio>
+} @else {
+  @if (publicados().length) {
+    <app-arc-section titulo="Publicado" descripcion="Obra visible para la comunidad.">
+      <ul class="obras">
+        @for (obra of publicados(); track obra.id) {
+          <li>
+            <article class="obra">
+              <h3><a [routerLink]="['/alumno/crear/historias', obra.id]">{{ obra.titulo || 'Historia sin título' }}</a></h3>
+              @if (obra.descripcion) {
+                <p>{{ obra.descripcion }}</p>
+              }
+              <div class="obra__meta">
+                <nz-tag nzColor="success">Publicado</nz-tag>
+                @if (obra.categoria) {
+                  <nz-tag>{{ obra.categoria }}</nz-tag>
+                }
+                @if (obra.tiempo_lectura) {
+                  <span>{{ obra.tiempo_lectura }} min de lectura</span>
+                }
+              </div>
+            </article>
+          </li>
+        }
+      </ul>
+    </app-arc-section>
+  }
+
+  @if (borradores().length) {
+    <app-arc-section titulo="Borradores" descripcion="Trabajo tuyo que todavía no está publicado.">
+      <ul class="obras">
+        @for (obra of borradores(); track obra.id) {
+          <li>
+            <article class="obra">
+              <h3><a [routerLink]="['/alumno/crear/historias', obra.id]">{{ obra.titulo || 'Historia sin título' }}</a></h3>
+              @if (obra.descripcion) {
+                <p>{{ obra.descripcion }}</p>
+              }
+              <div class="obra__meta">
+                <nz-tag>Borrador</nz-tag>
+              </div>
+            </article>
+          </li>
+        }
+      </ul>
+    </app-arc-section>
+  }
+}

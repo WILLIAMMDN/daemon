@@ -1,0 +1,82 @@
+@if (identidad.cargando() && !identidad.cargado()) {
+  <nz-skeleton [nzActive]="true" [nzParagraph]="{ rows: 5 }" />
+} @else if (identidad.error()) {
+  <nz-alert
+    nzType="warning"
+    nzShowIcon
+    nzMessage="No pudimos cargar tu progresión"
+    nzDescription="Vuelve a intentarlo en unos momentos."
+    [nzAction]="reintentar"
+  />
+  <ng-template #reintentar>
+    <button nz-button nzSize="small" type="button" (click)="identidad.cargar(true)">Reintentar</button>
+  </ng-template>
+} @else if (identidad.panel(); as panel) {
+  <app-arc-section titulo="Nivel y XP" descripcion="Tu avance como jugador dentro de DAEMON Pulse.">
+    <div class="nivel">
+      <div class="nivel__cabecera">
+        <span>Nivel {{ panel.progreso_nivel.nivel }} de {{ panel.progreso_nivel.nivel_maximo }}</span>
+        <strong>{{ panel.progreso_nivel.experiencia_nivel }} / {{ panel.progreso_nivel.experiencia_meta }} XP</strong>
+      </div>
+      <nz-progress
+        [nzPercent]="panel.progreso_nivel.progreso_porcentaje"
+        nzStrokeColor="var(--arc-green)"
+        [nzStrokeWidth]="8"
+      />
+      <small>{{ panel.progreso_nivel.experiencia_total }} XP acumulada en total.</small>
+    </div>
+  </app-arc-section>
+
+  <app-arc-section titulo="Constancia" descripcion="Tu racha y la actividad registrada esta semana.">
+    <dl class="cifras">
+      <div>
+        <dt>Racha actual</dt>
+        <dd>{{ panel.racha }} {{ panel.racha === 1 ? 'día' : 'días' }}</dd>
+      </div>
+      @if (panel.actividad_semana.length) {
+        <div>
+          <dt>Días activos esta semana</dt>
+          <dd>{{ diasActivos() }} / {{ panel.actividad_semana.length }}</dd>
+        </div>
+      }
+      <div>
+        <dt>Misiones completadas</dt>
+        <dd>{{ panel.misiones_completadas }}</dd>
+      </div>
+    </dl>
+  </app-arc-section>
+}
+
+<app-arc-section titulo="Logros" descripcion="Insignias otorgadas por tu docente.">
+  <a acciones nz-button nzType="default" nzSize="small" routerLink="../certificado">
+    Certificado y carnet
+  </a>
+
+  @if (cargandoLogros()) {
+    <nz-skeleton [nzActive]="true" [nzParagraph]="{ rows: 3 }" [nzTitle]="false" />
+  } @else if (insignias().length) {
+    <nz-list class="logros" nzBordered nzSize="small">
+      @for (insignia of insignias(); track insignia.id) {
+        <nz-list-item>
+          <div class="logro">
+            <div class="logro__texto">
+              <strong>{{ insignia.nombre }}</strong>
+              @if (insignia.descripcion) {
+                <small>{{ insignia.descripcion }}</small>
+              }
+            </div>
+            @if (insignia.fecha) {
+              <span class="logro__fecha">{{ insignia.fecha | date: 'd MMM y' }}</span>
+            }
+          </div>
+        </nz-list-item>
+      }
+    </nz-list>
+  } @else {
+    <app-estado-vacio
+      tamano="compact"
+      titulo="Todavía no tienes insignias"
+      descripcion="Tu docente las otorga cuando reconoce un logro concreto en tu trabajo."
+    />
+  }
+</app-arc-section>
