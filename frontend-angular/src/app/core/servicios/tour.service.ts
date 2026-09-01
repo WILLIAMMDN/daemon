@@ -52,8 +52,8 @@ export class TourService {
       {
         element: '#topbar-tokens',
         popover: {
-          title: 'Tokens DAEMON',
-          description: 'Esta es tu moneda virtual. Ganas tokens completando misiones y asistiendo a clases.',
+          title: 'Daems',
+          description: 'Esta es tu moneda virtual. Ganas Daems completando misiones y asistiendo a clases.',
           side: 'bottom',
           align: 'end',
         },

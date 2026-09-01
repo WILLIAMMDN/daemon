@@ -1,6 +1,10 @@
 # DAEMON
 
-DAEMON es una plataforma academica para gestionar una academia con estudiantes, docentes, actividades, recompensas e inteligencia artificial local. Su objetivo es centralizar el aprendizaje en un entorno digital donde el alumno pueda avanzar por misiones, usar un asistente IA, ganar tokens, canjear premios, rendir evaluaciones y participar en dinamicas de aula.
+DAEMON es un ecosistema y plataforma educativa full-stack para gestionar experiencias de aprendizaje con estudiantes, docentes, actividades, recompensas e inteligencia artificial local.
+
+## DAEMON ARC
+
+DAEMON ARC es la plataforma autenticada de aprendizaje y progresión del ecosistema, donde el estudiante avanza por misiones, utiliza asistentes de IA, gana Daems, canjea recompensas, rinde evaluaciones y participa en dinámicas de aula.
 
 ## Que permite hacer
 
