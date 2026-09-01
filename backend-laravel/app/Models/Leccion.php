@@ -19,6 +19,17 @@ class Leccion extends ModeloBase
         return ['contenido' => 'array', 'orden' => 'integer', 'duracion_minutos' => 'integer'];
     }
 
+    protected static function booted(): void
+    {
+        $exigirVersionEditable = function (Leccion $leccion): void {
+            $leccion->loadMissing('unidad.versionCurso');
+            abort_if($leccion->unidad?->versionCurso && $leccion->unidad->versionCurso->estado !== 'draft', 409, 'No se puede mutar una lección de una versión publicada.');
+        };
+        static::creating($exigirVersionEditable);
+        static::updating($exigirVersionEditable);
+        static::deleting($exigirVersionEditable);
+    }
+
     public function unidad(): BelongsTo
     {
         return $this->belongsTo(UnidadCurso::class, 'id_unidad');

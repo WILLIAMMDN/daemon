@@ -2,28 +2,3 @@
 .cuento-hero__bg {
   background-image: url('/img/headers/bg-cuento-banner.png');
 }
-
-/* Portada del cuento como libro de pie: proporción 3:4, sombra
-   profunda y rotación sutil que la separa del fondo del banner. */
-.cuento-hero__portada-wrap {
-  width: clamp(5.5rem, 9vw, 7.5rem);
-  aspect-ratio: 3 / 4;
-  border-radius: 8px;
-  overflow: hidden;
-  transform: rotate(2deg);
-  box-shadow:
-    0 18px 40px -12px rgba(23, 36, 60, 0.55),
-    0 0 0 3px rgba(255, 255, 255, 0.28);
-  transition: transform 0.25s ease;
-
-  &:hover {
-    transform: rotate(0deg) scale(1.03);
-  }
-}
-
-.cuento-hero__portada {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}

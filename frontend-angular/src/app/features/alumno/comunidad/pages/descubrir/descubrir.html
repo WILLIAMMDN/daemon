@@ -1,0 +1,72 @@
+@if (cargando()) {
+  <nz-skeleton [nzActive]="true" [nzParagraph]="{ rows: 6 }" />
+} @else if (sinNada()) {
+  <app-estado-vacio
+    titulo="La comunidad todavía está en silencio"
+    descripcion="Aún no hay publicaciones, participantes visibles ni eventos en vivo. Vuelve más tarde."
+  />
+} @else {
+  @if (actividades.eventoEnVivo(); as evento) {
+    <app-arc-section titulo="En vivo ahora" descripcion="Hay una ronda de competencia abierta.">
+      <div class="evento">
+        <div class="evento__texto">
+          <strong>Competencia en vivo</strong>
+          @if (evento.candidato; as candidato) {
+            <span>Turno de {{ candidato.nombre_completo }}</span>
+          }
+        </div>
+        <a nz-button nzType="primary" routerLink="../competencia">Participar</a>
+      </div>
+    </app-arc-section>
+  }
+
+  @if (recientes().length) {
+    <app-arc-section
+      titulo="Publicado por la comunidad"
+      descripcion="Lo último que tus compañeros hicieron público."
+    >
+      <a acciones nz-button nzType="default" nzSize="small" routerLink="../proyectos">Ver todo</a>
+
+      <ul class="publicaciones">
+        @for (publicacion of recientes(); track publicacion.id) {
+          <li>
+            <article class="publicacion">
+              <h3>
+                <a [routerLink]="['/alumno/crear/historias', publicacion.id]">
+                  {{ publicacion.titulo || 'Historia sin título' }}
+                </a>
+              </h3>
+              @if (publicacion.autor) {
+                <small>por {{ publicacion.autor }}</small>
+              }
+              @if (publicacion.descripcion) {
+                <p>{{ publicacion.descripcion }}</p>
+              }
+            </article>
+          </li>
+        }
+      </ul>
+    </app-arc-section>
+  }
+
+  @if (companeros().length) {
+    <app-arc-section titulo="Participantes" descripcion="Estudiantes y docentes registrados en la plataforma.">
+      <a acciones nz-button nzType="default" nzSize="small" routerLink="../perfiles">Ver el directorio</a>
+
+      <ul class="companeros">
+        @for (companero of companeros(); track companero.id) {
+          <li>
+            <a [routerLink]="['/alumno/comunidad/perfil', companero.id]">
+              <strong>{{ companero.nombre_completo }}</strong>
+              <small>{{ companero.rol === 'docente' ? 'Docente' : companero.nivel || 'Estudiante' }}</small>
+            </a>
+          </li>
+        }
+      </ul>
+    </app-arc-section>
+  }
+
+  <app-arc-section titulo="Clasificación" descripcion="Tu posición frente al resto, según la XP acumulada.">
+    <a nz-button nzType="default" routerLink="../ranking">Ver el ranking</a>
+  </app-arc-section>
+}

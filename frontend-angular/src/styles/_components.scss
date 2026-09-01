@@ -38,20 +38,24 @@
 /* Botones Principales Ng-Zorro Modificados */
 .daemon-btn.ant-btn {
   align-items: center;
-  border-radius: 6px;
+  border-radius: var(--daemon-radius-xs);
   display: inline-flex;
-  font-weight: 600;
+  font-weight: var(--daemon-font-weight-semibold);
   justify-content: center;
   min-height: 40px;
   padding: 0 1.25rem;
-  transition: all 0.15s ease-in-out;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  transition:
+    background-color var(--daemon-motion-fast) var(--daemon-motion-ease),
+    border-color var(--daemon-motion-fast) var(--daemon-motion-ease),
+    box-shadow var(--daemon-motion-fast) var(--daemon-motion-ease),
+    transform var(--daemon-motion-fast) var(--daemon-motion-ease);
+  box-shadow: var(--daemon-shadow-xs);
 }
 
 .daemon-btn.ant-btn-primary {
   background-color: var(--daemon-primary-dark);
   border-color: var(--daemon-primary-dark);
-  color: #ffffff;
+  color: var(--daemon-on-primary);
 }
 
 .daemon-btn.ant-btn-primary:not(:disabled):hover,
@@ -69,14 +73,14 @@
 }
 
 .daemon-btn.ant-btn-default {
-  background-color: #ffffff;
-  border-color: #cbd5e1;
-  color: #334155;
+  background-color: var(--daemon-surface);
+  border-color: var(--daemon-neutral-border-strong);
+  color: var(--daemon-ink-soft);
 }
 
 .daemon-btn.ant-btn-default:not(:disabled):hover,
 .daemon-btn.ant-btn-default:not(:disabled):focus {
-  background-color: #f8fafc;
+  background-color: var(--daemon-surface-muted);
   border-color: #94a3b8;
   color: #0f172a;
   transform: translateY(-1px);
@@ -112,7 +116,13 @@
   color: #1e40af;
 }
 
-/* Contenedores de Estado Vacío (Empty State) */
+/* Tarjetas Ng-Zorro — foundation compartida DAEMON (consumidores futuros) */
+.daemon-card.ant-card {
+  background: var(--daemon-surface);
+  border: 1px solid var(--daemon-border);
+  border-radius: var(--daemon-radius-md);
+  box-shadow: var(--daemon-shadow-xs);
+}
 .daemon-empty {
   background: #ffffff;
   border: 1px solid #e2e8f0;

@@ -1,0 +1,22 @@
+<section class="arc-section">
+  <header class="arc-section__header">
+    <div class="arc-section__texto">
+      @if (nivel() === 2) {
+        <h2>{{ titulo() }}</h2>
+      } @else {
+        <h3>{{ titulo() }}</h3>
+      }
+      @if (descripcion(); as detalle) {
+        <p>{{ detalle }}</p>
+      }
+    </div>
+
+    <div class="arc-section__acciones">
+      <ng-content select="[acciones]" />
+    </div>
+  </header>
+
+  <div class="arc-section__cuerpo">
+    <ng-content />
+  </div>
+</section>

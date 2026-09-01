@@ -18,8 +18,8 @@ export class NeuroMaze {
   ];
 
   readonly enlaces = [
-    { etiqueta: 'Cerebro del bot', ruta: '/alumno/herramientas/laboratorio' },
-    { etiqueta: 'Entrenamiento', ruta: '/alumno/herramientas/entrenamiento' },
-    { etiqueta: 'Defensa IA', ruta: '/alumno/herramientas/defensa-ia' },
+    { etiqueta: 'Cerebro del bot', ruta: '/alumno/crear/laboratorio' },
+    { etiqueta: 'Entrenamiento', ruta: '/alumno/crear/entrenamiento' },
+    { etiqueta: 'Defensa IA', ruta: '/alumno/crear/defensa-ia' },
   ];
 }

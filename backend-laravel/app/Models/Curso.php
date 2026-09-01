@@ -32,4 +32,9 @@ class Curso extends ModeloBase
     {
         return $this->hasMany(Aula::class, 'id_curso');
     }
+
+    public function versiones(): HasMany
+    {
+        return $this->hasMany(VersionCurso::class, 'id_curso')->orderBy('numero');
+    }
 }

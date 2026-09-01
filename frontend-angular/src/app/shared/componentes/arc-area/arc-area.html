@@ -1,0 +1,16 @@
+<div class="arc-area">
+  @if (mostrarEncabezado()) {
+    <header class="arc-area__header">
+      <h1>{{ titulo() }}</h1>
+      @if (descripcion(); as detalle) {
+        <p>{{ detalle }}</p>
+      }
+    </header>
+  }
+
+  <app-arc-local-nav [items]="items()" [ariaLabel]="ariaLabel()" />
+
+  <div class="arc-area__contenido">
+    <ng-content />
+  </div>
+</div>

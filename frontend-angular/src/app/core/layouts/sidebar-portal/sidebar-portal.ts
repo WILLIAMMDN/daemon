@@ -1,5 +1,17 @@
-import { Component, EventEmitter, HostBinding, HostListener, Input, OnChanges, OnInit, Output, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import {
+  Component,
+  EventEmitter,
+  HostBinding,
+  HostListener,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  Output,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+} from '@angular/core';
+import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
   faBars,
@@ -9,24 +21,23 @@ import {
   faThumbtack,
   faXmark,
 } from '@fortawesome/free-solid-svg-icons';
-import { FloatingShape } from '../../../shared/componentes/floating-shape/floating-shape';
+import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { PortalSidebarItem, PortalSidebarSection } from '../portal-sidebar.config';
 
 const SUFFIJO_PIN = '_pin';
 
 /**
- * Sidebar de portales DAEMON.
+ * Sidebar de portales DAEMON (DAEMON ARC Student Shell & Docente).
  *
  * Comportamiento:
- *  - Por defecto, está colapsado (~88px) y se expande al recibir hover.
- *  - El usuario puede "fijarlo" con el botón pin para que quede siempre expandido
- *    según el estado manual persistido en localStorage.
- *  - En mobile, se muestra/oculta con el botón hamburguesa y un backdrop.
- *
- * Estructura visual:
- *  - Brand bar superior con color sólido institucional (alumno / docente).
- *  - Navegación con secciones, submenús, badges e iconos.
- *  - Footer con cerrar sesión y firma institucional.
+ *  - Ancho canónico: 240px expandido, 76px colapsado.
+ *  - Hover expande temporalmente cuando no está fijado.
+ *  - Botón PIN fija el estado expandido en localStorage.
+ *  - En móvil (<=980px): cajón off-canvas con backdrop y botón de cierre.
+ *  - Acordeón de submenús preservado con auto-apertura por ruta activa.
+ *  - Si está colapsado a 76px y se activa un padre con hijos, se expande
+ *    adecuadamente antes de exponer el submenú.
  */
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -35,12 +46,11 @@ const SUFFIJO_PIN = '_pin';
     RouterLink,
     RouterLinkActive,
     FontAwesomeModule,
-    FloatingShape,
   ],
   templateUrl: './sidebar-portal.html',
   styleUrl: './sidebar-portal.scss',
 })
-export class SidebarPortal implements OnInit, OnChanges {
+export class SidebarPortal implements OnInit, OnChanges, OnDestroy {
   @Input() ariaLabel = 'Navegación principal';
   @Input() brandDetalle = 'Portal';
   @Input() homeLink = '/';
@@ -51,8 +61,8 @@ export class SidebarPortal implements OnInit, OnChanges {
 
   @Output() logout = new EventEmitter<void>();
 
-  readonly brandLogo = '/img/brand/daemon-transparent.png';
-  readonly brandLogoCompact = '/img/brand/daemon-small-transparent.png';
+  readonly brandLogo = '/img/brand/daemon-arc-logo.svg';
+  readonly brandLogoCompact = '/img/brand/daemon-arc-mark.svg';
 
   readonly iconos = {
     cerrar: faXmark,
@@ -73,6 +83,7 @@ export class SidebarPortal implements OnInit, OnChanges {
   brandLogoVisible = true;
 
   private readonly gruposAbiertos = new Set<string>();
+  private routerSub?: Subscription;
 
   constructor(private router: Router, private cdr: ChangeDetectorRef) {}
 
@@ -82,8 +93,9 @@ export class SidebarPortal implements OnInit, OnChanges {
 
   /**
    * Estado visual efectivo del sidebar.
+   *  - En móvil, el cajón siempre es 240px cuando está abierto.
    *  - Si está fijado, respeta el estado manual persistido.
-   *  - Si no, depende del hover.
+   *  - Si no está fijado, depende del hover.
    */
   get colapsado(): boolean {
     if (this.isMobile) return false;
@@ -92,7 +104,7 @@ export class SidebarPortal implements OnInit, OnChanges {
 
   @HostListener('window:resize')
   onResize(): void {
-    // Fuerzo la evaluación de isMobile para recalcular colapsado
+    this.cdr.markForCheck();
   }
 
   @HostBinding('class.sidebar-collapsed')
@@ -116,12 +128,31 @@ export class SidebarPortal implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-    this.colapsadoManual = localStorage.getItem(this.storageKey) === 'true';
-    this.fijado = localStorage.getItem(this.storageKey + SUFFIJO_PIN) === 'true';
+    const rawPin = typeof localStorage !== 'undefined' ? localStorage.getItem(this.storageKey + SUFFIJO_PIN) : null;
+    this.fijado = rawPin === null ? true : rawPin === 'true';
+
+    const rawColapsado = typeof localStorage !== 'undefined' ? localStorage.getItem(this.storageKey) : null;
+    this.colapsadoManual = rawColapsado === 'true';
     if (this.fijado) {
       this.colapsadoManual = false;
     }
     this.sincronizarGruposIniciales();
+
+    this.routerSub = this.router.events
+      .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
+      .subscribe(() => {
+        this.sincronizarGruposIniciales();
+        this.cdr.markForCheck();
+      });
+  }
+
+  ngOnChanges(): void {
+    this.sincronizarGruposIniciales();
+    this.cdr.markForCheck();
+  }
+
+  ngOnDestroy(): void {
+    this.routerSub?.unsubscribe();
   }
 
   /** Etiqueta corta del rol mostrada en el badge del brand bar. */
@@ -152,19 +183,19 @@ export class SidebarPortal implements OnInit, OnChanges {
   }
 
   estaAbierto(item: PortalSidebarItem): boolean {
-    return this.gruposAbiertos.has(item.id) || this.estaActivo(item);
+    return this.gruposAbiertos.has(item.id);
   }
 
   onBrandLogoError(): void {
     this.brandLogoVisible = false;
-  }
-
-  ngOnChanges(): void {
-    this.sincronizarGruposIniciales();
+    this.cdr.markForCheck();
   }
 
   navegar(): void {
-    this.mobileOpen = false;
+    if (this.mobileOpen) {
+      this.mobileOpen = false;
+      this.cdr.markForCheck();
+    }
   }
 
   /**
@@ -178,6 +209,7 @@ export class SidebarPortal implements OnInit, OnChanges {
       this.colapsadoManual = false;
       localStorage.setItem(this.storageKey, 'false');
     }
+    this.cdr.markForCheck();
   }
 
   /**
@@ -190,18 +222,29 @@ export class SidebarPortal implements OnInit, OnChanges {
     }
     this.colapsadoManual = !this.colapsadoManual;
     localStorage.setItem(this.storageKey, String(this.colapsadoManual));
+    this.cdr.markForCheck();
   }
 
   onMouseEnter(): void {
-    this.hoverActivo = true;
+    if (!this.hoverActivo) {
+      this.hoverActivo = true;
+      this.cdr.markForCheck();
+    }
   }
 
   onMouseLeave(): void {
-    this.hoverActivo = false;
+    if (this.hoverActivo) {
+      this.hoverActivo = false;
+      this.cdr.markForCheck();
+    }
   }
 
+  /**
+   * Abre/cierra grupo de submenú.
+   * Si está en rail colapsado de 76px, expande el sidebar adecuadamente
+   * antes de mostrar los hijos.
+   */
   toggleGrupo(item: PortalSidebarItem): void {
-    // Si está visualmente colapsado, primero expandirlo para mostrar el submenú.
     if (this.colapsado) {
       if (this.fijado) {
         this.colapsadoManual = false;
@@ -215,6 +258,7 @@ export class SidebarPortal implements OnInit, OnChanges {
     } else {
       this.gruposAbiertos.add(item.id);
     }
+    this.cdr.markForCheck();
   }
 
   private rutaActiva(ruta: string, exacto: boolean): boolean {

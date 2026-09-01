@@ -96,15 +96,15 @@
 
             <footer>
               @if (estado(mision) === 'available' || estado(mision) === 'rejected') {
-                <a nz-button nzType="primary" class="mission-primary-action" [routerLink]="['/alumno/misiones', mision.id, 'entregar']">
+                <a nz-button nzType="primary" class="mission-primary-action" [routerLink]="['/alumno/aprender/misiones', mision.id, 'entregar']">
                   {{ etiquetaAccion(mision) }} <fa-icon [icon]="iconos.flecha" aria-hidden="true" />
                 </a>
               } @else {
-                <a nz-button nzType="default" class="mission-primary-action" [routerLink]="['/alumno/misiones', mision.id]">
+                <a nz-button nzType="default" class="mission-primary-action" [routerLink]="['/alumno/aprender/misiones', mision.id]">
                   Ver progreso <fa-icon [icon]="iconos.flecha" aria-hidden="true" />
                 </a>
               }
-              <a class="detail-link" [routerLink]="['/alumno/misiones', mision.id]" [attr.aria-label]="'Ver detalle de ' + mision.titulo">
+              <a class="detail-link" [routerLink]="['/alumno/aprender/misiones', mision.id]" [attr.aria-label]="'Ver detalle de ' + mision.titulo">
                 <fa-icon [icon]="iconos.flecha" aria-hidden="true" />
               </a>
             </footer>
@@ -130,7 +130,7 @@
       <button nz-button nzType="primary" type="button" (click)="cargar()">
         <fa-icon [icon]="iconos.actualizar" aria-hidden="true" /> Actualizar misiones
       </button>
-      <a nz-button nzType="default" routerLink="/alumno/recursos">Volver a mis cursos</a>
+      <a nz-button nzType="default" routerLink="/alumno/aprender/explorar">Volver a mis cursos</a>
     </app-estado-vacio>
   }
 </section>

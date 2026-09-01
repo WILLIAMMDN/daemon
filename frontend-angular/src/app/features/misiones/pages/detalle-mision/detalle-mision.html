@@ -10,7 +10,7 @@
       <button nz-button nzType="primary" type="button" (click)="cargar()">
         <fa-icon [icon]="iconos.actualizar" aria-hidden="true" /> Intentar nuevamente
       </button>
-      <a nz-button nzType="default" routerLink="/alumno/misiones">Volver a misiones</a>
+      <a nz-button nzType="default" routerLink="/alumno/aprender/misiones">Volver a misiones</a>
     </section>
   } @else if (detalle(); as datos) {
     <header class="detail-hero">
@@ -18,7 +18,7 @@
         <span>Brief de misión · {{ datos.mision.nivel_requerido }}</span>
         <h1 id="mission-detail-title">{{ datos.mision.titulo }}</h1>
         <p>{{ datos.mision.descripcion || 'Tu docente preparó este desafío para transformar lo aprendido en una solución real.' }}</p>
-        <a routerLink="/alumno/misiones"><fa-icon [icon]="iconos.regresar" aria-hidden="true" /> Volver a misiones</a>
+        <a routerLink="/alumno/aprender/misiones"><fa-icon [icon]="iconos.regresar" aria-hidden="true" /> Volver a misiones</a>
       </div>
       <div class="dual-prize">
         <small>Recompensa al aprobar</small>
@@ -81,7 +81,7 @@
         @if (puedeEntregar(datos.entrega)) {
           <h2>{{ datos.entrega ? 'Prepara una corrección' : 'Demuestra lo que sabes' }}</h2>
           <p>La evidencia puede incluir texto y un archivo compatible con el formato solicitado.</p>
-          <a class="primary-action" [routerLink]="['/alumno/misiones', datos.mision.id, 'entregar']">
+          <a class="primary-action" [routerLink]="['/alumno/aprender/misiones', datos.mision.id, 'entregar']">
             {{ datos.entrega ? 'Corregir entrega' : 'Entregar evidencia' }} <fa-icon [icon]="iconos.flecha" aria-hidden="true" />
           </a>
         } @else if (datos.entrega?.estado === 'pendiente') {
@@ -91,7 +91,7 @@
           <h2>Misión completada</h2>
           <p>La recompensa ya forma parte de tu progreso. Continúa con el siguiente reto disponible.</p>
         }
-        <a class="secondary-action" routerLink="/alumno/misiones">Explorar otras misiones</a>
+        <a class="secondary-action" routerLink="/alumno/aprender/misiones">Explorar otras misiones</a>
       </nz-card>
     </section>
   }

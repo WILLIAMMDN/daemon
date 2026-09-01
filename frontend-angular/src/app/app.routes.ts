@@ -6,6 +6,8 @@ import { tutorGuard } from './core/guards/tutor-guard';
 import { CATEGORIAS_PREMIO, NIVELES_ALUMNO, NIVELES_CONTENIDO } from './core/dominio/nivel-alumno';
 import { soloDesarrolloGuard } from './core/guards/solo-desarrollo.guard';
 
+import { alumnoRoutes } from './features/alumno/alumno.routes';
+
 export const routes: Routes = [
   { path: '', loadComponent: () => import('./features/publico/pages/inicio/inicio').then((m) => m.Inicio) },
   { path: 'login', loadComponent: () => import('./features/autenticacion/pages/login/login').then((m) => m.Login) },
@@ -22,49 +24,10 @@ export const routes: Routes = [
     ],
   },
   {
-    path: 'alumno', loadComponent: () => import('./core/layouts/layout-alumno/layout-alumno').then((m) => m.LayoutAlumno), canActivate: [authGuard, alumnoGuard], children: [
-      { path: '', loadComponent: () => import('./features/alumno/pages/panel-alumno/panel-alumno').then((m) => m.PanelAlumno), data: { titulo: 'Mi panel', descripcion: 'Resumen de progreso, tokens, insignias y actividad.', endpoint: '/alumno/panel' } },
-      { path: 'perfil', loadComponent: () => import('./features/alumno/pages/perfil-alumno/perfil-alumno').then((m) => m.PerfilAlumno), data: { preload: true, titulo: 'Mi perfil', descripcion: 'Datos personales, insignias y mochila digital.', endpoint: '/alumno/perfil', accion: { etiqueta: 'Actualizar perfil', endpoint: '/alumno/perfil', campos: [{ nombre: 'nombre_completo', etiqueta: 'Nombre completo' }, { nombre: 'email', etiqueta: 'Correo' }, { nombre: 'biografia', etiqueta: 'Biografía', tipo: 'textarea' }] } } },
-      { path: 'perfil/editar', loadComponent: () => import('./features/alumno/pages/editar-perfil/editar-perfil').then((m) => m.EditarPerfil) },
-      { path: 'notificaciones', loadComponent: () => import('./features/compartido/pages/notificaciones/notificaciones').then((m) => m.NotificacionesPage) },
-      { path: 'desafios', redirectTo: 'misiones', pathMatch: 'full' },
-      { path: 'misiones', loadComponent: () => import('./features/misiones/pages/lista-misiones/lista-misiones').then((m) => m.ListaMisiones), data: { preload: true } },
-      { path: 'misiones/:id', loadComponent: () => import('./features/misiones/pages/detalle-mision/detalle-mision').then((m) => m.DetalleMision) },
-      { path: 'misiones/:id/entregar', loadComponent: () => import('./features/misiones/pages/entregar-mision/entregar-mision').then((m) => m.EntregarMision) },
-      { path: 'chatbot', redirectTo: 'herramientas/chatbot', pathMatch: 'full' },
-      { path: 'crear-bot', redirectTo: 'herramientas/bot', pathMatch: 'full' },
-      { path: 'herramientas', loadComponent: () => import('./features/herramientas/pages/herramientas/herramientas').then((m) => m.Herramientas), data: { preload: true } },
-      { path: 'herramientas/chatbot', loadComponent: () => import('./features/chatbot/pages/chatbot-alumno/chatbot-alumno').then((m) => m.ChatbotAlumno) },
-      { path: 'herramientas/bot', loadComponent: () => import('./features/chatbot/pages/crear-bot/crear-bot').then((m) => m.CrearBot) },
-      { path: 'recursos', loadComponent: () => import('./features/alumno/pages/recursos/recursos').then((m) => m.Recursos), data: { preload: true } },
-      { path: 'tienda', loadComponent: () => import('./features/tienda/pages/tienda-alumno/tienda-alumno').then((m) => m.TiendaAlumno), data: { preload: true, titulo: 'Tienda', descripcion: 'Canjea tus tokens por premios disponibles.', endpoint: '/tienda', accion: { etiqueta: 'Canjear premio', endpoint: '/tienda/canjear/{id}', campos: [{ nombre: 'id', etiqueta: 'ID del premio', tipo: 'number' }] } } },
-      { path: 'mascota', loadComponent: () => import('./features/mascota/pages/vestidor-mascota/vestidor-mascota').then((m) => m.VestidorMascota), data: { preload: true, titulo: 'Mi criatura', descripcion: 'Vestidor, colección y apariencia de tu compañero DAEMON.', endpoint: '/mascota' } },
-      { path: 'canjes', loadComponent: () => import('./features/tienda/pages/mis-canjes/mis-canjes').then((m) => m.MisCanjes), data: { titulo: 'Mis canjes', descripcion: 'Historial y códigos de premios digitales.', endpoint: '/tienda/canjes' } },
-      { path: 'evaluaciones', loadComponent: () => import('./features/evaluaciones/pages/examen-live/examen-live').then((m) => m.ExamenLive), data: { preload: true, titulo: 'Evaluaciones', descripcion: 'Exámenes activos para tu nivel.', endpoint: '/evaluaciones/activas', accion: { etiqueta: 'Enviar respuestas', endpoint: '/evaluaciones/{id}/responder', campos: [{ nombre: 'id', etiqueta: 'ID del examen', tipo: 'number' }, { nombre: 'respuestas', etiqueta: 'Respuestas JSON: {"1":"A"}', tipo: 'json', valor: '{}' }] } } },
-      { path: 'resultados', loadComponent: () => import('./features/evaluaciones/pages/resultados-examen/resultados-examen').then((m) => m.ResultadosExamen), data: { titulo: 'Mis resultados', descripcion: 'Puntajes obtenidos y exámenes enviados.', endpoint: '/evaluaciones/resultados' } },
-      { path: 'competencia', loadComponent: () => import('./features/competencia/pages/votar/votar').then((m) => m.Votar), data: { titulo: 'Competencia en vivo', descripcion: 'Estado de la ronda y voto actual.', endpoint: '/competencia/estado', accion: { etiqueta: 'Enviar voto', endpoint: '/competencia/votar', campos: [{ nombre: 'puntuacion', etiqueta: 'Puntuación (1-10)', tipo: 'number' }, { nombre: 'comentario', etiqueta: 'Comentario' }] } } },
-      { path: 'competencia/tv', loadComponent: () => import('./features/competencia/pages/tv/tv').then((m) => m.Tv) },
-      { path: 'proyectos', pathMatch: 'full', loadComponent: () => import('./features/proyectos/pages/proyectos/proyectos').then((m) => m.Proyectos), data: { preload: true, titulo: 'Mis proyectos', descripcion: 'Historias, asistentes y experimentos creativos.', endpoint: '/alumno/proyectos' } },
-      { path: 'proyectos/cuentos', pathMatch: 'full', loadComponent: () => import('./features/cuentos/pages/galeria-proyectos/galeria-proyectos').then((m) => m.GaleriaProyectos), data: { preload: true, titulo: 'Galería de historias', descripcion: 'Historias reales creadas por la comunidad.', endpoint: '/cuentos', accion: { etiqueta: 'Guardar mi cuento', endpoint: '/cuentos', campos: [{ nombre: 'titulo', etiqueta: 'Título' }, { nombre: 'data_1', etiqueta: 'Contenido de la primera escena', tipo: 'textarea' }] } } },
-      { path: 'proyectos/cuentos/crear', loadComponent: () => import('./features/cuentos/pages/crear-cuento/crear-cuento').then((m) => m.CrearCuento) },
-      { path: 'proyectos/cuentos/:id', loadComponent: () => import('./features/cuentos/pages/ver-cuento/ver-cuento').then((m) => m.VerCuento) },
-      { path: 'cuentos', redirectTo: 'proyectos/cuentos', pathMatch: 'full' },
-      { path: 'cuentos/crear', redirectTo: 'proyectos/cuentos/crear', pathMatch: 'full' },
-      { path: 'cuentos/:id', redirectTo: 'proyectos/cuentos/:id' },
-      { path: 'ranking', loadComponent: () => import('./features/ranking/pages/ranking/ranking').then((m) => m.Ranking), data: { preload: true, titulo: 'Ranking', descripcion: 'Clasificación por experiencia acumulada.', endpoint: '/ranking' } },
-      { path: 'comunidad', loadComponent: () => import('./features/comunidad/pages/comunidad/comunidad').then((m) => m.Comunidad), data: { preload: true, titulo: 'Comunidad', descripcion: 'Estudiantes y docentes de la plataforma.', endpoint: '/comunidad' } },
-      { path: 'comunidad/perfil/:usuarioId', loadComponent: () => import('./features/alumno/pages/perfil-alumno/perfil-alumno').then((m) => m.PerfilAlumno), data: { titulo: 'Perfil de compañero', descripcion: 'Perfil público de un participante de la comunidad.', endpoint: '/alumno/perfil/{usuarioId}' } },
-      { path: 'laboratorio', redirectTo: 'herramientas/laboratorio', pathMatch: 'full' },
-      { path: 'laboratorio/neuro-maze', redirectTo: 'herramientas/neuro-maze', pathMatch: 'full' },
-      { path: 'laboratorio/defensa-ia', redirectTo: 'herramientas/defensa-ia', pathMatch: 'full' },
-      { path: 'laboratorio/entrenamiento-mascota', redirectTo: 'herramientas/entrenamiento', pathMatch: 'full' },
-      { path: 'herramientas/laboratorio', loadComponent: () => import('./features/laboratorio/pages/lab-ia/lab-ia').then((m) => m.LabIa), data: { titulo: 'Laboratorio IA', descripcion: 'Entrenamiento del cerebro de tu mascota mediante una matriz Q.', endpoint: '/chatbot/cerebro', aviso: 'Los motores originales de neuro-maze, defensa IA y aprendizaje por refuerzo se conservaron en public/legacy/js.', accion: { etiqueta: 'Guardar matriz neural', endpoint: '/chatbot/cerebro', campos: [{ nombre: 'matriz_neural', etiqueta: 'Matriz en JSON', tipo: 'json', valor: '{"qTable":{},"epsilon":1}' }] } } },
-      { path: 'herramientas/neuro-maze', loadComponent: () => import('./features/laboratorio/pages/neuro-maze/neuro-maze').then((m) => m.NeuroMaze) },
-      { path: 'herramientas/defensa-ia', loadComponent: () => import('./features/laboratorio/pages/defensa-ia/defensa-ia').then((m) => m.DefensaIa) },
-      { path: 'herramientas/entrenamiento', loadComponent: () => import('./features/laboratorio/pages/entrenamiento-mascota/entrenamiento-mascota').then((m) => m.EntrenamientoMascota) },
-      { path: 'certificado', loadComponent: () => import('./features/certificados/pages/certificado/certificado').then((m) => m.Certificado), data: { preload: true, titulo: 'Certificado y carnet', descripcion: 'Datos listos para impresión y acreditación.', endpoint: '/certificados' } },
-      { path: 'certificado/imprimir', loadComponent: () => import('./features/certificados/pages/imprimir-carnet/imprimir-carnet').then((m) => m.ImprimirCarnet) },
-    ],
+    path: 'alumno',
+    loadComponent: () => import('./core/layouts/layout-alumno/layout-alumno').then((m) => m.LayoutAlumno),
+    canActivate: [authGuard, alumnoGuard],
+    children: alumnoRoutes,
   },
   {
     path: 'docente', loadComponent: () => import('./core/layouts/layout-docente/layout-docente').then((m) => m.LayoutDocente), canActivate: [authGuard, docenteGuard], children: [

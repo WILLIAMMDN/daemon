@@ -1,97 +1,46 @@
-# Índice de documentación DAEMON
+---
+title: Índice Principal DAEMON
+status: active
+owner: arquitectura
+last_reviewed: 2026-08-06
+applies_to: all
+---
+# Documentación DAEMON
 
-Empieza por `AGENTS.md` en la raíz. Después abre solo la guía que corresponda
-a la tarea.
+Bienvenido. Empieza leyendo la política de gobernanza, la fuente de verdad y
+el orden de lectura.
 
-## Contexto general
+## Autoridad global
 
-| Documento                          | Uso                                                                       |
-| ---------------------------------- | ------------------------------------------------------------------------- |
-| `ai-project-context.md`            | Arquitectura completa, decisiones y archivos clave.                       |
-| `estado-nube-github-produccion.md` | Firebase, Render, Supabase, GitHub y despliegues.                         |
-| `qa-produccion.md`                 | Pruebas, QA visual, smoke y verificación de bundles.                      |
-| `infraestructura-operativa.md`     | Runtime, staging, backups, restauracion y rollback.                       |
-| `ENVIRONMENTS.md`                  | Contrato fail-closed de development, testing, staging y production.       |
-| `frontend-architecture.md`         | Límites entre core, features y shared; ubicación y validación automática. |
+- [Constitución General del Proyecto DAEMON](00-governance/project-constitution.md) — autoridad global del proyecto (canonical, v1.0).
 
-## Transformación production-hardening
+## Gobernanza
 
-| Documento                                            | Uso                                                                   |
-| ---------------------------------------------------- | --------------------------------------------------------------------- |
-| `transformacion-estudiante/01-data-authority.md`     | Autoridad por dominio y ADR-001 a ADR-006.                            |
-| `transformacion-estudiante/02-environments.md`       | Aislamiento fail-closed y evidencia del Paquete 2.                    |
-| `transformacion-estudiante/03-firestore-security.md` | Rules v2, índices, matriz de pruebas, cobertura y gate de despliegue. |
+- [Política de Documentación](00-governance/documentation-policy.md)
+- [Fuente de Verdad](00-governance/source-of-truth.md)
+- [Orden de Lectura](00-governance/agent-reading-order.md)
+- [Estados Documentales](00-governance/document-statuses.md)
+- [Estudio de Fundación (FND-1)](00-governance/foundation-assessment.md)
+- [Mapa de Documentos Canónicos](00-governance/canonical-document-map.md)
+- [Registro de Brechas Documentales](00-governance/documentation-gap-register.md)
 
-## Portal alumno
+## Producto
 
-| Documento                             | Uso                                                            |
-| ------------------------------------- | -------------------------------------------------------------- |
-| `portal-alumno.md`                    | Layout, dashboard, perfil, misiones, ranking y tienda.         |
-| `sistema-visual-portal-alumno.md`     | Paleta, tipografía, header, tarjetas y reglas visuales.        |
-| `gamificacion-xp-daemons.md`          | Separación de XP y DAEMONS, nivel, ranking y canjes.           |
-| `release-2026-07-14-portal-alumno.md` | Historial completo, commits, archivos y evidencia del release. |
-| `frontend-ui-standard.md`             | Uso de NG-ZORRO y estándar compartido de componentes.          |
+- [DAEMON Product Overview](10-product/product-overview.md) — canonical v1.0 (autoridad canónica raíz del dominio Producto: identidad, actores, experiencias, capacidades y estado)
+- [DAEMON Business Rules](10-product/business-rules.md) — canonical v1.0 (catálogo canónico de reglas de negocio, invariantes y transiciones)
 
-## Portal de familias
+Los documentos de portales y módulos (portal-alumno, portal-familias,
+gamificacion-xp-daemons, sistema-mascotas-cosmeticos) son referencias
+técnicas activas, no autoridades canónicas globales.
 
-| Documento            | Uso                                                                                    |
-| -------------------- | -------------------------------------------------------------------------------------- |
-| `portal-familias.md` | Cuenta tutor, vínculo verificable, reporte semanal, bienestar digital y base de pagos. |
+## Tipos de documentación
 
-## Autenticación, datos y almacenamiento
+- **Canónica:** autoridad de un dominio (`status: canonical`). La
+  Constitución es la autoridad global.
+- **Activa:** documentación en uso actual, no necesariamente canónica.
+- **Iniciativas:** trabajo en curso (`80-initiatives/`), temporal.
+- **Historia y auditorías:** registros no normativos (`90-audits-history/`,
+  `99-archive/`); no se usan como especificación.
 
-| Documento                  | Uso                                                                |
-| -------------------------- | ------------------------------------------------------------------ |
-| `firebase-auth.md`         | Google, email/password, verificación y recuperación.               |
-| `supabase-postgres.md`     | PostgreSQL, storage, migraciones y responsabilidades.              |
-| `privacidad-kids-teens.md` | Consentimiento, exportacion, eliminacion y retencion para menores. |
-| `datos-prueba.txt`         | Cuentas y datos de prueba autorizados para QA.                     |
-
-## API y trabajo pendiente
-
-| Documento         | Uso                                                  |
-| ----------------- | ---------------------------------------------------- |
-| `api-crud.md`     | Contratos y operaciones CRUD.                        |
-| `crud-roadmap.md` | Ruta de evolución de CRUD y módulos administrativos. |
-
-## Lectura mínima por tarea
-
-### Cambiar una pantalla del alumno
-
-1. `portal-alumno.md`
-2. `sistema-visual-portal-alumno.md`
-3. archivo de la feature correspondiente
-
-### Cambiar recompensas, nivel, ranking o tienda
-
-1. `gamificacion-xp-daemons.md`
-2. `portal-alumno.md`
-3. pruebas `GamificacionXpTest`
-
-### Cambiar autenticación
-
-1. `firebase-auth.md`
-2. `ai-project-context.md`
-
-### Cambiar tutores, límites o membresías
-
-1. `portal-familias.md`
-2. `privacidad-kids-teens.md`
-3. pruebas `TutorPortalTest`
-
-### Publicar o diagnosticar producción
-
-1. `estado-nube-github-produccion.md`
-2. `qa-produccion.md`
-
-## Regla de mantenimiento
-
-Cuando una decisión de código cambie, actualizar en el mismo PR:
-
-- la guía temática;
-- `ai-project-context.md` si afecta arquitectura general;
-- `AGENTS.md` si cambia el camino de incorporación;
-- una nota de release si el cambio llega a producción.
-
-El código vigente tiene prioridad sobre una guía antigua. Si existe una
-diferencia, verificar el código y corregir la documentación antes del merge.
+El sistema visual (`30-design-system/`) tiene autoridad máxima únicamente
+dentro del dominio visual.

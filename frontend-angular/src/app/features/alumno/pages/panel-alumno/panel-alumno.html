@@ -8,7 +8,12 @@
     </button>
   </section>
 } @else if (panel(); as datos) {
-  <section class="flex flex-col gap-6" aria-labelledby="dashboard-title">
+  <section
+    class="student-dashboard"
+    [class.student-dashboard--kids]="esKids()"
+    [class.student-dashboard--teens]="esTeens()"
+    aria-labelledby="dashboard-title"
+  >
     @if (estado(); as estadoActual) {
       @if (estadoActual.kind === 'ready' && estadoActual.stale) {
         <aside class="offline-notice" role="status" aria-live="polite">
@@ -37,250 +42,314 @@
       </aside>
     }
 
-    <!-- HERO BANNER -->
-    <section class="student-hero-banner relative flex flex-col lg:flex-row items-center justify-between p-5 sm:p-6 lg:p-8 overflow-visible mt-4 lg:mt-0">
-      
-      <!-- Monstruo (Oculto en móvil para ahorrar espacio) -->
-      <div class="hidden lg:block relative z-10 flex-none w-[360px] -mt-20 -mb-10 -ml-6 pointer-events-none">
-        <img src="/img/hero-monster.png" alt="Monstruo DAEMON" class="w-full h-auto drop-shadow-2xl transform scale-90 origin-bottom" />
+    <!-- 1 · BIENVENIDA — KIDS escena ilustrada / TEENS introducción sobria -->
+    <section class="dashboard-welcome" aria-label="Bienvenida">
+      <div class="welcome-content">
+        <span class="eyebrow eyebrow--navy">{{ eyebrowBienvenida(datos, esTeens() ? 'creator' : 'explore') }}</span>
+        <h1 id="dashboard-title" class="welcome-title">Hola, <span class="welcome-name">{{ nombreCorto(datos.usuario) }}</span></h1>
+        <p class="welcome-sub">{{ mensajeBienvenida(datos) }}</p>
       </div>
-
-      <div class="relative z-10 flex-1 flex flex-col items-center lg:items-start text-center lg:text-left px-2 lg:px-8 w-full">
-        <!-- Badge de nivel super compacto para móviles -->
-        <div class="flex lg:hidden items-center gap-1.5 bg-[var(--daemon-on-accent)]/80 daemon-backdrop-sm border border-[var(--daemon-primary)]/50 rounded-full px-3 py-1 mb-3">
-          <span class="text-indigo-200 text-[9px] font-extrabold uppercase tracking-widest">NIVEL</span>
-          <strong class="text-[var(--daemon-kids)] text-sm font-black">{{ progreso(datos).nivel }}</strong>
+      @if (esKids()) {
+        <!-- KIDS · Explore: escenario ilustrado integrado (assets aprobados EXP-01) -->
+        <div class="kids-hero-scene" aria-hidden="true">
+          <img [src]="heroAssets().background" alt="" class="kids-hero-layer kids-hero-layer--bg" />
+          @for (nube of heroAssets().clouds; track $index) {
+            <img
+              [src]="nube"
+              alt=""
+              class="kids-hero-layer kids-hero-layer--cloud"
+              [class.kids-hero-layer--cloud-1]="$index === 0"
+              [class.kids-hero-layer--cloud-2]="$index === 1"
+              [class.kids-hero-layer--cloud-3]="$index === 2"
+              [class.kids-hero-layer--cloud-4]="$index === 3"
+            />
+          }
+          <img [src]="heroAssets().ground" alt="" class="kids-hero-layer kids-hero-layer--ground" />
+          <img [src]="heroAssets().flag" alt="" class="kids-hero-layer kids-hero-layer--flag" />
+          <img [src]="heroAssets().monster" alt="" class="kids-hero-layer kids-hero-layer--monster" />
         </div>
-
-        <small class="text-[var(--daemon-kids)] font-bold text-[10px] sm:text-xs tracking-widest uppercase mb-1 sm:mb-2 drop-shadow-md">RESUMEN DE APRENDIZAJE</small>
-        <h1 id="dashboard-title" class="text-white text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-2 sm:mb-3 leading-tight drop-shadow-lg">
-          Hola, {{ nombreCorto(datos.usuario) }}
-        </h1>
-        <p class="text-indigo-100 text-sm sm:text-lg mb-6 sm:mb-8 max-w-lg drop-shadow-md px-4 lg:px-0 leading-relaxed">
-          Sigue aprendiendo, completa misiones y desbloquea nuevas habilidades.
-        </p>
-        
-        <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-          <a nz-button class="bg-[var(--daemon-accent)] hover:bg-[var(--daemon-warning)] text-[var(--daemon-on-accent)] border-none rounded-xl font-extrabold h-11 sm:h-12 px-6 sm:px-8 shadow-sm transition-colors inline-flex items-center justify-center gap-2 w-full sm:w-auto" routerLink="/alumno/misiones">
-            <fa-icon [icon]="iconos.play" /> Continuar misión
-          </a>
-          <a nz-button class="bg-[var(--daemon-primary-dark)]/80 daemon-backdrop-md hover:bg-[var(--daemon-ink-soft)] border border-[var(--daemon-primary)] text-white rounded-xl font-semibold h-11 sm:h-12 px-6 sm:px-8 transition-colors inline-flex items-center justify-center gap-2 w-full sm:w-auto" routerLink="/alumno/perfil">
-            <fa-icon [icon]="iconos.brillo" /> Ver mi ruta
-          </a>
-        </div>
-      </div>
-
-      <!-- Círculo de progreso (Solo en Desktop/Tablet) -->
-      <div class="hidden lg:flex relative z-10 flex-none ml-4 flex-col items-center">
-        <div
-          class="relative flex items-center justify-center bg-[var(--daemon-on-accent)] border border-[var(--daemon-primary)] rounded-full w-[136px] h-[136px] shadow-sm"
-          role="progressbar"
-          aria-label="Progreso al siguiente nivel"
-          aria-valuemin="0"
-          aria-valuemax="100"
-          [attr.aria-valuenow]="progreso(datos).progreso_porcentaje"
-          [attr.aria-valuetext]="progreso(datos).progreso_porcentaje + '%; nivel ' + progreso(datos).nivel"
-        >
-          <nz-progress class="hero-progress absolute inset-0" aria-hidden="true" nzType="circle" [nzPercent]="progreso(datos).progreso_porcentaje" [nzWidth]="136" [nzStrokeWidth]="8" nzStrokeColor="var(--daemon-kids)" />
-          <div class="absolute flex flex-col items-center justify-center z-10">
-            <small class="text-indigo-200 text-[0.7rem] font-extrabold tracking-widest uppercase drop-shadow-md">NIVEL</small>
-            <strong class="text-white text-[3.5rem] font-extrabold leading-none drop-shadow-lg">{{ progreso(datos).nivel }}</strong>
-          </div>
-        </div>
-        <div class="text-center mt-4">
-          <strong class="text-yellow-400 text-sm block drop-shadow-md">{{ progreso(datos).experiencia_restante }} XP</strong>
-          <small class="text-indigo-200 text-xs opacity-80">para subir</small>
-        </div>
-      </div>
+      }
     </section>
 
-    <!-- STATS (Coherent Platform Design) -->
-    <section class="student-stats-grid gap-3 sm:gap-6" aria-label="Indicadores principales">
-      
-      <!-- XP Card -->
-      <article class="bg-white rounded-2xl p-4 sm:p-6 shadow-sm border border-slate-200 hover:shadow-md transition-shadow motion-reduce:transition-none cursor-default flex flex-col justify-between">
-        <span class="text-blue-600 text-[10px] sm:text-[11px] font-extrabold tracking-widest uppercase block mb-2 sm:mb-3 truncate">EXPERIENCIA</span>
-        <div class="flex items-center gap-2 sm:gap-3">
-          <strong class="text-slate-900 text-3xl sm:text-5xl font-black tracking-tight">{{ progreso(datos).experiencia_total }}</strong>
-          <fa-icon [icon]="iconos.energia" class="text-xl sm:text-3xl text-blue-500" />
+    <!-- 2 · PRIMARY LEARNING ACTION -->
+    <section class="mission-panel" aria-label="Prioridades de aprendizaje">
+      <header class="section-head">
+        <div>
+          <span class="eyebrow eyebrow--mission">@if (accionActual(datos); as accion) { {{ accion.tipoEtiqueta }} } @else { @if (esKids()) { PRÓXIMA MISIÓN } @else { CREA · EN PROGRESO } }</span>
+          <h2 class="section-title">@if (esKids()) { Tu siguiente reto } @else { Tu próximo proyecto }</h2>
         </div>
-        <p class="text-slate-500 text-xs sm:text-sm font-medium mt-2 sm:mt-3 hidden sm:block">Faltan {{ progreso(datos).experiencia_restante }} pts para subir.</p>
-      </article>
+        <a class="section-action" routerLink="/alumno/aprender/misiones">Ver todas</a>
+      </header>
 
-      <!-- DAEMONS Card -->
-      <article class="bg-white rounded-2xl p-4 sm:p-6 shadow-sm border border-slate-200 hover:shadow-md transition-shadow motion-reduce:transition-none cursor-default flex flex-col justify-between">
-        <span class="text-amber-500 text-[10px] sm:text-[11px] font-extrabold tracking-widest uppercase block mb-2 sm:mb-3 truncate">SALDO DE DAEMS</span>
-        <div class="flex items-center gap-2 sm:gap-3">
-          <strong class="text-slate-900 text-3xl sm:text-5xl font-black tracking-tight">{{ datos.usuario.tokens }}</strong>
-          <div class="sm:hidden flex items-center justify-center">
-            <app-moneda-daemon [size]="20" />
-          </div>
-          <div class="hidden sm:flex items-center justify-center">
-            <app-moneda-daemon [size]="32" />
-          </div>
-        </div>
-        <p class="text-slate-500 text-xs sm:text-sm font-medium mt-2 sm:mt-3 hidden sm:block">Moneda de la plataforma.</p>
-      </article>
-
-      <!-- MISIONES Card -->
-      <article class="bg-white rounded-2xl p-4 sm:p-6 shadow-sm border border-slate-200 hover:shadow-md transition-shadow motion-reduce:transition-none cursor-default flex flex-col justify-between">
-        <span class="text-emerald-500 text-[10px] sm:text-[11px] font-extrabold tracking-widest uppercase block mb-2 sm:mb-3 truncate">MISIONES</span>
-        <div class="flex items-center gap-2 sm:gap-3">
-          <strong class="text-slate-900 text-3xl sm:text-5xl font-black tracking-tight">{{ datos.misiones_completadas }}</strong>
-          <fa-icon [icon]="iconos.check" class="text-xl sm:text-3xl text-emerald-500" />
-        </div>
-        <div class="mt-2 sm:mt-3 flex items-center gap-2 hidden sm:flex">
-          <p class="text-slate-500 text-xs sm:text-sm font-medium">{{ datos.misiones_pendientes }} misiones pendientes.</p>
-        </div>
-      </article>
-
-      <!-- RANKING Card (Protagonista) -->
-      <article class="bg-purple-600 rounded-2xl p-4 sm:p-6 shadow-sm hover:shadow-md transition-shadow motion-reduce:transition-none relative overflow-hidden cursor-default flex flex-col justify-between">
-        <!-- Ícono masivo de fondo -->
-        <div class="absolute right-0 bottom-0 opacity-10">
-          <fa-icon [icon]="iconos.ranking" class="text-7xl sm:text-9xl -mr-2 sm:-mr-4 -mb-2 sm:-mb-4" />
-        </div>
-        <span class="text-purple-200 text-[10px] sm:text-[11px] font-extrabold tracking-widest uppercase block mb-2 sm:mb-3 relative z-10 truncate">RANKING</span>
-        <div class="flex items-center gap-2 sm:gap-3 relative z-10">
-          <strong class="text-white text-3xl sm:text-5xl font-black tracking-tight">#{{ datos.posicion }}</strong>
-          <fa-icon [icon]="iconos.ranking" class="text-xl sm:text-3xl text-purple-300" />
-        </div>
-        <p class="text-purple-200 text-xs sm:text-sm font-medium mt-2 sm:mt-3 relative z-10 hidden sm:block">{{ datos.posicion_scope_label }}</p>
-      </article>
-      
-    </section>
-
-    <!-- PRIORITY GRID -->
-    <section class="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-6 mt-1 sm:mt-2" aria-label="Prioridades de aprendizaje">
-      <article class="col-span-1 lg:col-span-8 daemon-bento p-5 sm:p-8 flex flex-col justify-between">
-        <header class="flex flex-row justify-between items-center sm:items-end border-b border-slate-100/60 pb-4 sm:pb-5 mb-5 sm:mb-6 gap-3">
-          <div>
-            <span class="text-blue-600 text-[10px] sm:text-[11px] font-extrabold tracking-widest uppercase block">RUTA DE HOY</span>
-            <h2 class="text-slate-900 text-xl sm:text-2xl font-extrabold mt-0.5 sm:mt-1 tracking-tight">Próxima misión</h2>
-          </div>
-          <a routerLink="/alumno/misiones" class="text-blue-600 sm:text-slate-400 font-bold text-xs sm:text-sm flex items-center gap-1 sm:gap-2 sm:hover:text-blue-600 transition-colors bg-blue-50 sm:bg-slate-50 sm:hover:bg-blue-50 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl">
-            <span class="hidden sm:inline">Ver todas</span> <fa-icon [icon]="iconos.flecha" />
-          </a>
-        </header>
-
-        @if (datos.proxima_mision; as mision) {
-          <div class="flex flex-row gap-3 sm:gap-5 items-start">
-            <span class="bg-blue-600 text-white rounded-xl w-12 h-12 sm:w-16 sm:h-16 flex-none flex items-center justify-center text-xl sm:text-2xl shadow-sm" aria-hidden="true"><fa-icon [icon]="iconos.cohete" /></span>
-            <div class="flex-1 w-full min-w-0">
-              <small class="text-slate-500 font-bold text-[10px] sm:text-xs block truncate">{{ mision.nivel_requerido }} · {{ mision.tipo_evidencia }}</small>
-              <h3 class="text-slate-900 text-base sm:text-lg font-bold mt-1 mb-1.5 sm:mb-2 leading-tight sm:leading-snug">{{ mision.titulo }}</h3>
-              <p class="text-slate-600 text-xs sm:text-sm leading-relaxed mb-4 line-clamp-2 sm:line-clamp-none">{{ mision.descripcion || 'Tu docente preparó un nuevo reto para seguir avanzando.' }}</p>
-              <div class="flex flex-wrap gap-2 mb-4 sm:mb-5">
-                <span class="bg-blue-50 text-blue-700 text-[10px] sm:text-xs font-bold px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg border border-blue-100">+{{ mision.recompensa }} XP</span>
-                <span class="bg-amber-50 text-amber-700 text-[10px] sm:text-xs font-bold px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg border border-amber-100">+{{ mision.recompensa }} DAEMONS</span>
-              </div>
-              <a nz-button nzType="primary" class="bg-blue-600 hover:bg-blue-700 text-white border-none !h-11 sm:!h-12 !rounded-xl font-extrabold px-6 sm:px-8 shadow-sm transition-colors w-full sm:w-auto flex items-center justify-center" [routerLink]="['/alumno/misiones', mision.id]">Abrir misión</a>
+      @if (accionActual(datos); as accion) {
+        @if (esKids()) {
+          <!-- KIDS · blueprint: body horizontal + footer integrado (sin card navy) -->
+          <div class="mission-body mission-body--kids">
+            <span class="mission-icon" aria-hidden="true"><fa-icon [icon]="iconos.cohete" /></span>
+            <div class="mission-head">
+              <h3 class="mission-title">{{ accion.titulo }}</h3>
+              <p class="mission-meta">{{ accion.meta }}</p>
             </div>
+            <p class="mission-desc">{{ accion.descripcion }}</p>
+            <div
+              class="mission-progress"
+              role="progressbar"
+              aria-label="Progreso de nivel"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              [attr.aria-valuenow]="progreso(datos).progreso_porcentaje"
+              [attr.aria-valuetext]="progreso(datos).progreso_porcentaje + '%; nivel ' + progreso(datos).nivel"
+            >
+              <span class="mission-progress__label">
+                <span>Nivel {{ progreso(datos).nivel }}</span>
+                <span>{{ progreso(datos).progreso_porcentaje }}%</span>
+              </span>
+              <nz-progress aria-hidden="true" [nzPercent]="progreso(datos).progreso_porcentaje" [nzShowInfo]="false" [nzStrokeWidth]="6" nzStrokeColor="var(--daemon-student-progress)" />
+            </div>
+          </div>
+          <div class="mission-foot">
+            <span class="mission-foot__rewards">
+              @if (accion.recompensaXp) {
+                <span class="chip chip--xp"><fa-icon [icon]="iconos.energia" /> +{{ accion.recompensaXp }} XP</span>
+                <span class="chip chip--daemons"><app-moneda-daemon [size]="14" /> +{{ accion.recompensaTokens }} DAEMONS</span>
+              }
+            </span>
+            <a class="dashboard-cta" [routerLink]="accion.ruta">
+              <fa-icon [icon]="iconos.play" /> {{ accion.ctaTexto }}
+            </a>
           </div>
         } @else {
-          <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 sm:p-8 flex flex-col sm:flex-row sm:items-center sm:justify-between mt-4 sm:mt-6 gap-4 sm:gap-5 shadow-sm">
-            <div class="flex gap-4 sm:gap-6 items-center min-w-0">
-              <span class="bg-emerald-500 text-white rounded-xl w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center text-xl sm:text-2xl flex-none" aria-hidden="true"><fa-icon [icon]="iconos.bandera" /></span>
-              <div>
-                <h3 class="text-slate-900 text-lg sm:text-xl font-extrabold mb-1 tracking-tight">Ruta completada</h3>
-                <p class="text-slate-500 text-xs sm:text-sm font-medium">No tienes misiones pendientes. Vuelve pronto.</p>
-              </div>
+          <div class="mission-body">
+            <span class="mission-icon" aria-hidden="true"><fa-icon [icon]="iconos.cohete" /></span>
+            <div class="mission-info">
+              <h3 class="mission-title">{{ accion.titulo }}</h3>
+              <p class="mission-meta">{{ accion.meta }}</p>
+              <p class="mission-desc">{{ accion.descripcion }}</p>
             </div>
-            <img src="/img/robot-mision.png" alt="Robot DAEMON celebrando" class="w-16 sm:w-32 h-auto object-contain flex-none self-center" />
+            <div class="mission-cta">
+              <div
+                class="level-context"
+                role="progressbar"
+                aria-label="Progreso de nivel"
+                aria-valuemin="0"
+                aria-valuemax="100"
+                [attr.aria-valuenow]="progreso(datos).progreso_porcentaje"
+                [attr.aria-valuetext]="progreso(datos).progreso_porcentaje + '%; nivel ' + progreso(datos).nivel"
+              >
+                <span class="level-context__label">
+                  <span>Nivel {{ progreso(datos).nivel }}</span>
+                  <span>{{ progreso(datos).progreso_porcentaje }}%</span>
+                </span>
+                <nz-progress aria-hidden="true" [nzPercent]="progreso(datos).progreso_porcentaje" [nzShowInfo]="false" [nzStrokeWidth]="6" nzStrokeColor="var(--daemon-student-progress)" />
+              </div>
+              <div class="mission-rewards">
+                @if (accion.recompensaXp) {
+                  <span class="chip chip--xp"><fa-icon [icon]="iconos.energia" /> +{{ accion.recompensaXp }} XP</span>
+                  <span class="chip chip--daemons"><app-moneda-daemon [size]="14" /> +{{ accion.recompensaTokens }} DAEMONS</span>
+                }
+              </div>
+              <a class="dashboard-cta" [routerLink]="accion.ruta">
+                <fa-icon [icon]="iconos.play" /> {{ accion.ctaTexto }}
+              </a>
+            </div>
           </div>
         }
-        <div class="flex flex-wrap gap-2 sm:gap-3 mt-6 sm:mt-8 pt-5 sm:pt-6 border-t border-slate-100/60">
-          <span class="bg-blue-600 text-white rounded-full text-[9px] sm:text-[11px] font-extrabold px-3 py-1.5 sm:px-4 sm:py-2 flex items-center gap-1.5 shadow-sm cursor-default"><fa-icon [icon]="iconos.cohete" class="opacity-90" /> CODING</span>
-          <span class="bg-emerald-500 text-white rounded-full text-[9px] sm:text-[11px] font-extrabold px-3 py-1.5 sm:px-4 sm:py-2 flex items-center gap-1.5 shadow-sm cursor-default"><fa-icon [icon]="iconos.cohete" class="opacity-90" /> IA & ROBÓTICA</span>
-          <span class="bg-purple-600 text-white rounded-full text-[9px] sm:text-[11px] font-extrabold px-3 py-1.5 sm:px-4 sm:py-2 flex items-center gap-1.5 shadow-sm cursor-default"><fa-icon [icon]="iconos.brillo" class="opacity-90" /> CREATIVIDAD</span>
-        </div>
-      </article>
-
-      <article class="col-span-1 lg:col-span-4 daemon-bento p-5 sm:p-8 flex flex-col justify-between">
-        <header class="border-b border-slate-100/60 pb-4 sm:pb-5 mb-5 sm:mb-6">
-          <span class="text-orange-500 text-[10px] sm:text-[11px] font-extrabold tracking-widest uppercase block">CONSTANCIA FLEXIBLE</span>
-          <h2 class="text-slate-900 text-xl sm:text-2xl font-extrabold mt-0.5 sm:mt-1 tracking-tight">Actividad</h2>
-        </header>
-        <div class="flex justify-between items-start">
-          <div>
-            <div class="flex items-center gap-3">
-              <span class="bg-orange-50 text-orange-600 rounded-xl w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center text-lg sm:text-xl" aria-hidden="true"><fa-icon [icon]="iconos.fuego" /></span>
-              <div class="flex flex-col">
-                <strong class="text-slate-900 text-2xl sm:text-3xl font-black leading-none">{{ datos.racha }}</strong>
-                <small class="text-slate-500 text-[10px] sm:text-xs font-bold mt-1">días de racha</small>
-              </div>
-            </div>
-            <p class="text-slate-500 text-[11px] sm:text-xs mt-3 leading-relaxed">{{ mensajeRacha(datos) }}</p>
+      } @else {
+        <div class="mission-empty">
+          <span class="mission-icon mission-icon--ok" aria-hidden="true"><fa-icon [icon]="iconos.bandera" /></span>
+          <div class="mission-info">
+            <h3 class="mission-title">Ruta completada</h3>
+            <p class="mission-desc">No tienes actividades pendientes. Tu Núcleo sigue creciendo.</p>
           </div>
-          <img src="/img/monstruo-racha.png" alt="Monstruo Racha" class="h-20 sm:h-24 object-contain -mr-2" />
+          @if (esKids()) {
+            <img src="/img/robot-mision.png" alt="Robot DAEMON celebrando" class="mission-empty__img" />
+          }
+          <a class="dashboard-cta dashboard-cta--sm" routerLink="/alumno/aprender/misiones">
+            <fa-icon [icon]="iconos.play" /> Explorar misiones
+          </a>
         </div>
-        <ul class="flex justify-between mt-5 sm:mt-6 pt-4 border-t border-slate-100" aria-label="Actividad real de los últimos siete días">
-          @for (dia of datos.actividad_semana; track dia.fecha) {
-            <li class="flex flex-col items-center gap-1.5 sm:gap-2" [attr.aria-label]="descripcionDia(dia)">
-              <span class="w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-full border-2 border-slate-300 bg-white" [class.!bg-green-500]="dia.activo" [class.!border-green-500]="dia.activo" [class.shadow-[0_0_0_2px_var(--daemon-success-soft)]]="dia.activo" [class.sm:shadow-[0_0_0_3px_var(--daemon-success-soft)]]="dia.activo"></span>
-              <small class="text-slate-400 text-[9px] sm:text-[10px] font-bold">{{ dia.etiqueta }}</small>
+      }
+    </section>
+
+    <!-- 3 · PROGRESS OVERVIEW -->
+    <section class="dashboard-metrics" aria-label="Indicadores principales">
+      <article class="metric metric--progreso">
+        <span class="metric-icon" aria-hidden="true"><fa-icon [icon]="iconos.check" /></span>
+        <strong class="metric-value">{{ datos.misiones_completadas }}</strong>
+        <span class="metric-label">Misiones</span>
+        <small class="metric-sub">completadas</small>
+      </article>
+      <article class="metric metric--racha">
+        <span class="metric-icon" aria-hidden="true"><fa-icon [icon]="iconos.fuego" /></span>
+        <strong class="metric-value">{{ datos.racha }}</strong>
+        <span class="metric-label">Racha</span>
+        <small class="metric-sub">días seguidos</small>
+      </article>
+      <article class="metric metric--logros">
+        <span class="metric-icon" aria-hidden="true"><fa-icon [icon]="iconos.medalla" /></span>
+        <strong class="metric-value">{{ datos.insignias }}</strong>
+        <span class="metric-label">Insignias</span>
+        <small class="metric-sub">en tu colección</small>
+      </article>
+      <article class="metric metric--ranking">
+        <span class="metric-icon" aria-hidden="true"><fa-icon [icon]="iconos.ranking" /></span>
+        <strong class="metric-value">#{{ datos.posicion }}</strong>
+        <span class="metric-label">Ranking</span>
+        <small class="metric-sub">{{ datos.posicion_scope_label }}</small>
+      </article>
+    </section>
+
+    <!-- 4 · LEARNING CONTINUATION: núcleo (nivel) + constancia (actividad) -->
+    <article class="panel panel--nivel">
+      <header class="section-head">
+        <div>
+          <span class="eyebrow">NÚCLEO DAEMON</span>
+          <h2 class="section-title">Próximo nivel</h2>
+        </div>
+        <strong class="panel-percent">{{ progreso(datos).progreso_porcentaje }}%</strong>
+      </header>
+      @if (esKids()) {
+        <div class="level-badge" aria-hidden="true">{{ progreso(datos).nivel }}</div>
+        <div class="level-headline">
+          <strong>Nivel {{ progreso(datos).nivel }}</strong>
+          <span>{{ progreso(datos).experiencia_restante }} XP para el siguiente nivel</span>
+        </div>
+      }
+      <div
+        class="level-bar"
+        role="progressbar"
+        aria-label="Experiencia hacia el siguiente nivel"
+        aria-valuemin="0"
+        aria-valuemax="100"
+        [attr.aria-valuenow]="progreso(datos).progreso_porcentaje"
+      >
+        <nz-progress aria-hidden="true" [nzPercent]="progreso(datos).progreso_porcentaje" [nzShowInfo]="false" [nzStrokeWidth]="esKids() ? 10 : 8" nzStrokeColor="var(--daemon-student-progress)" />
+      </div>
+      <div class="xp-row">
+        <span>{{ progreso(datos).experiencia_nivel }} XP actuales</span>
+        <span>{{ progreso(datos).experiencia_meta }} XP meta</span>
+      </div>
+      <p class="level-note">
+        <fa-icon [icon]="iconos.check" aria-hidden="true"></fa-icon> Tu XP nunca disminuye.
+      </p>
+    </article>
+
+    <article class="panel panel--constancia">
+      <header class="section-head">
+        <div>
+          <span class="eyebrow">@if (esKids()) { ACTIVIDAD SEMANAL } @else { CONSTANCIA }</span>
+          <h2 class="section-title">Actividad</h2>
+        </div>
+      </header>
+      <div class="racha-summary">
+        <span class="racha-icon" aria-hidden="true"><fa-icon [icon]="iconos.fuego" /></span>
+        <div>
+          <strong class="racha-value">{{ datos.racha }}</strong>
+          <span class="racha-label">días de racha</span>
+        </div>
+      </div>
+      <p class="racha-message">{{ mensajeRacha(datos) }}</p>
+      @if (esKids()) {
+        <div class="week-score" aria-label="Días activos esta semana">
+          <strong>{{ diasActivos(datos) }}</strong>
+          <span>de 7 días activos</span>
+        </div>
+      }
+      <ul class="activity-dots" aria-label="Actividad real de los últimos siete días">
+        @for (dia of datos.actividad_semana; track dia.fecha) {
+          <li
+            class="activity-dot"
+            [class.is-active]="dia.activo"
+            [attr.aria-label]="descripcionDia(dia)"
+          >
+            <span aria-hidden="true">@if (esKids() && dia.activo) { <fa-icon [icon]="iconos.check" /> }</span>
+            <small>{{ dia.etiqueta }}</small>
+          </li>
+        }
+      </ul>
+    </article>
+
+    <!-- 5 · DESCUBRE — CREATOR CLASSES (TEENS): disciplinas editoriales -->
+    @if (esTeens()) {
+      <section class="creator-classes" aria-labelledby="creator-classes-title">
+        <header class="section-head">
+          <div>
+            <span class="eyebrow eyebrow--discover">DESCUBRE</span>
+            <h2 id="creator-classes-title" class="section-title">Creator Classes</h2>
+          </div>
+          <span class="section-note">Disciplinas para explorar</span>
+        </header>
+        <ul class="creator-classes__grid">
+          @for (clase of creatorClasses(); track clase.id) {
+            <li class="class-card" [attr.data-clase]="clase.id">
+              <span class="class-card__indicator" aria-hidden="true"></span>
+              <div class="class-card__plate">
+                <img [src]="clase.rutaBust" [alt]="clase.nombre + ' — bust de la disciplina'" loading="lazy" />
+              </div>
+              <div class="class-card__head">
+                <span class="class-card__icon" aria-hidden="true"><fa-icon [icon]="iconosClase[clase.id]" /></span>
+                <div class="class-card__titles">
+                  <h3 class="class-card__name">{{ clase.nombre }}</h3>
+                  @if (clase.microAcento) {
+                    <span class="class-card__micro" aria-hidden="true" title="Microacento técnico"></span>
+                  }
+                </div>
+              </div>
+              <p class="class-card__desc">{{ clase.descripcion }}</p>
             </li>
           }
         </ul>
-      </article>
-    </section>
+      </section>
 
-    <!-- SECONDARY GRID -->
-    <section class="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-6 mt-1 sm:mt-2" aria-label="Progreso y colección">
-      <article class="col-span-1 lg:col-span-5 daemon-bento p-5 sm:p-8 flex flex-col justify-between">
-        <div>
-          <header class="flex justify-between items-end border-b border-slate-100/60 pb-4 sm:pb-5 mb-5 sm:mb-6">
-            <div>
-              <span class="text-indigo-500 text-[10px] sm:text-[11px] font-extrabold tracking-widest uppercase block">Núcleo DAEMON</span>
-              <h2 class="text-slate-900 text-xl sm:text-2xl font-extrabold mt-0.5 sm:mt-1 tracking-tight">Próximo nivel</h2>
-            </div>
-            <strong class="text-blue-600 font-black text-xl sm:text-2xl">{{ progreso(datos).progreso_porcentaje }}%</strong>
-          </header>
-          <div class="mt-3 sm:mt-4" role="progressbar" aria-label="Experiencia hacia el siguiente nivel" aria-valuemin="0" aria-valuemax="100" [attr.aria-valuenow]="progreso(datos).progreso_porcentaje">
-            <nz-progress aria-hidden="true" [nzPercent]="progreso(datos).progreso_porcentaje" [nzShowInfo]="false" [nzStrokeWidth]="8" nzStrokeColor="var(--daemon-teens)" />
-          </div>
-          <div class="flex justify-between text-slate-500 text-[10px] sm:text-xs font-bold mt-2">
-            <span>{{ progreso(datos).experiencia_nivel }} XP actuales</span>
-            <span>{{ progreso(datos).experiencia_meta }} XP meta</span>
-          </div>
+      <!-- 6 · DESCUBRE — TECH LEGENDS (TEENS): capa editorial secundaria -->
+      <aside class="tech-legends" aria-label="Tech Legends — historias de creadores">
+        <img
+          src="/img/alumno/teens/creator-classes/maker/maker-accessories.webp"
+          alt=""
+          class="tech-legends__art"
+          loading="lazy"
+        />
+        <div class="tech-legends__copy">
+          <span class="eyebrow">TECH LEGENDS</span>
+          <p>Historias de creadores que convirtieron ideas en tecnología.</p>
         </div>
-        <footer class="flex items-center gap-2 bg-blue-50 text-blue-800 text-[10px] sm:text-xs font-bold p-3 rounded-xl mt-5">
-          <fa-icon [icon]="iconos.check" class="text-blue-600 flex-none"></fa-icon> Tu XP nunca disminuye.
-        </footer>
-      </article>
+        <span class="tech-legends__arrow" aria-hidden="true"><fa-icon [icon]="iconos.flecha" /></span>
+      </aside>
+    }
 
-      <article class="col-span-1 lg:col-span-7 daemon-bento p-5 sm:p-8">
-        <header class="flex justify-between items-end border-b border-slate-100/60 pb-4 sm:pb-5 mb-5 sm:mb-6">
-          <div>
-            <span class="text-purple-500 text-[10px] sm:text-[11px] font-extrabold tracking-widest uppercase block">Logros</span>
-            <h2 class="text-slate-900 text-xl sm:text-2xl font-extrabold mt-0.5 sm:mt-1 tracking-tight">Tu colección</h2>
+    <!-- 7 · RECOMPENSAS -->
+    <footer class="dashboard-foot">
+      @if (esKids()) {
+        <div class="foot-head">
+          <div class="foot-rewards">
+            <span class="foot-eyebrow">RECOMPENSAS DESTACADAS</span>
+            <span class="foot-premios">Canjea DAEMONS por beneficios</span>
           </div>
-          <a routerLink="/alumno/perfil" class="text-slate-400 font-bold text-xs sm:text-sm flex items-center gap-1 sm:gap-2 hover:text-purple-600 transition-colors bg-slate-50 hover:bg-purple-50 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl">Abrir perfil <fa-icon [icon]="iconos.flecha" /></a>
-        </header>
-        <div class="student-logros-grid gap-2 sm:gap-4">
-          <div class="flex flex-col sm:flex-row items-center gap-1.5 sm:gap-4 bg-slate-50 border border-slate-100 rounded-xl p-3 sm:p-4 text-center sm:text-left cursor-default">
-            <span class="bg-blue-500 text-white rounded-xl w-8 h-8 sm:w-12 sm:h-12 flex-none flex items-center justify-center text-sm sm:text-xl shadow-sm" aria-hidden="true"><fa-icon [icon]="iconos.medalla" /></span>
-            <div class="flex flex-col mt-1 sm:mt-0">
-              <strong class="text-slate-900 text-lg sm:text-2xl font-extrabold leading-none tracking-tight">{{ datos.insignias }}</strong>
-              <small class="text-slate-500 text-[8px] sm:text-[11px] font-bold uppercase tracking-widest mt-0.5 sm:mt-1">Insignias</small>
-            </div>
-          </div>
-          <div class="flex flex-col sm:flex-row items-center gap-1.5 sm:gap-4 bg-slate-50 border border-slate-100 rounded-xl p-3 sm:p-4 text-center sm:text-left cursor-default">
-            <span class="bg-emerald-500 text-white rounded-xl w-8 h-8 sm:w-12 sm:h-12 flex-none flex items-center justify-center text-sm sm:text-xl shadow-sm" aria-hidden="true"><fa-icon [icon]="iconos.regalo" /></span>
-            <div class="flex flex-col mt-1 sm:mt-0">
-              <strong class="text-slate-900 text-lg sm:text-2xl font-extrabold leading-none tracking-tight">{{ datos.canjes_pendientes }}</strong>
-              <small class="text-slate-500 text-[8px] sm:text-[11px] font-bold uppercase tracking-widest mt-0.5 sm:mt-1">Premios</small>
-            </div>
-          </div>
-          <div class="flex flex-col sm:flex-row items-center gap-1.5 sm:gap-4 bg-slate-50 border border-slate-100 rounded-xl p-3 sm:p-4 text-center sm:text-left cursor-default">
-            <span class="bg-amber-500 text-white rounded-xl w-8 h-8 sm:w-12 sm:h-12 flex-none flex items-center justify-center text-sm sm:text-xl shadow-sm" aria-hidden="true"><fa-icon [icon]="iconos.cohete" /></span>
-            <div class="flex flex-col mt-1 sm:mt-0">
-              <strong class="text-slate-900 text-lg sm:text-2xl font-extrabold leading-none tracking-tight">{{ datos.misiones_pendientes }}</strong>
-              <small class="text-slate-500 text-[8px] sm:text-[11px] font-bold uppercase tracking-widest mt-0.5 sm:mt-1">Pendientes</small>
-            </div>
-          </div>
+          <a class="foot-cta" routerLink="/alumno/identidad/daems">Ver tienda</a>
         </div>
-      </article>
-    </section>
+        @if (premiosDestacados().length) {
+          <ul class="foot-tiles" aria-label="Premios destacados de la tienda">
+            @for (premio of premiosDestacados(); track premio.id) {
+              <li class="foot-tile" [title]="premio.nombre">
+                @if (premio.imagen && !premiosInvalidos().has(premio.id)) {
+                  <img [src]="activosUrl(premio.imagen)" [alt]="premio.nombre" loading="lazy" (error)="marcarPremioInvalido(premio.id)" />
+                } @else {
+                  <fa-icon [icon]="iconos.regalo" aria-hidden="true"></fa-icon>
+                }
+              </li>
+            }
+          </ul>
+        } @else {
+          <span class="foot-empty">Explora la tienda y usa tus DAEMONS para conseguir recompensas.</span>
+        }
+      } @else {
+        <span class="foot-premios">
+          <fa-icon [icon]="iconos.regalo" aria-hidden="true"></fa-icon>
+          <strong>{{ datos.canjes_pendientes }}</strong>
+          {{ datos.canjes_pendientes === 1 ? 'premio' : 'premios' }} por recoger
+        </span>
+        <a class="section-action" routerLink="/alumno/identidad/perfil">Ver mi perfil</a>
+      }
+    </footer>
   </section>
 }

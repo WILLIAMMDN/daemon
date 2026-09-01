@@ -9,10 +9,10 @@
    ============================================================ */
 .student-notification-dropdown,
 .student-profile-dropdown {
-  background: #ffffff;
-  border-radius: 14px;
+  background: var(--daemon-neutral-surface);
+  border-radius: var(--daemon-radius-md);
   box-sizing: border-box;
-  color: #172033;
+  color: var(--daemon-neutral-text-primary);
   isolation: isolate;
   max-width: calc(100vw - 24px);
   z-index: 1050;
@@ -20,11 +20,11 @@
 
 .cdk-overlay-pane .notification-popover,
 .ant-dropdown .notification-popover {
-  background-color: #ffffff;
-  border: 1px solid #e4eaf2;
-  border-radius: 14px;
+  background-color: var(--daemon-neutral-surface);
+  border: 1px solid var(--daemon-neutral-border);
+  border-radius: var(--daemon-radius-md);
   box-shadow: 0 14px 44px rgba(15, 23, 42, 0.18);
-  color: #172033;
+  color: var(--daemon-neutral-text-primary);
   display: block;
   overflow: hidden;
   padding: 0;
@@ -35,11 +35,11 @@
 .cdk-overlay-pane .notification-popover header,
 .ant-dropdown .notification-popover header {
   align-items: flex-end;
-  background: #ffffff;
+  background: var(--daemon-neutral-surface);
   border-bottom: 1px solid #e2e8f0;
   display: flex;
   justify-content: space-between;
-  padding: 12px 16px;
+  padding: var(--daemon-space-3) var(--daemon-space-4);
 }
 
 .cdk-overlay-pane .notification-popover header div,
@@ -76,29 +76,29 @@
 
 .cdk-overlay-pane .notification-list,
 .ant-dropdown .notification-list {
-  background: #ffffff;
+  background: var(--daemon-neutral-surface);
   max-height: min(380px, calc(100vh - 190px));
   overscroll-behavior: contain;
   overflow-y: auto;
-  padding: 8px 0;
+  padding: var(--daemon-space-2) 0;
 }
 
 .cdk-overlay-pane .notification-list article,
 .ant-dropdown .notification-list article {
   background: transparent;
   border-radius: 8px;
-  padding: 12px 16px;
+  padding: var(--daemon-space-3) var(--daemon-space-4);
   transition: background 0.2s;
 }
 
 .cdk-overlay-pane .notification-list article:hover,
 .ant-dropdown .notification-list article:hover {
-  background: #f8fafc;
+  background: var(--daemon-neutral-surface-subtle);
 }
 
 .cdk-overlay-pane .notification-list article.unread,
 .ant-dropdown .notification-list article.unread {
-  background: #eff6ff;
+  background: var(--daemon-semantic-info-subtle);
 }
 
 .cdk-overlay-pane .notification-list article.unread:hover,
@@ -127,7 +127,7 @@
   flex: 0 0 auto;
   font-size: 0.7rem;
   font-weight: 600;
-  margin-left: 12px;
+  margin-left: var(--daemon-space-3);
 }
 
 .cdk-overlay-pane .notification-list article p,
@@ -144,14 +144,14 @@
   color: #64748b;
   font-size: 0.85rem;
   font-weight: 600;
-  padding: 32px 16px;
+  padding: var(--daemon-space-8) var(--daemon-space-4);
   text-align: center;
 }
 
 .cdk-overlay-pane .notification-footer,
 .ant-dropdown .notification-footer {
   appearance: none;
-  background: #ffffff;
+  background: var(--daemon-neutral-surface);
   border-top: 1px solid #e2e8f0;
   border-right: 0;
   border-bottom: 0;
@@ -161,20 +161,20 @@
   display: block;
   font-size: 0.8rem;
   font-weight: 800;
-  padding: 12px;
+  padding: var(--daemon-space-3);
   text-align: center;
   width: 100%;
 }
 
 .cdk-overlay-pane .notification-footer:hover,
 .ant-dropdown .notification-footer:hover {
-  background: #f8fafc;
+  background: var(--daemon-neutral-surface-subtle);
   color: #312e81;
 }
 
 .cdk-overlay-pane .notification-footer:focus-visible,
 .ant-dropdown .notification-footer:focus-visible {
-  background: #f8fafc;
+  background: var(--daemon-neutral-surface-subtle);
   color: #312e81;
   outline: 2px solid var(--daemon-primary, #1677ff);
   outline-offset: -2px;
@@ -186,8 +186,8 @@
 .student-notification-dropdown .ant-dropdown-menu,
 .student-profile-dropdown .ant-dropdown-content,
 .student-profile-dropdown .ant-dropdown-menu {
-  background: #ffffff;
-  border-radius: 14px;
+  background: var(--daemon-neutral-surface);
+  border-radius: var(--daemon-radius-md);
   box-shadow: 0 14px 44px rgba(15, 23, 42, 0.18);
   padding: 0;
 }
@@ -198,16 +198,16 @@
    ============================================================ */
 .cdk-overlay-pane .profile-popover-menu,
 .ant-dropdown .profile-popover-menu {
-  background-color: #ffffff;
+  background-color: var(--daemon-neutral-surface);
   border: 1px solid #e2e8f0;
-  border-radius: 14px;
+  border-radius: var(--daemon-radius-md);
   box-shadow: 0 14px 44px rgba(15, 23, 42, 0.18);
   display: flex;
   flex-direction: column;
   gap: 0;
   list-style: none;
   margin: 0;
-  padding: 8px 0;
+  padding: var(--daemon-space-2) 0;
   max-width: calc(100vw - 24px);
   width: 280px;
 }
@@ -342,7 +342,7 @@
   padding: 0 !important;
 
   .ant-popover-inner {
-    background: #ffffff;
+    background: var(--daemon-neutral-surface);
     border: 1px solid rgba(0, 0, 0, 0.04);
     border-radius: 20px;
     box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.1), 0 0 20px rgba(0, 0, 0, 0.02);
@@ -369,7 +369,7 @@
 
 .profile-popover-head {
   align-items: center;
-  background: #ffffff;
+  background: var(--daemon-neutral-surface);
   border-bottom: 1px solid rgba(0, 0, 0, 0.04);
   display: grid;
   gap: .85rem;
@@ -379,7 +379,7 @@
 
 .profile-popover-avatar.ant-avatar {
   background: var(--pop-accent-soft);
-  border: 2px solid #ffffff;
+  border: 2px solid var(--daemon-neutral-surface);
   box-shadow: 0 0 0 1px var(--pop-border);
   color: var(--pop-accent);
   flex: 0 0 56px;
@@ -477,7 +477,7 @@
 }
 
 .profile-popover-item:hover {
-  background: #f8fafc;
+  background: var(--daemon-neutral-surface-subtle);
 }
 
 .profile-popover-icon {
@@ -611,9 +611,9 @@ body[data-theme='docente'] .profile-popover-item--accent:hover {
 }
 
 .profile-popover .ant-popover-inner {
-  background: #ffffff;
+  background: var(--daemon-neutral-surface);
   border: 1px solid rgba(37, 31, 106, .1);
-  border-radius: 24px;
+  border-radius: var(--daemon-radius-xl);
   box-shadow:
     0 24px 70px rgba(21, 24, 48, .18),
     0 8px 24px rgba(37, 31, 106, .08);
@@ -660,7 +660,7 @@ body[data-theme='docente'] .profile-popover-item--accent:hover {
 
 .profile-popover-avatar.ant-avatar {
   background: var(--pop-accent-soft);
-  border: 3px solid #ffffff;
+  border: 3px solid var(--daemon-neutral-surface);
   box-shadow: 0 0 0 1px rgba(255, 255, 255, .32);
   color: var(--pop-accent-ink);
   flex: 0 0 64px;
@@ -672,8 +672,8 @@ body[data-theme='docente'] .profile-popover-item--accent:hover {
 
 .profile-popover-status {
   background: #22c55e;
-  border: 2px solid #ffffff;
-  border-radius: 999px;
+  border: 2px solid var(--daemon-neutral-surface);
+  border-radius: var(--daemon-radius-pill);
   bottom: 8px;
   height: 13px;
   position: absolute;
@@ -745,7 +745,7 @@ body[data-theme='docente'] .profile-popover-item--accent:hover {
 }
 
 .profile-popover-list {
-  background: #ffffff;
+  background: var(--daemon-neutral-surface);
   display: grid;
   gap: .38rem;
   list-style: none;
@@ -755,7 +755,7 @@ body[data-theme='docente'] .profile-popover-item--accent:hover {
 
 .profile-popover-item {
   align-items: center;
-  background: #f8fafc;
+  background: var(--daemon-neutral-surface-subtle);
   border: 1px solid transparent;
   border-radius: 16px;
   display: grid;

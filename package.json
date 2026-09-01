@@ -1,0 +1,8 @@
+{
+  "name": "daemon-docs",
+  "version": "1.0.0",
+  "description": "Documentación DAEMON",
+  "scripts": {
+    "check:docs": "node scripts/check-documentation.mjs"
+  }
+}

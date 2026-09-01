@@ -1,0 +1,12 @@
+:host {
+  display: grid;
+  gap: 2rem;
+  min-width: 0;
+}
+
+.rejilla-cursos {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+  min-width: 0;
+}

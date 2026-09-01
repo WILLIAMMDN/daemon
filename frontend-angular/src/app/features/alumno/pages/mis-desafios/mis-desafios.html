@@ -1,4 +1,4 @@
-<main class="w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-6 md:gap-8 font-inter" aria-labelledby="challenges-title">
+<section class="w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-6 md:gap-8 font-inter" aria-labelledby="challenges-title">
   <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white border border-slate-200 shadow-sm rounded-2xl p-6 md:p-8">
     <div class="flex flex-col gap-1">
       <span class="text-blue-600 text-[11px] font-extrabold uppercase tracking-widest block">MIS DESAFÍOS</span>
@@ -48,8 +48,8 @@
           </div>
           
           <div class="flex flex-col sm:flex-row items-center gap-3 w-full mt-2 pt-4 border-t border-slate-100">
-            <a nz-button nzType="default" nzShape="round" class="w-full min-h-10 text-center flex items-center justify-center font-bold text-slate-600 bg-slate-50 hover:bg-slate-100" [routerLink]="['/alumno/misiones', mision.id]">Detalles</a>
-            <a nz-button nzType="primary" nzShape="round" class="daemon-btn w-full min-h-10 text-center flex items-center justify-center font-bold" [routerLink]="['/alumno/misiones', mision.id, 'entregar']">Entregar</a>
+            <a nz-button nzType="default" nzShape="round" class="w-full min-h-10 text-center flex items-center justify-center font-bold text-slate-600 bg-slate-50 hover:bg-slate-100" [routerLink]="['/alumno/aprender/misiones', mision.id]">Detalles</a>
+            <a nz-button nzType="primary" nzShape="round" class="daemon-btn w-full min-h-10 text-center flex items-center justify-center font-bold" [routerLink]="['/alumno/aprender/misiones', mision.id, 'entregar']">Entregar</a>
           </div>
         </article>
       }
@@ -62,4 +62,4 @@
       <button nz-button nzType="primary" type="button" (click)="cargar()">Actualizar misiones</button>
     </app-estado-vacio>
   }
-</main>
+</section>

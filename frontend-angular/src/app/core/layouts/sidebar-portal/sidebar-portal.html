@@ -18,39 +18,6 @@
   (mouseenter)="onMouseEnter()"
   (mouseleave)="onMouseLeave()"
 >
-  <!-- Decoración de fondo: figuritas del componente app-floating-shape.
-       Posicionadas con absolute para no afectar la estructura del sidebar. -->
-  <app-floating-shape
-    shape="pencil"
-    color="text-white/10"
-    size="w-9 h-9"
-    customClass="top-24 right-5 rotate-12"
-  ></app-floating-shape>
-  <app-floating-shape
-    shape="airplane"
-    color="text-white/10"
-    size="w-10 h-10"
-    customClass="top-36 left-8 -rotate-12"
-  ></app-floating-shape>
-  <app-floating-shape
-    shape="dots"
-    color="text-white/10"
-    size="w-16 h-16"
-    customClass="bottom-28 left-5"
-  ></app-floating-shape>
-  <app-floating-shape
-    shape="book"
-    color="text-white/10"
-    size="w-8 h-8"
-    customClass="bottom-48 right-7 -rotate-12"
-  ></app-floating-shape>
-  <app-floating-shape
-    shape="rocket"
-    color="text-white/10"
-    size="w-9 h-9"
-    customClass="top-72 right-5 rotate-12"
-  ></app-floating-shape>
-
   <header class="sidebar-header">
     <a
       class="brand-link"
@@ -64,9 +31,9 @@
           <img
             class="brand-logo brand-logo--full"
             [src]="brandLogo"
-            alt=""
-            width="132"
-            height="68"
+            alt="DAEMON"
+            width="126"
+            height="24"
             decoding="async"
             loading="eager"
             (error)="onBrandLogoError()"
@@ -74,9 +41,9 @@
           <img
             class="brand-logo brand-logo--compact"
             [src]="brandLogoCompact"
-            alt=""
-            width="42"
-            height="42"
+            alt="DAEMON"
+            width="36"
+            height="36"
             decoding="async"
             loading="eager"
             (error)="onBrandLogoError()"
@@ -107,9 +74,12 @@
   <nav class="sidebar-nav">
     @for (seccion of secciones; track seccion.titulo; let last = $last) {
       <section class="sidebar-section" [attr.data-tone]="seccion.tono ?? 'indigo'">
-        <p class="section-title">
-          <span class="section-label">{{ seccion.titulo }}</span>
-        </p>
+        @if (seccion.titulo) {
+          <p class="section-title">
+            <span class="section-label">{{ seccion.titulo }}</span>
+            <span class="section-divider-line" aria-hidden="true"></span>
+          </p>
+        }
 
         @for (item of seccion.items; track item.id) {
           @if (item.hijos?.length) {
@@ -123,6 +93,7 @@
               [attr.title]="colapsado ? item.etiqueta : null"
               (click)="toggleGrupo(item)"
             >
+              <span class="active-accent-bar" aria-hidden="true"></span>
               <span class="nav-icon"><fa-icon [icon]="item.icono" /></span>
               <span class="nav-copy">
                 <span class="nav-label">{{ item.etiqueta }}</span>
@@ -140,6 +111,7 @@
               @for (hijo of item.hijos; track hijo.id) {
                 <a
                   class="submenu-item"
+                  id="sidebar-{{hijo.id}}"
                   [routerLink]="hijo.ruta"
                   routerLinkActive="active"
                   [routerLinkActiveOptions]="{ exact: hijo.exacto ?? false }"
@@ -166,6 +138,7 @@
               [attr.title]="colapsado ? item.etiqueta : null"
               (click)="navegar()"
             >
+              <span class="active-accent-bar" aria-hidden="true"></span>
               <span class="nav-icon"><fa-icon [icon]="item.icono" /></span>
               <span class="nav-copy">
                 <span class="nav-label">{{ item.etiqueta }}</span>
@@ -194,3 +167,4 @@
     </button>
   </footer>
 </aside>
+

@@ -1,0 +1,24 @@
+@if (actividades.cargando() && !actividades.cargado()) {
+  <nz-skeleton [nzActive]="true" [nzParagraph]="{ rows: 5 }" />
+} @else if (actividades.pendientes().length) {
+  <app-arc-section
+    titulo="Pendiente de entregar"
+    descripcion="Trabajo asignado a tu nivel que todavía no has entregado."
+  >
+    <app-lista-actividades [actividades]="actividades.pendientes()" />
+  </app-arc-section>
+
+  <nz-alert
+    nzType="info"
+    nzShowIcon
+    nzMessage="Todavía no hay fechas límite"
+    nzDescription="La plataforma aún no publica vencimientos ni sesiones programadas, así que este listado se ordena por asignación y no por fecha."
+  />
+} @else {
+  <app-estado-vacio
+    titulo="No tienes trabajo pendiente"
+    descripcion="Cuando tu docente publique una misión o una evaluación para tu nivel, aparecerá aquí."
+  >
+    <a nz-button nzType="primary" routerLink="/alumno/aprender/mis-aprendizajes">Ir a mis aprendizajes</a>
+  </app-estado-vacio>
+}

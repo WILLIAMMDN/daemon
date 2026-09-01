@@ -146,8 +146,9 @@ cd C:\laragon\www\daemon
 git status --short --branch
 ```
 
-The initial bundle stays under the configured 1 MB warning budget. Treat any
-new build warning as a regression to review instead of accepting it by default.
+The initial bundle currently stays around 1.28 MB, which exceeds the configured
+1 MB warning budget. The build passes, but treat any new or larger warning as a
+regression to review instead of accepting it by default.
 
 ## Deploy commands
 
@@ -198,31 +199,55 @@ There is no local/staging DB. So:
 
 ## Docs to read by task
 
-- Overall project state: `docs/ai-project-context.md`
-- Firebase/auth details: `docs/firebase-auth.md`
-- Supabase DB/storage: `docs/supabase-postgres.md`
-- Cloud/GitHub/deploy state: `docs/estado-nube-github-produccion.md`
-- Test data: `docs/datos-prueba.txt`
-- Student portal behavior: `docs/portal-alumno.md`
-- Student visual system: `docs/sistema-visual-portal-alumno.md`
-- Frontend module boundaries: `docs/frontend-architecture.md`
-- XP and DAEMONS architecture: `docs/gamificacion-xp-daemons.md`
-- Production QA: `docs/qa-produccion.md`
-- Runtime, staging, backups and rollback: `docs/infraestructura-operativa.md`
-- KIDS/TEENS privacy and retention: `docs/privacidad-kids-teens.md`
-- Family/guardian portal: `docs/portal-familias.md`
-- July 2026 release evidence: `docs/release-2026-07-14-portal-alumno.md`
-- **Design system redesign (in progress): `docs/sistema-diseno/`** —
-  read `00-resumen-ejecutivo.md` first. Source of truth for the UI/UX
-  migration. Decisions D-01 through D-10 are closed; do not reopen
-  without talking to the owner. Current phase: **Phase 0 closed, Phase 1
-  pending start** (token consolidation + style-tokens linter).
+- Product definition (canonical): `docs/10-product/product-overview.md`
+- Product business rules (canonical): `docs/10-product/business-rules.md`
+- Overall project state: `docs/20-architecture/ai-project-context.md`
+- Firebase/auth details: `docs/50-security/firebase-auth.md`
+- Supabase DB/storage: `docs/40-data/supabase-postgres.md`
+- Cloud/GitHub/deploy state: `docs/60-operations/estado-nube-github-produccion.md`
+- Test data: `docs/99-archive/datos-prueba.txt`
+- Student portal behavior: `docs/10-product/portal-alumno.md`
+- Frontend module boundaries: `docs/20-architecture/frontend-architecture.md`
+- XP and DAEMONS architecture: `docs/10-product/gamificacion-xp-daemons.md`
+- Production QA: `docs/70-quality/qa-produccion.md`
+- Runtime, staging, backups and rollback: `docs/60-operations/infraestructura-operativa.md`
+- KIDS/TEENS privacy and retention: `docs/50-security/privacidad-kids-teens.md`
+- Family/guardian portal: `docs/10-product/portal-familias.md`
+
+**Orden obligatorio para cualquier agente:**
+1. `AGENTS.md`
+2. `docs/README.md`
+3. `docs/00-governance/project-constitution.md` (autoridad global)
+4. `docs/00-governance/source-of-truth.md`
+5. `docs/00-governance/agent-reading-order.md`
+6. documentación canónica del dominio asignado
+7. ADR aplicables
+8. documentación activa de la iniciativa
+
+La Constitución General (`docs/00-governance/project-constitution.md`)
+tiene precedencia global: los documentos de dominio deben respetarla y
+ningún agente puede modificarla ni crear excepciones sin autorización
+explícita del propietario. La Constitución Visual
+(`docs/30-design-system/visual-constitution.md`) tiene autoridad
+únicamente dentro del dominio visual. Ante una contradicción de autoridad
+(una fuente inferior contra una superior, o dos del mismo nivel), el
+agente se detiene y eleva el conflicto en lugar de resolverlo por cuenta
+propia.
+
+**Prohibido usar como especificación:**
+- historial Git;
+- `90-audits-history`;
+- documentos eliminados;
+- borradores no aprobados;
+- conversaciones o memorias locales de otros agentes.
 
 ## Sistema de diseño (DAEMON)
 
-La fuente de verdad de la estética es el **sistema de tokens `--daemon-*`**
-definido en `frontend-angular/src/styles/_tokens.scss` y los manuales de UI/UX
-en `docs/sistema-diseno/` (leer `00-resumen-ejecutivo.md` primero).
+**Para trabajo visual:**
+1. `docs/30-design-system/visual-constitution.md`
+2. `docs/30-design-system/token-map.md`
+3. `docs/30-design-system/color-accessibility.md`
+4. documentación de la iniciativa concreta
 
 Reglas obligatorias al construir UI:
 
@@ -230,11 +255,6 @@ Reglas obligatorias al construir UI:
   hex literales, gradientes hardcodeados u `outline` sin token: el check
   `npm run check:style-tokens` (CI) los bloquea.
 - El contrato visual del portal alumno se valida con `scripts/check-student-visual.mjs`.
-- Las guías de estilo de referencia son:
-  1. `docs/sistema-diseno/` — sistema de diseño vigente (decisiones D-01 a D-10 cerradas).
-  2. `docs/SISTEMA_DISENO_PREMIUM.md` — referencias estéticas de alto nivel
-     (3D, gradientes profundos, contrastes) para módulos premium.
-  3. `docs/ESTRUCTURA_COMPONENTES.md` — layouts asimétricos, CSS Grid y responsividad.
 - **Referencia canónica visual:** la galería de historias
   (`/alumno/proyectos/cuentos`) es el estándar de calidad de assets y
 distribución de tarjetas.
@@ -242,4 +262,4 @@ distribución de tarjetas.
   componentes, no como clases amontonadas.
 - Si un módulo usa `style=` inline o un color fuera del token, se corrige antes
   de commitear (la capa `ui/` y `core/modelos/dto.ts` son los puntos de
-  reutilización, ver `docs/frontend-architecture.md`).
+  reutilización, ver `docs/20-architecture/frontend-architecture.md`).

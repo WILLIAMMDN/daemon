@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { catchError, from, map, Observable, of, switchMap, tap, throwError, timeout, TimeoutError } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
+import { catchError, from, map, Observable, of, switchMap, tap, throwError, timer, timeout, TimeoutError } from 'rxjs';
 import { NivelAlumno } from '../dominio/nivel-alumno';
-import { Api } from './api';
+import { Api, ApiError } from './api';
 import { FirebaseAuth } from './firebase-auth';
 import { Sesion, UsuarioSesion } from './sesion';
 
@@ -53,7 +54,7 @@ export class Autenticacion {
   ) {}
 
   login(datos: { usuario: string; password: string }) {
-    return this.api.post<AuthRespuesta>('/auth/login', datos)
+    return this.reintentarEnFrio(() => this.api.post<AuthRespuesta>('/auth/login', datos))
       .pipe(
         tap((respuesta) => this.sesion.guardar(respuesta.usuario)),
         switchMap((respuesta) =>
@@ -394,17 +395,53 @@ export class Autenticacion {
       this.sesion.limpiar();
     }
 
-    return this.api.post<AuthRespuesta>('/auth/firebase', { id_token: idToken, crear_cuenta: crearCuenta })
+    return this.reintentarEnFrio(() => this.api.post<AuthRespuesta>('/auth/firebase', { id_token: idToken, crear_cuenta: crearCuenta }))
       .pipe(tap((respuesta) => this.sesion.guardar(respuesta.usuario)));
   }
 
   private autenticarTutorToken(idToken: string, crearCuenta: boolean): Observable<AuthRespuesta> {
-    return this.api.post<AuthRespuesta>('/auth/tutor/firebase', {
+    return this.reintentarEnFrio(() => this.api.post<AuthRespuesta>('/auth/tutor/firebase', {
       id_token: idToken,
       crear_cuenta: crearCuenta,
       ...(crearCuenta ? { acepta_privacidad: true } : {}),
-    })
+    }))
       .pipe(tap((respuesta) => this.sesion.guardar(respuesta.usuario)));
+  }
+
+  /**
+   * Reintenta una vez las peticiones de login cuando el error es de red
+   * o del arranque en frío del servidor:
+   *  - timeout (Render tardó más de lo esperado en despertar);
+   *  - sin conexión (status 0);
+   *  - 502/503 (el proxy de Render los devuelve mientras la instancia
+   *    arranca o se reinicia).
+   *
+   * NUNCA reintenta errores 4xx: una clave incorrecta o una cuenta
+   * inexistente deben mostrarse tal cual, no duplicar la espera.
+   */
+  private reintentarEnFrio<T>(peticion: () => Observable<T>, reintentos = 1): Observable<T> {
+    return peticion().pipe(
+      catchError((error) => {
+        if (reintentos > 0 && this.esErrorDeArranqueEnFrio(error)) {
+          return timer(800).pipe(
+            switchMap(() => this.reintentarEnFrio(peticion, reintentos - 1)),
+          );
+        }
+        return throwError(() => error);
+      }),
+    );
+  }
+
+  private esErrorDeArranqueEnFrio(error: unknown): boolean {
+    if (error instanceof ApiError) {
+      return error.kind === 'timeout' || error.kind === 'offline';
+    }
+
+    if (error instanceof HttpErrorResponse) {
+      return error.status === 502 || error.status === 503;
+    }
+
+    return false;
   }
 
   private sincronizarClave(password: string): Observable<unknown> {

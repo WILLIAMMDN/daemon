@@ -39,7 +39,7 @@ class ProyectoService
                 'nombre' => 'Historias y cuentos',
                 'etiqueta' => 'Narrativa digital',
                 'descripcion' => 'Crea una historia por escenas y descubre las publicaciones de la comunidad DAEMON.',
-                'ruta' => '/alumno/proyectos/cuentos',
+                'ruta' => '/alumno/crear/historias',
                 'accion' => 'Explorar historias',
                 'metricas' => [
                     ['valor' => $cuento ? 1 : 0, 'etiqueta' => 'cuento propio'],
@@ -52,7 +52,7 @@ class ProyectoService
                 'nombre' => 'IA aplicada',
                 'etiqueta' => 'Asistentes y modelos',
                 'descripcion' => 'Configura tu bot educativo y continúa los modelos de inteligencia artificial que ya guardaste.',
-                'ruta' => '/alumno/herramientas/bot',
+                'ruta' => '/alumno/crear/bot',
                 'accion' => $bot ? 'Continuar mi bot' : 'Configurar mi bot',
                 'metricas' => [
                     ['valor' => $bot ? 1 : 0, 'etiqueta' => 'bot configurado'],
@@ -65,7 +65,7 @@ class ProyectoService
                 'nombre' => 'Laboratorio interactivo',
                 'etiqueta' => 'Experimentación',
                 'descripcion' => 'Prueba estrategias, entrena sistemas y observa resultados dentro del laboratorio de DAEMON.',
-                'ruta' => '/alumno/herramientas/laboratorio',
+                'ruta' => '/alumno/crear/laboratorio',
                 'accion' => 'Entrar al laboratorio',
                 'metricas' => [
                     ['valor' => (int) ($laboratorio->episodios_totales ?? 0), 'etiqueta' => 'episodios registrados'],

@@ -8,7 +8,7 @@
     </div>
   </section>
 } @else if (perfil(); as datos) {
-  <main class="w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-6 md:gap-8 font-inter" aria-labelledby="profile-title">
+  <section class="w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-6 md:gap-8 font-inter" aria-labelledby="profile-title">
     
     <!-- HERO SECTION -->
     <header class="flex flex-col md:flex-row justify-between items-center md:items-stretch gap-8 bg-white border border-slate-200 shadow-sm rounded-2xl p-6 md:p-10">
@@ -45,7 +45,7 @@
         />
         <div class="mt-4 flex">
           @if (perfilPropio()) {
-            <a nz-button nzType="primary" nzShape="round" class="daemon-btn bg-blue-600 hover:bg-blue-700 border-0 w-full flex items-center justify-center font-bold h-10" routerLink="/alumno/perfil/editar">Editar perfil</a>
+            <a nz-button nzType="primary" nzShape="round" class="daemon-btn bg-blue-600 hover:bg-blue-700 border-0 w-full flex items-center justify-center font-bold h-10" routerLink="/alumno/identidad/perfil/editar">Editar perfil</a>
           } @else {
             <a nz-button nzType="default" nzShape="round" class="w-full flex items-center justify-center font-bold text-slate-600 bg-white hover:bg-slate-50 h-10" routerLink="/alumno/comunidad">Volver a comunidad</a>
           }
@@ -144,7 +144,7 @@
               [descripcion]="perfilPropio() ? 'Canjea recompensas en la tienda y aparecerán aquí cuando sean entregadas.' : 'Este estudiante todavía no tiene premios entregados.'"
             >
               @if (perfilPropio()) {
-                <a nz-button nzType="primary" routerLink="/alumno/tienda">Explorar recompensas</a>
+                <a nz-button nzType="primary" routerLink="/alumno/identidad/daems">Explorar recompensas</a>
               }
             </app-estado-vacio>
           }
@@ -189,12 +189,12 @@
             [descripcion]="perfilPropio() ? 'Completa misiones y logros importantes para llenar esta colección.' : 'Cuando este estudiante complete logros importantes, sus insignias aparecerán aquí.'"
           >
             @if (perfilPropio()) {
-              <a nz-button nzType="primary" routerLink="/alumno/misiones">Ver misiones</a>
+              <a nz-button nzType="primary" routerLink="/alumno/aprender/misiones">Ver misiones</a>
             }
           </app-estado-vacio>
         }
       </div>
     </section>
     
-  </main>
+  </section>
 }

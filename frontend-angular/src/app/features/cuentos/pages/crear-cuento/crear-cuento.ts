@@ -266,7 +266,7 @@ export class CrearCuento implements OnInit {
     if (!globalThis.confirm('¿Eliminar este cuento? La solicitud se puede reintentar sin duplicarse.')) return;
     if (await this.editor.eliminar()) {
       this.toast.success('Cuento eliminado.');
-      await this.router.navigate(['/alumno/proyectos/cuentos']);
+      await this.router.navigate(['/alumno/crear/historias']);
     }
   }
 

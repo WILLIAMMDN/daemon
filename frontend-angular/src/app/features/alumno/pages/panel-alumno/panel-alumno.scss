@@ -1,162 +1,1502 @@
 :host {
-  --dashboard-xp: var(--daemon-teens);
-  --dashboard-daemons: color-mix(in srgb, var(--daemon-accent-dark) 60%, var(--daemon-ink));
-  --dashboard-card-radius: 16px;
+  --cta-on: var(--daemon-on-purple);
   display: block;
 }
 
-.student-dashboard { display: grid; gap: 1.25rem; }
-.welcome-panel { order: 1; }
-.dashboard-stats { order: 2; }
-.priority-grid { order: 3; }
-.secondary-grid { order: 4; }
+/* KIDS: CTA amarillo → texto navy. TEENS: CTA morado → texto blanco. */
+:host-context(.theme-kids) {
+  --cta-on: var(--daemon-on-yellow);
+}
+
+.student-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--daemon-space-5);
+}
+
+/* ============================================================
+   EXPERIENCIAS (EXP-01): MISMO DOM, distinta composición.
+   KIDS · Explore sigue el BLUEPRINT KIDS-03:
+   hero 220px → misión 66% + nivel 34% → métricas 88-100px →
+   actividad 59% + recompensas 41%. Gaps de 16px.
+   TEENS · Creator sigue el BLUEPRINT TEENS-DASH-02:
+   CREA (bienvenida + misión) → COMPITE (métricas + nivel/constancia)
+   → DESCUBRE (Creator Classes + Tech Legends) → recompensas.
+   ============================================================ */
+
+.student-dashboard--kids {
+  display: grid;
+  gap: var(--daemon-space-4);
+  grid-template-areas:
+    'hero hero'
+    'mission nivel'
+    'metrics metrics'
+    'activity rewards';
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+}
+.student-dashboard--kids .dashboard-welcome { grid-area: hero; }
+.student-dashboard--kids .mission-panel { grid-area: mission; }
+.student-dashboard--kids .dashboard-metrics { grid-area: metrics; }
+.student-dashboard--kids .panel--nivel { grid-area: nivel; }
+.student-dashboard--kids .panel--constancia { grid-area: activity; }
+.student-dashboard--kids .dashboard-foot { grid-area: rewards; }
+
+/* TEENS · Creator — Blueprint TEENS-DASH-01/02 (desktop):
+   CREA (bienvenida + misión) → COMPITE (métricas + nivel/constancia)
+   → DESCUBRE (Creator Classes + Tech Legends) → recompensas.
+   Solid Surface: superficies blancas/neutras; color DAEMON sólido
+   solo en acentos, indicadores y mini-bloques. */
+.student-dashboard--teens {
+  display: grid;
+  gap: var(--daemon-space-5);
+  grid-template-areas:
+    'hero hero'
+    'mission mission'
+    'metrics metrics'
+    'nivel activity'
+    'classes classes'
+    'legends legends'
+    'foot foot';
+  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+}
+.student-dashboard--teens .dashboard-welcome { grid-area: hero; }
+.student-dashboard--teens .mission-panel { grid-area: mission; }
+.student-dashboard--teens .dashboard-metrics { grid-area: metrics; }
+.student-dashboard--teens .panel--nivel { grid-area: nivel; }
+.student-dashboard--teens .panel--constancia { grid-area: activity; }
+.student-dashboard--teens .creator-classes { grid-area: classes; }
+.student-dashboard--teens .tech-legends { grid-area: legends; }
+.student-dashboard--teens .dashboard-foot { grid-area: foot; }
+
+/* ============================================================
+   Estados (loading / error / offline / celebración)
+   ============================================================ */
 
 .dashboard-state {
-  background: var(--daemon-on-primary);
-  border: 1px solid var(--daemon-border);
-  border-radius: var(--dashboard-card-radius);
+  background: var(--daemon-neutral-surface);
+  border: 1px solid var(--daemon-neutral-border);
+  border-radius: var(--daemon-radius-lg);
   min-height: 320px;
-  padding: 1.5rem;
+  padding: var(--daemon-space-6);
 }
-.dashboard-state--error { display: grid; gap: 1rem; min-height: 0; }
-.dashboard-state--error .daemon-btn { justify-self: start; min-height: 44px; }
+.dashboard-state--error {
+  display: grid;
+  gap: var(--daemon-space-4);
+  min-height: 0;
+}
+.dashboard-state--error .daemon-btn {
+  justify-self: start;
+  min-height: 44px;
+}
 
 .offline-notice {
   align-items: center;
-  background: var(--daemon-tutor-soft);
-  border: 1px solid color-mix(in srgb, var(--daemon-accent) 45%, var(--daemon-on-primary));
-  border-radius: 12px;
-  color: var(--daemon-warning);
+  background: var(--daemon-semantic-warning-subtle);
+  border: 1px solid var(--daemon-neutral-border);
+  border-radius: var(--daemon-radius-md);
+  color: var(--daemon-semantic-warning);
   display: flex;
-  gap: 1rem;
+  gap: var(--daemon-space-4);
   justify-content: space-between;
-  padding: .75rem 1rem;
+  padding: var(--daemon-space-3) var(--daemon-space-4);
 }
 .offline-notice button {
-  background: var(--daemon-on-primary);
-  border: 1px solid var(--daemon-accent-dark);
-  border-radius: 9px;
-  color: var(--daemon-warning);
+  background: var(--daemon-neutral-surface);
+  border: 1px solid var(--daemon-neutral-border-strong);
+  border-radius: var(--daemon-radius-sm);
+  color: var(--daemon-semantic-warning);
   cursor: pointer;
-  font-weight: 700;
+  font-weight: var(--daemon-font-weight-bold);
   min-height: 44px;
-  padding: .5rem .85rem;
+  padding: var(--daemon-space-2) var(--daemon-space-4);
 }
 
 .reward-reveal {
   align-items: center;
-  background: var(--daemon-info-soft);
-  border: 1px solid var(--daemon-teens-border);
-  border-radius: 14px;
-  color: var(--daemon-on-accent);
+  background: var(--daemon-neutral-surface);
+  border: 1px solid var(--daemon-neutral-border);
+  border-radius: var(--daemon-radius-lg);
+  color: var(--daemon-neutral-text-primary);
   display: grid;
-  gap: 1rem;
+  gap: var(--daemon-space-4);
   grid-template-columns: auto 1fr auto;
   overflow: hidden;
-  padding: 1rem;
+  padding: var(--daemon-space-4);
   position: relative;
 }
 .reward-icon {
   align-items: center;
-  background: var(--daemon-primary-dark);
-  border-radius: 12px;
-  color: var(--daemon-on-primary);
+  background: var(--daemon-student-reward);
+  border-radius: var(--daemon-radius-md);
+  color: var(--daemon-on-yellow);
   display: flex;
   font-size: 1.15rem;
   height: 48px;
   justify-content: center;
   width: 48px;
 }
-.reward-reveal div { display: grid; gap: .18rem; }
-.reward-reveal small { color: var(--daemon-primary-soft); font-size: .75rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
-.reward-reveal strong { font-size: 1rem; }
-.reward-reveal p { color: var(--daemon-muted); margin: 0; }
+.reward-reveal div {
+  display: grid;
+  gap: 0.18rem;
+}
+.reward-reveal small {
+  color: var(--daemon-neutral-text-secondary);
+  font-size: var(--daemon-font-size-caption);
+  font-weight: var(--daemon-font-weight-extra);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.reward-reveal strong {
+  font-size: var(--daemon-font-size-body-lg);
+  font-weight: var(--daemon-font-weight-bold);
+}
+.reward-reveal p {
+  color: var(--daemon-neutral-text-secondary);
+  margin: 0;
+}
 .reward-close {
   align-items: center;
-  background: var(--daemon-on-primary);
-  border: 1px solid var(--daemon-border-strong);
-  border-radius: 10px;
-  color: var(--daemon-primary-dark);
+  background: var(--daemon-neutral-surface-subtle);
+  border: 1px solid var(--daemon-neutral-border);
+  border-radius: var(--daemon-radius-sm);
+  color: var(--daemon-neutral-text-secondary);
   cursor: pointer;
   display: flex;
   height: 44px;
   justify-content: center;
   width: 44px;
 }
-.reward-spark { animation: reward-pop .65s ease-out both; background: var(--daemon-warning); border-radius: 50%; height: 7px; position: absolute; width: 7px; }
+.reward-spark {
+  animation: reward-pop 0.65s ease-out both;
+  background: var(--daemon-student-reward);
+  border-radius: 50%;
+  height: 7px;
+  position: absolute;
+  width: 7px;
+}
 .reward-spark--one { left: 5%; top: 12%; }
 .reward-spark--two { left: 42%; top: 18%; }
 .reward-spark--three { right: 10%; top: 15%; }
-@keyframes reward-pop { from { opacity: 0; transform: scale(.2) translateY(12px); } to { opacity: 1; transform: scale(1) translateY(0); } }
-
-.student-hero-banner {
-  background-color: var(--daemon-on-accent);
-  background-image: url('/img/headers/story-header-bg.png');
-  background-blend-mode: multiply;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  box-shadow: none;
-  border-radius: 20px;
+@keyframes reward-pop {
+  from { opacity: 0; transform: scale(0.2) translateY(12px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
 }
+
+/* ============================================================
+   1 · HERO
+   ============================================================ */
+
+.dashboard-welcome {
+  background: var(--daemon-neutral-surface);
+  border: 1px solid var(--daemon-neutral-border);
+  border-radius: var(--daemon-radius-lg);
+  display: grid;
+  gap: var(--daemon-space-6);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 300px);
+  padding: var(--daemon-space-5) var(--daemon-space-6);
+}
+
+.welcome-content {
+  align-content: center;
+  display: grid;
+  gap: var(--daemon-space-2);
+}
+
+.eyebrow {
+  color: var(--daemon-neutral-text-secondary);
+  font-size: var(--daemon-font-size-mini);
+  font-weight: var(--daemon-font-weight-extra);
+  letter-spacing: 0.08em;
+  line-height: var(--daemon-line-height-mini);
+  text-transform: uppercase;
+}
+.eyebrow--navy {
+  color: var(--daemon-student-navigation);
+}
+.eyebrow--mission {
+  color: var(--daemon-student-mission);
+}
+
+.welcome-title {
+  color: var(--daemon-neutral-text-primary);
+  font-size: var(--daemon-font-size-h1);
+  font-weight: var(--daemon-font-weight-bold);
+  line-height: var(--daemon-line-height-h1);
+  margin: 0;
+}
+
+.welcome-sub {
+  color: var(--daemon-neutral-text-secondary);
+  font-size: var(--daemon-font-size-body-lg);
+  font-weight: var(--daemon-font-weight-medium);
+  line-height: var(--daemon-line-height-body-lg);
+  margin: 0;
+  max-width: 34rem;
+}
+
+/* ============================================================
+   VARIANTE TEENS · CREATOR — Blueprint TEENS-DASH-02
+   Bienvenida sobria (sin escenario, sin personaje), misión como
+   acción principal, métricas con chips sólidos, constancia sin
+   ilustraciones KIDS, Creator Classes editoriales y Tech Legends
+   como capa secundaria. NO afecta la variante KIDS.
+   ============================================================ */
+
+/* --- Bienvenida: introducción editorial limpia, una sola columna --- */
+.student-dashboard--teens .dashboard-welcome {
+  align-items: center;
+  grid-template-columns: minmax(0, 1fr);
+  padding: var(--daemon-space-5) var(--daemon-space-6);
+}
+.student-dashboard--teens .welcome-sub {
+  max-width: 40rem;
+}
+
+/* --- Misión: icono sólido (color DAEMON, sin tintes) --- */
+.student-dashboard--teens .mission-icon {
+  background: var(--daemon-student-mission);
+  color: var(--daemon-on-warning);
+}
+
+/* --- Métricas: tiles blancos con icono en mini-bloque sólido --- */
+.student-dashboard--teens .metric-icon {
+  background: var(--metric-color);
+  border-radius: var(--daemon-radius-sm);
+}
+.student-dashboard--teens .metric--progreso .metric-icon { color: var(--daemon-student-navigation); }
+.student-dashboard--teens .metric--racha .metric-icon { color: var(--daemon-on-warning); }
+.student-dashboard--teens .metric--logros .metric-icon { color: var(--daemon-on-yellow); }
+.student-dashboard--teens .metric--ranking .metric-icon { color: var(--daemon-on-purple); }
+
+/* --- Constancia y vacíos: chips sólidos (sin tintes; Solid Surface) --- */
+.student-dashboard--teens .racha-icon {
+  background: var(--daemon-student-mission);
+  color: var(--daemon-on-warning);
+}
+.student-dashboard--teens .mission-icon--ok {
+  background: var(--daemon-student-progress);
+  color: var(--daemon-student-navigation);
+}
+
+/* --- Eyebrow de la sección DESCUBRE --- */
+.student-dashboard--teens .eyebrow--discover {
+  color: var(--daemon-student-creative);
+}
+
+/* ============================================================
+   5 · DESCUBRE — CREATOR CLASSES (TEENS)
+   Disciplinas editoriales, no pertenencia del estudiante.
+   Solid Surface: card blanca; color oficial solo en el indicador
+   y el mini-bloque sólido; placa neutra para el bust.
+   ============================================================ */
+.student-dashboard--teens .creator-classes {
+  background: var(--daemon-neutral-surface);
+  border: 1px solid var(--daemon-neutral-border);
+  border-radius: var(--daemon-radius-lg);
+  padding: var(--daemon-space-5) var(--daemon-space-6);
+}
+.student-dashboard--teens .section-note {
+  color: var(--daemon-neutral-text-secondary);
+  font-size: var(--daemon-font-size-small);
+  font-weight: var(--daemon-font-weight-medium);
+  line-height: var(--daemon-line-height-small);
+}
+.student-dashboard--teens .creator-classes__grid {
+  display: grid;
+  gap: var(--daemon-space-4);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.student-dashboard--teens .class-card {
+  --class-color: var(--daemon-student-creative); /* CODE por defecto */
+  background: var(--daemon-neutral-surface);
+  border: 1px solid var(--daemon-neutral-border);
+  border-radius: var(--daemon-radius-md);
+  display: grid;
+  gap: var(--daemon-space-3);
+  min-width: 0;
+  overflow: hidden;
+  padding: var(--daemon-space-4);
+  position: relative;
+}
+.student-dashboard--teens .class-card[data-clase='ai'] { --class-color: var(--daemon-student-progress); }
+.student-dashboard--teens .class-card[data-clase='games'] { --class-color: var(--daemon-student-mission); }
+.student-dashboard--teens .class-card[data-clase='maker'] { --class-color: var(--daemon-student-navigation); }
+
+.student-dashboard--teens .class-card__indicator {
+  background: var(--class-color);
+  display: block;
+  height: 4px;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+.student-dashboard--teens .class-card__plate {
+  align-items: center;
+  background: var(--daemon-neutral-surface-subtle);
+  border: 1px solid var(--daemon-neutral-border);
+  border-radius: var(--daemon-radius-sm);
+  display: flex;
+  justify-content: center;
+  padding: var(--daemon-space-2);
+}
+.student-dashboard--teens .class-card__plate img {
+  height: 136px;
+  object-fit: contain;
+  width: auto;
+}
+.student-dashboard--teens .class-card__head {
+  align-items: center;
+  display: flex;
+  gap: var(--daemon-space-2);
+}
+.student-dashboard--teens .class-card__icon {
+  align-items: center;
+  background: var(--class-color);
+  border-radius: var(--daemon-radius-xs);
+  display: flex;
+  flex: none;
+  font-size: 0.95rem;
+  height: 30px;
+  justify-content: center;
+  width: 30px;
+}
+.student-dashboard--teens .class-card[data-clase='code'] .class-card__icon { color: var(--daemon-on-purple); }
+.student-dashboard--teens .class-card[data-clase='ai'] .class-card__icon { color: var(--daemon-student-navigation); }
+.student-dashboard--teens .class-card[data-clase='games'] .class-card__icon { color: var(--daemon-on-warning); }
+.student-dashboard--teens .class-card[data-clase='maker'] .class-card__icon { color: var(--daemon-student-navigation-text); }
+.student-dashboard--teens .class-card__titles {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.student-dashboard--teens .class-card__name {
+  color: var(--daemon-neutral-text-primary);
+  font-size: var(--daemon-font-size-body);
+  font-weight: var(--daemon-font-weight-bold);
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  margin: 0;
+  text-transform: uppercase;
+}
+/* MAKER: green únicamente como microacento técnico */
+.student-dashboard--teens .class-card__micro {
+  background: var(--daemon-student-progress);
+  border-radius: 50%;
+  display: inline-block;
+  height: 8px;
+  width: 8px;
+}
+.student-dashboard--teens .class-card__desc {
+  color: var(--daemon-neutral-text-secondary);
+  font-size: var(--daemon-font-size-small);
+  line-height: var(--daemon-line-height-small);
+  margin: 0;
+}
+
+/* ============================================================
+   6 · DESCUBRE — TECH LEGENDS (TEENS)
+   Capa editorial secundaria: strip sobrio, sin protagonismo.
+   ============================================================ */
+.student-dashboard--teens .tech-legends {
+  align-items: center;
+  background: var(--daemon-neutral-surface);
+  border: 1px solid var(--daemon-neutral-border);
+  border-radius: var(--daemon-radius-md);
+  display: flex;
+  gap: var(--daemon-space-4);
+  padding: var(--daemon-space-3) var(--daemon-space-5);
+}
+.student-dashboard--teens .tech-legends__art {
+  background: var(--daemon-neutral-surface-subtle);
+  border-radius: var(--daemon-radius-sm);
+  height: 56px;
+  object-fit: contain;
+  width: 76px;
+}
+.student-dashboard--teens .tech-legends__copy {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.student-dashboard--teens .tech-legends__copy .eyebrow {
+  color: var(--daemon-student-creative);
+}
+.student-dashboard--teens .tech-legends__copy p {
+  color: var(--daemon-neutral-text-secondary);
+  font-size: var(--daemon-font-size-small);
+  line-height: var(--daemon-line-height-small);
+  margin: 0;
+}
+.student-dashboard--teens .tech-legends__arrow {
+  color: var(--daemon-neutral-text-secondary);
+  margin-left: auto;
+}
+
+/* ============================================================
+   2 · PRIMARY LEARNING ACTION
+   ============================================================ */
+
+.mission-panel {
+  background: var(--daemon-neutral-surface);
+  border: 1px solid var(--daemon-neutral-border);
+  border-radius: var(--daemon-radius-lg);
+  box-shadow: var(--daemon-shadow-xs);
+  padding: var(--daemon-space-5) var(--daemon-space-6);
+}
+
+.section-head {
+  align-items: flex-end;
+  border-bottom: 1px solid var(--daemon-neutral-border);
+  display: flex;
+  gap: var(--daemon-space-4);
+  justify-content: space-between;
+  margin-bottom: var(--daemon-space-4);
+  padding-bottom: var(--daemon-space-3);
+}
+
+.section-title {
+  color: var(--daemon-neutral-text-primary);
+  font-size: var(--daemon-font-size-h2);
+  font-weight: var(--daemon-font-weight-bold);
+  line-height: var(--daemon-line-height-h2);
+  margin: var(--daemon-space-1) 0 0;
+}
+
+.section-action {
+  color: var(--daemon-student-navigation);
+  font-size: var(--daemon-font-size-small);
+  font-weight: var(--daemon-font-weight-semibold);
+  line-height: var(--daemon-line-height-small);
+  text-decoration: none;
+  transition: color var(--daemon-motion-fast) var(--daemon-motion-ease);
+}
+.section-action:hover {
+  color: var(--daemon-student-action-primary);
+}
+
+.mission-body {
+  align-items: center;
+  display: flex;
+  gap: var(--daemon-space-5);
+}
+
+.mission-icon {
+  align-items: center;
+  background: color-mix(in srgb, var(--daemon-student-mission) 14%, var(--daemon-neutral-surface));
+  border-radius: var(--daemon-radius-md);
+  color: var(--daemon-student-mission);
+  display: flex;
+  flex: none;
+  font-size: 1.2rem;
+  height: 52px;
+  justify-content: center;
+  width: 52px;
+}
+.mission-icon--ok {
+  background: color-mix(in srgb, var(--daemon-student-progress) 14%, var(--daemon-neutral-surface));
+  color: var(--daemon-student-progress);
+}
+
+.mission-info {
+  display: grid;
+  gap: var(--daemon-space-1);
+  min-width: 0;
+}
+
+.mission-title {
+  color: var(--daemon-neutral-text-primary);
+  font-size: var(--daemon-font-size-h3);
+  font-weight: var(--daemon-font-weight-semibold);
+  line-height: var(--daemon-line-height-h3);
+  margin: 0;
+}
+
+.mission-meta {
+  color: var(--daemon-neutral-text-secondary);
+  font-size: var(--daemon-font-size-small);
+  font-weight: var(--daemon-font-weight-medium);
+  margin: 0;
+}
+
+.mission-desc {
+  color: var(--daemon-neutral-text-secondary);
+  font-size: var(--daemon-font-size-body);
+  line-height: var(--daemon-line-height-body);
+  margin: var(--daemon-space-1) 0 0;
+}
+
+.mission-cta {
+  align-items: flex-end;
+  display: flex;
+  flex-direction: column;
+  gap: var(--daemon-space-4);
+  margin-left: auto;
+  width: 264px;
+}
+
+.level-context {
+  align-self: stretch;
+  display: grid;
+  gap: var(--daemon-space-2);
+}
+.level-context__label {
+  color: var(--daemon-neutral-text-secondary);
+  display: flex;
+  font-size: var(--daemon-font-size-small);
+  font-weight: var(--daemon-font-weight-medium);
+  justify-content: space-between;
+}
+
+.mission-rewards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--daemon-space-2);
+}
+
+.chip {
+  align-items: center;
+  background: var(--daemon-neutral-surface-subtle);
+  border-radius: var(--daemon-radius-pill);
+  display: inline-flex;
+  font-size: var(--daemon-font-size-caption);
+  font-weight: var(--daemon-font-weight-bold);
+  gap: var(--daemon-space-1);
+  line-height: var(--daemon-line-height-caption);
+  padding: var(--daemon-space-1) var(--daemon-space-3);
+}
+.chip--xp {
+  color: var(--daemon-student-progress);
+}
+.chip--daemons {
+  color: var(--daemon-student-reward);
+}
+
+.dashboard-cta {
+  align-items: center;
+  background: var(--daemon-student-action-primary);
+  border-radius: var(--daemon-radius-md);
+  box-shadow: var(--daemon-shadow-sm);
+  color: var(--cta-on);
+  display: inline-flex;
+  font-size: var(--daemon-font-size-body);
+  font-weight: var(--daemon-font-weight-bold);
+  gap: var(--daemon-space-2);
+  justify-content: center;
+  min-height: 48px;
+  padding: var(--daemon-space-3) var(--daemon-space-6);
+  text-decoration: none;
+  transition: box-shadow var(--daemon-motion-fast) var(--daemon-motion-ease);
+}
+.dashboard-cta:hover {
+  box-shadow: var(--daemon-shadow-md);
+}
+.dashboard-cta--sm {
+  font-size: var(--daemon-font-size-small);
+  min-height: 40px;
+  padding: var(--daemon-space-2) var(--daemon-space-5);
+}
+
+.mission-empty {
+  align-items: center;
+  display: flex;
+  gap: var(--daemon-space-4);
+  padding: var(--daemon-space-2) 0 0;
+}
+.mission-empty .mission-info {
+  flex: 1;
+}
+.mission-empty__img {
+  height: 64px;
+  object-fit: contain;
+}
+
+/* ============================================================
+   3 · PROGRESS OVERVIEW
+   ============================================================ */
+
+.dashboard-metrics {
+  display: grid;
+  gap: var(--daemon-space-3);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.metric {
+  background: var(--daemon-neutral-surface);
+  border: 1px solid var(--daemon-neutral-border);
+  border-radius: var(--daemon-radius-md);
+  display: grid;
+  gap: var(--daemon-space-1);
+  padding: var(--daemon-space-3) var(--daemon-space-4);
+}
+.metric--progreso { --metric-color: var(--daemon-student-progress); }
+.metric--racha   { --metric-color: var(--daemon-student-mission); }
+.metric--logros  { --metric-color: var(--daemon-student-reward); }
+.metric--ranking { --metric-color: var(--daemon-student-creative); }
+
+.metric-icon {
+  align-items: center;
+  background: color-mix(in srgb, var(--metric-color) 12%, var(--daemon-neutral-surface));
+  border-radius: var(--daemon-radius-sm);
+  color: var(--metric-color);
+  display: flex;
+  font-size: 0.95rem;
+  height: 36px;
+  justify-content: center;
+  margin-bottom: var(--daemon-space-1);
+  width: 36px;
+}
+
+.metric-value {
+  color: var(--daemon-neutral-text-primary);
+  font-size: var(--daemon-font-size-h3);
+  font-weight: var(--daemon-font-weight-bold);
+  line-height: var(--daemon-line-height-h3);
+}
+
+.metric-label {
+  color: var(--daemon-neutral-text-secondary);
+  font-size: var(--daemon-font-size-caption);
+  font-weight: var(--daemon-font-weight-bold);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.metric-sub {
+  color: var(--daemon-neutral-text-secondary);
+  font-size: var(--daemon-font-size-small);
+  line-height: var(--daemon-line-height-small);
+}
+
+/* ============================================================
+   4 · LEARNING CONTINUATION — núcleo / constancia
+   ============================================================ */
+
+.panel {
+  background: var(--daemon-neutral-surface);
+  border: 1px solid var(--daemon-neutral-border);
+  border-radius: var(--daemon-radius-lg);
+  padding: var(--daemon-space-5) var(--daemon-space-6);
+}
+
+.panel-percent {
+  color: var(--daemon-student-progress);
+  font-size: var(--daemon-font-size-h2);
+  font-weight: var(--daemon-font-weight-bold);
+  line-height: var(--daemon-line-height-h2);
+}
+
+.xp-row {
+  color: var(--daemon-neutral-text-secondary);
+  display: flex;
+  font-size: var(--daemon-font-size-caption);
+  font-weight: var(--daemon-font-weight-semibold);
+  justify-content: space-between;
+  margin-top: var(--daemon-space-2);
+}
+
+.level-note {
+  align-items: center;
+  color: var(--daemon-neutral-text-secondary);
+  display: flex;
+  font-size: var(--daemon-font-size-small);
+  font-weight: var(--daemon-font-weight-medium);
+  gap: var(--daemon-space-2);
+  margin: var(--daemon-space-4) 0 0;
+}
+.level-note fa-icon {
+  color: var(--daemon-student-progress);
+}
+
+.racha-summary {
+  align-items: center;
+  display: flex;
+  gap: var(--daemon-space-4);
+}
+.racha-icon {
+  align-items: center;
+  background: color-mix(in srgb, var(--daemon-student-mission) 12%, var(--daemon-neutral-surface));
+  border-radius: var(--daemon-radius-md);
+  color: var(--daemon-student-mission);
+  display: flex;
+  font-size: 1.1rem;
+  height: 44px;
+  justify-content: center;
+  width: 44px;
+}
+.racha-value {
+  color: var(--daemon-neutral-text-primary);
+  font-size: var(--daemon-font-size-h2);
+  font-weight: var(--daemon-font-weight-bold);
+  line-height: var(--daemon-line-height-h2);
+}
+.racha-label {
+  color: var(--daemon-neutral-text-secondary);
+  display: block;
+  font-size: var(--daemon-font-size-small);
+  font-weight: var(--daemon-font-weight-medium);
+}
+.racha-mascota {
+  height: 64px;
+  margin-left: auto;
+  object-fit: contain;
+}
+.racha-message {
+  color: var(--daemon-neutral-text-secondary);
+  font-size: var(--daemon-font-size-small);
+  line-height: var(--daemon-line-height-small);
+  margin: var(--daemon-space-3) 0 0;
+}
+
+.activity-dots {
+  border-top: 1px solid var(--daemon-neutral-border);
+  display: flex;
+  gap: var(--daemon-space-1);
+  justify-content: space-between;
+  list-style: none;
+  margin: var(--daemon-space-4) 0 0;
+  padding: var(--daemon-space-4) 0 0;
+}
+.activity-dot {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: var(--daemon-space-2);
+}
+.activity-dot span {
+  background: var(--daemon-neutral-surface);
+  border: 2px solid var(--daemon-neutral-border-strong);
+  border-radius: 50%;
+  display: block;
+  height: 12px;
+  width: 12px;
+}
+.activity-dot.is-active span {
+  background: var(--daemon-student-progress);
+  border-color: var(--daemon-student-progress);
+}
+.activity-dot small {
+  color: var(--daemon-neutral-text-disabled);
+  font-size: var(--daemon-font-size-mini);
+  font-weight: var(--daemon-font-weight-bold);
+}
+.activity-dot.is-active small {
+  color: var(--daemon-neutral-text-secondary);
+}
+
+/* ============================================================
+   5 · RECOMPENSAS
+   ============================================================ */
+
+.dashboard-foot {
+  align-items: center;
+  background: var(--daemon-neutral-surface);
+  border: 1px solid var(--daemon-neutral-border);
+  border-radius: var(--daemon-radius-md);
+  display: flex;
+  gap: var(--daemon-space-4);
+  justify-content: space-between;
+  padding: var(--daemon-space-3) var(--daemon-space-5);
+}
+.foot-premios {
+  align-items: center;
+  color: var(--daemon-neutral-text-secondary);
+  display: inline-flex;
+  font-size: var(--daemon-font-size-small);
+  font-weight: var(--daemon-font-weight-medium);
+  gap: var(--daemon-space-2);
+}
+.foot-premios fa-icon {
+  color: var(--daemon-student-reward);
+}
+
+/* ============================================================
+   VARIANTE KIDS · EXPLORE — BLUEPRINT KIDS-03
+   TEENS conserva la base compartida de arriba.
+   ============================================================ */
+
+/* --- HERO: escena única de ~220px, contenido 42% / escena 58% --- */
+.student-dashboard--kids .dashboard-welcome {
+  background: var(--daemon-student-navigation);
+  border-color: var(--daemon-student-navigation);
+  gap: var(--daemon-space-6);
+  grid-template-columns: minmax(0, 42%) minmax(0, 58%);
+  min-height: 196px;
+  overflow: hidden;
+  padding: var(--daemon-space-4) var(--daemon-space-6);
+}
+.student-dashboard--kids .eyebrow--navy {
+  color: var(--daemon-student-progress);
+}
+.student-dashboard--kids .welcome-title {
+  color: var(--daemon-student-navigation-text);
+}
+.student-dashboard--kids .welcome-name {
+  color: var(--daemon-student-progress);
+}
+.student-dashboard--kids .welcome-sub {
+  color: var(--daemon-on-navy-muted);
+  max-width: 30rem;
+}
+
+.student-dashboard--kids .kids-hero-scene {
+  min-height: 196px;
+  position: relative;
+}
+.student-dashboard--kids .kids-hero-layer {
+  display: block;
+  position: absolute;
+}
+/* Escenario integrado (pack KIDS recortado a su arte) — capas lógicas:
+   1) montañas: plano ambiental anclado abajo (~2/3 del stage);
+   2) nubes: flotan en el cielo navy (tercio superior);
+   3) terreno: plataforma amarilla anclada al borde inferior, bajo el personaje;
+   4) bandera: elemento secundario a la derecha, parcialmente tras el personaje;
+   5) personaje: anclado sobre el terreno, con aire de cielo sobre la cabeza. */
+.student-dashboard--kids .kids-hero-layer--bg {
+  bottom: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  object-position: right bottom;
+  z-index: 0;
+}
+.student-dashboard--kids .kids-hero-layer--cloud {
+  height: auto;
+  width: auto;
+  z-index: 1;
+}
+.student-dashboard--kids .kids-hero-layer--cloud-1 {
+  height: 42px;
+  left: 3%;
+  top: 4px;
+}
+.student-dashboard--kids .kids-hero-layer--cloud-2 {
+  height: 22px;
+  left: 28%;
+  top: 12px;
+}
+.student-dashboard--kids .kids-hero-layer--cloud-3 {
+  height: 36px;
+  right: 32%;
+  top: 20px;
+}
+.student-dashboard--kids .kids-hero-layer--cloud-4 {
+  height: 24px;
+  right: 8%;
+  top: 32px;
+}
+.student-dashboard--kids .kids-hero-layer--flag {
+  bottom: 25px;
+  height: 140px;
+  right: 2%;
+  width: auto;
+  z-index: 2;
+}
+.student-dashboard--kids .kids-hero-layer--ground {
+  bottom: -65px;
+  height: 130px;
+  right: -2%;
+  width: auto;
+  z-index: 3;
+}
+.student-dashboard--kids .kids-hero-layer--monster {
+  bottom: 15px;
+  height: 175px;
+  right: 15%;
+  width: auto;
+  z-index: 4;
+}
+
+/* --- Misión: body horizontal + footer integrado, SIN card navy --- */
+.student-dashboard--kids .mission-panel {
+  padding: var(--daemon-space-4) var(--daemon-space-5);
+}
+.student-dashboard--kids .section-head {
+  margin-bottom: var(--daemon-space-2);
+  padding-bottom: var(--daemon-space-1);
+}
+.student-dashboard--kids .section-title {
+  font-size: var(--daemon-font-size-h3);
+  line-height: 1.2;
+  margin-top: 0;
+}
+.student-dashboard--kids .mission-body--kids {
+  display: grid;
+  gap: var(--daemon-space-1) var(--daemon-space-4);
+  grid-template-areas:
+    'icon head'
+    'icon desc'
+    'icon progress';
+  grid-template-columns: auto minmax(0, 1fr);
+}
+.student-dashboard--kids .mission-body--kids .mission-icon {
+  background: var(--daemon-student-mission);
+  border-radius: var(--daemon-radius-sm);
+  color: var(--daemon-on-warning);
+  font-size: 1.3rem;
+  grid-area: icon;
+  grid-row: 1 / -1;
+  height: 56px;
+  width: 56px;
+}
+.student-dashboard--kids .mission-head {
+  align-self: center;
+  display: grid;
+  gap: 2px;
+  grid-area: head;
+  min-width: 0;
+}
+.student-dashboard--kids .mission-title {
+  line-height: 1.25;
+}
+.student-dashboard--kids .mission-desc {
+  align-self: start;
+  font-size: var(--daemon-font-size-small);
+  grid-area: desc;
+  line-height: var(--daemon-line-height-small);
+  margin-top: 0;
+}
+.student-dashboard--kids .mission-progress {
+  display: grid;
+  gap: var(--daemon-space-1);
+  grid-area: progress;
+  margin-top: 0;
+  max-width: 320px;
+}
+.student-dashboard--kids .mission-progress__label {
+  color: var(--daemon-neutral-text-secondary);
+  display: flex;
+  font-size: var(--daemon-font-size-small);
+  font-weight: var(--daemon-font-weight-semibold);
+  justify-content: space-between;
+  line-height: 1.2;
+}
+.student-dashboard--kids .mission-progress nz-progress {
+  display: block;
+  line-height: 0;
+}
+.student-dashboard--kids .mission-foot {
+  align-items: center;
+  border-top: 1px solid var(--daemon-neutral-border);
+  display: flex;
+  gap: var(--daemon-space-4);
+  justify-content: space-between;
+  margin-top: var(--daemon-space-1);
+  padding-top: var(--daemon-space-2);
+}
+.student-dashboard--kids .mission-foot__rewards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--daemon-space-2);
+}
+.student-dashboard--kids .mission-foot .dashboard-cta {
+  min-height: 40px;
+  padding: var(--daemon-space-2) var(--daemon-space-5);
+}
+.student-dashboard--kids .dashboard-cta {
+  border-radius: var(--daemon-radius-sm);
+}
+
+/* --- Núcleo: badge de nivel + headline + barra (sin círculo grande) --- */
+.student-dashboard--kids .panel--nivel {
+  align-content: space-between;
+  align-items: center;
+  display: grid;
+  gap: var(--daemon-space-2) var(--daemon-space-3);
+  grid-template-columns: auto minmax(0, 1fr);
+  padding: var(--daemon-space-4) var(--daemon-space-5);
+}
+.student-dashboard--kids .panel--nivel .section-head {
+  grid-column: 1 / -1;
+}
+.student-dashboard--kids .level-badge {
+  align-items: center;
+  background: var(--daemon-student-reward);
+  clip-path: polygon(25% 6.7%, 75% 6.7%, 100% 50%, 75% 93.3%, 25% 93.3%, 0 50%);
+  color: var(--daemon-on-yellow);
+  display: flex;
+  font-size: var(--daemon-font-size-h3);
+  font-weight: var(--daemon-font-weight-extra);
+  height: 48px;
+  justify-content: center;
+  width: 54px;
+}
+.student-dashboard--kids .level-headline {
+  display: grid;
+  gap: 2px;
+}
+.student-dashboard--kids .level-headline strong {
+  color: var(--daemon-neutral-text-primary);
+  font-size: var(--daemon-font-size-h3);
+  font-weight: var(--daemon-font-weight-bold);
+  line-height: 1.2;
+}
+.student-dashboard--kids .level-headline span {
+  color: var(--daemon-neutral-text-secondary);
+  font-size: var(--daemon-font-size-small);
+  line-height: var(--daemon-line-height-small);
+}
+.student-dashboard--kids .level-bar {
+  grid-column: 1 / -1;
+  margin-top: var(--daemon-space-1);
+}
+.student-dashboard--kids .xp-row {
+  grid-column: 1 / -1;
+  margin-top: 0;
+}
+.student-dashboard--kids .level-note {
+  grid-column: 1 / -1;
+  margin-top: var(--daemon-space-1);
+}
+
+/* --- Métricas: banda navy compacta (88-100px), icono + texto --- */
+.student-dashboard--kids .dashboard-metrics {
+  background: var(--daemon-student-navigation);
+  border: 1px solid var(--daemon-student-navigation);
+  border-radius: var(--daemon-radius-lg);
+  gap: 0;
+  overflow: hidden;
+}
+.student-dashboard--kids .metric {
+  align-items: center;
+  align-content: center;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  gap: 2px;
+  grid-template-columns: auto minmax(0, 1fr);
+  padding: 16px var(--daemon-space-5);
+}
+.student-dashboard--kids .metric + .metric {
+  border-left: 1px solid color-mix(in srgb, var(--daemon-on-navy-muted) 18%, var(--daemon-student-navigation));
+}
+.student-dashboard--kids .metric-icon {
+  background: transparent;
+  border: 2px solid var(--metric-color);
+  border-radius: 50%;
+  color: var(--metric-color);
+  font-size: 1.05rem;
+  grid-row: 1 / span 3;
+  height: 40px;
+  margin: 0 var(--daemon-space-3) 0 0;
+  width: 40px;
+}
+.student-dashboard--kids .metric-value {
+  color: var(--daemon-student-navigation-text);
+  font-size: var(--daemon-font-size-h3);
+  line-height: 1.2;
+}
+.student-dashboard--kids .metric-label {
+  color: var(--daemon-on-navy-muted);
+  font-size: 11px;
+  line-height: 1.3;
+}
+.student-dashboard--kids .metric-sub {
+  color: var(--daemon-on-navy-muted);
+  font-size: 11px;
+  line-height: 1.3;
+}
+
+/* --- Constancia: 7 días + puntaje semanal + mensaje --- */
+.student-dashboard--kids .panel--constancia {
+  display: grid;
+  gap: var(--daemon-space-2) var(--daemon-space-4);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 170px);
+  padding: var(--daemon-space-4) var(--daemon-space-5);
+}
+.student-dashboard--kids .panel--constancia .section-head {
+  grid-column: 1 / -1;
+}
+.student-dashboard--kids .racha-summary {
+  display: none;
+}
+.student-dashboard--kids .activity-dots {
+  align-self: start;
+  border: 0;
+  border-top: 1px solid var(--daemon-neutral-border);
+  display: grid;
+  gap: var(--daemon-space-2);
+  grid-column: 1;
+  grid-row: 3;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  margin-top: 0;
+  padding-top: var(--daemon-space-2);
+}
+.student-dashboard--kids .activity-dot {
+  background: var(--daemon-neutral-surface-subtle);
+  border: 1px solid var(--daemon-neutral-border);
+  border-radius: var(--daemon-radius-sm);
+  gap: 2px;
+  padding: var(--daemon-space-1) var(--daemon-space-1);
+}
+.student-dashboard--kids .activity-dot.is-active {
+  background: var(--daemon-student-progress);
+  border-color: var(--daemon-student-progress);
+}
+.student-dashboard--kids .activity-dot span {
+  align-items: center;
+  display: inline-flex;
+  height: 16px;
+  justify-content: center;
+  width: 16px;
+}
+.student-dashboard--kids .activity-dot.is-active span {
+  background: var(--daemon-student-progress);
+  border-color: var(--daemon-student-progress);
+  color: var(--daemon-on-success);
+  font-size: 9px;
+}
+.student-dashboard--kids .activity-dot span {
+  height: 14px;
+  width: 14px;
+}
+.student-dashboard--kids .week-score strong {
+  font-size: var(--daemon-font-size-h3);
+  line-height: 1.15;
+}
+.student-dashboard--kids .week-score span {
+  font-size: 10px;
+  line-height: 1.25;
+}
+.student-dashboard--kids .racha-message {
+  font-size: var(--daemon-font-size-small);
+  line-height: 1.3;
+}
+.student-dashboard--kids .week-score {
+  align-self: start;
+  background: transparent;
+  border-top: 1px solid var(--daemon-neutral-border);
+  grid-column: 2;
+  grid-row: 3;
+  padding: var(--daemon-space-2) 0 0;
+  text-align: left;
+}
+.student-dashboard--kids .week-score strong {
+  color: var(--daemon-student-progress);
+  display: block;
+  font-size: var(--daemon-font-size-h3);
+  font-weight: var(--daemon-font-weight-bold);
+  line-height: 1.2;
+}
+.student-dashboard--kids .week-score span {
+  color: var(--daemon-neutral-text-secondary);
+  display: block;
+  font-size: 11px;
+  line-height: 1.3;
+}
+.student-dashboard--kids .racha-message {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  margin-top: 0;
+}
+
+/* --- Recompensas: módulo compacto con CTA Ver tienda --- */
+.student-dashboard--kids .dashboard-foot {
+  align-content: center;
+  border-radius: var(--daemon-radius-lg);
+  display: grid;
+  gap: var(--daemon-space-3);
+  padding: var(--daemon-space-4) var(--daemon-space-5);
+}
+.student-dashboard--kids .foot-head {
+  align-items: center;
+  display: flex;
+  gap: var(--daemon-space-4);
+  justify-content: space-between;
+}
+.student-dashboard--kids .foot-rewards {
+  display: grid;
+  gap: 2px;
+}
+.student-dashboard--kids .foot-eyebrow {
+  color: var(--daemon-student-mission);
+  font-size: var(--daemon-font-size-mini);
+  font-weight: var(--daemon-font-weight-extra);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.student-dashboard--kids .foot-premios {
+  color: var(--daemon-neutral-text-secondary);
+  font-size: var(--daemon-font-size-small);
+  font-weight: var(--daemon-font-weight-medium);
+  line-height: var(--daemon-line-height-small);
+}
+.student-dashboard--kids .foot-tiles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--daemon-space-3);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.student-dashboard--kids .foot-tile {
+  align-items: center;
+  background: var(--daemon-neutral-surface);
+  border: 1px solid var(--daemon-neutral-border);
+  border-radius: var(--daemon-radius-sm);
+  color: var(--daemon-student-reward);
+  display: flex;
+  height: 64px;
+  justify-content: center;
+  overflow: hidden;
+  width: 64px;
+}
+.student-dashboard--kids .foot-tile img {
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+.student-dashboard--kids .foot-empty {
+  color: var(--daemon-neutral-text-secondary);
+  font-size: var(--daemon-font-size-small);
+  line-height: var(--daemon-line-height-small);
+  max-width: 230px;
+}
+.student-dashboard--kids .foot-cta {
+  align-items: center;
+  background: var(--daemon-student-action-primary);
+  border-radius: var(--daemon-radius-sm);
+  box-shadow: var(--daemon-shadow-sm);
+  color: var(--cta-on);
+  display: inline-flex;
+  font-size: var(--daemon-font-size-small);
+  font-weight: var(--daemon-font-weight-bold);
+  justify-content: center;
+  min-height: 40px;
+  padding: var(--daemon-space-2) var(--daemon-space-5);
+  text-decoration: none;
+  transition: box-shadow var(--daemon-motion-fast) var(--daemon-motion-ease);
+}
+.student-dashboard--kids .foot-cta:hover {
+  box-shadow: var(--daemon-shadow-md);
+}
+
+/* ============================================================
+   Responsive
+   ============================================================ */
 
 @media (max-width: 1023px) {
-  .student-hero-banner {
-    /* Evitar que 'cover' haga un zoom enorme a la imagen horizontal en contenedores verticales */
-    background-size: auto;
-    background-position: center top;
-    /* Mezcla sólida para mantener legibilidad del texto sin degradados (D-06) */
-    background-image: url('/img/headers/story-header-bg.png');
-    background-blend-mode: multiply;
+  .student-dashboard--kids {
+    grid-template-areas:
+      'hero'
+      'mission'
+      'nivel'
+      'metrics'
+      'activity'
+      'rewards';
+    grid-template-columns: 1fr;
   }
-}
-
-/* Estilos migrados a Tailwind CSS. Solo se conservan animaciones globales */
-
-@media (max-width: 1023px) {
-  .student-stats-grid {
-    display: grid !important;
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  .student-dashboard--teens {
+    grid-template-areas:
+      'hero'
+      'mission'
+      'metrics'
+      'nivel'
+      'activity'
+      'classes'
+      'legends'
+      'foot';
+    grid-template-columns: 1fr;
   }
-}
-@media (min-width: 1024px) {
-  .student-stats-grid {
-    display: grid !important;
-    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  .student-dashboard--teens .creator-classes__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-}
-
-.student-logros-grid {
-  display: grid !important;
-  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  .student-dashboard--kids .dashboard-welcome {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 260px);
+  }
+  .student-dashboard--kids .kids-hero-layer--bg {
+    height: 130px;
+    object-position: center top;
+  }
+  .student-dashboard--kids .kids-hero-layer--ground {
+    height: 56px;
+  }
+  .student-dashboard--kids .kids-hero-layer--monster {
+    bottom: 4px;
+    height: 118px;
+  }
+  .student-dashboard--kids .kids-hero-layer--flag {
+    bottom: 12px;
+    height: 100px;
+    right: 6%;
+  }
+  .student-dashboard--kids .kids-hero-layer--cloud-1 {
+    height: 30px;
+  }
+  .student-dashboard--kids .kids-hero-layer--cloud-2 {
+    height: 18px;
+  }
+  .student-dashboard--kids .kids-hero-layer--cloud-3 {
+    display: none;
+  }
+  .student-dashboard--kids .kids-hero-layer--cloud-4 {
+    display: none;
+  }
+  .dashboard-welcome {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 220px);
+  }
+  .dashboard-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .mission-body {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .mission-cta {
+    align-items: stretch;
+    margin-left: 0;
+    width: 100%;
+  }
 }
 
 @media (max-width: 767px) {
-  .student-logros-grid {
-    display: flex !important;
-    grid-template-columns: none !important;
-    gap: .75rem !important;
-    overflow-x: auto !important;
-    scroll-snap-type: x mandatory !important;
-    -webkit-overflow-scrolling: touch !important;
-    padding-bottom: .25rem !important;
+  /* Mobile: hero con texto arriba y PAISAJE a ancho completo abajo
+     (sin recortes laterales; el monstruo y el terreno se ven enteros). */
+  .student-dashboard--kids .dashboard-welcome {
+    gap: 0;
+    grid-template-columns: 1fr;
+    min-height: 252px;
+    padding: var(--daemon-space-5);
+    position: relative;
   }
-  .student-logros-grid > * {
-    flex: 0 0 78% !important;
-    scroll-snap-align: start !important;
+  .student-dashboard--kids .welcome-content {
+    align-content: start;
+    background: transparent;
+    max-width: 100%;
+    padding-right: 0;
+    position: relative;
+    z-index: 1;
+  }
+  .student-dashboard--kids .kids-hero-scene {
+    bottom: 0;
+    display: block;
+    height: 104px;
+    left: 0;
+    min-height: 0;
+    overflow: hidden;
+    position: absolute;
+    right: 0;
+    top: auto;
+    width: 100%;
+  }
+  .student-dashboard--kids .kids-hero-layer--bg {
+    bottom: 0;
+    height: 104px;
+    left: 0;
+    object-position: center top;
+    right: 0;
+    width: 100%;
+  }
+  .student-dashboard--kids .kids-hero-layer--cloud {
+    display: none;
+  }
+  .student-dashboard--kids .kids-hero-layer--ground {
+    bottom: 0;
+    height: 48px;
+    object-fit: contain;
+    right: 6%;
+    width: auto;
+  }
+  .student-dashboard--kids .kids-hero-layer--flag {
+    display: none;
+  }
+  .student-dashboard--kids .kids-hero-layer--monster {
+    bottom: 2px;
+    height: 96px;
+    right: 8%;
+  }
+  .student-dashboard--kids .mission-body--kids {
+    gap: var(--daemon-space-2) var(--daemon-space-3);
+    grid-template-areas:
+      'icon head'
+      'desc desc'
+      'progress progress';
+  }
+  .student-dashboard--kids .mission-body--kids .mission-icon {
+    font-size: 1.15rem;
+    height: 48px;
+    width: 48px;
+  }
+  .student-dashboard--kids .mission-progress {
+    max-width: none;
+  }
+  .student-dashboard--kids .mission-foot {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .student-dashboard--kids .mission-foot__rewards {
+    justify-content: center;
+  }
+  .student-dashboard--kids .panel--constancia {
+    grid-template-columns: 1fr;
+  }
+  .student-dashboard--kids .activity-dots {
+    grid-column: 1;
+    grid-row: auto;
+  }
+  .student-dashboard--kids .week-score {
+    grid-column: 1;
+    grid-row: auto;
+    justify-self: start;
+  }
+  .student-dashboard--kids .racha-message {
+    grid-column: 1;
+    grid-row: auto;
+  }
+  .student-dashboard--kids .dashboard-foot {
+    align-items: stretch;
+  }
+  /* Orden visual mobile: cabecera → premios → CTA (Ver tienda al final).
+     display:contents aplana el head para que sus hijos entren al grid del foot. */
+  .student-dashboard--kids .foot-head {
+    display: contents;
+  }
+  .student-dashboard--kids .foot-rewards {
+    order: 1;
+  }
+  .student-dashboard--kids .foot-tiles,
+  .student-dashboard--kids .foot-empty {
+    order: 2;
+  }
+  .student-dashboard--kids .foot-cta {
+    order: 3;
+    justify-self: stretch;
+  }
+  .student-dashboard--kids .foot-tiles {
+    flex-wrap: wrap;
+  }
+  .dashboard-welcome {
+    grid-template-columns: 1fr;
+    padding: var(--daemon-space-4) var(--daemon-space-5);
+  }
+  .mission-panel,
+  .panel {
+    padding: var(--daemon-space-4) var(--daemon-space-4);
+  }
+  .welcome-title {
+    font-size: var(--daemon-font-size-h2);
+    line-height: var(--daemon-line-height-h2);
+  }
+  .dashboard-foot {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .mission-empty {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .student-dashboard--teens .creator-classes__grid {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
-
-/* Ocultar texto por defecto de progress y mejorar track */
-:host ::ng-deep .hero-progress .ant-progress-circle-trail {
-  stroke: rgba(255, 255, 255, 0.2);
-}
-:host ::ng-deep .hero-progress .ant-progress-text {
-  display: none;
-}
-
-/* Estilos migrados a Tailwind CSS. Solo se conservan animaciones globales */
 
 @media (prefers-reduced-motion: reduce) {
-  .reward-spark { animation: none; }
+  .reward-spark {
+    animation: none;
+  }
 }

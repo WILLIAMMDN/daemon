@@ -1,0 +1,109 @@
+<app-arc-section titulo="Tu cuenta">
+  <a acciones nz-button nzType="default" nzSize="small" routerLink="../perfil">Ver perfil</a>
+
+  <div class="cuenta">
+    <nz-avatar
+      class="cuenta__avatar"
+      [nzSize]="56"
+      [nzSrc]="usuario()?.avatar ?? undefined"
+      [nzText]="iniciales()"
+    />
+    <div class="cuenta__texto">
+      <strong>{{ usuario()?.nombre_completo || 'Estudiante' }}</strong>
+      @if (usuario()?.usuario) {
+        <span>{{ usuario()?.usuario }}</span>
+      }
+      @if (usuario()?.nivel) {
+        <small>Nivel de contenido: {{ usuario()?.nivel }}</small>
+      }
+    </div>
+  </div>
+</app-arc-section>
+
+@if (identidad.cargando() && !identidad.cargado()) {
+  <nz-skeleton [nzActive]="true" [nzParagraph]="{ rows: 4 }" />
+} @else if (identidad.error()) {
+  <nz-alert
+    nzType="warning"
+    nzShowIcon
+    nzMessage="No pudimos cargar tu progresión"
+    nzDescription="Tu XP, tu racha y tus Daems siguen guardados. Vuelve a intentarlo en unos momentos."
+    [nzAction]="reintentar"
+  />
+  <ng-template #reintentar>
+    <button nz-button nzSize="small" type="button" (click)="identidad.cargar(true)">Reintentar</button>
+  </ng-template>
+} @else if (identidad.panel(); as panel) {
+  <app-arc-section
+    titulo="Progresión de jugador"
+    descripcion="XP y nivel de DAEMON Pulse. Es tu avance como jugador, no tu evidencia académica."
+  >
+    <a acciones nz-button nzType="default" nzSize="small" routerLink="../progreso">Ver detalle</a>
+
+    <div class="progresion">
+      <div class="progresion__cabecera">
+        <span>Nivel {{ panel.progreso_nivel.nivel }} de {{ panel.progreso_nivel.nivel_maximo }}</span>
+        <strong>{{ panel.progreso_nivel.experiencia_restante }} XP para subir</strong>
+      </div>
+      <nz-progress
+        [nzPercent]="panel.progreso_nivel.progreso_porcentaje"
+        nzStrokeColor="var(--arc-green)"
+        [nzStrokeWidth]="8"
+      />
+      <dl class="cifras">
+        <div>
+          <dt>XP total</dt>
+          <dd>{{ panel.progreso_nivel.experiencia_total }}</dd>
+        </div>
+        <div>
+          <dt>Racha</dt>
+          <dd>{{ panel.racha }} {{ panel.racha === 1 ? 'día' : 'días' }}</dd>
+        </div>
+        <div>
+          <dt>Insignias</dt>
+          <dd>{{ panel.insignias }}</dd>
+        </div>
+        <div>
+          <dt>Posición</dt>
+          <dd>#{{ panel.posicion }} <small>{{ panel.posicion_scope_label }}</small></dd>
+        </div>
+      </dl>
+    </div>
+  </app-arc-section>
+
+  <app-arc-section
+    titulo="Daems"
+    descripcion="Tu economía virtual. Gastar Daems nunca reduce tu XP ni tu nivel."
+  >
+    <a acciones nz-button nzType="default" nzSize="small" routerLink="../daems">Abrir la tienda</a>
+
+    <dl class="cifras">
+      <div>
+        <dt>Saldo</dt>
+        <dd>{{ usuario()?.tokens ?? 0 }}</dd>
+      </div>
+      <div>
+        <dt>Canjes pendientes</dt>
+        <dd>{{ panel.canjes_pendientes }}</dd>
+      </div>
+    </dl>
+  </app-arc-section>
+}
+
+@if (aprendizaje.cargado() && aprendizaje.objetivosProgreso().totales > 0) {
+  <app-arc-section
+    titulo="Progreso de objetivos"
+    descripcion="Objetivos de aprendizaje trabajados con evidencia registrada. Se calcula desde tus cursos, no desde la XP."
+  >
+    <a acciones nz-button nzType="default" nzSize="small" routerLink="/alumno/aprender/mis-aprendizajes">
+      Ir a Aprender
+    </a>
+
+    <dl class="cifras">
+      <div>
+        <dt>Objetivos con evidencia</dt>
+        <dd>{{ aprendizaje.mastery().logrados }} / {{ aprendizaje.mastery().totales }}</dd>
+      </div>
+    </dl>
+  </app-arc-section>
+}

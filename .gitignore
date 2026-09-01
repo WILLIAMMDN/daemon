@@ -30,3 +30,6 @@ firestore-debug.log
 
 # Credenciales locales (deploy hooks, API keys locales)
 scripts/render-deploy-hook.url
+
+# MCP: contiene tokens de acceso (p. ej. FIGMA_API_KEY)
+.mcp.json

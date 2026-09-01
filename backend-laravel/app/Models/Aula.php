@@ -19,6 +19,7 @@ class Aula extends Model
         'codigo',
         'sourced_id',
         'id_curso',
+        'id_version_curso',
         'id_periodo_academico',
         'tipo_clase',
         'estado_interoperabilidad',
@@ -48,6 +49,11 @@ class Aula extends Model
         return $this->belongsTo(Curso::class, 'id_curso');
     }
 
+    public function versionCurso(): BelongsTo
+    {
+        return $this->belongsTo(VersionCurso::class, 'id_version_curso');
+    }
+
     public function periodoAcademico(): BelongsTo
     {
         return $this->belongsTo(PeriodoAcademico::class, 'id_periodo_academico');
@@ -56,5 +62,10 @@ class Aula extends Model
     public function matriculas(): HasMany
     {
         return $this->hasMany(MatriculaAula::class, 'id_aula');
+    }
+
+    public function sesionesAprendizaje(): HasMany
+    {
+        return $this->hasMany(SesionAprendizaje::class, 'id_aula');
     }
 }

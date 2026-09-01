@@ -7,7 +7,7 @@
       <p>Responde con calma y revisa cada pregunta antes de registrar tu evaluación.</p>
     </div>
     <nav aria-label="Acciones de evaluaciones">
-      <a nz-button nzType="default" routerLink="/alumno/resultados">Ver mis resultados <fa-icon [icon]="iconos.flecha" aria-hidden="true" /></a>
+      <a nz-button nzType="default" routerLink="/alumno/aprender/evaluaciones/resultados">Ver mis resultados <fa-icon [icon]="iconos.flecha" aria-hidden="true" /></a>
       <button nz-button nzType="default" type="button" (click)="cargar()" [disabled]="cargando()">
         <fa-icon [icon]="iconos.actualizar" aria-hidden="true" /> Actualizar
       </button>
@@ -111,7 +111,7 @@
       descripcion="Cuando tu docente publique una evaluación para tu nivel, aparecerá aquí automáticamente."
     >
       <button nz-button nzType="primary" type="button" (click)="cargar()"><fa-icon [icon]="iconos.actualizar" aria-hidden="true" /> Actualizar</button>
-      <a nz-button nzType="default" routerLink="/alumno/resultados">Ver resultados anteriores</a>
+      <a nz-button nzType="default" routerLink="/alumno/aprender/evaluaciones/resultados">Ver resultados anteriores</a>
     </app-estado-vacio>
   }
 </section>

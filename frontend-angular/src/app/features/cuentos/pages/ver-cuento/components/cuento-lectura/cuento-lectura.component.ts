@@ -2,8 +2,15 @@ import { Component, Input, Output, EventEmitter, ElementRef, ViewChild, HostList
 import { CommonModule } from '@angular/common';
 import { QuillModule } from 'ngx-quill';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faBookOpenReader, faHeart, faBookmark, faShareNodes, faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
-import { CuentoDetalleVista, PaginaCuentoVista } from '../../../../presentacion/cuento-detalle-vista.modelo';
+import { faBookOpenReader, faHeart, faBookmark, faShareNodes, faClock, faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { CuentoDetallePayload } from '../../../../models/cuento.models';
+
+interface PaginaCuento {
+  id?: string | number;
+  contenido?: string | null;
+  colorFondo?: string | null;
+  ilustracion?: string | null;
+}
 import { Activos } from '../../../../../../core/servicios/activos';
 import { migrarContenidoLegacy } from '../../../../utils/cuento-legacy';
 
@@ -12,7 +19,7 @@ import { migrarContenidoLegacy } from '../../../../utils/cuento-legacy';
   standalone: true,
   imports: [CommonModule, QuillModule, FontAwesomeModule],
   templateUrl: './cuento-lectura.component.html',
-  styleUrl: './cuento-lectura.component.scss',
+  styleUrl: '../../../crear-cuento/crear-cuento.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CuentoLecturaComponent {
@@ -22,17 +29,18 @@ export class CuentoLecturaComponent {
   faHeart = faHeart;
   faBookmark = faBookmark;
   faShareNodes = faShareNodes;
+  faClock = faClock;
   faChevronLeft = faChevronLeft;
   faChevronRight = faChevronRight;
 
-  @Input({ required: true }) set datosCuento(val: CuentoDetalleVista) {
+  @Input({ required: true }) set datosCuento(val: CuentoDetallePayload) {
     this._datosCuento = val;
     this.paginaActualIndex.set(0);
   }
-  get datosCuento(): CuentoDetalleVista {
+  get datosCuento(): CuentoDetallePayload {
     return this._datosCuento;
   }
-  private _datosCuento!: CuentoDetalleVista;
+  private _datosCuento!: CuentoDetallePayload;
   @Input() modoLectura = false;
   @Input() escalaFuente = 1;
   @Input() guardado = false;
@@ -59,10 +67,10 @@ export class CuentoLecturaComponent {
 
   @ViewChild('contenedorLectura') contenedorLectura!: ElementRef;
 
-  get paginasCuento(): readonly PaginaCuentoVista[] {
+  get paginasCuento(): PaginaCuento[] {
     const p = this.datosCuento?.cuento?.paginas;
     if (Array.isArray(p) && p.length > 0) {
-      return p;
+      return p as PaginaCuento[];
     }
     // Fallback
     if (this.contenidoProcesado) {
@@ -70,14 +78,13 @@ export class CuentoLecturaComponent {
         id: 'legacy-1',
         contenido: this.contenidoProcesado,
         colorFondo: 'var(--daemon-on-primary)',
-        ilustracion: null,
-        textoAlternativo: '',
+        ilustracion: null
       }];
     }
     return [];
   }
 
-  get paginaActiva(): PaginaCuentoVista {
+  get paginaActiva(): PaginaCuento {
     const paginas = this.paginasCuento;
     const index = this.paginaActualIndex();
     if (index >= 0 && index < paginas.length) {
@@ -89,7 +96,6 @@ export class CuentoLecturaComponent {
       contenido: '',
       colorFondo: 'var(--daemon-on-primary)',
       ilustracion: null,
-      textoAlternativo: '',
     };
   }
 

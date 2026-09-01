@@ -54,14 +54,14 @@ export function migrarContenidoLegacy(raw: unknown): string {
   }
 
   try {
-    const parsed: unknown = JSON.parse(trimmed);
-    if (!esObjetoLegacy(parsed)) return trimmed;
+    const parsed = JSON.parse(trimmed);
+    if (!parsed || typeof parsed !== 'object') return trimmed;
 
     const fragmentos: string[] = [];
 
-    if (Array.isArray(parsed.bubbles)) {
-      for (const b of parsed.bubbles) {
-        if (b && typeof b === 'object' && 'text' in b && typeof b.text === 'string') {
+    if (Array.isArray((parsed as any).bubbles)) {
+      for (const b of (parsed as any).bubbles) {
+        if (b && typeof b === 'object' && typeof b.text === 'string') {
           const limpio = b.text.trim();
           if (limpio) fragmentos.push(limpio);
         } else if (typeof b === 'string') {
@@ -71,10 +71,10 @@ export function migrarContenidoLegacy(raw: unknown): string {
       }
     }
 
-    if (Array.isArray(parsed.chars) && parsed.chars.length > 0) {
+    if (Array.isArray((parsed as any).chars) && (parsed as any).chars.length > 0) {
       // eslint-disable-next-line no-console
       console.info(
-        `[cuentos-legacy] Migración: ${parsed.chars.length} sprite(s) de personaje descartados.`,
+        `[cuentos-legacy] Migración: ${(parsed as any).chars.length} sprite(s) de personaje descartados.`,
       );
     }
 
@@ -88,10 +88,6 @@ export function migrarContenidoLegacy(raw: unknown): string {
   }
 
   return trimmed;
-}
-
-function esObjetoLegacy(valor: unknown): valor is { bubbles?: unknown[]; chars?: unknown[] } {
-  return valor !== null && typeof valor === 'object' && !Array.isArray(valor);
 }
 
 /** Escapa HTML básico para que la sugerencia no rompa el editor. */

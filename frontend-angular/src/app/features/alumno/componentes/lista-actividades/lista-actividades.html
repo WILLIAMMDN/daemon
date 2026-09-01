@@ -1,0 +1,24 @@
+<nz-list class="actividades" nzBordered nzSize="small">
+  @for (actividad of actividades(); track actividad.id) {
+    <nz-list-item>
+      <div class="actividad">
+        <div class="actividad__texto">
+          <a [routerLink]="actividad.ruta">{{ actividad.titulo }}</a>
+          <small>
+            {{ actividad.tipo === 'mision' ? 'Misión' : 'Evaluación' }}
+            @if (mostrarFecha() && actividad.fecha) {
+              · {{ actividad.fecha | date: 'd MMM y' }}
+            }
+          </small>
+        </div>
+
+        <div class="actividad__estado">
+          @if (actividad.recompensa !== null) {
+            <span class="actividad__recompensa">{{ actividad.recompensa }} XP</span>
+          }
+          <nz-tag [nzColor]="color(actividad.estado)">{{ actividad.estadoLabel }}</nz-tag>
+        </div>
+      </div>
+    </nz-list-item>
+  }
+</nz-list>

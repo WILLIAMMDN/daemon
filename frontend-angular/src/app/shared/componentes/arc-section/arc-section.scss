@@ -1,0 +1,56 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.arc-section {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.arc-section__header {
+  align-items: baseline;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  justify-content: space-between;
+  min-width: 0;
+}
+
+.arc-section__texto {
+  display: grid;
+  gap: 0.25rem;
+  max-width: 68ch;
+  min-width: 0;
+}
+
+.arc-section__texto h2,
+.arc-section__texto h3 {
+  color: var(--daemon-ink);
+  font-size: 1.125rem;
+  font-weight: 650;
+  letter-spacing: -0.015em;
+  margin: 0;
+}
+
+.arc-section__texto p {
+  color: var(--daemon-muted);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.arc-section__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.arc-section__acciones:empty {
+  display: none;
+}
+
+.arc-section__cuerpo {
+  min-width: 0;
+}

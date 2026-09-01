@@ -3,7 +3,7 @@
           nz-popconfirm [nzPopconfirmTitle]="confirmacion" nzPopconfirmPlacement="left" (nzOnConfirm)="ejecutar()"
           [type]="esSubmit ? 'submit' : 'button'"
           [disabled]="deshabilitado" [nzLoading]="cargando"
-          class="!bg-[var(--daemon-danger)] !border-none !text-white !shadow-sm hover:!bg-red-600 transition-colors flex items-center gap-1.5 {{ claseExtra }}"
+          class="!bg-[var(--daemon-semantic-danger)] !border-none !text-white !shadow-sm hover:!bg-red-600 transition-colors flex items-center gap-1.5 {{ claseExtra }}"
           [class.w-full]="anchoCompleto">
     <fa-icon [icon]="iconos.eliminar"></fa-icon> <span>{{ texto || 'Eliminar' }}</span>
   </button>
@@ -35,7 +35,7 @@
   <button nz-button nzType="primary" (click)="ejecutar()" 
           [type]="esSubmit ? 'submit' : 'button'"
           [disabled]="deshabilitado" [nzLoading]="cargando"
-          class="!bg-white !border !border-blue-500 !text-blue-600 !shadow-sm hover:!bg-blue-50 transition-colors flex items-center gap-1.5 {{ claseExtra }}"
+          class="!bg-[var(--daemon-neutral-surface)] !border !border-blue-500 !text-[var(--daemon-semantic-info)] !shadow-sm hover:!bg-[var(--daemon-semantic-info-subtle)] transition-colors flex items-center gap-1.5 {{ claseExtra }}"
           [class.w-full]="anchoCompleto">
     <fa-icon [icon]="iconos.agregar_usuario"></fa-icon> <span>{{ texto || 'Nuevo Alumno' }}</span>
   </button>

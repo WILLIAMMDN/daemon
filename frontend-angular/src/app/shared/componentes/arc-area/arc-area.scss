@@ -1,0 +1,39 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.arc-area {
+  display: grid;
+  gap: 1.25rem;
+  min-width: 0;
+}
+
+.arc-area__header {
+  display: grid;
+  gap: 0.375rem;
+  max-width: 68ch;
+  min-width: 0;
+}
+
+.arc-area__header h1 {
+  color: var(--daemon-ink);
+  font-size: clamp(1.5rem, 2.6vw, 2rem);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+  margin: 0;
+}
+
+.arc-area__header p {
+  color: var(--daemon-muted);
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.arc-area__contenido {
+  display: grid;
+  gap: 1.5rem;
+  min-width: 0;
+}

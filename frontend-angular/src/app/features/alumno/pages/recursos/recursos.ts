@@ -21,7 +21,6 @@ import {
   faStar,
   faTriangleExclamation,
   faCompass,
-  faBell,
 } from '@fortawesome/free-solid-svg-icons';
 import { finalize } from 'rxjs';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -127,7 +126,6 @@ export class Recursos {
   readonly faStar = faStar;
   readonly faTriangleExclamation = faTriangleExclamation;
   readonly faCompass = faCompass;
-  readonly faBell = faBell;
 
   readonly datos = signal<AprendizajeResponse | null>(null);
   readonly cargando = signal(true);

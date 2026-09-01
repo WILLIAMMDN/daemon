@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   inspectEnvironmentVariables,
+  inspectStaticDocuments,
   parseDotenv,
 } from "./check-environment-safety.mjs";
 
@@ -91,4 +92,59 @@ test("solo permite lectura productiva desde local con autorizacion explicita", (
     }),
     [],
   );
+});
+
+test("acepta frontend development conectado a produccion de forma coherente", () => {
+  const issues = inspectStaticDocuments({
+    environment: "export { environment } from './environment.development';",
+    development: `
+apiUrl: 'https://daemon-5vo1.onrender.com/api/v1'
+projectId: 'daemon-a41f8'
+url: 'https://lbxdcvsrmkkynttgwblc.supabase.co'
+enabled: false
+firebaseEmulators: { enabled: false }
+`,
+    staging: "",
+    production: "",
+    backendExample: "",
+    backendTesting: "",
+    angular: "{}",
+    packageJson: "{}",
+    firebaseRc: "{}",
+    playwright: "",
+    composer: "",
+    renderStaging: "",
+    prWorkflow: "",
+    productionWorkflow: "",
+  });
+
+  const developmentIssues = issues.filter((issue) =>
+    issue.startsWith("Frontend development"),
+  );
+  assert.deepEqual(developmentIssues, []);
+});
+
+test("bloquea frontend development que mezcla produccion con emulador demo", () => {
+  const issues = inspectStaticDocuments({
+    environment: "export { environment } from './environment.development';",
+    development: `
+apiUrl: 'https://daemon-5vo1.onrender.com/api/v1'
+projectId: 'demo-daemon-local'
+enabled: true
+`,
+    staging: "",
+    production: "",
+    backendExample: "",
+    backendTesting: "",
+    angular: "{}",
+    packageJson: "{}",
+    firebaseRc: "{}",
+    playwright: "",
+    composer: "",
+    renderStaging: "",
+    prWorkflow: "",
+    productionWorkflow: "",
+  });
+
+  assert.ok(issues.some((issue) => issue.startsWith("Frontend development")));
 });

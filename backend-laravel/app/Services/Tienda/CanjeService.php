@@ -74,7 +74,7 @@ class CanjeService
                     'id' => $cosmetico->id,
                     'nombre' => $cosmetico->nombre,
                     'slot' => $cosmetico->slot,
-                    'ruta_vestidor' => '/alumno/mascota',
+                    'ruta_vestidor' => '/alumno/identidad/personalizacion',
                 ] : null,
             ];
         }, 3);

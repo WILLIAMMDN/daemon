@@ -1,4 +1,4 @@
-<main class="student-module-page w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-6 md:gap-8 font-inter">
+<section class="student-module-page w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 flex flex-col gap-6 md:gap-8 font-inter">
   @if (cargando()) {
     <app-cargando class="w-full bg-white border border-slate-200 shadow-sm rounded-2xl p-8" texto="Cargando certificado..."></app-cargando>
   } @else if (error()) {
@@ -12,7 +12,7 @@
         <p class="text-sm text-slate-600 font-medium">Emitido: {{ certificado.emitido_en }}</p>
       </div>
       <div class="flex gap-2">
-        <a nz-button nzType="primary" class="daemon-btn" routerLink="/alumno/certificado/imprimir">Imprimir carnet</a>
+        <a nz-button nzType="primary" class="daemon-btn" routerLink="/alumno/identidad/certificado/imprimir">Imprimir carnet</a>
       </div>
     </header>
 
@@ -55,4 +55,4 @@
     </section>
 
   }
-</main>
+</section>

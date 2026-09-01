@@ -1,4 +1,4 @@
-<main class="redemptions-page">
+<section class="redemptions-page">
   <header class="redemptions-hero">
     <div><span>Inventario personal</span><h1>Mis recompensas</h1><p>Cada canje celebra tu esfuerzo sin descontar XP ni cambiar tu posición en el ranking.</p></div>
     <app-boton-accion tipo="actualizar" (accion)="cargar()" [cargando]="cargando()" [deshabilitado]="cargando()" />
@@ -28,4 +28,4 @@
   } @else {
     <section class="redemptions-state"><app-estado-vacio titulo="Tu inventario está listo" descripcion="Cuando canjees un premio con Daems aparecerá aquí, sin afectar tu XP." /></section>
   }
-</main>
+</section>

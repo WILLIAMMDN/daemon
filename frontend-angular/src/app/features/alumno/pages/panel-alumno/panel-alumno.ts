@@ -6,16 +6,21 @@ import {
   faArrowRight,
   faBolt,
   faCheck,
+  faCode,
   faFire,
+  faGamepad,
   faGift,
+  faHammer,
   faMedal,
   faRankingStar,
+  faRobot,
   faRocket,
   faWandMagicSparkles,
   faXmark,
   faFlag,
   faPlay,
 } from '@fortawesome/free-solid-svg-icons';
+import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -24,6 +29,13 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { ApiError } from '../../../../core/servicios/api';
 import { Activos } from '../../../../core/servicios/activos';
 import { Sesion } from '../../../../core/servicios/sesion';
+import { PremioTienda } from '../../../../core/modelos/dto';
+import { Tienda } from '../../../tienda/services/tienda';
+import {
+  experienciaDashboard,
+  CreatorClassCard,
+  StudentDashboardHeroAsset,
+} from './panel-alumno.experience';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 import { MonedaDaemon } from '../../../../shared/componentes/moneda-daemon/moneda-daemon';
 import {
@@ -35,6 +47,21 @@ import {
   UsuarioPanel,
 } from '../../models/panel-alumno.model';
 import { Alumno } from '../../services/alumno';
+import {
+  HomeContextResponse,
+  SesionAprendizajeDto,
+} from '../../models/contexto-alumno.model';
+
+export interface AccionVista {
+  titulo: string;
+  descripcion: string;
+  meta: string;
+  tipoEtiqueta: string;
+  ruta: string | unknown[];
+  ctaTexto: string;
+  recompensaXp?: number;
+  recompensaTokens?: number;
+}
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -47,8 +74,10 @@ export class PanelAlumno {
   private readonly alumno = inject(Alumno);
   private readonly sesion = inject(Sesion);
   private readonly activos = inject(Activos);
+  private readonly tienda = inject(Tienda);
 
   readonly estado = signal<EstadoPanelAlumno>({ kind: 'loading' });
+  readonly homeContext = signal<HomeContextResponse | null>(null);
   readonly panel = computed(() => {
     const estado = this.estado();
     return estado.kind === 'ready' ? estado.data : null;
@@ -60,6 +89,55 @@ export class PanelAlumno {
   });
   readonly actualizando = signal(false);
   readonly celebracion = signal<{ xp: number } | null>(null);
+
+  readonly nextLiveSession = computed<SesionAprendizajeDto | null>(() => this.homeContext()?.nextLiveSession ?? null);
+  readonly currentCourse = computed(() => this.homeContext()?.currentCourse ?? null);
+  readonly cohort = computed(() => this.homeContext()?.cohort ?? null);
+
+  /** Premios destacados de la tienda (hasta 4, orden real). Presentacional: no modifica la tienda. */
+  readonly premiosDestacados = signal<PremioTienda[]>([]);
+  readonly premiosInvalidos = signal<Set<number>>(new Set());
+
+  /**
+   * Variante de experiencia del dashboard (KIDS · Explore / TEENS · Creator),
+   * derivada del nivel runtime del estudiante vía tema-portal-alumno.
+   * Presentacional: no altera datos, rutas ni comportamiento.
+   */
+  readonly experiencia = computed(() => experienciaDashboard(this.sesion.usuario()?.nivel));
+  readonly esKids = computed(() => this.experiencia().experience === 'kids');
+  readonly esTeens = computed(() => this.experiencia().experience === 'teens');
+
+  /**
+   * Rutas de los assets aprobados del hero (solo KIDS tiene dirección
+   * artística; TEENS devuelve cadenas vacías y conserva su stage base).
+   */
+  readonly heroAssets = computed(() => {
+    const lista = this.experiencia().heroAssets ?? [];
+    const ruta = (nombre: StudentDashboardHeroAsset['nombre']): string =>
+      lista.find((asset) => asset.nombre === nombre)?.ruta ?? '';
+    const clouds = lista.filter((asset) => asset.nombre === 'cloud').map((asset) => asset.ruta);
+    return {
+      background: ruta('background'),
+      ground: ruta('ground'),
+      flag: ruta('flag'),
+      monster: ruta('monster'),
+      clouds,
+    };
+  });
+
+  /**
+   * Creator Classes editoriales (TEENS · DESCUBRE). Disciplinas para
+   * explorar; NO representan pertenencia del estudiante.
+   */
+  readonly creatorClasses = computed<readonly CreatorClassCard[]>(() => this.experiencia().creatorClasses ?? []);
+
+  /** Icono de disciplina por clase (sistema de iconos, no assets). */
+  readonly iconosClase: Record<CreatorClassCard['id'], IconDefinition> = {
+    code: faCode,
+    ai: faRobot,
+    games: faGamepad,
+    maker: faHammer,
+  };
 
   readonly iconos = {
     flecha: faArrowRight,
@@ -78,6 +156,23 @@ export class PanelAlumno {
 
   constructor() {
     this.cargar(false);
+    this.cargarPremiosDestacados();
+  }
+
+  /** Lee los primeros 4 premios reales de la tienda; ante cualquier fallo el dashboard queda intacto. */
+  private cargarPremiosDestacados(): void {
+    this.tienda.premios().subscribe({
+      next: (datos) => this.premiosDestacados.set((datos.premios ?? []).slice(0, 4)),
+      error: () => this.premiosDestacados.set([]),
+    });
+  }
+
+  activosUrl(ruta?: string | null): string {
+    return this.activos.url(ruta);
+  }
+
+  marcarPremioInvalido(id: number): void {
+    this.premiosInvalidos.update((actuales) => new Set(actuales).add(id));
   }
 
   cargar(forzar = true): void {
@@ -112,6 +207,93 @@ export class PanelAlumno {
         this.actualizando.set(false);
       },
     });
+
+    this.alumno.homeContext(forzar).subscribe({
+      next: (contexto) => this.homeContext.set(contexto),
+      error: () => this.homeContext.set(null),
+    });
+  }
+
+  accionActual(datos: PanelAlumnoDto): AccionVista | null {
+    const next = this.homeContext()?.nextAction;
+    if (next) {
+      const tipo = next.type;
+      let ruta: string | unknown[] = '/alumno/aprender';
+      let ctaTexto = 'Continuar';
+      let tipoEtiqueta = 'SIGUIENTE ACCIÓN';
+
+      switch (tipo) {
+        case 'live_session':
+          ruta = '/alumno/agenda';
+          ctaTexto = 'Ir a la sesión en vivo';
+          tipoEtiqueta = 'SESIÓN EN VIVO';
+          break;
+        case 'lesson':
+          const cursoId = this.currentCourse()?.id;
+          ruta = cursoId ? ['/alumno/aprender/curso', cursoId] : '/alumno/aprender';
+          ctaTexto = 'Continuar lección';
+          tipoEtiqueta = 'LECCIÓN';
+          break;
+        case 'mission':
+          ruta = next.experience?.sourceId
+            ? ['/alumno/aprender/misiones', next.experience.sourceId]
+            : (datos.proxima_mision ? ['/alumno/aprender/misiones', datos.proxima_mision.id] : '/alumno/aprender/misiones');
+          ctaTexto = 'Continuar misión';
+          tipoEtiqueta = 'MISIÓN';
+          break;
+        case 'assessment':
+          ruta = '/alumno/aprender/evaluaciones';
+          ctaTexto = 'Comenzar evaluación';
+          tipoEtiqueta = 'EVALUACIÓN';
+          break;
+        case 'project':
+          ruta = '/alumno/crear/proyectos';
+          ctaTexto = 'Continuar proyecto';
+          tipoEtiqueta = 'PROYECTO';
+          break;
+        case 'challenge':
+          ruta = '/alumno/aprender/rutas';
+          ctaTexto = 'Aceptar reto';
+          tipoEtiqueta = 'DESAFÍO';
+          break;
+        case 'lab':
+          ruta = '/alumno/crear/herramientas';
+          ctaTexto = 'Entrar al laboratorio';
+          tipoEtiqueta = 'LABORATORIO';
+          break;
+        default:
+          ruta = '/alumno/aprender';
+          ctaTexto = 'Continuar aprendizaje';
+          tipoEtiqueta = 'ACTIVIDAD';
+      }
+
+      return {
+        titulo: next.title,
+        descripcion: datos.proxima_mision?.descripcion || 'Continúa con el siguiente paso en tu ruta de aprendizaje.',
+        meta: this.currentCourse()?.titulo || (this.cohort()?.nombre ?? (datos.proxima_mision?.nivel_requerido || 'Ruta académica')),
+        tipoEtiqueta,
+        ruta,
+        ctaTexto,
+        recompensaXp: datos.proxima_mision?.recompensa,
+        recompensaTokens: datos.proxima_mision?.recompensa,
+      };
+    }
+
+    if (datos.proxima_mision) {
+      const mision = datos.proxima_mision;
+      return {
+        titulo: mision.titulo,
+        descripcion: mision.descripcion || 'Tu docente preparó un nuevo reto para seguir avanzando.',
+        meta: `${mision.nivel_requerido} · ${mision.tipo_evidencia}`,
+        tipoEtiqueta: this.esKids() ? 'PRÓXIMA MISIÓN' : 'CREA · EN PROGRESO',
+        ruta: ['/alumno/aprender/misiones', mision.id],
+        ctaTexto: this.esKids() ? 'Continuar misión' : 'Continuar proyecto',
+        recompensaXp: mision.recompensa,
+        recompensaTokens: mision.recompensa,
+      };
+    }
+
+    return null;
   }
 
   nombreCorto(usuario: UsuarioPanel): string {
@@ -133,6 +315,24 @@ export class PanelAlumno {
 
   formatoNivel = (): string => `${this.panel()?.progreso_nivel?.nivel ?? 1}`;
 
+  mensajeBienvenida(datos: PanelAlumnoDto): string {
+    if (datos.misiones_pendientes > 0) {
+      const pendientes = datos.misiones_pendientes;
+      return `Tienes ${pendientes} ${pendientes === 1 ? 'misión pendiente' : 'misiones pendientes'} en tu ruta. Continúa donde lo dejaste.`;
+    }
+    if (datos.proxima_mision) {
+      return 'Tu próxima misión ya está lista.';
+    }
+    return 'Estás al día con tus misiones. Explora un nuevo reto o revisa tu progreso.';
+  }
+
+  eyebrowBienvenida(datos: PanelAlumnoDto, tono: 'explore' | 'creator'): string {
+    if (datos.misiones_pendientes > 0) {
+      return tono === 'creator' ? 'CONTINÚA CREANDO' : 'CONTINÚA APRENDIENDO';
+    }
+    return 'TODO AL DÍA';
+  }
+
   mensajeRacha(datos: PanelAlumnoDto): string {
     if (datos.racha === 0) return 'Tu primera misión aprobada enciende la racha.';
 
@@ -144,6 +344,10 @@ export class PanelAlumno {
 
   descripcionDia(dia: ActividadDia): string {
     return `${dia.etiqueta}, ${dia.fecha}: ${dia.activo ? 'misión aprobada' : 'sin actividad registrada'}`;
+  }
+
+  diasActivos(datos: PanelAlumnoDto): number {
+    return datos.actividad_semana.filter((dia) => dia.activo).length;
   }
 
   cerrarCelebracion(): void {
