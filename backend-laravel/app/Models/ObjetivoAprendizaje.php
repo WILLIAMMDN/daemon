@@ -16,4 +16,9 @@ class ObjetivoAprendizaje extends ModeloBase
     {
         return $this->belongsToMany(Leccion::class, 'leccion_objetivo', 'id_objetivo', 'id_leccion');
     }
+
+    public function experiencias(): BelongsToMany
+    {
+        return $this->belongsToMany(ExperienciaAprendizaje::class, 'experiencia_objetivo', 'id_objetivo', 'id_experiencia');
+    }
 }

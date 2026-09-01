@@ -10,7 +10,10 @@ class MatriculaAula extends ModeloBase
 
     public $timestamps = true;
 
-    protected $fillable = ['sourced_id', 'id_aula', 'id_usuario', 'rol', 'es_principal', 'fecha_inicio', 'fecha_fin', 'estado'];
+    protected $fillable = [
+        'sourced_id', 'id_aula', 'id_version_curso', 'id_ruta_aprendizaje', 'id_usuario',
+        'rol', 'es_principal', 'fecha_inicio', 'fecha_fin', 'estado',
+    ];
 
     protected function casts(): array
     {
@@ -25,5 +28,15 @@ class MatriculaAula extends ModeloBase
     public function usuario(): BelongsTo
     {
         return $this->belongsTo(Usuario::class, 'id_usuario');
+    }
+
+    public function versionCurso(): BelongsTo
+    {
+        return $this->belongsTo(VersionCurso::class, 'id_version_curso');
+    }
+
+    public function rutaAprendizaje(): BelongsTo
+    {
+        return $this->belongsTo(RutaAprendizaje::class, 'id_ruta_aprendizaje');
     }
 }
