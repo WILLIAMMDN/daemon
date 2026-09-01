@@ -9,7 +9,7 @@
       <button nz-button nzType="primary" type="button" (click)="cargar()">
         <fa-icon [icon]="iconos.actualizar" aria-hidden="true" /> Intentar nuevamente
       </button>
-      <a nz-button nzType="default" routerLink="/alumno/misiones">Volver a misiones</a>
+      <a nz-button nzType="default" routerLink="/alumno/aprender/misiones">Volver a misiones</a>
     </section>
   } @else if (detalle(); as datos) {
     <header class="delivery-hero">
@@ -18,7 +18,7 @@
         <h1 id="delivery-title">{{ datos.mision.titulo }}</h1>
         <p>{{ datos.mision.descripcion || 'Prepara la evidencia de tu proceso y resultado.' }}</p>
       </div>
-      <a nz-button nzType="default" class="daemon-btn" [routerLink]="['/alumno/misiones', id]">
+      <a nz-button nzType="default" class="daemon-btn" [routerLink]="['/alumno/aprender/misiones', id]">
         <fa-icon [icon]="iconos.regresar" aria-hidden="true" /> Volver al detalle
       </a>
     </header>
@@ -43,7 +43,7 @@
                 Espera el comentario de tu docente. El formulario volverá a habilitarse únicamente si solicita cambios.
               }
             </p>
-            <a nz-button nzType="primary" [routerLink]="['/alumno/misiones', id]">Ver estado de la misión</a>
+            <a nz-button nzType="primary" [routerLink]="['/alumno/aprender/misiones', id]">Ver estado de la misión</a>
           </nz-card>
         } @else {
           <nz-card class="delivery-card">

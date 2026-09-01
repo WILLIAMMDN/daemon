@@ -3,7 +3,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faCommentDots, faEllipsisVertical, faTrash, faPenToSquare, faXmark, faCheck } from '@fortawesome/free-solid-svg-icons';
-import { ComentarioCuentoVista } from '../../../../presentacion/cuento-detalle-vista.modelo';
+import { CuentoComentario } from '../../../../models/cuento.models';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 
 @Component({
@@ -22,7 +22,7 @@ export class CuentoComentariosComponent {
   faXmark = faXmark;
   faCheck = faCheck;
 
-  @Input({ required: true }) comentarios: ComentarioCuentoVista[] = [];
+  @Input({ required: true }) comentarios: CuentoComentario[] = [];
   @Input({ required: true }) miAvatar = '/img/avatars/default.png';
   @Input() miId: string | number | null = null;
   @Input() enviandoComentario = false;
@@ -49,7 +49,7 @@ export class CuentoComentariosComponent {
     this.menuAbiertoId = this.menuAbiertoId === id ? null : id;
   }
 
-  iniciarEdicion(comentario: ComentarioCuentoVista) {
+  iniciarEdicion(comentario: CuentoComentario) {
     this.editandoId = comentario.id || null;
     this.contenidoEdicion = comentario.contenido;
     this.menuAbiertoId = null;

@@ -1,131 +1,81 @@
-@let pagina = paginaActiva;
-@let totalPaginas = paginasCuento.length;
-@let indice = paginaActualIndex();
-
-<article class="libro">
-  <!-- Barra superior: modo lectura, tamaño de fuente y acciones -->
-  <header class="libro__barra">
-    <button
-      type="button"
-      class="libro__btn libro__btn--modo"
-      (click)="onToggleModoLectura.emit()"
-      [class.libro__btn--activo]="modoLectura"
-      [attr.aria-pressed]="modoLectura"
-    >
-      <fa-icon [icon]="faBookOpenReader"></fa-icon>
-      <span>Modo lectura</span>
-    </button>
-
-    <div class="libro__acciones">
-      <div class="libro__fuente" role="group" aria-label="Tamaño de fuente">
-        <button type="button" (click)="onCambiarFuente.emit(-0.1)" class="libro__btn libro__btn--icono" title="Reducir fuente" aria-label="Reducir fuente">A−</button>
-        <button type="button" (click)="onCambiarFuente.emit(0.1)" class="libro__btn libro__btn--icono" title="Aumentar fuente" aria-label="Aumentar fuente">A+</button>
-      </div>
-
-      <button
-        type="button"
-        class="libro__btn libro__btn--icono"
-        (click)="onReaccionar.emit('encanto')"
-        [class.libro__btn--activo]="miReaccion === 'encanto'"
-        title="Me encantó"
-        aria-label="Reaccionar: me encantó"
-      >
-        <fa-icon [icon]="faHeart"></fa-icon>
-      </button>
-      <button
-        type="button"
-        class="libro__btn libro__btn--icono"
-        (click)="onGuardar.emit()"
-        [class.libro__btn--activo]="guardado"
-        title="Guardar en favoritos"
-        aria-label="Guardar cuento"
-      >
-        <fa-icon [icon]="faBookmark"></fa-icon>
-      </button>
-      <button type="button" class="libro__btn libro__btn--icono" (click)="onCompartir.emit()" title="Compartir" aria-label="Compartir cuento">
-        <fa-icon [icon]="faShareNodes"></fa-icon>
-      </button>
-    </div>
-  </header>
-
-  <!-- Hoja del libro: página actual centrada con su color de fondo -->
-  <div
-    class="libro__hoja"
-    #contenedorLectura
-    [style.--daemon-hoja-fondo]="pagina.colorFondo || 'var(--daemon-on-primary)'"
-    [style.--libro-escala]="escalaFuente"
-  >
-    <div class="libro__hoja-inner">
-      @if (pagina.ilustracion) {
-        <figure class="libro__figura">
-          <img [src]="resolverImagen(pagina.ilustracion)" class="libro__img" alt="Ilustración de la página" loading="lazy" />
-        </figure>
-      }
-
-      <div class="libro__texto">
-        @if (pagina.contenido) {
-          <quill-view-html class="libro__quill" [content]="pagina.contenido" theme="snow"></quill-view-html>
-        } @else {
-          <p class="libro__vacio">Página sin contenido.</p>
-        }
-      </div>
-
-      <span class="libro__marca">{{ indice + 1 }} / {{ totalPaginas }}</span>
-    </div>
-  </div>
-
-  <!-- Navegación de páginas: profesional y clara -->
-  <footer class="libro__pie">
-    <button
-      type="button"
-      class="libro__nav libro__nav--prev"
-      (click)="anteriorPagina()"
-      [disabled]="indice === 0"
-      aria-label="Página anterior"
-    >
-      <fa-icon [icon]="faChevronLeft"></fa-icon>
-      <span class="libro__nav-texto">Anterior</span>
-    </button>
-
-    <div class="libro__progreso">
-      <span class="libro__progreso-texto">Página {{ indice + 1 }} de {{ totalPaginas }}</span>
-      <div class="libro__progreso-barra" aria-hidden="true">
-        <div class="libro__progreso-llenado" [style.width.%]="progresoPorcentaje"></div>
-      </div>
-    </div>
-
-    <button
-      type="button"
-      class="libro__nav libro__nav--next"
-      (click)="siguientePagina()"
-      [disabled]="indice === totalPaginas - 1"
-      aria-label="Página siguiente"
-    >
-      <span class="libro__nav-texto">Siguiente</span>
-      <fa-icon [icon]="faChevronRight"></fa-icon>
-    </button>
-  </footer>
-
-  <!-- Miniaturas de páginas -->
-  @if (totalPaginas > 1) {
-    <nav class="libro__miniaturas" aria-label="Ir a página">
-      @for (p of paginasCuento; track p.id; let i = $index) {
-        <button
-          type="button"
-          class="libro__mini"
-          [class.libro__mini--activa]="indice === i"
-          (click)="irAPagina(i)"
-          [attr.aria-label]="'Ir a la página ' + (i + 1)"
-          [attr.aria-current]="indice === i ? 'page' : null"
-        >
-          <div class="libro__mini-marco" [style.background-color]="p.colorFondo">
-            @if (p.ilustracion) {
-              <img [src]="resolverImagen(p.ilustracion)" alt="" class="libro__mini-img" loading="lazy" />
-            }
-            <span class="libro__mini-etiqueta">{{ i === 0 ? 'PORTADA' : 'PÁG ' + i }}</span>
+        <article class="bg-surface border border-border rounded-[24px] shadow-soft overflow-hidden flex flex-col h-full w-full">
+          <!-- Toolbar de Lectura -->
+          <div class="flex justify-between items-center px-6 py-3 border-b border-border/40 bg-canvas/30">
+            <button (click)="onToggleModoLectura.emit()" class="flex items-center gap-2 text-xs font-bold transition-colors" [class.text-primary]="modoLectura" [class.text-muted]="!modoLectura" [class.hover:text-ink]="!modoLectura">
+              <fa-icon [icon]="faBookOpenReader"></fa-icon> Modo lectura
+            </button>
+            <div class="flex items-center gap-4 text-muted">
+              <button (click)="onCambiarFuente.emit(-0.1)" class="text-sm font-bold hover:text-ink transition-colors" title="Reducir fuente">A-</button>
+              <button (click)="onCambiarFuente.emit(0.1)" class="text-base font-bold hover:text-ink transition-colors" title="Aumentar fuente">A+</button>
+              <button (click)="onReaccionar.emit('encanto')" [class.text-pink-500]="miReaccion === 'encanto'" class="hover:text-pink-500 transition-colors ml-2"><fa-icon [icon]="faHeart"></fa-icon></button>
+              <button (click)="onGuardar.emit()" [class.text-primary]="guardado" class="hover:text-primary transition-colors"><fa-icon [icon]="faBookmark"></fa-icon></button>
+              <button (click)="onCompartir.emit()" class="hover:text-primary transition-colors"><fa-icon [icon]="faShareNodes"></fa-icon></button>
+              <button class="text-xl leading-none hover:text-ink mb-2">...</button>
+            </div>
           </div>
-        </button>
-      }
-    </nav>
-  }
-</article>
+
+          <!-- Contenido del Cuento (Libro Interactivo Calcando crear-cuento) -->
+          <div class="p-4 md:p-6 relative flex-1 flex flex-col w-full" #contenedorLectura>
+            <section class="crear-editor w-full border-none shadow-none p-0 max-w-full">
+              
+              <!-- ───── EDITOR (Quill) + ILUSTRACIÓN DE PÁGINA ───── -->
+              <div class="crear-pagina-editor">
+                @let pagina = paginaActiva;
+                <div class="quill-wrapper" [style.background-color]="pagina.colorFondo || 'var(--daemon-on-primary)'">
+
+                  <!-- TEXTO -->
+                  @if (pagina.contenido) {
+                    <quill-view-html class="custom-quill-page block h-full w-full" [style.font-size.rem]="escalaFuente" [content]="pagina.contenido ?? ''" theme="snow"></quill-view-html>
+                  } @else {
+                    <div class="custom-quill-page p-8 text-center text-muted italic my-10">Página sin contenido.</div>
+                  }
+
+                  <!-- Panel de ilustración de la PÁGINA ACTIVA -->
+                  <div class="pagina-illust" [class.hidden]="!pagina.ilustracion">
+                    <div class="pagina-illust__inner bg-transparent shadow-none">
+                      @if (pagina.ilustracion) {
+                        <img [src]="resolverImagen(pagina.ilustracion)" class="pagina-illust__img object-cover h-full w-full" alt="Ilustración" />
+                      }
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ───── GESTOR DE PÁGINAS ───── -->
+              <div class="crear-paginas mt-6 rounded-b-[24px]">
+                <div class="crear-paginas__header">
+                  <span class="crear-paginas__label">Páginas de la historia</span>
+                  <!-- Controles de pasar hoja -->
+                  <div class="flex gap-2">
+                      <button (click)="anteriorPagina()" [disabled]="paginaActualIndex() === 0" class="text-xs font-bold text-muted px-2 py-1 bg-surface rounded hover:bg-canvas disabled:opacity-50">
+                        <fa-icon [icon]="faChevronLeft"></fa-icon> Anterior
+                      </button>
+                      <button (click)="siguientePagina()" [disabled]="paginaActualIndex() === paginasCuento.length - 1" class="text-xs font-bold text-muted px-2 py-1 bg-surface rounded hover:bg-canvas disabled:opacity-50">
+                        Siguiente <fa-icon [icon]="faChevronRight"></fa-icon>
+                      </button>
+                  </div>
+                </div>
+
+                <div class="crear-paginas__list flex flex-wrap gap-2 mt-2">
+                  @for (pagina of paginasCuento; track pagina.id; let i = $index) {
+                    <button
+                      type="button"
+                      class="crear-paginas__item"
+                      [class.crear-paginas__item--active]="paginaActualIndex() === i"
+                      (click)="irAPagina(i)"
+                    >
+                      <div class="crear-paginas__item-bg" [style.background-color]="pagina.colorFondo"></div>
+                      @if (pagina.ilustracion) {
+                        <img [src]="resolverImagen(pagina.ilustracion)" alt="" class="crear-paginas__item-thumb" />
+                      }
+                      <span class="crear-paginas__item-label">
+                        {{ i === 0 ? 'PORTADA' : 'PÁG ' + i }}
+                      </span>
+                    </button>
+                  }
+                </div>
+              </div>
+
+            </section>
+          </div>
+        </article>

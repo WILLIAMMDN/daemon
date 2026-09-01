@@ -46,7 +46,7 @@ describe('ListaMisiones', () => {
     expect(element.querySelectorAll('.mission-card')).toHaveLength(1);
     expect(element.querySelector('.mission-card h2')?.textContent).toContain('Corrige');
     expect(element.querySelector<HTMLAnchorElement>('.mission-primary-action')?.getAttribute('href'))
-      .toBe('/alumno/misiones/4/entregar');
+      .toBe('/alumno/aprender/misiones/4/entregar');
   });
 
   it('diferencia un error remoto del estado académico vacío', () => {

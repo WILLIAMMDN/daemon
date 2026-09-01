@@ -14,19 +14,19 @@ export class EntrenamientoMascota {
       titulo: 'Cerebro guardado',
       detalle: 'Matriz neural conectada al backend del chatbot.',
       estado: 'Conectado',
-      ruta: '/alumno/herramientas/laboratorio',
+      ruta: '/alumno/crear/laboratorio',
     },
     {
       titulo: 'Neuro Maze',
       detalle: 'Motor heredado del laberinto y agente de aprendizaje.',
       estado: 'Motor heredado',
-      ruta: '/alumno/herramientas/neuro-maze',
+      ruta: '/alumno/crear/neuro-maze',
     },
     {
       titulo: 'Defensa IA',
       detalle: 'Assets heredados para visión/modelo local.',
       estado: 'Motor heredado',
-      ruta: '/alumno/herramientas/defensa-ia',
+      ruta: '/alumno/crear/defensa-ia',
     },
   ];
 }

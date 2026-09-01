@@ -18,8 +18,8 @@ export class DefensaIa {
   ];
 
   readonly enlaces = [
-    { etiqueta: 'Cerebro del bot', ruta: '/alumno/herramientas/laboratorio' },
-    { etiqueta: 'Entrenamiento', ruta: '/alumno/herramientas/entrenamiento' },
-    { etiqueta: 'Neuro Maze', ruta: '/alumno/herramientas/neuro-maze' },
+    { etiqueta: 'Cerebro del bot', ruta: '/alumno/crear/laboratorio' },
+    { etiqueta: 'Entrenamiento', ruta: '/alumno/crear/entrenamiento' },
+    { etiqueta: 'Neuro Maze', ruta: '/alumno/crear/neuro-maze' },
   ];
 }
