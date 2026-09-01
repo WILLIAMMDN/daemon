@@ -7,11 +7,13 @@ use App\Http\Requests\Api\V1\Academico\CursoRequest;
 use App\Http\Requests\Api\V1\Academico\LeccionRequest;
 use App\Http\Requests\Api\V1\Academico\PeriodoRequest;
 use App\Http\Requests\Api\V1\Academico\ProgresoLeccionRequest;
+use App\Http\Requests\Api\V1\Academico\SesionAprendizajeRequest;
 use App\Http\Requests\Api\V1\Academico\UnidadRequest;
 use App\Models\Aula;
 use App\Models\Curso;
 use App\Models\Leccion;
 use App\Models\PeriodoAcademico;
+use App\Models\SesionAprendizaje;
 use App\Models\UnidadCurso;
 use App\Models\Usuario;
 use App\Services\Academico\AprendizajeService;
@@ -98,6 +100,21 @@ class AcademicoController extends Controller
         $periodo = PeriodoAcademico::findOrFail($datos['id_periodo_academico']);
 
         return $this->aprendizaje->vincularAula($request->user(), $aula, $curso, $periodo);
+    }
+
+    public function crearSesion(SesionAprendizajeRequest $request, Aula $aula)
+    {
+        return response()->json(
+            $this->aprendizaje->crearSesion($request->user(), $aula, $request->validated()),
+            201,
+        );
+    }
+
+    public function actualizarSesion(
+        SesionAprendizajeRequest $request,
+        SesionAprendizaje $sesion,
+    ): SesionAprendizaje {
+        return $this->aprendizaje->actualizarSesion($request->user(), $sesion, $request->validated());
     }
 
     public function alumno(Request $request): array

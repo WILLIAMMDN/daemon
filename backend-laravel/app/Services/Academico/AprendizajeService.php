@@ -9,9 +9,11 @@ use App\Models\MatriculaAula;
 use App\Models\ObjetivoAprendizaje;
 use App\Models\PeriodoAcademico;
 use App\Models\ProgresoLeccion;
+use App\Models\SesionAprendizaje;
 use App\Models\UnidadCurso;
 use App\Models\Usuario;
 use App\Services\Eventos\OutboxService;
+use Carbon\CarbonImmutable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -163,6 +165,43 @@ class AprendizajeService
         $aula->update(['id_curso' => $curso->id, 'id_periodo_academico' => $periodo->id]);
 
         return $aula->fresh(['curso', 'periodoAcademico']);
+    }
+
+    public function crearSesion(Usuario $actor, Aula $aula, array $datos): SesionAprendizaje
+    {
+        $this->autorizarInstitucion($actor, (int) $aula->id_institucion);
+        $datos = $this->normalizarHorarioSesion($datos);
+
+        return SesionAprendizaje::create([
+            ...$datos,
+            'uuid' => (string) Str::uuid(),
+            'id_aula' => $aula->id,
+            'id_creador' => $actor->id,
+            'tipo' => $datos['tipo'] ?? 'live',
+            'estado' => $datos['estado'] ?? 'scheduled',
+        ])->load(['aula.curso', 'aula.periodoAcademico']);
+    }
+
+    public function actualizarSesion(
+        Usuario $actor,
+        SesionAprendizaje $sesion,
+        array $datos,
+    ): SesionAprendizaje {
+        $sesion->loadMissing('aula');
+        $this->autorizarInstitucion($actor, (int) $sesion->aula->id_institucion);
+        $sesion->update($this->normalizarHorarioSesion($datos));
+
+        return $sesion->fresh(['aula.curso', 'aula.periodoAcademico']);
+    }
+
+    private function normalizarHorarioSesion(array $datos): array
+    {
+        $datos['inicio_at'] = CarbonImmutable::parse($datos['inicio_at'])->utc();
+        $datos['fin_at'] = ! empty($datos['fin_at'])
+            ? CarbonImmutable::parse($datos['fin_at'])->utc()
+            : null;
+
+        return $datos;
     }
 
     public function aprendizajeAlumno(Usuario $alumno): array

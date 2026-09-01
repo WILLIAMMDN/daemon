@@ -57,4 +57,9 @@ class Aula extends Model
     {
         return $this->hasMany(MatriculaAula::class, 'id_aula');
     }
+
+    public function sesionesAprendizaje(): HasMany
+    {
+        return $this->hasMany(SesionAprendizaje::class, 'id_aula');
+    }
 }

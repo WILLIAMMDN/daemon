@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\V1\AlumnoAdminController;
 use App\Http\Controllers\Api\V1\AlumnoController;
 use App\Http\Controllers\Api\V1\ArchivoAdminController;
 use App\Http\Controllers\Api\V1\ArchivoController;
+use App\Http\Controllers\Api\V1\ArcStudentContextController;
 use App\Http\Controllers\Api\V1\AutenticacionController;
 use App\Http\Controllers\Api\V1\BienestarDigitalController;
 use App\Http\Controllers\Api\V1\CertificadoController;
@@ -22,15 +23,15 @@ use App\Http\Controllers\Api\V1\MascotaController;
 use App\Http\Controllers\Api\V1\MisionController;
 use App\Http\Controllers\Api\V1\NotificacionController;
 use App\Http\Controllers\Api\V1\PrivacidadController;
+use App\Http\Controllers\Api\V1\ProyectoController;
 use App\Http\Controllers\Api\V1\RankingController;
 use App\Http\Controllers\Api\V1\SaludController;
 use App\Http\Controllers\Api\V1\SeguridadComunidadController;
 use App\Http\Controllers\Api\V1\TelemetriaController;
 use App\Http\Controllers\Api\V1\TiendaController;
 use App\Http\Controllers\Api\V1\TutorPortalController;
-use App\Http\Controllers\Api\V1\ProyectoController;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Broadcast;
+use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function (): void {
     Broadcast::routes(['middleware' => ['auth:sanctum']]);
@@ -71,6 +72,9 @@ Route::prefix('v1')->group(function (): void {
 
         Route::middleware('role:alumno')->group(function (): void {
             Route::get('/alumno/panel', [AlumnoController::class, 'panel']);
+            Route::get('/alumno/home-context', [ArcStudentContextController::class, 'home']);
+            Route::get('/alumno/learning-context', [ArcStudentContextController::class, 'learning']);
+            Route::get('/alumno/agenda', [ArcStudentContextController::class, 'agenda']);
             Route::get('/alumno/proyectos', [ProyectoController::class, 'index']);
             Route::get('/alumno/aprendizaje', [AcademicoController::class, 'alumno']);
             Route::put('/alumno/aprendizaje/lecciones/{leccion}/progreso', [AcademicoController::class, 'progreso'])->middleware('throttle:60,1');
@@ -122,6 +126,8 @@ Route::prefix('v1')->group(function (): void {
                 Route::post('/objetivos', [AcademicoController::class, 'crearObjetivo']);
                 Route::put('/aulas/{aula}/curso', [AcademicoController::class, 'vincularAula']);
                 Route::post('/aulas/{aula}/usuarios/{usuario}', [AcademicoController::class, 'matricular']);
+                Route::post('/aulas/{aula}/sesiones', [AcademicoController::class, 'crearSesion']);
+                Route::put('/sesiones/{sesion}', [AcademicoController::class, 'actualizarSesion']);
             });
             Route::get('/docente/panel', [DocenteController::class, 'panel']);
             Route::get('/docente/alumnos', [DocenteController::class, 'alumnos']);
