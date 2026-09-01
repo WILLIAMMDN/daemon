@@ -7,6 +7,18 @@ $frontendUrls = array_filter(array_map(
     explode(',', (string) env('FRONTEND_URL', 'http://localhost:4200'))
 ));
 
+// Desarrollo local. `ng serve` cambia de puerto cuando otro worktree ya ocupa
+// el 4200, asi que la lista cubre los puertos que usa el equipo en vez de un
+// unico valor. Son cadenas literales a proposito: EnsureCookieRequestIsFromAllowedOrigin
+// compara contra esta misma lista para autorizar escrituras con cookie, y no
+// entiende patrones.
+$puertosLocales = [4200, 4260, 4300, 4400, 5173, 8000];
+$origenesLocales = [];
+foreach ($puertosLocales as $puerto) {
+    $origenesLocales[] = 'http://localhost:'.$puerto;
+    $origenesLocales[] = 'http://127.0.0.1:'.$puerto;
+}
+
 return [
     'paths' => ['api/*', 'sanctum/csrf-cookie', 'storage/*', 'broadcasting/*'],
     'allowed_methods' => ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
@@ -17,11 +29,7 @@ return [
         'https://daemon-a41f8.web.app',
         'https://daemon-a41f8.firebaseapp.com',
         // Desarrollo local
-        'http://localhost:4200',
-        'http://127.0.0.1:4200',
-        'http://localhost:4300',
-        'http://127.0.0.1:4300',
-        'http://localhost:8000',
+        ...$origenesLocales,
     ])),
     'allowed_origins_patterns' => [],
     'allowed_headers' => ['Accept', 'Authorization', 'Content-Type', 'Origin', 'X-Requested-With', 'X-XSRF-TOKEN'],
