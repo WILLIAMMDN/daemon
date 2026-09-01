@@ -7,6 +7,7 @@ use App\Models\Pregunta;
 use App\Models\RespuestaEvaluacion;
 use App\Models\Usuario;
 use App\Services\Academico\AcademicScopeService;
+use App\Services\Academico\LearningProgressionService;
 use App\Services\Gamificacion\GamificacionService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -16,6 +17,7 @@ class EvaluacionService
     public function __construct(
         private readonly AcademicScopeService $alcance,
         private readonly GamificacionService $gamificacion,
+        private readonly LearningProgressionService $progresion,
     ) {}
 
     public function listadoDocente(): Collection
@@ -136,6 +138,7 @@ class EvaluacionService
                 "Evaluación aprobada: {$evaluacion->titulo}",
             );
         }
+        $this->progresion->registrarEvaluacionExistente($alumno, $evaluacion->id, $registro->id, $puntaje);
 
         return ['resultado' => $registro, 'correctas' => $correctas, 'total' => $preguntas->count()];
     }

@@ -11,6 +11,7 @@ use App\Http\Requests\Api\V1\Mision\RevisarEntregaRequest;
 use App\Models\Entrega;
 use App\Models\Mision;
 use App\Services\Academico\AcademicScopeService;
+use App\Services\Academico\LearningProgressionService;
 use App\Services\Archivo\ArchivoService;
 use App\Services\Gamificacion\GamificacionService;
 use Illuminate\Http\Request;
@@ -22,6 +23,7 @@ class MisionController extends Controller
         private readonly ArchivoService $archivos,
         private readonly AcademicScopeService $alcance,
         private readonly GamificacionService $gamificacion,
+        private readonly LearningProgressionService $progresion,
     ) {}
 
     public function index(Request $request)
@@ -104,7 +106,10 @@ class MisionController extends Controller
             return response()->json(['message' => 'Ya tienes una entrega en revisión o aprobada para esta misión.'], 422);
         }
 
-        return response()->json($this->entregaConUrl(Entrega::create(['id_desafio' => $mision->id, 'id_alumno' => $request->user()->id, 'archivo_url' => $evidencia, 'estado' => 'pendiente'])), 201);
+        $entrega = Entrega::create(['id_desafio' => $mision->id, 'id_alumno' => $request->user()->id, 'archivo_url' => $evidencia, 'estado' => 'pendiente']);
+        $this->progresion->registrarEntregaMision($request->user(), $mision->id, $entrega->id, $evidencia);
+
+        return response()->json($this->entregaConUrl($entrega), 201);
     }
 
     public function entregas(Request $request)
@@ -150,6 +155,13 @@ class MisionController extends Controller
                 }
                 DB::table('historial_movimientos')->insert(['id_docente' => $request->user()->id, 'id_alumno' => $alumno->id, 'cantidad' => $puntos, 'id_operador' => $request->user()->id, 'motivo' => "Mision aprobada: {$mision->titulo}"]);
             }
+            $this->progresion->revisarEntregaMision(
+                $request->user(),
+                $entrega->id,
+                $datos['estado'] === 'aprobado',
+                isset($datos['calificacion']) ? (float) $datos['calificacion'] : null,
+                $datos['comentario_docente'] ?? null,
+            );
 
             return $this->entregaConUrl($entrega->fresh());
         });
