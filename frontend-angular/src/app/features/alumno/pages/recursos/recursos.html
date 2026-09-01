@@ -7,8 +7,8 @@
         </svg>
       </div>
       <div>
-        <h1 id="learning-title">Mis cursos</h1>
-        <p>Aquí verás las rutas, unidades y lecciones que tu docente te asigne.</p>
+        <h1 id="learning-title">Explorar cursos</h1>
+        <p>El catálogo publicado para tu aula, con sus unidades y lecciones.</p>
       </div>
     </div>
 
@@ -281,14 +281,10 @@
             titulo="Tu ruta está preparándose"
             descripcion="Cuando tu docente publique y asigne un curso, aparecerá aquí automáticamente."
           >
-            <button nz-button nzType="primary" type="button" routerLink="/alumno/catalogo">
+            <a nz-button nzType="primary" routerLink="/alumno/aprender/misiones">
               <fa-icon [icon]="faCompass" aria-hidden="true"></fa-icon>
-              Explorar catálogo
-            </button>
-            <button nz-button nzType="default" type="button">
-              <fa-icon [icon]="faBell" aria-hidden="true"></fa-icon>
-              Notificarme
-            </button>
+              Ver misiones disponibles
+            </a>
           </app-estado-vacio>
         }
 
@@ -300,7 +296,7 @@
             <h2 id="course-discovery-title">Siempre hay algo nuevo por descubrir</h2>
             <p>Mientras llegan nuevas rutas, practica con misiones y herramientas disponibles.</p>
           </div>
-          <a nz-button nzType="default" routerLink="/alumno/herramientas">
+          <a nz-button nzType="default" routerLink="/alumno/crear/herramientas">
             Explorar herramientas
             <fa-icon [icon]="faArrowRight" aria-hidden="true"></fa-icon>
           </a>
@@ -332,11 +328,6 @@
               <fa-icon [icon]="faCircleCheck" aria-hidden="true"></fa-icon>
               <strong>{{ cursosCompletados() }}</strong>
               <span>Completados</span>
-            </article>
-            <article>
-              <fa-icon [icon]="faStar" class="text-amber-500" aria-hidden="true"></fa-icon>
-              <strong>0</strong>
-              <span>XP obtenida</span>
             </article>
           </div>
           <div class="course-summary-card__progress-copy">
@@ -392,7 +383,7 @@
             <h2>Practica mientras avanzas</h2>
             <p>Las misiones convierten lo aprendido en retos concretos.</p>
           </div>
-          <a routerLink="/alumno/misiones" aria-label="Ir a mis misiones">
+          <a routerLink="/alumno/aprender/misiones" aria-label="Ir a mis misiones">
             Ir a misiones
             <fa-icon [icon]="faArrowRight" aria-hidden="true"></fa-icon>
           </a>

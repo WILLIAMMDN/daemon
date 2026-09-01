@@ -1,0 +1,20 @@
+<app-arc-area
+  titulo="Aprender"
+  descripcion="Tus cursos asignados, el catálogo disponible y las rutas que sigues."
+  ariaLabel="Secciones de Aprender"
+  [items]="items"
+>
+  @if (mensajeError(); as mensaje) {
+    <nz-alert
+      nzType="warning"
+      nzShowIcon
+      [nzMessage]="mensaje"
+      [nzAction]="reintentarAccion"
+    />
+    <ng-template #reintentarAccion>
+      <button nz-button nzSize="small" type="button" (click)="reintentar()">Reintentar</button>
+    </ng-template>
+  }
+
+  <router-outlet />
+</app-arc-area>

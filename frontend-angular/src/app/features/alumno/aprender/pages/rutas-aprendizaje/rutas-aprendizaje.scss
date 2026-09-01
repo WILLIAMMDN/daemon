@@ -1,0 +1,93 @@
+:host {
+  display: grid;
+  gap: 2rem;
+  min-width: 0;
+}
+
+.ruta {
+  display: grid;
+  gap: 0;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ruta__paso {
+  display: grid;
+  gap: 0.875rem;
+  grid-template-columns: 2rem minmax(0, 1fr);
+  min-width: 0;
+  padding-bottom: 1.25rem;
+  position: relative;
+}
+
+.ruta__paso:not(:last-child)::before {
+  background: var(--daemon-border);
+  content: '';
+  inset-block: 2.25rem 0;
+  inset-inline-start: 0.9375rem;
+  position: absolute;
+  width: 1px;
+}
+
+.ruta__paso[data-estado='completed']:not(:last-child)::before {
+  background: var(--arc-green);
+}
+
+.ruta__marca {
+  align-items: center;
+  background: var(--daemon-surface);
+  border: 1px solid var(--daemon-border-strong);
+  border-radius: var(--daemon-radius-sm);
+  color: var(--daemon-ink-soft);
+  display: flex;
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  height: 2rem;
+  justify-content: center;
+  width: 2rem;
+}
+
+.ruta__paso[data-estado='completed'] .ruta__marca {
+  background: var(--arc-green-soft);
+  border-color: var(--arc-green);
+  color: var(--arc-green-ink);
+}
+
+.ruta__paso[data-estado='inProgress'] .ruta__marca {
+  background: var(--arc-blue-soft);
+  border-color: var(--arc-blue-border);
+  color: var(--arc-blue);
+}
+
+.ruta__cuerpo {
+  display: grid;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.ruta__encabezado {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.75rem;
+  justify-content: space-between;
+  min-width: 0;
+}
+
+.ruta__encabezado h3 {
+  color: var(--daemon-ink);
+  font-size: 1rem;
+  font-weight: 650;
+  margin: 0;
+  min-width: 0;
+}
+
+.ruta__cuerpo p {
+  color: var(--daemon-muted);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  margin: 0;
+  max-width: 70ch;
+}

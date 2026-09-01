@@ -1,0 +1,81 @@
+@if (aprendizaje.cargando()) {
+  <nz-skeleton [nzActive]="true" [nzParagraph]="{ rows: 6 }" />
+} @else if (sinCursos()) {
+  <app-estado-vacio
+    titulo="Todavía no tienes cursos asignados"
+    descripcion="Cuando tu docente publique un curso para tu aula aparecerá aquí con sus unidades y lecciones."
+  >
+    <a nz-button nzType="primary" routerLink="../explorar">Ver el catálogo</a>
+  </app-estado-vacio>
+} @else {
+  @if (aprendizaje.enProgreso().length) {
+    <app-arc-section
+      titulo="Continuar"
+      descripcion="Cursos en los que ya empezaste a avanzar."
+    >
+      <div class="rejilla-cursos">
+        @for (curso of aprendizaje.enProgreso(); track curso.id) {
+          <app-tarjeta-curso [curso]="curso" />
+        }
+      </div>
+    </app-arc-section>
+  }
+
+  @if (aprendizaje.porIniciar().length) {
+    <app-arc-section titulo="Por iniciar" descripcion="Cursos asignados que aún no comenzaste.">
+      <div class="rejilla-cursos">
+        @for (curso of aprendizaje.porIniciar(); track curso.id) {
+          <app-tarjeta-curso [curso]="curso" />
+        }
+      </div>
+    </app-arc-section>
+  }
+
+  @if (aprendizaje.completados().length) {
+    <app-arc-section titulo="Completados" descripcion="Historial de cursos que terminaste.">
+      <div class="rejilla-cursos">
+        @for (curso of aprendizaje.completados(); track curso.id) {
+          <app-tarjeta-curso [curso]="curso" />
+        }
+      </div>
+    </app-arc-section>
+  }
+}
+
+<app-arc-section
+  titulo="Actividades"
+  descripcion="Misiones y evaluaciones que convierten el curso en trabajo entregable."
+>
+  <a acciones nz-button nzType="default" nzSize="small" routerLink="../misiones">Ver misiones</a>
+
+  @if (actividades.cargando() && !actividades.cargado()) {
+    <nz-skeleton [nzActive]="true" [nzParagraph]="{ rows: 3 }" [nzTitle]="false" />
+  } @else if (pendientes().length) {
+    <nz-list class="lista-actividades" nzBordered nzSize="small">
+      @for (actividad of pendientes(); track actividad.id) {
+        <nz-list-item>
+          <div class="actividad">
+            <div class="actividad__texto">
+              <a [routerLink]="actividad.ruta">{{ actividad.titulo }}</a>
+              <small>{{ actividad.tipo === 'mision' ? 'Misión' : 'Evaluación' }}</small>
+            </div>
+            <div class="actividad__estado">
+              @if (actividad.recompensa !== null) {
+                <span class="actividad__recompensa">{{ actividad.recompensa }} XP</span>
+              }
+              <nz-tag [nzColor]="actividad.estado === 'requiereCorreccion' ? 'error' : 'processing'">
+                {{ actividad.estadoLabel }}
+              </nz-tag>
+            </div>
+          </div>
+        </nz-list-item>
+      }
+    </nz-list>
+  } @else {
+    <app-estado-vacio
+      tamano="compact"
+      titulo="No tienes actividades pendientes"
+      descripcion="Cuando tu docente publique una misión o una evaluación para tu nivel, la verás aquí."
+    />
+  }
+</app-arc-section>

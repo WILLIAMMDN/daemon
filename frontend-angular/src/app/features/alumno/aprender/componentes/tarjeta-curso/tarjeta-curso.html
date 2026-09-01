@@ -1,0 +1,47 @@
+<article class="curso">
+  <header class="curso__header">
+    <h3 class="curso__titulo">
+      <a [routerLink]="enlace()">{{ curso().titulo }}</a>
+    </h3>
+    <nz-tag [nzColor]="colorEstado()">{{ curso().estadoLabel }}</nz-tag>
+  </header>
+
+  @if (curso().descripcion; as descripcion) {
+    <p class="curso__descripcion">{{ descripcion }}</p>
+  }
+
+  <dl class="curso__meta">
+    <div>
+      <dt>Unidades</dt>
+      <dd>{{ curso().unidades.length }}</dd>
+    </div>
+    <div>
+      <dt>Lecciones</dt>
+      <dd>{{ curso().leccionesCompletadas }} / {{ curso().totalLecciones }}</dd>
+    </div>
+    @if (curso().nivel; as nivel) {
+      <div>
+        <dt>Nivel</dt>
+        <dd>{{ nivel }}</dd>
+      </div>
+    }
+  </dl>
+
+  <nz-progress
+    class="curso__progreso"
+    [nzPercent]="curso().porcentaje"
+    nzStrokeColor="var(--arc-green)"
+    nzSize="small"
+    [nzStrokeWidth]="6"
+  />
+
+  <footer class="curso__footer">
+    @if (curso().siguienteLeccion; as leccion) {
+      <a class="curso__continuar" [routerLink]="enlace()" [fragment]="'leccion-' + leccion.id">
+        {{ curso().estado === 'notStarted' ? 'Empezar' : 'Continuar' }}: {{ leccion.titulo }}
+      </a>
+    } @else {
+      <a class="curso__continuar" [routerLink]="enlace()">Revisar el curso</a>
+    }
+  </footer>
+</article>
