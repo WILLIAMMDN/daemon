@@ -174,12 +174,16 @@
   /* === LAYER 2: DAEMON ARC (experiencia autenticada del estudiante) ===
      Azul y verde de marca DAEMON. El verde es acento de
      activo / progreso / éxito: uso estratégico, nunca decorativo. */
-  --arc-blue:        #1455ff;
-  --arc-blue-soft:   #eef3ff;
-  --arc-blue-border: #c7d8ff;
-  --arc-green:       #76cf1a;
-  --arc-green-soft:  #f1fbe4;
-  --arc-green-ink:   #3f7205;
+  --arc-blue:              #1455ff;
+  --arc-blue-soft:         #eef3ff;
+  --arc-blue-border:       #c7d8ff;
+  --arc-green:             #76cf1a;
+  --arc-green-soft:        #f1fbe4;
+  --arc-green-ink:         #3f7205;
+  --daemon-arc-blue:       #1455ff;
+  --daemon-arc-blue-hover: #0c3fda;
+  --daemon-arc-green:      #76cf1a;
+  --daemon-arc-divider:    #d5e3ff;
 
   /* === SEMÁNTICOS LEGACY (conservan su valor; los canónicos viven arriba) === */
   --daemon-success:      #12a150;
