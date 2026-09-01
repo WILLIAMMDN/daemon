@@ -15,6 +15,8 @@ use Illuminate\Support\Collection;
 
 class ArcStudentContextService
 {
+    public function __construct(private readonly LearningProgressionService $progresion) {}
+
     public function home(Usuario $alumno): array
     {
         $ahora = CarbonImmutable::now('UTC');
@@ -22,6 +24,7 @@ class ArcStudentContextService
         $actual = $contextos->first();
         $sesiones = $this->sesionesEnRango($contextos, $ahora, $ahora->addDays(30), true);
         $siguienteLive = $sesiones->first();
+        $mapa = $this->progresion->mapa($alumno);
 
         return [
             'student' => $this->alumnoResumen($alumno),
@@ -29,7 +32,8 @@ class ArcStudentContextService
             'currentCourse' => $actual ? $this->cursoResumen($this->cursoPublicado($actual)) : null,
             'cohort' => $actual ? $this->aulaResumen($actual['aula']) : null,
             'nextLiveSession' => $siguienteLive ? $this->sesionRespuesta($siguienteLive) : null,
-            'nextAction' => $this->siguienteAccion($alumno, $contextos, $siguienteLive),
+            'nextAction' => $this->siguienteAccion($alumno, $contextos, $siguienteLive, $mapa),
+            'nextLearningItem' => $mapa['nextItem'],
             'upcomingAgendaSummary' => [
                 'total' => $sesiones->count(),
                 'items' => $sesiones->take(3)->map(fn (SesionAprendizaje $sesion): array => $this->sesionRespuesta($sesion))->values(),
@@ -42,11 +46,12 @@ class ArcStudentContextService
     {
         $ahora = CarbonImmutable::now('UTC');
         $contextos = $this->matriculasActivas($alumno, $ahora);
-        $progreso = $this->progresoPorCurso($alumno, $contextos);
+        $progreso = $this->progresoPorContexto($alumno, $contextos);
         $matriculas = $contextos->map(function (array $contexto) use ($progreso): array {
             $respuesta = $this->matriculaRespuesta($contexto);
             $curso = $this->cursoPublicado($contexto);
-            $respuesta['progress'] = $curso ? ($progreso[$curso->id] ?? $this->progresoVacio()) : null;
+            $clave = $contexto['enrollment'] ? 'enrollment-'.$contexto['enrollment']->id : 'legacy-'.$curso?->id;
+            $respuesta['progress'] = $curso ? ($progreso[$clave] ?? $this->progresoVacio()) : null;
 
             return $respuesta;
         })->values();
@@ -121,8 +126,9 @@ class ArcStudentContextService
     {
         $prefijo = $desdeMatricula ? 'aula.' : '';
 
-        return [
+        $relaciones = [
             $prefijo.'curso',
+            $prefijo.'versionCurso',
             $prefijo.'periodoAcademico',
             $prefijo.'matriculas' => fn ($query) => $query
                 ->where('rol', 'teacher')
@@ -131,6 +137,12 @@ class ArcStudentContextService
                 ->where(fn (Builder $query) => $query->whereNull('fecha_fin')->orWhereDate('fecha_fin', '>=', $hoy))
                 ->with('usuario:id,nombre_completo'),
         ];
+        if ($desdeMatricula) {
+            $relaciones[] = 'versionCurso';
+            $relaciones[] = 'rutaAprendizaje';
+        }
+
+        return $relaciones;
     }
 
     /**
@@ -186,8 +198,35 @@ class ArcStudentContextService
     /**
      * @param  Collection<int, array{enrollment: MatriculaAula|null, aula: Aula}>  $contextos
      */
-    private function siguienteAccion(Usuario $alumno, Collection $contextos, ?SesionAprendizaje $siguienteLive): ?array
-    {
+    private function siguienteAccion(
+        Usuario $alumno,
+        Collection $contextos,
+        ?SesionAprendizaje $siguienteLive,
+        array $mapa,
+    ): ?array {
+        if ($mapa['path'] !== null) {
+            $siguiente = $mapa['nextItem'];
+            if ($siguiente) {
+                $tipo = $siguiente['type'] === 'leccion' ? 'lesson' : $siguiente['type'];
+
+                return [
+                    'type' => $tipo,
+                    'title' => $siguiente['title'],
+                    'experience' => $siguiente,
+                    'lesson' => $tipo === 'lesson' && $siguiente['sourceId'] ? [
+                        'id' => $siguiente['sourceId'],
+                        'progressState' => 'notStarted',
+                    ] : null,
+                ];
+            }
+
+            return $siguienteLive ? [
+                'type' => 'live_session',
+                'title' => $siguienteLive->titulo,
+                'session' => $this->sesionRespuesta($siguienteLive),
+            ] : null;
+        }
+
         $cursos = $contextos
             ->map(fn (array $contexto): ?Curso => $this->cursoPublicado($contexto))
             ->filter()
@@ -242,44 +281,70 @@ class ArcStudentContextService
      * @param  Collection<int, array{enrollment: MatriculaAula|null, aula: Aula}>  $contextos
      * @return array<int, array{lessonCount: int, completedLessonCount: int, lessonProgressPercent: int}>
      */
-    private function progresoPorCurso(Usuario $alumno, Collection $contextos): array
+    private function progresoPorContexto(Usuario $alumno, Collection $contextos): array
     {
-        $cursoIds = $contextos
-            ->map(fn (array $contexto): ?int => $this->cursoPublicado($contexto)?->id)
+        $cursoIds = $contextos->map(fn (array $contexto): ?int => $this->cursoPublicado($contexto)?->id)
             ->filter()
             ->unique()
             ->values();
-
         if ($cursoIds->isEmpty()) {
             return [];
         }
-
-        $totales = Leccion::query()
+        $versionIds = $contextos->map(fn (array $contexto) => $this->versionPublicada($contexto)?->id)->filter()->unique()->values();
+        $matriculaIds = $contextos->pluck('enrollment')->filter()->pluck('id')->values();
+        $totalesVersion = Leccion::query()
             ->join('unidades_curso', 'unidades_curso.id', '=', 'lecciones.id_unidad')
+            ->whereIn('unidades_curso.id_version_curso', $versionIds)
+            ->where('unidades_curso.estado', 'published')
+            ->where('lecciones.estado', 'published')
+            ->selectRaw('unidades_curso.id_version_curso as version_id, COUNT(lecciones.id) as total')
+            ->groupBy('unidades_curso.id_version_curso')
+            ->pluck('total', 'version_id');
+        $totalesLegacy = Leccion::query()
+            ->join('unidades_curso', 'unidades_curso.id', '=', 'lecciones.id_unidad')
+            ->whereNull('unidades_curso.id_version_curso')
             ->whereIn('unidades_curso.id_curso', $cursoIds)
             ->where('unidades_curso.estado', 'published')
             ->where('lecciones.estado', 'published')
             ->selectRaw('unidades_curso.id_curso as curso_id, COUNT(lecciones.id) as total')
             ->groupBy('unidades_curso.id_curso')
             ->pluck('total', 'curso_id');
-
-        $completadas = ProgresoLeccion::query()
+        $completadasMatricula = ProgresoLeccion::query()
+            ->whereIn('id_matricula', $matriculaIds)
+            ->where('estado', 'completed')
+            ->selectRaw('id_matricula, COUNT(id) as total')
+            ->groupBy('id_matricula')
+            ->pluck('total', 'id_matricula');
+        $completadasLegacy = ProgresoLeccion::query()
             ->join('lecciones', 'lecciones.id', '=', 'progresos_leccion.id_leccion')
             ->join('unidades_curso', 'unidades_curso.id', '=', 'lecciones.id_unidad')
             ->where('progresos_leccion.id_alumno', $alumno->id)
+            ->whereNull('progresos_leccion.id_matricula')
             ->where('progresos_leccion.estado', 'completed')
-            ->where('unidades_curso.estado', 'published')
-            ->where('lecciones.estado', 'published')
             ->whereIn('unidades_curso.id_curso', $cursoIds)
             ->selectRaw('unidades_curso.id_curso as curso_id, COUNT(progresos_leccion.id) as total')
             ->groupBy('unidades_curso.id_curso')
             ->pluck('total', 'curso_id');
 
-        return $cursoIds->mapWithKeys(function (int $cursoId) use ($totales, $completadas): array {
-            $total = (int) ($totales[$cursoId] ?? 0);
-            $completado = (int) ($completadas[$cursoId] ?? 0);
+        return $contextos->mapWithKeys(function (array $contexto) use ($totalesVersion, $totalesLegacy, $completadasMatricula, $completadasLegacy): array {
+            $curso = $this->cursoPublicado($contexto);
+            if (! $curso) {
+                return [];
+            }
+            $matricula = $contexto['enrollment'];
+            $version = $this->versionPublicada($contexto);
+            $total = (int) ($version ? ($totalesVersion[$version->id] ?? 0) : ($totalesLegacy[$curso->id] ?? 0));
+            $completado = $matricula
+                ? (int) ($completadasMatricula[$matricula->id] ?? 0)
+                : (int) ($completadasLegacy[$curso->id] ?? 0);
+            if ($matricula && ! $version) {
+                // Los registros históricos no permiten inferir una matrícula. Solo
+                // se conservan como fallback para ofertas legacy sin versión.
+                $completado = min($total, $completado + (int) ($completadasLegacy[$curso->id] ?? 0));
+            }
+            $clave = $matricula ? 'enrollment-'.$matricula->id : 'legacy-'.$curso->id;
 
-            return [$cursoId => [
+            return [$clave => [
                 'lessonCount' => $total,
                 'completedLessonCount' => $completado,
                 'lessonProgressPercent' => $total > 0 ? (int) round($completado * 100 / $total) : 0,
@@ -300,6 +365,7 @@ class ArcStudentContextService
             'startsOn' => $matricula?->fecha_inicio?->toDateString(),
             'endsOn' => $matricula?->fecha_fin?->toDateString(),
             'course' => $this->cursoResumen($this->cursoPublicado($contexto)),
+            'curriculumVersion' => $this->versionResumen($this->versionPublicada($contexto)),
             'cohort' => $this->aulaResumen($contexto['aula']),
         ];
     }
@@ -309,7 +375,15 @@ class ArcStudentContextService
     {
         $curso = $contexto['aula']->curso;
 
-        return $curso?->estado === 'published' ? $curso : null;
+        return ($this->versionPublicada($contexto) || $curso?->estado === 'published') ? $curso : null;
+    }
+
+    /** @param array{enrollment: MatriculaAula|null, aula: Aula} $contexto */
+    private function versionPublicada(array $contexto)
+    {
+        $version = $contexto['enrollment']?->versionCurso ?? $contexto['aula']->versionCurso;
+
+        return in_array($version?->estado, ['published', 'archived'], true) ? $version : null;
     }
 
     private function alumnoResumen(Usuario $alumno): array
@@ -324,6 +398,17 @@ class ArcStudentContextService
             'title' => $curso->titulo,
             'code' => $curso->codigo,
             'version' => $curso->version,
+        ] : null;
+    }
+
+    private function versionResumen($version): ?array
+    {
+        return $version ? [
+            'id' => $version->id,
+            'number' => $version->numero,
+            'audience' => $version->audiencia->value,
+            'difficulty' => $version->etapa->value,
+            'status' => $version->estado,
         ] : null;
     }
 
