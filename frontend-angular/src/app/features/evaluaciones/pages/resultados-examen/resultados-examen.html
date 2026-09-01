@@ -7,7 +7,7 @@
       <p>Consulta los puntajes reales registrados en tus evaluaciones enviadas.</p>
     </div>
     <nav aria-label="Acciones de resultados">
-      <a nz-button nzType="primary" routerLink="/alumno/evaluaciones">Ver evaluaciones activas <fa-icon [icon]="iconos.flecha" aria-hidden="true" /></a>
+      <a nz-button nzType="primary" routerLink="/alumno/aprender/evaluaciones">Ver evaluaciones activas <fa-icon [icon]="iconos.flecha" aria-hidden="true" /></a>
       <button nz-button nzType="default" type="button" (click)="cargar()" [disabled]="cargando()">
         <fa-icon [icon]="iconos.actualizar" aria-hidden="true" /> Actualizar
       </button>
@@ -69,7 +69,7 @@
       titulo="Todavía no tienes resultados"
       descripcion="Cuando envíes una evaluación, su puntaje aparecerá aquí automáticamente."
     >
-      <a nz-button nzType="primary" routerLink="/alumno/evaluaciones">Ver evaluaciones activas</a>
+      <a nz-button nzType="primary" routerLink="/alumno/aprender/evaluaciones">Ver evaluaciones activas</a>
       <button nz-button nzType="default" type="button" (click)="cargar()">Actualizar historial</button>
     </app-estado-vacio>
   }

@@ -128,7 +128,17 @@
 
 .student-logros-grid {
   display: grid !important;
-  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  /* Tres columnas cuando caben; envuelve cuando la tarjeta se estrecha
+     (a 834 px la retícula forzada a 3 desbordaba el documento). */
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 8rem), 1fr)) !important;
+}
+
+.student-logros-grid > * {
+  min-width: 0;
+}
+
+.student-logros-grid > * > * {
+  min-width: 0;
 }
 
 @media (max-width: 767px) {

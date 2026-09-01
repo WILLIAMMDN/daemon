@@ -47,7 +47,7 @@
 
       <div class="relative z-10 flex-1 flex flex-col items-center lg:items-start text-center lg:text-left px-2 lg:px-8 w-full">
         <!-- Badge de nivel super compacto para móviles -->
-        <div class="flex lg:hidden items-center gap-1.5 bg-[var(--daemon-on-accent)]/80 daemon-backdrop-sm border border-[var(--daemon-primary)]/50 rounded-full px-3 py-1 mb-3">
+        <div class="flex lg:hidden items-center gap-1.5 bg-[var(--daemon-on-accent)]/80 border border-[var(--daemon-primary)]/50 rounded-full px-3 py-1 mb-3">
           <span class="text-indigo-200 text-[9px] font-extrabold uppercase tracking-widest">NIVEL</span>
           <strong class="text-[var(--daemon-kids)] text-sm font-black">{{ progreso(datos).nivel }}</strong>
         </div>
@@ -61,10 +61,10 @@
         </p>
         
         <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-          <a nz-button class="bg-[var(--daemon-accent)] hover:bg-[var(--daemon-warning)] text-[var(--daemon-on-accent)] border-none rounded-xl font-extrabold h-11 sm:h-12 px-6 sm:px-8 shadow-sm transition-colors inline-flex items-center justify-center gap-2 w-full sm:w-auto" routerLink="/alumno/misiones">
+          <a nz-button class="bg-[var(--daemon-accent)] hover:bg-[var(--daemon-warning)] text-[var(--daemon-on-accent)] border-none rounded-xl font-extrabold h-11 sm:h-12 px-6 sm:px-8 shadow-sm transition-colors inline-flex items-center justify-center gap-2 w-full sm:w-auto" routerLink="/alumno/aprender/misiones">
             <fa-icon [icon]="iconos.play" /> Continuar misión
           </a>
-          <a nz-button class="bg-[var(--daemon-primary-dark)]/80 daemon-backdrop-md hover:bg-[var(--daemon-ink-soft)] border border-[var(--daemon-primary)] text-white rounded-xl font-semibold h-11 sm:h-12 px-6 sm:px-8 transition-colors inline-flex items-center justify-center gap-2 w-full sm:w-auto" routerLink="/alumno/perfil">
+          <a nz-button class="bg-[var(--daemon-primary-dark)]/80 hover:bg-[var(--daemon-ink-soft)] border border-[var(--daemon-primary)] text-white rounded-xl font-semibold h-11 sm:h-12 px-6 sm:px-8 transition-colors inline-flex items-center justify-center gap-2 w-full sm:w-auto" routerLink="/alumno/identidad/perfil">
             <fa-icon [icon]="iconos.brillo" /> Ver mi ruta
           </a>
         </div>
@@ -158,7 +158,7 @@
             <span class="text-blue-600 text-[10px] sm:text-[11px] font-extrabold tracking-widest uppercase block">RUTA DE HOY</span>
             <h2 class="text-slate-900 text-xl sm:text-2xl font-extrabold mt-0.5 sm:mt-1 tracking-tight">Próxima misión</h2>
           </div>
-          <a routerLink="/alumno/misiones" class="text-blue-600 sm:text-slate-400 font-bold text-xs sm:text-sm flex items-center gap-1 sm:gap-2 sm:hover:text-blue-600 transition-colors bg-blue-50 sm:bg-slate-50 sm:hover:bg-blue-50 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl">
+          <a routerLink="/alumno/aprender/misiones" class="text-blue-600 sm:text-slate-400 font-bold text-xs sm:text-sm flex items-center gap-1 sm:gap-2 sm:hover:text-blue-600 transition-colors bg-blue-50 sm:bg-slate-50 sm:hover:bg-blue-50 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl">
             <span class="hidden sm:inline">Ver todas</span> <fa-icon [icon]="iconos.flecha" />
           </a>
         </header>
@@ -174,7 +174,7 @@
                 <span class="bg-blue-50 text-blue-700 text-[10px] sm:text-xs font-bold px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg border border-blue-100">+{{ mision.recompensa }} XP</span>
                 <span class="bg-amber-50 text-amber-700 text-[10px] sm:text-xs font-bold px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg border border-amber-100">+{{ mision.recompensa }} DAEMONS</span>
               </div>
-              <a nz-button nzType="primary" class="bg-blue-600 hover:bg-blue-700 text-white border-none !h-11 sm:!h-12 !rounded-xl font-extrabold px-6 sm:px-8 shadow-sm transition-colors w-full sm:w-auto flex items-center justify-center" [routerLink]="['/alumno/misiones', mision.id]">Abrir misión</a>
+              <a nz-button nzType="primary" class="bg-blue-600 hover:bg-blue-700 text-white border-none !h-11 sm:!h-12 !rounded-xl font-extrabold px-6 sm:px-8 shadow-sm transition-colors w-full sm:w-auto flex items-center justify-center" [routerLink]="['/alumno/aprender/misiones', mision.id]">Abrir misión</a>
             </div>
           </div>
         } @else {
@@ -189,11 +189,6 @@
             <img src="/img/robot-mision.png" alt="Robot DAEMON celebrando" class="w-16 sm:w-32 h-auto object-contain flex-none self-center" />
           </div>
         }
-        <div class="flex flex-wrap gap-2 sm:gap-3 mt-6 sm:mt-8 pt-5 sm:pt-6 border-t border-slate-100/60">
-          <span class="bg-blue-600 text-white rounded-full text-[9px] sm:text-[11px] font-extrabold px-3 py-1.5 sm:px-4 sm:py-2 flex items-center gap-1.5 shadow-sm cursor-default"><fa-icon [icon]="iconos.cohete" class="opacity-90" /> CODING</span>
-          <span class="bg-emerald-500 text-white rounded-full text-[9px] sm:text-[11px] font-extrabold px-3 py-1.5 sm:px-4 sm:py-2 flex items-center gap-1.5 shadow-sm cursor-default"><fa-icon [icon]="iconos.cohete" class="opacity-90" /> IA & ROBÓTICA</span>
-          <span class="bg-purple-600 text-white rounded-full text-[9px] sm:text-[11px] font-extrabold px-3 py-1.5 sm:px-4 sm:py-2 flex items-center gap-1.5 shadow-sm cursor-default"><fa-icon [icon]="iconos.brillo" class="opacity-90" /> CREATIVIDAD</span>
-        </div>
       </article>
 
       <article class="col-span-1 lg:col-span-4 daemon-bento p-5 sm:p-8 flex flex-col justify-between">
@@ -255,7 +250,7 @@
             <span class="text-purple-500 text-[10px] sm:text-[11px] font-extrabold tracking-widest uppercase block">Logros</span>
             <h2 class="text-slate-900 text-xl sm:text-2xl font-extrabold mt-0.5 sm:mt-1 tracking-tight">Tu colección</h2>
           </div>
-          <a routerLink="/alumno/perfil" class="text-slate-400 font-bold text-xs sm:text-sm flex items-center gap-1 sm:gap-2 hover:text-purple-600 transition-colors bg-slate-50 hover:bg-purple-50 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl">Abrir perfil <fa-icon [icon]="iconos.flecha" /></a>
+          <a routerLink="/alumno/identidad/perfil" class="text-slate-400 font-bold text-xs sm:text-sm flex items-center gap-1 sm:gap-2 hover:text-purple-600 transition-colors bg-slate-50 hover:bg-purple-50 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl">Abrir perfil <fa-icon [icon]="iconos.flecha" /></a>
         </header>
         <div class="student-logros-grid gap-2 sm:gap-4">
           <div class="flex flex-col sm:flex-row items-center gap-1.5 sm:gap-4 bg-slate-50 border border-slate-100 rounded-xl p-3 sm:p-4 text-center sm:text-left cursor-default">

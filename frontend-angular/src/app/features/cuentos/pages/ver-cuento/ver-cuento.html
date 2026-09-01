@@ -1,13 +1,13 @@
 @if (cargando()) {
   <app-cargando class="w-full" texto="Cargando historia..."></app-cargando>
 } @else if (error()) {
-  <main class="student-module-page w-full max-w-3xl mx-auto p-4 md:p-8 flex justify-center">
+  <section class="student-module-page w-full max-w-3xl mx-auto p-4 md:p-8 flex justify-center">
     <div class="w-full bg-red-50 border border-red-200 rounded-2xl p-6 text-center">
       <p class="text-sm font-bold text-red-700">{{ error() }}</p>
     </div>
-  </main>
+  </section>
 } @else if (datos(); as datosCuento) {
-  <main class="student-module-page flex flex-col gap-6 max-w-[1400px] mx-auto w-full font-inter px-4 lg:px-8 pb-10">
+  <section class="student-module-page flex flex-col gap-6 max-w-[1400px] mx-auto w-full font-inter px-4 lg:px-8 pb-10">
 
     <app-cuento-hero 
       [datosCuento]="datosCuento"
@@ -64,5 +64,5 @@
       </app-cuento-sidebar>
 
     </div>
-  </main>
+  </section>
 }

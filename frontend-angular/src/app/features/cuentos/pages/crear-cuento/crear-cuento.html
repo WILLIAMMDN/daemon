@@ -7,17 +7,17 @@
     "Reintentar" que llama a `cargar` (no aplica aquí porque es
     un cuento nuevo, pero queda como gancho).
   -->
-  <main class="crear-error">
+  <section class="crear-error">
     <div class="crear-error__card">
       <h2 class="crear-error__title">No pudimos abrir el editor</h2>
       <p class="crear-error__msg">{{ error() }}</p>
-      <a routerLink="/alumno/proyectos/cuentos" class="crear-btn crear-btn--primary">
+      <a routerLink="/alumno/crear/historias" class="crear-btn crear-btn--primary">
         Volver a la galería
       </a>
     </div>
-  </main>
+  </section>
 } @else {
-  <main class="crear-page">
+  <section class="crear-page">
 
     <!-- Banner de estado de guardado (no rompe la página) -->
     @if (errorGuardado(); as msg) {
@@ -75,7 +75,7 @@
           <button type="button" class="crear-hero__btn crear-hero__btn--ghost" (click)="vistaPrevia()">
             <fa-icon [icon]="faEye"></fa-icon> Vista previa
           </button>
-          <a class="crear-hero__btn crear-hero__btn--accent" routerLink="/alumno/proyectos/cuentos">
+          <a class="crear-hero__btn crear-hero__btn--accent" routerLink="/alumno/crear/historias">
             <fa-icon [icon]="faImage"></fa-icon> Galería
           </a>
         </div>
@@ -700,5 +700,5 @@
 
       </aside>
     </div>
-  </main>
+  </section>
 }

@@ -14,7 +14,7 @@
     </div>
 
     <div class="chatbot-actions">
-      <a class="secondary-action" routerLink="/alumno/herramientas/bot">Configurar bot</a>
+      <a class="secondary-action" routerLink="/alumno/crear/bot">Configurar bot</a>
       @if (bot()) {
         <button type="button" class="danger-action" (click)="limpiar()" [disabled]="limpiando() || !mensajesFormateados().length">
           {{ limpiando() ? 'Limpiando...' : 'Limpiar chat' }}
@@ -35,8 +35,8 @@
       titulo="Tu asistente todavía no está configurado"
       descripcion="Guarda un nombre, personalidad, avatar y conocimiento. Cuando termines, el chat aparecerá aquí listo para usar."
     >
-      <a class="primary-action" routerLink="/alumno/herramientas/bot">Configurar mi bot</a>
-      <a class="secondary-action" routerLink="/alumno/herramientas">Volver a Herramientas IA</a>
+      <a class="primary-action" routerLink="/alumno/crear/bot">Configurar mi bot</a>
+      <a class="secondary-action" routerLink="/alumno/crear/herramientas">Volver a Herramientas IA</a>
     </app-estado-vacio>
   } @else {
     <section class="chat-layout" aria-label="Área de conversación">

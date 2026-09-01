@@ -939,7 +939,7 @@ export class CrearCuento implements OnInit {
         // No lanzamos toast.success: el banner verde dentro de la página
         // ya muestra el estado. Lanzar ambos es redundante y ruidoso.
         if (nuevoEstado === 'publicado') {
-          this.router.navigate(['/alumno/proyectos/cuentos']);
+          this.router.navigate(['/alumno/crear/historias']);
         }
         // Limpia el "ok" después de unos segundos para que el banner no
         // quede pegado.
@@ -1052,14 +1052,14 @@ export class CrearCuento implements OnInit {
           const nuevoId = (res.id as unknown as string) ?? null;
           if (nuevoId) {
             this.cuentoId.set(nuevoId);
-            this.router.navigate(['/alumno/proyectos/cuentos', nuevoId]);
+            this.router.navigate(['/alumno/crear/historias', nuevoId]);
           }
         },
         error: () => this.toast.error('No pudimos guardar el borrador. Intenta de nuevo.'),
       });
       return;
     }
-    this.router.navigate(['/alumno/proyectos/cuentos', id]);
+    this.router.navigate(['/alumno/crear/historias', id]);
   }
 
   async compartir(): Promise<void> {
@@ -1098,7 +1098,7 @@ export class CrearCuento implements OnInit {
   eliminarCuento(): void {
     const id = this.cuentoId();
     if (!id) {
-      this.router.navigate(['/alumno/proyectos/cuentos']);
+      this.router.navigate(['/alumno/crear/historias']);
       return;
     }
     const ok = confirm('¿Borrar este cuento? No se puede deshacer.');
@@ -1106,7 +1106,7 @@ export class CrearCuento implements OnInit {
     this.cuentos.eliminar(id).subscribe({
       next: () => {
         this.toast.success('Cuento eliminado.');
-        this.router.navigate(['/alumno/proyectos/cuentos']);
+        this.router.navigate(['/alumno/crear/historias']);
       },
       error: () => this.toast.error('No pudimos eliminarlo. Intenta de nuevo.'),
     });

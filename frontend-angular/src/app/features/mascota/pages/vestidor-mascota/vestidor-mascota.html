@@ -1,4 +1,4 @@
-<main class="companion-page">
+<section class="companion-page">
   <header class="companion-hero">
     <div class="hero-icon" aria-hidden="true"><fa-icon [icon]="iconos.criatura" /></div>
     <div class="hero-copy">
@@ -9,7 +9,7 @@
     <div class="hero-balance" aria-label="Saldo disponible">
       <span>Saldo</span>
       <strong><app-moneda-daemon [cantidad]="estado()?.saldo ?? 0" [size]="25" /></strong>
-      <a routerLink="/alumno/tienda">Ir a la tienda <fa-icon [icon]="iconos.flecha" /></a>
+      <a routerLink="/alumno/identidad/daems">Ir a la tienda <fa-icon [icon]="iconos.flecha" /></a>
     </div>
   </header>
 
@@ -89,7 +89,7 @@
             <span>Inventario</span>
             <h2>Construye tu estilo</h2>
           </div>
-          <a class="store-link" routerLink="/alumno/tienda"><fa-icon [icon]="iconos.tienda" /> Tienda</a>
+          <a class="store-link" routerLink="/alumno/identidad/daems"><fa-icon [icon]="iconos.tienda" /> Tienda</a>
         </header>
 
         <nav class="slot-tabs" aria-label="Filtrar accesorios">
@@ -128,7 +128,7 @@
             [titulo]="slotActivo() === 'todos' ? 'Tu colección está lista para crecer' : 'Aún no tienes piezas en esta categoría'"
             descripcion="Completa retos, gana DAEMONS y desbloquea accesorios compatibles en la tienda."
           >
-            <a nz-button nzType="primary" routerLink="/alumno/tienda">
+            <a nz-button nzType="primary" routerLink="/alumno/identidad/daems">
               <fa-icon [icon]="iconos.tienda" aria-hidden="true" />
               Explorar accesorios
             </a>
@@ -157,7 +157,7 @@
 
     @if (cosmeticosTienda().length) {
       <section class="discover-section">
-        <header><div><span>Nuevos looks</span><h2>Accesorios que puedes desbloquear</h2></div><a routerLink="/alumno/tienda">Ver catálogo completo <fa-icon [icon]="iconos.flecha" /></a></header>
+        <header><div><span>Nuevos looks</span><h2>Accesorios que puedes desbloquear</h2></div><a routerLink="/alumno/identidad/daems">Ver catálogo completo <fa-icon [icon]="iconos.flecha" /></a></header>
         <div class="discover-row">
           @for (item of cosmeticosTienda().slice(0, 4); track item.id) {
             <article>
@@ -169,4 +169,4 @@
       </section>
     }
   }
-</main>
+</section>
