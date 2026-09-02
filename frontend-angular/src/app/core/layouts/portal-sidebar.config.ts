@@ -14,6 +14,7 @@ import {
   faDragon,
   faGaugeHigh,
   faGift,
+  faHouse,
   faMedal,
   faPeopleGroup,
   faRankingStar,
@@ -47,27 +48,56 @@ export interface PortalSidebarSection {
 
 export const alumnoSidebarSections: PortalSidebarSection[] = [
   {
-    titulo: 'Aprendizaje',
+    titulo: 'DAEMON ARC',
     tono: 'indigo',
     items: [
-      { id: 'alumno-panel', etiqueta: 'Dashboard', ruta: '/alumno', detalle: 'Vista general', icono: faGaugeHigh, exacto: true },
-      { id: 'alumno-recursos', etiqueta: 'Cursos', ruta: '/alumno/recursos', detalle: 'Materiales y rutas', icono: faBookOpenReader },
-      { id: 'alumno-proyectos', etiqueta: 'Proyectos', ruta: '/alumno/proyectos', detalle: 'Crea y experimenta', icono: faCode },
-      { id: 'alumno-misiones', etiqueta: 'Misiones', ruta: '/alumno/misiones', detalle: 'Retos activos', icono: faRocket },
-      { id: 'alumno-ranking', etiqueta: 'Ranking', ruta: '/alumno/ranking', detalle: 'Clasificacion', icono: faRankingStar },
-      { id: 'alumno-comunidad', etiqueta: 'Comunidad', ruta: '/alumno/comunidad', detalle: 'Perfiles del aula', icono: faPeopleGroup },
-      { id: 'alumno-recompensas', etiqueta: 'Recompensas', ruta: '/alumno/tienda', detalle: 'Tienda y canjes', icono: faGift },
-      { id: 'alumno-mascota', etiqueta: 'Mi criatura', ruta: '/alumno/mascota', detalle: 'Vestidor y colección', icono: faDragon },
-    ],
-  },
-  {
-    titulo: 'Cuenta',
-    tono: 'cyan',
-    items: [
-      { id: 'alumno-perfil', etiqueta: 'Mi perfil', ruta: '/alumno/perfil', detalle: 'Cuenta y logros', icono: faCircleUser },
-      { id: 'alumno-herramientas', etiqueta: 'Herramientas IA', ruta: '/alumno/herramientas', detalle: 'Chatbot y laboratorio', icono: faWandMagicSparkles },
-      { id: 'alumno-evaluaciones', etiqueta: 'Evaluaciones', ruta: '/alumno/evaluaciones', detalle: 'Examenes activos', icono: faClipboardQuestion },
-      { id: 'alumno-certificado', etiqueta: 'Certificado', ruta: '/alumno/certificado', detalle: 'Carnet y constancia', icono: faCertificate },
+      { id: 'alumno-panel', etiqueta: 'Inicio', ruta: '/alumno', icono: faHouse, exacto: true },
+      {
+        id: 'alumno-recursos',
+        etiqueta: 'Aprender',
+        icono: faBookOpenReader,
+        hijos: [
+          { id: 'alumno-recursos-lista', etiqueta: 'Cursos', ruta: '/alumno/recursos', icono: faBookOpenReader, exacto: true },
+          { id: 'alumno-evaluaciones', etiqueta: 'Evaluaciones', ruta: '/alumno/evaluaciones', icono: faClipboardQuestion },
+          { id: 'alumno-certificado', etiqueta: 'Certificado', ruta: '/alumno/certificado', icono: faCertificate },
+        ],
+      },
+      {
+        id: 'alumno-proyectos',
+        etiqueta: 'Crear',
+        icono: faWandMagicSparkles,
+        hijos: [
+          { id: 'alumno-proyectos-lista', etiqueta: 'Proyectos', ruta: '/alumno/proyectos', icono: faCode, exacto: true },
+          { id: 'alumno-herramientas', etiqueta: 'Herramientas IA', ruta: '/alumno/herramientas', icono: faWandMagicSparkles },
+        ],
+      },
+      {
+        id: 'alumno-comunidad',
+        etiqueta: 'Comunidad',
+        icono: faPeopleGroup,
+        hijos: [
+          { id: 'alumno-comunidad-lista', etiqueta: 'Comunidad', ruta: '/alumno/comunidad', icono: faPeopleGroup, exacto: true },
+          { id: 'alumno-ranking', etiqueta: 'Ranking', ruta: '/alumno/ranking', icono: faRankingStar },
+        ],
+      },
+      {
+        id: 'alumno-agenda',
+        etiqueta: 'Agenda',
+        icono: faClipboardCheck,
+        hijos: [
+          { id: 'alumno-misiones', etiqueta: 'Misiones', ruta: '/alumno/misiones', icono: faRocket, exacto: true },
+        ],
+      },
+      {
+        id: 'alumno-identidad',
+        etiqueta: 'Identidad',
+        icono: faCircleUser,
+        hijos: [
+          { id: 'alumno-perfil', etiqueta: 'Mi perfil', ruta: '/alumno/perfil', icono: faCircleUser, exacto: true },
+          { id: 'alumno-mascota', etiqueta: 'Mi criatura', ruta: '/alumno/mascota', icono: faDragon },
+          { id: 'alumno-recompensas', etiqueta: 'Recompensas', ruta: '/alumno/tienda', icono: faGift },
+        ],
+      },
     ],
   },
 ];

@@ -4,10 +4,11 @@ import { alumnoGuard } from './core/guards/alumno-guard';
 import { docenteGuard } from './core/guards/docente-guard';
 import { tutorGuard } from './core/guards/tutor-guard';
 import { CATEGORIAS_PREMIO, NIVELES_ALUMNO, NIVELES_CONTENIDO } from './core/dominio/nivel-alumno';
-import { soloDesarrolloGuard } from './core/guards/solo-desarrollo.guard';
 
 export const routes: Routes = [
   { path: '', loadComponent: () => import('./features/publico/pages/inicio/inicio').then((m) => m.Inicio) },
+  { path: 'cohorte/matematica', loadComponent: () => import('./features/publico/pages/landing-matematica/landing-matematica').then((m) => m.LandingMatematica) },
+  { path: 'matematica', redirectTo: 'cohorte/matematica', pathMatch: 'full' },
   { path: 'login', loadComponent: () => import('./features/autenticacion/pages/login/login').then((m) => m.Login) },
   { path: 'login-docente', loadComponent: () => import('./features/autenticacion/pages/login-docente/login-docente').then((m) => m.LoginDocente) },
   { path: 'familias/acceso', loadComponent: () => import('./features/familias/pages/acceso-familias/acceso-familias').then((m) => m.AccesoFamilias) },
@@ -87,6 +88,5 @@ export const routes: Routes = [
       { path: 'tokens', loadComponent: () => import('./features/docente/pages/historial-tokens/historial-tokens').then((m) => m.HistorialTokens), data: { titulo: 'Historial de tokens', descripcion: 'Auditoría de todos los movimientos.', endpoint: '/docente/historial-tokens' } },
     ],
   },
-  { path: 'dev/design-system', canActivate: [soloDesarrolloGuard], loadComponent: () => import('./features/dev/pages/catalogo-diseno/catalogo-diseno').then((m) => m.CatalogoDiseno) },
   { path: '**', redirectTo: '' },
 ];

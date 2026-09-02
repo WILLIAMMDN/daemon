@@ -1,0 +1,600 @@
+<div class="bg-[#FFFFFF] text-[#111119] antialiased selection:bg-[#FEC514] selection:text-[#10105D] min-h-screen">
+
+  <!-- ==================== HEADER / TOPBAR (FIGMA 166:8) ==================== -->
+  <header class="sticky top-0 z-50 bg-[#FFFFFF] border-b border-[#E4E6F0]">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
+      
+      <!-- Wordmark Logo -->
+      <a routerLink="/" class="flex items-center gap-2 group">
+        <span class="font-heading font-extrabold text-2xl tracking-tight text-[#111119]">Daemon</span>
+      </a>
+
+      <!-- Right Actions -->
+      <div class="flex items-center gap-6">
+        <a [href]="enlaceWhatsapp" target="_blank" rel="noopener noreferrer" class="hidden sm:inline-flex items-center gap-2 text-xs font-semibold text-[#5F6070] hover:text-[#111119] transition-colors">
+          <fa-icon [icon]="icChat" class="text-sm"></fa-icon>
+          <span>¿Dudas? Hablemos</span>
+        </a>
+
+        <a
+          [href]="enlaceWhatsapp"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center justify-center px-5 py-2.5 rounded-full bg-[#FEC514] hover:bg-[#E5B10D] text-[#10105D] font-heading font-extrabold text-xs sm:text-sm tracking-wide transition-all shadow-sm"
+        >
+          PRE-RESERVAR CUPO
+        </a>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ==================== HERO SECTION (FIGMA 146:8 - EXACT #10105D + SVG WAVE CUT) ==================== -->
+  <section class="bg-[#10105D] text-white pt-10 pb-20 sm:pt-14 sm:pb-28 relative">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+        
+        <!-- Left Hero Content -->
+        <div class="lg:col-span-7 space-y-5 text-left">
+          
+          <div class="text-[11px] sm:text-xs font-heading font-bold tracking-widest text-[#D9DAE8] uppercase">
+            PROGRAMA DE 6 SEMANAS · SECUNDARIA
+          </div>
+
+          <h1 class="font-heading font-extrabold text-3xl sm:text-5xl lg:text-5xl text-white leading-tight">
+            Matemática DAEMON<br>
+            <span class="font-script text-3xl sm:text-5xl text-[#FEC514] font-normal tracking-normal">Refuerzo + Retos</span>
+          </h1>
+
+          <p class="font-heading font-bold text-lg sm:text-xl text-white leading-snug">
+            Que deje de memorizar y empiece a resolver.
+          </p>
+
+          <p class="text-[#D9DAE8] text-sm sm:text-base leading-relaxed max-w-xl">
+            6 semanas para detectar brechas, entrenar estrategias y convertir cada intento en una oportunidad para corregir y avanzar.
+          </p>
+
+          <!-- Facts Badges Row -->
+          <div class="flex flex-wrap items-center gap-2 sm:gap-3 text-xs text-white pt-1">
+            <span class="flex items-center gap-1.5 bg-white/10 border border-white/15 px-3 py-1.5 rounded-full">
+              <fa-icon [icon]="icCalendar" class="text-[#FEC514]"></fa-icon> 6 semanas
+            </span>
+            <span class="flex items-center gap-1.5 bg-white/10 border border-white/15 px-3 py-1.5 rounded-full">
+              <fa-icon [icon]="icVideo" class="text-[#FEC514]"></fa-icon> 2 clases en vivo
+            </span>
+            <span class="flex items-center gap-1.5 bg-white/10 border border-white/15 px-3 py-1.5 rounded-full">
+              <fa-icon [icon]="icClock" class="text-[#FEC514]"></fa-icon> 60 min
+            </span>
+            <span class="flex items-center gap-1.5 bg-white/10 border border-white/15 px-3 py-1.5 rounded-full">
+              <fa-icon [icon]="icCap" class="text-[#FEC514]"></fa-icon> Secundaria
+            </span>
+          </div>
+
+          <!-- Hero Action CTA + Price Callout -->
+          <div class="flex flex-col sm:flex-row sm:items-center gap-5 pt-3">
+            <a
+              [href]="enlaceWhatsapp"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-[#FEC514] hover:bg-[#E5B10D] text-[#10105D] font-heading font-extrabold text-sm tracking-wide transition-all shadow-md hover:scale-[1.02]"
+            >
+              <span>PRE-RESERVAR CUPO</span>
+              <fa-icon [icon]="icArrow" class="text-xs"></fa-icon>
+            </a>
+
+            <div class="flex items-baseline gap-2 text-left">
+              <span class="font-heading font-extrabold text-2xl sm:text-3xl text-white">S/149</span>
+              <span class="text-xs text-[#D9DAE8]">Pre-reserva S/20 · se descuenta del total</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right Hero Visual Card -->
+        <div class="lg:col-span-5 relative flex items-center justify-center">
+          <div class="w-full max-w-[380px]">
+            <img
+              src="img/landing/hero_main_visual.png"
+              alt="Matemática DAEMON - Estudiante con Zoe"
+              class="w-full h-auto object-contain drop-shadow-2xl rounded-3xl"
+            />
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Exact SVG Curve Cut from Figma 265:73 -->
+    <div class="absolute bottom-0 left-0 right-0 w-full overflow-hidden leading-none z-0">
+      <img src="img/landing/hero_curve.svg" alt="Curva de transición" class="w-full h-auto block" />
+    </div>
+  </section>
+
+  <!-- ==================== SUB-NAV TABS (FIGMA 166:9) ==================== -->
+  <div class="bg-[#FFFFFF] border-b border-[#E4E6F0] sticky top-16 sm:top-20 z-40">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 flex items-center gap-8 text-xs sm:text-sm font-semibold text-[#5F6070]">
+      <a href="#descripcion" class="py-3.5 text-[#5630CE] border-b-2 border-[#5630CE] font-bold">Descripción</a>
+      <a href="#ruta" class="py-3.5 hover:text-[#111119] transition-colors">Malla Curricular</a>
+      <a href="#docente" class="py-3.5 hover:text-[#111119] transition-colors">Instructor</a>
+      <a href="#faq" class="py-3.5 hover:text-[#111119] transition-colors">Preguntas frecuentes</a>
+    </div>
+  </div>
+
+  <!-- ==================== MAIN BODY SURFACE (FIGMA 146:11) ==================== -->
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-16 bg-[#FFFFFF] relative" id="descripcion">
+    
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+      
+      <!-- LEFT COLUMN: Content & Method (8 cols) -->
+      <div class="lg:col-span-8 space-y-16 text-left relative">
+        
+        <!-- Section 1: ¿Qué es Matemática DAEMON? -->
+        <section class="space-y-4">
+          <h2 class="font-heading font-extrabold text-2xl sm:text-3xl text-[#5630CE] tracking-tight">
+            ¿Qué es Matemática DAEMON?
+          </h2>
+
+          <p class="text-[#111119] text-sm sm:text-base leading-relaxed">
+            Es un programa de 6 semanas para estudiantes de secundaria que necesitan reforzar bases y aprender a resolver problemas con estrategia, no solo repetir procedimientos.
+          </p>
+
+          <p class="text-[#111119] text-sm sm:text-base leading-relaxed">
+            Cada semana combina 2 clases en vivo con retos aplicados, práctica guiada, comentarios del docente y nuevos intentos. El estudiante trabaja sobre problemas donde debe interpretar, decidir, resolver y explicar por qué su respuesta tiene sentido.
+          </p>
+
+          <!-- Feature Card: ¿Qué hará el estudiante en el curso? -->
+          <div class="bg-[#FFFFFF] border border-[#E4E6F0] rounded-2xl p-6 sm:p-7 mt-6 shadow-sm">
+            <h3 class="font-heading font-bold text-base sm:text-lg text-[#111119] mb-5">
+              ¿Qué hará el estudiante en el curso?
+            </h3>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm text-[#111119]">
+              <div class="flex items-start gap-2.5">
+                <span class="text-[#5630CE] font-bold mt-0.5">✓</span>
+                <span>Identificar qué información importa antes de calcular.</span>
+              </div>
+              <div class="flex items-start gap-2.5">
+                <span class="text-[#5630CE] font-bold mt-0.5">✓</span>
+                <span>Recibir comentarios sobre cómo resolvió y volver a intentarlo.</span>
+              </div>
+              <div class="flex items-start gap-2.5">
+                <span class="text-[#5630CE] font-bold mt-0.5">✓</span>
+                <span>Elegir una estrategia y explicar por qué la usa.</span>
+              </div>
+              <div class="flex items-start gap-2.5">
+                <span class="text-[#5630CE] font-bold mt-0.5">✓</span>
+                <span>Comparar alternativas y justificar una decisión.</span>
+              </div>
+              <div class="flex items-start gap-2.5">
+                <span class="text-[#5630CE] font-bold mt-0.5">✓</span>
+                <span>Resolver retos que cambian de contexto, no copias del ejemplo.</span>
+              </div>
+              <div class="flex items-start gap-2.5">
+                <span class="text-[#5630CE] font-bold mt-0.5">✓</span>
+                <span>Mostrar cómo llegó a la respuesta, no solo el resultado.</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 2: Cómo funciona DAEMON en Matemática -->
+        <section class="space-y-4 relative" id="metodo">
+          <h2 class="font-heading font-extrabold text-2xl sm:text-3xl text-[#5630CE] tracking-tight">
+            Cómo funciona DAEMON en Matemática
+          </h2>
+
+          <p class="text-[#111119] text-sm sm:text-base leading-relaxed">
+            Cada semana combina clases en vivo, práctica breve entre clases, orientación y nuevos intentos. El objetivo es que el estudiante entienda, corrija y avance.
+          </p>
+
+          <!-- El ciclo de aprendizaje Card -->
+          <div class="bg-[#FFFFFF] border border-[#E4E6F0] rounded-2xl p-6 sm:p-7 shadow-sm relative">
+            <h3 class="font-heading font-bold text-base sm:text-lg text-[#111119] mb-1">El ciclo de aprendizaje</h3>
+            <p class="text-xs text-[#5F6070] mb-6">Una secuencia simple que se repite con retos distintos.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+              
+              <div class="md:col-span-7 space-y-4">
+                <div class="flex items-start gap-3.5">
+                  <div class="w-8 h-8 rounded-full bg-[#F0EEFA] text-[#5630CE] flex items-center justify-center shrink-0 mt-0.5">
+                    <fa-icon [icon]="icSearch" class="text-xs"></fa-icon>
+                  </div>
+                  <div>
+                    <h4 class="font-heading font-bold text-sm text-[#111119]">Evaluamos qué necesita reforzar</h4>
+                    <p class="text-xs text-[#5F6070] mt-0.5 leading-relaxed">Una evaluación breve marca el punto de partida.</p>
+                  </div>
+                </div>
+
+                <div class="flex items-start gap-3.5">
+                  <div class="w-8 h-8 rounded-full bg-[#F0EEFA] text-[#5630CE] flex items-center justify-center shrink-0 mt-0.5">
+                    <fa-icon [icon]="icDisplay" class="text-xs"></fa-icon>
+                  </div>
+                  <div>
+                    <h4 class="font-heading font-bold text-sm text-[#111119]">Aprende y practica en vivo</h4>
+                    <p class="text-xs text-[#5F6070] mt-0.5 leading-relaxed">2 clases de 60 min con explicación, práctica guiada y retos.</p>
+                  </div>
+                </div>
+
+                <div class="flex items-start gap-3.5">
+                  <div class="w-8 h-8 rounded-full bg-[#F0EEFA] text-[#5630CE] flex items-center justify-center shrink-0 mt-0.5">
+                    <fa-icon [icon]="icBolt" class="text-xs"></fa-icon>
+                  </div>
+                  <div>
+                    <h4 class="font-heading font-bold text-sm text-[#111119]">Practica entre clases</h4>
+                    <p class="text-xs text-[#5F6070] mt-0.5 leading-relaxed">Actividades cortas de 10–15 min para reforzar lo trabajado.</p>
+                  </div>
+                </div>
+
+                <div class="flex items-start gap-3.5">
+                  <div class="w-8 h-8 rounded-full bg-[#F0EEFA] text-[#5630CE] flex items-center justify-center shrink-0 mt-0.5">
+                    <fa-icon [icon]="icRotate" class="text-xs"></fa-icon>
+                  </div>
+                  <div>
+                    <h4 class="font-heading font-bold text-sm text-[#111119]">Recibe orientación y vuelve a intentar</h4>
+                    <p class="text-xs text-[#5F6070] mt-0.5 leading-relaxed">Corrige lo necesario y prueba otra vez con una variación.</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Spot Notebook SVG Illustration -->
+              <div class="md:col-span-5 flex items-center justify-center p-4">
+                <img src="img/landing/spot_notebook.svg" alt="Ciclo de aprendizaje DAEMON" class="max-h-40 object-contain">
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 3: En DAEMON, avanzar no es sumar puntos -->
+        <section class="space-y-4" id="progreso">
+          <h2 class="font-heading font-extrabold text-2xl sm:text-3xl text-[#5630CE] tracking-tight">
+            En DAEMON, avanzar no es sumar puntos.
+          </h2>
+
+          <p class="text-[#111119] text-sm leading-relaxed">
+            El aprendizaje se valida por lo que el estudiante puede resolver, explicar y volver a aplicar. XP y DAEMONS reconocen el proceso sin alterar ese resultado.
+          </p>
+
+          <div class="bg-[#FFFFFF] border border-[#E4E6F0] rounded-2xl overflow-hidden shadow-sm text-xs">
+            <div class="grid grid-cols-1 sm:grid-cols-12 p-4 sm:p-5 border-b border-[#E4E6F0] items-center">
+              <span class="sm:col-span-3 font-heading font-extrabold text-[#5630CE] uppercase tracking-wider">DOMINIO</span>
+              <span class="sm:col-span-4 font-heading font-bold text-[#111119]">Lo que aprendió</span>
+              <span class="sm:col-span-5 text-[#5F6070]">Se actualiza cuando demuestra una habilidad: resuelve, explica y la aplica en una variación.</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-12 p-4 sm:p-5 border-b border-[#E4E6F0] items-center bg-[#F8FAFC]">
+              <span class="sm:col-span-3 font-heading font-extrabold text-[#5630CE] uppercase tracking-wider">XP</span>
+              <span class="sm:col-span-4 font-heading font-bold text-[#111119]">El esfuerzo válido</span>
+              <span class="sm:col-span-5 text-[#5F6070]">Reconoce práctica, intentos y acciones que sí aportan al aprendizaje.</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-12 p-4 sm:p-5 items-center">
+              <span class="sm:col-span-3 font-heading font-extrabold text-[#5630CE] uppercase tracking-wider">DAEMONS</span>
+              <span class="sm:col-span-4 font-heading font-bold text-[#111119]">La recompensa</span>
+              <span class="sm:col-span-5 text-[#5F6070]">Acompaña la experiencia con identidad y recompensas; no compra notas ni dominio.</span>
+            </div>
+          </div>
+
+          <p class="text-xs text-[#5F6070]">
+            Primero se demuestra el aprendizaje. Después se reconocen el esfuerzo y la participación.
+          </p>
+        </section>
+
+      </div>
+
+      <!-- RIGHT COLUMN: Sidebar Pricing (NOT STICKY - DEC-005) -->
+      <div class="lg:col-span-4" id="precios">
+        
+        <div class="bg-[#FFFFFF] border border-[#E4E6F0] rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
+          
+          <div>
+            <span class="font-heading font-extrabold text-[11px] uppercase tracking-wider text-[#5F6070] block mb-1">INVERSIÓN EDUCATIVA</span>
+            <div class="font-heading font-extrabold text-5xl text-[#111119] leading-none mb-1">
+              S/149
+            </div>
+            <span class="font-heading font-extrabold text-sm text-[#5F6070] block">Matemática DAEMON</span>
+          </div>
+
+          <div class="h-px bg-[#E4E6F0] w-full"></div>
+
+          <a
+            [href]="enlaceWhatsapp"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="w-full inline-flex items-center justify-center gap-2 py-3.5 px-4 rounded-full bg-[#FEC514] hover:bg-[#E5B10D] text-[#10105D] font-heading font-extrabold text-sm tracking-wide transition-all shadow-sm"
+          >
+            <span>PRE-RESERVAR CUPO</span>
+            <fa-icon [icon]="icArrow" class="text-xs"></fa-icon>
+          </a>
+
+          <div class="text-xs font-semibold text-[#5F6070] text-center">
+            ✓ Pre-reserva: S/20, descontable del total.
+          </div>
+
+          <div class="space-y-4 pt-2 text-xs border-t border-[#E4E6F0]">
+            <h4 class="font-heading font-extrabold text-[#111119] text-sm">Información del curso</h4>
+            
+            <div class="flex items-start gap-3 text-[#5F6070]">
+              <fa-icon [icon]="icCap" class="text-[#5630CE] text-sm shrink-0 mt-0.5"></fa-icon>
+              <div>
+                <span class="font-heading font-bold text-[#111119] block">NIVEL RECOMENDADO</span>
+                <span>Secundaria</span>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-3 text-[#5F6070]">
+              <fa-icon [icon]="icCalendar" class="text-[#5630CE] text-sm shrink-0 mt-0.5"></fa-icon>
+              <div>
+                <span class="font-heading font-bold text-[#111119] block">DURACIÓN</span>
+                <span>6 semanas</span>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-3 text-[#5F6070]">
+              <fa-icon [icon]="icVideo" class="text-[#5630CE] text-sm shrink-0 mt-0.5"></fa-icon>
+              <div>
+                <span class="font-heading font-bold text-[#111119] block">CLASES EN VIVO</span>
+                <span>2 por semana · 60 min</span>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-3 text-[#5F6070]">
+              <fa-icon [icon]="icBullseye" class="text-[#5630CE] text-sm shrink-0 mt-0.5"></fa-icon>
+              <div>
+                <span class="font-heading font-bold text-[#111119] block">METODOLOGÍA</span>
+                <span>Evaluación inicial · retos · orientación · progreso</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ==================== DARK NAVY SECTION: RUTA DE APRENDIZAJE ==================== -->
+  <section class="bg-[#10105D] text-white py-16 sm:py-24 relative overflow-hidden" id="ruta">
+    
+    <!-- Top Right Spot Pencil Decorative -->
+    <div class="absolute top-6 right-6 lg:right-16 w-32 sm:w-44 opacity-90 pointer-events-none">
+      <img src="img/landing/spot_pencil.svg" alt="Decorativo ruta" class="w-full h-auto">
+    </div>
+
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 relative z-10 text-left">
+      
+      <div class="mb-10">
+        <h2 class="font-heading font-extrabold text-2xl sm:text-4xl text-[#FEC514] tracking-tight">
+          Ruta de aprendizaje de 6 semanas
+        </h2>
+        <p class="text-[#D9DAE8] text-xs sm:text-sm mt-2 max-w-xl">
+          La ruta está definida. Los contenidos concretos se ajustan al grado y a la evaluación inicial para reforzar lo que cada grupo necesita.
+        </p>
+      </div>
+
+      <div class="bg-[#FFFFFF] border border-[#E4E6F0] text-[#111119] rounded-2xl p-5 mb-6 shadow-sm">
+        <div class="flex items-start gap-3.5">
+          <div class="w-8 h-8 rounded-full bg-[#F0EEFA] text-[#5630CE] flex items-center justify-center shrink-0">
+            <fa-icon [icon]="icSearch" class="text-xs"></fa-icon>
+          </div>
+          <div>
+            <span class="font-heading font-extrabold text-[10px] uppercase text-[#5630CE] tracking-wider block">ANTES DE EMPEZAR</span>
+            <h3 class="font-heading font-bold text-sm text-[#111119]">Evaluación inicial · 20–30 min</h3>
+            <p class="text-xs text-[#5F6070] mt-1">Sirve para saber desde dónde parte el estudiante y qué necesita reforzar primero. No es un examen para poner nota: orienta el recorrido del grupo.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Weekly Accordion Modules -->
+      <div class="space-y-3">
+        @for (s of semanas; track s.semana) {
+          @if (semanaAbierta() === s.semana) {
+            <!-- Open Week State (White Card) -->
+            <div
+              (click)="toggleSemana(s.semana)"
+              class="bg-[#FFFFFF] text-[#111119] rounded-2xl p-5 sm:p-6 shadow-sm cursor-pointer transition-all"
+            >
+              <div class="flex items-center justify-between pb-2 border-b border-[#E4E6F0]">
+                <div>
+                  <span class="font-heading font-extrabold text-[10px] uppercase text-[#5630CE] tracking-wider">SEMANA {{ s.semana }}</span>
+                  <h3 class="font-heading font-bold text-base text-[#111119]">{{ s.titulo }}</h3>
+                </div>
+                <fa-icon [icon]="icUp" class="text-xs text-[#5F6070]"></fa-icon>
+              </div>
+              <div class="mt-3 space-y-3">
+                <p class="text-xs text-[#5F6070] leading-relaxed">
+                  {{ s.descripcion }}
+                </p>
+                <div class="space-y-2 text-xs text-[#111119] font-medium">
+                  @for (it of s.items; track it) {
+                    <div class="flex items-center gap-2">
+                      <span class="text-[#5630CE] font-bold">✓</span>
+                      <span>{{ it }}</span>
+                    </div>
+                  }
+                </div>
+              </div>
+            </div>
+          } @else {
+            <!-- Collapsed Week State (Navy Pill) -->
+            <div
+              (click)="toggleSemana(s.semana)"
+              class="bg-white/5 border border-white/10 rounded-xl p-4 flex items-center justify-between text-xs font-bold text-[#D9DAE8] cursor-pointer hover:bg-white/10 transition-all"
+            >
+              <div>
+                <span class="text-[10px] uppercase text-[#D9DAE8]/60 block font-heading">SEMANA {{ s.semana }}</span>
+                <span>{{ s.titulo }}</span>
+              </div>
+              <fa-icon [icon]="icDown" class="text-[#D9DAE8] text-xs"></fa-icon>
+            </div>
+          }
+        }
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- ==================== CÓMO COMPROBAMOS EL PROGRESO ==================== -->
+  <section class="max-w-4xl mx-auto px-4 sm:px-6 py-16 text-left bg-[#FFFFFF] relative">
+    
+    <!-- Outer Right Spot GraphBoard Illustration -->
+    <div class="hidden lg:block absolute -right-24 top-1/2 -translate-y-1/2 w-28 pointer-events-none">
+      <img src="img/landing/spot_graphboard.svg" alt="Progreso visual" class="w-full h-auto">
+    </div>
+
+    <div class="mb-8">
+      <h2 class="font-heading font-extrabold text-2xl sm:text-3xl text-[#5630CE] tracking-tight">
+        Cómo comprobamos el progreso
+      </h2>
+      <p class="text-[#111119] text-xs sm:text-sm mt-1">
+        Al terminar las 6 semanas, comparamos cómo resuelve, explica y corrige frente a su punto de partida.
+      </p>
+    </div>
+
+    <div class="bg-[#FFFFFF] border border-[#E4E6F0] rounded-2xl p-6 sm:p-8 shadow-sm space-y-6">
+      
+      <div>
+        <h3 class="font-heading font-bold text-sm text-[#111119] uppercase tracking-wider mb-3">Qué señales buscamos</h3>
+        <p class="text-xs text-[#5F6070] mb-4">Nos fijamos en comportamientos que pueden verse en sus retos y trabajos.</p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs text-[#111119]">
+          <div>
+            <span class="font-heading font-bold text-[#111119] block">✓ Explica la estrategia que eligió</span>
+            <span class="text-[#5F6070]">Puede contar por qué siguió ese camino, no solo mostrar un resultado.</span>
+          </div>
+          <div>
+            <span class="font-heading font-bold text-[#111119] block">✓ Resuelve una variación del problema</span>
+            <span class="text-[#5F6070]">Aplica lo aprendido cuando cambia el contexto.</span>
+          </div>
+          <div>
+            <span class="font-heading font-bold text-[#111119] block">✓ Reconoce un error y lo corrige</span>
+            <span class="text-[#5F6070]">Usa la orientación recibida y vuelve a intentarlo mejor.</span>
+          </div>
+          <div>
+            <span class="font-heading font-bold text-[#111119] block">✓ Sabe qué reforzó y qué sigue</span>
+            <span class="text-[#5F6070]">Identifica qué mejoró y qué necesita continuar practicando.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-4 border-t border-[#E4E6F0]">
+        <h4 class="font-heading font-bold text-xs text-[#111119] uppercase tracking-wider mb-3">Comparamos dos momentos</h4>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+          <div class="bg-[#F8FAFC] p-4 rounded-xl border border-[#E4E6F0]">
+            <span class="font-heading font-extrabold text-[10px] uppercase text-[#5F6070] block">PUNTO DE PARTIDA</span>
+            <span class="font-heading font-bold text-[#111119] block mt-1">Evaluación inicial</span>
+            <span class="text-[#5F6070] mt-1 block">Observamos cómo interpreta el problema y qué estrategia usa.</span>
+          </div>
+          <div class="bg-[#F0EEFA] p-4 rounded-xl border border-[#E4E6F0]">
+            <span class="font-heading font-extrabold text-[10px] uppercase text-[#5630CE] block">SEMANA 6</span>
+            <span class="font-heading font-bold text-[#111119] block mt-1">Misión final + reevaluación</span>
+            <span class="text-[#5F6070] mt-1 block">Volvemos a observar cómo resuelve, explica y corrige para comparar el avance.</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- ==================== DOCENTE DAEMON ==================== -->
+  <section class="max-w-4xl mx-auto px-4 sm:px-6 pb-16 text-left" id="docente">
+    <div class="mb-6">
+      <h2 class="font-heading font-extrabold text-2xl text-[#5630CE] tracking-tight">Docente DAEMON</h2>
+      <p class="text-xs text-[#5F6070] mt-1">Acompañamiento en vivo durante las 6 semanas.</p>
+    </div>
+
+    <div class="bg-[#FFFFFF] border border-[#E4E6F0] rounded-2xl p-5 sm:p-6 shadow-sm flex items-center gap-4">
+      <div class="w-14 h-14 rounded-full bg-[#F0EEFA] flex items-center justify-center text-[#5630CE] text-xl font-bold shrink-0">
+        <fa-icon [icon]="icCap"></fa-icon>
+      </div>
+      <div>
+        <span class="font-heading font-extrabold text-[10px] uppercase text-[#5630CE] tracking-wider block">DOCENTE</span>
+        <h3 class="font-heading font-bold text-base text-[#111119]">Docente DAEMON</h3>
+        <p class="text-xs text-[#5F6070] mt-0.5">Acompaña las clases en vivo, guía la práctica y orienta al estudiante durante los retos.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== PREGUNTAS FRECUENTES INTERACTIVAS ==================== -->
+  <section class="max-w-4xl mx-auto px-4 sm:px-6 pb-20 text-left" id="faq">
+    <div class="mb-6">
+      <h2 class="font-heading font-extrabold text-2xl text-[#5630CE] tracking-tight">Preguntas frecuentes</h2>
+      <p class="text-xs text-[#5F6070] mt-1">Respuestas rápidas antes de reservar.</p>
+    </div>
+
+    <div class="space-y-3">
+      @for (f of faqs; track $index) {
+        <div class="bg-[#FFFFFF] border border-[#E4E6F0] rounded-xl overflow-hidden transition-all shadow-sm">
+          <button
+            (click)="toggleFaq($index)"
+            class="w-full p-5 text-left flex items-center justify-between gap-4 font-heading font-bold text-sm text-[#111119] hover:text-[#5630CE] transition-colors"
+          >
+            <span>{{ f.pregunta }}</span>
+            <span class="text-base font-bold shrink-0" [class]="faqAbierta() === $index ? 'text-[#5630CE]' : 'text-[#5F6070]'">
+              {{ faqAbierta() === $index ? '−' : '+' }}
+            </span>
+          </button>
+          @if (faqAbierta() === $index) {
+            <p class="px-5 pb-5 text-xs text-[#5F6070] leading-relaxed border-t border-[#E4E6F0] pt-3 animate-fadeIn">
+              {{ f.respuesta }}
+            </p>
+          }
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- ==================== BOTTOM FINAL CTA BAR (FIGMA 150:29) ==================== -->
+  <section class="max-w-5xl mx-auto px-4 sm:px-6 pb-16">
+    <div class="bg-[#FFFFFF] border border-[#E4E6F0] rounded-3xl p-6 sm:p-8 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6">
+      
+      <div class="text-left space-y-1.5 max-w-md">
+        <h3 class="font-heading font-extrabold text-xl sm:text-2xl text-[#10105D] leading-tight">
+          Si esta forma de aprender encaja, el siguiente paso es reservar el cupo.
+        </h3>
+        <p class="text-xs text-[#5F6070]">
+          2 clases en vivo por semana · S/149 total · pre-reserva S/20 descontable del total.
+        </p>
+      </div>
+
+      <div class="shrink-0 flex items-center justify-center">
+        <img
+          src="img/landing/zoe_cta_welcome.png"
+          alt="Zoe DAEMON te da la bienvenida"
+          class="h-28 sm:h-36 object-contain"
+        />
+      </div>
+
+      <div class="text-center md:text-right flex flex-col items-center md:items-end gap-3 shrink-0">
+        <div>
+          <span class="font-heading font-extrabold text-3xl sm:text-4xl text-[#10105D]">S/149</span>
+          <span class="text-[11px] font-semibold text-[#5F6070] block">Inversión total</span>
+        </div>
+
+        <a
+          [href]="enlaceWhatsapp"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-[#FEC514] hover:bg-[#E5B10D] text-[#10105D] font-heading font-extrabold text-xs sm:text-sm tracking-wide transition-all shadow-sm hover:scale-105"
+        >
+          <span>PRE-RESERVAR CUPO</span>
+          <fa-icon [icon]="icArrow" class="text-xs"></fa-icon>
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="bg-[#FFFFFF] border-t border-[#E4E6F0] py-6 text-xs text-[#5F6070]">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <span class="font-heading font-extrabold text-[#111119] text-base">Daemon</span>
+      <span>Matemática DAEMON · Secundaria</span>
+    </div>
+  </footer>
+
+</div>
