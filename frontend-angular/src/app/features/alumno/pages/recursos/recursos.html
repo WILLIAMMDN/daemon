@@ -281,9 +281,9 @@
             titulo="Tu ruta está preparándose"
             descripcion="Cuando tu docente publique y asigne un curso, aparecerá aquí automáticamente."
           >
-            <a nz-button nzType="primary" routerLink="/alumno/aprender/misiones">
+            <a nz-button nzType="primary" routerLink="/alumno/aprender">
               <fa-icon [icon]="faCompass" aria-hidden="true"></fa-icon>
-              Ver misiones disponibles
+              Ver mis cursos
             </a>
           </app-estado-vacio>
         }
@@ -294,10 +294,10 @@
           </span>
           <div>
             <h2 id="course-discovery-title">Siempre hay algo nuevo por descubrir</h2>
-            <p>Mientras llegan nuevas rutas, practica con misiones y herramientas disponibles.</p>
+            <p>Mientras llegan nuevas rutas, revisa tus sesiones programadas en tu agenda.</p>
           </div>
-          <a nz-button nzType="default" routerLink="/alumno/crear/herramientas">
-            Explorar herramientas
+          <a nz-button nzType="default" routerLink="/alumno/agenda">
+            Ver agenda
             <fa-icon [icon]="faArrowRight" aria-hidden="true"></fa-icon>
           </a>
         </section>
@@ -380,11 +380,11 @@
         <section class="course-recommendation-card">
           <span aria-hidden="true"><fa-icon [icon]="faRocket"></fa-icon></span>
           <div>
-            <h2>Practica mientras avanzas</h2>
-            <p>Las misiones convierten lo aprendido en retos concretos.</p>
+            <h2>Revisa tu agenda</h2>
+            <p>Consulta tus sesiones en vivo y entregas pendientes.</p>
           </div>
-          <a routerLink="/alumno/aprender/misiones" aria-label="Ir a mis misiones">
-            Ir a misiones
+          <a routerLink="/alumno/agenda" aria-label="Ir a mi agenda">
+            Ir a agenda
             <fa-icon [icon]="faArrowRight" aria-hidden="true"></fa-icon>
           </a>
         </section>

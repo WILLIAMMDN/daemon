@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
-import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Router, RouterOutlet } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
@@ -26,7 +26,7 @@ import { TopbarAlumno } from '../topbar-alumno/topbar-alumno';
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-layout-alumno',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, FontAwesomeModule, EmailVerificationBanner, SidebarPortal, TopbarAlumno],
+  imports: [RouterOutlet, FontAwesomeModule, EmailVerificationBanner, SidebarPortal, TopbarAlumno],
   templateUrl: './layout-alumno.html',
   styleUrl: './layout-alumno.scss',
 })

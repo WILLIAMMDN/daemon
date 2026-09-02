@@ -32,19 +32,28 @@ export class TourService {
         },
       },
       {
-        element: '#sidebar-alumno-misiones',
+        element: '#sidebar-alumno-aprender',
         popover: {
-          title: 'Misiones Activas',
-          description: 'Aca encontraras las tareas que tu docente ha asignado. Completalas para ganar recompensas.',
+          title: 'Aprender',
+          description: 'Accede a tus cursos activos, contenidos y mapas de aprendizaje.',
           side: 'right',
           align: 'start',
         },
       },
       {
-        element: '#sidebar-alumno-recompensas',
+        element: '#sidebar-alumno-agenda',
         popover: {
-          title: 'Tu Mochila',
-          description: 'Todo lo que compres en la tienda o las insignias que ganes se guardaran aqui.',
+          title: 'Agenda',
+          description: 'Consulta tus sesiones en vivo y el estado de tus entregas.',
+          side: 'right',
+          align: 'start',
+        },
+      },
+      {
+        element: '#sidebar-alumno-identidad',
+        popover: {
+          title: 'Identidad y Progreso',
+          description: 'Revisa tu nivel, racha, logros, personalización y saldo de Daems.',
           side: 'right',
           align: 'start',
         },
@@ -53,7 +62,7 @@ export class TourService {
         element: '#topbar-tokens',
         popover: {
           title: 'Daems',
-          description: 'Esta es tu moneda virtual. Ganas Daems completando misiones y asistiendo a clases.',
+          description: 'Esta es tu moneda virtual. Ganas Daems completando actividades académicas y asistiendo a clases.',
           side: 'bottom',
           align: 'end',
         },

@@ -3,6 +3,36 @@
   min-width: 0;
 }
 
+.curso-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  border-bottom: 1px solid var(--daemon-border);
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-2);
+
+  .curso-nav-item {
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--daemon-muted);
+    border-radius: var(--daemon-radius-sm);
+    text-decoration: none;
+    transition: color 0.15s ease, background-color 0.15s ease;
+
+    &:hover {
+      color: var(--daemon-ink);
+      background-color: var(--daemon-surface-muted);
+    }
+
+    &.active {
+      color: var(--daemon-primary);
+      background-color: var(--daemon-primary-subtle, rgba(94, 52, 215, 0.08));
+      font-weight: 600;
+    }
+  }
+}
+
 .resumen {
   display: flex;
   flex-wrap: wrap;

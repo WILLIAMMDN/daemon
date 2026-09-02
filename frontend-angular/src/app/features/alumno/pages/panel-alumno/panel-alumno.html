@@ -79,7 +79,7 @@
           <span class="eyebrow eyebrow--mission">@if (accionActual(datos); as accion) { {{ accion.tipoEtiqueta }} } @else { @if (esKids()) { PRÓXIMA MISIÓN } @else { CREA · EN PROGRESO } }</span>
           <h2 class="section-title">@if (esKids()) { Tu siguiente reto } @else { Tu próximo proyecto }</h2>
         </div>
-        <a class="section-action" routerLink="/alumno/aprender/misiones">Ver todas</a>
+        <a class="section-action" routerLink="/alumno/aprender">Ver todas</a>
       </header>
 
       @if (accionActual(datos); as accion) {
@@ -157,8 +157,8 @@
           @if (esKids()) {
             <img src="/img/robot-mision.png" alt="Robot DAEMON celebrando" class="mission-empty__img" />
           }
-          <a class="dashboard-cta dashboard-cta--sm" routerLink="/alumno/aprender/misiones">
-            <fa-icon [icon]="iconos.play" /> Explorar misiones
+          <a class="dashboard-cta dashboard-cta--sm" routerLink="/alumno/aprender/explorar">
+            <fa-icon [icon]="iconos.play" /> Explorar cursos
           </a>
         </div>
       }

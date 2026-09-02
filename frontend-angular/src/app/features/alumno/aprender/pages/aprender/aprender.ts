@@ -24,9 +24,8 @@ export class Aprender {
   readonly aprendizaje = inject(Aprendizaje);
 
   readonly items: ArcNavItem[] = [
-    { etiqueta: 'Mis aprendizajes', ruta: 'mis-aprendizajes' },
+    { etiqueta: 'Mis cursos', ruta: 'mis-cursos' },
     { etiqueta: 'Explorar', ruta: 'explorar' },
-    { etiqueta: 'Rutas', ruta: 'rutas' },
   ];
 
   readonly mensajeError = computed(() => {

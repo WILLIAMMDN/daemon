@@ -127,7 +127,7 @@ describe('Recursos', () => {
     expect(estadoVacio?.textContent).toContain('Tu ruta está preparándose');
     expect(estadoVacio?.querySelector<HTMLImageElement>('.empty-state__art img')?.getAttribute('src'))
       .toBe('/img/empty/empty-robot.webp');
-    expect(estadoVacio?.querySelector('.ant-btn-primary')?.textContent).toContain('Ver misiones disponibles');
+    expect(estadoVacio?.querySelector('.ant-btn-primary')?.textContent).toContain('Ver mis cursos');
     expect(element.querySelector('.course-summary-card')?.textContent).toContain('Aún no tienes cursos asignados');
   });
 

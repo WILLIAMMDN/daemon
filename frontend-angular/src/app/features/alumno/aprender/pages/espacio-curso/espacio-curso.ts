@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink, RouterLinkActive } from '@angular/router';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzProgressModule } from 'ng-zorro-antd/progress';
@@ -14,17 +14,16 @@ import { LeccionVista } from '../../../models/aprendizaje.model';
 import { Aprendizaje } from '../../../services/aprendizaje';
 
 /**
- * Espacio de aprendizaje de un curso matriculado real (`/alumno/aprendizaje`).
+ * Espacio de aprendizaje de un curso matriculado real (`/alumno/aprender/curso/:cursoId`).
  *
- * Sólo expone secciones que el modelo de datos sostiene hoy: resumen, contenido
- * (unidades y lecciones) y progreso académico por objetivos. No hay pestañas de
- * sesiones, laboratorios ni tutor IA porque la plataforma no expone esos datos
- * por curso y una pestaña permanentemente vacía es peor que no tenerla.
+ * Expone la navegación contextual del curso: Resumen, Ruta, Contenido y Progreso.
  */
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-espacio-curso',
   imports: [
+    RouterLink,
+    RouterLinkActive,
     NzAlertModule,
     NzButtonModule,
     NzProgressModule,
@@ -62,7 +61,7 @@ export class EspacioCurso {
 
   readonly migas = computed<ArcMiga[]>(() => [
     { etiqueta: 'Aprender', ruta: '/alumno/aprender' },
-    { etiqueta: 'Mis aprendizajes', ruta: '/alumno/aprender/mis-aprendizajes' },
+    { etiqueta: 'Mis cursos', ruta: '/alumno/aprender' },
     { etiqueta: this.curso()?.titulo ?? 'Curso' },
   ]);
 

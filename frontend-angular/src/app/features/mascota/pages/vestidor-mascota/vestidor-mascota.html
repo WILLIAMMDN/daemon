@@ -2,14 +2,14 @@
   <header class="companion-hero">
     <div class="hero-icon" aria-hidden="true"><fa-icon [icon]="iconos.criatura" /></div>
     <div class="hero-copy">
-      <span class="page-kicker"><fa-icon [icon]="iconos.brillo" /> Tu compañero DAEMON</span>
-      <h1>Mi criatura</h1>
-      <p>Combina skins y accesorios que desbloqueas con tus Daems. Tu XP y tu nivel siempre se conservan.</p>
+      <span class="page-kicker"><fa-icon [icon]="iconos.brillo" /> Tu personaje DAEMON</span>
+      <h1>Personalización</h1>
+      <p>Combina aspectos y cosméticos que desbloqueas con tus Daems. Tu XP y tu nivel siempre se conservan.</p>
     </div>
     <div class="hero-balance" aria-label="Saldo disponible">
       <span>Saldo</span>
       <strong><app-moneda-daemon [cantidad]="estado()?.saldo ?? 0" [size]="25" /></strong>
-      <a routerLink="/alumno/tienda">Ir a la tienda <fa-icon [icon]="iconos.flecha" /></a>
+      <a routerLink="/alumno/identidad/daems">Ir a la tienda <fa-icon [icon]="iconos.flecha" /></a>
     </div>
   </header>
 
@@ -24,7 +24,7 @@
   }
 
   @if (cargando()) {
-    <section class="loading-card"><app-cargando texto="Preparando tu criatura..."></app-cargando></section>
+    <section class="loading-card"><app-cargando texto="Preparando tu personaje..."></app-cargando></section>
   } @else if (estado(); as datos) {
     <section class="dresser-grid">
       <article class="preview-card">
@@ -33,7 +33,7 @@
             <span>Vista en vivo</span>
             <h2>{{ datos.mascota.nombre }}</h2>
           </div>
-          <button class="icon-button" type="button" title="Actualizar" aria-label="Actualizar criatura" (click)="cargar(true)" [disabled]="guardando()">
+          <button class="icon-button" type="button" title="Actualizar" aria-label="Actualizar personaje" (click)="cargar(true)" [disabled]="guardando()">
             <fa-icon [icon]="iconos.actualizar" />
           </button>
         </header>
@@ -62,7 +62,7 @@
           <label>
             <span>Nombre</span>
             <div class="input-action">
-              <input [(ngModel)]="nombreBorrador" maxlength="30" autocomplete="off" aria-label="Nombre de la criatura" (keyup.enter)="guardarNombre()">
+              <input [(ngModel)]="nombreBorrador" maxlength="30" autocomplete="off" aria-label="Nombre del personaje" (keyup.enter)="guardarNombre()">
               <button type="button" (click)="guardarNombre()" [disabled]="guardando() || !nombreBorrador.trim()">Guardar</button>
             </div>
           </label>
@@ -89,10 +89,10 @@
             <span>Inventario</span>
             <h2>Construye tu estilo</h2>
           </div>
-          <a class="store-link" routerLink="/alumno/tienda"><fa-icon [icon]="iconos.tienda" /> Tienda</a>
+          <a class="store-link" routerLink="/alumno/identidad/daems"><fa-icon [icon]="iconos.tienda" /> Tienda</a>
         </header>
 
-        <nav class="slot-tabs" aria-label="Filtrar accesorios">
+        <nav class="slot-tabs" aria-label="Filtrar cosméticos">
           <button type="button" [class.active]="slotActivo() === 'todos'" [attr.aria-pressed]="slotActivo() === 'todos'" (click)="filtrar('todos')">Todo</button>
           @for (slot of datos.slots; track slot.codigo) {
             <button type="button" [class.active]="slotActivo() === slot.codigo" [attr.aria-pressed]="slotActivo() === slot.codigo" (click)="filtrar(slot.codigo)">{{ slot.etiqueta }}</button>
@@ -126,11 +126,11 @@
           <app-estado-vacio
             tamano="compact"
             [titulo]="slotActivo() === 'todos' ? 'Tu colección está lista para crecer' : 'Aún no tienes piezas en esta categoría'"
-            descripcion="Completa retos, gana Daems y desbloquea accesorios compatibles en la tienda."
+            descripcion="Completa retos, gana Daems y desbloquea cosméticos compatibles en la tienda."
           >
-            <a nz-button nzType="primary" routerLink="/alumno/tienda">
+            <a nz-button nzType="primary" routerLink="/alumno/identidad/daems">
               <fa-icon [icon]="iconos.tienda" aria-hidden="true" />
-              Explorar accesorios
+              Explorar cosméticos
             </a>
           </app-estado-vacio>
         }
@@ -145,7 +145,7 @@
               <button class="secondary-action" type="button" (click)="quitarSeleccion()" [disabled]="guardando()">Quitar</button>
             } @else {
               <button class="primary-action" type="button" (click)="equiparSeleccion()" [disabled]="guardando()">
-                <fa-icon [icon]="iconos.varita" /> {{ guardando() ? 'Guardando...' : 'Usar accesorio' }}
+                <fa-icon [icon]="iconos.varita" /> {{ guardando() ? 'Guardando...' : 'Equipar cosmético' }}
               </button>
             }
           </footer>
@@ -157,7 +157,7 @@
 
     @if (cosmeticosTienda().length) {
       <section class="discover-section">
-        <header><div><span>Nuevos looks</span><h2>Accesorios que puedes desbloquear</h2></div><a routerLink="/alumno/tienda">Ver catálogo completo <fa-icon [icon]="iconos.flecha" /></a></header>
+        <header><div><span>Nuevos looks</span><h2>Cosméticos que puedes desbloquear</h2></div><a routerLink="/alumno/identidad/daems">Ver catálogo completo <fa-icon [icon]="iconos.flecha" /></a></header>
         <div class="discover-row">
           @for (item of cosmeticosTienda().slice(0, 4); track item.id) {
             <article>

@@ -14,6 +14,7 @@ import {
   faCoins,
   faCompass,
   faDragon,
+  faGamepad,
   faGaugeHigh,
   faGift,
   faHouse,
@@ -55,56 +56,10 @@ export const alumnoSidebarSections: PortalSidebarSection[] = [
     tono: 'indigo',
     items: [
       { id: 'alumno-panel', etiqueta: 'Inicio', ruta: '/alumno', icono: faHouse, exacto: true },
-      {
-        id: 'alumno-aprender',
-        etiqueta: 'Aprender',
-        icono: faBookOpenReader,
-        hijos: [
-          { id: 'alumno-aprender-mis-aprendizajes', etiqueta: 'Mis aprendizajes', ruta: '/alumno/aprender/mis-aprendizajes', icono: faBookOpenReader, exacto: true },
-          { id: 'alumno-aprender-explorar', etiqueta: 'Explorar', ruta: '/alumno/aprender/explorar', icono: faCompass },
-          { id: 'alumno-aprender-rutas', etiqueta: 'Rutas', ruta: '/alumno/aprender/rutas', icono: faRoute },
-          { id: 'alumno-aprender-misiones', etiqueta: 'Misiones', ruta: '/alumno/aprender/misiones', icono: faRocket },
-          { id: 'alumno-aprender-evaluaciones', etiqueta: 'Evaluaciones', ruta: '/alumno/aprender/evaluaciones', icono: faClipboardQuestion },
-        ],
-      },
-      {
-        id: 'alumno-crear',
-        etiqueta: 'Crear',
-        icono: faWandMagicSparkles,
-        hijos: [
-          { id: 'alumno-crear-proyectos', etiqueta: 'Mis proyectos', ruta: '/alumno/crear/proyectos', icono: faCode, exacto: true },
-          { id: 'alumno-crear-estudio', etiqueta: 'Estudio', ruta: '/alumno/crear/estudio', icono: faWandMagicSparkles },
-          { id: 'alumno-crear-herramientas', etiqueta: 'Herramientas', ruta: '/alumno/crear/herramientas', icono: faUsersGear },
-          { id: 'alumno-crear-portafolio', etiqueta: 'Portafolio', ruta: '/alumno/crear/portafolio', icono: faMedal },
-        ],
-      },
-      {
-        id: 'alumno-comunidad',
-        etiqueta: 'Comunidad',
-        icono: faPeopleGroup,
-        hijos: [
-          { id: 'alumno-comunidad-descubrir', etiqueta: 'Descubrir', ruta: '/alumno/comunidad/descubrir', icono: faPeopleGroup, exacto: true },
-          { id: 'alumno-comunidad-proyectos', etiqueta: 'Proyectos', ruta: '/alumno/comunidad/proyectos', icono: faCode },
-          { id: 'alumno-comunidad-eventos', etiqueta: 'Eventos', ruta: '/alumno/comunidad/eventos', icono: faBullhorn },
-        ],
-      },
-      {
-        id: 'alumno-agenda',
-        etiqueta: 'Agenda',
-        ruta: '/alumno/agenda',
-        icono: faCalendarDays,
-      },
-      {
-        id: 'alumno-identidad',
-        etiqueta: 'Identidad',
-        icono: faCircleUser,
-        hijos: [
-          { id: 'alumno-identidad-perfil', etiqueta: 'Perfil', ruta: '/alumno/identidad/perfil', icono: faCircleUser, exacto: true },
-          { id: 'alumno-identidad-progreso', etiqueta: 'Progreso y logros', ruta: '/alumno/identidad/progreso', icono: faTrophy },
-          { id: 'alumno-identidad-personalizacion', etiqueta: 'Personalización', ruta: '/alumno/identidad/personalizacion', icono: faDragon },
-          { id: 'alumno-identidad-daems', etiqueta: 'Daems y tienda', ruta: '/alumno/identidad/daems', icono: faGift },
-        ],
-      },
+      { id: 'alumno-aprender', etiqueta: 'Aprender', ruta: '/alumno/aprender', icono: faBookOpenReader },
+      { id: 'alumno-arena', etiqueta: 'Arena', ruta: '/alumno/arena', icono: faGamepad },
+      { id: 'alumno-agenda', etiqueta: 'Agenda', ruta: '/alumno/agenda', icono: faCalendarDays },
+      { id: 'alumno-identidad', etiqueta: 'Identidad', ruta: '/alumno/identidad', icono: faCircleUser },
     ],
   },
 ];

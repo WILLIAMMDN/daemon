@@ -168,15 +168,7 @@ export class Api {
       relacionados.add('ranking');
     }
     if (scope === 'alumno') {
-      relacionados.add('comunidad');
-    }
-    const cambiaProyecto = ['cuentos', 'ia-modelos', 'neuro-maze'].includes(scope)
-      || rutaLimpia === '/chatbot/bot'
-      || rutaLimpia === '/chatbot/cerebro';
-    if (cambiaProyecto) {
-      // El hub de Proyectos agrega estos artefactos. Se invalida únicamente
-      // ese agregado para conservar calientes el panel y los demás módulos.
-      this.cacheGet.delete(this.url('/alumno/proyectos'));
+      relacionados.add('identidad');
     }
 
     for (const key of this.cacheGet.keys()) {

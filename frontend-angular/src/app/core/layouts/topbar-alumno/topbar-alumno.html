@@ -32,7 +32,7 @@
     </div>
 
     <div class="topbar-right">
-      <a id="topbar-tokens" routerLink="/alumno/tienda" class="topbar-card token-card" aria-label="Abrir tienda">
+      <a id="topbar-tokens" routerLink="/alumno/identidad/daems" class="topbar-card token-card" aria-label="Abrir tienda">
         <span class="token-glyph"><app-moneda-daemon [size]="28" titulo="Daems" /></span>
         <span class="token-copy">
           <small>SALDO DAEMS</small>
@@ -118,14 +118,14 @@
     <li nz-menu-divider></li>
     @if (sesion.usuario()?.email_verificado === false) {
       <li>
-        <a nz-menu-item routerLink="/alumno/perfil/editar" class="profile-popover-warning">
+        <a nz-menu-item routerLink="/alumno/identidad/perfil/editar" class="profile-popover-warning">
           <fa-icon [icon]="iconos.alerta" /> Confirma tu correo electrónico
         </a>
       </li>
       <li nz-menu-divider></li>
     }
     <li>
-      <a nz-menu-item routerLink="/alumno/perfil">
+      <a nz-menu-item routerLink="/alumno/identidad/perfil">
         <fa-icon [icon]="iconos.perfil" /> Mi perfil de estudiante
       </a>
     </li>

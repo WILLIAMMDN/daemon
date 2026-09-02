@@ -42,9 +42,6 @@
 }
 
 <app-arc-section titulo="Logros" descripcion="Reconocimientos que ya obtuviste en DAEMON Pulse.">
-  <a acciones nz-button nzType="default" nzSize="small" routerLink="../certificado">
-    Certificado y carnet
-  </a>
 
   @if (pulse.achievementsStatus() === 'loading') {
     <nz-skeleton [nzActive]="true" [nzParagraph]="{ rows: 3 }" [nzTitle]="false" />

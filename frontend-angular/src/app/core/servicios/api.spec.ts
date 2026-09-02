@@ -123,19 +123,15 @@ describe('Api Service', () => {
     httpMock.expectOne(`${environment.apiUrl}/ranking`).flush({ alumnos: [] });
   });
 
-  it('should invalidate the projects hub after saving a story', () => {
-    service.get('/alumno/proyectos').subscribe();
-    httpMock.expectOne(`${environment.apiUrl}/alumno/proyectos`).flush({ categorias: [] });
-    service.get('/alumno/panel').subscribe();
-    httpMock.expectOne(`${environment.apiUrl}/alumno/panel`).flush({ experiencia: 100 });
+  it('should invalidate identity cache after student mutation', () => {
+    service.get('/alumno/identidad').subscribe();
+    httpMock.expectOne(`${environment.apiUrl}/alumno/identidad`).flush({ perfil: {} });
 
-    service.post('/cuentos', { titulo: 'Mi historia' }).subscribe();
-    httpMock.expectOne(`${environment.apiUrl}/cuentos`).flush({ id: 7 });
+    service.post('/alumno/perfil', { biografia: 'Nueva bio' }).subscribe();
+    httpMock.expectOne(`${environment.apiUrl}/alumno/perfil`).flush({ ok: true });
 
-    service.get('/alumno/proyectos').subscribe();
-    httpMock.expectOne(`${environment.apiUrl}/alumno/proyectos`).flush({ categorias: [{ slug: 'cuentos' }] });
-    service.get('/alumno/panel').subscribe();
-    httpMock.expectNone(`${environment.apiUrl}/alumno/panel`);
+    service.get('/alumno/identidad').subscribe();
+    httpMock.expectOne(`${environment.apiUrl}/alumno/identidad`).flush({ perfil: { biografia: 'Nueva bio' } });
   });
 
   it('should invalidate the companion inventory after a store purchase', () => {
