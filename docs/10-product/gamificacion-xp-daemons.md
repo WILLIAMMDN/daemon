@@ -26,6 +26,53 @@ DAEMON usa dos valores separados en `usuarios`:
 - `tokens`: saldo de DAEMONS. Se obtiene con recompensas y se descuenta en la
   tienda. No participa en el ranking ni en el calculo de nivel.
 
+## DAEMON Pulse V1
+
+Pulse es la capa de progresion del producto autenticado DAEMON ARC. Consume
+unicamente eventos academicos server-side ya validados por Learning Core:
+
+```text
+Learning Core -> eventos_dominio -> politica Pulse -> movimientos_economia
+              -> XP / Daems / racha / logro -> snapshot de progresion
+```
+
+`movimientos_economia` sigue siendo el ledger canonico compartido para XP y
+Daems; `usuarios.experiencia` y `usuarios.tokens` siguen siendo proyecciones de
+lectura compatibles con ranking, tienda y UI existente. Cada movimiento Pulse
+referencia el evento de dominio y la politica que lo genero. Las restricciones
+unicas por evento/politica y clave de repeticion son la barrera de base de datos
+contra reintentos, workers duplicados y farming.
+
+No se sembraron politicas ni logros comerciales. Learning Core funciona aunque
+no exista una politica. El consumidor `pulse:process-outbox` es separado y
+reintentable, por lo que una falla de Pulse no revierte una finalizacion
+academica.
+
+Interpretacion canonica V1 de reconocimientos:
+
+- `insignias` contiene tanto insignias manuales legacy como definiciones de
+  logro Pulse cuando `tipo_criterio` no es nulo;
+- `insignias_otorgadas` contiene los otorgamientos; los automaticos Pulse son
+  inmutables e idempotentes;
+- no existe un segundo dominio Achievement/Badge en paralelo.
+
+Invariantes de separacion:
+
+- XP no es Mastery.
+- Daems no es Mastery.
+- el nivel Pulse es progresion de identidad, no dificultad academica ni
+  audiencia KIDS/TEENS;
+- Learning Core conserva la autoridad de prerequisitos y desbloqueos
+  academicos; Pulse solo puede otorgar recompensas no academicas.
+
+Contratos de lectura del estudiante:
+
+```text
+GET /api/v1/alumno/pulse
+GET /api/v1/alumno/pulse/transacciones
+GET /api/v1/alumno/pulse/logros
+```
+
 ## Recompensas duales
 
 `App\Services\Gamificacion\GamificacionService::otorgarRecompensa()` es el

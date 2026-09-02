@@ -19,3 +19,7 @@ Schedule::command('queue:prune-failed --hours=168')
 Schedule::command('daemon:aplicar-retencion --confirm')
     ->weeklyOn(1, '04:00')
     ->withoutOverlapping();
+
+Schedule::command('pulse:process-outbox --limit=100')
+    ->everyMinute()
+    ->withoutOverlapping();

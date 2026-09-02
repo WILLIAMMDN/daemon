@@ -11,7 +11,8 @@ class MovimientoEconomia extends ModeloBase
     const UPDATED_AT = null;
 
     protected $fillable = [
-        'uuid', 'id_usuario', 'id_actor', 'moneda', 'variacion', 'saldo_anterior', 'saldo_resultante',
+        'uuid', 'id_usuario', 'id_actor', 'id_evento_dominio', 'id_politica_pulse', 'id_matricula',
+        'moneda', 'tipo_transaccion', 'variacion', 'saldo_anterior', 'saldo_resultante',
         'origen_tipo', 'origen_id', 'clave_idempotencia', 'motivo', 'metadatos',
     ];
 
