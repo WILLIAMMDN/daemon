@@ -5,6 +5,8 @@ import { provideRouter, Router } from '@angular/router';
 import { NzDropdownDirective } from 'ng-zorro-antd/dropdown';
 import { Activos } from '../../servicios/activos';
 import { NotificacionesService } from '../../servicios/notificaciones.service';
+import { PulseSnapshot } from '../../modelos/pulse';
+import { PulseService } from '../../servicios/pulse.service';
 import { Sesion } from '../../servicios/sesion';
 import { TopbarAlumno } from './topbar-alumno';
 
@@ -24,21 +26,57 @@ describe('TopbarAlumno', () => {
   });
   const notificaciones = signal([]);
   const noLeidas = signal(2);
+  const pulseSnapshot: PulseSnapshot = {
+    level: { current: 4, maximum: 100, xpWithinLevel: 70, xpRequiredForNextLevel: 400, xpToNextLevel: 330, progressPercent: 18 },
+    xpTotal: 670,
+    daemsBalance: 45,
+    streak: { current: 3, longest: 8, lastQualifyingDate: null, timezone: 'America/Lima' },
+    recentAchievements: [],
+    recentTransactions: [],
+  };
+  const snapshot = signal<PulseSnapshot | null>(pulseSnapshot);
+  const snapshotStatus = signal<'idle' | 'loading' | 'ready' | 'error'>('ready');
 
   beforeEach(async () => {
     marcarTodasComoLeidas.mockClear();
+    snapshotStatus.set('ready');
+    snapshot.set(pulseSnapshot);
     await TestBed.configureTestingModule({
       imports: [TopbarAlumno],
       providers: [
         provideRouter([]),
         { provide: Sesion, useValue: { usuario } },
         { provide: Activos, useValue: { url: () => '' } },
+        { provide: PulseService, useValue: { snapshot, snapshotStatus } },
         {
           provide: NotificacionesService,
           useValue: { notificaciones, noLeidas, marcarTodasComoLeidas },
         },
       ],
     }).compileComponents();
+  });
+
+  it('muestra nivel, XP restante y Daems desde Pulse', () => {
+    const fixture = TestBed.createComponent(TopbarAlumno);
+    fixture.detectChanges();
+    const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
+
+    expect(text).toContain('NIVEL 4');
+    expect(text).toContain('330 XP para subir');
+    expect(text).toContain('45');
+  });
+
+  it('no presenta ceros inventados mientras Pulse carga o falla', () => {
+    snapshot.set(null);
+    snapshotStatus.set('loading');
+    const fixture = TestBed.createComponent(TopbarAlumno);
+    fixture.detectChanges();
+    expect((fixture.nativeElement as HTMLElement).textContent).toContain('Cargando progreso');
+    expect((fixture.nativeElement as HTMLElement).querySelector('.token-card strong')?.textContent?.trim()).toBe('—');
+
+    snapshotStatus.set('error');
+    fixture.detectChanges();
+    expect((fixture.nativeElement as HTMLElement).textContent).toContain('Progreso no disponible');
   });
 
   it('identifica y describe por separado los overlays de notificaciones y perfil', () => {
