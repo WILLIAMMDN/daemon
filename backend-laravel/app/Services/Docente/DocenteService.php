@@ -239,6 +239,7 @@ class DocenteService
 
     public function eliminarInsignia(Insignia $insignia): void
     {
+        abort_if($insignia->tipo_criterio !== null, 409, 'Los logros Pulse se desactivan; no se eliminan desde insignias legacy.');
         DB::transaction(function () use ($insignia) {
             DB::table('insignias_otorgadas')->where('id_insignia', $insignia->id)->delete();
             $insignia->delete();
@@ -248,6 +249,8 @@ class DocenteService
     public function asignarInsignia(Usuario $docente, array $datos): void
     {
         $this->alcance->alumnoGestionable($docente, (int) $datos['id_alumno']);
+        $insignia = Insignia::findOrFail((int) $datos['id_insignia']);
+        abort_if($insignia->tipo_criterio !== null, 409, 'Los logros Pulse solo se otorgan por eventos server-side.');
 
         $clave = [
             'id_alumno' => $datos['id_alumno'],
