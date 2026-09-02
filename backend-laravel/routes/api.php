@@ -27,6 +27,8 @@ use App\Http\Controllers\Api\V1\MisionController;
 use App\Http\Controllers\Api\V1\NotificacionController;
 use App\Http\Controllers\Api\V1\PrivacidadController;
 use App\Http\Controllers\Api\V1\ProyectoController;
+use App\Http\Controllers\Api\V1\PulseAdminController;
+use App\Http\Controllers\Api\V1\PulseController;
 use App\Http\Controllers\Api\V1\RankingController;
 use App\Http\Controllers\Api\V1\SaludController;
 use App\Http\Controllers\Api\V1\SeguridadComunidadController;
@@ -89,6 +91,9 @@ Route::prefix('v1')->group(function (): void {
             Route::get('/alumno/home-context', [ArcStudentContextController::class, 'home']);
             Route::get('/alumno/learning-context', [ArcStudentContextController::class, 'learning']);
             Route::get('/alumno/agenda', [ArcStudentContextController::class, 'agenda']);
+            Route::get('/alumno/pulse', [PulseController::class, 'show']);
+            Route::get('/alumno/pulse/transacciones', [PulseController::class, 'transacciones']);
+            Route::get('/alumno/pulse/logros', [PulseController::class, 'logros']);
             Route::get('/alumno/rutas', [LearningCoreStudentController::class, 'rutas']);
             Route::get('/alumno/rutas/{ruta}', [LearningCoreStudentController::class, 'ruta']);
             Route::get('/alumno/aprender/mapa', [LearningCoreStudentController::class, 'mapa']);
@@ -230,6 +235,15 @@ Route::prefix('v1')->group(function (): void {
                 Route::put('/{usuario}', [AlumnoAdminController::class, 'update']);
                 Route::delete('/{usuario}', [AlumnoAdminController::class, 'destroy']);
                 Route::post('/{usuario}/resetear-clave', [AlumnoAdminController::class, 'resetearClave']);
+            });
+
+            Route::middleware('role:admin')->prefix('pulse/admin')->group(function (): void {
+                Route::get('/politicas', [PulseAdminController::class, 'politicas']);
+                Route::post('/politicas', [PulseAdminController::class, 'crearPolitica'])->middleware('throttle:20,1');
+                Route::put('/politicas/{politica}', [PulseAdminController::class, 'actualizarPolitica'])->middleware('throttle:20,1');
+                Route::get('/logros', [PulseAdminController::class, 'logros']);
+                Route::post('/logros', [PulseAdminController::class, 'crearLogro'])->middleware('throttle:20,1');
+                Route::put('/logros/{logro}', [PulseAdminController::class, 'actualizarLogro'])->middleware('throttle:20,1');
             });
 
             Route::middleware('role:admin')->prefix('ia-modelos/admin')->group(function (): void {
