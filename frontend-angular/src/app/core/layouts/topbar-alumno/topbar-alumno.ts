@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, Output, EventEmitter, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, Output, EventEmitter, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faBell, faChevronDown, faHouse, faRightFromBracket, faTriangleExclamation, faUser } from '@fortawesome/free-solid-svg-icons';
@@ -11,6 +11,7 @@ import { MonedaDaemon } from '../../../shared/componentes/moneda-daemon/moneda-d
 import { Activos } from '../../servicios/activos';
 import { Sesion } from '../../servicios/sesion';
 import { NotificacionesService } from '../../servicios/notificaciones.service';
+import { PulseService } from '../../servicios/pulse.service';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -23,6 +24,7 @@ export class TopbarAlumno {
   @Output() abrirMenuMovil = new EventEmitter<void>();
   @Output() logout = new EventEmitter<void>();
   public readonly sesion = inject(Sesion);
+  readonly pulse = inject(PulseService);
   private readonly activos = inject(Activos);
   private readonly notificacionesService = inject(NotificacionesService);
   private readonly router = inject(Router);
@@ -45,11 +47,6 @@ export class TopbarAlumno {
 
   notificaciones = this.notificacionesService.notificaciones;
   notificacionesNoLeidas = this.notificacionesService.noLeidas;
-
-  readonly nivelGamificacion = computed(() => this.sesion.usuario()?.nivel_gamificacion ?? 1);
-  readonly xpRestante = computed(() => this.sesion.usuario()?.progreso_nivel?.experiencia_restante ?? 100);
-  readonly progresoNivel = computed(() => this.sesion.usuario()?.progreso_nivel?.progreso_porcentaje ?? 0);
-  readonly perfilTokens = computed(() => this.sesion.usuario()?.tokens ?? 0);
 
   avatarUrl(): string {
     return this.activos.url(this.sesion.usuario()?.avatar);

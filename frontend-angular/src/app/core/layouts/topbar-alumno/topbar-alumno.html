@@ -8,12 +8,17 @@
       <a routerLink="/alumno" fragment="progreso-nivel" class="topbar-card level-card" aria-label="Ver progreso hacia el siguiente nivel">
         <div class="level-hexagon">
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="hex-bg"><path d="M12 2L21 7V17L12 22L3 17V7L12 2Z" stroke="currentColor" stroke-width="2"/></svg>
-          <span>{{ nivelGamificacion() }}</span>
+          <span>{{ pulse.snapshot()?.level?.current ?? '—' }}</span>
         </div>
         <div class="level-copy">
-          <small>NIVEL {{ nivelGamificacion() }}</small>
-          <strong>{{ xpRestante() }} XP para subir</strong>
-          <div class="level-mini-bar"><div class="fill" [style.width]="progresoNivel() + '%'"></div></div>
+          @if (pulse.snapshot(); as pulseData) {
+            <small>NIVEL {{ pulseData.level.current }}</small>
+            <strong>{{ pulseData.level.xpToNextLevel }} XP para subir</strong>
+            <div class="level-mini-bar"><div class="fill" [style.width]="pulseData.level.progressPercent + '%'"></div></div>
+          } @else {
+            <small>DAEMON PULSE</small>
+            <strong>{{ pulse.snapshotStatus() === 'error' ? 'Progreso no disponible' : 'Cargando progreso…' }}</strong>
+          }
         </div>
       </a>
 
@@ -31,7 +36,7 @@
         <span class="token-glyph"><app-moneda-daemon [size]="28" titulo="Daems" /></span>
         <span class="token-copy">
           <small>SALDO DAEMS</small>
-          <strong>{{ perfilTokens() || 0 }}</strong>
+          <strong>{{ pulse.snapshot()?.daemsBalance ?? '—' }}</strong>
         </span>
       </a>
 

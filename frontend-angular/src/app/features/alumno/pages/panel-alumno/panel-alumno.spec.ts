@@ -5,6 +5,9 @@ import { of, throwError } from 'rxjs';
 import { ApiError } from '../../../../core/servicios/api';
 import { Activos } from '../../../../core/servicios/activos';
 import { Sesion } from '../../../../core/servicios/sesion';
+import { PulseSnapshot } from '../../../../core/modelos/pulse';
+import { PulseService } from '../../../../core/servicios/pulse.service';
+import { Tienda } from '../../../tienda/services/tienda';
 import { PanelAlumnoDto } from '../../models/panel-alumno.model';
 import { Alumno } from '../../services/alumno';
 import { PanelAlumno } from './panel-alumno';
@@ -64,6 +67,24 @@ const panel: PanelAlumnoDto = {
   },
 };
 
+const pulseSnapshot: PulseSnapshot = {
+  level: { current: 5, maximum: 100, xpWithinLevel: 120, xpRequiredForNextLevel: 500, xpToNextLevel: 380, progressPercent: 24 },
+  xpTotal: 1120,
+  daemsBalance: 80,
+  streak: { current: 4, longest: 9, lastQualifyingDate: '2026-07-15', timezone: 'America/Lima' },
+  recentAchievements: [],
+  recentTransactions: [],
+};
+
+const pulseMock = {
+  snapshot: signal<PulseSnapshot | null>(pulseSnapshot),
+  snapshotStatus: signal<'idle' | 'loading' | 'ready' | 'error'>('ready'),
+  achievements: signal([{ id: 1 }, { id: 2 }, { id: 3 }]),
+  achievementsStatus: signal<'idle' | 'loading' | 'ready' | 'error'>('ready'),
+  ensureSnapshot: jest.fn(),
+  ensureAchievements: jest.fn(),
+};
+
 describe('PanelAlumno', () => {
   const panelMock = jest.fn();
   const sesionMock = {
@@ -76,6 +97,9 @@ describe('PanelAlumno', () => {
     panelMock.mockReset();
     sesionMock.actualizarUsuario.mockReset();
     panelMock.mockReturnValue(of(panel));
+    pulseMock.snapshot.set(pulseSnapshot);
+    pulseMock.snapshotStatus.set('ready');
+    pulseMock.achievementsStatus.set('ready');
 
     await TestBed.configureTestingModule({
       imports: [PanelAlumno],
@@ -83,7 +107,9 @@ describe('PanelAlumno', () => {
         provideRouter([]),
         { provide: Alumno, useValue: { panel: panelMock, homeContext: jest.fn().mockReturnValue(of(null)) } },
         { provide: Sesion, useValue: sesionMock },
+        { provide: PulseService, useValue: pulseMock },
         { provide: Activos, useValue: { url: (ruta: string | null | undefined) => ruta ?? '' } },
+        { provide: Tienda, useValue: { premios: jest.fn().mockReturnValue(of({ saldo: 80, premios: [] })) } },
       ],
     }).compileComponents();
   });
@@ -101,6 +127,10 @@ describe('PanelAlumno', () => {
     expect(tarjetasIndicadores.some((tarjeta) => tarjeta.textContent?.includes('Tu aula'))).toBe(true);
     expect(elemento.querySelectorAll('[aria-label="Actividad real de los últimos siete días"] li')).toHaveLength(7);
     expect(elemento.querySelector('[aria-label="Prioridades de aprendizaje"] h3')?.textContent?.trim()).toBe('Privacidad digital');
+    expect(elemento.textContent).toContain('Nivel 5');
+    expect(elemento.textContent).toContain('4');
+    expect(elemento.textContent).toContain('Mejor racha: 9 días');
+    expect(elemento.querySelector('.metric--logros .metric-value')?.textContent?.trim()).toBe('3');
   });
 
   it('conserva el ultimo panel cuando falla una actualizacion', () => {
@@ -140,7 +170,9 @@ describe('PanelAlumno · TEENS Creator', () => {
           },
         },
         { provide: Sesion, useValue: { usuario: signal(panelTeens.usuario), actualizarUsuario: jest.fn() } },
+        { provide: PulseService, useValue: pulseMock },
         { provide: Activos, useValue: { url: (ruta: string | null | undefined) => ruta ?? '' } },
+        { provide: Tienda, useValue: { premios: jest.fn().mockReturnValue(of({ saldo: 80, premios: [] })) } },
       ],
     }).compileComponents();
   });

@@ -7,8 +7,8 @@ import { NzProgressModule } from 'ng-zorro-antd/progress';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { ArcSection } from '../../../../../shared/componentes/arc-section/arc-section';
 import { Sesion } from '../../../../../core/servicios/sesion';
+import { PulseService } from '../../../../../core/servicios/pulse.service';
 import { Aprendizaje } from '../../../services/aprendizaje';
-import { IdentidadAlumno } from '../../services/identidad';
 
 /**
  * Resumen de identidad: quién eres y en qué estado están las tres monedas del
@@ -31,7 +31,7 @@ import { IdentidadAlumno } from '../../services/identidad';
   styleUrl: './resumen-identidad.scss',
 })
 export class ResumenIdentidad {
-  readonly identidad = inject(IdentidadAlumno);
+  readonly pulse = inject(PulseService);
   readonly aprendizaje = inject(Aprendizaje);
   private readonly sesion = inject(Sesion);
 
@@ -47,7 +47,8 @@ export class ResumenIdentidad {
   });
 
   constructor() {
-    this.identidad.asegurarCargado();
+    this.pulse.ensureSnapshot();
+    this.pulse.ensureAchievements();
     this.aprendizaje.asegurarCargado();
   }
 }

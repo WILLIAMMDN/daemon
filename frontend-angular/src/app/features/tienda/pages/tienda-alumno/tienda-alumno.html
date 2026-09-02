@@ -4,11 +4,11 @@
       <span class="page-kicker"><fa-icon [icon]="iconos.brillo" /> DAEMON Rewards</span>
       <h1>Convierte tu esfuerzo<br><span>en algo memorable.</span></h1>
       <p>Gasta DAEMONS con tranquilidad: tu XP, nivel y posición en el ranking nunca bajan.</p>
-      <div class="hero-actions"><a nz-button nzType="primary" class="daemon-btn" routerLink="/alumno/identidad/daems/canjes">Ver mis canjes <fa-icon [icon]="iconos.flecha" /></a><a nz-button class="wardrobe-button" routerLink="/alumno/identidad/personalizacion"><fa-icon [icon]="iconos.criatura" /> Mi criatura</a><button nz-button type="button" class="refresh-button" (click)="cargar()" [disabled]="cargando()"><fa-icon [icon]="iconos.actualizar" /> Actualizar</button></div>
+      <div class="hero-actions"><a nz-button nzType="primary" class="daemon-btn" routerLink="/alumno/identidad/daems/canjes">Ver mis canjes <fa-icon [icon]="iconos.flecha" /></a><a nz-button class="wardrobe-button" routerLink="/alumno/identidad/personalizacion"><fa-icon [icon]="iconos.criatura" /> Mi criatura</a><button nz-button type="button" class="refresh-button" (click)="actualizar()" [disabled]="cargando()"><fa-icon [icon]="iconos.actualizar" /> Actualizar</button></div>
     </div>
     <div class="balance-vault">
       <span>Saldo disponible</span>
-      <div><app-moneda-daemon [size]="42" titulo="DAEMONS" /><strong>{{ saldo() }}</strong></div>
+      <div><app-moneda-daemon [size]="42" titulo="DAEMONS" /><strong>{{ saldo() ?? '—' }}</strong></div>
       <small><fa-icon [icon]="iconos.escudo" /> Tu progreso está protegido</small>
     </div>
   </header>
@@ -47,7 +47,7 @@
             <a nz-button class="owned-button" routerLink="/alumno/identidad/personalizacion"><fa-icon [icon]="iconos.check" /> Ya es tuyo · Abrir vestidor</a>
           } @else {
             <button nz-button nzType="primary" class="daemon-btn redeem-button" type="button" (click)="canjear(premio.id)" [nzLoading]="procesando() === premio.id" [disabled]="procesando() === premio.id || !puedeCanjear(premio)">
-              @if (premio.stock < 1) { Agotado } @else if (saldo() < premio.precio) { <fa-icon [icon]="iconos.candado" /> Te faltan {{ premio.precio - saldo() }} } @else if (premio.tipo_entrega === 'cosmetico') { Desbloquear look <fa-icon [icon]="iconos.flecha" /> } @else { Canjear ahora <fa-icon [icon]="iconos.flecha" /> }
+              @if (premio.stock < 1) { Agotado } @else if (saldo() === null) { Saldo no disponible } @else if (saldo()! < premio.precio) { <fa-icon [icon]="iconos.candado" /> Te faltan {{ premio.precio - saldo()! }} } @else if (premio.tipo_entrega === 'cosmetico') { Desbloquear look <fa-icon [icon]="iconos.flecha" /> } @else { Canjear ahora <fa-icon [icon]="iconos.flecha" /> }
             </button>
           }
         </nz-card>
@@ -56,4 +56,44 @@
   } @else {
     <section class="store-state"><app-estado-vacio titulo="Nuevos premios en camino" descripcion="La tienda se está preparando. Conserva tus DAEMONS para el próximo lanzamiento." /></section>
   }
+
+  <section class="pulse-history" aria-labelledby="pulse-history-title">
+    <header class="catalog-heading">
+      <div><span>DAEMON Pulse</span><h2 id="pulse-history-title">Actividad de XP y Daems</h2></div>
+      @if (pulse.transactions(); as page) { <small>{{ page.total }} movimientos</small> }
+    </header>
+
+    @if (pulse.transactionsStatus() === 'loading') {
+      <nz-skeleton [nzActive]="true" [nzTitle]="false" [nzParagraph]="{ rows: 3 }" />
+    } @else if (pulse.transactionsError()) {
+      <nz-alert
+        nzType="warning"
+        nzShowIcon
+        nzMessage="No pudimos cargar tu actividad"
+        nzDescription="Tu saldo y tus movimientos siguen protegidos."
+      />
+    } @else if (pulse.transactions()?.items?.length) {
+      <nz-list class="transaction-list" nzBordered nzSize="small">
+        @for (transaction of pulse.transactions()!.items; track transaction.id) {
+          <nz-list-item>
+            <div class="transaction-row">
+              <div>
+                <strong>{{ transaction.reason || 'Movimiento de ' + etiquetaMoneda(transaction.currency) }}</strong>
+                <small>{{ transaction.occurredAt | date: 'd MMM y, h:mm a' }}</small>
+              </div>
+              <span [class.transaction-row__amount--spend]="transaction.signedAmount < 0">
+                {{ transaction.signedAmount > 0 ? '+' : '' }}{{ transaction.signedAmount }} {{ etiquetaMoneda(transaction.currency) }}
+              </span>
+            </div>
+          </nz-list-item>
+        }
+      </nz-list>
+    } @else {
+      <app-estado-vacio
+        tamano="compact"
+        titulo="Aún no hay movimientos"
+        descripcion="Las recompensas y canjes confirmados por Pulse aparecerán aquí."
+      />
+    }
+  </section>
 </section>

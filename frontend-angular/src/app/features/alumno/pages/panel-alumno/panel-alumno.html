@@ -14,6 +14,7 @@
     [class.student-dashboard--teens]="esTeens()"
     aria-labelledby="dashboard-title"
   >
+    @let progresoPulse = progreso();
     @if (estado(); as estadoActual) {
       @if (estadoActual.kind === 'ready' && estadoActual.stale) {
         <aside class="offline-notice" role="status" aria-live="polite">
@@ -91,29 +92,25 @@
               <p class="mission-meta">{{ accion.meta }}</p>
             </div>
             <p class="mission-desc">{{ accion.descripcion }}</p>
-            <div
-              class="mission-progress"
-              role="progressbar"
-              aria-label="Progreso de nivel"
-              aria-valuemin="0"
-              aria-valuemax="100"
-              [attr.aria-valuenow]="progreso(datos).progreso_porcentaje"
-              [attr.aria-valuetext]="progreso(datos).progreso_porcentaje + '%; nivel ' + progreso(datos).nivel"
-            >
-              <span class="mission-progress__label">
-                <span>Nivel {{ progreso(datos).nivel }}</span>
-                <span>{{ progreso(datos).progreso_porcentaje }}%</span>
-              </span>
-              <nz-progress aria-hidden="true" [nzPercent]="progreso(datos).progreso_porcentaje" [nzShowInfo]="false" [nzStrokeWidth]="6" nzStrokeColor="var(--daemon-student-progress)" />
-            </div>
+            @if (progresoPulse) {
+              <div
+                class="mission-progress"
+                role="progressbar"
+                aria-label="Progreso de nivel"
+                aria-valuemin="0"
+                aria-valuemax="100"
+                [attr.aria-valuenow]="progresoPulse.progressPercent"
+                [attr.aria-valuetext]="progresoPulse.progressPercent + '%; nivel ' + progresoPulse.current"
+              >
+                <span class="mission-progress__label">
+                  <span>Nivel {{ progresoPulse.current }}</span>
+                  <span>{{ progresoPulse.progressPercent }}%</span>
+                </span>
+                <nz-progress aria-hidden="true" [nzPercent]="progresoPulse.progressPercent" [nzShowInfo]="false" [nzStrokeWidth]="6" nzStrokeColor="var(--daemon-student-progress)" />
+              </div>
+            }
           </div>
           <div class="mission-foot">
-            <span class="mission-foot__rewards">
-              @if (accion.recompensaXp) {
-                <span class="chip chip--xp"><fa-icon [icon]="iconos.energia" /> +{{ accion.recompensaXp }} XP</span>
-                <span class="chip chip--daemons"><app-moneda-daemon [size]="14" /> +{{ accion.recompensaTokens }} DAEMONS</span>
-              }
-            </span>
             <a class="dashboard-cta" [routerLink]="accion.ruta">
               <fa-icon [icon]="iconos.play" /> {{ accion.ctaTexto }}
             </a>
@@ -127,27 +124,23 @@
               <p class="mission-desc">{{ accion.descripcion }}</p>
             </div>
             <div class="mission-cta">
-              <div
-                class="level-context"
-                role="progressbar"
-                aria-label="Progreso de nivel"
-                aria-valuemin="0"
-                aria-valuemax="100"
-                [attr.aria-valuenow]="progreso(datos).progreso_porcentaje"
-                [attr.aria-valuetext]="progreso(datos).progreso_porcentaje + '%; nivel ' + progreso(datos).nivel"
-              >
-                <span class="level-context__label">
-                  <span>Nivel {{ progreso(datos).nivel }}</span>
-                  <span>{{ progreso(datos).progreso_porcentaje }}%</span>
-                </span>
-                <nz-progress aria-hidden="true" [nzPercent]="progreso(datos).progreso_porcentaje" [nzShowInfo]="false" [nzStrokeWidth]="6" nzStrokeColor="var(--daemon-student-progress)" />
-              </div>
-              <div class="mission-rewards">
-                @if (accion.recompensaXp) {
-                  <span class="chip chip--xp"><fa-icon [icon]="iconos.energia" /> +{{ accion.recompensaXp }} XP</span>
-                  <span class="chip chip--daemons"><app-moneda-daemon [size]="14" /> +{{ accion.recompensaTokens }} DAEMONS</span>
-                }
-              </div>
+              @if (progresoPulse) {
+                <div
+                  class="level-context"
+                  role="progressbar"
+                  aria-label="Progreso de nivel"
+                  aria-valuemin="0"
+                  aria-valuemax="100"
+                  [attr.aria-valuenow]="progresoPulse.progressPercent"
+                  [attr.aria-valuetext]="progresoPulse.progressPercent + '%; nivel ' + progresoPulse.current"
+                >
+                  <span class="level-context__label">
+                    <span>Nivel {{ progresoPulse.current }}</span>
+                    <span>{{ progresoPulse.progressPercent }}%</span>
+                  </span>
+                  <nz-progress aria-hidden="true" [nzPercent]="progresoPulse.progressPercent" [nzShowInfo]="false" [nzStrokeWidth]="6" nzStrokeColor="var(--daemon-student-progress)" />
+                </div>
+              }
               <a class="dashboard-cta" [routerLink]="accion.ruta">
                 <fa-icon [icon]="iconos.play" /> {{ accion.ctaTexto }}
               </a>
@@ -181,13 +174,13 @@
       </article>
       <article class="metric metric--racha">
         <span class="metric-icon" aria-hidden="true"><fa-icon [icon]="iconos.fuego" /></span>
-        <strong class="metric-value">{{ datos.racha }}</strong>
+        <strong class="metric-value">{{ rachaActual() ?? '—' }}</strong>
         <span class="metric-label">Racha</span>
         <small class="metric-sub">días seguidos</small>
       </article>
       <article class="metric metric--logros">
         <span class="metric-icon" aria-hidden="true"><fa-icon [icon]="iconos.medalla" /></span>
-        <strong class="metric-value">{{ datos.insignias }}</strong>
+        <strong class="metric-value">{{ pulse.achievementsStatus() === 'ready' ? logroCount() : '—' }}</strong>
         <span class="metric-label">Insignias</span>
         <small class="metric-sub">en tu colección</small>
       </article>
@@ -206,29 +199,33 @@
           <span class="eyebrow">NÚCLEO DAEMON</span>
           <h2 class="section-title">Próximo nivel</h2>
         </div>
-        <strong class="panel-percent">{{ progreso(datos).progreso_porcentaje }}%</strong>
+        <strong class="panel-percent">{{ progresoPulse ? progresoPulse.progressPercent + '%' : '—' }}</strong>
       </header>
-      @if (esKids()) {
-        <div class="level-badge" aria-hidden="true">{{ progreso(datos).nivel }}</div>
-        <div class="level-headline">
-          <strong>Nivel {{ progreso(datos).nivel }}</strong>
-          <span>{{ progreso(datos).experiencia_restante }} XP para el siguiente nivel</span>
+      @if (progresoPulse) {
+        @if (esKids()) {
+          <div class="level-badge" aria-hidden="true">{{ progresoPulse.current }}</div>
+          <div class="level-headline">
+            <strong>Nivel {{ progresoPulse.current }}</strong>
+            <span>{{ progresoPulse.xpToNextLevel }} XP para el siguiente nivel</span>
+          </div>
+        }
+        <div
+          class="level-bar"
+          role="progressbar"
+          aria-label="Experiencia hacia el siguiente nivel"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          [attr.aria-valuenow]="progresoPulse.progressPercent"
+        >
+          <nz-progress aria-hidden="true" [nzPercent]="progresoPulse.progressPercent" [nzShowInfo]="false" [nzStrokeWidth]="esKids() ? 10 : 8" nzStrokeColor="var(--daemon-student-progress)" />
         </div>
+        <div class="xp-row">
+          <span>{{ progresoPulse.xpWithinLevel }} XP actuales</span>
+          <span>{{ progresoPulse.xpRequiredForNextLevel }} XP meta</span>
+        </div>
+      } @else {
+        <p class="level-note">{{ pulse.snapshotStatus() === 'error' ? 'No pudimos cargar tu progreso de Pulse.' : 'Cargando tu progreso de Pulse…' }}</p>
       }
-      <div
-        class="level-bar"
-        role="progressbar"
-        aria-label="Experiencia hacia el siguiente nivel"
-        aria-valuemin="0"
-        aria-valuemax="100"
-        [attr.aria-valuenow]="progreso(datos).progreso_porcentaje"
-      >
-        <nz-progress aria-hidden="true" [nzPercent]="progreso(datos).progreso_porcentaje" [nzShowInfo]="false" [nzStrokeWidth]="esKids() ? 10 : 8" nzStrokeColor="var(--daemon-student-progress)" />
-      </div>
-      <div class="xp-row">
-        <span>{{ progreso(datos).experiencia_nivel }} XP actuales</span>
-        <span>{{ progreso(datos).experiencia_meta }} XP meta</span>
-      </div>
       <p class="level-note">
         <fa-icon [icon]="iconos.check" aria-hidden="true"></fa-icon> Tu XP nunca disminuye.
       </p>
@@ -244,11 +241,14 @@
       <div class="racha-summary">
         <span class="racha-icon" aria-hidden="true"><fa-icon [icon]="iconos.fuego" /></span>
         <div>
-          <strong class="racha-value">{{ datos.racha }}</strong>
+          <strong class="racha-value">{{ rachaActual() ?? '—' }}</strong>
           <span class="racha-label">días de racha</span>
         </div>
       </div>
       <p class="racha-message">{{ mensajeRacha(datos) }}</p>
+      @if (rachaMaxima() !== null) {
+        <p class="racha-message">Mejor racha: {{ rachaMaxima() }} {{ rachaMaxima() === 1 ? 'día' : 'días' }}.</p>
+      }
       @if (esKids()) {
         <div class="week-score" aria-label="Días activos esta semana">
           <strong>{{ diasActivos(datos) }}</strong>
