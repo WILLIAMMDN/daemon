@@ -13,10 +13,10 @@ export const aprenderRoutes: Routes = [
     path: '',
     loadComponent: () => import('./pages/aprender/aprender').then((m) => m.Aprender),
     children: [
-      { path: '', pathMatch: 'full', redirectTo: 'mis-aprendizajes' },
+      { path: '', pathMatch: 'full', redirectTo: 'mis-cursos' },
       {
-        path: 'mis-aprendizajes',
-        loadComponent: () => import('./pages/mis-aprendizajes/mis-aprendizajes').then((m) => m.MisAprendizajes),
+        path: 'mis-cursos',
+        loadComponent: () => import('./pages/mis-cursos/mis-cursos').then((m) => m.MisCursos),
       },
       {
         path: 'explorar',

@@ -94,24 +94,21 @@ describe('DAEMON ARC — Student IA V2 Architecture', () => {
       });
       const component = TestBed.createComponent(Aprender).componentInstance;
       expect(component.items).toEqual([
-        { etiqueta: 'Mis cursos', ruta: 'mis-aprendizajes' },
+        { etiqueta: 'Mis cursos', ruta: 'mis-cursos' },
         { etiqueta: 'Explorar', ruta: 'explorar' },
       ]);
     });
   });
 
   describe('Arena Product Shell Architecture', () => {
-    it('should configure canonical Arena routes', () => {
+    it('should configure ONLY canonical /alumno/arena route without premature children', () => {
       const paths = arenaRoutes.map((r) => r.path);
-      expect(paths).toContain('');
-      expect(paths).toContain('torneos');
-      expect(paths).toContain('partida/:matchId');
-      expect(paths).toContain('resultados/:matchId');
+      expect(paths).toEqual(['']);
     });
 
-    it('should render Arena shell with competition local item', () => {
+    it('should render Arena shell with neutral label', () => {
       const arena = new Arena();
-      expect(arena.items).toEqual([{ etiqueta: 'Competencia', ruta: '/alumno/arena' }]);
+      expect(arena.items).toEqual([{ etiqueta: 'Arena', ruta: '/alumno/arena' }]);
     });
   });
 
@@ -127,22 +124,25 @@ describe('DAEMON ARC — Student IA V2 Architecture', () => {
   });
 
   describe('Identidad Area Architecture', () => {
-    it('should configure canonical Identidad routes without certificates', () => {
+    it('should configure canonical Identidad routes with default to perfil and without resumen or certificates', () => {
       const paths = identidadRoutes.map((r) => r.path);
       expect(paths).toContain('perfil/editar');
       expect(paths).toContain('daems/canjes');
       expect(paths).toContain('');
 
+      expect(paths).not.toContain('resumen');
       expect(paths).not.toContain('certificado');
       expect(paths).not.toContain('certificado/imprimir');
 
       const root = identidadRoutes.find((r) => r.path === '');
+      expect(root?.children?.[0]?.redirectTo).toBe('perfil');
+
       const childPaths = root?.children?.map((r) => r.path) ?? [];
-      expect(childPaths).toContain('resumen');
       expect(childPaths).toContain('perfil');
       expect(childPaths).toContain('progreso');
       expect(childPaths).toContain('personalizacion');
       expect(childPaths).toContain('daems');
+      expect(childPaths).not.toContain('resumen');
     });
   });
 });

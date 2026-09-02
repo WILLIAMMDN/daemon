@@ -12,10 +12,9 @@ import { ArcNavItem } from '../../../../../shared/componentes/arc-local-nav/arc-
 })
 export class Identidad {
   readonly items: ArcNavItem[] = [
-    { etiqueta: 'Resumen', ruta: 'resumen' },
     { etiqueta: 'Perfil', ruta: 'perfil' },
-    { etiqueta: 'Progreso y logros', ruta: 'progreso' },
+    { etiqueta: 'Progreso', ruta: 'progreso' },
     { etiqueta: 'Personalización', ruta: 'personalizacion' },
-    { etiqueta: 'Daems y tienda', ruta: 'daems' },
+    { etiqueta: 'Daems', ruta: 'daems' },
   ];
 }

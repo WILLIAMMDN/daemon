@@ -1,26 +1,14 @@
-﻿import { Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 
 /**
- * DAEMON ARC — Arena (concurso y competencia en vivo).
+ * DAEMON ARC — Arena (área de producto reservada).
  *
- * Establece la propiedad del producto para competencias en vivo vinculadas a
- * cursos sin datos simulados ni mecánicas de juego inventadas.
+ * El formato definitivo se definirá tras la etapa de descubrimiento de producto.
+ * Mantiene únicamente la ruta canónica reservada /alumno/arena.
  */
 export const arenaRoutes: Routes = [
   {
     path: '',
-    loadComponent: () => import('./pages/arena/arena').then((m) => m.Arena),
-  },
-  {
-    path: 'torneos',
-    loadComponent: () => import('./pages/arena/arena').then((m) => m.Arena),
-  },
-  {
-    path: 'partida/:matchId',
-    loadComponent: () => import('./pages/arena/arena').then((m) => m.Arena),
-  },
-  {
-    path: 'resultados/:matchId',
     loadComponent: () => import('./pages/arena/arena').then((m) => m.Arena),
   },
 ];

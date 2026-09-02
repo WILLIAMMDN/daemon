@@ -1,4 +1,4 @@
-﻿import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ArcArea } from '../../../../../shared/componentes/arc-area/arc-area';
 import { ArcNavItem } from '../../../../../shared/componentes/arc-local-nav/arc-local-nav';
 import { ArcSection } from '../../../../../shared/componentes/arc-section/arc-section';
@@ -13,6 +13,6 @@ import { EstadoVacio } from '../../../../../shared/componentes/estado-vacio/esta
 })
 export class Arena {
   readonly items: ArcNavItem[] = [
-    { etiqueta: 'Competencia', ruta: '/alumno/arena' },
+    { etiqueta: 'Arena', ruta: '/alumno/arena' },
   ];
 }

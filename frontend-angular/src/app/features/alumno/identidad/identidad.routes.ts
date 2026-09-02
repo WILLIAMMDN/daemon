@@ -19,11 +19,7 @@ export const identidadRoutes: Routes = [
     path: '',
     loadComponent: () => import('./pages/identidad/identidad').then((m) => m.Identidad),
     children: [
-      { path: '', pathMatch: 'full', redirectTo: 'resumen' },
-      {
-        path: 'resumen',
-        loadComponent: () => import('./pages/resumen-identidad/resumen-identidad').then((m) => m.ResumenIdentidad),
-      },
+      { path: '', pathMatch: 'full', redirectTo: 'perfil' },
       {
         path: 'perfil',
         loadComponent: () => import('../pages/perfil-alumno/perfil-alumno').then((m) => m.PerfilAlumno),

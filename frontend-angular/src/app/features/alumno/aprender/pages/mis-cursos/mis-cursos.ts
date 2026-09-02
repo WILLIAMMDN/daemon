@@ -16,12 +16,12 @@ import { ListaActividades } from '../../../componentes/lista-actividades/lista-a
  */
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  selector: 'app-mis-aprendizajes',
+  selector: 'app-mis-cursos',
   imports: [RouterLink, NzButtonModule, NzSkeletonModule, ArcSection, EstadoVacio, TarjetaCurso, ListaActividades],
-  templateUrl: './mis-aprendizajes.html',
-  styleUrl: './mis-aprendizajes.scss',
+  templateUrl: './mis-cursos.html',
+  styleUrl: './mis-cursos.scss',
 })
-export class MisAprendizajes {
+export class MisCursos {
   readonly aprendizaje = inject(Aprendizaje);
   readonly actividades = inject(Actividades);
 
