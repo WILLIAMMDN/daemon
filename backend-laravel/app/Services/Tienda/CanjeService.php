@@ -47,6 +47,7 @@ class CanjeService
                 "tienda:canje:{$canje->id}",
                 "Canje: {$premio->nombre}",
                 ['id_premio' => $premio->id],
+                EconomiaService::TIPO_SPEND,
             );
 
             if ($cosmetico) {
