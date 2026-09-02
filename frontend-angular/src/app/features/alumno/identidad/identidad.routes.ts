@@ -4,8 +4,7 @@ import { Routes } from '@angular/router';
  * Identidad — rutas internas del área.
  *
  * “Mis canjes” es historial de la economía, no una aplicación aparte: cuelga de
- * Daems. El certificado y el carnet son documentos contextuales y se alcanzan
- * desde Progreso y logros.
+ * Daems.
  */
 export const identidadRoutes: Routes = [
   {
@@ -15,17 +14,6 @@ export const identidadRoutes: Routes = [
   {
     path: 'daems/canjes',
     loadComponent: () => import('../../tienda/pages/mis-canjes/mis-canjes').then((m) => m.MisCanjes),
-  },
-  {
-    path: 'certificado',
-    pathMatch: 'full',
-    loadComponent: () => import('../../certificados/pages/certificado/certificado').then((m) => m.Certificado),
-    data: { preload: true },
-  },
-  {
-    path: 'certificado/imprimir',
-    loadComponent: () =>
-      import('../../certificados/pages/imprimir-carnet/imprimir-carnet').then((m) => m.ImprimirCarnet),
   },
   {
     path: '',

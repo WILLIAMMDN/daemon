@@ -23,10 +23,6 @@ export const aprenderRoutes: Routes = [
         loadComponent: () => import('../pages/recursos/recursos').then((m) => m.Recursos),
         data: { arcTituloPropio: true },
       },
-      {
-        path: 'rutas',
-        loadComponent: () => import('./pages/rutas-aprendizaje/rutas-aprendizaje').then((m) => m.RutasAprendizaje),
-      },
     ],
   },
   {
@@ -34,26 +30,19 @@ export const aprenderRoutes: Routes = [
     loadComponent: () => import('./pages/espacio-curso/espacio-curso').then((m) => m.EspacioCurso),
   },
   {
-    path: 'misiones',
-    loadComponent: () => import('../../misiones/pages/lista-misiones/lista-misiones').then((m) => m.ListaMisiones),
-    data: { preload: true },
+    path: 'curso/:cursoId/ruta',
+    loadComponent: () => import('./pages/espacio-curso/espacio-curso').then((m) => m.EspacioCurso),
   },
   {
-    path: 'misiones/:id',
-    loadComponent: () => import('../../misiones/pages/detalle-mision/detalle-mision').then((m) => m.DetalleMision),
+    path: 'curso/:cursoId/contenido',
+    loadComponent: () => import('./pages/espacio-curso/espacio-curso').then((m) => m.EspacioCurso),
   },
   {
-    path: 'misiones/:id/entregar',
-    loadComponent: () => import('../../misiones/pages/entregar-mision/entregar-mision').then((m) => m.EntregarMision),
+    path: 'curso/:cursoId/experiencia/:experienceId',
+    loadComponent: () => import('./pages/espacio-curso/espacio-curso').then((m) => m.EspacioCurso),
   },
   {
-    path: 'evaluaciones',
-    loadComponent: () => import('../../evaluaciones/pages/examen-live/examen-live').then((m) => m.ExamenLive),
-    data: { preload: true },
-  },
-  {
-    path: 'evaluaciones/resultados',
-    loadComponent: () =>
-      import('../../evaluaciones/pages/resultados-examen/resultados-examen').then((m) => m.ResultadosExamen),
+    path: 'curso/:cursoId/progreso',
+    loadComponent: () => import('./pages/espacio-curso/espacio-curso').then((m) => m.EspacioCurso),
   },
 ];

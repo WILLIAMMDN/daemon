@@ -47,7 +47,7 @@
           @if (perfilPropio()) {
             <a nz-button nzType="primary" nzShape="round" class="daemon-btn bg-blue-600 hover:bg-blue-700 border-0 w-full flex items-center justify-center font-bold h-10" routerLink="/alumno/identidad/perfil/editar">Editar perfil</a>
           } @else {
-            <a nz-button nzType="default" nzShape="round" class="w-full flex items-center justify-center font-bold text-slate-600 bg-white hover:bg-slate-50 h-10" routerLink="/alumno/comunidad">Volver a comunidad</a>
+            <a nz-button nzType="default" nzShape="round" class="w-full flex items-center justify-center font-bold text-slate-600 bg-white hover:bg-slate-50 h-10" routerLink="/alumno/identidad">Volver a identidad</a>
           }
         </div>
       </div>
@@ -189,7 +189,7 @@
             [descripcion]="perfilPropio() ? 'Completa misiones y logros importantes para llenar esta colección.' : 'Cuando este estudiante complete logros importantes, sus insignias aparecerán aquí.'"
           >
             @if (perfilPropio()) {
-              <a nz-button nzType="primary" routerLink="/alumno/aprender/misiones">Ver misiones</a>
+              <a nz-button nzType="primary" routerLink="/alumno/aprender">Ver cursos</a>
             }
           </app-estado-vacio>
         }

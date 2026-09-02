@@ -27,17 +27,17 @@ describe('NavegacionApp', () => {
   });
 
   it('activa el indicador desde el primer evento de navegacion', () => {
-    eventos.next(new NavigationStart(1, '/alumno/herramientas'));
+    eventos.next(new NavigationStart(1, '/alumno/aprender'));
 
     expect(servicio.activa()).toBe(true);
   });
 
   it.each([
-    new NavigationEnd(1, '/alumno/herramientas', '/alumno/herramientas'),
-    new NavigationCancel(2, '/alumno/perfil', 'cancelada'),
-    new NavigationError(3, '/alumno/ranking', new Error('chunk')),
+    new NavigationEnd(1, '/alumno/aprender', '/alumno/aprender'),
+    new NavigationCancel(2, '/alumno/identidad/perfil', 'cancelada'),
+    new NavigationError(3, '/alumno/arena', new Error('chunk')),
   ])('mantiene visible y luego oculta el indicador al finalizar o interrumpir la navegacion', (evento) => {
-    eventos.next(new NavigationStart(1, '/alumno/herramientas'));
+    eventos.next(new NavigationStart(1, '/alumno/aprender'));
     eventos.next(evento);
 
     expect(servicio.activa()).toBe(true);

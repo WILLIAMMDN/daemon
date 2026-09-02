@@ -19,7 +19,6 @@ export class Agenda {
   readonly items = computed<ArcNavItem[]>(() => [
     { etiqueta: 'Hoy', ruta: 'hoy' },
     { etiqueta: 'Sesiones', ruta: 'sesiones', contador: this.agendaService.sesionesFuturas().length || null },
-    { etiqueta: 'Próximamente', ruta: 'proximamente', contador: this.actividades.pendientes().length || null },
     { etiqueta: 'Entregas', ruta: 'entregas', contador: this.actividades.enRevision().length || null },
   ]);
 

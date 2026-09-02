@@ -63,8 +63,4 @@ export class Alumno {
       }),
     );
   }
-
-  comunidad<T = unknown>() {
-    return this.api.get<T>('/comunidad');
-  }
 }

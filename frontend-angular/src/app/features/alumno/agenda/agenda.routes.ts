@@ -18,10 +18,6 @@ export const agendaRoutes: Routes = [
         path: 'sesiones',
         loadComponent: () => import('./pages/sesiones/sesiones').then((m) => m.Sesiones),
       },
-      {
-        path: 'proximamente',
-        loadComponent: () => import('./pages/proximamente/proximamente').then((m) => m.Proximamente),
-      },
       { path: 'entregas', loadComponent: () => import('./pages/entregas/entregas').then((m) => m.Entregas) },
     ],
   },

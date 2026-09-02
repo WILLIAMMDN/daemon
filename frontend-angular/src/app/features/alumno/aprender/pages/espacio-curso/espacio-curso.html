@@ -7,11 +7,18 @@
     nzSubTitle="Este curso no está publicado para tu aula o ya no forma parte de tu matrícula."
   >
     <div nz-result-extra>
-      <a nz-button nzType="primary" href="/alumno/aprender/mis-aprendizajes">Volver a mis aprendizajes</a>
+      <a nz-button nzType="primary" routerLink="/alumno/aprender">Volver a mis cursos</a>
     </div>
   </nz-result>
 } @else if (curso(); as curso) {
   <app-arc-page [titulo]="curso.titulo" [descripcion]="curso.descripcion" [migas]="migas()">
+    <nav class="curso-nav" aria-label="Navegación contextual del curso">
+      <a class="curso-nav-item" [routerLink]="['/alumno/aprender/curso', curso.id]" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Resumen</a>
+      <a class="curso-nav-item" [routerLink]="['/alumno/aprender/curso', curso.id, 'ruta']" routerLinkActive="active">Ruta</a>
+      <a class="curso-nav-item" [routerLink]="['/alumno/aprender/curso', curso.id, 'contenido']" routerLinkActive="active">Contenido</a>
+      <a class="curso-nav-item" [routerLink]="['/alumno/aprender/curso', curso.id, 'progreso']" routerLinkActive="active">Progreso</a>
+    </nav>
+
     @if (errorAccion(); as mensaje) {
       <nz-alert nzType="error" nzShowIcon [nzMessage]="mensaje" />
     }

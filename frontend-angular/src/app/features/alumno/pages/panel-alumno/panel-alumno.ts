@@ -227,6 +227,9 @@ export class PanelAlumno {
       let ctaTexto = 'Continuar';
       let tipoEtiqueta = 'SIGUIENTE ACCIÓN';
 
+      const cursoId = this.currentCourse()?.id;
+      const expId = next.experience?.id || next.experience?.sourceId;
+
       switch (tipo) {
         case 'live_session':
           ruta = '/alumno/agenda';
@@ -234,40 +237,45 @@ export class PanelAlumno {
           tipoEtiqueta = 'SESIÓN EN VIVO';
           break;
         case 'lesson':
-          const cursoId = this.currentCourse()?.id;
           ruta = cursoId ? ['/alumno/aprender/curso', cursoId] : '/alumno/aprender';
           ctaTexto = 'Continuar lección';
           tipoEtiqueta = 'LECCIÓN';
           break;
         case 'mission':
-          ruta = next.experience?.sourceId
-            ? ['/alumno/aprender/misiones', next.experience.sourceId]
-            : (datos.proxima_mision ? ['/alumno/aprender/misiones', datos.proxima_mision.id] : '/alumno/aprender/misiones');
+          ruta = cursoId && expId
+            ? ['/alumno/aprender/curso', cursoId, 'experiencia', expId]
+            : (cursoId ? ['/alumno/aprender/curso', cursoId] : '/alumno/aprender');
           ctaTexto = 'Continuar misión';
           tipoEtiqueta = 'MISIÓN';
           break;
         case 'assessment':
-          ruta = '/alumno/aprender/evaluaciones';
+          ruta = cursoId && expId
+            ? ['/alumno/aprender/curso', cursoId, 'experiencia', expId]
+            : (cursoId ? ['/alumno/aprender/curso', cursoId] : '/alumno/aprender');
           ctaTexto = 'Comenzar evaluación';
           tipoEtiqueta = 'EVALUACIÓN';
           break;
         case 'project':
-          ruta = '/alumno/crear/proyectos';
+          ruta = cursoId && expId
+            ? ['/alumno/aprender/curso', cursoId, 'experiencia', expId]
+            : (cursoId ? ['/alumno/aprender/curso', cursoId] : '/alumno/aprender');
           ctaTexto = 'Continuar proyecto';
           tipoEtiqueta = 'PROYECTO';
           break;
         case 'challenge':
-          ruta = '/alumno/aprender/rutas';
+          ruta = cursoId ? ['/alumno/aprender/curso', cursoId, 'ruta'] : '/alumno/aprender';
           ctaTexto = 'Aceptar reto';
           tipoEtiqueta = 'DESAFÍO';
           break;
         case 'lab':
-          ruta = '/alumno/crear/herramientas';
+          ruta = cursoId && expId
+            ? ['/alumno/aprender/curso', cursoId, 'experiencia', expId]
+            : (cursoId ? ['/alumno/aprender/curso', cursoId] : '/alumno/aprender');
           ctaTexto = 'Entrar al laboratorio';
           tipoEtiqueta = 'LABORATORIO';
           break;
         default:
-          ruta = '/alumno/aprender';
+          ruta = cursoId ? ['/alumno/aprender/curso', cursoId] : '/alumno/aprender';
           ctaTexto = 'Continuar aprendizaje';
           tipoEtiqueta = 'ACTIVIDAD';
       }
@@ -284,12 +292,13 @@ export class PanelAlumno {
 
     if (datos.proxima_mision) {
       const mision = datos.proxima_mision;
+      const cursoId = this.currentCourse()?.id;
       return {
         titulo: mision.titulo,
         descripcion: mision.descripcion || 'Tu docente preparó un nuevo reto para seguir avanzando.',
         meta: `${mision.nivel_requerido} · ${mision.tipo_evidencia}`,
         tipoEtiqueta: this.esKids() ? 'PRÓXIMA MISIÓN' : 'CREA · EN PROGRESO',
-        ruta: ['/alumno/aprender/misiones', mision.id],
+        ruta: cursoId ? ['/alumno/aprender/curso', cursoId] : '/alumno/aprender',
         ctaTexto: this.esKids() ? 'Continuar misión' : 'Continuar proyecto',
       };
     }
