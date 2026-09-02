@@ -20,9 +20,9 @@
   </div>
 </app-arc-section>
 
-@if (identidad.cargando() && !identidad.cargado()) {
+@if (pulse.snapshotStatus() === 'loading' && !pulse.snapshot()) {
   <nz-skeleton [nzActive]="true" [nzParagraph]="{ rows: 4 }" />
-} @else if (identidad.error()) {
+} @else if (pulse.snapshotError()) {
   <nz-alert
     nzType="warning"
     nzShowIcon
@@ -31,9 +31,9 @@
     [nzAction]="reintentar"
   />
   <ng-template #reintentar>
-    <button nz-button nzSize="small" type="button" (click)="identidad.cargar(true)">Reintentar</button>
+    <button nz-button nzSize="small" type="button" (click)="pulse.loadSnapshot(true)">Reintentar</button>
   </ng-template>
-} @else if (identidad.panel(); as panel) {
+} @else if (pulse.snapshot(); as pulseData) {
   <app-arc-section
     titulo="Progresión de jugador"
     descripcion="XP y nivel de DAEMON Pulse. Es tu avance como jugador, no tu evidencia académica."
@@ -42,30 +42,26 @@
 
     <div class="progresion">
       <div class="progresion__cabecera">
-        <span>Nivel {{ panel.progreso_nivel.nivel }} de {{ panel.progreso_nivel.nivel_maximo }}</span>
-        <strong>{{ panel.progreso_nivel.experiencia_restante }} XP para subir</strong>
+        <span>Nivel {{ pulseData.level.current }} de {{ pulseData.level.maximum }}</span>
+        <strong>{{ pulseData.level.xpToNextLevel }} XP para subir</strong>
       </div>
       <nz-progress
-        [nzPercent]="panel.progreso_nivel.progreso_porcentaje"
+        [nzPercent]="pulseData.level.progressPercent"
         nzStrokeColor="var(--arc-green)"
         [nzStrokeWidth]="8"
       />
       <dl class="cifras">
         <div>
           <dt>XP total</dt>
-          <dd>{{ panel.progreso_nivel.experiencia_total }}</dd>
+          <dd>{{ pulseData.xpTotal }}</dd>
         </div>
         <div>
           <dt>Racha</dt>
-          <dd>{{ panel.racha }} {{ panel.racha === 1 ? 'día' : 'días' }}</dd>
+          <dd>{{ pulseData.streak.current }} {{ pulseData.streak.current === 1 ? 'día' : 'días' }}</dd>
         </div>
         <div>
           <dt>Insignias</dt>
-          <dd>{{ panel.insignias }}</dd>
-        </div>
-        <div>
-          <dt>Posición</dt>
-          <dd>#{{ panel.posicion }} <small>{{ panel.posicion_scope_label }}</small></dd>
+          <dd>{{ pulse.achievementsStatus() === 'ready' ? pulse.achievements().length : '—' }}</dd>
         </div>
       </dl>
     </div>
@@ -80,11 +76,7 @@
     <dl class="cifras">
       <div>
         <dt>Saldo</dt>
-        <dd>{{ usuario()?.tokens ?? 0 }}</dd>
-      </div>
-      <div>
-        <dt>Canjes pendientes</dt>
-        <dd>{{ panel.canjes_pendientes }}</dd>
+        <dd>{{ pulseData.daemsBalance }}</dd>
       </div>
     </dl>
   </app-arc-section>

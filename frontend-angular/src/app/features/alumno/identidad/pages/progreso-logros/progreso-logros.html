@@ -1,6 +1,6 @@
-@if (identidad.cargando() && !identidad.cargado()) {
+@if (pulse.snapshotStatus() === 'loading' && !pulse.snapshot()) {
   <nz-skeleton [nzActive]="true" [nzParagraph]="{ rows: 5 }" />
-} @else if (identidad.error()) {
+} @else if (pulse.snapshotError()) {
   <nz-alert
     nzType="warning"
     nzShowIcon
@@ -9,64 +9,65 @@
     [nzAction]="reintentar"
   />
   <ng-template #reintentar>
-    <button nz-button nzSize="small" type="button" (click)="identidad.cargar(true)">Reintentar</button>
+    <button nz-button nzSize="small" type="button" (click)="pulse.loadSnapshot(true)">Reintentar</button>
   </ng-template>
-} @else if (identidad.panel(); as panel) {
+} @else if (pulse.snapshot(); as pulseData) {
   <app-arc-section titulo="Nivel y XP" descripcion="Tu avance como jugador dentro de DAEMON Pulse.">
     <div class="nivel">
       <div class="nivel__cabecera">
-        <span>Nivel {{ panel.progreso_nivel.nivel }} de {{ panel.progreso_nivel.nivel_maximo }}</span>
-        <strong>{{ panel.progreso_nivel.experiencia_nivel }} / {{ panel.progreso_nivel.experiencia_meta }} XP</strong>
+        <span>Nivel {{ pulseData.level.current }} de {{ pulseData.level.maximum }}</span>
+        <strong>{{ pulseData.level.xpWithinLevel }} / {{ pulseData.level.xpRequiredForNextLevel }} XP</strong>
       </div>
       <nz-progress
-        [nzPercent]="panel.progreso_nivel.progreso_porcentaje"
+        [nzPercent]="pulseData.level.progressPercent"
         nzStrokeColor="var(--arc-green)"
         [nzStrokeWidth]="8"
       />
-      <small>{{ panel.progreso_nivel.experiencia_total }} XP acumulada en total.</small>
+      <small>{{ pulseData.xpTotal }} XP acumulada en total.</small>
     </div>
   </app-arc-section>
 
-  <app-arc-section titulo="Constancia" descripcion="Tu racha y la actividad registrada esta semana.">
+  <app-arc-section titulo="Constancia" descripcion="Tu continuidad en actividades que califican para DAEMON Pulse.">
     <dl class="cifras">
       <div>
         <dt>Racha actual</dt>
-        <dd>{{ panel.racha }} {{ panel.racha === 1 ? 'día' : 'días' }}</dd>
+        <dd>{{ pulseData.streak.current }} {{ pulseData.streak.current === 1 ? 'día' : 'días' }}</dd>
       </div>
-      @if (panel.actividad_semana.length) {
-        <div>
-          <dt>Días activos esta semana</dt>
-          <dd>{{ diasActivos() }} / {{ panel.actividad_semana.length }}</dd>
-        </div>
-      }
       <div>
-        <dt>Misiones completadas</dt>
-        <dd>{{ panel.misiones_completadas }}</dd>
+        <dt>Mejor racha</dt>
+        <dd>{{ pulseData.streak.longest }} {{ pulseData.streak.longest === 1 ? 'día' : 'días' }}</dd>
       </div>
     </dl>
   </app-arc-section>
 }
 
-<app-arc-section titulo="Logros" descripcion="Insignias otorgadas por tu docente.">
+<app-arc-section titulo="Logros" descripcion="Reconocimientos que ya obtuviste en DAEMON Pulse.">
   <a acciones nz-button nzType="default" nzSize="small" routerLink="../certificado">
     Certificado y carnet
   </a>
 
-  @if (cargandoLogros()) {
+  @if (pulse.achievementsStatus() === 'loading') {
     <nz-skeleton [nzActive]="true" [nzParagraph]="{ rows: 3 }" [nzTitle]="false" />
-  } @else if (insignias().length) {
+  } @else if (pulse.achievementsError()) {
+    <nz-alert
+      nzType="warning"
+      nzShowIcon
+      nzMessage="No pudimos cargar tus logros"
+      nzDescription="Tu colección sigue guardada. Inténtalo nuevamente."
+    />
+  } @else if (pulse.achievements().length) {
     <nz-list class="logros" nzBordered nzSize="small">
-      @for (insignia of insignias(); track insignia.id) {
+      @for (insignia of pulse.achievements(); track insignia.id) {
         <nz-list-item>
           <div class="logro">
             <div class="logro__texto">
-              <strong>{{ insignia.nombre }}</strong>
-              @if (insignia.descripcion) {
-                <small>{{ insignia.descripcion }}</small>
+              <strong>{{ insignia.title }}</strong>
+              @if (insignia.description) {
+                <small>{{ insignia.description }}</small>
               }
             </div>
-            @if (insignia.fecha) {
-              <span class="logro__fecha">{{ insignia.fecha | date: 'd MMM y' }}</span>
+            @if (insignia.awardedAt) {
+              <span class="logro__fecha">{{ insignia.awardedAt | date: 'd MMM y' }}</span>
             }
           </div>
         </nz-list-item>
@@ -76,7 +77,14 @@
     <app-estado-vacio
       tamano="compact"
       titulo="Todavía no tienes insignias"
-      descripcion="Tu docente las otorga cuando reconoce un logro concreto en tu trabajo."
+      descripcion="Cuando obtengas un reconocimiento real de Pulse aparecerá aquí."
     />
   }
+</app-arc-section>
+
+<app-arc-section
+  titulo="Progreso académico"
+  descripcion="Tus cursos, rutas, hitos y evidencias pertenecen a Aprender y no se calculan con XP."
+>
+  <a acciones nz-button nzType="default" nzSize="small" routerLink="/alumno/aprender">Ir a Aprender</a>
 </app-arc-section>

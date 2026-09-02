@@ -58,7 +58,15 @@
 :host ::ng-deep .reward-card--owned.ant-card { border-color: var(--daemon-border-strong); }
 .owned-button { align-items: center; background: var(--daemon-success-soft); border: 1px solid var(--daemon-border-strong); border-radius: 8px; color: var(--daemon-success); display: inline-flex; font-size: .72rem; font-weight: 700; gap: .4rem; justify-content: center; margin-top: .75rem; width: 100%; }
 .store-state { background: var(--daemon-on-primary); border: 1px solid var(--daemon-border); border-radius: 14px; padding: 2rem; }
+.pulse-history { display: grid; gap: var(--daemon-space-3); min-width: 0; }
+.transaction-list { background: var(--daemon-surface); min-width: 0; }
+.transaction-row { align-items: center; display: flex; gap: var(--daemon-space-4); justify-content: space-between; min-width: 0; width: 100%; }
+.transaction-row > div { display: grid; gap: var(--daemon-space-1); min-width: 0; }
+.transaction-row strong { color: var(--daemon-ink); font-size: var(--daemon-font-size-body); }
+.transaction-row small { color: var(--daemon-muted); font-size: var(--daemon-font-size-caption); }
+.transaction-row > span { color: var(--daemon-success); font-variant-numeric: tabular-nums; font-weight: var(--daemon-font-weight-bold); text-align: right; white-space: nowrap; }
+.transaction-row > span.transaction-row__amount--spend { color: var(--daemon-ink); }
 
 @media (max-width: 1180px) { .rewards-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 900px) { .store-hero { grid-template-columns: 1fr; } .balance-vault { max-width: 420px; width: 100%; } .rewards-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 620px) { .rewards-grid { grid-template-columns: 1fr; } .catalog-heading > small { display: none; } }
+@media (max-width: 620px) { .rewards-grid { grid-template-columns: 1fr; } .catalog-heading > small { display: none; } .transaction-row { align-items: flex-start; flex-direction: column; } .transaction-row > span { text-align: left; } }

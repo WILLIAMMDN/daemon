@@ -1,10 +1,9 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
   faArrowRight,
-  faBolt,
   faCheck,
   faCode,
   faFire,
@@ -30,6 +29,8 @@ import { ApiError } from '../../../../core/servicios/api';
 import { Activos } from '../../../../core/servicios/activos';
 import { Sesion } from '../../../../core/servicios/sesion';
 import { PremioTienda } from '../../../../core/modelos/dto';
+import { NivelPulse, PulseSnapshot } from '../../../../core/modelos/pulse';
+import { PulseService } from '../../../../core/servicios/pulse.service';
 import { Tienda } from '../../../tienda/services/tienda';
 import {
   experienciaDashboard,
@@ -37,13 +38,11 @@ import {
   StudentDashboardHeroAsset,
 } from './panel-alumno.experience';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
-import { MonedaDaemon } from '../../../../shared/componentes/moneda-daemon/moneda-daemon';
 import {
   ActividadDia,
   EstadoPanelAlumno,
   MotivoErrorPanel,
   PanelAlumnoDto,
-  ProgresoNivel,
   UsuarioPanel,
 } from '../../models/panel-alumno.model';
 import { Alumno } from '../../services/alumno';
@@ -59,14 +58,12 @@ export interface AccionVista {
   tipoEtiqueta: string;
   ruta: string | unknown[];
   ctaTexto: string;
-  recompensaXp?: number;
-  recompensaTokens?: number;
 }
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-panel-alumno',
-  imports: [RouterLink, FontAwesomeModule, NzAlertModule, NzAvatarModule, NzButtonModule, NzProgressModule, NzIconModule, Cargando, MonedaDaemon],
+  imports: [RouterLink, FontAwesomeModule, NzAlertModule, NzAvatarModule, NzButtonModule, NzProgressModule, NzIconModule, Cargando],
   templateUrl: './panel-alumno.html',
   styleUrl: './panel-alumno.scss',
 })
@@ -75,6 +72,7 @@ export class PanelAlumno {
   private readonly sesion = inject(Sesion);
   private readonly activos = inject(Activos);
   private readonly tienda = inject(Tienda);
+  readonly pulse = inject(PulseService);
 
   readonly estado = signal<EstadoPanelAlumno>({ kind: 'loading' });
   readonly homeContext = signal<HomeContextResponse | null>(null);
@@ -89,6 +87,9 @@ export class PanelAlumno {
   });
   readonly actualizando = signal(false);
   readonly celebracion = signal<{ xp: number } | null>(null);
+  readonly logroCount = computed(() => this.pulse.achievements().length);
+  readonly rachaActual = computed(() => this.pulse.snapshot()?.streak.current ?? null);
+  readonly rachaMaxima = computed(() => this.pulse.snapshot()?.streak.longest ?? null);
 
   readonly nextLiveSession = computed<SesionAprendizajeDto | null>(() => this.homeContext()?.nextLiveSession ?? null);
   readonly currentCourse = computed(() => this.homeContext()?.currentCourse ?? null);
@@ -141,7 +142,6 @@ export class PanelAlumno {
 
   readonly iconos = {
     flecha: faArrowRight,
-    energia: faBolt,
     check: faCheck,
     fuego: faFire,
     regalo: faGift,
@@ -155,6 +155,12 @@ export class PanelAlumno {
   };
 
   constructor() {
+    this.pulse.ensureSnapshot();
+    this.pulse.ensureAchievements();
+    effect(() => {
+      const snapshot = this.pulse.snapshot();
+      if (snapshot) this.detectarCelebracion(snapshot);
+    });
     this.cargar(false);
     this.cargarPremiosDestacados();
   }
@@ -187,7 +193,6 @@ export class PanelAlumno {
         this.estado.set({ kind: 'ready', data: datos, stale: false });
         const usuarioActual = this.sesion.usuario();
         if (usuarioActual) this.sesion.actualizarUsuario({ ...usuarioActual, ...datos.usuario });
-        this.detectarCelebracion(datos);
         this.actualizando.set(false);
       },
       error: (e: unknown) => {
@@ -274,8 +279,6 @@ export class PanelAlumno {
         tipoEtiqueta,
         ruta,
         ctaTexto,
-        recompensaXp: datos.proxima_mision?.recompensa,
-        recompensaTokens: datos.proxima_mision?.recompensa,
       };
     }
 
@@ -288,8 +291,6 @@ export class PanelAlumno {
         tipoEtiqueta: this.esKids() ? 'PRÓXIMA MISIÓN' : 'CREA · EN PROGRESO',
         ruta: ['/alumno/aprender/misiones', mision.id],
         ctaTexto: this.esKids() ? 'Continuar misión' : 'Continuar proyecto',
-        recompensaXp: mision.recompensa,
-        recompensaTokens: mision.recompensa,
       };
     }
 
@@ -309,11 +310,9 @@ export class PanelAlumno {
     return base.split(/\s+/).filter(Boolean).slice(0, 2).map((parte) => parte[0]?.toUpperCase()).join('') || 'D';
   }
 
-  progreso(datos: PanelAlumnoDto): ProgresoNivel {
-    return datos.progreso_nivel ?? datos.usuario.progreso_nivel;
+  progreso(): NivelPulse | null {
+    return this.pulse.snapshot()?.level ?? null;
   }
-
-  formatoNivel = (): string => `${this.panel()?.progreso_nivel?.nivel ?? 1}`;
 
   mensajeBienvenida(datos: PanelAlumnoDto): string {
     if (datos.misiones_pendientes > 0) {
@@ -334,12 +333,14 @@ export class PanelAlumno {
   }
 
   mensajeRacha(datos: PanelAlumnoDto): string {
-    if (datos.racha === 0) return 'Tu primera misión aprobada enciende la racha.';
+    const racha = this.rachaActual();
+    if (racha === null) return 'La constancia de Pulse no está disponible en este momento.';
+    if (racha === 0) return 'Una actividad válida para Pulse iniciará tu próxima racha.';
 
     const hoy = datos.actividad_semana.at(-1)?.activo ?? false;
     if (hoy) return 'Hoy ya alimentaste tu Núcleo DAEMON. Buen trabajo.';
 
-    return `Tu racha de ${datos.racha} días sigue viva. Completa una misión hoy para extenderla.`;
+    return `Tu racha de ${racha} días sigue viva. Completa una actividad válida hoy para extenderla.`;
   }
 
   descripcionDia(dia: ActividadDia): string {
@@ -354,9 +355,12 @@ export class PanelAlumno {
     this.celebracion.set(null);
   }
 
-  private detectarCelebracion(datos: PanelAlumnoDto): void {
-    const clave = `daemon_xp_confirmada_${datos.usuario.id}`;
-    const xpActual = datos.progreso_nivel.experiencia_total;
+  private detectarCelebracion(snapshot: PulseSnapshot): void {
+    const usuarioId = this.sesion.usuario()?.id;
+    if (!usuarioId) return;
+
+    const clave = `daemon_xp_confirmada_${usuarioId}`;
+    const xpActual = snapshot.xpTotal;
 
     try {
       const anteriorGuardada = localStorage.getItem(clave);

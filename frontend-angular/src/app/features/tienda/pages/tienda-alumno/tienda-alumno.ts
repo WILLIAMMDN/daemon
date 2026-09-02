@@ -1,11 +1,15 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faArrowRight, faBagShopping, faCheck, faDragon, faLock, faRotateRight, faShieldHeart, faShirt, faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
+import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { NzListModule } from 'ng-zorro-antd/list';
+import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { Activos } from '../../../../core/servicios/activos';
-import { Sesion } from '../../../../core/servicios/sesion';
+import { PulseService } from '../../../../core/servicios/pulse.service';
 import { Cargando } from '../../../../shared/componentes/cargando/cargando';
 import { EstadoVacio } from '../../../../shared/componentes/estado-vacio/estado-vacio';
 import { MonedaDaemon } from '../../../../shared/componentes/moneda-daemon/moneda-daemon';
@@ -15,16 +19,17 @@ import { PremioTienda, RespuestaTienda, RespuestaCanje } from '../../../../core/
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-tienda-alumno',
-  imports: [RouterLink, FontAwesomeModule, NzButtonModule, NzCardModule, Cargando, EstadoVacio, MonedaDaemon],
+  imports: [DatePipe, RouterLink, FontAwesomeModule, NzAlertModule, NzButtonModule, NzCardModule, NzListModule, NzSkeletonModule, Cargando, EstadoVacio, MonedaDaemon],
   templateUrl: './tienda-alumno.html',
   styleUrl: './tienda-alumno.scss',
 })
 export class TiendaAlumno {
   private readonly tienda = inject(Tienda);
   private readonly activos = inject(Activos);
-  private readonly sesion = inject(Sesion);
+  readonly pulse = inject(PulseService);
 
-  readonly saldo = signal(0);
+  private readonly saldoTienda = signal<number | null>(null);
+  readonly saldo = computed(() => this.pulse.snapshot()?.daemsBalance ?? this.saldoTienda());
   readonly premios = signal<PremioTienda[]>([]);
   readonly imagenesInvalidas = signal<Set<number>>(new Set());
   readonly cargando = signal(true);
@@ -34,6 +39,8 @@ export class TiendaAlumno {
   readonly iconos = { bolsa: faBagShopping, criatura: faDragon, ropa: faShirt, flecha: faArrowRight, check: faCheck, candado: faLock, actualizar: faRotateRight, escudo: faShieldHeart, brillo: faWandMagicSparkles };
 
   constructor() {
+    this.pulse.ensureSnapshot();
+    this.pulse.ensureTransactions();
     this.cargar();
   }
 
@@ -43,9 +50,8 @@ export class TiendaAlumno {
     this.tienda.premios().subscribe({
       next: (datos: RespuestaTienda) => {
         const saldo = Number(datos.saldo ?? 0);
-        this.saldo.set(saldo);
+        this.saldoTienda.set(saldo);
         this.premios.set(datos.premios ?? []);
-        this.sincronizarSaldo(saldo);
         this.cargando.set(false);
       },
       error: (e) => {
@@ -61,9 +67,6 @@ export class TiendaAlumno {
     this.error.set('');
     this.tienda.canjear(id).subscribe({
       next: (respuesta: RespuestaCanje) => {
-        const saldo = Number(respuesta.saldo ?? this.saldo());
-        this.saldo.set(saldo);
-        this.sincronizarSaldo(saldo);
         this.mensaje.set(
           respuesta.cosmetico
             ? `${respuesta.cosmetico.nombre} ya está en tu vestidor.`
@@ -72,6 +75,7 @@ export class TiendaAlumno {
               : 'Premio canjeado. Ya aparece en Mis canjes.',
         );
         this.procesando.set(null);
+        this.pulse.refreshAll();
         this.cargar();
       },
       error: (e) => {
@@ -82,7 +86,8 @@ export class TiendaAlumno {
   }
 
   puedeCanjear(premio: PremioTienda): boolean {
-    return !premio.ya_posee && this.saldo() >= Number(premio.precio ?? 0) && Number(premio.stock ?? 0) > 0;
+    const saldo = this.saldo();
+    return saldo !== null && !premio.ya_posee && saldo >= Number(premio.precio ?? 0) && Number(premio.stock ?? 0) > 0;
   }
 
   asset(ruta?: string | null): string {
@@ -93,8 +98,12 @@ export class TiendaAlumno {
     this.imagenesInvalidas.update((actuales) => new Set(actuales).add(id));
   }
 
-  private sincronizarSaldo(tokens: number): void {
-    const usuario = this.sesion.usuario();
-    if (usuario) this.sesion.actualizarUsuario({ ...usuario, tokens });
+  actualizar(): void {
+    this.pulse.refreshAll();
+    this.cargar();
+  }
+
+  etiquetaMoneda(currency: string): string {
+    return currency.toLowerCase() === 'xp' ? 'XP' : 'Daems';
   }
 }
