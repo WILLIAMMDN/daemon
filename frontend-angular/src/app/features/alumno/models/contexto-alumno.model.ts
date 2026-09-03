@@ -154,6 +154,9 @@ export interface ExperienciaAprendizajeDto {
   type: TipoExperiencia;
   variant?: string | null;
   title: string;
+  summary?: string | null;
+  content?: unknown;
+  instructions?: unknown;
   order: number;
   required: boolean;
   attemptable?: boolean;

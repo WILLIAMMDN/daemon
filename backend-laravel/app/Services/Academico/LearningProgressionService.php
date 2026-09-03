@@ -89,6 +89,9 @@ class LearningProgressionService
                     'sourceId' => $experiencia->origen_id,
                     'state' => $completada ? 'completed' : ($esActual ? 'current' : ($accesible ? 'unlocked' : 'locked')),
                     'progressPercent' => $progreso?->porcentaje ?? 0,
+                    'summary' => $experiencia->descripcion,
+                    'content' => $experiencia->contenido,
+                    'instructions' => $experiencia->guia_entrega,
                     'objectives' => $experiencia->objetivos->map(fn ($objetivo): array => [
                         'id' => $objetivo->id,
                         'code' => $objetivo->codigo,

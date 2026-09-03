@@ -196,6 +196,42 @@ export class Experiencia {
       });
   }
 
+  readonly bloquesContenido = computed<any[]>(() => {
+    const exp = this.experiencia();
+    if (!exp || !exp.content) return [];
+    if (typeof exp.content === 'object' && exp.content !== null) {
+      const c = exp.content as Record<string, any>;
+      if (Array.isArray(c['bloques'])) return c['bloques'];
+    }
+    return [];
+  });
+
+  readonly guiaEntrega = computed<Record<string, any> | null>(() => {
+    const exp = this.experiencia();
+    if (!exp || !exp.instructions) return null;
+    if (typeof exp.instructions === 'object') {
+      return exp.instructions as Record<string, any>;
+    }
+    return null;
+  });
+
+  private resolverTipoEvidencia(tipo: TipoExperienciaCanonico): string {
+    switch (tipo) {
+      case 'lab':
+        return 'lab_output';
+      case 'mission':
+        return 'mission_delivery';
+      case 'practice':
+        return 'practice_result';
+      case 'assessment':
+        return 'assessment_result';
+      case 'project':
+        return 'artifact';
+      default:
+        return 'submission';
+    }
+  }
+
   entregarEvidencia(): void {
     const intentoId = this.intentoIniciado();
     const texto = this.evidenciaTexto().trim();
@@ -207,7 +243,7 @@ export class Experiencia {
 
     this.aprendizaje
       .entregarEvidencia(intentoId, {
-        tipo: 'text_evidence',
+        tipo: this.resolverTipoEvidencia(this.tipoCanonico()),
         referencia: texto,
         metadatos: { enviado_desde: 'learning-experience-shell' },
       })

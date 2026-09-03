@@ -56,41 +56,205 @@
       [descripcion]="'Desarrollo y actividades orientadas al objetivo de aprendizaje.'"
     >
       <div class="exp-cuerpo">
-        @switch (tipoCanonico()) {
-          @case ('lesson') {
-            <div class="exp-tipo-detalle">
-              <p>Esta lección aborda conceptos clave estructurados para tu avance curricular. Lee atentamente las orientaciones y marca tu progreso al finalizar.</p>
-            </div>
-          }
-          @case ('practice') {
-            <div class="exp-tipo-detalle">
-              <p>Pon a prueba lo aprendido resolviendo las actividades prácticas diseñadas para afianzar tus competencias.</p>
-            </div>
-          }
-          @case ('mission') {
-            <div class="exp-tipo-detalle">
-              <p>Misión formativa: Desarrolla el producto o solución solicitado siguiendo las especificaciones del docente y entrega tu evidencia.</p>
-            </div>
-          }
-          @case ('lab') {
-            <div class="exp-tipo-detalle">
-              <p>Laboratorio interactivo: Experimenta, prueba hipótesis y registra tus observaciones técnicas.</p>
-            </div>
-          }
-          @case ('assessment') {
-            <div class="exp-tipo-detalle">
-              <p>Evaluación académica: Demuestra tu comprensión de los objetivos evaluados en esta etapa del curso.</p>
-            </div>
-          }
-          @case ('project') {
-            <div class="exp-tipo-detalle">
-              <p>Proyecto integrador: Aplica conocimientos multidisciplinarios para construir un entregable verificable.</p>
-            </div>
-          }
-          @case ('challenge') {
-            <div class="exp-tipo-detalle">
-              <p>Desafío formativo: Supera este reto académico aplicando pensamiento crítico y creatividad.</p>
-            </div>
+        @if (exp.summary) {
+          <div class="exp-resumen">
+            <p>{{ exp.summary }}</p>
+          </div>
+        }
+
+        @if (bloquesContenido().length > 0) {
+          <div class="exp-bloques">
+            @for (bloque of bloquesContenido(); track $index) {
+              @switch (bloque.tipo) {
+                @case ('concepto') {
+                  <div class="exp-bloque exp-bloque--concepto">
+                    <p>{{ bloque.texto }}</p>
+                  </div>
+                }
+                @case ('ejemplo') {
+                  <div class="exp-bloque exp-bloque--ejemplo">
+                    <h5>{{ bloque.titulo || 'Ejemplo ilustrativo' }}</h5>
+                    @if (bloque.texto) {
+                      <p>{{ bloque.texto }}</p>
+                    }
+                    @if (bloque.debil && bloque.estructurado) {
+                      <div class="exp-ejemplo-comparativa">
+                        <div class="exp-ejemplo-lado exp-ejemplo-lado--debil">
+                          <span class="exp-ejemplo-tag">Instrucción débil:</span>
+                          <code>"{{ bloque.debil }}"</code>
+                        </div>
+                        <div class="exp-ejemplo-lado exp-ejemplo-lado--estructurado">
+                          <span class="exp-ejemplo-tag">Instrucción estructurada:</span>
+                          <code>"{{ bloque.estructurado }}"</code>
+                        </div>
+                      </div>
+                    }
+                  </div>
+                }
+                @case ('pasos') {
+                  <div class="exp-bloque exp-bloque--pasos">
+                    <h5>{{ bloque.titulo || 'Pasos a seguir' }}</h5>
+                    <ol>
+                      @for (paso of bloque.pasos; track $index) {
+                        <li>{{ paso }}</li>
+                      }
+                    </ol>
+                  </div>
+                }
+                @case ('flujo') {
+                  <div class="exp-bloque exp-bloque--flujo">
+                    <h5>Flujo del proceso</h5>
+                    <div class="exp-flujo-pasos">
+                      @for (paso of bloque.pasos; track $index) {
+                        <span class="exp-flujo-paso">{{ paso }}</span>
+                      }
+                    </div>
+                  </div>
+                }
+                @case ('llamado') {
+                  <div class="exp-bloque exp-bloque--llamado">
+                    <h5>{{ bloque.titulo || 'Nota clave' }}</h5>
+                    <p>{{ bloque.texto }}</p>
+                  </div>
+                }
+                @case ('privacidad') {
+                  <div class="exp-bloque exp-bloque--privacidad">
+                    <h5>{{ bloque.titulo || 'Seguridad y Privacidad' }}</h5>
+                    <ul>
+                      @for (item of bloque.elementos; track $index) {
+                        <li>{{ item }}</li>
+                      }
+                    </ul>
+                  </div>
+                }
+                @case ('criterio') {
+                  <div class="exp-bloque exp-bloque--criterio">
+                    <h5>{{ bloque.titulo || 'Criterio Humano' }}</h5>
+                    <p>{{ bloque.texto }}</p>
+                  </div>
+                }
+                @case ('defensa') {
+                  <div class="exp-bloque exp-bloque--defensa">
+                    <h5>Preguntas de auditoría humana</h5>
+                    <ul>
+                      @for (preg of bloque.preguntas; track $index) {
+                        <li>{{ preg }}</li>
+                      }
+                    </ul>
+                  </div>
+                }
+                @default {
+                  @if (bloque.texto) {
+                    <p>{{ bloque.texto }}</p>
+                  }
+                }
+              }
+            }
+          </div>
+        }
+
+        @if (guiaEntrega(); as guia) {
+          <div class="exp-guia-entrega">
+            <h4>Orientaciones para la entrega</h4>
+            @if (guia['instrucciones']) {
+              <p class="exp-guia-texto">{{ guia['instrucciones'] }}</p>
+            }
+            @if (guia['herramienta_sugerida']) {
+              <div class="exp-herramienta-alerta">
+                <strong>Herramienta sugerida:</strong> {{ guia['herramienta_sugerida'] }}
+                <span class="exp-herramienta-nota">(Recuerda: no compartas datos personales identificables).</span>
+              </div>
+            }
+            @if (guia['preguntas_informe']) {
+              <div class="exp-guia-seccion">
+                <h5>Preguntas a responder en tu informe:</h5>
+                <ol>
+                  @for (p of guia['preguntas_informe']; track $index) {
+                    <li>{{ p }}</li>
+                  }
+                </ol>
+              </div>
+            }
+            @if (guia['campos_requeridos']) {
+              <div class="exp-guia-seccion">
+                <h5>Campos requeridos en tu entrega:</h5>
+                <ul>
+                  @for (c of guia['campos_requeridos']; track $index) {
+                    <li>{{ c }}</li>
+                  }
+                </ul>
+              </div>
+            }
+            @if (guia['casos']) {
+              <div class="exp-guia-seccion">
+                <h5>Casos de análisis:</h5>
+                <ul>
+                  @for (caso of guia['casos']; track $index) {
+                    <li>{{ caso }}</li>
+                  }
+                </ul>
+              </div>
+            }
+            @if (guia['requisitos']) {
+              <div class="exp-guia-seccion">
+                <h5>Requisitos de la bitácora:</h5>
+                <ol>
+                  @for (r of guia['requisitos']; track $index) {
+                    <li>{{ r }}</li>
+                  }
+                </ol>
+              </div>
+            }
+            @if (guia['rubrica_referencia']) {
+              <div class="exp-guia-seccion">
+                <h5>Criterios de evaluación formativa del Capstone:</h5>
+                <div class="exp-rubrica-grid">
+                  @for (criterio of guia['rubrica_referencia']; track $index) {
+                    <span class="exp-rubrica-tag">{{ criterio }}</span>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        }
+
+        @if (bloquesContenido().length === 0 && !guiaEntrega()) {
+          @switch (tipoCanonico()) {
+            @case ('lesson') {
+              <div class="exp-tipo-detalle">
+                <p>Esta lección aborda conceptos clave estructurados para tu avance curricular. Lee atentamente las orientaciones y marca tu progreso al finalizar.</p>
+              </div>
+            }
+            @case ('practice') {
+              <div class="exp-tipo-detalle">
+                <p>Pon a prueba lo aprendido resolviendo las actividades prácticas diseñadas para afianzar tus competencias.</p>
+              </div>
+            }
+            @case ('mission') {
+              <div class="exp-tipo-detalle">
+                <p>Misión formativa: Desarrolla el producto o solución solicitado siguiendo las especificaciones del docente y entrega tu evidencia.</p>
+              </div>
+            }
+            @case ('lab') {
+              <div class="exp-tipo-detalle">
+                <p>Laboratorio interactivo: Experimenta, prueba hipótesis y registra tus observaciones técnicas.</p>
+              </div>
+            }
+            @case ('assessment') {
+              <div class="exp-tipo-detalle">
+                <p>Evaluación académica: Demuestra tu comprensión de los objetivos evaluados en esta etapa del curso.</p>
+              </div>
+            }
+            @case ('project') {
+              <div class="exp-tipo-detalle">
+                <p>Proyecto integrador: Aplica conocimientos multidisciplinarios para construir un entregable verificable.</p>
+              </div>
+            }
+            @case ('challenge') {
+              <div class="exp-tipo-detalle">
+                <p>Desafío formativo: Supera este reto académico aplicando pensamiento crítico y creatividad.</p>
+              </div>
+            }
           }
         }
       </div>

@@ -52,6 +52,204 @@
   margin-bottom: 1.5rem;
 }
 
+.exp-resumen {
+  padding: 0.875rem 1.125rem;
+  margin-bottom: 1.25rem;
+  background: var(--daemon-neutral-surface-subtle);
+  border-left: 4px solid var(--daemon-primary, var(--daemon-neutral-text-primary));
+  border-radius: var(--daemon-radius-sm);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--daemon-neutral-text-primary);
+
+  p {
+    margin: 0;
+  }
+}
+
+.exp-bloques {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.exp-bloque {
+  background: var(--daemon-neutral-surface);
+  border: 1px solid var(--daemon-neutral-border);
+  border-radius: var(--daemon-radius-md);
+  padding: 1rem 1.25rem;
+
+  h5 {
+    margin: 0 0 0.5rem;
+    font-size: 0.9375rem;
+    font-weight: 650;
+    color: var(--daemon-neutral-text-primary);
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1.55;
+    color: var(--daemon-neutral-text-primary);
+  }
+
+  ol, ul {
+    margin: 0;
+    padding-left: 1.25rem;
+    font-size: 0.875rem;
+    color: var(--daemon-neutral-text-primary);
+    line-height: 1.5;
+  }
+
+  &--llamado {
+    background: var(--daemon-neutral-surface-subtle);
+    border-left: 3px solid var(--daemon-neutral-border-focus, var(--daemon-neutral-border));
+  }
+
+  &--privacidad {
+    background: var(--daemon-neutral-surface-subtle);
+    border-left: 3px solid var(--daemon-neutral-text-secondary);
+  }
+
+  &--criterio {
+    background: var(--daemon-neutral-surface-subtle);
+  }
+}
+
+.exp-ejemplo-comparativa {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.exp-ejemplo-lado {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  padding: 0.75rem;
+  border-radius: var(--daemon-radius-sm);
+  border: 1px solid var(--daemon-neutral-border);
+  background: var(--daemon-neutral-surface-subtle);
+
+  code {
+    font-size: 0.8125rem;
+    font-family: inherit;
+    color: var(--daemon-neutral-text-primary);
+    line-height: 1.4;
+  }
+
+  &--debil {
+    opacity: 0.85;
+  }
+}
+
+.exp-ejemplo-tag {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--daemon-neutral-text-secondary);
+}
+
+.exp-flujo-pasos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.exp-flujo-paso {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.625rem;
+  background: var(--daemon-neutral-surface-subtle);
+  border: 1px solid var(--daemon-neutral-border);
+  border-radius: var(--daemon-radius-sm);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--daemon-neutral-text-primary);
+}
+
+.exp-guia-entrega {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding: 1.25rem;
+  background: var(--daemon-neutral-surface-subtle);
+  border: 1px solid var(--daemon-neutral-border);
+  border-radius: var(--daemon-radius-md);
+
+  h4 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--daemon-neutral-text-primary);
+  }
+}
+
+.exp-guia-texto {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--daemon-neutral-text-primary);
+}
+
+.exp-herramienta-alerta {
+  padding: 0.625rem 0.875rem;
+  background: var(--daemon-neutral-surface);
+  border: 1px solid var(--daemon-neutral-border);
+  border-radius: var(--daemon-radius-sm);
+  font-size: 0.8125rem;
+  color: var(--daemon-neutral-text-primary);
+
+  .exp-herramienta-nota {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.75rem;
+    color: var(--daemon-neutral-text-secondary);
+  }
+}
+
+.exp-guia-seccion {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+
+  h5 {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 650;
+    color: var(--daemon-neutral-text-primary);
+  }
+
+  ol, ul {
+    margin: 0;
+    padding-left: 1.25rem;
+    font-size: 0.8125rem;
+    color: var(--daemon-neutral-text-primary);
+    line-height: 1.5;
+  }
+}
+
+.exp-rubrica-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+}
+
+.exp-rubrica-tag {
+  display: inline-flex;
+  padding: 0.25rem 0.5rem;
+  background: var(--daemon-neutral-surface);
+  border: 1px solid var(--daemon-neutral-border);
+  border-radius: var(--daemon-radius-sm);
+  font-size: 0.75rem;
+  color: var(--daemon-neutral-text-primary);
+}
+
 .exp-tipo-detalle {
   background: var(--daemon-neutral-surface);
   border: 1px solid var(--daemon-neutral-border);
