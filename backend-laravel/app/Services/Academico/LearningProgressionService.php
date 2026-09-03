@@ -49,7 +49,7 @@ class LearningProgressionService
             'hitos.experiencias.progresos' => fn ($query) => $query->where('id_matricula', $matricula->id)->with('intentoCompletado.feedback'),
             'hitos.experiencias.intentos' => fn ($query) => $query
                 ->where('id_matricula', $matricula->id)
-                ->with(['evidencias', 'feedback'])
+                ->with(['evidencias.artefactos', 'artefactos', 'feedback'])
                 ->orderBy('numero'),
         ]);
         $completitudHitos = $ruta->hitos->mapWithKeys(fn (HitoAprendizaje $hito): array => [
@@ -320,7 +320,7 @@ class LearningProgressionService
                     'previousAttemptNumber' => $intentoAnterior->numero,
                 ];
             }
-            $intento->evidencias()->create([
+            $evidencia = $intento->evidencias()->create([
                 'uuid' => (string) Str::uuid(),
                 'id_objetivo' => $datos['id_objetivo'] ?? null,
                 'tipo' => $datos['tipo'],
@@ -328,6 +328,11 @@ class LearningProgressionService
                 'metadatos' => $metadatos ?: null,
                 'registrado_at' => now(),
             ]);
+
+            if (! empty($datos['artefacto_ids'])) {
+                app(ArtefactoAprendizajeService::class)->asociarEvidencia($evidencia, $datos['artefacto_ids']);
+            }
+
             $intento->update(['estado' => 'submitted', 'enviado_at' => now()]);
             $intento->loadMissing(['experiencia.hito.ruta.versionCurso', 'matricula']);
             $this->emitirEvento($intento, $intento->experiencia->tipo === TipoExperienciaAprendizaje::PROYECTO
@@ -339,7 +344,7 @@ class LearningProgressionService
                 $this->completarExperiencia($intento->matricula, $intento->experiencia, $intento);
             }
 
-            return $intento->fresh(['evidencias', 'feedback']);
+            return $intento->fresh(['evidencias.artefactos', 'artefactos', 'feedback']);
         });
     }
 
@@ -464,7 +469,8 @@ class LearningProgressionService
             'matricula.aula.curso:id,titulo',
             'experiencia.hito.ruta.versionCurso.curso:id,titulo',
             'experiencia.objetivos:id,codigo,descripcion',
-            'evidencias',
+            'evidencias.artefactos',
+            'artefactos',
             'feedback.autor:id,nombre_completo',
         ]);
 
@@ -519,7 +525,9 @@ class LearningProgressionService
                 'reference' => $ev->referencia,
                 'metadata' => $ev->metadatos,
                 'registeredAt' => $ev->registrado_at?->toIso8601String(),
+                'artifacts' => $ev->artefactos->map(fn ($art): array => app(ArtefactoAprendizajeService::class)->serializarArtefacto($art))->values()->all(),
             ])->values()->all(),
+            'artifacts' => $intento->artefactos->map(fn ($art): array => app(ArtefactoAprendizajeService::class)->serializarArtefacto($art))->values()->all(),
             'feedback' => $intento->feedback->map(fn ($fb): array => [
                 'id' => $fb->id,
                 'comment' => $fb->comentario,
@@ -726,7 +734,9 @@ class LearningProgressionService
                 'reference' => $evidencia->referencia,
                 'metadata' => $evidencia->metadatos,
                 'registeredAt' => $evidencia->registrado_at?->toIso8601String(),
+                'artifacts' => $evidencia->artefactos->map(fn ($art): array => app(ArtefactoAprendizajeService::class)->serializarArtefacto($art))->values()->all(),
             ])->values(),
+            'artifacts' => $intento->artefactos->map(fn ($art): array => app(ArtefactoAprendizajeService::class)->serializarArtefacto($art))->values()->all(),
             'feedback' => $intento->feedback->sortBy('registrado_at')->map(fn ($feedback): array => [
                 'comment' => $feedback->comentario,
                 'criteria' => $feedback->criterios,

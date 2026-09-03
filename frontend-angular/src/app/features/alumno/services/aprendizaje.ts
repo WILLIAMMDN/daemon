@@ -9,6 +9,7 @@ import {
   construirCursoVista,
 } from '../models/aprendizaje.model';
 import {
+  ArtefactoAprendizajeDto,
   ExperienciaAprendizajeDto,
   HomeContextResponse,
   LearningContextResponse,
@@ -160,7 +161,29 @@ export class Aprendizaje {
     );
   }
 
-  entregarEvidencia(intentoId: number, datos: { tipo: string; id_objetivo?: number | null; referencia?: string; metadatos?: Record<string, unknown> }) {
+  subirArtefacto(intentoId: number, archivo: File) {
+    const formData = new FormData();
+    formData.append('archivo', archivo);
+    return this.api.post<ArtefactoAprendizajeDto>(
+      `/alumno/aprender/intentos/${intentoId}/artefactos`,
+      formData,
+    );
+  }
+
+  adjuntarEnlace(intentoId: number, urlExterna: string, nombre?: string) {
+    return this.api.post<ArtefactoAprendizajeDto>(
+      `/alumno/aprender/intentos/${intentoId}/artefactos`,
+      { url_externa: urlExterna, nombre: nombre || undefined },
+    );
+  }
+
+  eliminarArtefacto(intentoId: number, artefactoId: number) {
+    return this.api.delete<{ ok: boolean }>(
+      `/alumno/aprender/intentos/${intentoId}/artefactos/${artefactoId}`,
+    );
+  }
+
+  entregarEvidencia(intentoId: number, datos: { tipo: string; id_objetivo?: number | null; referencia?: string; artefacto_ids?: number[]; metadatos?: Record<string, unknown> }) {
     return this.api.post<{ id: number; estado: string; evidencias: unknown[] }>(
       `/alumno/aprender/intentos/${intentoId}/evidencias`,
       datos,

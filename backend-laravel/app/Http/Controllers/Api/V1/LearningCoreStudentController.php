@@ -67,4 +67,36 @@ class LearningCoreStudentController extends Controller
             'data' => $this->progresion->detalleRevision($request->user(), $intento),
         ];
     }
+
+    public function subirArtefacto(Request $request, IntentoAprendizaje $intento, \App\Services\Academico\ArtefactoAprendizajeService $artefactos)
+    {
+        if ($request->hasFile('archivo')) {
+            $request->validate([
+                'archivo' => ['required', 'file', 'max:10240'],
+            ]);
+            $artefacto = $artefactos->subirArchivo($request->user(), $intento, $request->file('archivo'));
+        } elseif ($request->filled('url_externa')) {
+            $request->validate([
+                'url_externa' => ['required', 'url', 'max:1000'],
+                'nombre' => ['nullable', 'string', 'max:255'],
+            ]);
+            $artefacto = $artefactos->adjuntarEnlaceExterno($request->user(), $intento, (string) $request->input('url_externa'), $request->input('nombre'));
+        } else {
+            abort(422, 'Se requiere un archivo o una url_externa para adjuntar el artefacto.');
+        }
+
+        return response()->json($artefactos->serializarArtefacto($artefacto), 201);
+    }
+
+    public function eliminarArtefacto(Request $request, IntentoAprendizaje $intento, \App\Models\ArtefactoAprendizaje $artefacto, \App\Services\Academico\ArtefactoAprendizajeService $artefactos)
+    {
+        $artefactos->eliminarBorrador($request->user(), $intento, $artefacto);
+
+        return response()->json(['ok' => true]);
+    }
+
+    public function descargarArtefacto(Request $request, \App\Models\ArtefactoAprendizaje $artefacto, \App\Services\Academico\ArtefactoAprendizajeService $artefactos)
+    {
+        return $artefactos->descargarContenido($request->user(), $artefacto);
+    }
 }

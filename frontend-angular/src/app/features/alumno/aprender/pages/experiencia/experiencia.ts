@@ -6,6 +6,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzResultModule } from 'ng-zorro-antd/result';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NzTagModule } from 'ng-zorro-antd/tag';
@@ -13,6 +14,7 @@ import { finalize, map } from 'rxjs';
 import { ArcMiga, ArcPage } from '../../../../../shared/componentes/arc-page/arc-page';
 import { ArcSection } from '../../../../../shared/componentes/arc-section/arc-section';
 import {
+  ArtefactoAprendizajeDto,
   canonizarTipoExperiencia,
   CicloIntentosDto,
   ETIQUETA_TIPO_EXPERIENCIA,
@@ -48,6 +50,7 @@ import { Aprendizaje } from '../../../services/aprendizaje';
     NzAlertModule,
     NzButtonModule,
     NzInputModule,
+    NzModalModule,
     NzResultModule,
     NzSkeletonModule,
     NzTagModule,
@@ -81,6 +84,12 @@ export class Experiencia {
   readonly queCambio = signal('');
   readonly porQueCambio = signal('');
   readonly feedbackUtilizado = signal('');
+  readonly artefactosBorrador = signal<ArtefactoAprendizajeDto[]>([]);
+  readonly subiendoArchivo = signal(false);
+  readonly errorArtefacto = signal<string | null>(null);
+  readonly modalEnlaceVisible = signal(false);
+  readonly enlaceUrl = signal('');
+  readonly enlaceTitulo = signal('');
 
   readonly curso = computed(() => this.aprendizaje.curso(Number(this.cursoId())));
   readonly mapa = this.aprendizaje.mapa;
@@ -162,9 +171,10 @@ export class Experiencia {
   });
   readonly puedeEnviarEvidencia = computed(() => Boolean(
     this.intentoActivoId()
-      && this.evidenciaTexto().trim()
+      && (this.evidenciaTexto().trim() || this.artefactosBorrador().length > 0)
       && this.explicacionRevisionCompleta()
-      && !this.procesando(),
+      && !this.procesando()
+      && !this.subiendoArchivo(),
   ));
 
   readonly indiceActual = computed(() => {
@@ -307,10 +317,115 @@ export class Experiencia {
     return null;
   }
 
+  onArchivoSeleccionado(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+
+    const intentoId = this.intentoActivoId();
+    if (!intentoId) {
+      this.errorArtefacto.set('Debes tener un intento activo para adjuntar archivos.');
+      input.value = '';
+      return;
+    }
+
+    const ext = file.name.split('.').pop()?.toLowerCase();
+    const permitidas = ['jpg', 'jpeg', 'png', 'webp', 'pdf'];
+    if (!ext || !permitidas.includes(ext)) {
+      this.errorArtefacto.set('Formato de archivo no admitido. Se admiten PNG, JPG, WEBP y PDF.');
+      input.value = '';
+      return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      this.errorArtefacto.set('El archivo supera el tamaño máximo permitido de 10 MB.');
+      input.value = '';
+      return;
+    }
+
+    this.subiendoArchivo.set(true);
+    this.errorArtefacto.set(null);
+
+    this.aprendizaje
+      .subirArtefacto(intentoId, file)
+      .pipe(finalize(() => {
+        this.subiendoArchivo.set(false);
+        input.value = '';
+      }))
+      .subscribe({
+        next: (art) => {
+          this.artefactosBorrador.update((list) => [...list, art]);
+        },
+        error: (err) => {
+          this.errorArtefacto.set(err?.error?.message || 'Error al subir el archivo.');
+        },
+      });
+  }
+
+  abrirModalEnlace(): void {
+    this.modalEnlaceVisible.set(true);
+    this.enlaceUrl.set('');
+    this.enlaceTitulo.set('');
+    this.errorArtefacto.set(null);
+  }
+
+  cancelarModalEnlace(): void {
+    this.modalEnlaceVisible.set(false);
+  }
+
+  guardarEnlace(): void {
+    const intentoId = this.intentoActivoId();
+    const url = this.enlaceUrl().trim();
+    const titulo = this.enlaceTitulo().trim();
+
+    if (!intentoId || !url) return;
+    if (!url.startsWith('https://')) {
+      this.errorArtefacto.set('El enlace debe iniciar con https://');
+      return;
+    }
+
+    this.subiendoArchivo.set(true);
+    this.errorArtefacto.set(null);
+
+    this.aprendizaje
+      .adjuntarEnlace(intentoId, url, titulo)
+      .pipe(finalize(() => this.subiendoArchivo.set(false)))
+      .subscribe({
+        next: (art) => {
+          this.artefactosBorrador.update((list) => [...list, art]);
+          this.modalEnlaceVisible.set(false);
+        },
+        error: (err) => {
+          this.errorArtefacto.set(err?.error?.message || 'Error al adjuntar el enlace.');
+        },
+      });
+  }
+
+  quitarArtefacto(art: ArtefactoAprendizajeDto): void {
+    const intentoId = this.intentoActivoId();
+    if (!intentoId) return;
+
+    this.aprendizaje.eliminarArtefacto(intentoId, art.id).subscribe({
+      next: () => {
+        this.artefactosBorrador.update((list) => list.filter((a) => a.id !== art.id));
+      },
+      error: () => {
+        this.artefactosBorrador.update((list) => list.filter((a) => a.id !== art.id));
+      },
+    });
+  }
+
+  formatearTamanio(bytes: number | null | undefined): string {
+    if (!bytes || bytes <= 0) return '';
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  }
+
   entregarEvidencia(): void {
     const intentoId = this.intentoActivoId();
     const texto = this.evidenciaTexto().trim();
-    if (!intentoId || !texto || this.procesando()) return;
+    if (!intentoId || (!texto && this.artefactosBorrador().length === 0) || this.procesando()) return;
 
     this.procesando.set(true);
     this.error.set(null);
@@ -328,7 +443,8 @@ export class Experiencia {
     this.aprendizaje
       .entregarEvidencia(intentoId, {
         tipo: this.resolverTipoEvidencia(this.tipoCanonico()),
-        referencia: texto,
+        referencia: texto || (this.artefactosBorrador().length > 0 ? 'Entrega con evidencias adjuntas.' : ''),
+        artefacto_ids: this.artefactosBorrador().map((a) => a.id),
         metadatos,
       })
       .pipe(finalize(() => this.procesando.set(false)))
@@ -336,6 +452,7 @@ export class Experiencia {
         next: () => {
           this.feedback.set('Tu evidencia fue enviada correctamente.');
           this.evidenciaTexto.set('');
+          this.artefactosBorrador.set([]);
           this.queCambio.set('');
           this.porQueCambio.set('');
           this.feedbackUtilizado.set('');

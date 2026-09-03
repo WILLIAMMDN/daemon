@@ -365,6 +365,23 @@
                         }
                       </dl>
                     }
+                    @if (anterior.artifacts && anterior.artifacts.length > 0) {
+                      <div class="exp-artefactos-anteriores">
+                        <strong>Artefactos de esta versión:</strong>
+                        <ul>
+                          @for (art of anterior.artifacts; track art.id) {
+                            <li>
+                              <span>{{ art.originalName }}</span>
+                              @if (art.downloadUrl) {
+                                <a [href]="art.downloadUrl" target="_blank" rel="noopener noreferrer">Ver archivo</a>
+                              } @else if (art.externalUrl) {
+                                <a [href]="art.externalUrl" target="_blank" rel="noopener noreferrer">Abrir enlace</a>
+                              }
+                            </li>
+                          }
+                        </ul>
+                      </div>
+                    }
                   } @else {
                     <p>No hay una referencia textual en el intento anterior.</p>
                   }
@@ -378,14 +395,72 @@
 
             <div class="exp-revision__nueva">
               <label for="evidencia-nueva">VERSIÓN NUEVA</label>
-              <p>Describe tu solución, enlace o evidencia sin reemplazar la versión anterior.</p>
+              <p>Describe tu solución, observaciones o entrega.</p>
               <textarea
                 id="evidencia-nueva"
                 nz-input
-                rows="6"
-                placeholder="Escribe aquí la nueva versión de tu evidencia..."
+                rows="5"
+                placeholder="Escribe aquí tu entrega o reporte..."
                 [(ngModel)]="evidenciaTexto"
               ></textarea>
+
+              <div class="exp-artefactos-seccion">
+                <label class="exp-artefactos-label">Archivos y enlaces adjuntos (multimodal)</label>
+
+                @if (errorArtefacto(); as errArt) {
+                  <nz-alert nzType="error" [nzMessage]="errArt" [nzCloseable]="true" (nzOnClose)="errorArtefacto.set(null)" />
+                }
+
+                <div class="exp-artefactos-acciones">
+                  <label class="exp-btn-adjuntar" [class.exp-btn-adjuntar--deshabilitado]="subiendoArchivo()">
+                    <input
+                      type="file"
+                      class="exp-input-file-oculto"
+                      accept=".jpg,.jpeg,.png,.webp,.pdf"
+                      [disabled]="subiendoArchivo()"
+                      (change)="onArchivoSeleccionado($event)"
+                    />
+                    <span>{{ subiendoArchivo() ? 'Subiendo…' : '+ Adjuntar archivo (PNG, JPG, WEBP, PDF máx. 10MB)' }}</span>
+                  </label>
+
+                  <button
+                    type="button"
+                    nz-button
+                    nzType="default"
+                    nzSize="small"
+                    [disabled]="subiendoArchivo()"
+                    (click)="abrirModalEnlace()"
+                  >
+                    + Añadir enlace externo (HTTPS)
+                  </button>
+                </div>
+
+                @if (artefactosBorrador().length > 0) {
+                  <ul class="exp-artefactos-lista">
+                    @for (art of artefactosBorrador(); track art.id) {
+                      <li class="exp-artefacto-item">
+                        <div class="exp-artefacto-item__info">
+                          <nz-tag [nzColor]="art.category === 'image' ? 'cyan' : art.category === 'document' ? 'geekblue' : 'purple'">
+                            {{ art.category === 'image' ? 'IMAGEN' : art.category === 'document' ? 'PDF' : 'ENLACE' }}
+                          </nz-tag>
+                          <span class="exp-artefacto-item__nombre">{{ art.originalName }}</span>
+                          @if (art.sizeBytes) {
+                            <span class="exp-artefacto-item__peso">({{ formatearTamanio(art.sizeBytes) }})</span>
+                          }
+                        </div>
+                        <button
+                          type="button"
+                          class="exp-btn-quitar"
+                          (click)="quitarArtefacto(art)"
+                          aria-label="Quitar artefacto"
+                        >
+                          Quitar
+                        </button>
+                      </li>
+                    }
+                  </ul>
+                }
+              </div>
             </div>
 
             @if (esRevision()) {
@@ -488,4 +563,40 @@
       }
     </footer>
   </app-arc-page>
+
+  <nz-modal
+    [nzVisible]="modalEnlaceVisible()"
+    nzTitle="Añadir enlace externo de evidencia"
+    (nzOnCancel)="cancelarModalEnlace()"
+    (nzOnOk)="guardarEnlace()"
+    [nzOkDisabled]="!enlaceUrl().trim().startsWith('https://') || subiendoArchivo()"
+    [nzOkLoading]="subiendoArchivo()"
+    nzOkText="Adjuntar enlace"
+    nzCancelText="Cancelar"
+  >
+    <ng-container *nzModalContent>
+      <div class="modal-enlace-form">
+        <label for="modal-enlace-url" class="modal-enlace-label">URL del recurso externo (HTTPS obligatorio):</label>
+        <input
+          id="modal-enlace-url"
+          nz-input
+          type="url"
+          placeholder="https://colab.research.google.com/..."
+          [ngModel]="enlaceUrl()"
+          (ngModelChange)="enlaceUrl.set($event)"
+        />
+        <span class="modal-enlace-ayuda">Por seguridad y privacidad de menores, solo se admiten enlaces seguros https://.</span>
+
+        <label for="modal-enlace-titulo" class="modal-enlace-label" style="margin-top: 16px;">Título o descripción breve (opcional):</label>
+        <input
+          id="modal-enlace-titulo"
+          nz-input
+          type="text"
+          placeholder="Ej: Demo en HuggingFace o Notebook de Colab"
+          [ngModel]="enlaceTitulo()"
+          (ngModelChange)="enlaceTitulo.set($event)"
+        />
+      </div>
+    </ng-container>
+  </nz-modal>
 }

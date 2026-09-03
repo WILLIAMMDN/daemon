@@ -27,6 +27,8 @@ class EvidenciaAprendizajeRequest extends FormRequest
             'metadatos.revision.whatChanged' => [$requiereExplicacion ? 'required' : 'nullable', 'string', 'max:1000'],
             'metadatos.revision.whyChanged' => [$requiereExplicacion ? 'required' : 'nullable', 'string', 'max:1000'],
             'metadatos.revision.feedbackUsed' => [$requiereExplicacion ? 'required' : 'nullable', 'string', 'max:1000'],
+            'artefacto_ids' => ['nullable', 'array'],
+            'artefacto_ids.*' => ['integer', 'exists:artefactos_aprendizaje,id'],
         ];
     }
 

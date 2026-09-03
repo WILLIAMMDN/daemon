@@ -49,4 +49,9 @@ class IntentoAprendizaje extends ModeloBase
     {
         return $this->hasMany(FeedbackAprendizaje::class, 'id_intento');
     }
+
+    public function artefactos(): HasMany
+    {
+        return $this->hasMany(ArtefactoAprendizaje::class, 'id_intento');
+    }
 }

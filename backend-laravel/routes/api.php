@@ -85,6 +85,7 @@ Route::prefix('v1')->group(function (): void {
         Route::post('/cuentos-v2/borradores', [CuentoV2Controller::class, 'reservarBorrador'])->middleware('throttle:20,1');
         Route::put('/cuentos-v2/borradores/{cuentoId}', [CuentoV2Controller::class, 'guardarBorrador'])->middleware('throttle:20,1');
         Route::get('/cuentos-v2/{cuentoId}', [CuentoV2Controller::class, 'detalle'])->middleware('throttle:60,1');
+        Route::get('/academico/artefactos/{artefacto}/contenido', [LearningCoreStudentController::class, 'descargarArtefacto']);
 
         Route::middleware('role:alumno')->group(function (): void {
             Route::get('/alumno/panel', [AlumnoController::class, 'panel']);
@@ -100,6 +101,8 @@ Route::prefix('v1')->group(function (): void {
             Route::get('/alumno/aprender/siguiente', [LearningCoreStudentController::class, 'siguiente']);
             Route::post('/alumno/aprender/experiencias/{experiencia}/intentos', [LearningCoreStudentController::class, 'iniciarIntento'])->middleware('throttle:30,1');
             Route::post('/alumno/aprender/intentos/{intento}/evidencias', [LearningCoreStudentController::class, 'evidencia'])->middleware('throttle:30,1');
+            Route::post('/alumno/aprender/intentos/{intento}/artefactos', [LearningCoreStudentController::class, 'subirArtefacto'])->middleware('throttle:30,1');
+            Route::delete('/alumno/aprender/intentos/{intento}/artefactos/{artefacto}', [LearningCoreStudentController::class, 'eliminarArtefacto'])->middleware('throttle:30,1');
             Route::get('/alumno/proyectos', [ProyectoController::class, 'index']);
             Route::get('/alumno/aprendizaje', [AcademicoController::class, 'alumno']);
             Route::put('/alumno/aprendizaje/lecciones/{leccion}/progreso', [AcademicoController::class, 'progreso'])->middleware('throttle:60,1');

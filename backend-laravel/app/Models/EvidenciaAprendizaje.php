@@ -26,4 +26,9 @@ class EvidenciaAprendizaje extends ModeloBase
     {
         return $this->belongsTo(ObjetivoAprendizaje::class, 'id_objetivo');
     }
+
+    public function artefactos(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(ArtefactoAprendizaje::class, 'id_evidencia');
+    }
 }
