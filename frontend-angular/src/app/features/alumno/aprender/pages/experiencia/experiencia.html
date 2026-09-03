@@ -257,6 +257,18 @@
             }
           }
         }
+
+        @if (exp.latestFeedback; as fb) {
+          <div class="exp-feedback-docente">
+            <div class="exp-feedback-docente__cabecera">
+              <span class="exp-feedback-docente__badge">Docente</span>
+              <span class="exp-feedback-docente__titulo">Retroalimentación formativa</span>
+            </div>
+            @if (fb.comment) {
+              <p class="exp-feedback-docente__comentario">{{ fb.comment }}</p>
+            }
+          </div>
+        }
       </div>
 
       <div class="exp-acciones">

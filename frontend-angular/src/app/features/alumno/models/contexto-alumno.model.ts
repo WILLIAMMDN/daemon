@@ -166,6 +166,11 @@ export interface ExperienciaAprendizajeDto {
   state: EstadoProgresoExperiencia;
   progressPercent: number;
   objectives: ObjetivoAprendizajeCoreDto[];
+  latestFeedback?: {
+    comment?: string | null;
+    criteria?: unknown;
+    registeredAt?: string | null;
+  } | null;
 }
 
 export interface HitoAprendizajeDto {

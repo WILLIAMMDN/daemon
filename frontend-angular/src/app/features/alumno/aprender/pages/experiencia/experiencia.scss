@@ -261,6 +261,50 @@
   }
 }
 
+.exp-feedback-docente {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+  padding: 1rem 1.25rem;
+  background: var(--daemon-neutral-surface-subtle);
+  border: 1px solid var(--daemon-neutral-border);
+  border-left: 3px solid var(--daemon-primary, var(--daemon-neutral-text-primary));
+  border-radius: var(--daemon-radius-md);
+
+  &__cabecera {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &__badge {
+    display: inline-flex;
+    padding: 0.125rem 0.375rem;
+    background: var(--daemon-neutral-surface);
+    border: 1px solid var(--daemon-neutral-border);
+    border-radius: var(--daemon-radius-sm);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--daemon-neutral-text-secondary);
+  }
+
+  &__titulo {
+    font-size: 0.875rem;
+    font-weight: 650;
+    color: var(--daemon-neutral-text-primary);
+  }
+
+  &__comentario {
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1.55;
+    color: var(--daemon-neutral-text-primary);
+  }
+}
+
 .exp-acciones {
   display: flex;
   flex-direction: column;

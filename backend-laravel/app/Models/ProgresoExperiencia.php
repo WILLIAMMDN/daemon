@@ -29,4 +29,9 @@ class ProgresoExperiencia extends ModeloBase
     {
         return $this->belongsTo(ExperienciaAprendizaje::class, 'id_experiencia');
     }
+
+    public function intentoCompletado(): BelongsTo
+    {
+        return $this->belongsTo(IntentoAprendizaje::class, 'id_intento_completado');
+    }
 }

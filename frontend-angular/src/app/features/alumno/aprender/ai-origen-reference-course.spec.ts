@@ -306,4 +306,40 @@ describe('DAEMON ARC — IA: Origen (Teens) Reference Course Experience Shell', 
     expect(el.textContent).toContain('Criterios de evaluación formativa del Capstone:');
     expect(el.textContent).toContain('Rol Humano–IA');
   });
+
+  it('renders formative teacher feedback when available', () => {
+    setupTestBed('101');
+    const fixture = TestBed.createComponent(Experiencia);
+
+    const mapWithFeedback: LearningMapResponse = {
+      ...mockLearningMap,
+      milestones: [
+        {
+          ...mockLearningMap.milestones[0],
+          experiences: [
+            {
+              ...mockLearningMap.milestones[0].experiences[0],
+              latestFeedback: {
+                comment: 'Excelente análisis sobre por qué los modelos probabilísticos no poseen comprensión real.',
+                registeredAt: '2026-09-02T10:00:00Z',
+              },
+            },
+            mockLearningMap.milestones[0].experiences[1],
+          ],
+        },
+        mockLearningMap.milestones[1],
+      ],
+    };
+
+    httpMock.expectOne((r) => r.url.includes('/alumno/aprendizaje')).flush(mockAprendizajeResponse);
+    httpMock.expectOne((r) => r.url.includes('/alumno/learning-context')).flush({ currentEnrollment: null, activeEnrollments: [] });
+    httpMock.expectOne((r) => r.url.includes('/alumno/home-context')).flush({ nextLiveSession: null });
+    httpMock.expectOne((r) => r.url.includes('/alumno/aprender/mapa')).flush(mapWithFeedback);
+
+    fixture.detectChanges();
+
+    const el: HTMLElement = fixture.nativeElement;
+    expect(el.textContent).toContain('Retroalimentación formativa');
+    expect(el.textContent).toContain('Excelente análisis sobre por qué los modelos');
+  });
 });

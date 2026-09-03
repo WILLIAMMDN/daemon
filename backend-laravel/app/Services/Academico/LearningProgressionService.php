@@ -44,7 +44,7 @@ class LearningProgressionService
         $ruta->load([
             'hitos.prerrequisitos:id',
             'hitos.experiencias.objetivos:id,codigo,descripcion',
-            'hitos.experiencias.progresos' => fn ($query) => $query->where('id_matricula', $matricula->id),
+            'hitos.experiencias.progresos' => fn ($query) => $query->where('id_matricula', $matricula->id)->with('intentoCompletado.feedback'),
         ]);
         $completitudHitos = $ruta->hitos->mapWithKeys(fn (HitoAprendizaje $hito): array => [
             $hito->id => $this->hitoCompletado($hito),
@@ -92,6 +92,11 @@ class LearningProgressionService
                     'summary' => $experiencia->descripcion,
                     'content' => $experiencia->contenido,
                     'instructions' => $experiencia->guia_entrega,
+                    'latestFeedback' => ($ultimoFeedback = $progreso?->intentoCompletado?->feedback?->last()) ? [
+                        'comment' => $ultimoFeedback->comentario,
+                        'criteria' => $ultimoFeedback->criterios,
+                        'registeredAt' => $ultimoFeedback->registrado_at?->toIso8601String(),
+                    ] : null,
                     'objectives' => $experiencia->objetivos->map(fn ($objetivo): array => [
                         'id' => $objetivo->id,
                         'code' => $objetivo->codigo,
