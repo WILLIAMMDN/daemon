@@ -99,7 +99,7 @@ export class EspacioCurso {
   readonly hitos = computed<HitoAprendizajeDto[]>(() => this.mapa()?.milestones ?? []);
 
   readonly matricula = computed(() => this.aprendizaje.learningContext()?.currentEnrollment ?? null);
-  readonly aula = computed(() => this.matricula()?.aula ?? null);
+  readonly aula = computed(() => this.matricula()?.cohort ?? null);
   readonly proximaSesion = computed(() => this.aprendizaje.homeContext()?.nextLiveSession ?? null);
 
   readonly siguienteAccion = computed<SiguienteAccionCurso | null>(() => {
@@ -136,18 +136,15 @@ export class EspacioCurso {
     return this.hitos().filter((h) => h.state === 'completed').length;
   });
 
+  /** Sin mapa de ruta (curso legacy) el avance real sigue siendo el de lecciones. */
   readonly experienciasRequeridasTotal = computed(() => {
-    const p = this.mapa()?.progress;
-    if (p?.requiredExperienceCount !== undefined) return p.requiredExperienceCount;
-    if (p?.requiredTotal !== undefined) return p.requiredTotal;
-    return this.curso()?.totalLecciones ?? 0;
+    const progreso = this.mapa()?.progress;
+    return progreso ? progreso.requiredExperienceCount : (this.curso()?.totalLecciones ?? 0);
   });
 
   readonly experienciasRequeridasCompletadas = computed(() => {
-    const p = this.mapa()?.progress;
-    if (p?.completedRequiredExperienceCount !== undefined) return p.completedRequiredExperienceCount;
-    if (p?.completedTotal !== undefined) return p.completedTotal;
-    return this.curso()?.leccionesCompletadas ?? 0;
+    const progreso = this.mapa()?.progress;
+    return progreso ? progreso.completedRequiredExperienceCount : (this.curso()?.leccionesCompletadas ?? 0);
   });
 
   readonly objetivosAcademicos = computed(() => {

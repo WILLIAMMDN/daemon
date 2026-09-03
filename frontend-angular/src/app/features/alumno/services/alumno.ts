@@ -8,7 +8,8 @@ import {
   HomeContextResponse,
   LearningContextResponse,
   LearningMapResponse,
-  RutaAprendizajeItemDto,
+  RutasAlumnoResponse,
+  SiguienteItemResponse,
 } from '../models/contexto-alumno.model';
 
 type UsuarioResourceRespuesta = UsuarioSesion | { data?: UsuarioSesion; usuario?: UsuarioSesion };
@@ -39,16 +40,16 @@ export class Alumno {
     return this.api.get<LearningMapResponse>('/alumno/aprender/mapa', { fresh });
   }
 
-  rutas(fresh = false): Observable<RutaAprendizajeItemDto[]> {
-    return this.api.get<RutaAprendizajeItemDto[]>('/alumno/rutas', { fresh });
+  rutas(fresh = false): Observable<RutasAlumnoResponse> {
+    return this.api.get<RutasAlumnoResponse>('/alumno/rutas', { fresh });
   }
 
   ruta(idOrSlug: number | string, fresh = false): Observable<unknown> {
     return this.api.get<unknown>(`/alumno/rutas/${idOrSlug}`, { fresh });
   }
 
-  siguiente(fresh = false): Observable<unknown> {
-    return this.api.get<unknown>('/alumno/aprender/siguiente', { fresh });
+  siguiente(fresh = false): Observable<SiguienteItemResponse> {
+    return this.api.get<SiguienteItemResponse>('/alumno/aprender/siguiente', { fresh });
   }
 
   perfil<T = unknown>(usuarioId?: number | string | null) {

@@ -14,6 +14,7 @@ import {
   LearningContextResponse,
   LearningMapResponse,
   RutasAlumnoResponse,
+  SiguienteItemResponse,
 } from '../models/contexto-alumno.model';
 
 export type MotivoErrorAprendizaje = 'offline' | 'timeout' | 'permission' | 'generic';
@@ -150,7 +151,7 @@ export class Aprendizaje {
   }
 
   siguienteItem() {
-    return this.api.get<{ nextItem: ExperienciaAprendizajeDto | null }>('/alumno/aprender/siguiente');
+    return this.api.get<SiguienteItemResponse>('/alumno/aprender/siguiente');
   }
 
   iniciarIntento(experienciaId: number, idempotencyKey: string) {

@@ -47,8 +47,10 @@ import {
 } from '../../models/panel-alumno.model';
 import { Alumno } from '../../services/alumno';
 import {
+  canonizarTipoExperiencia,
   HomeContextResponse,
   SesionAprendizajeDto,
+  SiguienteAccionDto,
 } from '../../models/contexto-alumno.model';
 
 export interface AccionVista {
@@ -227,10 +229,12 @@ export class PanelAlumno {
       let ctaTexto = 'Continuar';
       let tipoEtiqueta = 'SIGUIENTE ACCIÓN';
 
-      const cursoId = this.currentCourse()?.id;
+      const cursoId = this.currentCourse()?.id ?? next.course?.id;
       const expId = next.experience?.id || next.experience?.sourceId;
 
-      switch (tipo) {
+      // `nextAction.type` solo canoniza `leccion` → `lesson`; el resto llega con
+      // el valor del enum del backend (`mision`, `laboratorio`, …).
+      switch (tipo === 'live_session' ? tipo : canonizarTipoExperiencia(tipo)) {
         case 'live_session':
           ruta = '/alumno/agenda';
           ctaTexto = 'Ir a la sesión en vivo';
@@ -287,7 +291,7 @@ export class PanelAlumno {
       return {
         titulo: next.title,
         descripcion: datos.proxima_mision?.descripcion || 'Continúa con el siguiente paso en tu ruta de aprendizaje.',
-        meta: this.currentCourse()?.titulo || (this.cohort()?.nombre ?? (datos.proxima_mision?.nivel_requerido || 'Ruta académica')),
+        meta: this.metaAccion(next, datos),
         tipoEtiqueta,
         ruta,
         ctaTexto,
@@ -308,6 +312,17 @@ export class PanelAlumno {
     }
 
     return null;
+  }
+
+  /**
+   * Contexto mostrado bajo la siguiente acción: curso real, si no aula real.
+   * No inventa texto: si el backend no da curso ni aula, cae al dato de la
+   * próxima misión y, en último término, a una etiqueta genérica de ruta.
+   */
+  private metaAccion(next: SiguienteAccionDto, datos: PanelAlumnoDto): string {
+    const curso = this.currentCourse() ?? next.course ?? null;
+    const aula = this.cohort() ?? next.cohort ?? null;
+    return curso?.title || aula?.name || datos.proxima_mision?.nivel_requerido || 'Ruta académica';
   }
 
   nombreCorto(usuario: UsuarioPanel): string {

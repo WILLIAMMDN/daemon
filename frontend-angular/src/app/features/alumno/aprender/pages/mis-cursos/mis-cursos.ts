@@ -121,7 +121,7 @@ export class MisCursos {
 
   readonly aulaInfo = computed(() => {
     const enrol = this.aprendizaje.learningContext()?.currentEnrollment;
-    return enrol?.aula ?? null;
+    return enrol?.cohort ?? null;
   });
 
   constructor() {
