@@ -69,6 +69,28 @@ describe('DAEMON ARC — Teacher Feedback Operations (RevisionesDocente)', () =>
           hipotesis: 'El contraste de luz afecta la extracción de bordes.',
         },
         registeredAt: '2026-09-02T18:00:00Z',
+        artifacts: [
+          {
+            id: 501,
+            uuid: 'art-uuid-501',
+            category: 'image',
+            originalName: 'captura_precision.png',
+            mimeType: 'image/png',
+            sizeBytes: 204800,
+            downloadUrl: '/api/v1/academico/artefactos/501/contenido',
+            externalUrl: null,
+          },
+          {
+            id: 502,
+            uuid: 'art-uuid-502',
+            category: 'external_link',
+            originalName: 'Notebook de Google Colab',
+            mimeType: null,
+            sizeBytes: null,
+            downloadUrl: null,
+            externalUrl: 'https://colab.research.google.com/drive/test',
+          },
+        ],
       },
     ],
     feedback: [],
@@ -201,6 +223,11 @@ describe('DAEMON ARC — Teacher Feedback Operations (RevisionesDocente)', () =>
     // Check structured metadata
     expect(modalEl.textContent).toContain('Herramienta utilizada');
     expect(modalEl.textContent).toContain('Número de clases entrenadas');
+    // Check multimodal artifacts
+    expect(modalEl.textContent).toContain('Artefactos adjuntos verificables:');
+    expect(modalEl.textContent).toContain('captura_precision.png');
+    expect(modalEl.textContent).toContain('Notebook de Google Colab');
+    expect(modalEl.textContent).toContain('https://colab.research.google.com/drive/test');
   });
 
   it('3. should submit formative evaluation and call POST /academico/intentos/:id/evaluar', () => {

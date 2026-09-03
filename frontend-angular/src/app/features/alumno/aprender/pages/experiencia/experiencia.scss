@@ -273,6 +273,176 @@
   textarea { resize: vertical; }
 }
 
+.exp-artefactos-seccion {
+  margin-top: var(--daemon-space-4);
+  padding: var(--daemon-space-3) var(--daemon-space-4);
+  background: var(--daemon-neutral-surface-subtle);
+  border: 1px dashed var(--daemon-neutral-border);
+  border-radius: var(--daemon-radius-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--daemon-space-3);
+}
+
+.exp-artefactos-label {
+  font-size: var(--daemon-font-size-caption);
+  font-weight: var(--daemon-font-weight-bold);
+  color: var(--daemon-neutral-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.exp-artefactos-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--daemon-space-3);
+}
+
+.exp-input-file-oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.exp-btn-adjuntar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--daemon-space-2) var(--daemon-space-3);
+  font-size: var(--daemon-font-size-body-sm);
+  font-weight: var(--daemon-font-weight-medium);
+  color: var(--daemon-neutral-text-primary);
+  background: var(--daemon-neutral-surface);
+  border: 1px solid var(--daemon-neutral-border);
+  border-radius: var(--daemon-radius-sm);
+  cursor: pointer;
+  transition: background var(--daemon-transition-fast), border-color var(--daemon-transition-fast);
+
+  &:hover {
+    background: var(--daemon-neutral-surface-subtle);
+    border-color: var(--daemon-neutral-border-strong);
+  }
+
+  &--deshabilitado {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+}
+
+.exp-artefactos-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--daemon-space-2);
+}
+
+.exp-artefacto-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--daemon-space-2) var(--daemon-space-3);
+  background: var(--daemon-neutral-surface);
+  border: 1px solid var(--daemon-neutral-border);
+  border-radius: var(--daemon-radius-sm);
+  gap: var(--daemon-space-2);
+
+  &__info {
+    display: flex;
+    align-items: center;
+    gap: var(--daemon-space-2);
+    min-width: 0;
+    flex: 1;
+  }
+
+  &__nombre {
+    font-size: var(--daemon-font-size-body-sm);
+    color: var(--daemon-neutral-text-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__peso {
+    font-size: var(--daemon-font-size-caption);
+    color: var(--daemon-neutral-text-secondary);
+    white-space: nowrap;
+  }
+}
+
+.exp-btn-quitar {
+  background: transparent;
+  border: none;
+  color: var(--daemon-status-danger-text);
+  font-size: var(--daemon-font-size-caption);
+  font-weight: var(--daemon-font-weight-medium);
+  cursor: pointer;
+  padding: var(--daemon-space-1) var(--daemon-space-2);
+  border-radius: var(--daemon-radius-sm);
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.exp-artefactos-anteriores {
+  margin-top: var(--daemon-space-3);
+  padding-top: var(--daemon-space-2);
+  border-top: 1px dashed var(--daemon-neutral-border);
+
+  strong {
+    display: block;
+    font-size: var(--daemon-font-size-caption);
+    color: var(--daemon-neutral-text-secondary);
+    margin-bottom: var(--daemon-space-1);
+  }
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--daemon-space-1);
+  }
+
+  li {
+    font-size: var(--daemon-font-size-body-sm);
+    display: flex;
+    align-items: center;
+    gap: var(--daemon-space-2);
+
+    a {
+      color: var(--daemon-brand-primary);
+      text-decoration: underline;
+    }
+  }
+}
+
+.modal-enlace-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--daemon-space-2);
+}
+
+.modal-enlace-label {
+  font-size: var(--daemon-font-size-body-sm);
+  font-weight: var(--daemon-font-weight-medium);
+  color: var(--daemon-neutral-text-primary);
+}
+
+.modal-enlace-ayuda {
+  font-size: var(--daemon-font-size-caption);
+  color: var(--daemon-neutral-text-secondary);
+}
+
 .exp-navegacion {
   display: flex;
   align-items: center;

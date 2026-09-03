@@ -234,12 +234,27 @@ export interface FeedbackAprendizajeDto {
   registeredAt?: string | null;
 }
 
+export interface ArtefactoAprendizajeDto {
+  id: number;
+  uuid: string;
+  category: 'image' | 'document' | 'file' | 'external_link';
+  originalName: string;
+  mimeType?: string | null;
+  sizeBytes?: number | null;
+  downloadUrl?: string | null;
+  externalUrl?: string | null;
+  checksumSha256?: string | null;
+  registeredAt?: string | null;
+  metadata?: Record<string, unknown> | null;
+}
+
 export interface EvidenciaAprendizajeDto {
   id: number;
   type: string;
   reference?: string | null;
   metadata?: Record<string, unknown> | null;
   registeredAt?: string | null;
+  artifacts?: ArtefactoAprendizajeDto[];
 }
 
 export interface IntentoAprendizajeDto {
@@ -253,6 +268,7 @@ export interface IntentoAprendizajeDto {
   evaluatedAt?: string | null;
   metadata?: Record<string, unknown> | null;
   evidence: EvidenciaAprendizajeDto[];
+  artifacts?: ArtefactoAprendizajeDto[];
   feedback: FeedbackAprendizajeDto[];
 }
 

@@ -364,6 +364,61 @@
                           </dl>
                         </div>
                       }
+
+                      @if (ev.artifacts && ev.artifacts.length > 0) {
+                        <div class="evidencia-artefactos">
+                          <label>Artefactos adjuntos verificables:</label>
+                          <div class="artefactos-grid">
+                            @for (art of ev.artifacts; track art.id) {
+                              <div class="artefacto-card" [class.artefacto-card--imagen]="art.category === 'image'">
+                                @if (art.category === 'image') {
+                                  <div class="artefacto-card__preview">
+                                    <img
+                                      [src]="art.downloadUrl"
+                                      [alt]="art.originalName"
+                                      loading="lazy"
+                                      class="artefacto-img"
+                                    />
+                                  </div>
+                                  <div class="artefacto-card__meta">
+                                    <strong class="artefacto-card__nombre">{{ art.originalName }}</strong>
+                                    @if (art.sizeBytes) {
+                                      <span class="artefacto-card__peso">{{ formatearTamanio(art.sizeBytes) }}</span>
+                                    }
+                                    @if (art.downloadUrl) {
+                                      <a [href]="art.downloadUrl" target="_blank" rel="noopener noreferrer" class="artefacto-card__link">
+                                        Ver imagen completa ↗
+                                      </a>
+                                    }
+                                  </div>
+                                } @else if (art.category === 'document' || art.category === 'file') {
+                                  <div class="artefacto-card__doc">
+                                    <nz-tag nzColor="geekblue">DOCUMENTO PDF</nz-tag>
+                                    <strong class="artefacto-card__nombre">{{ art.originalName }}</strong>
+                                    @if (art.sizeBytes) {
+                                      <span class="artefacto-card__peso">{{ formatearTamanio(art.sizeBytes) }}</span>
+                                    }
+                                    @if (art.downloadUrl) {
+                                      <a [href]="art.downloadUrl" target="_blank" rel="noopener noreferrer" class="artefacto-card__btn-descargar">
+                                        Descargar / Visualizar PDF ↗
+                                      </a>
+                                    }
+                                  </div>
+                                } @else if (art.category === 'external_link') {
+                                  <div class="artefacto-card__link-box">
+                                    <nz-tag nzColor="purple">ENLACE EXTERNO</nz-tag>
+                                    <strong class="artefacto-card__nombre">{{ art.originalName }}</strong>
+                                    <span class="artefacto-card__url-aviso">Recurso externo provisto por el estudiante:</span>
+                                    <a [href]="art.externalUrl" target="_blank" rel="noopener noreferrer" class="artefacto-card__external-link">
+                                      {{ art.externalUrl }} ↗
+                                    </a>
+                                  </div>
+                                }
+                              </div>
+                            }
+                          </div>
+                        </div>
+                      }
                     </div>
                   </div>
                 }

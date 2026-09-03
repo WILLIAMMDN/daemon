@@ -377,6 +377,102 @@
   }
 }
 
+.evidencia-artefactos {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--daemon-ink-muted);
+    text-transform: uppercase;
+  }
+
+  .artefactos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .artefacto-card {
+    background: var(--daemon-surface-muted);
+    border: 1px solid var(--daemon-border);
+    border-radius: var(--daemon-radius-xs);
+    padding: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    &--imagen {
+      padding: 0.5rem;
+    }
+
+    &__preview {
+      width: 100%;
+      max-height: 200px;
+      overflow: hidden;
+      border-radius: var(--daemon-radius-xs);
+      background: var(--daemon-surface);
+      border: 1px solid var(--daemon-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .artefacto-img {
+      max-width: 100%;
+      max-height: 200px;
+      object-fit: contain;
+      display: block;
+    }
+
+    &__meta {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    &__doc,
+    &__link-box {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      align-items: flex-start;
+    }
+
+    &__nombre {
+      font-size: 0.85rem;
+      color: var(--daemon-ink-strong);
+      word-break: break-word;
+    }
+
+    &__peso {
+      font-size: 0.75rem;
+      color: var(--daemon-ink-muted);
+    }
+
+    &__url-aviso {
+      font-size: 0.725rem;
+      color: var(--daemon-ink-muted);
+    }
+
+    &__link,
+    &__btn-descargar,
+    &__external-link {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--daemon-primary);
+      text-decoration: underline;
+      word-break: break-all;
+
+      &:hover {
+        color: var(--daemon-ink-strong);
+      }
+    }
+  }
+}
+
 .evidencia-vacia {
   font-size: 0.875rem;
   color: var(--daemon-ink-muted);

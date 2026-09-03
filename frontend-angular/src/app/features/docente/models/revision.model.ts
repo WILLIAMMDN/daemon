@@ -45,12 +45,27 @@ export interface ExperienciaRevisionDto {
   objectives: ObjetivoRevisionDto[];
 }
 
+export interface ArtefactoRevisionDto {
+  id: number;
+  uuid: string;
+  category: 'image' | 'document' | 'file' | 'external_link';
+  originalName: string;
+  mimeType?: string | null;
+  sizeBytes?: number | null;
+  downloadUrl?: string | null;
+  externalUrl?: string | null;
+  checksumSha256?: string | null;
+  registeredAt?: string | null;
+  metadata?: Record<string, unknown> | null;
+}
+
 export interface EvidenciaRevisionDto {
   id: number;
   type: string;
   reference: string;
   metadata?: Record<string, unknown> | null;
   registeredAt?: string | null;
+  artifacts?: ArtefactoRevisionDto[];
 }
 
 export interface FeedbackRevisionDto {
@@ -76,6 +91,7 @@ export interface IntentoRevisionDto {
   milestone: HitoRevisionDto;
   experience: ExperienciaRevisionDto;
   evidences: EvidenciaRevisionDto[];
+  artifacts?: ArtefactoRevisionDto[];
   feedback: FeedbackRevisionDto[];
 }
 
