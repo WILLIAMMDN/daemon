@@ -1,0 +1,132 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.exp-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--daemon-neutral-border);
+
+  &__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+  }
+
+  &__objetivos {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    background: var(--daemon-neutral-surface-subtle);
+    border: 1px solid var(--daemon-neutral-border);
+    border-radius: var(--daemon-radius-md);
+    padding: 0.75rem 1rem;
+  }
+
+  &__objetivos-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--daemon-neutral-text-secondary);
+  }
+
+  &__objetivos-lista {
+    list-style: disc;
+    padding-left: 1.25rem;
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--daemon-neutral-text-primary);
+    line-height: 1.45;
+  }
+}
+
+.exp-cuerpo {
+  font-size: 0.9375rem;
+  color: var(--daemon-neutral-text-primary);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.exp-tipo-detalle {
+  background: var(--daemon-neutral-surface);
+  border: 1px solid var(--daemon-neutral-border);
+  border-radius: var(--daemon-radius-lg);
+  padding: 1.25rem;
+
+  p {
+    margin: 0;
+  }
+}
+
+.exp-acciones {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--daemon-neutral-border);
+
+  &__completado {
+    padding: 0.875rem 1.25rem;
+    background: var(--arc-green-soft);
+    border: 1px solid var(--arc-green);
+    border-radius: var(--daemon-radius-md);
+    color: var(--daemon-neutral-text-primary);
+    font-weight: 600;
+    font-size: 0.9375rem;
+  }
+}
+
+.exp-entrega {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  background: var(--daemon-neutral-surface-subtle);
+  border: 1px solid var(--daemon-neutral-border);
+  border-radius: var(--daemon-radius-lg);
+  padding: 1.25rem;
+
+  h4 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 650;
+    color: var(--daemon-neutral-text-primary);
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--daemon-neutral-text-secondary);
+  }
+
+  textarea {
+    resize: vertical;
+  }
+}
+
+.exp-navegacion {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--daemon-neutral-border);
+}
+
+@media (max-width: 640px) {
+  .exp-navegacion {
+    flex-direction: column;
+    align-items: stretch;
+
+    a {
+      width: 100%;
+      text-align: center;
+    }
+  }
+}

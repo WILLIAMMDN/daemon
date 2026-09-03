@@ -20,8 +20,7 @@ export const aprenderRoutes: Routes = [
       },
       {
         path: 'explorar',
-        loadComponent: () => import('../pages/recursos/recursos').then((m) => m.Recursos),
-        data: { arcTituloPropio: true },
+        loadComponent: () => import('./pages/explorar/explorar').then((m) => m.Explorar),
       },
     ],
   },
@@ -39,7 +38,7 @@ export const aprenderRoutes: Routes = [
   },
   {
     path: 'curso/:cursoId/experiencia/:experienceId',
-    loadComponent: () => import('./pages/espacio-curso/espacio-curso').then((m) => m.EspacioCurso),
+    loadComponent: () => import('./pages/experiencia/experiencia').then((m) => m.Experiencia),
   },
   {
     path: 'curso/:cursoId/progreso',

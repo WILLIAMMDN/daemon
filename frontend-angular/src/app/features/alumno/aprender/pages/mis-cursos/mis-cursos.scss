@@ -4,9 +4,182 @@
   min-width: 0;
 }
 
+.curso-hero {
+  background: var(--daemon-neutral-surface);
+  border: 1px solid var(--daemon-neutral-border);
+  border-radius: var(--daemon-radius-xl);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+
+  &__header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__meta-sup {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  &__cohorte {
+    font-size: 0.8125rem;
+    color: var(--daemon-neutral-text-secondary);
+    font-weight: 500;
+  }
+
+  &__titulo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.25;
+    margin: 0;
+
+    a {
+      color: var(--daemon-neutral-text-primary);
+      text-decoration: none;
+
+      &:hover {
+        color: var(--arc-blue);
+      }
+    }
+  }
+
+  &__descripcion {
+    font-size: 0.9375rem;
+    color: var(--daemon-neutral-text-secondary);
+    line-height: 1.5;
+    margin: 0;
+    max-width: 48rem;
+  }
+
+  &__progreso {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    background: var(--daemon-neutral-surface-subtle);
+    border: 1px solid var(--daemon-neutral-border);
+    border-radius: var(--daemon-radius-md);
+    padding: 0.875rem 1rem;
+  }
+
+  &__progreso-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &__progreso-label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--daemon-neutral-text-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+  }
+
+  &__progreso-valor {
+    font-size: 0.8125rem;
+    color: var(--daemon-neutral-text-secondary);
+    font-weight: 500;
+  }
+
+  &__siguiente {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    background: var(--daemon-neutral-surface);
+    border: 1px solid var(--daemon-neutral-border);
+    border-radius: var(--daemon-radius-lg);
+  }
+
+  &__siguiente-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  &__siguiente-eyebrow {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--arc-blue);
+  }
+
+  &__siguiente-titulo {
+    font-size: 1.0625rem;
+    font-weight: 600;
+    color: var(--daemon-neutral-text-primary);
+  }
+
+  &__siguiente-cta {
+    font-weight: 600;
+  }
+
+  &__sesion {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: var(--daemon-neutral-surface-subtle);
+    border-radius: var(--daemon-radius-md);
+    border-left: 3px solid var(--arc-blue);
+  }
+
+  &__sesion-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+  }
+
+  &__sesion-etiqueta {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--daemon-neutral-text-secondary);
+  }
+
+  &__sesion-titulo {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--daemon-neutral-text-primary);
+  }
+}
+
 .rejilla-cursos {
   display: grid;
   gap: 1rem;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
   min-width: 0;
+}
+
+@media (max-width: 640px) {
+  .curso-hero {
+    padding: 1rem;
+
+    &__siguiente {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    &__siguiente-cta {
+      width: 100%;
+      text-align: center;
+    }
+
+    &__sesion {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
 }

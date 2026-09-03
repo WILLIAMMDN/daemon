@@ -1,0 +1,191 @@
+@if (cargando()) {
+  <nz-skeleton [nzActive]="true" [nzParagraph]="{ rows: 10 }" />
+} @else if (noEncontrada()) {
+  <nz-result
+    nzStatus="404"
+    nzTitle="Experiencia no encontrada"
+    nzSubTitle="La experiencia solicitada no existe o no forma parte de este curso."
+  >
+    <div nz-result-extra>
+      <a nz-button nzType="primary" [routerLink]="['/alumno/aprender/curso', cursoId()]">Volver al curso</a>
+    </div>
+  </nz-result>
+} @else if (experiencia(); as exp) {
+  <app-arc-page [titulo]="exp.title" [migas]="migas()">
+    <header class="exp-header">
+      <div class="exp-header__tags">
+        <nz-tag nzColor="blue">{{ tipoEtiqueta() }}</nz-tag>
+        @if (exp.required) {
+          <nz-tag nzColor="default">Obligatoria</nz-tag>
+        } @else {
+          <nz-tag nzColor="default">Opcional</nz-tag>
+        }
+        <nz-tag
+          [nzColor]="exp.state === 'completed' ? 'success' : exp.state === 'current' ? 'processing' : 'default'"
+        >
+          {{ exp.state === 'completed' ? 'Completada' : exp.state === 'current' ? 'En curso' : exp.state === 'locked' ? 'Bloqueada' : 'Disponible' }}
+        </nz-tag>
+      </div>
+
+      @if (exp.objectives.length > 0) {
+        <div class="exp-header__objetivos">
+          <span class="exp-header__objetivos-label">Objetivos vinculados:</span>
+          <ul class="exp-header__objetivos-lista">
+            @for (obj of exp.objectives; track obj.id) {
+              <li>
+                @if (obj.code) {
+                  <strong>[{{ obj.code }}]</strong>
+                }
+                {{ obj.description }}
+              </li>
+            }
+          </ul>
+        </div>
+      }
+    </header>
+
+    @if (error(); as mensaje) {
+      <nz-alert nzType="error" nzShowIcon [nzMessage]="mensaje" />
+    }
+    @if (feedback(); as mensaje) {
+      <nz-alert nzType="success" nzShowIcon [nzMessage]="mensaje" />
+    }
+
+    <app-arc-section
+      titulo="Contenido de la experiencia"
+      [descripcion]="'Desarrollo y actividades orientadas al objetivo de aprendizaje.'"
+    >
+      <div class="exp-cuerpo">
+        @switch (tipoCanonico()) {
+          @case ('lesson') {
+            <div class="exp-tipo-detalle">
+              <p>Esta lección aborda conceptos clave estructurados para tu avance curricular. Lee atentamente las orientaciones y marca tu progreso al finalizar.</p>
+            </div>
+          }
+          @case ('practice') {
+            <div class="exp-tipo-detalle">
+              <p>Pon a prueba lo aprendido resolviendo las actividades prácticas diseñadas para afianzar tus competencias.</p>
+            </div>
+          }
+          @case ('mission') {
+            <div class="exp-tipo-detalle">
+              <p>Misión formativa: Desarrolla el producto o solución solicitado siguiendo las especificaciones del docente y entrega tu evidencia.</p>
+            </div>
+          }
+          @case ('lab') {
+            <div class="exp-tipo-detalle">
+              <p>Laboratorio interactivo: Experimenta, prueba hipótesis y registra tus observaciones técnicas.</p>
+            </div>
+          }
+          @case ('assessment') {
+            <div class="exp-tipo-detalle">
+              <p>Evaluación académica: Demuestra tu comprensión de los objetivos evaluados en esta etapa del curso.</p>
+            </div>
+          }
+          @case ('project') {
+            <div class="exp-tipo-detalle">
+              <p>Proyecto integrador: Aplica conocimientos multidisciplinarios para construir un entregable verificable.</p>
+            </div>
+          }
+          @case ('challenge') {
+            <div class="exp-tipo-detalle">
+              <p>Desafío formativo: Supera este reto académico aplicando pensamiento crítico y creatividad.</p>
+            </div>
+          }
+        }
+      </div>
+
+      <div class="exp-acciones">
+        @if (exp.state === 'completed') {
+          <div class="exp-acciones__completado">
+            <span>✓ Experiencia completada con éxito.</span>
+          </div>
+        } @else if (tipoCanonico() === 'lesson') {
+          <button
+            nz-button
+            nzType="primary"
+            nzSize="large"
+            [disabled]="procesando()"
+            (click)="completarComoLeccion()"
+          >
+            {{ procesando() ? 'Guardando avance…' : 'Marcar lección como completada' }}
+          </button>
+        } @else if (exp.attemptable) {
+          @if (!intentoIniciado()) {
+            <button
+              nz-button
+              nzType="primary"
+              nzSize="large"
+              [disabled]="procesando()"
+              (click)="iniciarIntento()"
+            >
+              {{ procesando() ? 'Iniciando…' : 'Iniciar intento' }}
+            </button>
+          } @else {
+            <div class="exp-entrega">
+              <h4>Entrega de evidencia</h4>
+              <p>Describe tu solución, enlace o evidencia de cumplimiento para esta experiencia:</p>
+              <textarea
+                nz-input
+                rows="4"
+                placeholder="Escribe aquí tu evidencia, explicación o enlace de entrega..."
+                [(ngModel)]="evidenciaTexto"
+              ></textarea>
+              <button
+                nz-button
+                nzType="primary"
+                [disabled]="!evidenciaTexto().trim() || procesando()"
+                (click)="entregarEvidencia()"
+              >
+                {{ procesando() ? 'Enviando…' : 'Entregar evidencia' }}
+              </button>
+            </div>
+          }
+        } @else {
+          <button
+            nz-button
+            nzType="primary"
+            nzSize="large"
+            [disabled]="procesando()"
+            (click)="completarComoLeccion()"
+          >
+            {{ procesando() ? 'Guardando…' : 'Completar actividad' }}
+          </button>
+        }
+      </div>
+    </app-arc-section>
+
+    <footer class="exp-navegacion">
+      @if (anterior(); as ant) {
+        <a
+          nz-button
+          nzType="default"
+          [routerLink]="['/alumno/aprender/curso', cursoId(), 'experiencia', ant.id]"
+        >
+          ← Anterior: {{ ant.title }}
+        </a>
+      } @else {
+        <span></span>
+      }
+
+      <a
+        nz-button
+        nzType="dashed"
+        [routerLink]="['/alumno/aprender/curso', cursoId(), 'ruta']"
+      >
+        Ver ruta del curso
+      </a>
+
+      @if (siguiente(); as sig) {
+        <a
+          nz-button
+          nzType="primary"
+          [disabled]="sig.state === 'locked'"
+          [routerLink]="sig.state !== 'locked' ? ['/alumno/aprender/curso', cursoId(), 'experiencia', sig.id] : null"
+        >
+          Siguiente: {{ sig.title }} →
+        </a>
+      }
+    </footer>
+  </app-arc-page>
+}

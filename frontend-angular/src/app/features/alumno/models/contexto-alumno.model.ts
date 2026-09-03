@@ -79,13 +79,67 @@ export interface SesionAprendizajeDto {
 
 export type TipoExperiencia =
   | 'lesson'
+  | 'leccion'
+  | 'practice'
+  | 'practica'
+  | 'mission'
+  | 'mision'
+  | 'lab'
+  | 'laboratorio'
+  | 'assessment'
+  | 'evaluacion'
+  | 'project'
+  | 'proyecto'
+  | 'challenge'
+  | 'desafio'
+  | 'live_session';
+
+export type TipoExperienciaCanonico =
+  | 'lesson'
   | 'practice'
   | 'mission'
   | 'lab'
   | 'assessment'
   | 'project'
-  | 'challenge'
-  | 'live_session';
+  | 'challenge';
+
+export function canonizarTipoExperiencia(tipo: string): TipoExperienciaCanonico {
+  switch (tipo) {
+    case 'leccion':
+    case 'lesson':
+      return 'lesson';
+    case 'practica':
+    case 'practice':
+      return 'practice';
+    case 'mision':
+    case 'mission':
+      return 'mission';
+    case 'laboratorio':
+    case 'lab':
+      return 'lab';
+    case 'evaluacion':
+    case 'assessment':
+      return 'assessment';
+    case 'proyecto':
+    case 'project':
+      return 'project';
+    case 'desafio':
+    case 'challenge':
+      return 'challenge';
+    default:
+      return 'lesson';
+  }
+}
+
+export const ETIQUETA_TIPO_EXPERIENCIA: Record<TipoExperienciaCanonico, string> = {
+  lesson: 'Lección',
+  practice: 'Práctica',
+  mission: 'Misión',
+  lab: 'Laboratorio',
+  assessment: 'Evaluación',
+  project: 'Proyecto',
+  challenge: 'Desafío',
+};
 
 export type EstadoProgresoExperiencia = 'completed' | 'current' | 'unlocked' | 'locked';
 
@@ -114,9 +168,13 @@ export interface ExperienciaAprendizajeDto {
 export interface HitoAprendizajeDto {
   id: number;
   title: string;
+  description?: string | null;
   order: number;
-  unlocked: boolean;
-  completed: boolean;
+  required?: boolean;
+  state: 'completed' | 'unlocked' | 'locked';
+  prerequisiteIds?: number[];
+  unlocked?: boolean;
+  completed?: boolean;
   experiences: ExperienciaAprendizajeDto[];
 }
 
@@ -163,23 +221,43 @@ export interface AgendaResponse {
   events: SesionAprendizajeDto[];
 }
 
+export interface LearningMapProgressDto {
+  requiredExperienceCount?: number;
+  completedRequiredExperienceCount?: number;
+  requiredTotal?: number;
+  completedTotal?: number;
+  percent: number;
+}
+
 export interface LearningMapResponse {
   path: {
     id: number;
     title: string;
+    description?: string | null;
     audience: string;
     difficulty: string;
+    state?: string;
   } | null;
   milestones: HitoAprendizajeDto[];
   nextItem: ExperienciaAprendizajeDto | null;
-  progress: {
-    requiredTotal: number;
-    completedTotal: number;
-    percent: number;
-  };
+  progress: LearningMapProgressDto;
   enrollment?: MatriculaRespuestaDto | null;
   courseVersion?: VersionCursoResumenDto | null;
   legacyFallback?: boolean;
+}
+
+export interface RutaDisponibleDto {
+  id: number;
+  title: string;
+  description?: string | null;
+  audience: string;
+  difficulty: string;
+  courseVersionId?: number | null;
+  milestoneCount?: number;
+}
+
+export interface RutasAlumnoResponse {
+  paths: RutaDisponibleDto[];
 }
 
 export interface RutaAprendizajeItemDto {
