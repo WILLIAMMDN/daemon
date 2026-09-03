@@ -51,7 +51,7 @@ Ya tienes `@sentry/angular@^10.65.0` instalado. Falta:
 ### 2.2 UptimeRobot externo
 - Crear cuenta en https://uptimerobot.com (free: 50 monitores, 5 min).
 - Configurar 3 monitores:
-  1. `https://daemonestudiante.web.app` (frontend)
+  1. `https://daemonarc.web.app` (frontend)
   2. `https://daemon-5vo1.onrender.com/api/v1/salud` (backend)
   3. `https://daemon-5vo1.onrender.com/api/v1/salud` con keyword check de `"ok":true`
 - Configurar alertas por email al mantenedor.

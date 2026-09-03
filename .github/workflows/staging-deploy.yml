@@ -36,7 +36,7 @@ jobs:
             test -n "${!name}" || { echo "Missing environment variable: $name"; exit 1; }
           done
           case "$STAGING_FIREBASE_PROJECT_ID|$STAGING_FRONTEND_URL|$STAGING_API_URL|$STAGING_ASSET_BASE_URL|$STAGING_SUPABASE_URL|$STAGING_SUPABASE_BUCKET" in
-            *daemon-a41f8*|*daemonestudiante.web.app*|*daemon-5vo1.onrender.com*)
+            *daemon-a41f8*|*daemonarc.web.app*|*daemon-5vo1.onrender.com*)
               echo 'Staging cannot reuse production resources.'
               exit 1
               ;;

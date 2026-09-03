@@ -78,7 +78,7 @@ Riesgos P1 relevantes (fuera de la lista P0): contradicciones documentales hered
 | Storage | Supabase Storage buckets `daemon-assets` (público) y `daemon-private` (privado); Firebase Hosting para assets estáticos | `render.yaml`, migraciones, `Activos` |
 | Realtime | Pusher + `laravel-echo` (Broadcast) | `composer.json`, `package.json`, `routes/channels.php` |
 | IA | OpenRouter (chatbot, `OpenRouterProvider`) y Ollama (legacy), asistente IA de cuentos vía Laravel | `app/Services/Chatbot/`, `CuentoV2` |
-| Deploy | Firebase Hosting (`daemonestudiante`, target `estudiante`) + Render Docker (`daemon-5vo1.onrender.com`) | `firebase.json`, `.firebaserc`, `render.yaml`, Dockerfile |
+| Deploy | Firebase Hosting (`daemonarc`, target `arc`) + Render Docker (`daemon-5vo1.onrender.com`) | `firebase.json`, `.firebaserc`, `render.yaml`, Dockerfile |
 | CI/CD | 9 workflows GitHub Actions (backend-tests, frontend-ci, firebase-hosting-merge, firebase-hosting-pull-request, staging-deploy, supabase-backup, production-monitor, keep-alive, security-audit) | `.github/workflows/` |
 
 ## 4. Evaluación por dominio
@@ -139,7 +139,7 @@ Riesgos P1 relevantes (fuera de la lista P0): contradicciones documentales hered
 
 ```text
 Browser
-  -> Firebase Hosting (https://daemonestudiante.web.app)  [Angular 21 SPA]
+  -> Firebase Hosting (https://daemonarc.web.app)        [Angular 21 SPA]
   -> Render (https://daemon-5vo1.onrender.com/api/v1)     [Laravel 12 + Sanctum]
   -> Supabase PostgreSQL (business data)                  [proyecto lbxdcvsrmkkynttgwblc]
   -> Supabase Storage (daemon-assets, daemon-private)     [uploads de negocio]

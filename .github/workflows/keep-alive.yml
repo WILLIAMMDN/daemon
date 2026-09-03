@@ -28,7 +28,7 @@ jobs:
       - name: Warm up Render backend
         env:
           HEALTH_URL: https://daemon-5vo1.onrender.com/api/v1/salud
-          FRONTEND_URL: https://daemonestudiante.web.app
+          FRONTEND_URL: https://daemonarc.web.app
         shell: bash
         run: |
           set +e

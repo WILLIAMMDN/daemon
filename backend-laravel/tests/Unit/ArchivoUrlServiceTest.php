@@ -12,20 +12,20 @@ class ArchivoUrlServiceTest extends TestCase
 {
     public function test_normaliza_avatar_default_y_lo_resuelve_desde_frontend(): void
     {
-        config(['daemon.asset_public_url' => 'https://daemonestudiante.web.app']);
+        config(['daemon.asset_public_url' => 'https://daemonarc.web.app']);
 
         $url = app(ArchivoUrlService::class)->url('img/bot_default.png');
 
-        $this->assertSame('https://daemonestudiante.web.app/img/bot_default.svg', $url);
+        $this->assertSame('https://daemonarc.web.app/img/bot_default.svg', $url);
     }
 
     public function test_resuelve_assets_publicos_desde_frontend(): void
     {
-        config(['daemon.asset_public_url' => 'https://daemonestudiante.web.app']);
+        config(['daemon.asset_public_url' => 'https://daemonarc.web.app']);
 
         $url = app(ArchivoUrlService::class)->url('galeria/osito.jpg');
 
-        $this->assertSame('https://daemonestudiante.web.app/galeria/osito.jpg', $url);
+        $this->assertSame('https://daemonarc.web.app/galeria/osito.jpg', $url);
     }
 
     public function test_resuelve_uploads_desde_storage_cloud(): void

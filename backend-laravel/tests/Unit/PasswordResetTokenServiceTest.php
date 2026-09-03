@@ -17,7 +17,7 @@ class PasswordResetTokenServiceTest extends TestCase
         parent::setUp();
 
         config([
-            'services.firebase.password_reset_url' => 'https://daemonestudiante.web.app/restablecer-clave',
+            'services.firebase.password_reset_url' => 'https://daemonarc.web.app/restablecer-clave',
             'app.key' => 'base64:'.base64_encode(str_repeat('a', 32)),
         ]);
 
@@ -49,7 +49,7 @@ class PasswordResetTokenServiceTest extends TestCase
 
         $url = (new PasswordResetTokenService())->crear($usuario);
 
-        $this->assertStringStartsWith('https://daemonestudiante.web.app/restablecer-clave?', $url);
+        $this->assertStringStartsWith('https://daemonarc.web.app/restablecer-clave?', $url);
         $this->assertStringContainsString('correo=1', $url);
         $this->assertMatchesRegularExpression('/token=[A-Za-z0-9._-]+/', $url);
     }

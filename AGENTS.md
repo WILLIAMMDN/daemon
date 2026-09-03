@@ -47,12 +47,12 @@ evaluations, files, and AI modules.
 ## Key public URLs
 
 ```text
-Frontend production: https://daemonestudiante.web.app
+Frontend production: https://daemonarc.web.app
 Backend production:  https://daemon-5vo1.onrender.com/api/v1
 Health endpoint:     https://daemon-5vo1.onrender.com/api/v1/salud
 GitHub repo:         https://github.com/WILLIAMMDN/daemon
 Firebase project:    daemon-a41f8
-Hosting site:        daemonestudiante
+Hosting site:        daemonarc
 Supabase project:    lbxdcvsrmkkynttgwblc
 Supabase bucket:     daemon-assets
 ```
@@ -156,7 +156,7 @@ Frontend deploy:
 
 ```powershell
 cd C:\laragon\www\daemon
-firebase deploy --only hosting:estudiante --project daemon-a41f8
+firebase deploy --only hosting:arc --project daemon-a41f8
 ```
 
 Verify public bundle:

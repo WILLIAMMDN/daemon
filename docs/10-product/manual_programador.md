@@ -91,7 +91,7 @@ La arquitectura sigue la convención *Feature-based*:
   El frontend se compila bajo presupuestos estrictos (máximo 1MB initial bundle).
   ```bash
   npm run build
-  firebase deploy --only hosting:estudiante --project daemon-a41f8
+  firebase deploy --only hosting:arc --project daemon-a41f8
   ```
   *La caché de recursos estáticos está configurada a 1 año (`max-age=31536000`) en `firebase.json` aprovechando el cache busting de Angular.*
 

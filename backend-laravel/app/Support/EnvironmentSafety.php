@@ -11,7 +11,7 @@ final class EnvironmentSafety
         'database' => 'lbxdcvsrmkkynttgwblc',
         'firebase' => 'daemon-a41f8',
         'api' => 'daemon-5vo1.onrender.com',
-        'hosting' => 'daemonestudiante.web.app',
+        'hosting' => 'daemonarc.web.app',
         'pusher' => '921d28612ceab3864425',
     ];
 

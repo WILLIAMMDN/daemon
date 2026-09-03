@@ -12,7 +12,7 @@ const repositoryRoot = path.resolve(
 export const PRODUCTION_MARKERS = [
   { label: "API Render de produccion", value: "daemon-5vo1.onrender.com" },
   { label: "Firebase de produccion", value: "daemon-a41f8" },
-  { label: "Hosting de produccion", value: "daemonestudiante.web.app" },
+  { label: "Hosting de produccion", value: "daemonarc.web.app" },
   { label: "Supabase de produccion", value: "lbxdcvsrmkkynttgwblc" },
   { label: "Pusher de produccion", value: "921d28612ceab3864425" },
 ];
