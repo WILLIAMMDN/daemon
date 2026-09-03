@@ -55,20 +55,14 @@ describe('DAEMON ARC — IA: Origen (Teens) Reference Course Experience Shell', 
   };
 
   const mockLearningMap: LearningMapResponse = {
-    enrollment: {
-      id: 1,
-      role: 'student',
-      status: 'active',
-      isPrimary: true,
-      aula: { id: 10, nombre: 'Cohorte IA Teens 2026' },
-      course: { id: 20, titulo: 'IA: Origen', audiencia: 'TEENS' },
-    },
+    enrollment: { id: 1, cohortId: 10, status: 'active' },
     courseVersion: {
       id: 5,
-      version: 'IA_ORIGEN_TEENS_2026_V1',
-      estado: 'published',
+      courseId: 20,
+      number: 1,
       audience: 'TEENS',
       difficulty: 'inicial',
+      status: 'published',
     },
     path: {
       id: 1,
