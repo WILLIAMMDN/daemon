@@ -334,7 +334,8 @@ class LearningProgressionService
                 ? 'learning.project.submitted'
                 : 'learning.experience.submitted', 'submitted');
 
-            if (($intento->experiencia->regla_completitud['modo'] ?? null) === 'submission') {
+            if (($intento->experiencia->regla_completitud['modo'] ?? null) === 'submission'
+                && ! $this->requiereEvaluacionDocente($intento->experiencia)) {
                 $this->completarExperiencia($intento->matricula, $intento->experiencia, $intento);
             }
 
@@ -603,12 +604,11 @@ class LearningProgressionService
         /** @var IntentoAprendizaje|null $ultimo */
         $ultimo = $intentos->last();
         $dentroDelLimite = ! $experiencia->max_intentos || $intentos->count() < $experiencia->max_intentos;
-        $tieneFeedback = $ultimo?->feedback?->isNotEmpty() ?? false;
         $puedeRevisar = (bool) ($ultimo
             && $experiencia->permite_intentos
             && $dentroDelLimite
             && $ultimo->estado === 'evaluated'
-            && ($ultimo->aprobado === false || $tieneFeedback));
+            && $ultimo->aprobado === false);
 
         $estado = match (true) {
             ! $ultimo => 'notStarted',
@@ -643,6 +643,17 @@ class LearningProgressionService
             'activeAttemptId' => $ultimo?->estado === 'started' ? $ultimo->id : null,
             'activeAttemptNumber' => $ultimo?->estado === 'started' ? $ultimo->numero : null,
         ];
+    }
+
+    private function requiereEvaluacionDocente(ExperienciaAprendizaje $experiencia): bool
+    {
+        return in_array($experiencia->tipo, [
+            TipoExperienciaAprendizaje::MISION,
+            TipoExperienciaAprendizaje::LABORATORIO,
+            TipoExperienciaAprendizaje::EVALUACION,
+            TipoExperienciaAprendizaje::PROYECTO,
+            TipoExperienciaAprendizaje::DESAFIO,
+        ], true);
     }
 
     private function evaluarTransicionesSuperiores(MatriculaAula $matricula, RutaAprendizaje $ruta): void

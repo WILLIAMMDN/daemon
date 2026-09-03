@@ -493,6 +493,9 @@ class ArcLearningCoreTest extends TestCase
         $this->actingAs($escenario['alumno'])->getJson('/api/v1/alumno/aprender/mapa')
             ->assertOk()
             ->assertJsonPath('milestones.0.experiences.0.attemptLifecycle.state', 'reviewedAgain')
+            ->assertJsonPath('milestones.0.experiences.0.attemptLifecycle.action', 'continue')
+            ->assertJsonPath('milestones.0.experiences.0.attemptLifecycle.canRevise', false)
+            ->assertJsonPath('milestones.0.experiences.0.attemptLifecycle.revisionAvailable', false)
             ->assertJsonPath('milestones.0.experiences.0.attempts.0.approved', false)
             ->assertJsonPath('milestones.0.experiences.0.attempts.1.approved', true)
             ->assertJsonPath('nextItem.id', $escenario['evaluacionExperiencia']->id);

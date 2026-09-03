@@ -205,6 +205,16 @@ class ArcAiOrigenTeensReferenceCourseTest extends TestCase
 
     public function test_end_to_end_progression_unlocks_milestone_two_and_emits_domain_events(): void
     {
+        $docente = Usuario::create([
+            'nombre_completo' => 'Docente de progresión IA',
+            'usuario' => 'docente-progresion-ia',
+            'email' => 'docente-progresion-ia@daemon.test',
+            'password_hash' => bcrypt('password123'),
+            'rol' => 'docente',
+            'nivel' => 'TEENS',
+            'id_institucion' => $this->institucion->id,
+            'id_aula' => $this->aula->id,
+        ]);
         // 1. Estado Inicial: M1 desbloqueado, M1-E1 es actual, M2 a M6 bloqueados
         $mapaInicial = $this->actingAs($this->alumno)->getJson('/api/v1/alumno/aprender/mapa')
             ->assertOk()
@@ -250,6 +260,10 @@ class ArcAiOrigenTeensReferenceCourseTest extends TestCase
                 'metadatos' => ['herramienta' => 'teachable_machine', 'clases' => 2],
             ],
         )->assertOk();
+        $this->actingAs($docente)->postJson(
+            "/api/v1/academico/intentos/{$intentoE2['id']}/evaluar",
+            ['aprobado' => true, 'comentario' => 'Laboratorio aprobado.'],
+        )->assertOk()->assertJsonPath('aprobado', true);
 
         // Verificar avance a M1-E3
         $mapaTrasE2 = $this->actingAs($this->alumno)->getJson('/api/v1/alumno/aprender/mapa')->json();
@@ -272,6 +286,10 @@ class ArcAiOrigenTeensReferenceCourseTest extends TestCase
                 'referencia' => 'Analicé el autocorrector del móvil: entrada (teclas), modelo (n-gramas probabilísticos), salida (sugerencia de palabra).',
             ],
         )->assertOk();
+        $this->actingAs($docente)->postJson(
+            "/api/v1/academico/intentos/{$intentoE3['id']}/evaluar",
+            ['aprobado' => true, 'comentario' => 'Misión aprobada.'],
+        )->assertOk()->assertJsonPath('aprobado', true);
 
         // 5. ¡Hito 1 completado! Verificar que Hito 2 se desbloquea a través del Learning Core
         $mapaTrasM1 = $this->actingAs($this->alumno)->getJson('/api/v1/alumno/aprender/mapa')->json();
@@ -304,9 +322,10 @@ class ArcAiOrigenTeensReferenceCourseTest extends TestCase
             'usuario' => 'docente-ia-origen',
             'email' => 'docente-ia-origen@daemon.test',
             'password_hash' => bcrypt('password123'),
-            'rol' => 'admin',
+            'rol' => 'docente',
             'nivel' => 'TEENS',
             'id_institucion' => $this->institucion->id,
+            'id_aula' => $this->aula->id,
         ]);
         $escenarios = [
             'Tres intentos, una mejor decisión',
@@ -335,6 +354,10 @@ class ArcAiOrigenTeensReferenceCourseTest extends TestCase
                 "/api/v1/alumno/aprender/intentos/{$intentoUno['id']}/evidencias",
                 ['tipo' => $this->tipoEvidencia($experiencia), 'referencia' => "{$titulo}: versión anterior"],
             )->assertOk();
+            $colaV1 = $this->actingAs($docente)->getJson('/api/v1/academico/revisiones?estado=pending')
+                ->assertOk()
+                ->json('data');
+            $this->assertNotNull(collect($colaV1)->firstWhere('id', $intentoUno['id']), "{$titulo}: V1 no apareció en la cola docente");
             $this->actingAs($docente)->postJson(
                 "/api/v1/academico/intentos/{$intentoUno['id']}/evaluar",
                 [
@@ -348,6 +371,15 @@ class ArcAiOrigenTeensReferenceCourseTest extends TestCase
                     ],
                 ],
             )->assertOk();
+            $this->assertDatabaseMissing('progresos_experiencia', [
+                'id_matricula' => $this->matricula->id,
+                'id_experiencia' => $experiencia->id,
+                'estado' => 'completed',
+            ]);
+            $this->assertDatabaseHas('feedback_aprendizaje', [
+                'id_intento' => $intentoUno['id'],
+                'id_autor' => $docente->id,
+            ]);
 
             $this->actingAs($this->alumno)->getJson('/api/v1/alumno/aprender/mapa')
                 ->assertOk()
@@ -370,6 +402,20 @@ class ArcAiOrigenTeensReferenceCourseTest extends TestCase
                     ]],
                 ],
             )->assertOk();
+            $colaV2 = $this->actingAs($docente)->getJson('/api/v1/academico/revisiones?estado=pending')
+                ->assertOk()
+                ->json('data');
+            $revisionEnCola = collect($colaV2)->firstWhere('id', $intentoDos['id']);
+            $this->assertNotNull($revisionEnCola, "{$titulo}: V2 no apareció en la cola docente");
+            $this->assertSame("{$titulo}: versión nueva", $revisionEnCola['evidences'][0]['reference']);
+            $this->actingAs($docente)->postJson(
+                "/api/v1/academico/intentos/{$intentoDos['id']}/evaluar",
+                [
+                    'aprobado' => true,
+                    'puntaje' => 90,
+                    'comentario' => 'La versión revisada aplica el feedback y queda aprobada.',
+                ],
+            )->assertOk()->assertJsonPath('aprobado', true);
 
             $this->assertDatabaseHas('evidencias_aprendizaje', [
                 'id_intento' => $intentoUno['id'],
@@ -379,6 +425,18 @@ class ArcAiOrigenTeensReferenceCourseTest extends TestCase
                 'id_intento' => $intentoDos['id'],
                 'referencia' => "{$titulo}: versión nueva",
             ]);
+            $this->assertDatabaseHas('progresos_experiencia', [
+                'id_matricula' => $this->matricula->id,
+                'id_experiencia' => $experiencia->id,
+                'estado' => 'completed',
+                'id_intento_completado' => $intentoDos['id'],
+            ]);
+            $this->actingAs($this->alumno)->getJson('/api/v1/alumno/aprender/mapa')
+                ->assertOk()
+                ->assertJsonPath($this->rutaJsonExperiencia($experiencia, 'attemptLifecycle.action'), 'continue')
+                ->assertJsonPath($this->rutaJsonExperiencia($experiencia, 'attemptLifecycle.canRevise'), false)
+                ->assertJsonPath($this->rutaJsonExperiencia($experiencia, 'attempts.0.evidence.0.reference'), "{$titulo}: versión anterior")
+                ->assertJsonPath($this->rutaJsonExperiencia($experiencia, 'attempts.1.evidence.0.reference'), "{$titulo}: versión nueva");
             $this->assertSame(2, DB::table('intentos_aprendizaje')
                 ->where('id_matricula', $this->matricula->id)
                 ->where('id_experiencia', $experiencia->id)
