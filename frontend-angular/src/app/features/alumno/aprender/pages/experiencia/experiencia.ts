@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
@@ -13,8 +14,11 @@ import { ArcMiga, ArcPage } from '../../../../../shared/componentes/arc-page/arc
 import { ArcSection } from '../../../../../shared/componentes/arc-section/arc-section';
 import {
   canonizarTipoExperiencia,
+  CicloIntentosDto,
   ETIQUETA_TIPO_EXPERIENCIA,
+  EvidenciaAprendizajeDto,
   ExperienciaAprendizajeDto,
+  IntentoAprendizajeDto,
   TipoExperienciaCanonico,
 } from '../../../models/contexto-alumno.model';
 import { Aprendizaje } from '../../../services/aprendizaje';
@@ -39,6 +43,7 @@ import { Aprendizaje } from '../../../services/aprendizaje';
   selector: 'app-experiencia',
   imports: [
     RouterLink,
+    DatePipe,
     FormsModule,
     NzAlertModule,
     NzButtonModule,
@@ -72,6 +77,10 @@ export class Experiencia {
   readonly feedback = signal<string | null>(null);
   readonly evidenciaTexto = signal('');
   readonly intentoIniciado = signal<number | null>(null);
+  readonly numeroIntentoIniciado = signal<number | null>(null);
+  readonly queCambio = signal('');
+  readonly porQueCambio = signal('');
+  readonly feedbackUtilizado = signal('');
 
   readonly curso = computed(() => this.aprendizaje.curso(Number(this.cursoId())));
   readonly mapa = this.aprendizaje.mapa;
@@ -122,6 +131,41 @@ export class Experiencia {
   readonly tipoEtiqueta = computed(() => {
     return ETIQUETA_TIPO_EXPERIENCIA[this.tipoCanonico()] || 'Experiencia';
   });
+
+  readonly cicloIntentos = computed<CicloIntentosDto>(() => {
+    const exp = this.experiencia();
+    return exp?.attemptLifecycle ?? {
+      state: 'notStarted',
+      action: exp?.attemptable ? 'start' : 'none',
+      canStartAttempt: Boolean(exp?.attemptable),
+      canRevise: false,
+      revisionAvailable: false,
+      revisionExplanationRequired: false,
+      activeAttemptId: null,
+      activeAttemptNumber: null,
+    };
+  });
+
+  readonly intentos = computed<IntentoAprendizajeDto[]>(() => this.experiencia()?.attempts ?? []);
+  readonly ultimoIntento = computed<IntentoAprendizajeDto | null>(() => this.intentos().at(-1) ?? null);
+  readonly intentoActivoId = computed(() => this.intentoIniciado() ?? this.cicloIntentos().activeAttemptId ?? null);
+  readonly numeroIntentoActivo = computed(() => this.numeroIntentoIniciado() ?? this.cicloIntentos().activeAttemptNumber ?? null);
+  readonly esRevision = computed(() => (this.numeroIntentoActivo() ?? 0) > 1);
+  readonly intentoAnterior = computed<IntentoAprendizajeDto | null>(() => {
+    const numero = this.numeroIntentoActivo();
+    if (!numero || numero <= 1) return null;
+    return [...this.intentos()].reverse().find((intento) => intento.number < numero) ?? null;
+  });
+  readonly explicacionRevisionCompleta = computed(() => {
+    if (!this.esRevision() || !this.cicloIntentos().revisionExplanationRequired) return true;
+    return Boolean(this.queCambio().trim() && this.porQueCambio().trim() && this.feedbackUtilizado().trim());
+  });
+  readonly puedeEnviarEvidencia = computed(() => Boolean(
+    this.intentoActivoId()
+      && this.evidenciaTexto().trim()
+      && this.explicacionRevisionCompleta()
+      && !this.procesando(),
+  ));
 
   readonly indiceActual = computed(() => {
     const id = Number(this.experienceId());
@@ -188,6 +232,7 @@ export class Experiencia {
       .subscribe({
         next: (intento) => {
           this.intentoIniciado.set(intento.id);
+          this.numeroIntentoIniciado.set(intento.numero);
           this.feedback.set(`Intento #${intento.numero} iniciado. Ya puedes trabajar en tu entrega.`);
         },
         error: (err) => {
@@ -232,8 +277,38 @@ export class Experiencia {
     }
   }
 
+  etiquetaEstadoIntento(estado: string): string {
+    switch (estado) {
+      case 'started': return 'En progreso';
+      case 'submitted': return 'Enviado';
+      case 'evaluated': return 'Revisado';
+      default: return estado;
+    }
+  }
+
+  evidenciaPrincipal(intento: IntentoAprendizajeDto | null): EvidenciaAprendizajeDto | null {
+    return intento?.evidence?.at(-1) ?? null;
+  }
+
+  versionesMetadata(evidencia: EvidenciaAprendizajeDto | null): Array<{ label: string; value: string }> {
+    if (!evidencia?.metadata) return [];
+    return Object.entries(evidencia.metadata)
+      .filter(([key]) => /^v\d+$/i.test(key))
+      .map(([key, value]) => ({ label: key.toUpperCase(), value: String(value) }));
+  }
+
+  criterioFeedback(...claves: string[]): string | null {
+    const criterios = this.experiencia()?.latestFeedback?.criteria;
+    if (!criterios || Array.isArray(criterios) || typeof criterios !== 'object') return null;
+    for (const clave of claves) {
+      const valor = criterios[clave];
+      if (typeof valor === 'string' && valor.trim()) return valor;
+    }
+    return null;
+  }
+
   entregarEvidencia(): void {
-    const intentoId = this.intentoIniciado();
+    const intentoId = this.intentoActivoId();
     const texto = this.evidenciaTexto().trim();
     if (!intentoId || !texto || this.procesando()) return;
 
@@ -241,17 +316,32 @@ export class Experiencia {
     this.error.set(null);
     this.feedback.set(null);
 
+    const metadatos: Record<string, unknown> = { sentFrom: 'learning-experience-shell' };
+    if (this.esRevision()) {
+      metadatos['revision'] = {
+        whatChanged: this.queCambio().trim(),
+        whyChanged: this.porQueCambio().trim(),
+        feedbackUsed: this.feedbackUtilizado().trim(),
+      };
+    }
+
     this.aprendizaje
       .entregarEvidencia(intentoId, {
         tipo: this.resolverTipoEvidencia(this.tipoCanonico()),
         referencia: texto,
-        metadatos: { enviado_desde: 'learning-experience-shell' },
+        metadatos,
       })
       .pipe(finalize(() => this.procesando.set(false)))
       .subscribe({
         next: () => {
           this.feedback.set('Tu evidencia fue enviada correctamente.');
           this.evidenciaTexto.set('');
+          this.queCambio.set('');
+          this.porQueCambio.set('');
+          this.feedbackUtilizado.set('');
+          this.intentoIniciado.set(null);
+          this.numeroIntentoIniciado.set(null);
+          this.aprendizaje.cargarMapa(true).subscribe({ error: () => undefined });
         },
         error: (err) => {
           this.error.set(err?.error?.message || 'Ocurrió un problema al enviar la evidencia.');

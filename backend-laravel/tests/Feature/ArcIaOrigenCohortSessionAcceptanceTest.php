@@ -176,6 +176,37 @@ class ArcIaOrigenCohortSessionAcceptanceTest extends TestCase
             ->getJson('/api/v1/alumno/home-context')
             ->assertOk()
             ->assertJsonPath('nextLiveSession.startsAt', '2026-09-08T01:00:00Z');
+
+        // 7. El docente cancela con la semántica canónica del dominio.
+        $this->actingAs($this->docente)
+            ->putJson("/api/v1/academico/sesiones/{$creada['id']}", [
+                'titulo' => 'Semana 1 — ¿La IA piensa?',
+                'inicio_at' => '2026-09-07T20:00:00-05:00',
+                'fin_at' => '2026-09-07T21:30:00-05:00',
+                'estado' => 'cancelled',
+            ])
+            ->assertOk()
+            ->assertJsonPath('estado', 'cancelled');
+
+        $this->assertDatabaseHas('sesiones_aprendizaje', [
+            'id' => $creada['id'],
+            'estado' => 'cancelled',
+        ]);
+
+        // 8. El Alumno deja de tener próxima sesión, pero la cancelación sigue
+        //    siendo visible en la Agenda: no desaparece en silencio.
+        $this->actingAs($this->alumno)
+            ->getJson('/api/v1/alumno/home-context')
+            ->assertOk()
+            ->assertJsonPath('nextLiveSession', null)
+            ->assertJsonPath('upcomingAgendaSummary.total', 0);
+
+        $this->actingAs($this->alumno)
+            ->getJson('/api/v1/alumno/agenda')
+            ->assertOk()
+            ->assertJsonCount(1, 'events')
+            ->assertJsonPath('events.0.status', 'cancelled')
+            ->assertJsonPath('events.0.access', null);
     }
 
     private function crearUsuario(string $rol, string $sufijo, ?Aula $aula = null): Usuario

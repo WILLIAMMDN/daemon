@@ -1,0 +1,438 @@
+<div class="revisiones-pagina">
+  <header class="revisiones-cabecera">
+    <div class="revisiones-cabecera__info">
+      <h1 class="revisiones-cabecera__titulo">Revisiones formativas</h1>
+      <p class="revisiones-cabecera__descripcion">
+        Supervisión de evidencias de aprendizaje, retroalimentación cualitativa y cierre del ciclo pedagógico.
+      </p>
+    </div>
+    <div class="revisiones-cabecera__acciones">
+      <button nz-button nzType="default" [disabled]="cargando()" (click)="cargarRevisiones()">
+        <fa-icon [icon]="iconos.recargar" [animation]="cargando() ? 'spin' : undefined"></fa-icon>
+        <span>Actualizar</span>
+      </button>
+    </div>
+  </header>
+
+  @if (feedbackMensaje(); as msg) {
+    <nz-alert nzType="success" nzShowIcon [nzMessage]="msg" class="alerta-feedback" />
+  }
+
+  @if (error(); as err) {
+    <nz-alert nzType="error" nzShowIcon [nzMessage]="err" class="alerta-error" />
+  }
+
+  <section class="revisiones-filtros">
+    <div class="filtro-item">
+      <label for="filtro-curso">Filtrar por curso:</label>
+      <nz-select
+        id="filtro-curso"
+        [ngModel]="filtroCursoId()"
+        (ngModelChange)="filtroCursoId.set($event)"
+        nzPlaceHolder="Todos los cursos"
+        nzAllowClear
+        class="filtro-select"
+      >
+        @for (c of cursosDisponibles(); track c.id) {
+          <nz-option [nzValue]="c.id" [nzLabel]="c.title" />
+        }
+      </nz-select>
+    </div>
+
+    <div class="filtro-item">
+      <label for="filtro-aula">Filtrar por cohorte / aula:</label>
+      <nz-select
+        id="filtro-aula"
+        [ngModel]="filtroAulaId()"
+        (ngModelChange)="filtroAulaId.set($event)"
+        nzPlaceHolder="Todas las aulas"
+        nzAllowClear
+        class="filtro-select"
+      >
+        @for (a of aulasDisponibles(); track a.id) {
+          <nz-option [nzValue]="a.id" [nzLabel]="a.name" />
+        }
+      </nz-select>
+    </div>
+  </section>
+
+  <nz-tabs
+    [nzSelectedIndex]="pestanaActiva() === 'pending' ? 0 : 1"
+    (nzSelectedIndexChange)="cambiarPestana($event)"
+    class="revisiones-tabs"
+  >
+    <nz-tab [nzTitle]="'Pendientes de revisión (' + pendientes().length + ')'">
+      @if (cargando()) {
+        <nz-skeleton [nzActive]="true" [nzParagraph]="{ rows: 6 }" />
+      } @else if (listaFiltrada().length === 0) {
+        <div class="revisiones-vacio">
+          <nz-empty
+            nzNotFoundImage="simple"
+            nzNotFoundContent="No hay entregas pendientes de revisión con los filtros seleccionados."
+          ></nz-empty>
+        </div>
+      } @else {
+        <div class="tabla-contenedor">
+          <nz-table
+            #tablaPendientes
+            [nzData]="listaFiltrada()"
+            [nzFrontPagination]="true"
+            [nzPageSize]="10"
+            nzSize="middle"
+          >
+            <thead>
+              <tr>
+                <th>Estudiante</th>
+                <th>Cohorte / Aula</th>
+                <th>Curso & Versión</th>
+                <th>Experiencia</th>
+                <th>Intento</th>
+                <th>Fecha de envío</th>
+                <th>Acción</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of tablaPendientes.data; track item.id) {
+                <tr>
+                  <td>
+                    <div class="celda-estudiante">
+                      <strong class="celda-estudiante__nombre">{{ item.student.name }}</strong>
+                      <span class="celda-estudiante__usuario">&#64;{{ item.student.username }}</span>
+                    </div>
+                  </td>
+                  <td>
+                    <span>{{ item.cohort.name }}</span>
+                  </td>
+                  <td>
+                    <div class="celda-curso">
+                      <strong>{{ item.course.title }}</strong>
+                      @if (item.course.version) {
+                        <span class="celda-curso__version">{{ item.course.version }}</span>
+                      }
+                    </div>
+                  </td>
+                  <td>
+                    <div class="celda-exp">
+                      <span class="celda-exp__hito">Hito {{ item.milestone.order }}: {{ item.milestone.title }}</span>
+                      <div class="celda-exp__titulo-linea">
+                        <nz-tag [nzColor]="obtenerColorTipo(item.experience.type)">
+                          {{ obtenerEtiquetaTipo(item.experience.type) }}
+                        </nz-tag>
+                        <strong>{{ item.experience.title }}</strong>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <nz-tag>#{{ item.attemptNumber }}</nz-tag>
+                  </td>
+                  <td>
+                    <span>{{ item.submittedAt | date: 'dd/MM/yyyy HH:mm' }}</span>
+                  </td>
+                  <td>
+                    <button nz-button nzType="primary" nzSize="small" (click)="abrirRevision(item)">
+                      <fa-icon [icon]="iconos.ver"></fa-icon>
+                      <span>Revisar entrega</span>
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </nz-table>
+        </div>
+      }
+    </nz-tab>
+
+    <nz-tab [nzTitle]="'Revisadas (' + revisadas().length + ')'">
+      @if (cargando()) {
+        <nz-skeleton [nzActive]="true" [nzParagraph]="{ rows: 6 }" />
+      } @else if (listaFiltrada().length === 0) {
+        <div class="revisiones-vacio">
+          <nz-empty
+            nzNotFoundImage="simple"
+            nzNotFoundContent="Aún no hay entregas revisadas que coincidan con los filtros."
+          ></nz-empty>
+        </div>
+      } @else {
+        <div class="tabla-contenedor">
+          <nz-table
+            #tablaRevisadas
+            [nzData]="listaFiltrada()"
+            [nzFrontPagination]="true"
+            [nzPageSize]="10"
+            nzSize="middle"
+          >
+            <thead>
+              <tr>
+                <th>Estudiante</th>
+                <th>Cohorte / Aula</th>
+                <th>Curso</th>
+                <th>Experiencia</th>
+                <th>Resultado</th>
+                <th>Puntaje</th>
+                <th>Fecha evaluación</th>
+                <th>Acción</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of tablaRevisadas.data; track item.id) {
+                <tr>
+                  <td>
+                    <div class="celda-estudiante">
+                      <strong class="celda-estudiante__nombre">{{ item.student.name }}</strong>
+                      <span class="celda-estudiante__usuario">&#64;{{ item.student.username }}</span>
+                    </div>
+                  </td>
+                  <td>
+                    <span>{{ item.cohort.name }}</span>
+                  </td>
+                  <td>
+                    <span>{{ item.course.title }}</span>
+                  </td>
+                  <td>
+                    <div class="celda-exp">
+                      <div class="celda-exp__titulo-linea">
+                        <nz-tag [nzColor]="obtenerColorTipo(item.experience.type)">
+                          {{ obtenerEtiquetaTipo(item.experience.type) }}
+                        </nz-tag>
+                        <strong>{{ item.experience.title }}</strong>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <nz-tag [nzColor]="item.approved ? 'success' : 'error'">
+                      {{ item.approved ? 'Aprobado' : 'Requiere revisión' }}
+                    </nz-tag>
+                  </td>
+                  <td>
+                    <span>{{ item.score !== null ? item.score + ' / 100' : 'Formativo' }}</span>
+                  </td>
+                  <td>
+                    <span>{{ item.evaluatedAt | date: 'dd/MM/yyyy HH:mm' }}</span>
+                  </td>
+                  <td>
+                    <button nz-button nzType="default" nzSize="small" (click)="abrirRevision(item)">
+                      <fa-icon [icon]="iconos.ver"></fa-icon>
+                      <span>Ver revisión</span>
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </nz-table>
+        </div>
+      }
+    </nz-tab>
+  </nz-tabs>
+
+  <!-- Modal de Revisión y Retroalimentación -->
+  <nz-modal
+    [nzVisible]="modalVisible()"
+    [nzTitle]="'Revisión: ' + (intentoSeleccionado()?.experience?.title || 'Entrega')"
+    (nzOnCancel)="cerrarModal()"
+    (nzOnOk)="guardarEvaluacion()"
+    [nzOkLoading]="guardando()"
+    [nzOkText]="'Guardar evaluación formativa'"
+    [nzCancelText]="'Cerrar'"
+    [nzWidth]="850"
+  >
+    <ng-container *nzModalContent>
+      @if (intentoSeleccionado(); as item) {
+        <div class="modal-revision">
+          <!-- Contexto del Estudiante y Curso -->
+          <div class="revision-cabecera-meta">
+            <div class="meta-item">
+              <span class="meta-label">Estudiante:</span>
+              <strong class="meta-valor">{{ item.student.name }} (&#64;{{ item.student.username }})</strong>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Cohorte / Aula:</span>
+              <span class="meta-valor">{{ item.cohort.name }}</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Curso:</span>
+              <span class="meta-valor">{{ item.course.title }} ({{ item.course.version || 'V1' }})</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Intento:</span>
+              <span class="meta-valor">#{{ item.attemptNumber }}</span>
+            </div>
+          </div>
+
+          @if (errorModal(); as errModal) {
+            <nz-alert nzType="error" nzShowIcon [nzMessage]="errModal" class="alerta-error-modal" />
+          }
+
+          <!-- Contexto de la Tarea / Instrucciones -->
+          <div class="seccion-revision">
+            <h3 class="seccion-revision__titulo">1. Consigna pedagógica de la experiencia</h3>
+            @if (item.experience.summary) {
+              <p class="seccion-revision__resumen">{{ item.experience.summary }}</p>
+            }
+
+            @if (item.experience.instructions; as ins) {
+              <div class="instrucciones-caja">
+                @if (ins['tipo_actividad']) {
+                  <div class="instruccion-item">
+                    <span class="instruccion-tag">Modalidad:</span>
+                    <span>{{ ins['tipo_actividad'] }}</span>
+                  </div>
+                }
+                @if (ins['herramienta_sugerida']) {
+                  <div class="instruccion-item">
+                    <span class="instruccion-tag">Herramienta:</span>
+                    <span>{{ ins['herramienta_sugerida'] }}</span>
+                  </div>
+                }
+                @if (obtenerCamposRequeridos(ins)) {
+                  <div class="instruccion-item">
+                    <span class="instruccion-tag">Campos solicitados:</span>
+                    <span>{{ obtenerCamposRequeridos(ins) }}</span>
+                  </div>
+                }
+                @if (obtenerPreguntasInforme(ins).length > 0) {
+                  <div class="instruccion-item">
+                    <span class="instruccion-tag">Preguntas guía:</span>
+                    <ul>
+                      @for (p of obtenerPreguntasInforme(ins); track $index) {
+                        <li>{{ p }}</li>
+                      }
+                    </ul>
+                  </div>
+                }
+              </div>
+            }
+
+            @if (item.experience.objectives.length > 0) {
+              <div class="objetivos-lista">
+                <span class="objetivos-lista__label">Objetivos vinculados:</span>
+                <ul>
+                  @for (obj of item.experience.objectives; track obj.id) {
+                    <li>
+                      @if (obj.code) {
+                        <strong>[{{ obj.code }}]</strong>
+                      }
+                      {{ obj.description }}
+                    </li>
+                  }
+                </ul>
+              </div>
+            }
+          </div>
+
+          <!-- Rúbrica formativa de referencia -->
+          @if (criteriosRubrica(item.experience.instructions).length > 0) {
+            <div class="seccion-revision">
+              <h3 class="seccion-revision__titulo">2. Criterios formativos de la rúbrica</h3>
+              <div class="rubrica-grid">
+                @for (criterio of criteriosRubrica(item.experience.instructions); track $index) {
+                  <span class="rubrica-criterio-tag">{{ criterio }}</span>
+                }
+              </div>
+            </div>
+          }
+
+          <!-- Evidencia entregada por el estudiante -->
+          <div class="seccion-revision">
+            <h3 class="seccion-revision__titulo">3. Evidencia entregada por el estudiante</h3>
+            @if (item.evidences.length === 0) {
+              <p class="evidencia-vacia">El intento no cuenta con evidencias adjuntas.</p>
+            } @else {
+              <div class="evidencias-lista">
+                @for (ev of item.evidences; track ev.id) {
+                  <div class="evidencia-tarjeta">
+                    <div class="evidencia-tarjeta__cabecera">
+                      <nz-tag nzColor="blue">{{ obtenerEtiquetaEvidencia(ev.type) }}</nz-tag>
+                      <span class="evidencia-tarjeta__fecha">{{ ev.registeredAt | date: 'dd/MM/yyyy HH:mm' }}</span>
+                    </div>
+
+                    <div class="evidencia-tarjeta__cuerpo">
+                      <div class="evidencia-texto">
+                        <label>Contenido / Referencia:</label>
+                        <p class="evidencia-parrafo">{{ ev.reference }}</p>
+                      </div>
+
+                      @if (obtenerMetadatosKeys(ev.metadata).length > 0) {
+                        <div class="evidencia-metadatos">
+                          <label>Metadatos estructurados reportados:</label>
+                          <dl class="metadatos-grid">
+                            @for (clave of obtenerMetadatosKeys(ev.metadata); track clave) {
+                              <div class="metadato-fila">
+                                <dt>{{ formatearClaveMetadato(clave) }}:</dt>
+                                <dd>{{ ev.metadata![clave] }}</dd>
+                              </div>
+                            }
+                          </dl>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+
+          <!-- Historial de retroalimentación previa -->
+          @if (item.feedback.length > 0) {
+            <div class="seccion-revision">
+              <h3 class="seccion-revision__titulo">4. Historial de retroalimentación</h3>
+              <div class="historial-fb">
+                @for (fb of item.feedback; track fb.id) {
+                  <div class="fb-item">
+                    <div class="fb-item__cabecera">
+                      <strong>{{ fb.authorName }}</strong>
+                      <span class="fb-item__fecha">{{ fb.registeredAt | date: 'dd/MM/yyyy HH:mm' }}</span>
+                    </div>
+                    <p class="fb-item__comentario">{{ fb.comment }}</p>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+
+          <!-- Formulario de Evaluación -->
+          <div class="seccion-revision seccion-revision--formulario">
+            <h3 class="seccion-revision__titulo">5. Registrar evaluación formativa</h3>
+
+            <div class="form-grupo">
+              <label class="form-label">Resolución pedagógica:</label>
+              <nz-radio-group [ngModel]="formAprobado()" (ngModelChange)="formAprobado.set($event)">
+                <label nz-radio [nzValue]="true">Aprobado (completa la experiencia)</label>
+                <label nz-radio [nzValue]="false">Requiere revisión (permite reintento)</label>
+              </nz-radio-group>
+            </div>
+
+            <div class="form-grupo">
+              <label class="form-label" for="form-puntaje">Puntaje formativo (0 a 100, opcional):</label>
+              <input
+                nz-input
+                type="number"
+                id="form-puntaje"
+                min="0"
+                max="100"
+                placeholder="Ej. 90 (opcional)"
+                [ngModel]="formPuntaje()"
+                (ngModelChange)="formPuntaje.set($event)"
+                class="form-input-puntaje"
+              />
+            </div>
+
+            <div class="form-grupo">
+              <label class="form-label" for="form-comentario">Retroalimentación formativa cualitativa:</label>
+              <textarea
+                nz-input
+                id="form-comentario"
+                rows="5"
+                placeholder="Escribe aquí tu retroalimentación estructurada:
+• FORTALEZA: Aspectos destacados de la entrega.
+• MEJORA: Elementos que requieren profundización o corrección.
+• SIGUIENTE PASO: Recomendación concreta para la siguiente experiencia."
+                [ngModel]="formComentario()"
+                (ngModelChange)="formComentario.set($event)"
+              ></textarea>
+            </div>
+          </div>
+        </div>
+      }
+    </ng-container>
+  </nz-modal>
+</div>
