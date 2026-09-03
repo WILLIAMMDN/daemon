@@ -1,0 +1,129 @@
+<section class="studio-curso-detalle">
+  <nav class="studio-curso-detalle__migas" aria-label="Ruta de navegación">
+    <a routerLink="/docente/cursos">Cursos</a>
+    <span aria-hidden="true">/</span>
+    <span>{{ curso()?.title ?? 'Curso' }}</span>
+  </nav>
+
+  @if (cargando()) {
+    <nz-skeleton [nzActive]="true" [nzParagraph]="{ rows: 5 }" />
+  } @else if (error(); as fallo) {
+    @if (fallo.tipo === 'autorizacion') {
+      <nz-result nzStatus="403" nzTitle="Sin acceso a este curso" [nzSubTitle]="fallo.mensaje" />
+    } @else {
+      <nz-alert nzType="error" [nzMessage]="fallo.mensaje" nzShowIcon>
+        <ng-container *nzAlertAction>
+          <button nz-button nzSize="small" (click)="cargar()">Reintentar</button>
+        </ng-container>
+      </nz-alert>
+    }
+  } @else if (curso(); as datos) {
+    <header class="studio-curso-detalle__cabecera">
+      <div class="studio-curso-detalle__intro">
+        <h1>{{ datos.title }}</h1>
+        @if (datos.description) {
+          <p>{{ datos.description }}</p>
+        }
+      </div>
+      <dl class="studio-curso-detalle__datos">
+        @if (datos.code) {
+          <div>
+            <dt>Código</dt>
+            <dd>{{ datos.code }}</dd>
+          </div>
+        }
+        @if (datos.audience) {
+          <div>
+            <dt>Audiencia</dt>
+            <dd>{{ datos.audience }}</dd>
+          </div>
+        }
+        <div>
+          <dt>Cohortes</dt>
+          <dd>{{ datos.cohortCount }}</dd>
+        </div>
+      </dl>
+    </header>
+
+    <section class="studio-bloque">
+      <h2 class="studio-bloque__titulo">Versiones</h2>
+      <p class="studio-bloque__nota">
+        Una versión publicada no se edita. Para cambiarla, crea un borrador a partir de ella: el
+        contenido se clona y las cohortes existentes siguen en su versión.
+      </p>
+
+      @if (datos.versions.length === 0) {
+        <nz-empty nzNotFoundContent="Este curso todavía no tiene versiones." />
+      } @else {
+        <ul class="studio-versiones">
+          @for (version of datos.versions; track version.id) {
+            <li class="studio-version" [class.studio-version--borrador]="version.status === 'draft'">
+              <div class="studio-version__cuerpo">
+                <div class="studio-version__identidad">
+                  <nz-tag [nzColor]="colorEstado(version.status)">{{ etiquetaEstado(version.status) }}</nz-tag>
+                  <h3 class="studio-version__titulo">
+                    <a [routerLink]="['/docente/cursos', courseId(), 'version', version.id]">
+                      V{{ version.number }} · {{ version.title ?? 'Sin título' }}
+                    </a>
+                  </h3>
+                </div>
+
+                <p class="studio-version__meta">
+                  @if (version.audience) {
+                    <span>{{ version.audience }}</span>
+                  }
+                  @if (version.difficulty) {
+                    <span>{{ version.difficulty }}</span>
+                  }
+                  @if (version.publishedAt) {
+                    <span>Publicada el {{ version.publishedAt | date: 'mediumDate' }}</span>
+                  }
+                  @if (version.clonedFromVersionId) {
+                    <span>Clonada de otra versión</span>
+                  }
+                </p>
+
+                @if (version.author || version.publisher) {
+                  <p class="studio-version__autoria">
+                    @if (version.author) {
+                      <span>Creada por {{ version.author.name }}</span>
+                    }
+                    @if (version.publisher) {
+                      <span>Publicada por {{ version.publisher.name }}</span>
+                    }
+                  </p>
+                }
+              </div>
+
+              <div class="studio-version__acciones">
+                <a
+                  nz-button
+                  nzType="default"
+                  nzSize="small"
+                  [routerLink]="['/docente/cursos', courseId(), 'version', version.id]"
+                >
+                  {{ version.editable ? 'Editar' : 'Ver' }}
+                </a>
+                @if (!version.editable) {
+                  <button
+                    nz-button
+                    nzType="primary"
+                    nzSize="small"
+                    nz-popconfirm
+                    nzPopconfirmTitle="Se creará una versión nueva en borrador con una copia completa de este contenido. La versión actual no cambia."
+                    nzOkText="Crear borrador"
+                    nzCancelText="Cancelar"
+                    (nzOnConfirm)="crearBorrador(version)"
+                    [nzLoading]="clonando() === version.id"
+                  >
+                    Crear borrador
+                  </button>
+                }
+              </div>
+            </li>
+          }
+        </ul>
+      }
+    </section>
+  }
+</section>
