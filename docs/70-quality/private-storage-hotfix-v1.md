@@ -144,6 +144,12 @@ diagnostics) remain; no initial-bundle growth was introduced.
 | Public URL retirement in production | Pending deployment; baseline is HTTP 200 image/png on both sites |
 | Remote CI | See PR checks; local results above are not a substitute for remote CI |
 
+A later pre-merge probe returned HTTP 404 for both retired paths on `daemonestudiante`,
+while both paths on `daemonarc` still returned HTTP 200 image/png. Ordinary and explicitly
+revalidated requests agreed. No deployment was performed by this task between probes,
+and `origin/main` was rechecked at the same canonical commit. The initial exposure and
+later remote responses are separate observations, not evidence of a completed rollout.
+
 ## Deployment and owner review
 
 **Do not merge automatically.** The observed Render dashboard setting is **On Commit**,
@@ -161,7 +167,7 @@ After owner review and the resulting deployment:
 1. Confirm Render serves the reviewed commit and its effective private configuration.
 2. Confirm Firebase deployed **both** hosting targets from the scanned artifact.
 3. Run `node scripts/verify-retired-public-assets.mjs`. The merge workflow runs it too.
-   It rejects image/PDF responses and accepts denied/missing responses or a 200 HTML SPA
+   It checks ordinary and cache-revalidated requests, rejects image/PDF responses and accepts denied/missing responses or a 200 HTML SPA
    rewrite. Check both the homework URL and its retired Angular prize duplicate.
 4. With an approved synthetic Student enrollment, upload a synthetic PNG/PDF through the
    real artifact API. Confirm the business row has `disk=supabase_private`, owner and

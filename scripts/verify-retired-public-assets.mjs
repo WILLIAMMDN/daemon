@@ -8,20 +8,22 @@ const paths = [
 let failed = false;
 for (const site of sites) {
   for (const path of paths) {
-    try {
-      const response = await fetch(`${site}${path}`, {
-        method: 'HEAD',
-        headers: { 'Cache-Control': 'no-cache' },
-        signal: AbortSignal.timeout(20000),
-      });
-      const type = response.headers.get('content-type') ?? '';
-      const unavailable = [401, 403, 404, 410].includes(response.status)
-        || (response.status === 200 && type.startsWith('text/html'));
-      console.log(`${unavailable ? 'PASS' : 'FAIL'} ${site}${path}: ${response.status} ${type}`);
-      failed ||= !unavailable;
-    } catch {
-      console.error(`FAIL ${site}${path}: verification unavailable`);
-      failed = true;
+    for (const revalidate of [false, true]) {
+      try {
+        const response = await fetch(`${site}${path}`, {
+          method: 'HEAD',
+          headers: revalidate ? { 'Cache-Control': 'no-cache' } : {},
+          signal: AbortSignal.timeout(20000),
+        });
+        const type = response.headers.get('content-type') ?? '';
+        const unavailable = [401, 403, 404, 410].includes(response.status)
+          || (response.status === 200 && type.startsWith('text/html'));
+        console.log(`${unavailable ? 'PASS' : 'FAIL'} ${site}${path} (${revalidate ? 'revalidated' : 'ordinary'}): ${response.status} ${type}`);
+        failed ||= !unavailable;
+      } catch {
+        console.error(`FAIL ${site}${path}: verification unavailable`);
+        failed = true;
+      }
     }
   }
 }
