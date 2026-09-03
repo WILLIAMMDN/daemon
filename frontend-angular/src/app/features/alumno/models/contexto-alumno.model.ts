@@ -1,98 +1,155 @@
 /**
- * DAEMON ARC — Modelos fuertemente tipados para los contratos reales de la API.
- * 
- * Basado en ArcStudentContextController, LearningCoreStudentController y sus servicios.
+ * DAEMON ARC — Contratos reales de la API del Alumno.
+ *
+ * Fuente de verdad: la respuesta JSON del backend, no interfaces heredadas.
+ *
+ * - `ArcStudentContextService` sirve `/alumno/home-context`, `/alumno/learning-context`
+ *   y `/alumno/agenda`.
+ * - `LearningProgressionService` sirve `/alumno/aprender/mapa`, `/alumno/aprender/siguiente`
+ *   y `/alumno/rutas`.
+ *
+ * El backend ya expone un contrato canónico en inglés/camelCase. Estos tipos lo
+ * reflejan tal cual: no se mantienen alias en español ni campos duales.
  */
 
+/**
+ * `student` de home-context y learning-context.
+ *
+ * El backend expone deliberadamente solo identidad mínima: no envía email,
+ * usuario, rol ni avatar en este contrato (ver `ArcCohortLearningSpineTest`).
+ * El perfil completo vive en la sesión y en `/alumno/perfil`.
+ */
 export interface AlumnoResumenDto {
   id: number;
-  nombre_completo: string;
-  usuario: string;
-  email: string;
-  rol: string;
-  nivel: string;
-  avatar?: string | null;
+  name: string;
 }
 
+export interface PeriodoAcademicoResumenDto {
+  id: number;
+  title: string;
+  startsOn: string | null;
+  endsOn: string | null;
+}
+
+export interface DocenteResumenDto {
+  id: number;
+  name: string;
+}
+
+/** `cohort` de home-context y `currentEnrollment.cohort` de learning-context. */
 export interface AulaResumenDto {
   id: number;
-  nombre: string;
-  codigo?: string | null;
-  grado?: string | null;
-  seccion?: string | null;
-  periodo?: {
-    id: number;
-    nombre: string;
-    fecha_inicio: string;
-    fecha_fin: string;
-  } | null;
+  name: string;
+  code: string | null;
+  teacher: DocenteResumenDto | null;
+  period: PeriodoAcademicoResumenDto | null;
 }
 
+/**
+ * `course` en todo el árbol del Alumno: `currentCourse`, `currentEnrollment.course`,
+ * `nextAction.course` y `nextLiveSession.course`.
+ */
 export interface CursoResumenDto {
   id: number;
-  titulo: string;
-  slug?: string | null;
-  descripcion?: string | null;
-  nivel?: string | null;
-  audiencia?: 'kids' | 'teens' | 'todos' | string | null;
+  title: string;
+  code: string | null;
+  version: number | null;
 }
 
-export interface VersionCursoResumenDto {
+/** `currentEnrollment.curriculumVersion` de home-context y learning-context. */
+export interface VersionCurriculumDto {
   id: number;
-  version: string;
-  estado: string;
+  number: number;
+  audience: string;
+  difficulty: string;
+  status: string;
 }
 
+/**
+ * `courseVersion` de `/alumno/aprender/mapa`.
+ *
+ * Learning Core añade `courseId` a su proyección de versión; el resto de campos
+ * coincide con `VersionCurriculumDto`.
+ */
+export interface VersionCursoMapaDto extends VersionCurriculumDto {
+  courseId: number | null;
+}
+
+/**
+ * `currentEnrollment.progress` de learning-context.
+ *
+ * home-context no incluye `progress`: solo learning-context lo calcula.
+ */
 export interface ProgresoContextoDto {
-  totalLessons: number;
-  completedLessons: number;
-  percent: number;
+  lessonCount: number;
+  completedLessonCount: number;
+  lessonProgressPercent: number;
 }
 
+/**
+ * `currentEnrollment` y cada elemento de `activeEnrollments`.
+ *
+ * `id` es `null` en el fallback legacy de un alumno con `id_aula` pero sin
+ * matrícula registrada; en ese caso el aula sí es real.
+ */
 export interface MatriculaRespuestaDto {
   id: number | null;
-  role: string;
+  /** Columna abierta en base de datos; este contrato emite `active`. */
   status: string;
   isPrimary: boolean;
-  startDate?: string | null;
-  endDate?: string | null;
-  aula: AulaResumenDto;
+  startsOn: string | null;
+  endsOn: string | null;
   course: CursoResumenDto | null;
-  courseVersion?: VersionCursoResumenDto | null;
+  curriculumVersion: VersionCurriculumDto | null;
+  cohort: AulaResumenDto;
+  /** Solo presente en learning-context. */
   progress?: ProgresoContextoDto | null;
 }
 
-export interface SesionAprendizajeDto {
+/** `enrollment` de `/alumno/aprender/mapa`: proyección mínima de Learning Core. */
+export interface MatriculaMapaResumenDto {
   id: number;
-  titulo: string;
-  descripcion?: string | null;
-  tipo: 'live' | 'taller' | 'asesoria' | string;
-  estado: 'programada' | 'en_vivo' | 'finalizada' | 'cancelada' | string;
-  fecha_inicio: string;
-  fecha_fin: string;
-  enlace_sesion?: string | null;
-  reunion_id?: string | null;
-  sala_id?: string | null;
-  grabacion_url?: string | null;
-  aula_id: number;
+  cohortId: number;
+  status: string;
 }
 
+export type EstadoSesionAprendizaje = 'scheduled' | 'cancelled' | 'completed';
+
+/**
+ * Contrato canónico de sesión en vivo del Alumno.
+ *
+ * Es exactamente lo que devuelven `/alumno/agenda`, `/alumno/home-context`
+ * (`nextLiveSession`, `upcomingAgendaSummary.items`) y `nextAction.session`.
+ * El backend nunca expone aquí la descripción/instrucciones internas del
+ * docente: si hace falta añadir contenido para el Alumno, se amplía el
+ * contrato del backend, no este modelo.
+ */
+export interface SesionAprendizajeDto {
+  id: number;
+  type: 'live_session' | string;
+  title: string;
+  course: CursoResumenDto | null;
+  cohort: { id: number; name: string; code: string | null } | null;
+  startsAt: string;
+  endsAt: string | null;
+  durationMinutes: number | null;
+  status: EstadoSesionAprendizaje | string;
+  access: { joinUrl: string } | null;
+}
+
+/**
+ * Valores reales del enum backend `TipoExperienciaAprendizaje`.
+ *
+ * `/alumno/aprender/mapa` los emite sin traducir.
+ */
 export type TipoExperiencia =
-  | 'lesson'
   | 'leccion'
-  | 'practice'
   | 'practica'
-  | 'mission'
   | 'mision'
-  | 'lab'
   | 'laboratorio'
-  | 'assessment'
   | 'evaluacion'
-  | 'project'
   | 'proyecto'
-  | 'challenge'
-  | 'desafio'
-  | 'live_session';
+  | 'desafio';
 
 export type TipoExperienciaCanonico =
   | 'lesson'
@@ -102,6 +159,15 @@ export type TipoExperienciaCanonico =
   | 'assessment'
   | 'project'
   | 'challenge';
+
+/**
+ * `nextAction.type`.
+ *
+ * El backend solo canoniza `leccion` → `lesson` al construir la siguiente
+ * acción; el resto de tipos viaja con el valor del enum en español. Usa
+ * `canonizarTipoExperiencia` antes de ramificar por tipo.
+ */
+export type TipoSiguienteAccion = TipoExperiencia | 'lesson' | 'live_session';
 
 export function canonizarTipoExperiencia(tipo: string): TipoExperienciaCanonico {
   switch (tipo) {
@@ -253,21 +319,30 @@ export interface HitoAprendizajeDto {
   required?: boolean;
   state: 'completed' | 'unlocked' | 'locked';
   prerequisiteIds?: number[];
-  unlocked?: boolean;
-  completed?: boolean;
   experiences: ExperienciaAprendizajeDto[];
 }
 
+/** `nextAction.lesson`. `durationMinutes` solo llega por la rama legacy sin ruta. */
+export interface LeccionSiguienteAccionDto {
+  id: number;
+  progressState: string;
+  durationMinutes?: number | null;
+}
+
+/**
+ * `nextAction` de home-context.
+ *
+ * El backend arma tres formas: experiencia de la ruta (`experience` + `lesson`),
+ * lección legacy sin ruta (`lesson` + `course` + `cohort`) y sesión en vivo
+ * (`session`). Por eso todo salvo `type` y `title` es opcional.
+ */
 export interface SiguienteAccionDto {
-  type: TipoExperiencia | 'live_session';
+  type: TipoSiguienteAccion;
   title: string;
   experience?: ExperienciaAprendizajeDto | null;
-  lesson?: {
-    id: number;
-    progressState: string;
-    courseId?: number;
-    unitId?: number;
-  } | null;
+  lesson?: LeccionSiguienteAccionDto | null;
+  course?: CursoResumenDto | null;
+  cohort?: AulaResumenDto | null;
   session?: SesionAprendizajeDto | null;
 }
 
@@ -302,14 +377,14 @@ export interface AgendaResponse {
 }
 
 export interface LearningMapProgressDto {
-  requiredExperienceCount?: number;
-  completedRequiredExperienceCount?: number;
-  requiredTotal?: number;
-  completedTotal?: number;
+  requiredExperienceCount: number;
+  completedRequiredExperienceCount: number;
   percent: number;
 }
 
 export interface LearningMapResponse {
+  enrollment: MatriculaMapaResumenDto | null;
+  courseVersion: VersionCursoMapaDto | null;
   path: {
     id: number;
     title: string;
@@ -321,31 +396,23 @@ export interface LearningMapResponse {
   milestones: HitoAprendizajeDto[];
   nextItem: ExperienciaAprendizajeDto | null;
   progress: LearningMapProgressDto;
-  enrollment?: MatriculaRespuestaDto | null;
-  courseVersion?: VersionCursoResumenDto | null;
-  legacyFallback?: boolean;
+  legacyFallback: boolean;
 }
 
 export interface RutaDisponibleDto {
   id: number;
   title: string;
-  description?: string | null;
+  description: string | null;
   audience: string;
   difficulty: string;
-  courseVersionId?: number | null;
-  milestoneCount?: number;
+  courseVersionId: number | null;
+  milestoneCount: number;
 }
 
 export interface RutasAlumnoResponse {
   paths: RutaDisponibleDto[];
 }
 
-export interface RutaAprendizajeItemDto {
-  id: number;
-  titulo: string;
-  slug: string;
-  audiencia: string;
-  dificultad: string;
-  hitos_count?: number;
-  experiencias_count?: number;
+export interface SiguienteItemResponse {
+  nextItem: ExperienciaAprendizajeDto | null;
 }

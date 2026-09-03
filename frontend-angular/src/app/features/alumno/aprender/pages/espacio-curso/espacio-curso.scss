@@ -130,9 +130,16 @@
   }
 
   &__sesion-titulo {
+    display: block;
     font-size: 0.875rem;
     font-weight: 600;
     color: var(--daemon-neutral-text-primary);
+  }
+
+  &__sesion-fecha {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--daemon-neutral-text-secondary);
   }
 
   &__objetivos {

@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\V1\AlumnoAdminController;
 use App\Http\Controllers\Api\V1\AlumnoController;
 use App\Http\Controllers\Api\V1\ArchivoAdminController;
 use App\Http\Controllers\Api\V1\ArchivoController;
+use App\Http\Controllers\Api\V1\ArcCohortSessionOpsController;
 use App\Http\Controllers\Api\V1\ArcStudentContextController;
 use App\Http\Controllers\Api\V1\AutenticacionController;
 use App\Http\Controllers\Api\V1\BienestarDigitalController;
@@ -166,6 +167,8 @@ Route::prefix('v1')->group(function (): void {
                 Route::post('/objetivos', [AcademicoController::class, 'crearObjetivo']);
                 Route::put('/aulas/{aula}/curso', [AcademicoController::class, 'vincularAula']);
                 Route::post('/aulas/{aula}/usuarios/{usuario}', [AcademicoController::class, 'matricular']);
+                Route::get('/cohortes', [ArcCohortSessionOpsController::class, 'cohortes']);
+                Route::get('/aulas/{aula}/sesiones', [ArcCohortSessionOpsController::class, 'sesiones']);
                 Route::post('/aulas/{aula}/sesiones', [AcademicoController::class, 'crearSesion']);
                 Route::put('/sesiones/{sesion}', [AcademicoController::class, 'actualizarSesion']);
                 Route::post('/cursos/{curso}/versiones', [LearningCoreAuthoringController::class, 'crearVersion']);

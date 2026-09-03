@@ -111,7 +111,8 @@ export class Experiencia {
       if (leccion) {
         return {
           id: leccion.id,
-          type: 'lesson',
+          // Valor del enum del backend: el fallback emula una experiencia de lección.
+          type: 'leccion',
           title: leccion.titulo,
           order: leccion.orden,
           required: true,

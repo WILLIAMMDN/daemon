@@ -47,8 +47,10 @@ import {
 } from '../../models/panel-alumno.model';
 import { Alumno } from '../../services/alumno';
 import {
+  canonizarTipoExperiencia,
   HomeContextResponse,
   SesionAprendizajeDto,
+  SiguienteAccionDto,
 } from '../../models/contexto-alumno.model';
 
 export interface AccionVista {
@@ -227,40 +229,43 @@ export class PanelAlumno {
       let ctaTexto = 'Continuar';
       let tipoEtiqueta = 'SIGUIENTE ACCIÓN';
 
-      const cursoId = this.currentCourse()?.id;
+      const cursoId = this.currentCourse()?.id ?? next.course?.id;
       const expId = next.experience?.id || next.experience?.sourceId;
+      const rutaExperiencia: string | unknown[] = cursoId && expId
+        ? ['/alumno/aprender/curso', cursoId, 'experiencia', expId]
+        : (cursoId ? ['/alumno/aprender/curso', cursoId] : '/alumno/aprender');
 
-      switch (tipo) {
+      // `nextAction.type` solo canoniza `leccion` → `lesson`; el resto llega con
+      // el valor del enum del backend (`mision`, `laboratorio`, `practica`, …),
+      // así que siempre hay que canonizar antes de ramificar.
+      switch (tipo === 'live_session' ? tipo : canonizarTipoExperiencia(tipo)) {
         case 'live_session':
           ruta = '/alumno/agenda';
           ctaTexto = 'Ir a la sesión en vivo';
           tipoEtiqueta = 'SESIÓN EN VIVO';
           break;
         case 'lesson':
-          ruta = cursoId && expId
-            ? ['/alumno/aprender/curso', cursoId, 'experiencia', expId]
-            : (cursoId ? ['/alumno/aprender/curso', cursoId] : '/alumno/aprender');
+          ruta = rutaExperiencia;
           ctaTexto = 'Continuar lección';
           tipoEtiqueta = 'LECCIÓN';
           break;
+        case 'practice':
+          ruta = rutaExperiencia;
+          ctaTexto = 'Continuar práctica';
+          tipoEtiqueta = 'PRÁCTICA';
+          break;
         case 'mission':
-          ruta = cursoId && expId
-            ? ['/alumno/aprender/curso', cursoId, 'experiencia', expId]
-            : (cursoId ? ['/alumno/aprender/curso', cursoId] : '/alumno/aprender');
+          ruta = rutaExperiencia;
           ctaTexto = 'Continuar misión';
           tipoEtiqueta = 'MISIÓN';
           break;
         case 'assessment':
-          ruta = cursoId && expId
-            ? ['/alumno/aprender/curso', cursoId, 'experiencia', expId]
-            : (cursoId ? ['/alumno/aprender/curso', cursoId] : '/alumno/aprender');
+          ruta = rutaExperiencia;
           ctaTexto = 'Comenzar evaluación';
           tipoEtiqueta = 'EVALUACIÓN';
           break;
         case 'project':
-          ruta = cursoId && expId
-            ? ['/alumno/aprender/curso', cursoId, 'experiencia', expId]
-            : (cursoId ? ['/alumno/aprender/curso', cursoId] : '/alumno/aprender');
+          ruta = rutaExperiencia;
           ctaTexto = 'Continuar proyecto';
           tipoEtiqueta = 'PROYECTO';
           break;
@@ -272,22 +277,16 @@ export class PanelAlumno {
           tipoEtiqueta = 'DESAFÍO';
           break;
         case 'lab':
-          ruta = cursoId && expId
-            ? ['/alumno/aprender/curso', cursoId, 'experiencia', expId]
-            : (cursoId ? ['/alumno/aprender/curso', cursoId] : '/alumno/aprender');
+          ruta = rutaExperiencia;
           ctaTexto = 'Entrar al laboratorio';
           tipoEtiqueta = 'LABORATORIO';
           break;
-        default:
-          ruta = cursoId ? ['/alumno/aprender/curso', cursoId] : '/alumno/aprender';
-          ctaTexto = 'Continuar aprendizaje';
-          tipoEtiqueta = 'ACTIVIDAD';
       }
 
       return {
         titulo: next.title,
         descripcion: datos.proxima_mision?.descripcion || 'Continúa con el siguiente paso en tu ruta de aprendizaje.',
-        meta: this.currentCourse()?.titulo || (this.cohort()?.nombre ?? (datos.proxima_mision?.nivel_requerido || 'Ruta académica')),
+        meta: this.metaAccion(next, datos),
         tipoEtiqueta,
         ruta,
         ctaTexto,
@@ -308,6 +307,17 @@ export class PanelAlumno {
     }
 
     return null;
+  }
+
+  /**
+   * Contexto mostrado bajo la siguiente acción: curso real, si no aula real.
+   * No inventa texto: si el backend no da curso ni aula, cae al dato de la
+   * próxima misión y, en último término, a una etiqueta genérica de ruta.
+   */
+  private metaAccion(next: SiguienteAccionDto, datos: PanelAlumnoDto): string {
+    const curso = this.currentCourse() ?? next.course ?? null;
+    const aula = this.cohort() ?? next.cohort ?? null;
+    return curso?.title || aula?.name || datos.proxima_mision?.nivel_requerido || 'Ruta académica';
   }
 
   nombreCorto(usuario: UsuarioPanel): string {

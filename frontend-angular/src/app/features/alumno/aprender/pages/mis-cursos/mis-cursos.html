@@ -19,7 +19,7 @@
             <nz-tag nzColor="blue">{{ curso.nivel }}</nz-tag>
           }
           @if (aulaInfo(); as aula) {
-            <span class="curso-hero__cohorte">Aula: {{ aula.nombre }}</span>
+            <span class="curso-hero__cohorte">Aula: {{ aula.name }}</span>
           }
         </div>
         <h2 class="curso-hero__titulo">
@@ -32,7 +32,7 @@
 
       <div class="curso-hero__progreso">
         <div class="curso-hero__progreso-meta">
-          <span class="curso-hero__progreso-label">Progreso del curso</span>
+          <span class="curso-hero__progreso-label">Progreso de lecciones</span>
           <span class="curso-hero__progreso-valor">{{ curso.leccionesCompletadas }} de {{ curso.totalLecciones }} lecciones ({{ curso.porcentaje }}%)</span>
         </div>
         <nz-progress
@@ -64,7 +64,10 @@
         <div class="curso-hero__sesion">
           <div class="curso-hero__sesion-info">
             <span class="curso-hero__sesion-etiqueta">Próxima sesión en vivo</span>
-            <span class="curso-hero__sesion-titulo">{{ sesion.titulo }}</span>
+            <span class="curso-hero__sesion-titulo">{{ sesion.title }}</span>
+            <time class="curso-hero__sesion-fecha" [attr.datetime]="sesion.startsAt">
+              {{ sesion.startsAt | date: 'EEEE d MMM, HH:mm' }}
+            </time>
           </div>
           <a nz-button nzType="default" nzSize="small" routerLink="/alumno/agenda">
             Ver en Agenda

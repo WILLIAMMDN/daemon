@@ -154,6 +154,11 @@
     font-weight: 500;
     color: var(--daemon-neutral-text-primary);
   }
+
+  &__sesion-fecha {
+    font-size: 0.75rem;
+    color: var(--daemon-neutral-text-secondary);
+  }
 }
 
 .rejilla-cursos {

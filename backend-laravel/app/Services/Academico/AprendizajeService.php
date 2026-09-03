@@ -187,7 +187,7 @@ class AprendizajeService
 
     public function crearSesion(Usuario $actor, Aula $aula, array $datos): SesionAprendizaje
     {
-        $this->autorizarInstitucion($actor, (int) $aula->id_institucion);
+        $this->autorizarAula($actor, $aula);
         $datos = $this->normalizarHorarioSesion($datos);
 
         return SesionAprendizaje::create([
@@ -206,7 +206,7 @@ class AprendizajeService
         array $datos,
     ): SesionAprendizaje {
         $sesion->loadMissing('aula');
-        $this->autorizarInstitucion($actor, (int) $sesion->aula->id_institucion);
+        $this->autorizarAula($actor, $sesion->aula);
         $sesion->update($this->normalizarHorarioSesion($datos));
 
         return $sesion->fresh(['aula.curso', 'aula.periodoAcademico']);
@@ -330,6 +330,44 @@ class AprendizajeService
             'completadas' => $completadas,
             'porcentaje' => $lecciones->count() ? (int) round($completadas * 100 / $lecciones->count()) : 0,
         ];
+    }
+
+    /**
+     * Un aula concreta solo es operable por un administrador o por un docente
+     * realmente vinculado a ella (aula principal o matrícula activa de docente).
+     * La pertenencia institucional sigue siendo condición previa.
+     */
+    public function autorizarAula(Usuario $actor, Aula $aula): void
+    {
+        $this->autorizarInstitucion($actor, (int) $aula->id_institucion);
+
+        if ($actor->rol === 'admin') {
+            return;
+        }
+
+        abort_unless(
+            $this->docenteVinculadoAlAula($actor, $aula),
+            403,
+            'No puedes operar sobre un aula fuera de tu alcance.',
+        );
+    }
+
+    public function docenteVinculadoAlAula(Usuario $actor, Aula $aula): bool
+    {
+        if ((int) $actor->id_aula === (int) $aula->id) {
+            return true;
+        }
+
+        $hoy = CarbonImmutable::now('UTC')->toDateString();
+
+        return MatriculaAula::query()
+            ->where('id_aula', $aula->id)
+            ->where('id_usuario', $actor->id)
+            ->whereIn('rol', ['teacher', 'administrator'])
+            ->where('estado', 'active')
+            ->where(fn ($query) => $query->whereNull('fecha_inicio')->orWhereDate('fecha_inicio', '<=', $hoy))
+            ->where(fn ($query) => $query->whereNull('fecha_fin')->orWhereDate('fecha_fin', '>=', $hoy))
+            ->exists();
     }
 
     private function autorizarInstitucion(Usuario $actor, int $institucionId): void

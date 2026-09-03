@@ -19,11 +19,19 @@
     align-items: center;
   }
 
-  &__tipo {
+  &__contexto {
     font-size: var(--daemon-font-size-caption);
     font-weight: var(--daemon-font-weight-bold);
-    color: var(--daemon-semantic-info);
-    letter-spacing: 0.05em;
+    color: var(--daemon-neutral-text-secondary);
+  }
+
+  &--destacada {
+    border-color: var(--arc-blue-border);
+    background: var(--arc-blue-soft);
+  }
+
+  &--pasada {
+    opacity: 0.72;
   }
 
   &__titulo {
@@ -31,13 +39,6 @@
     font-weight: var(--daemon-font-weight-bold);
     color: var(--daemon-neutral-text-primary);
     margin: 0;
-  }
-
-  &__desc {
-    font-size: var(--daemon-font-size-body);
-    color: var(--daemon-neutral-text-secondary);
-    margin: 0;
-    flex: 1;
   }
 
   &__footer {

@@ -1,0 +1,360 @@
+<main class="ops-sesiones">
+  <header class="ops-sesiones__cabecera">
+    <div class="ops-sesiones__intro">
+      <h1>Sesiones en vivo</h1>
+      <p>Programa y ajusta las clases sincronizadas de tus cohortes. Lo que publiques aquí es lo que ve el alumnado en su Agenda.</p>
+    </div>
+
+    <div class="ops-sesiones__acciones">
+      @if (cohortes().length > 1) {
+        <nz-select
+          class="ops-sesiones__selector"
+          nzPlaceHolder="Selecciona una cohorte"
+          [ngModel]="cohorteSeleccionada()"
+          [ngModelOptions]="{ standalone: true }"
+          (ngModelChange)="seleccionarCohorte($event)"
+        >
+          @for (item of cohortes(); track item.id) {
+            <nz-option [nzValue]="item.id" [nzLabel]="item.name" />
+          }
+        </nz-select>
+      }
+      <button
+        nz-button
+        nzType="primary"
+        type="button"
+        [disabled]="!cohorteSeleccionada() || cargandoSesiones()"
+        (click)="abrirCreacion()"
+      >
+        Nueva sesión
+      </button>
+    </div>
+  </header>
+
+  @if (error(); as fallo) {
+    @if (fallo.tipo === 'autorizacion') {
+      <nz-result nzStatus="403" nzTitle="Sin acceso a esta cohorte" [nzSubTitle]="fallo.mensaje">
+        <div nz-result-extra>
+          <button nz-button nzType="primary" type="button" (click)="cargarCohortes()">Reintentar</button>
+        </div>
+      </nz-result>
+    } @else {
+      <nz-alert
+        nzType="error"
+        nzShowIcon
+        nzMessage="No pudimos cargar la operación de sesiones"
+        [nzDescription]="fallo.mensaje"
+        [nzAction]="reintentar"
+      />
+      <ng-template #reintentar>
+        <button nz-button nzSize="small" type="button" (click)="cargarSesiones()">Reintentar</button>
+      </ng-template>
+    }
+  } @else if (cargandoCohortes()) {
+    <nz-skeleton [nzActive]="true" [nzParagraph]="{ rows: 5 }" />
+  } @else if (!cohortes().length) {
+    <nz-empty
+      nzNotFoundContent="Todavía no tienes cohortes asignadas. Pide a coordinación académica que te matricule como docente en un aula."
+    />
+  } @else {
+    @if (cohorte(); as contexto) {
+      <section class="ops-contexto" aria-label="Contexto académico de la cohorte">
+        <div class="ops-contexto__principal">
+          <span class="ops-contexto__etiqueta">Cohorte</span>
+          <h2>{{ contexto.name }}</h2>
+          @if (contexto.course; as curso) {
+            <p class="ops-contexto__curso">
+              {{ curso.title }}
+              @if (curso.code) {
+                <span class="ops-contexto__codigo">{{ curso.code }}</span>
+              }
+            </p>
+          } @else {
+            <p class="ops-contexto__curso ops-contexto__curso--vacio">Sin curso vinculado</p>
+          }
+        </div>
+
+        <dl class="ops-contexto__datos">
+          @if (contexto.period; as periodo) {
+            <div>
+              <dt>Período</dt>
+              <dd>
+                {{ periodo.title }}
+                @if (periodo.startsOn && periodo.endsOn) {
+                  <span class="ops-contexto__rango">
+                    {{ periodo.startsOn | date: 'd MMM yyyy' }} – {{ periodo.endsOn | date: 'd MMM yyyy' }}
+                  </span>
+                }
+              </dd>
+            </div>
+          }
+          <div>
+            <dt>Estudiantes activos</dt>
+            <dd>{{ contexto.activeStudentCount }}</dd>
+          </div>
+          <div>
+            <dt>Sesiones programadas</dt>
+            <dd>{{ contexto.scheduledSessionCount }}</dd>
+          </div>
+        </dl>
+      </section>
+    }
+
+    @if (cargandoSesiones()) {
+      <nz-skeleton [nzActive]="true" [nzParagraph]="{ rows: 6 }" />
+    } @else if (sinSesiones()) {
+      <nz-empty nzNotFoundContent="Esta cohorte todavía no tiene sesiones. Crea la primera para que aparezca en la Agenda del alumnado." />
+    } @else {
+      @if (proxima(); as sesion) {
+        <section class="ops-bloque" aria-labelledby="ops-proxima">
+          <h2 class="ops-bloque__titulo" id="ops-proxima">Próxima sesión</h2>
+          <article class="ops-sesion ops-sesion--destacada">
+            <div class="ops-sesion__cuerpo">
+              <div class="ops-sesion__meta">
+                @if (sesion.deliveryWeek) {
+                  <nz-tag nzColor="blue">Semana {{ sesion.deliveryWeek }}</nz-tag>
+                }
+                <nz-tag [nzColor]="colorEstado(sesion)">{{ etiquetaEstado(sesion) }}</nz-tag>
+              </div>
+              <h3 class="ops-sesion__titulo">{{ sesion.title }}</h3>
+              <time class="ops-sesion__fecha" [attr.datetime]="sesion.startsAt">
+                {{ sesion.startsAt | date: 'EEEE d MMMM, HH:mm' }}
+                @if (sesion.endsAt) {
+                  – {{ sesion.endsAt | date: 'HH:mm' }}
+                }
+                @if (sesion.durationMinutes) {
+                  <span class="ops-sesion__duracion">{{ sesion.durationMinutes }} min</span>
+                }
+              </time>
+              @if (sesion.accessUrl; as enlace) {
+                <a class="ops-sesion__enlace" [href]="enlace" target="_blank" rel="noopener noreferrer">Enlace de la sesión</a>
+              }
+            </div>
+            <div class="ops-sesion__acciones">
+              <button nz-button nzSize="small" type="button" (click)="abrirEdicion(sesion)">Editar</button>
+              <button
+                nz-button
+                nzSize="small"
+                nzDanger
+                type="button"
+                nz-popconfirm
+                nzPopconfirmTitle="Se cancelará la sesión y dejará de aparecer como próxima en la Agenda del alumnado. ¿Continuar?"
+                nzOkText="Cancelar sesión"
+                nzCancelText="Volver"
+                (nzOnConfirm)="cancelarSesion(sesion)"
+              >
+                Cancelar
+              </button>
+            </div>
+          </article>
+        </section>
+      }
+
+      @if (siguientes().length) {
+        <section class="ops-bloque" aria-labelledby="ops-proximas">
+          <h2 class="ops-bloque__titulo" id="ops-proximas">Próximas</h2>
+          <ul class="ops-lista">
+            @for (sesion of siguientes(); track sesion.id) {
+              <li>
+                <article class="ops-sesion">
+                  <div class="ops-sesion__cuerpo">
+                    <div class="ops-sesion__meta">
+                      @if (sesion.deliveryWeek) {
+                        <nz-tag nzColor="blue">Semana {{ sesion.deliveryWeek }}</nz-tag>
+                      }
+                      <nz-tag [nzColor]="colorEstado(sesion)">{{ etiquetaEstado(sesion) }}</nz-tag>
+                    </div>
+                    <h3 class="ops-sesion__titulo">{{ sesion.title }}</h3>
+                    <time class="ops-sesion__fecha" [attr.datetime]="sesion.startsAt">
+                      {{ sesion.startsAt | date: 'EEE d MMM, HH:mm' }}
+                      @if (sesion.endsAt) {
+                        – {{ sesion.endsAt | date: 'HH:mm' }}
+                      }
+                    </time>
+                  </div>
+                  <div class="ops-sesion__acciones">
+                    <button nz-button nzSize="small" type="button" (click)="abrirEdicion(sesion)">Editar</button>
+                    <button
+                      nz-button
+                      nzSize="small"
+                      nzDanger
+                      type="button"
+                      nz-popconfirm
+                      nzPopconfirmTitle="Se cancelará la sesión y dejará de aparecer en la Agenda del alumnado. ¿Continuar?"
+                      nzOkText="Cancelar sesión"
+                      nzCancelText="Volver"
+                      (nzOnConfirm)="cancelarSesion(sesion)"
+                    >
+                      Cancelar
+                    </button>
+                  </div>
+                </article>
+              </li>
+            }
+          </ul>
+        </section>
+      }
+
+      @if (semanas().length) {
+        <section class="ops-bloque" aria-labelledby="ops-semanas">
+          <h2 class="ops-bloque__titulo" id="ops-semanas">Entrega por semanas</h2>
+          <p class="ops-bloque__nota">
+            Las semanas se calculan a partir de la primera sesión real de la cohorte. No hay un calendario fijo detrás.
+          </p>
+          <ol class="ops-semanas">
+            @for (semana of semanas(); track semana.week) {
+              <li class="ops-semana">
+                <div class="ops-semana__encabezado">
+                  <span class="ops-semana__numero">Semana {{ semana.week }}</span>
+                  <time [attr.datetime]="semana.startsOn">Desde el {{ semana.startsOn | date: 'd MMM yyyy' }}</time>
+                </div>
+                <ul class="ops-semana__sesiones">
+                  @for (sesion of semana.sessions; track sesion.id) {
+                    <li [attr.data-estado]="sesion.status">
+                      <span class="ops-semana__titulo">{{ sesion.title }}</span>
+                      <time [attr.datetime]="sesion.startsAt">{{ sesion.startsAt | date: 'EEE d MMM, HH:mm' }}</time>
+                    </li>
+                  }
+                </ul>
+              </li>
+            }
+          </ol>
+        </section>
+      }
+
+      @if (canceladas().length) {
+        <section class="ops-bloque" aria-labelledby="ops-canceladas">
+          <h2 class="ops-bloque__titulo" id="ops-canceladas">Canceladas</h2>
+          <ul class="ops-lista">
+            @for (sesion of canceladas(); track sesion.id) {
+              <li>
+                <article class="ops-sesion ops-sesion--atenuada">
+                  <div class="ops-sesion__cuerpo">
+                    <div class="ops-sesion__meta">
+                      <nz-tag [nzColor]="colorEstado(sesion)">{{ etiquetaEstado(sesion) }}</nz-tag>
+                    </div>
+                    <h3 class="ops-sesion__titulo">{{ sesion.title }}</h3>
+                    <time class="ops-sesion__fecha" [attr.datetime]="sesion.startsAt">
+                      {{ sesion.startsAt | date: 'EEE d MMM, HH:mm' }}
+                    </time>
+                  </div>
+                  <div class="ops-sesion__acciones">
+                    <button nz-button nzSize="small" type="button" (click)="abrirEdicion(sesion)">Editar</button>
+                  </div>
+                </article>
+              </li>
+            }
+          </ul>
+        </section>
+      }
+
+      @if (pasadas().length) {
+        <section class="ops-bloque" aria-labelledby="ops-pasadas">
+          <h2 class="ops-bloque__titulo" id="ops-pasadas">Pasadas</h2>
+          <ul class="ops-lista">
+            @for (sesion of pasadas(); track sesion.id) {
+              <li>
+                <article class="ops-sesion ops-sesion--atenuada">
+                  <div class="ops-sesion__cuerpo">
+                    <div class="ops-sesion__meta">
+                      @if (sesion.deliveryWeek) {
+                        <nz-tag>Semana {{ sesion.deliveryWeek }}</nz-tag>
+                      }
+                      <nz-tag [nzColor]="colorEstado(sesion)">{{ etiquetaEstado(sesion) }}</nz-tag>
+                    </div>
+                    <h3 class="ops-sesion__titulo">{{ sesion.title }}</h3>
+                    <time class="ops-sesion__fecha" [attr.datetime]="sesion.startsAt">
+                      {{ sesion.startsAt | date: 'd MMM yyyy, HH:mm' }}
+                    </time>
+                  </div>
+                </article>
+              </li>
+            }
+          </ul>
+        </section>
+      }
+    }
+  }
+</main>
+
+<nz-drawer
+  [nzVisible]="drawerAbierto()"
+  [nzTitle]="sesionEditando() ? 'Editar sesión' : 'Nueva sesión'"
+  nzPlacement="right"
+  [nzWidth]="480"
+  (nzOnClose)="cerrarDrawer()"
+>
+  <ng-container *nzDrawerContent>
+    <form nz-form nzLayout="vertical" [formGroup]="formulario" (ngSubmit)="guardar()">
+      <nz-form-item>
+        <nz-form-label nzRequired nzFor="sesion-titulo">Tema de la sesión</nz-form-label>
+        <nz-form-control nzErrorTip="Escribe un tema de hasta 150 caracteres.">
+          <input
+            nz-input
+            id="sesion-titulo"
+            formControlName="titulo"
+            maxlength="150"
+            placeholder="Semana 1 — ¿La IA piensa?"
+          />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label nzRequired nzFor="sesion-inicio">Inicio</nz-form-label>
+        <nz-form-control nzErrorTip="Indica la fecha y hora de inicio.">
+          <nz-date-picker
+            id="sesion-inicio"
+            formControlName="inicio"
+            nzShowTime
+            nzFormat="dd/MM/yyyy HH:mm"
+            class="ops-form__control"
+          />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label nzFor="sesion-fin">Fin (opcional)</nz-form-label>
+        <nz-form-control>
+          <nz-date-picker
+            id="sesion-fin"
+            formControlName="fin"
+            nzShowTime
+            nzFormat="dd/MM/yyyy HH:mm"
+            class="ops-form__control"
+          />
+        </nz-form-control>
+      </nz-form-item>
+
+      @if (formulario.errors?.['ventana']) {
+        <nz-alert nzType="error" nzShowIcon nzMessage="La hora de fin debe ser posterior a la de inicio." />
+      }
+
+      <nz-form-item>
+        <nz-form-label nzFor="sesion-url">Enlace de la reunión (opcional)</nz-form-label>
+        <nz-form-control nzErrorTip="Usa una URL http o https válida.">
+          <input nz-input id="sesion-url" formControlName="accesoUrl" placeholder="https://..." />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label nzFor="sesion-descripcion">Instrucciones internas (opcional)</nz-form-label>
+        <nz-form-control nzExtra="Solo para el equipo docente: no se muestra en la Agenda del alumnado.">
+          <textarea
+            nz-input
+            id="sesion-descripcion"
+            formControlName="descripcion"
+            rows="4"
+            maxlength="4000"
+          ></textarea>
+        </nz-form-control>
+      </nz-form-item>
+
+      <div class="ops-form__acciones">
+        <button nz-button type="button" (click)="cerrarDrawer()">Descartar</button>
+        <button nz-button nzType="primary" type="submit" [nzLoading]="guardando()">
+          {{ sesionEditando() ? 'Guardar cambios' : 'Crear sesión' }}
+        </button>
+      </div>
+    </form>
+  </ng-container>
+</nz-drawer>
