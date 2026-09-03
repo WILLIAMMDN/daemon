@@ -1,40 +1,130 @@
-@if (agendaService.cargando()) {
+@if (agendaService.cargando() && !agendaService.cargado()) {
   <nz-skeleton [nzActive]="true" [nzParagraph]="{ rows: 4 }" />
-} @else if (agendaService.sesiones().length === 0) {
-  <app-estado-vacio
-    titulo="No tienes sesiones programadas"
-    descripcion="Cuando tu docente o tutor agende una clase en vivo, taller o asesoría, aparecerá aquí."
-  />
 } @else {
-  <app-arc-section
-    titulo="Sesiones en vivo y talleres"
-    descripcion="Clases sincronizadas y asesorías académicas programadas para tu aula."
-  >
-    <div class="sesiones-lista">
-      @for (sesion of agendaService.sesiones(); track sesion.id) {
-        <article class="sesion-card" [attr.data-estado]="sesion.estado">
-          <div class="sesion-card__header">
-            <span class="sesion-card__tipo">{{ sesion.tipo | uppercase }}</span>
-            <nz-tag [nzColor]="sesion.estado === 'en_vivo' ? 'processing' : (sesion.estado === 'finalizada' ? 'default' : 'success')">
-              {{ sesion.estado }}
-            </nz-tag>
-          </div>
-          <h3 class="sesion-card__titulo">{{ sesion.titulo }}</h3>
-          @if (sesion.descripcion) {
-            <p class="sesion-card__desc">{{ sesion.descripcion }}</p>
-          }
-          <div class="sesion-card__footer">
-            <time class="sesion-card__fecha">
-              {{ sesion.fecha_inicio | date:'dd MMM yyyy, HH:mm' }}
-            </time>
-            @if (sesion.enlace_sesion && sesion.estado !== 'finalizada') {
-              <a nz-button nzType="primary" nzSize="small" [href]="sesion.enlace_sesion" target="_blank" rel="noopener noreferrer">
-                Ingresar a la sesión
-              </a>
+  @if (agendaService.error()) {
+    <nz-alert
+      nzType="warning"
+      nzShowIcon
+      nzMessage="No pudimos cargar tus sesiones"
+      nzDescription="Comprueba tu conexión y vuelve a intentarlo."
+      [nzAction]="reintentar"
+    />
+    <ng-template #reintentar>
+      <button nz-button nzSize="small" type="button" (click)="agendaService.cargar()">Reintentar</button>
+    </ng-template>
+  }
+
+  @if (agendaService.proximaSesion(); as sesion) {
+    <app-arc-section
+      titulo="Próxima sesión"
+      descripcion="La siguiente clase en vivo de tu cohorte."
+    >
+      <article class="sesion-card sesion-card--destacada">
+        <div class="sesion-card__header">
+          <span class="sesion-card__contexto">
+            {{ sesion.course?.title ?? sesion.cohort?.name ?? 'Sesión en vivo' }}
+          </span>
+          <nz-tag [nzColor]="colorEstado(sesion)">{{ etiquetaEstado(sesion) }}</nz-tag>
+        </div>
+        <h3 class="sesion-card__titulo">{{ sesion.title }}</h3>
+        <div class="sesion-card__footer">
+          <time class="sesion-card__fecha" [attr.datetime]="sesion.startsAt">
+            {{ sesion.startsAt | date: 'EEEE d MMM, HH:mm' }}
+            @if (sesion.endsAt) {
+              – {{ sesion.endsAt | date: 'HH:mm' }}
             }
-          </div>
-        </article>
-      }
-    </div>
-  </app-arc-section>
+          </time>
+          @if (sesion.access?.joinUrl; as enlace) {
+            <a nz-button nzType="primary" nzSize="small" [href]="enlace" target="_blank" rel="noopener noreferrer">
+              Ingresar a la sesión
+            </a>
+          }
+        </div>
+      </article>
+    </app-arc-section>
+  }
+
+  @if (agendaService.sesionesFuturas().length > 1) {
+    <app-arc-section
+      titulo="Próximas sesiones"
+      descripcion="Clases sincronizadas ya programadas para tu cohorte."
+    >
+      <div class="sesiones-lista">
+        @for (sesion of agendaService.sesionesFuturas().slice(1); track sesion.id) {
+          <article class="sesion-card" [attr.data-estado]="sesion.status">
+            <div class="sesion-card__header">
+              <span class="sesion-card__contexto">
+                {{ sesion.course?.title ?? sesion.cohort?.name ?? 'Sesión en vivo' }}
+              </span>
+              <nz-tag [nzColor]="colorEstado(sesion)">{{ etiquetaEstado(sesion) }}</nz-tag>
+            </div>
+            <h3 class="sesion-card__titulo">{{ sesion.title }}</h3>
+            <div class="sesion-card__footer">
+              <time class="sesion-card__fecha" [attr.datetime]="sesion.startsAt">
+                {{ sesion.startsAt | date: 'd MMM yyyy, HH:mm' }}
+              </time>
+              @if (sesion.access?.joinUrl; as enlace) {
+                <a nz-button nzType="default" nzSize="small" [href]="enlace" target="_blank" rel="noopener noreferrer">
+                  Ingresar
+                </a>
+              }
+            </div>
+          </article>
+        }
+      </div>
+    </app-arc-section>
+  }
+
+  @if (agendaService.sesionesCanceladas().length) {
+    <app-arc-section titulo="Sesiones canceladas" descripcion="Tu docente canceló estas clases.">
+      <div class="sesiones-lista">
+        @for (sesion of agendaService.sesionesCanceladas(); track sesion.id) {
+          <article class="sesion-card sesion-card--pasada" [attr.data-estado]="sesion.status">
+            <div class="sesion-card__header">
+              <span class="sesion-card__contexto">
+                {{ sesion.course?.title ?? sesion.cohort?.name ?? 'Sesión en vivo' }}
+              </span>
+              <nz-tag [nzColor]="colorEstado(sesion)">{{ etiquetaEstado(sesion) }}</nz-tag>
+            </div>
+            <h3 class="sesion-card__titulo">{{ sesion.title }}</h3>
+            <div class="sesion-card__footer">
+              <time class="sesion-card__fecha" [attr.datetime]="sesion.startsAt">
+                {{ sesion.startsAt | date: 'd MMM yyyy, HH:mm' }}
+              </time>
+            </div>
+          </article>
+        }
+      </div>
+    </app-arc-section>
+  }
+
+  @if (agendaService.sesionesPasadas().length) {
+    <app-arc-section titulo="Sesiones pasadas" descripcion="Clases que ya se realizaron.">
+      <div class="sesiones-lista">
+        @for (sesion of agendaService.sesionesPasadas(); track sesion.id) {
+          <article class="sesion-card sesion-card--pasada" [attr.data-estado]="sesion.status">
+            <div class="sesion-card__header">
+              <span class="sesion-card__contexto">
+                {{ sesion.course?.title ?? sesion.cohort?.name ?? 'Sesión en vivo' }}
+              </span>
+              <nz-tag [nzColor]="colorEstado(sesion)">{{ etiquetaEstado(sesion) }}</nz-tag>
+            </div>
+            <h3 class="sesion-card__titulo">{{ sesion.title }}</h3>
+            <div class="sesion-card__footer">
+              <time class="sesion-card__fecha" [attr.datetime]="sesion.startsAt">
+                {{ sesion.startsAt | date: 'd MMM yyyy, HH:mm' }}
+              </time>
+            </div>
+          </article>
+        }
+      </div>
+    </app-arc-section>
+  }
+
+  @if (!agendaService.sesiones().length && !agendaService.error()) {
+    <app-estado-vacio
+      titulo="No tienes sesiones programadas"
+      descripcion="Cuando tu docente agende una clase en vivo para tu cohorte, aparecerá aquí."
+    />
+  }
 }

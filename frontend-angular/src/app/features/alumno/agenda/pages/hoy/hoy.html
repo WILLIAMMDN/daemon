@@ -20,12 +20,17 @@
         @for (sesion of sesionesHoy(); track sesion.id) {
           <article class="sesion-item">
             <div>
-              <span class="sesion-item__tipo">{{ sesion.tipo | uppercase }}</span>
-              <strong>{{ sesion.titulo }}</strong>
-              <time>{{ sesion.fecha_inicio | date:'shortTime' }} - {{ sesion.fecha_fin | date:'shortTime' }}</time>
+              <span class="sesion-item__tipo">{{ sesion.course?.title ?? sesion.cohort?.name ?? 'En vivo' }}</span>
+              <strong>{{ sesion.title }}</strong>
+              <time [attr.datetime]="sesion.startsAt">
+                {{ sesion.startsAt | date:'shortTime' }}
+                @if (sesion.endsAt) {
+                  - {{ sesion.endsAt | date:'shortTime' }}
+                }
+              </time>
             </div>
-            @if (sesion.enlace_sesion && sesion.estado !== 'finalizada') {
-              <a nz-button nzType="primary" nzSize="small" [href]="sesion.enlace_sesion" target="_blank" rel="noopener noreferrer">
+            @if (sesion.access?.joinUrl; as enlace) {
+              <a nz-button nzType="primary" nzSize="small" [href]="enlace" target="_blank" rel="noopener noreferrer">
                 Ingresar
               </a>
             }

@@ -1,4 +1,4 @@
-import { DatePipe, UpperCasePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
@@ -16,7 +16,6 @@ import { AgendaService } from '../../services/agenda.service';
   selector: 'app-hoy',
   imports: [
     DatePipe,
-    UpperCasePipe,
     RouterLink,
     NzAlertModule,
     NzButtonModule,
