@@ -10,6 +10,8 @@ use App\Models\RutaAprendizaje;
 use App\Models\UnidadCurso;
 use App\Models\Usuario;
 use App\Models\VersionCurso;
+use App\Support\Academico\ContenidoEstructurado;
+use App\Support\Academico\GuiaEntrega;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -20,7 +22,7 @@ class LearningCoreAuthoringService
     {
         $this->autorizarInstitucion($actor, (int) $curso->id_institucion);
 
-        return DB::transaction(function () use ($curso, $datos): VersionCurso {
+        return DB::transaction(function () use ($actor, $curso, $datos): VersionCurso {
             $numero = (int) VersionCurso::where('id_curso', $curso->id)->lockForUpdate()->max('numero') + 1;
 
             return VersionCurso::create([
@@ -29,6 +31,7 @@ class LearningCoreAuthoringService
                 'id_curso' => $curso->id,
                 'numero' => $numero,
                 'estado' => 'draft',
+                'id_autor' => $actor->id,
             ]);
         });
     }
@@ -66,10 +69,10 @@ class LearningCoreAuthoringService
         abort_if($version->unidades->isEmpty(), 422, 'La versión necesita al menos una unidad.');
         abort_if($version->unidades->flatMap->lecciones->isEmpty(), 422, 'La versión necesita al menos una lección.');
 
-        return DB::transaction(function () use ($version): VersionCurso {
+        return DB::transaction(function () use ($actor, $version): VersionCurso {
             UnidadCurso::where('id_version_curso', $version->id)->update(['estado' => 'published']);
             DB::table('lecciones')->whereIn('id_unidad', $version->unidades->pluck('id'))->update(['estado' => 'published']);
-            $version->forceFill(['estado' => 'published', 'publicado_at' => now()])->save();
+            $version->forceFill(['estado' => 'published', 'publicado_at' => now(), 'id_publicador' => $actor->id])->save();
 
             return $version->fresh(['unidades.lecciones']);
         });
@@ -147,25 +150,44 @@ class LearningCoreAuthoringService
         });
     }
 
+    public function actualizarHito(Usuario $actor, HitoAprendizaje $hito, array $datos): HitoAprendizaje
+    {
+        $hito->loadMissing('ruta');
+        $this->autorizarRuta($actor, $hito->ruta);
+        $this->exigirBorrador($hito->ruta->estado, 'ruta');
+        $hito->update($datos);
+
+        return $hito->fresh(['prerrequisitos', 'experiencias.objetivos']);
+    }
+
+    public function eliminarHito(Usuario $actor, HitoAprendizaje $hito): void
+    {
+        $hito->loadMissing('ruta');
+        $this->autorizarRuta($actor, $hito->ruta);
+        $this->exigirBorrador($hito->ruta->estado, 'ruta');
+
+        DB::transaction(function () use ($hito): void {
+            // Un hito eliminado no puede seguir siendo prerrequisito de otro.
+            DB::table('hito_prerrequisitos')
+                ->where('id_hito', $hito->id)
+                ->orWhere('id_prerrequisito', $hito->id)
+                ->delete();
+            $hito->experiencias->each(fn (ExperienciaAprendizaje $experiencia) => $experiencia->objetivos()->detach());
+            ExperienciaAprendizaje::where('id_hito', $hito->id)->get()->each->delete();
+            $hito->delete();
+        });
+    }
+
     public function crearExperiencia(Usuario $actor, HitoAprendizaje $hito, array $datos): ExperienciaAprendizaje
     {
         $hito->loadMissing('ruta.versionCurso');
         $this->autorizarRuta($actor, $hito->ruta);
         $this->exigirBorrador($hito->ruta->estado, 'ruta');
-        if (! empty($datos['id_unidad'])) {
-            $unidadValida = UnidadCurso::whereKey($datos['id_unidad'])
-                ->where('id_version_curso', $hito->ruta->id_version_curso)
-                ->exists();
-            abort_unless($unidadValida, 422, 'La unidad no pertenece a la versión curricular de la ruta.');
-        }
-        $objetivos = $datos['objetivos'] ?? [];
-        $objetivosValidos = DB::table('objetivos_aprendizaje')
-            ->where('id_institucion', $hito->ruta->id_institucion)
-            ->whereIn('id', $objetivos)
-            ->count();
-        abort_unless($objetivosValidos === count(array_unique($objetivos)), 422, 'Los objetivos deben pertenecer a la institución de la ruta.');
+        $this->validarUnidadExperiencia($datos, $hito->ruta);
+        $objetivos = $this->objetivosValidados($datos, $hito->ruta);
         $this->validarOrigenExperiencia($datos, $hito->ruta);
         unset($datos['objetivos']);
+        $datos = $this->normalizarPayloadExperiencia($datos);
 
         return DB::transaction(function () use ($hito, $datos, $objetivos): ExperienciaAprendizaje {
             $experiencia = ExperienciaAprendizaje::create([
@@ -178,6 +200,51 @@ class LearningCoreAuthoringService
 
             return $experiencia->fresh('objetivos');
         });
+    }
+
+    public function actualizarExperiencia(Usuario $actor, ExperienciaAprendizaje $experiencia, array $datos): ExperienciaAprendizaje
+    {
+        $experiencia->loadMissing('hito.ruta.versionCurso');
+        $ruta = $experiencia->hito->ruta;
+        $this->autorizarRuta($actor, $ruta);
+        $this->exigirBorrador($ruta->estado, 'ruta');
+        $this->validarUnidadExperiencia($datos, $ruta);
+        $sincronizarObjetivos = array_key_exists('objetivos', $datos);
+        $objetivos = $this->objetivosValidados($datos, $ruta);
+        $this->validarOrigenExperiencia([...$experiencia->only(['origen_tipo', 'origen_id']), ...$datos], $ruta);
+        unset($datos['objetivos']);
+        $datos = $this->normalizarPayloadExperiencia($datos);
+
+        return DB::transaction(function () use ($experiencia, $datos, $objetivos, $sincronizarObjetivos): ExperienciaAprendizaje {
+            $experiencia->update($datos);
+            if ($sincronizarObjetivos) {
+                $experiencia->objetivos()->sync($objetivos);
+            }
+
+            return $experiencia->fresh('objetivos');
+        });
+    }
+
+    public function eliminarExperiencia(Usuario $actor, ExperienciaAprendizaje $experiencia): void
+    {
+        $experiencia->loadMissing('hito.ruta');
+        $this->autorizarRuta($actor, $experiencia->hito->ruta);
+        $this->exigirBorrador($experiencia->hito->ruta->estado, 'ruta');
+
+        DB::transaction(function () use ($experiencia): void {
+            $experiencia->objetivos()->detach();
+            $experiencia->delete();
+        });
+    }
+
+    /**
+     * Sincroniza los objetivos de una experiencia en borrador.
+     *
+     * @param  list<int>  $objetivoIds
+     */
+    public function vincularObjetivos(Usuario $actor, ExperienciaAprendizaje $experiencia, array $objetivoIds): ExperienciaAprendizaje
+    {
+        return $this->actualizarExperiencia($actor, $experiencia, ['objetivos' => $objetivoIds]);
     }
 
     public function publicarRuta(Usuario $actor, RutaAprendizaje $ruta): RutaAprendizaje
@@ -244,6 +311,61 @@ class LearningCoreAuthoringService
     private function autorizarRuta(Usuario $actor, RutaAprendizaje $ruta): void
     {
         $this->autorizarInstitucion($actor, (int) $ruta->id_institucion);
+    }
+
+    /**
+     * Traduce el contrato de autoría a la forma de almacenamiento del Learning
+     * Core. Vive en el servicio para que cualquier cliente de la API canónica
+     * (Studio hoy, un adaptador MCP mañana) obtenga la misma normalización.
+     *
+     * @param  array<string, mixed>  $datos
+     * @return array<string, mixed>
+     */
+    private function normalizarPayloadExperiencia(array $datos): array
+    {
+        if (array_key_exists('guia_entrega', $datos)) {
+            $datos['guia_entrega'] = GuiaEntrega::paraPersistir($datos['guia_entrega']);
+        }
+
+        if (array_key_exists('contenido', $datos)) {
+            $datos['contenido'] = $datos['contenido'] === null || $datos['contenido'] === []
+                ? null
+                : ContenidoEstructurado::escribir($datos['contenido']);
+        }
+
+        return $datos;
+    }
+
+    private function validarUnidadExperiencia(array $datos, RutaAprendizaje $ruta): void
+    {
+        if (empty($datos['id_unidad'])) {
+            return;
+        }
+
+        $unidadValida = UnidadCurso::whereKey($datos['id_unidad'])
+            ->where('id_version_curso', $ruta->id_version_curso)
+            ->exists();
+        abort_unless($unidadValida, 422, 'La unidad no pertenece a la versión curricular de la ruta.');
+    }
+
+    /**
+     * @return list<int>
+     */
+    private function objetivosValidados(array $datos, RutaAprendizaje $ruta): array
+    {
+        $objetivos = array_values(array_unique(array_map('intval', $datos['objetivos'] ?? [])));
+
+        if ($objetivos === []) {
+            return [];
+        }
+
+        $validos = DB::table('objetivos_aprendizaje')
+            ->where('id_institucion', $ruta->id_institucion)
+            ->whereIn('id', $objetivos)
+            ->count();
+        abort_unless($validos === count($objetivos), 422, 'Los objetivos deben pertenecer a la institución de la ruta.');
+
+        return $objetivos;
     }
 
     private function autorizarInstitucion(Usuario $actor, int $institucionId): void

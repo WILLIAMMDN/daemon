@@ -12,11 +12,13 @@ use App\Http\Requests\Api\V1\Academico\UnidadRequest;
 use App\Models\Aula;
 use App\Models\Curso;
 use App\Models\Leccion;
+use App\Models\ObjetivoAprendizaje;
 use App\Models\PeriodoAcademico;
 use App\Models\SesionAprendizaje;
 use App\Models\UnidadCurso;
 use App\Models\Usuario;
 use App\Services\Academico\AprendizajeService;
+use App\Services\Academico\ArcCourseStudioService;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -75,6 +77,25 @@ class AcademicoController extends Controller
         ]);
 
         return response()->json($this->aprendizaje->crearObjetivo($request->user(), $datos), 201);
+    }
+
+    public function objetivos(Request $request, ArcCourseStudioService $studio): array
+    {
+        return [
+            'data' => $studio->objetivos($request->user())->values()->all(),
+        ];
+    }
+
+    public function actualizarObjetivo(Request $request, ObjetivoAprendizaje $objetivo, ArcCourseStudioService $studio)
+    {
+        $datos = $request->validate([
+            'codigo' => ['nullable', 'string', 'max:80'],
+            'descripcion' => ['required', 'string', 'max:2000'],
+            'marco' => ['nullable', 'string', 'max:100'],
+            'nivel' => ['nullable', Rule::in(['KIDS', 'TEENS', 'TODOS'])],
+        ]);
+
+        return $studio->actualizarObjetivo($request->user(), $objetivo, $datos);
     }
 
     public function matricular(Request $request, Aula $aula, Usuario $usuario)

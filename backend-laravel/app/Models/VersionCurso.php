@@ -15,7 +15,7 @@ class VersionCurso extends ModeloBase
 
     protected $fillable = [
         'uuid', 'id_curso', 'numero', 'titulo', 'descripcion', 'audiencia', 'etapa',
-        'estado', 'publicado_at', 'archivado_at',
+        'estado', 'publicado_at', 'archivado_at', 'id_autor', 'id_publicador', 'id_version_origen',
     ];
 
     protected function casts(): array
@@ -51,6 +51,21 @@ class VersionCurso extends ModeloBase
     public function curso(): BelongsTo
     {
         return $this->belongsTo(Curso::class, 'id_curso');
+    }
+
+    public function autor(): BelongsTo
+    {
+        return $this->belongsTo(Usuario::class, 'id_autor');
+    }
+
+    public function publicador(): BelongsTo
+    {
+        return $this->belongsTo(Usuario::class, 'id_publicador');
+    }
+
+    public function versionOrigen(): BelongsTo
+    {
+        return $this->belongsTo(self::class, 'id_version_origen');
     }
 
     public function unidades(): HasMany
