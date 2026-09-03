@@ -88,7 +88,7 @@ jobs:
         shell: bash
         run: |
           set +e
-          npx firebase-tools@15.22.3 deploy --only hosting:arc --project daemon-a41f8 --non-interactive 2>&1 | tee firebase-deploy.log
+          npx firebase-tools@15.22.3 deploy --only hosting:arc,hosting:estudiante --project daemon-a41f8 --non-interactive 2>&1 | tee firebase-deploy.log
           status=${PIPESTATUS[0]}
 
           if [ "$status" -ne 0 ]; then
@@ -118,3 +118,6 @@ jobs:
       - name: Smoke production
         shell: pwsh
         run: ./scripts/smoke-produccion.ps1
+
+      - name: Verify retired student asset URLs on both hosting sites
+        run: node scripts/verify-retired-public-assets.mjs

@@ -1,0 +1,1535 @@
+{
+  "base_commit": "4af07fca2fd8e14c17c0458a22f5babdceebe7d7",
+  "checked_at": "2026-09-03T23:20:11+00:00",
+  "postgres_text_columns_scanned": 291,
+  "firestore_documents_scanned": {
+    "cuentos": 41,
+    "versiones": 29,
+    "paginas": 46
+  },
+  "private_preservation_manifest": "daemon-private/recovery/firebase-hosting/4af07fca/manifest.json",
+  "files": [
+    {
+      "path": "frontend-angular/public/uploads/0a338937bd515296951e5a022f0dd30a.jpg",
+      "bytes": 35304,
+      "sha256": "b9fd8d12d7be7a2b2071fde6c4a24c5f2427c444517c1f722a6c9108f5cd70c3",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/0c792b6fa84fdfdaa7b32af4579995d1.jpg",
+      "bytes": 11600,
+      "sha256": "49b79f9e1948fd824e71c7a368b8961a536f2c8d32e80fc355e3050ff7843475",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/0d3fcfd16f20bb2a1123fb468a1c0414.png",
+      "bytes": 274857,
+      "sha256": "4e044f85b84f663e6291096ed1a1aa10070695e2892101c1235d467c41b5568e",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/1a1dce83401b8991eda0e992b2d793cd.png",
+      "bytes": 3781866,
+      "sha256": "a297ff8f9f28aa995c6a11950b0512b6d67759d355ff329010915cfc9ed94bf9",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/1c38b62e041be4e755e441f0b1167640.jpg",
+      "bytes": 65091,
+      "sha256": "63b64841184fc1480294c5facf5f54b2a2864d474394f1d4974b562755883b78",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/23f3279f71c957014ae3ac4e536435e9.webp",
+      "bytes": 7098,
+      "sha256": "b2a984e2dd11e1e0342c2683bfef0137054520ca9123c8cdf3b6523ccde7db3a",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/2441d6b97daec12c6eb672ff601d52f8.webp",
+      "bytes": 124878,
+      "sha256": "0aedd67302188348147c4941d45cc6cb673ba131e03b9f80e949c9e38081160f",
+      "postgres_reference_fields": [
+        "cuentos.img_2"
+      ],
+      "firestore_reference_collections": [],
+      "action": "private_legacy_preservation",
+      "preserved_bucket": "daemon-private",
+      "preserved_key": "recovery/firebase-hosting/4af07fca/0aedd67302188348147c4941d45cc6cb673ba131e03b9f80e949c9e38081160f/2441d6b97daec12c6eb672ff601d52f8.webp"
+    },
+    {
+      "path": "frontend-angular/public/uploads/288376957f9386a33f49a679b1ca5252.jpg",
+      "bytes": 162009,
+      "sha256": "bd6a5f715efb0ce69544e2e511f6170dca0236cfb8364ffc97523c9169106576",
+      "postgres_reference_fields": [
+        "cuentos.img_3"
+      ],
+      "firestore_reference_collections": [],
+      "action": "private_legacy_preservation",
+      "preserved_bucket": "daemon-private",
+      "preserved_key": "recovery/firebase-hosting/4af07fca/bd6a5f715efb0ce69544e2e511f6170dca0236cfb8364ffc97523c9169106576/288376957f9386a33f49a679b1ca5252.jpg"
+    },
+    {
+      "path": "frontend-angular/public/uploads/29f4a81ae6be8f255522b4c3b6adddab.png",
+      "bytes": 4626918,
+      "sha256": "3ab53d1497a883eb5bf6774b55bf212fe82e345deb0afb82eab1fa2e70304c21",
+      "postgres_reference_fields": [
+        "cuentos.data_1",
+        "cuentos.data_2",
+        "cuentos.data_3",
+        "cuentos.data_4"
+      ],
+      "firestore_reference_collections": [],
+      "action": "private_legacy_preservation",
+      "preserved_bucket": "daemon-private",
+      "preserved_key": "recovery/firebase-hosting/4af07fca/3ab53d1497a883eb5bf6774b55bf212fe82e345deb0afb82eab1fa2e70304c21/29f4a81ae6be8f255522b4c3b6adddab.png"
+    },
+    {
+      "path": "frontend-angular/public/uploads/2b0ff8b9aaf48b8fe83c40f056c654a2.png",
+      "bytes": 274857,
+      "sha256": "4e044f85b84f663e6291096ed1a1aa10070695e2892101c1235d467c41b5568e",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/2bc79ff0690058ddda67f12d69c1d46a.png",
+      "bytes": 7419469,
+      "sha256": "10ad8292b7a4d560c8dbef41876826aa6a043f5b46481e587616b05fc4ebd6bf",
+      "postgres_reference_fields": [
+        "cuentos.data_4"
+      ],
+      "firestore_reference_collections": [],
+      "action": "private_legacy_preservation",
+      "preserved_bucket": "daemon-private",
+      "preserved_key": "recovery/firebase-hosting/4af07fca/10ad8292b7a4d560c8dbef41876826aa6a043f5b46481e587616b05fc4ebd6bf/2bc79ff0690058ddda67f12d69c1d46a.png"
+    },
+    {
+      "path": "frontend-angular/public/uploads/2d19b96b97162c5b3435f620580aa1e5.webp",
+      "bytes": 7098,
+      "sha256": "b2a984e2dd11e1e0342c2683bfef0137054520ca9123c8cdf3b6523ccde7db3a",
+      "postgres_reference_fields": [
+        "cuentos.img_1"
+      ],
+      "firestore_reference_collections": [],
+      "action": "private_legacy_preservation",
+      "preserved_bucket": "daemon-private",
+      "preserved_key": "recovery/firebase-hosting/4af07fca/b2a984e2dd11e1e0342c2683bfef0137054520ca9123c8cdf3b6523ccde7db3a/2d19b96b97162c5b3435f620580aa1e5.webp"
+    },
+    {
+      "path": "frontend-angular/public/uploads/30f7440b5f9e53bbe79fa3ab79113542.png",
+      "bytes": 274857,
+      "sha256": "4e044f85b84f663e6291096ed1a1aa10070695e2892101c1235d467c41b5568e",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/3a32c23467286e9de0f88359552f997e.png",
+      "bytes": 4626918,
+      "sha256": "3ab53d1497a883eb5bf6774b55bf212fe82e345deb0afb82eab1fa2e70304c21",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/5267406f2be6cdf0c9771829cc366f21.webp",
+      "bytes": 7098,
+      "sha256": "b2a984e2dd11e1e0342c2683bfef0137054520ca9123c8cdf3b6523ccde7db3a",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/533377f895a83e3e692a1c0797258a1d.jpg",
+      "bytes": 168922,
+      "sha256": "0ad821b2d8ab2f04d5b63820aa31588aed2eb0b8300a1071d202fa0b503a6a84",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/68a46fa75709285feb3978ad0ea7937b.png",
+      "bytes": 7407806,
+      "sha256": "d52197e8506bab00f7f90e23bc400aef376dd37e618b2a16512521f2f31d805f",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/782ebfdc5e1301b6ec09fa4bdee880b7.jpg",
+      "bytes": 200739,
+      "sha256": "bc15d3d9e65918e60ee8167072e0e6c19673a77b3724c081e28e71ec231c179c",
+      "postgres_reference_fields": [
+        "cuentos.data_1"
+      ],
+      "firestore_reference_collections": [],
+      "action": "private_legacy_preservation",
+      "preserved_bucket": "daemon-private",
+      "preserved_key": "recovery/firebase-hosting/4af07fca/bc15d3d9e65918e60ee8167072e0e6c19673a77b3724c081e28e71ec231c179c/782ebfdc5e1301b6ec09fa4bdee880b7.jpg"
+    },
+    {
+      "path": "frontend-angular/public/uploads/81965dfee598a0b4b0627adf9cc977a0.jpg",
+      "bytes": 58320,
+      "sha256": "f5212d83f40577206115984cd96357776cdf7d9f5518cbb55fe3e43940babd6e",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/863cd84eb29d381fb03fbf0529f527d1.png",
+      "bytes": 3781866,
+      "sha256": "a297ff8f9f28aa995c6a11950b0512b6d67759d355ff329010915cfc9ed94bf9",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/927bf5baff7ab9fd3eb45a1f8f870ddb.jpg",
+      "bytes": 248049,
+      "sha256": "5c55b49b084ed6e8f8f96dbdfd0de18dc79c70ae33c5913e1195989dba1e019e",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/94c4cccd72ee832f36c158ca68d8e631.png",
+      "bytes": 4626918,
+      "sha256": "3ab53d1497a883eb5bf6774b55bf212fe82e345deb0afb82eab1fa2e70304c21",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/9f2e01ec166b2602dcacbb5bef02b766.jpg",
+      "bytes": 168922,
+      "sha256": "0ad821b2d8ab2f04d5b63820aa31588aed2eb0b8300a1071d202fa0b503a6a84",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/a07938c69f875093acdedfd626cafc2c.png",
+      "bytes": 3651076,
+      "sha256": "dac1b7afeac0ba5263ee0ab2830d57819908c8a9754530f0d3d69a39f2d3d0c7",
+      "postgres_reference_fields": [
+        "cuentos.data_1",
+        "cuentos.data_2"
+      ],
+      "firestore_reference_collections": [],
+      "action": "private_legacy_preservation",
+      "preserved_bucket": "daemon-private",
+      "preserved_key": "recovery/firebase-hosting/4af07fca/dac1b7afeac0ba5263ee0ab2830d57819908c8a9754530f0d3d69a39f2d3d0c7/a07938c69f875093acdedfd626cafc2c.png"
+    },
+    {
+      "path": "frontend-angular/public/uploads/abd7521108e08b9aa24b617b749efdf7.jpg",
+      "bytes": 162009,
+      "sha256": "bd6a5f715efb0ce69544e2e511f6170dca0236cfb8364ffc97523c9169106576",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/abe3fb5b2df50cef9130b7edf33ce404.png",
+      "bytes": 1067543,
+      "sha256": "20392f6ab2ad748c2cff57ef44406fb65a4caf76da19d769a5b047f52fb6e3d9",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/assets/asset_12_1769283402_69751f4acd494.jpg",
+      "bytes": 57003,
+      "sha256": "ffbeeaa1edf0bb01fc6b95b92f3a290d86cdc1d987448a10b943281a7f205bd9",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/assets/asset_12_1769283570_69751ff207e9a.avif",
+      "bytes": 37372,
+      "sha256": "fef6c57e909b02e294b0769c15b9ce14750deced78234cc5791a5fb424a6a2da",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/assets/asset_12_1769284699_6975245b195c7.avif",
+      "bytes": 37372,
+      "sha256": "fef6c57e909b02e294b0769c15b9ce14750deced78234cc5791a5fb424a6a2da",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/assets/asset_12_1769287510_69752f5669727.avif",
+      "bytes": 37372,
+      "sha256": "fef6c57e909b02e294b0769c15b9ce14750deced78234cc5791a5fb424a6a2da",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/assets/asset_12_1769293888_697548402fc70.avif",
+      "bytes": 37372,
+      "sha256": "fef6c57e909b02e294b0769c15b9ce14750deced78234cc5791a5fb424a6a2da",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/assets/asset_12_1769310100_69758794a1694.jpg",
+      "bytes": 57003,
+      "sha256": "ffbeeaa1edf0bb01fc6b95b92f3a290d86cdc1d987448a10b943281a7f205bd9",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/assets/asset_12_1769310124_697587ac39375.avif",
+      "bytes": 37372,
+      "sha256": "fef6c57e909b02e294b0769c15b9ce14750deced78234cc5791a5fb424a6a2da",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/assets/asset_12_1769310641_697589b1c197c.jpg",
+      "bytes": 9373,
+      "sha256": "5e8d1d400929f6ebcf8550a78351004ef9ebed79880c26078ba83d73d830a57e",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/assets/asset_12_1769310667_697589cbdeb0a.avif",
+      "bytes": 37372,
+      "sha256": "fef6c57e909b02e294b0769c15b9ce14750deced78234cc5791a5fb424a6a2da",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/assets/asset_12_1769311795_69758e334b6b7.PNG",
+      "bytes": 11271,
+      "sha256": "959184a5b7628e03203a70a22f6d9147400eb2068429cf304e2b61522c74a395",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/assets/asset_12_1769312393_6975908969b80.PNG",
+      "bytes": 11271,
+      "sha256": "959184a5b7628e03203a70a22f6d9147400eb2068429cf304e2b61522c74a395",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/assets/asset_12_1769312408_697590986163a.avif",
+      "bytes": 37372,
+      "sha256": "fef6c57e909b02e294b0769c15b9ce14750deced78234cc5791a5fb424a6a2da",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/assets/asset_12_1769313166_6975938e993c0.jpg",
+      "bytes": 57003,
+      "sha256": "ffbeeaa1edf0bb01fc6b95b92f3a290d86cdc1d987448a10b943281a7f205bd9",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/assets/asset_12_1769316551_6975a0c71adc3.webp",
+      "bytes": 7458,
+      "sha256": "0d3656d184491aafc128f14f707ce9fb03e8115e5ae5592204f785261e83cff5",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/avatars/avatar_12_1770127890.jpg",
+      "bytes": 20624,
+      "sha256": "671d4432939f1064262bb5716274ffde76c35670bb600a23455fef9503918edd",
+      "postgres_reference_fields": [
+        "usuarios.avatar"
+      ],
+      "firestore_reference_collections": [],
+      "action": "remove_verified_canonical_profile_duplicate"
+    },
+    {
+      "path": "frontend-angular/public/uploads/avatars/avatar_14_1770127683.png",
+      "bytes": 6346664,
+      "sha256": "3893c26c353559303e03098077823497374389ca74a52af30ce31ad9f80483e6",
+      "postgres_reference_fields": [
+        "usuarios.avatar"
+      ],
+      "firestore_reference_collections": [],
+      "action": "remove_verified_canonical_profile_duplicate"
+    },
+    {
+      "path": "frontend-angular/public/uploads/avatars/avatar_15_1769533202.jpeg",
+      "bytes": 8941,
+      "sha256": "91949661c689505d0ab305c8dfa1aa7b48841d957a29355b6e993c5de9af08d0",
+      "postgres_reference_fields": [
+        "usuarios.avatar"
+      ],
+      "firestore_reference_collections": [
+        "cuentos"
+      ],
+      "action": "remove_verified_canonical_profile_duplicate"
+    },
+    {
+      "path": "frontend-angular/public/uploads/avatars/avatar_16_1769489396.jpg",
+      "bytes": 34961,
+      "sha256": "6843d316c856b83b37fb9671f79339c53f530f6142d42eec7927c32d7c15946c",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/avatars/avatar_17_1770125670.jpg",
+      "bytes": 12440,
+      "sha256": "585f9f0b0762317c14070c8b36b85e072c652769d975a4a00f7deca44d4134e6",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/avatars/avatar_17_1770126082.jpg",
+      "bytes": 43615,
+      "sha256": "8f2be30a8e422c48fa4d31cab41b983f985c6920759657e4af399b7327a0df21",
+      "postgres_reference_fields": [
+        "usuarios.avatar"
+      ],
+      "firestore_reference_collections": [
+        "cuentos"
+      ],
+      "action": "remove_verified_canonical_profile_duplicate"
+    },
+    {
+      "path": "frontend-angular/public/uploads/avatars/avatar_19_1769532868.jpeg",
+      "bytes": 36244,
+      "sha256": "e9b1fa7cd9462c076be50b93a88184cb27e49be97dd1574574b513bb90799223",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/avatars/avatar_19_1769533029.jpeg",
+      "bytes": 36244,
+      "sha256": "e9b1fa7cd9462c076be50b93a88184cb27e49be97dd1574574b513bb90799223",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/avatars/avatar_19_1769533034.jpeg",
+      "bytes": 36244,
+      "sha256": "e9b1fa7cd9462c076be50b93a88184cb27e49be97dd1574574b513bb90799223",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/avatars/avatar_19_1769533292.jpeg",
+      "bytes": 12458,
+      "sha256": "b513f2e07a8adebbd8a15c8a01b1b1d20e35dab49182161a249bc15bf400802e",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/avatars/avatar_19_1770999202.jpg",
+      "bytes": 7958,
+      "sha256": "f862780f3961b17e4cb3445c4f2991c3224f44ca98b708708385fdc368527a5e",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/avatars/avatar_19_1771002538.jpeg",
+      "bytes": 133905,
+      "sha256": "a446199e69fc46de29ae124d8bbc6c021dd616c23e4d6718e4d24fd87fe27f28",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/avatars/avatar_19_1771342383.jpg",
+      "bytes": 26429,
+      "sha256": "5d0f104fae4d03b6b45e8f294271a413fb23df12079d6065d34954e29e06db16",
+      "postgres_reference_fields": [
+        "usuarios.avatar"
+      ],
+      "firestore_reference_collections": [
+        "cuentos"
+      ],
+      "action": "remove_verified_canonical_profile_duplicate"
+    },
+    {
+      "path": "frontend-angular/public/uploads/avatars/avatar_20_1769533594.jpeg",
+      "bytes": 16077,
+      "sha256": "9bb0b05567dca0bef367c01fcffbf439466b15b5db327aade36cf436dca13c40",
+      "postgres_reference_fields": [
+        "usuarios.avatar"
+      ],
+      "firestore_reference_collections": [],
+      "action": "remove_verified_canonical_profile_duplicate"
+    },
+    {
+      "path": "frontend-angular/public/uploads/avatars/avatar_21_1769533337.jpg",
+      "bytes": 130129,
+      "sha256": "42c892a56ecc9a6dcc4b3658b9068e0bd280c7a5873d13deea3c7da725911b7a",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/avatars/avatar_21_1770133091.jpeg",
+      "bytes": 7460,
+      "sha256": "67baa1f73f85336caeed56c32c6dca8c116c9f116590dec48b0295b058f5d011",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/avatars/avatar_21_1770134455.jpeg",
+      "bytes": 7460,
+      "sha256": "67baa1f73f85336caeed56c32c6dca8c116c9f116590dec48b0295b058f5d011",
+      "postgres_reference_fields": [
+        "usuarios.avatar"
+      ],
+      "firestore_reference_collections": [
+        "cuentos"
+      ],
+      "action": "remove_verified_canonical_profile_duplicate"
+    },
+    {
+      "path": "frontend-angular/public/uploads/avatars/avatar_22_1769533378.jpg",
+      "bytes": 115919,
+      "sha256": "53b0b9082e7fe82252f1266bc7254e3773e51080330d662513da1f94fb85fd71",
+      "postgres_reference_fields": [
+        "usuarios.avatar"
+      ],
+      "firestore_reference_collections": [],
+      "action": "remove_verified_canonical_profile_duplicate"
+    },
+    {
+      "path": "frontend-angular/public/uploads/avatars/avatar_23_1769533554.jpg",
+      "bytes": 9259,
+      "sha256": "cf8ea9342bca2f32c75f46c2c4c0bc310414da6b088ede2db22d834fd0f6e28c",
+      "postgres_reference_fields": [
+        "usuarios.avatar"
+      ],
+      "firestore_reference_collections": [],
+      "action": "remove_verified_canonical_profile_duplicate"
+    },
+    {
+      "path": "frontend-angular/public/uploads/avatars/avatar_24_1770446715.png",
+      "bytes": 117827,
+      "sha256": "c676e8d880bad4143fc99f3e42fb70603fdecdd620ae82b0a32f775acb02c7cb",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/avatars/avatar_24_1770447962.png",
+      "bytes": 69122,
+      "sha256": "f2453347a58ac3a0710bf2d0d1a3dcca6664deaa5129e477e19dc1bd7ee95a85",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/avatars/avatar_24_1770454647.gif",
+      "bytes": 63605,
+      "sha256": "9e32c1a5285b88fd354a3a9f3dcb06ea937dce41aec5839b0089b62aab043083",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/avatars/avatar_24_1770960890.gif",
+      "bytes": 485445,
+      "sha256": "3e09998e5eef20b5b5cdb25aa1b5b13e1c26ec4fc1575cfc53608578ded16700",
+      "postgres_reference_fields": [
+        "usuarios.avatar"
+      ],
+      "firestore_reference_collections": [],
+      "action": "remove_verified_canonical_profile_duplicate"
+    },
+    {
+      "path": "frontend-angular/public/uploads/avatars/avatar_26_1769788006.jpeg",
+      "bytes": 8227,
+      "sha256": "8c0906b2fed164d3ddc8661d82fdbc307094679e803580a62e66b4ee3d29dba3",
+      "postgres_reference_fields": [
+        "usuarios.avatar"
+      ],
+      "firestore_reference_collections": [
+        "cuentos"
+      ],
+      "action": "remove_verified_canonical_profile_duplicate"
+    },
+    {
+      "path": "frontend-angular/public/uploads/avatars/avatar_28_1769793425.jpg",
+      "bytes": 88134,
+      "sha256": "ccbde7e7da36022d43fd4a074132f23936906ff0c2b62b9296ab69ba846568c7",
+      "postgres_reference_fields": [
+        "usuarios.avatar"
+      ],
+      "firestore_reference_collections": [
+        "cuentos"
+      ],
+      "action": "remove_verified_canonical_profile_duplicate"
+    },
+    {
+      "path": "frontend-angular/public/uploads/avatars/avatar_32_1769788389.jpeg",
+      "bytes": 8929,
+      "sha256": "5f03a280d605eed2ecfbf9b8b012d216c727e34d06adaa6a8eaf5b9ba9a63240",
+      "postgres_reference_fields": [
+        "usuarios.avatar"
+      ],
+      "firestore_reference_collections": [
+        "cuentos"
+      ],
+      "action": "remove_verified_canonical_profile_duplicate"
+    },
+    {
+      "path": "frontend-angular/public/uploads/avatars/avatar_34_1770125831.jpeg",
+      "bytes": 108343,
+      "sha256": "e416efa9ada5daa155131261663081436a5ef71695b0b0d3ddb0deb4b64ad06d",
+      "postgres_reference_fields": [
+        "usuarios.avatar"
+      ],
+      "firestore_reference_collections": [],
+      "action": "remove_verified_canonical_profile_duplicate"
+    },
+    {
+      "path": "frontend-angular/public/uploads/avatars/avatar_35_1770127671.jpg",
+      "bytes": 55225,
+      "sha256": "47b064fdf438373f2abefecba744595469e8ce632a2ab3374ceeaaff59dcc92b",
+      "postgres_reference_fields": [
+        "usuarios.avatar"
+      ],
+      "firestore_reference_collections": [],
+      "action": "remove_verified_canonical_profile_duplicate"
+    },
+    {
+      "path": "frontend-angular/public/uploads/avatars/avatar_37_1770128219.jpg",
+      "bytes": 81741,
+      "sha256": "d3d9c570a612ef48d4af372da92a204cccb71e4d66acc30e4eef1bfd6826d7dd",
+      "postgres_reference_fields": [
+        "usuarios.avatar"
+      ],
+      "firestore_reference_collections": [
+        "cuentos"
+      ],
+      "action": "remove_verified_canonical_profile_duplicate"
+    },
+    {
+      "path": "frontend-angular/public/uploads/avatars/avatar_39_1770128506.webp",
+      "bytes": 7098,
+      "sha256": "b2a984e2dd11e1e0342c2683bfef0137054520ca9123c8cdf3b6523ccde7db3a",
+      "postgres_reference_fields": [
+        "usuarios.avatar"
+      ],
+      "firestore_reference_collections": [
+        "cuentos"
+      ],
+      "action": "remove_verified_canonical_profile_duplicate"
+    },
+    {
+      "path": "frontend-angular/public/uploads/avatars/avatar_40_1770133159.jpg",
+      "bytes": 60116,
+      "sha256": "974aa760363c3cfc64c63ddbe75aa353554268a764cf30c4e0b4a04b04638442",
+      "postgres_reference_fields": [
+        "usuarios.avatar"
+      ],
+      "firestore_reference_collections": [
+        "cuentos"
+      ],
+      "action": "remove_verified_canonical_profile_duplicate"
+    },
+    {
+      "path": "frontend-angular/public/uploads/avatars/avatar_41_1770447811.png",
+      "bytes": 8208593,
+      "sha256": "115e19d9d2af9c6ebb7f3d97192c9b3a6283b8dbc8b4f5e7e6e4da6900ca7d55",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/avatars/avatar_41_1770447973.png",
+      "bytes": 59340,
+      "sha256": "c22e0643b87eaaa1a43c57d8287ae35c3ad79067c2df9e06a7535c9597eb28bf",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/avatars/avatar_41_1770448392.png",
+      "bytes": 117827,
+      "sha256": "c676e8d880bad4143fc99f3e42fb70603fdecdd620ae82b0a32f775acb02c7cb",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/avatars/avatar_41_1770448475.png",
+      "bytes": 117827,
+      "sha256": "c676e8d880bad4143fc99f3e42fb70603fdecdd620ae82b0a32f775acb02c7cb",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/avatars/avatar_41_1770448487.png",
+      "bytes": 117827,
+      "sha256": "c676e8d880bad4143fc99f3e42fb70603fdecdd620ae82b0a32f775acb02c7cb",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/avatars/avatar_41_1770448508.png",
+      "bytes": 117827,
+      "sha256": "c676e8d880bad4143fc99f3e42fb70603fdecdd620ae82b0a32f775acb02c7cb",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/avatars/avatar_41_1770448566.png",
+      "bytes": 117827,
+      "sha256": "c676e8d880bad4143fc99f3e42fb70603fdecdd620ae82b0a32f775acb02c7cb",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/avatars/avatar_41_1770448575.png",
+      "bytes": 117827,
+      "sha256": "c676e8d880bad4143fc99f3e42fb70603fdecdd620ae82b0a32f775acb02c7cb",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/avatars/avatar_41_1770449891.gif",
+      "bytes": 1255465,
+      "sha256": "3bae81f58338ccda5d75a1794bb19de3501281df4974d7815eb39bf4b4cf16d3",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/avatars/avatar_41_1770451953.gif",
+      "bytes": 11120,
+      "sha256": "f3d1c9bdcd38ce7f7e80235ef894ff3cea896638fa663ba8f89705788e757c80",
+      "postgres_reference_fields": [
+        "usuarios.avatar"
+      ],
+      "firestore_reference_collections": [
+        "cuentos"
+      ],
+      "action": "remove_verified_canonical_profile_duplicate"
+    },
+    {
+      "path": "frontend-angular/public/uploads/avatars/avatar_41_1781237171.jpg",
+      "bytes": 46006,
+      "sha256": "d07bdd4da4342951c96a3686a9d452038390cb228d6556ea8675a891231c9577",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/avatars/avatar_43_1770399199.jpg",
+      "bytes": 12440,
+      "sha256": "585f9f0b0762317c14070c8b36b85e072c652769d975a4a00f7deca44d4134e6",
+      "postgres_reference_fields": [
+        "usuarios.avatar"
+      ],
+      "firestore_reference_collections": [
+        "cuentos"
+      ],
+      "action": "remove_verified_canonical_profile_duplicate"
+    },
+    {
+      "path": "frontend-angular/public/uploads/avatars/bot_12_1769407792.png",
+      "bytes": 61926,
+      "sha256": "44a0e7d16a9e65bd059452ce8235884fdb70a1254b3eca0a819d5e27dcf5f557",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/avatars/hero_24_1770448095.png",
+      "bytes": 69122,
+      "sha256": "f2453347a58ac3a0710bf2d0d1a3dcca6664deaa5129e477e19dc1bd7ee95a85",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/avatars/hero_41_1770448032.png",
+      "bytes": 59340,
+      "sha256": "c22e0643b87eaaa1a43c57d8287ae35c3ad79067c2df9e06a7535c9597eb28bf",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/avatars/hero_41_1770448043.png",
+      "bytes": 117827,
+      "sha256": "c676e8d880bad4143fc99f3e42fb70603fdecdd620ae82b0a32f775acb02c7cb",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/avatars/hero_41_1770448073.png",
+      "bytes": 68856,
+      "sha256": "9c374bfcb8edc334284f810bffbe4573346718921b1d5cb417b2e187af4be4f9",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/ba08a3ed24f650cab1cdc84ca50269f6.jpg",
+      "bytes": 248049,
+      "sha256": "5c55b49b084ed6e8f8f96dbdfd0de18dc79c70ae33c5913e1195989dba1e019e",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/c18e6ae3e04743e8d10d0cdfc17edd5b.png",
+      "bytes": 1944775,
+      "sha256": "abde7b28fe0e50a8f7b083d80e957c7b278c07bcf8e4e8275fe743cf8d1325eb",
+      "postgres_reference_fields": [
+        "cuentos.data_2"
+      ],
+      "firestore_reference_collections": [],
+      "action": "private_legacy_preservation",
+      "preserved_bucket": "daemon-private",
+      "preserved_key": "recovery/firebase-hosting/4af07fca/abde7b28fe0e50a8f7b083d80e957c7b278c07bcf8e4e8275fe743cf8d1325eb/c18e6ae3e04743e8d10d0cdfc17edd5b.png"
+    },
+    {
+      "path": "frontend-angular/public/uploads/cff6793385aaaa8fe23f99f8eab1dad3.webp",
+      "bytes": 7098,
+      "sha256": "b2a984e2dd11e1e0342c2683bfef0137054520ca9123c8cdf3b6523ccde7db3a",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/cuentos/esc_12_1769282429.jpg",
+      "bytes": 57003,
+      "sha256": "ffbeeaa1edf0bb01fc6b95b92f3a290d86cdc1d987448a10b943281a7f205bd9",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/cuentos/esc_12_1769282432.jpg",
+      "bytes": 57003,
+      "sha256": "ffbeeaa1edf0bb01fc6b95b92f3a290d86cdc1d987448a10b943281a7f205bd9",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/cuentos/pers_12_1769282429.jpg",
+      "bytes": 57003,
+      "sha256": "ffbeeaa1edf0bb01fc6b95b92f3a290d86cdc1d987448a10b943281a7f205bd9",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/cuentos/pers_12_1769282432.jpg",
+      "bytes": 57003,
+      "sha256": "ffbeeaa1edf0bb01fc6b95b92f3a290d86cdc1d987448a10b943281a7f205bd9",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/d315ed6966098e13872ca85d75c10e38.png",
+      "bytes": 3781866,
+      "sha256": "a297ff8f9f28aa995c6a11950b0512b6d67759d355ff329010915cfc9ed94bf9",
+      "postgres_reference_fields": [
+        "cuentos.data_2",
+        "cuentos.data_3",
+        "cuentos.data_4"
+      ],
+      "firestore_reference_collections": [],
+      "action": "private_legacy_preservation",
+      "preserved_bucket": "daemon-private",
+      "preserved_key": "recovery/firebase-hosting/4af07fca/a297ff8f9f28aa995c6a11950b0512b6d67759d355ff329010915cfc9ed94bf9/d315ed6966098e13872ca85d75c10e38.png"
+    },
+    {
+      "path": "frontend-angular/public/uploads/e2064872ee0e65fec479815d96589a27.jpg",
+      "bytes": 8036,
+      "sha256": "dcb953f48bcf6b76062e911dcfe41bf1b5fe4c2b3d5be3bdc162aab11e489421",
+      "postgres_reference_fields": [
+        "cuentos.img_1",
+        "cuentos.img_2",
+        "cuentos.img_3",
+        "cuentos.img_4",
+        "cuentos.img_5",
+        "cuentos.img_6"
+      ],
+      "firestore_reference_collections": [],
+      "action": "private_legacy_preservation",
+      "preserved_bucket": "daemon-private",
+      "preserved_key": "recovery/firebase-hosting/4af07fca/dcb953f48bcf6b76062e911dcfe41bf1b5fe4c2b3d5be3bdc162aab11e489421/e2064872ee0e65fec479815d96589a27.jpg"
+    },
+    {
+      "path": "frontend-angular/public/uploads/ebdbeabe68962917cbf18e0256477882.webp",
+      "bytes": 124878,
+      "sha256": "0aedd67302188348147c4941d45cc6cb673ba131e03b9f80e949c9e38081160f",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/fondos/bg_19_1770999040.jpeg",
+      "bytes": 133905,
+      "sha256": "a446199e69fc46de29ae124d8bbc6c021dd616c23e4d6718e4d24fd87fe27f28",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/fondos/bg_19_1770999087.jpg",
+      "bytes": 60116,
+      "sha256": "974aa760363c3cfc64c63ddbe75aa353554268a764cf30c4e0b4a04b04638442",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/fondos/bg_19_1771341603.jpeg",
+      "bytes": 8227,
+      "sha256": "8c0906b2fed164d3ddc8661d82fdbc307094679e803580a62e66b4ee3d29dba3",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/fondos/bg_19_1771342401.jpg",
+      "bytes": 26429,
+      "sha256": "5d0f104fae4d03b6b45e8f294271a413fb23df12079d6065d34954e29e06db16",
+      "postgres_reference_fields": [
+        "usuarios.fondo"
+      ],
+      "firestore_reference_collections": [],
+      "action": "remove_verified_canonical_profile_duplicate"
+    },
+    {
+      "path": "frontend-angular/public/uploads/fondos/bg_21_1770999085.jfif",
+      "bytes": 100477,
+      "sha256": "028bbf82b272d7a1cc3ba89bce74bf8d19cf07af0f64d41ab705ccb344ab5dc9",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/fondos/bg_21_1770999121.jpeg",
+      "bytes": 108343,
+      "sha256": "e416efa9ada5daa155131261663081436a5ef71695b0b0d3ddb0deb4b64ad06d",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/fondos/bg_21_1771002574.jpeg",
+      "bytes": 7460,
+      "sha256": "67baa1f73f85336caeed56c32c6dca8c116c9f116590dec48b0295b058f5d011",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/fondos/bg_21_1771002618.jfif",
+      "bytes": 100477,
+      "sha256": "028bbf82b272d7a1cc3ba89bce74bf8d19cf07af0f64d41ab705ccb344ab5dc9",
+      "postgres_reference_fields": [
+        "usuarios.fondo"
+      ],
+      "firestore_reference_collections": [],
+      "action": "remove_verified_canonical_profile_duplicate"
+    },
+    {
+      "path": "frontend-angular/public/uploads/fondos/bg_24_1770449725.png",
+      "bytes": 7718145,
+      "sha256": "947d5e214ce5e3c554cc0055930f2416262f2e5922c9919496904ee8ca221b94",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/fondos/bg_24_1770449750.gif",
+      "bytes": 188771,
+      "sha256": "8a1b65070a00a00ffd973ef58c1a40026862b92eea80b2457a2d9b0880b9dfc8",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/fondos/bg_24_1770450481.gif",
+      "bytes": 188771,
+      "sha256": "8a1b65070a00a00ffd973ef58c1a40026862b92eea80b2457a2d9b0880b9dfc8",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/fondos/bg_24_1770450503.gif",
+      "bytes": 188771,
+      "sha256": "8a1b65070a00a00ffd973ef58c1a40026862b92eea80b2457a2d9b0880b9dfc8",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/fondos/bg_24_1770450930.gif",
+      "bytes": 188771,
+      "sha256": "8a1b65070a00a00ffd973ef58c1a40026862b92eea80b2457a2d9b0880b9dfc8",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/fondos/bg_24_1770451512.jpg",
+      "bytes": 133273,
+      "sha256": "05976e40d99c59489386dd6d9f5bda4e98201633fbb8217e548fd70632ee6b01",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/fondos/bg_24_1770451633.gif",
+      "bytes": 3132698,
+      "sha256": "f8859953d4947fdae6473bb77b3972dead942f998771504becfb8ab3141205d1",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/fondos/bg_24_1770451668.gif",
+      "bytes": 2079401,
+      "sha256": "0e5bdba2a43be2f34700c65c35e18ef945c79bb1f397348ae05912fe7433ae9e",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/fondos/bg_24_1770451767.gif",
+      "bytes": 1288916,
+      "sha256": "410f0d5b110cbfac7d786b35dd6934ef0d39c85af8d70d16c773086b847ebf77",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/fondos/bg_24_1770451826.gif",
+      "bytes": 2898244,
+      "sha256": "cdb6a025b90c3917a9495ce58ee70f7b40d5153c89d8386c1eb4e6bddd1d1e54",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/fondos/bg_24_1770451906.gif",
+      "bytes": 1791910,
+      "sha256": "727b3c5e1351ebb3bd7b80229bcccb7128165dff0524c9b64f05d76bda06c07c",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/fondos/bg_24_1770452824.gif",
+      "bytes": 1791910,
+      "sha256": "727b3c5e1351ebb3bd7b80229bcccb7128165dff0524c9b64f05d76bda06c07c",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/fondos/bg_24_1770452984.gif",
+      "bytes": 1791910,
+      "sha256": "727b3c5e1351ebb3bd7b80229bcccb7128165dff0524c9b64f05d76bda06c07c",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/fondos/bg_24_1770453748.gif",
+      "bytes": 1791910,
+      "sha256": "727b3c5e1351ebb3bd7b80229bcccb7128165dff0524c9b64f05d76bda06c07c",
+      "postgres_reference_fields": [
+        "usuarios.fondo"
+      ],
+      "firestore_reference_collections": [],
+      "action": "remove_verified_canonical_profile_duplicate"
+    },
+    {
+      "path": "frontend-angular/public/uploads/fondos/bg_28_1770999179.jpg",
+      "bytes": 88134,
+      "sha256": "ccbde7e7da36022d43fd4a074132f23936906ff0c2b62b9296ab69ba846568c7",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/fondos/bg_41_1770449910.gif",
+      "bytes": 1255465,
+      "sha256": "3bae81f58338ccda5d75a1794bb19de3501281df4974d7815eb39bf4b4cf16d3",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/fondos/bg_41_1770449919.jpg",
+      "bytes": 12440,
+      "sha256": "585f9f0b0762317c14070c8b36b85e072c652769d975a4a00f7deca44d4134e6",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/fondos/bg_41_1770451946.gif",
+      "bytes": 1061629,
+      "sha256": "36d2d229c46fb8bd194bb87a5c018ff971868bcb6ffab08f1b8094f575df6942",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/fondos/bg_41_1770452263.gif",
+      "bytes": 1288916,
+      "sha256": "410f0d5b110cbfac7d786b35dd6934ef0d39c85af8d70d16c773086b847ebf77",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/fondos/bg_41_1770452760.gif",
+      "bytes": 1288916,
+      "sha256": "410f0d5b110cbfac7d786b35dd6934ef0d39c85af8d70d16c773086b847ebf77",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/fondos/bg_41_1770452903.gif",
+      "bytes": 1288916,
+      "sha256": "410f0d5b110cbfac7d786b35dd6934ef0d39c85af8d70d16c773086b847ebf77",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/fondos/bg_41_1770453044.gif",
+      "bytes": 1288916,
+      "sha256": "410f0d5b110cbfac7d786b35dd6934ef0d39c85af8d70d16c773086b847ebf77",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/fondos/bg_41_1770453194.gif",
+      "bytes": 1288916,
+      "sha256": "410f0d5b110cbfac7d786b35dd6934ef0d39c85af8d70d16c773086b847ebf77",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/fondos/bg_41_1770453413.gif",
+      "bytes": 1288916,
+      "sha256": "410f0d5b110cbfac7d786b35dd6934ef0d39c85af8d70d16c773086b847ebf77",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/fondos/bg_41_1770453617.gif",
+      "bytes": 1288916,
+      "sha256": "410f0d5b110cbfac7d786b35dd6934ef0d39c85af8d70d16c773086b847ebf77",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/fondos/bg_41_1770453728.gif",
+      "bytes": 1288916,
+      "sha256": "410f0d5b110cbfac7d786b35dd6934ef0d39c85af8d70d16c773086b847ebf77",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/fondos/bg_41_1770595438.gif",
+      "bytes": 31712,
+      "sha256": "6f0fc22f480bfc403e5980b56ef26ba012214dc209cff0ece9bfc98144d531f4",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/fondos/bg_41_1770595447.gif",
+      "bytes": 1791910,
+      "sha256": "727b3c5e1351ebb3bd7b80229bcccb7128165dff0524c9b64f05d76bda06c07c",
+      "postgres_reference_fields": [
+        "usuarios.fondo"
+      ],
+      "firestore_reference_collections": [],
+      "action": "remove_verified_canonical_profile_duplicate"
+    },
+    {
+      "path": "frontend-angular/public/uploads/fondos/fondo_24.jpg",
+      "bytes": 7718145,
+      "sha256": "947d5e214ce5e3c554cc0055930f2416262f2e5922c9919496904ee8ca221b94",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/fondos/fondo_41.jpg",
+      "bytes": 178782,
+      "sha256": "fbadcaa08a96d6b27d392e2d4318e5341114c60c36482798c4761e6b5c0ee5ea",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/heroes/heroe_24_1770449731.gif",
+      "bytes": 1045751,
+      "sha256": "ea4b0d9df71a4c2e567eebaad182c1d47997bf0d2ca5a8dbf3eb753c1e13d7c9",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/heroes/heroe_24_1770450950.gif",
+      "bytes": 1045751,
+      "sha256": "ea4b0d9df71a4c2e567eebaad182c1d47997bf0d2ca5a8dbf3eb753c1e13d7c9",
+      "postgres_reference_fields": [
+        "usuarios.heroe"
+      ],
+      "firestore_reference_collections": [],
+      "action": "remove_verified_canonical_profile_duplicate"
+    },
+    {
+      "path": "frontend-angular/public/uploads/heroes/heroe_41.gif",
+      "bytes": 188771,
+      "sha256": "8a1b65070a00a00ffd973ef58c1a40026862b92eea80b2457a2d9b0880b9dfc8",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/heroes/heroe_41_1770449888.gif",
+      "bytes": 1045751,
+      "sha256": "ea4b0d9df71a4c2e567eebaad182c1d47997bf0d2ca5a8dbf3eb753c1e13d7c9",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/heroes/heroe_41_1770449938.gif",
+      "bytes": 1255465,
+      "sha256": "3bae81f58338ccda5d75a1794bb19de3501281df4974d7815eb39bf4b4cf16d3",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/heroes/heroe_41_1770450152.gif",
+      "bytes": 1255465,
+      "sha256": "3bae81f58338ccda5d75a1794bb19de3501281df4974d7815eb39bf4b4cf16d3",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/heroes/heroe_41_1770450161.gif",
+      "bytes": 1255465,
+      "sha256": "3bae81f58338ccda5d75a1794bb19de3501281df4974d7815eb39bf4b4cf16d3",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/heroes/heroe_41_1770450261.gif",
+      "bytes": 1255465,
+      "sha256": "3bae81f58338ccda5d75a1794bb19de3501281df4974d7815eb39bf4b4cf16d3",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/heroes/heroe_41_1770450463.gif",
+      "bytes": 1255465,
+      "sha256": "3bae81f58338ccda5d75a1794bb19de3501281df4974d7815eb39bf4b4cf16d3",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/heroes/heroe_41_1770450625.gif",
+      "bytes": 1255465,
+      "sha256": "3bae81f58338ccda5d75a1794bb19de3501281df4974d7815eb39bf4b4cf16d3",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/heroes/heroe_41_1770450729.gif",
+      "bytes": 1255465,
+      "sha256": "3bae81f58338ccda5d75a1794bb19de3501281df4974d7815eb39bf4b4cf16d3",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/heroes/heroe_41_1770450736.gif",
+      "bytes": 1255465,
+      "sha256": "3bae81f58338ccda5d75a1794bb19de3501281df4974d7815eb39bf4b4cf16d3",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/heroes/heroe_41_1770452073.gif",
+      "bytes": 63605,
+      "sha256": "9e32c1a5285b88fd354a3a9f3dcb06ea937dce41aec5839b0089b62aab043083",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/heroes/heroe_41_1770452238.gif",
+      "bytes": 923504,
+      "sha256": "1bccd459e0b34656c5bb7eb996103d696314f0f2f5d4770b0e90b5d2540dbb95",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_historical_upload"
+    },
+    {
+      "path": "frontend-angular/public/uploads/heroes/heroe_41_1770595457.gif",
+      "bytes": 1045751,
+      "sha256": "ea4b0d9df71a4c2e567eebaad182c1d47997bf0d2ca5a8dbf3eb753c1e13d7c9",
+      "postgres_reference_fields": [
+        "usuarios.heroe"
+      ],
+      "firestore_reference_collections": [],
+      "action": "remove_verified_canonical_profile_duplicate"
+    },
+    {
+      "path": "frontend-angular/public/uploads/tareas/tarea_7_24_1769779763.png",
+      "bytes": 1620685,
+      "sha256": "182310fa30f7562d46b2a2c9451d47fd707d36a0b06b20e6872b4a1be6a3e324",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unreferenced_homework"
+    },
+    {
+      "path": "frontend-angular/public/galeria/63d157ca33f60b0d3af18b5baa4a1e2a.jpg",
+      "bytes": 60116,
+      "sha256": "974aa760363c3cfc64c63ddbe75aa353554268a764cf30c4e0b4a04b04638442",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unused_gallery"
+    },
+    {
+      "path": "frontend-angular/public/galeria/6fab9784bafee88e1b7aea4620dc85af.jpg",
+      "bytes": 88134,
+      "sha256": "ccbde7e7da36022d43fd4a074132f23936906ff0c2b62b9296ab69ba846568c7",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unused_gallery"
+    },
+    {
+      "path": "frontend-angular/public/galeria/720f0cebc6a5bb3a15520f702f080d99.jpg",
+      "bytes": 26429,
+      "sha256": "5d0f104fae4d03b6b45e8f294271a413fb23df12079d6065d34954e29e06db16",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unused_gallery"
+    },
+    {
+      "path": "frontend-angular/public/galeria/ai-generated-pink-teddy-bear-with-bokeh-background-free-photo.jpg",
+      "bytes": 20624,
+      "sha256": "671d4432939f1064262bb5716274ffde76c35670bb600a23455fef9503918edd",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unused_gallery"
+    },
+    {
+      "path": "frontend-angular/public/galeria/c817eb34433485b3a754df61723ece6d.jpg",
+      "bytes": 55225,
+      "sha256": "47b064fdf438373f2abefecba744595469e8ce632a2ab3374ceeaaff59dcc92b",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unused_gallery"
+    },
+    {
+      "path": "frontend-angular/public/galeria/descarga_(6).jpeg",
+      "bytes": 108343,
+      "sha256": "e416efa9ada5daa155131261663081436a5ef71695b0b0d3ddb0deb4b64ad06d",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unused_gallery"
+    },
+    {
+      "path": "frontend-angular/public/galeria/Gemini_Generated_Image_1aa46z1aa46z1aa4.png",
+      "bytes": 1944775,
+      "sha256": "abde7b28fe0e50a8f7b083d80e957c7b278c07bcf8e4e8275fe743cf8d1325eb",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unused_gallery"
+    },
+    {
+      "path": "frontend-angular/public/galeria/Gemini_Generated_Image_8fexf58fexf58fex.png",
+      "bytes": 7419469,
+      "sha256": "10ad8292b7a4d560c8dbef41876826aa6a043f5b46481e587616b05fc4ebd6bf",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unused_gallery"
+    },
+    {
+      "path": "frontend-angular/public/galeria/Gemini_Generated_Image_enqia8enqia8enqi.png",
+      "bytes": 6346664,
+      "sha256": "3893c26c353559303e03098077823497374389ca74a52af30ce31ad9f80483e6",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unused_gallery"
+    },
+    {
+      "path": "frontend-angular/public/galeria/Gemini_Generated_Image_fioimwfioimwfioi.png",
+      "bytes": 3781866,
+      "sha256": "a297ff8f9f28aa995c6a11950b0512b6d67759d355ff329010915cfc9ed94bf9",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unused_gallery"
+    },
+    {
+      "path": "frontend-angular/public/galeria/Gemini_Generated_Image_j2fdihj2fdihj2fd.png",
+      "bytes": 6821276,
+      "sha256": "7e5251567032004897f2f7ec675cd801fee1df09fc6f6afef8395ecb2685eeea",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unused_gallery"
+    },
+    {
+      "path": "frontend-angular/public/galeria/Gemini_Generated_Image_w4zhu3w4zhu3w4zh.png",
+      "bytes": 4626918,
+      "sha256": "3ab53d1497a883eb5bf6774b55bf212fe82e345deb0afb82eab1fa2e70304c21",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unused_gallery"
+    },
+    {
+      "path": "frontend-angular/public/galeria/Gemini_Generated_Image_zc5qvvzc5qvvzc5q.png",
+      "bytes": 3651076,
+      "sha256": "dac1b7afeac0ba5263ee0ab2830d57819908c8a9754530f0d3d69a39f2d3d0c7",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unused_gallery"
+    },
+    {
+      "path": "frontend-angular/public/galeria/imagenes-de-perfil-de-minecraft-y4r9th833t1my8c2.jpg",
+      "bytes": 43615,
+      "sha256": "8f2be30a8e422c48fa4d31cab41b983f985c6920759657e4af399b7327a0df21",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unused_gallery"
+    },
+    {
+      "path": "frontend-angular/public/galeria/images_(3).jpeg",
+      "bytes": 8227,
+      "sha256": "8c0906b2fed164d3ddc8661d82fdbc307094679e803580a62e66b4ee3d29dba3",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unused_gallery"
+    },
+    {
+      "path": "frontend-angular/public/galeria/images_(4).jpeg",
+      "bytes": 8929,
+      "sha256": "5f03a280d605eed2ecfbf9b8b012d216c727e34d06adaa6a8eaf5b9ba9a63240",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unused_gallery"
+    },
+    {
+      "path": "frontend-angular/public/galeria/images_(5).jpeg",
+      "bytes": 7460,
+      "sha256": "67baa1f73f85336caeed56c32c6dca8c116c9f116590dec48b0295b058f5d011",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unused_gallery"
+    },
+    {
+      "path": "frontend-angular/public/galeria/SpyderSammy.webp",
+      "bytes": 7098,
+      "sha256": "b2a984e2dd11e1e0342c2683bfef0137054520ca9123c8cdf3b6523ccde7db3a",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unused_gallery"
+    },
+    {
+      "path": "frontend-angular/public/galeria/steal-a-brainrot-characters-kowwynsvxa5gyysa.jpg",
+      "bytes": 81741,
+      "sha256": "d3d9c570a612ef48d4af372da92a204cccb71e4d66acc30e4eef1bfd6826d7dd",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unused_gallery"
+    },
+    {
+      "path": "frontend-angular/public/galeria/unnamed_(9).jpg",
+      "bytes": 200739,
+      "sha256": "bc15d3d9e65918e60ee8167072e0e6c19673a77b3724c081e28e71ec231c179c",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unused_gallery"
+    },
+    {
+      "path": "frontend-angular/public/galeria/_102469653_gettyimages-962792890.jpg.JPG",
+      "bytes": 29390,
+      "sha256": "e95feace8371e1db28a8b32c286f899c495f74232f0bd5251ebfec8b10609a0e",
+      "postgres_reference_fields": [],
+      "firestore_reference_collections": [],
+      "action": "remove_unused_gallery"
+    },
+    {
+      "path": "frontend-angular/public/img/premios/premio_697cad1bea665.png",
+      "bytes": 1620685,
+      "sha256": "182310fa30f7562d46b2a2c9451d47fd707d36a0b06b20e6872b4a1be6a3e324",
+      "postgres_reference_fields": [
+        "premios.imagen (canonical Supabase copy)"
+      ],
+      "firestore_reference_collections": [],
+      "action": "remove_verified_canonical_prize_duplicate",
+      "note": "Identical commercial candy image used by the unreferenced homework fixture. Current prize uses uploads/tienda/premios/2 in daemon-assets; its bytes were verified."
+    }
+  ]
+}
