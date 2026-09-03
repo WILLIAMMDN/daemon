@@ -65,7 +65,7 @@
               </dd>
             </div>
             <div>
-              <dt>Progreso</dt>
+              <dt>Progreso de lecciones</dt>
               <dd>{{ curso.leccionesCompletadas }} de {{ curso.totalLecciones }} lecciones ({{ curso.porcentaje }}%)</dd>
             </div>
             <div>
@@ -362,9 +362,17 @@
             <div class="progreso-metricas">
               <div class="metrica-bloque">
                 <span class="metrica-bloque__label">Avance del curso</span>
-                <nz-progress [nzPercent]="curso.porcentaje" nzStrokeColor="var(--arc-green)" [nzStrokeWidth]="8" />
-                <span class="metrica-bloque__valor">{{ curso.porcentaje }}% completado</span>
+                <nz-progress [nzPercent]="avanceCursoPorcentaje()" nzStrokeColor="var(--arc-green)" [nzStrokeWidth]="8" />
+                <span class="metrica-bloque__valor">{{ avanceCursoPorcentaje() }}% completado</span>
               </div>
+
+              @if (mapa()?.path) {
+                <div class="metrica-bloque">
+                  <span class="metrica-bloque__label">Experiencias requeridas</span>
+                  <span class="metrica-bloque__cifra">{{ experienciasRequeridasCompletadas() }} / {{ experienciasRequeridasTotal() }}</span>
+                  <span class="metrica-bloque__detalle">Avance académico de la ruta</span>
+                </div>
+              }
 
               <div class="metrica-bloque">
                 <span class="metrica-bloque__label">Lecciones completadas</span>

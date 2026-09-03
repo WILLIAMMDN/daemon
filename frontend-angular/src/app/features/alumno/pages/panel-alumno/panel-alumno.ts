@@ -231,9 +231,13 @@ export class PanelAlumno {
 
       const cursoId = this.currentCourse()?.id ?? next.course?.id;
       const expId = next.experience?.id || next.experience?.sourceId;
+      const rutaExperiencia: string | unknown[] = cursoId && expId
+        ? ['/alumno/aprender/curso', cursoId, 'experiencia', expId]
+        : (cursoId ? ['/alumno/aprender/curso', cursoId] : '/alumno/aprender');
 
       // `nextAction.type` solo canoniza `leccion` → `lesson`; el resto llega con
-      // el valor del enum del backend (`mision`, `laboratorio`, …).
+      // el valor del enum del backend (`mision`, `laboratorio`, `practica`, …),
+      // así que siempre hay que canonizar antes de ramificar.
       switch (tipo === 'live_session' ? tipo : canonizarTipoExperiencia(tipo)) {
         case 'live_session':
           ruta = '/alumno/agenda';
@@ -241,30 +245,27 @@ export class PanelAlumno {
           tipoEtiqueta = 'SESIÓN EN VIVO';
           break;
         case 'lesson':
-          ruta = cursoId && expId
-            ? ['/alumno/aprender/curso', cursoId, 'experiencia', expId]
-            : (cursoId ? ['/alumno/aprender/curso', cursoId] : '/alumno/aprender');
+          ruta = rutaExperiencia;
           ctaTexto = 'Continuar lección';
           tipoEtiqueta = 'LECCIÓN';
           break;
+        case 'practice':
+          ruta = rutaExperiencia;
+          ctaTexto = 'Continuar práctica';
+          tipoEtiqueta = 'PRÁCTICA';
+          break;
         case 'mission':
-          ruta = cursoId && expId
-            ? ['/alumno/aprender/curso', cursoId, 'experiencia', expId]
-            : (cursoId ? ['/alumno/aprender/curso', cursoId] : '/alumno/aprender');
+          ruta = rutaExperiencia;
           ctaTexto = 'Continuar misión';
           tipoEtiqueta = 'MISIÓN';
           break;
         case 'assessment':
-          ruta = cursoId && expId
-            ? ['/alumno/aprender/curso', cursoId, 'experiencia', expId]
-            : (cursoId ? ['/alumno/aprender/curso', cursoId] : '/alumno/aprender');
+          ruta = rutaExperiencia;
           ctaTexto = 'Comenzar evaluación';
           tipoEtiqueta = 'EVALUACIÓN';
           break;
         case 'project':
-          ruta = cursoId && expId
-            ? ['/alumno/aprender/curso', cursoId, 'experiencia', expId]
-            : (cursoId ? ['/alumno/aprender/curso', cursoId] : '/alumno/aprender');
+          ruta = rutaExperiencia;
           ctaTexto = 'Continuar proyecto';
           tipoEtiqueta = 'PROYECTO';
           break;
@@ -276,16 +277,10 @@ export class PanelAlumno {
           tipoEtiqueta = 'DESAFÍO';
           break;
         case 'lab':
-          ruta = cursoId && expId
-            ? ['/alumno/aprender/curso', cursoId, 'experiencia', expId]
-            : (cursoId ? ['/alumno/aprender/curso', cursoId] : '/alumno/aprender');
+          ruta = rutaExperiencia;
           ctaTexto = 'Entrar al laboratorio';
           tipoEtiqueta = 'LABORATORIO';
           break;
-        default:
-          ruta = cursoId ? ['/alumno/aprender/curso', cursoId] : '/alumno/aprender';
-          ctaTexto = 'Continuar aprendizaje';
-          tipoEtiqueta = 'ACTIVIDAD';
       }
 
       return {

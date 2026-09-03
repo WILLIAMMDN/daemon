@@ -147,6 +147,18 @@ export class EspacioCurso {
     return progreso ? progreso.completedRequiredExperienceCount : (this.curso()?.leccionesCompletadas ?? 0);
   });
 
+  /**
+   * Avance canónico del curso: es el de Learning Core (experiencias requeridas
+   * de la ruta), no el de lecciones. `/alumno/aprendizaje` solo conoce la tabla
+   * legacy `lecciones` — en IA: Origen son 6 frente a 18 experiencias
+   * obligatorias, así que usarlo como avance total del curso miente.
+   * Solo cuando el curso no tiene ruta publicada queda el avance de lecciones.
+   */
+  readonly avanceCursoPorcentaje = computed(() => {
+    const mapa = this.mapa();
+    return mapa?.path ? mapa.progress.percent : (this.curso()?.porcentaje ?? 0);
+  });
+
   readonly objetivosAcademicos = computed(() => {
     const curso = this.curso();
     if (!curso) return [];

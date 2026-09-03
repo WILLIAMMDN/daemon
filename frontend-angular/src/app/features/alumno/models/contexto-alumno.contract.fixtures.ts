@@ -24,6 +24,7 @@ import {
   MatriculaRespuestaDto,
   ProgresoContextoDto,
   SesionAprendizajeDto,
+  TipoSiguienteAccion,
   VersionCurriculumDto,
 } from './contexto-alumno.model';
 
@@ -58,10 +59,18 @@ export const VERSION_CURRICULUM_CONTRATO: VersionCurriculumDto = {
   status: 'published',
 };
 
-/** `progresoPorContexto()` de `ArcStudentContextService`. */
+/**
+ * `progresoPorContexto()` de `ArcStudentContextService`.
+ *
+ * OJO con la semántica: `lessonCount` cuenta filas publicadas de la tabla
+ * legacy `lecciones` de la versión del curso — NO experiencias de Learning
+ * Core. En IA: Origen son 6 lecciones frente a 18 experiencias obligatorias,
+ * así que este bloque es información de lecciones, no el avance total del
+ * curso. El avance canónico vive en `/alumno/aprender/mapa`.`progress`.
+ */
 export const PROGRESO_CONTRATO: ProgresoContextoDto = {
-  lessonCount: 18,
-  completedLessonCount: 9,
+  lessonCount: 6,
+  completedLessonCount: 3,
   lessonProgressPercent: 50,
 };
 
@@ -136,6 +145,72 @@ export const HOME_CONTEXT_CONTRATO: HomeContextResponse = {
   upcomingAgendaSummary: { total: 1, items: [SESION_CONTRATO] },
   generatedAt: '2026-08-31T12:00:00Z',
 };
+
+/**
+ * `nextAction.type` REAL observado recorriendo la ruta IA: Origen (Teens)
+ * completa contra el backend (`ArcStudentContextService::siguienteAccion`).
+ *
+ * El backend solo canoniza `leccion` → `lesson`; el resto son valores del enum
+ * `TipoExperienciaAprendizaje` sin traducir. La clave es el hito/experiencia de
+ * IA: Origen que los produce.
+ */
+export const NEXT_ACTION_TIPOS_REALES: ReadonlyArray<{
+  ancla: string;
+  tipoApi: TipoSiguienteAccion;
+  titulo: string;
+  etiqueta: string;
+  cta: string;
+}> = [
+  {
+    ancla: 'M1-E1',
+    tipoApi: 'lesson',
+    titulo: 'IA no es magia',
+    etiqueta: 'LECCIÓN',
+    cta: 'Continuar lección',
+  },
+  {
+    ancla: 'M1-E2',
+    tipoApi: 'laboratorio',
+    titulo: 'Entrena, prueba y rompe un modelo simple',
+    etiqueta: 'LABORATORIO',
+    cta: 'Entrar al laboratorio',
+  },
+  {
+    ancla: 'M2-E2',
+    tipoApi: 'practica',
+    titulo: 'Mejora la instrucción',
+    etiqueta: 'PRÁCTICA',
+    cta: 'Continuar práctica',
+  },
+  {
+    ancla: 'M2-E3',
+    tipoApi: 'mision',
+    titulo: 'Tres intentos, una mejor decisión',
+    etiqueta: 'MISIÓN',
+    cta: 'Continuar misión',
+  },
+  {
+    ancla: 'M3-E2',
+    tipoApi: 'desafio',
+    titulo: 'Detective de respuestas',
+    etiqueta: 'DESAFÍO',
+    cta: 'Aceptar reto',
+  },
+  {
+    ancla: 'M3-E3',
+    tipoApi: 'evaluacion',
+    titulo: 'Verifica antes de repetir',
+    etiqueta: 'EVALUACIÓN',
+    cta: 'Comenzar evaluación',
+  },
+  {
+    ancla: 'M5-E1',
+    tipoApi: 'proyecto',
+    titulo: 'Capstone 1 — Define el problema',
+    etiqueta: 'PROYECTO',
+    cta: 'Continuar proyecto',
+  },
+];
 
 /**
  * Rama legacy de `siguienteAccion()`: el alumno no tiene ruta publicada, así

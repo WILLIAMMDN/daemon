@@ -40,6 +40,7 @@ import {
   LEARNING_CONTEXT_SIN_MATRICULA_CONTRATO,
   LEARNING_MAP_CONTRATO,
   MATRICULA_CONTRATO,
+  NEXT_ACTION_TIPOS_REALES,
   PROGRESO_CONTRATO,
 } from './models/contexto-alumno.contract.fixtures';
 
@@ -291,6 +292,61 @@ describe('DAEMON ARC — Contrato API del Alumno (curso · aula · matrícula ·
       expect(accion.titulo).toBe('Diseña tu primer prompt verificable');
     });
 
+    it.each(NEXT_ACTION_TIPOS_REALES)(
+      'enruta $ancla ($tipoApi) a su CTA canónica, sin caer en la acción genérica',
+      ({ tipoApi, titulo, etiqueta, cta }) => {
+        const experiencia = HOME_CONTEXT_CONTRATO.nextAction!.experience!;
+        const fixture = montarPanel({
+          ...HOME_CONTEXT_CONTRATO,
+          nextAction: {
+            type: tipoApi,
+            title: titulo,
+            experience: { ...experiencia, id: 909, title: titulo },
+            lesson: null,
+          },
+        });
+        const accion = fixture.componentInstance.accionActual(panelDto)!;
+
+        expect(accion.titulo).toBe(titulo);
+        expect(accion.tipoEtiqueta).toBe(etiqueta);
+        expect(accion.ctaTexto).toBe(cta);
+        expect(accion.ruta).toEqual(['/alumno/aprender/curso', CURSO_CONTRATO.id, 'experiencia', 909]);
+
+        // La regresión que motivó este trabajo: el `default` genérico.
+        expect(accion.tipoEtiqueta).not.toBe('ACTIVIDAD');
+        expect(accion.ctaTexto).not.toBe('Continuar aprendizaje');
+      },
+    );
+
+    it('cubre todos los valores del enum de experiencias del backend', () => {
+      const tiposApi = NEXT_ACTION_TIPOS_REALES.map((caso) => caso.tipoApi).sort();
+      expect(tiposApi).toEqual([
+        'desafio',
+        'evaluacion',
+        'laboratorio',
+        'lesson',
+        'mision',
+        'practica',
+        'proyecto',
+      ]);
+    });
+
+    it('lleva la sesión en vivo a la Agenda', () => {
+      const fixture = montarPanel({
+        ...HOME_CONTEXT_CONTRATO,
+        nextAction: {
+          type: 'live_session',
+          title: 'Variables en vivo',
+          session: HOME_CONTEXT_CONTRATO.nextLiveSession,
+        },
+      });
+      const accion = fixture.componentInstance.accionActual(panelDto)!;
+
+      expect(accion.tipoEtiqueta).toBe('SESIÓN EN VIVO');
+      expect(accion.ctaTexto).toBe('Ir a la sesión en vivo');
+      expect(accion.ruta).toBe('/alumno/agenda');
+    });
+
     it('usa el curso y el aula de la propia nextAction en la rama legacy sin ruta', () => {
       const sinContextoRaiz = {
         ...HOME_CONTEXT_LECCION_LEGACY_CONTRATO,
@@ -380,6 +436,39 @@ describe('DAEMON ARC — Contrato API del Alumno (curso · aula · matrícula ·
       expect(fixture.componentInstance.aula()?.name).toBe('Cohorte IA Teens 2026');
       expect(texto).toContain('Cohorte IA Teens 2026');
       expect(texto).toContain('Periodo 2026-I');
+    });
+
+    it('Mis cursos etiqueta el avance de lecciones como tal, no como avance del curso', () => {
+      const fixture = TestBed.createComponent(MisCursos);
+      fixture.detectChanges();
+      responderContexto();
+      fixture.detectChanges();
+
+      const texto = (fixture.nativeElement as HTMLElement).textContent ?? '';
+      expect(texto).toContain('Progreso de lecciones');
+      expect(texto).not.toContain('Progreso del curso');
+    });
+
+    it('Course Summary usa el avance de Learning Core como avance del curso, no el de lecciones', () => {
+      const fixture = TestBed.createComponent(EspacioCurso);
+      fixture.detectChanges();
+      responderContexto();
+      fixture.detectChanges();
+
+      // El curso legacy sirve 1 lección sin completar (0%); Learning Core
+      // reporta 9/18 experiencias obligatorias (50%). El avance del curso
+      // debe seguir a Learning Core.
+      expect(fixture.componentInstance.curso()?.porcentaje).toBe(0);
+      expect(fixture.componentInstance.avanceCursoPorcentaje()).toBe(50);
+    });
+
+    it('Course Summary cae al avance de lecciones solo si el curso no tiene ruta publicada', () => {
+      const fixture = TestBed.createComponent(EspacioCurso);
+      fixture.detectChanges();
+      responderContexto({ ...LEARNING_MAP_CONTRATO, path: null, legacyFallback: true });
+      fixture.detectChanges();
+
+      expect(fixture.componentInstance.avanceCursoPorcentaje()).toBe(0);
     });
 
     it('Course Summary lee el progreso de la ruta con los nombres reales de Learning Core', () => {
