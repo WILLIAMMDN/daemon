@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\AlumnoController;
 use App\Http\Controllers\Api\V1\ArchivoAdminController;
 use App\Http\Controllers\Api\V1\ArchivoController;
 use App\Http\Controllers\Api\V1\ArcCohortSessionOpsController;
+use App\Http\Controllers\Api\V1\ArcCourseStudioController;
 use App\Http\Controllers\Api\V1\ArcStudentContextController;
 use App\Http\Controllers\Api\V1\AutenticacionController;
 use App\Http\Controllers\Api\V1\BienestarDigitalController;
@@ -180,10 +181,29 @@ Route::prefix('v1')->group(function (): void {
                 Route::post('/versiones/{version}/rutas', [LearningCoreAuthoringController::class, 'crearRuta']);
                 Route::put('/rutas/{ruta}', [LearningCoreAuthoringController::class, 'actualizarRuta']);
                 Route::post('/rutas/{ruta}/hitos', [LearningCoreAuthoringController::class, 'crearHito']);
+                Route::put('/hitos/{hito}', [LearningCoreAuthoringController::class, 'actualizarHito']);
+                Route::delete('/hitos/{hito}', [LearningCoreAuthoringController::class, 'eliminarHito']);
                 Route::put('/hitos/{hito}/prerrequisitos', [LearningCoreAuthoringController::class, 'prerrequisitos']);
                 Route::post('/hitos/{hito}/experiencias', [LearningCoreAuthoringController::class, 'crearExperiencia']);
+                Route::put('/experiencias/{experiencia}', [LearningCoreAuthoringController::class, 'actualizarExperiencia']);
+                Route::delete('/experiencias/{experiencia}', [LearningCoreAuthoringController::class, 'eliminarExperiencia']);
+                Route::put('/experiencias/{experiencia}/objetivos', [LearningCoreAuthoringController::class, 'objetivosExperiencia']);
                 Route::post('/rutas/{ruta}/publicar', [LearningCoreAuthoringController::class, 'publicarRuta']);
                 Route::post('/rutas/{ruta}/archivar', [LearningCoreAuthoringController::class, 'archivarRuta']);
+
+                // Course Operations / Studio: superficie canónica de autoría.
+                // Studio y un futuro adaptador MCP consumen exactamente esto.
+                Route::prefix('studio')->group(function (): void {
+                    Route::get('/catalogo', [ArcCourseStudioController::class, 'catalogo']);
+                    Route::get('/cursos', [ArcCourseStudioController::class, 'cursos']);
+                    Route::get('/cursos/{curso}', [ArcCourseStudioController::class, 'curso']);
+                    Route::get('/versiones/{version}', [ArcCourseStudioController::class, 'version']);
+                    Route::post('/versiones/{version}/borrador', [ArcCourseStudioController::class, 'crearBorrador']);
+                    Route::get('/versiones/{version}/validacion', [ArcCourseStudioController::class, 'validar']);
+                    Route::post('/versiones/{version}/publicacion', [ArcCourseStudioController::class, 'publicar']);
+                });
+                Route::get('/objetivos', [AcademicoController::class, 'objetivos']);
+                Route::put('/objetivos/{objetivo}', [AcademicoController::class, 'actualizarObjetivo']);
                 Route::get('/revisiones', [LearningCoreStudentController::class, 'revisiones']);
                 Route::get('/revisiones/{intento}', [LearningCoreStudentController::class, 'detalleRevision']);
                 Route::post('/intentos/{intento}/evaluar', [LearningCoreStudentController::class, 'evaluar']);

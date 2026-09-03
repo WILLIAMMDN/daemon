@@ -79,6 +79,7 @@ export const docenteSidebarSections: PortalSidebarSection[] = [
     titulo: 'Academia',
     tono: 'orange',
     items: [
+      { id: 'docente-cursos', etiqueta: 'Cursos', ruta: '/docente/cursos', detalle: 'Autoría y publicación de versiones', icono: faBookOpenReader },
       { id: 'docente-curriculo', etiqueta: 'Currículo', ruta: '/docente/curriculo', detalle: 'Cursos y lecciones', icono: faBookOpenReader },
       { id: 'docente-sesiones', etiqueta: 'Sesiones en vivo', ruta: '/docente/sesiones', detalle: 'Agenda de la cohorte', icono: faChalkboardUser },
       { id: 'docente-revisiones', etiqueta: 'Revisiones', ruta: '/docente/revisiones', detalle: 'Evidencias y retroalimentación', icono: faClipboardCheck },

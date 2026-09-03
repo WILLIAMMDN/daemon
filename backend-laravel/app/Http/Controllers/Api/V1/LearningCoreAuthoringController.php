@@ -10,6 +10,7 @@ use App\Http\Requests\Api\V1\Academico\UnidadRequest;
 use App\Http\Requests\Api\V1\Academico\VersionCursoRequest;
 use App\Models\Aula;
 use App\Models\Curso;
+use App\Models\ExperienciaAprendizaje;
 use App\Models\HitoAprendizaje;
 use App\Models\RutaAprendizaje;
 use App\Models\VersionCurso;
@@ -77,9 +78,43 @@ class LearningCoreAuthoringController extends Controller
         return $this->autoria->configurarPrerrequisitos($request->user(), $hito, $datos['prerrequisitos']);
     }
 
+    public function actualizarHito(HitoAprendizajeRequest $request, HitoAprendizaje $hito)
+    {
+        return $this->autoria->actualizarHito($request->user(), $hito, $request->validated());
+    }
+
+    public function eliminarHito(Request $request, HitoAprendizaje $hito)
+    {
+        $this->autoria->eliminarHito($request->user(), $hito);
+
+        return response()->json(['ok' => true]);
+    }
+
     public function crearExperiencia(ExperienciaAprendizajeRequest $request, HitoAprendizaje $hito)
     {
         return response()->json($this->autoria->crearExperiencia($request->user(), $hito, $request->validated()), 201);
+    }
+
+    public function actualizarExperiencia(ExperienciaAprendizajeRequest $request, ExperienciaAprendizaje $experiencia)
+    {
+        return $this->autoria->actualizarExperiencia($request->user(), $experiencia, $request->validated());
+    }
+
+    public function eliminarExperiencia(Request $request, ExperienciaAprendizaje $experiencia)
+    {
+        $this->autoria->eliminarExperiencia($request->user(), $experiencia);
+
+        return response()->json(['ok' => true]);
+    }
+
+    public function objetivosExperiencia(Request $request, ExperienciaAprendizaje $experiencia)
+    {
+        $datos = $request->validate([
+            'objetivos' => ['present', 'array', 'max:50'],
+            'objetivos.*' => ['integer', 'exists:objetivos_aprendizaje,id'],
+        ]);
+
+        return $this->autoria->vincularObjetivos($request->user(), $experiencia, $datos['objetivos']);
     }
 
     public function publicarRuta(Request $request, RutaAprendizaje $ruta)

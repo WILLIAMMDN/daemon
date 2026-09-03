@@ -792,8 +792,22 @@ class LearningProgressionService
         ];
     }
 
-    private function requiereEvaluacionDocente(ExperienciaAprendizaje $experiencia): bool
+    /**
+     * ¿Esta experiencia exige revisión humana antes de darse por completada?
+     *
+     * Regla canónica y única del dominio. Por defecto se deriva del tipo de
+     * experiencia — el comportamiento histórico, intacto para todo el contenido
+     * existente. La autoría puede declarar un override explícito en
+     * `regla_completitud.revision_humana`; sólo entonces la derivación cede.
+     */
+    public static function exigeRevisionHumana(ExperienciaAprendizaje $experiencia): bool
     {
+        $override = $experiencia->regla_completitud['revision_humana'] ?? null;
+
+        if (is_bool($override)) {
+            return $override;
+        }
+
         return in_array($experiencia->tipo, [
             TipoExperienciaAprendizaje::MISION,
             TipoExperienciaAprendizaje::LABORATORIO,
@@ -801,6 +815,11 @@ class LearningProgressionService
             TipoExperienciaAprendizaje::PROYECTO,
             TipoExperienciaAprendizaje::DESAFIO,
         ], true);
+    }
+
+    private function requiereEvaluacionDocente(ExperienciaAprendizaje $experiencia): bool
+    {
+        return self::exigeRevisionHumana($experiencia);
     }
 
     private function evaluarTransicionesSuperiores(MatriculaAula $matricula, RutaAprendizaje $ruta): void

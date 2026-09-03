@@ -13,10 +13,12 @@ class HitoAprendizajeRequest extends FormRequest
 
     public function rules(): array
     {
+        $obligatorio = in_array($this->method(), ['PUT', 'PATCH'], true) ? 'sometimes' : 'required';
+
         return [
-            'titulo' => ['required', 'string', 'max:150'],
+            'titulo' => [$obligatorio, 'string', 'max:150'],
             'descripcion' => ['nullable', 'string', 'max:5000'],
-            'orden' => ['required', 'integer', 'min:1', 'max:999'],
+            'orden' => [$obligatorio, 'integer', 'min:1', 'max:999'],
             'obligatorio' => ['sometimes', 'boolean'],
             'requisitos_completitud' => ['nullable', 'array'],
         ];

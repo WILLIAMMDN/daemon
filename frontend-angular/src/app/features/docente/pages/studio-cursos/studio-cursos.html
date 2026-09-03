@@ -1,0 +1,91 @@
+<section class="studio-cursos">
+  <header class="studio-cursos__cabecera">
+    <div class="studio-cursos__intro">
+      <h1>Cursos</h1>
+      <p>
+        Construye, valida y publica versiones de curso del Learning Core. Una versión publicada es
+        inmutable: para cambiarla se crea un borrador nuevo.
+      </p>
+    </div>
+  </header>
+
+  @if (cargando()) {
+    <nz-skeleton [nzActive]="true" [nzParagraph]="{ rows: 6 }" />
+  } @else if (error(); as fallo) {
+    @if (fallo.tipo === 'autorizacion') {
+      <nz-result
+        nzStatus="403"
+        nzTitle="Sin acceso a la autoría de cursos"
+        [nzSubTitle]="fallo.mensaje"
+      />
+    } @else {
+      <nz-alert nzType="error" [nzMessage]="fallo.mensaje" nzShowIcon>
+        <ng-container *nzAlertAction>
+          <button nz-button nzSize="small" (click)="cargar()">Reintentar</button>
+        </ng-container>
+      </nz-alert>
+    }
+  } @else if (sinCursos()) {
+    <nz-empty nzNotFoundContent="Todavía no hay cursos en tu institución." />
+  } @else {
+    <ul class="studio-lista">
+      @for (curso of cursos(); track curso.id) {
+        <li class="studio-curso">
+          <div class="studio-curso__cuerpo">
+            <div class="studio-curso__identidad">
+              <h2 class="studio-curso__titulo">
+                <a [routerLink]="['/docente/cursos', curso.id]">{{ curso.title }}</a>
+              </h2>
+              @if (curso.code) {
+                <span class="studio-curso__codigo">{{ curso.code }}</span>
+              }
+            </div>
+
+            @if (curso.description) {
+              <p class="studio-curso__descripcion">{{ curso.description }}</p>
+            }
+
+            <dl class="studio-curso__datos">
+              @if (curso.audience) {
+                <div>
+                  <dt>Audiencia</dt>
+                  <dd>{{ curso.audience }}</dd>
+                </div>
+              }
+              <div>
+                <dt>Versiones</dt>
+                <dd>{{ curso.versionCount }}</dd>
+              </div>
+              <div>
+                <dt>Cohortes</dt>
+                <dd>{{ curso.cohortCount }}</dd>
+              </div>
+            </dl>
+          </div>
+
+          <div class="studio-curso__estado">
+            @if (curso.publishedVersion; as publicada) {
+              <span class="studio-curso__version">
+                <nz-tag [nzColor]="colorEstado(publicada.status)">{{ etiquetaEstado(publicada.status) }}</nz-tag>
+                <a [routerLink]="['/docente/cursos', curso.id, 'version', publicada.id]">
+                  V{{ publicada.number }} · {{ publicada.title ?? 'Sin título' }}
+                </a>
+              </span>
+            }
+            @if (curso.draftVersion; as borrador) {
+              <span class="studio-curso__version">
+                <nz-tag [nzColor]="colorEstado(borrador.status)">{{ etiquetaEstado(borrador.status) }}</nz-tag>
+                <a [routerLink]="['/docente/cursos', curso.id, 'version', borrador.id]">
+                  V{{ borrador.number }} · {{ borrador.title ?? 'Sin título' }}
+                </a>
+              </span>
+            }
+            @if (!curso.publishedVersion && !curso.draftVersion) {
+              <span class="studio-curso__vacio">Sin versiones todavía</span>
+            }
+          </div>
+        </li>
+      }
+    </ul>
+  }
+</section>

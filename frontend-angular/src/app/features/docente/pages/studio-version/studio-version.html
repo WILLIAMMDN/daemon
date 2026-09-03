@@ -1,0 +1,655 @@
+<section class="studio-version-editor">
+  <nav class="studio-version-editor__migas" aria-label="Ruta de navegación">
+    <a routerLink="/docente/cursos">Cursos</a>
+    <span aria-hidden="true">/</span>
+    <a [routerLink]="['/docente/cursos', courseId()]">{{ detalle()?.course?.title ?? 'Curso' }}</a>
+    <span aria-hidden="true">/</span>
+    <span>{{ detalle() ? 'V' + detalle()!.version.number : 'Versión' }}</span>
+  </nav>
+
+  @if (cargando()) {
+    <nz-skeleton [nzActive]="true" [nzParagraph]="{ rows: 8 }" />
+  } @else if (error(); as fallo) {
+    @if (fallo.tipo === 'autorizacion') {
+      <nz-result nzStatus="403" nzTitle="Sin acceso a esta versión" [nzSubTitle]="fallo.mensaje" />
+    } @else {
+      <nz-alert nzType="error" [nzMessage]="fallo.mensaje" nzShowIcon>
+        <ng-container *nzAlertAction>
+          <button nz-button nzSize="small" (click)="cargar()">Reintentar</button>
+        </ng-container>
+      </nz-alert>
+    }
+  } @else if (detalle(); as datos) {
+    <header class="studio-version-editor__cabecera">
+      <div class="studio-version-editor__intro">
+        <h1>{{ datos.version.title ?? 'Versión sin título' }}</h1>
+        <p class="studio-version-editor__meta">
+          <nz-tag [nzColor]="datos.editable ? 'processing' : 'success'">
+            {{ datos.editable ? 'Borrador' : 'Publicada' }}
+          </nz-tag>
+          <span>{{ datos.course.title }}</span>
+          <span>V{{ datos.version.number }}</span>
+          <span>{{ datos.paths.length }} ruta(s) · {{ totalExperiencias() }} experiencia(s)</span>
+        </p>
+      </div>
+
+      <div class="studio-version-editor__acciones">
+        <button nz-button nzType="default" (click)="revalidar()">Validar versión</button>
+        @if (datos.editable) {
+          <button
+            nz-button
+            nzType="primary"
+            [disabled]="!listoParaPublicar()"
+            [nzLoading]="publicando()"
+            (click)="confirmarPublicacion()"
+          >
+            Publicar versión
+          </button>
+        }
+      </div>
+    </header>
+
+    @if (!datos.editable) {
+      <nz-alert
+        nzType="info"
+        nzMessage="Versión publicada — sólo lectura"
+        nzDescription="Una versión publicada es la verdad académica de las cohortes que la usan y no puede modificarse. Para cambiar algo, vuelve al curso y crea un borrador nuevo a partir de esta versión."
+        nzShowIcon
+      />
+    }
+
+    @if (validacion(); as resultado) {
+      @if (datos.editable && resultado.errors.length > 0) {
+        <section class="studio-hallazgos studio-hallazgos--error" aria-labelledby="studio-errores">
+          <h2 id="studio-errores" class="studio-hallazgos__titulo">
+            {{ resultado.errors.length }} bloqueo(s) de publicación
+          </h2>
+          <ul>
+            @for (hallazgo of resultado.errors; track hallazgo.code + '-' + hallazgo.targetId) {
+              <li>{{ hallazgo.message }}</li>
+            }
+          </ul>
+        </section>
+      } @else if (datos.editable) {
+        <nz-alert
+          nzType="success"
+          nzMessage="Esta versión pasa la validación de publicación."
+          nzShowIcon
+        />
+      }
+
+      @if (resultado.warnings.length > 0) {
+        <section class="studio-hallazgos studio-hallazgos--aviso" aria-labelledby="studio-avisos">
+          <h2 id="studio-avisos" class="studio-hallazgos__titulo">
+            {{ resultado.warnings.length }} recomendación(es)
+          </h2>
+          <ul>
+            @for (hallazgo of resultado.warnings; track hallazgo.code + '-' + hallazgo.targetId) {
+              <li>{{ hallazgo.message }}</li>
+            }
+          </ul>
+        </section>
+      }
+    }
+
+    <nz-tabs>
+      <nz-tab nzTitle="Ruta">
+        @if (ruta(); as camino) {
+          <section class="studio-bloque">
+            <div class="studio-bloque__encabezado">
+              <div>
+                <h2 class="studio-bloque__titulo">{{ camino.title }}</h2>
+                @if (camino.description) {
+                  <p class="studio-bloque__nota">{{ camino.description }}</p>
+                }
+              </div>
+              @if (datos.editable) {
+                <button nz-button nzType="default" nzSize="small" (click)="abrirCreacionHito()">
+                  Añadir hito
+                </button>
+              }
+            </div>
+
+            @if (camino.milestones.length === 0) {
+              <nz-empty nzNotFoundContent="Esta ruta todavía no tiene hitos." />
+            } @else {
+              <ol class="studio-hitos">
+                @for (hito of camino.milestones; track hito.id) {
+                  <li class="studio-hito">
+                    <div class="studio-hito__encabezado">
+                      <div class="studio-hito__identidad">
+                        <span class="studio-hito__orden">Hito {{ hito.order }}</span>
+                        <h3 class="studio-hito__titulo">{{ hito.title }}</h3>
+                        @if (!hito.required) {
+                          <nz-tag nzColor="default">Opcional</nz-tag>
+                        }
+                      </div>
+                      @if (datos.editable) {
+                        <div class="studio-hito__acciones">
+                          <button nz-button nzSize="small" (click)="abrirEdicionHito(hito)">Editar</button>
+                          <button nz-button nzSize="small" (click)="abrirCreacionExperiencia(hito)">
+                            Añadir experiencia
+                          </button>
+                          <button
+                            nz-button
+                            nzSize="small"
+                            nzDanger
+                            nz-popconfirm
+                            nzPopconfirmTitle="Se eliminará el hito con todas sus experiencias de este borrador."
+                            nzOkText="Eliminar"
+                            nzCancelText="Cancelar"
+                            (nzOnConfirm)="eliminarHito(hito)"
+                          >
+                            Eliminar
+                          </button>
+                        </div>
+                      }
+                    </div>
+
+                    @if (hito.description) {
+                      <p class="studio-hito__descripcion">{{ hito.description }}</p>
+                    }
+
+                    @if (hito.prerequisiteIds.length > 0) {
+                      <p class="studio-hito__dependencias">
+                        Requiere
+                        @for (id of hito.prerequisiteIds; track id) {
+                          <span class="studio-hito__dependencia">Hito #{{ id }}</span>
+                        }
+                      </p>
+                    }
+
+                    @if (hito.experiences.length === 0) {
+                      <p class="studio-hito__vacio">Sin experiencias todavía.</p>
+                    } @else {
+                      <ul class="studio-experiencias">
+                        @for (experiencia of hito.experiences; track experiencia.id) {
+                          <li class="studio-experiencia">
+                            <div class="studio-experiencia__cuerpo">
+                              <div class="studio-experiencia__identidad">
+                                <span class="studio-experiencia__orden">{{ experiencia.order }}</span>
+                                <h4 class="studio-experiencia__titulo">{{ experiencia.title }}</h4>
+                                <nz-tag nzColor="blue">{{ etiquetaTipo(experiencia.type) }}</nz-tag>
+                                @if (!experiencia.required) {
+                                  <nz-tag nzColor="default">Opcional</nz-tag>
+                                }
+                              </div>
+
+                              @if (experiencia.description) {
+                                <p class="studio-experiencia__descripcion">{{ experiencia.description }}</p>
+                              }
+
+                              <p class="studio-experiencia__atributos">
+                                <span>{{ etiquetaModo(experiencia.completion.mode) }}</span>
+                                @if (experiencia.review.required) {
+                                  <span>Revisión docente</span>
+                                }
+                                @if (experiencia.evidence.modalities.length > 0) {
+                                  <span>
+                                    Evidencia:
+                                    @for (modalidad of experiencia.evidence.modalities; track modalidad) {
+                                      {{ etiquetaModalidad(modalidad) }}
+                                    }
+                                  </span>
+                                } @else {
+                                  <span class="studio-experiencia__pendiente">Evidencia sin configurar</span>
+                                }
+                                @if (experiencia.rubric) {
+                                  <span>Rúbrica de {{ experiencia.rubric.criteria.length }} criterio(s)</span>
+                                }
+                              </p>
+
+                              @if (experiencia.objectives.length > 0) {
+                                <p class="studio-experiencia__objetivos">
+                                  @for (objetivo of experiencia.objectives; track objetivo.id) {
+                                    <nz-tag nzColor="green">{{ objetivo.code ?? ('#' + objetivo.id) }}</nz-tag>
+                                  }
+                                </p>
+                              }
+                            </div>
+
+                            @if (datos.editable) {
+                              <div class="studio-experiencia__acciones">
+                                <button nz-button nzSize="small" (click)="abrirEdicionExperiencia(hito, experiencia)">
+                                  Editar
+                                </button>
+                                <button
+                                  nz-button
+                                  nzSize="small"
+                                  nzDanger
+                                  nz-popconfirm
+                                  nzPopconfirmTitle="Se eliminará esta experiencia del borrador."
+                                  nzOkText="Eliminar"
+                                  nzCancelText="Cancelar"
+                                  (nzOnConfirm)="eliminarExperiencia(experiencia)"
+                                >
+                                  Eliminar
+                                </button>
+                              </div>
+                            }
+                          </li>
+                        }
+                      </ul>
+                    }
+                  </li>
+                }
+              </ol>
+            }
+          </section>
+        } @else {
+          <nz-empty nzNotFoundContent="Esta versión todavía no tiene una ruta de aprendizaje." />
+        }
+      </nz-tab>
+
+      <nz-tab nzTitle="Metadatos">
+        <form class="studio-form" [formGroup]="formMetadatos" (ngSubmit)="guardarMetadatos()">
+          <div class="studio-campo">
+            <label class="studio-campo__etiqueta studio-campo__etiqueta--req" for="studio-titulo">Título de la versión</label>
+            <div class="studio-campo__control">
+              <input id="studio-titulo" nz-input formControlName="titulo" maxlength="150" />
+            @if (formMetadatos.controls.titulo.invalid && formMetadatos.controls.titulo.touched) {
+              <p class="studio-campo__error">El título es obligatorio (máximo 150 caracteres).</p>
+            }
+            </div>
+          </div>
+
+          <div class="studio-campo">
+            <label class="studio-campo__etiqueta" for="studio-descripcion">Descripción</label>
+            <div class="studio-campo__control">
+              <textarea id="studio-descripcion" nz-input formControlName="descripcion" rows="4"></textarea>
+            </div>
+          </div>
+
+          <div class="studio-form__fila">
+            <div class="studio-campo">
+              <label class="studio-campo__etiqueta studio-campo__etiqueta--req" for="studio-audiencia">Audiencia</label>
+              <div class="studio-campo__control">
+                <nz-select id="studio-audiencia" formControlName="audiencia">
+                  @for (audiencia of catalogo()?.audiences ?? []; track audiencia) {
+                    <nz-option [nzValue]="audiencia" [nzLabel]="audiencia" />
+                  }
+                </nz-select>
+              </div>
+            </div>
+
+            <div class="studio-campo">
+              <label class="studio-campo__etiqueta studio-campo__etiqueta--req" for="studio-etapa">Dificultad</label>
+              <div class="studio-campo__control">
+                <nz-select id="studio-etapa" formControlName="etapa">
+                  @for (etapa of catalogo()?.difficulties ?? []; track etapa) {
+                    <nz-option [nzValue]="etapa" [nzLabel]="etapa" />
+                  }
+                </nz-select>
+              </div>
+            </div>
+          </div>
+
+          @if (datos.editable) {
+            <div class="studio-form__acciones">
+              <button nz-button nzType="primary" type="submit" [nzLoading]="guardando()">
+                Guardar metadatos
+              </button>
+            </div>
+          }
+        </form>
+      </nz-tab>
+
+      <nz-tab nzTitle="Objetivos">
+        @if (datos.objectives.length === 0) {
+          <nz-empty nzNotFoundContent="Esta institución todavía no tiene objetivos de aprendizaje." />
+        } @else {
+          <ul class="studio-objetivos">
+            @for (objetivo of datos.objectives; track objetivo.id) {
+              <li class="studio-objetivo">
+                <span class="studio-objetivo__codigo">{{ objetivo.code ?? ('#' + objetivo.id) }}</span>
+                <p class="studio-objetivo__descripcion">{{ objetivo.description }}</p>
+                @if (objetivo.framework) {
+                  <span class="studio-objetivo__marco">{{ objetivo.framework }}</span>
+                }
+              </li>
+            }
+          </ul>
+        }
+      </nz-tab>
+
+      <nz-tab nzTitle="Unidades">
+        @if (datos.units.length === 0) {
+          <nz-empty nzNotFoundContent="Esta versión todavía no tiene unidades curriculares." />
+        } @else {
+          <ol class="studio-unidades">
+            @for (unidad of datos.units; track unidad.id) {
+              <li class="studio-unidad">
+                <h3 class="studio-unidad__titulo">{{ unidad.order }}. {{ unidad.title }}</h3>
+                @if (unidad.lessons.length > 0) {
+                  <ul class="studio-unidad__lecciones">
+                    @for (leccion of unidad.lessons; track leccion.id) {
+                      <li>{{ leccion.title }}</li>
+                    }
+                  </ul>
+                } @else {
+                  <p class="studio-unidad__vacia">Sin lecciones.</p>
+                }
+              </li>
+            }
+          </ol>
+        }
+      </nz-tab>
+    </nz-tabs>
+  }
+</section>
+
+<!-- Editor de hito -->
+<nz-drawer
+  [nzVisible]="hitoDrawer()"
+  nzPlacement="right"
+  [nzWidth]="anchoDrawerHito()"
+  [nzTitle]="hitoEditando() ? 'Editar hito' : 'Nuevo hito'"
+  (nzOnClose)="cerrarHito()"
+>
+  <ng-container *nzDrawerContent>
+    <form class="studio-form" [formGroup]="formHito" (ngSubmit)="guardarHito()">
+      <div class="studio-campo">
+        <label class="studio-campo__etiqueta studio-campo__etiqueta--req" for="hito-titulo">Título</label>
+        <div class="studio-campo__control">
+          <input id="hito-titulo" nz-input formControlName="titulo" maxlength="150" />
+            @if (formHito.controls.titulo.invalid && formHito.controls.titulo.touched) {
+              <p class="studio-campo__error">El título es obligatorio.</p>
+            }
+        </div>
+      </div>
+
+      <div class="studio-campo">
+        <label class="studio-campo__etiqueta" for="hito-descripcion">Descripción</label>
+        <div class="studio-campo__control">
+          <textarea id="hito-descripcion" nz-input formControlName="descripcion" rows="3"></textarea>
+        </div>
+      </div>
+
+      <div class="studio-form__fila">
+        <div class="studio-campo">
+          <label class="studio-campo__etiqueta studio-campo__etiqueta--req" for="hito-orden">Orden</label>
+          <div class="studio-campo__control">
+            <input id="hito-orden" nz-input type="number" formControlName="orden" min="1" max="999" />
+          </div>
+        </div>
+
+        <div class="studio-campo">
+          <div class="studio-campo__control">
+            <label nz-checkbox formControlName="obligatorio">Hito obligatorio</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="studio-campo">
+        <label class="studio-campo__etiqueta" for="hito-prerrequisitos">Prerrequisitos</label>
+        <div class="studio-campo__control">
+          <nz-select id="hito-prerrequisitos" nzMode="multiple" formControlName="prerrequisitos">
+            @for (candidato of candidatosPrerrequisito(); track candidato.id) {
+              <nz-option [nzValue]="candidato.id" [nzLabel]="'Hito ' + candidato.order + ' · ' + candidato.title" />
+            }
+          </nz-select>
+            <p class="studio-campo__ayuda">El backend rechaza ciclos y referencias fuera de la ruta.</p>
+        </div>
+      </div>
+
+      <div class="studio-form__acciones">
+        <button nz-button type="button" (click)="cerrarHito()">Cancelar</button>
+        <button nz-button nzType="primary" type="submit" [nzLoading]="guardando()">Guardar hito</button>
+      </div>
+    </form>
+  </ng-container>
+</nz-drawer>
+
+<!-- Editor de experiencia -->
+<nz-drawer
+  [nzVisible]="experienciaDrawer()"
+  nzPlacement="right"
+  [nzWidth]="anchoDrawerExperiencia()"
+  [nzTitle]="experienciaEditando() ? 'Editar experiencia' : 'Nueva experiencia'"
+  (nzOnClose)="cerrarExperiencia()"
+>
+  <ng-container *nzDrawerContent>
+    <form
+      class="studio-form"
+      [formGroup]="formExperiencia"
+      (ngSubmit)="guardarExperiencia()"
+    >
+      <div class="studio-campo">
+        <label class="studio-campo__etiqueta studio-campo__etiqueta--req" for="exp-titulo">Título</label>
+        <div class="studio-campo__control">
+          <input id="exp-titulo" nz-input formControlName="titulo" maxlength="150" />
+            @if (formExperiencia.controls.titulo.invalid && formExperiencia.controls.titulo.touched) {
+              <p class="studio-campo__error">El título es obligatorio.</p>
+            }
+        </div>
+      </div>
+
+      <div class="studio-campo">
+        <label class="studio-campo__etiqueta" for="exp-descripcion">Descripción para el estudiante</label>
+        <div class="studio-campo__control">
+          <textarea id="exp-descripcion" nz-input formControlName="descripcion" rows="3"></textarea>
+        </div>
+      </div>
+
+      <div class="studio-form__fila">
+        <div class="studio-campo">
+          <label class="studio-campo__etiqueta studio-campo__etiqueta--req" for="exp-tipo">Tipo</label>
+          <div class="studio-campo__control">
+            <nz-select id="exp-tipo" formControlName="tipo">
+              @for (tipo of catalogo()?.experienceTypes ?? []; track tipo) {
+                <nz-option [nzValue]="tipo" [nzLabel]="etiquetaTipo(tipo)" />
+              }
+            </nz-select>
+          </div>
+        </div>
+
+        <div class="studio-campo">
+          <label class="studio-campo__etiqueta studio-campo__etiqueta--req" for="exp-orden">Orden</label>
+          <div class="studio-campo__control">
+            <input id="exp-orden" nz-input type="number" formControlName="orden" min="1" max="999" />
+          </div>
+        </div>
+      </div>
+
+      <div class="studio-form__fila">
+        <div class="studio-campo">
+          <div class="studio-campo__control">
+            <label nz-checkbox formControlName="obligatoria">Obligatoria</label>
+          </div>
+        </div>
+        <div class="studio-campo">
+          <div class="studio-campo__control">
+            <label nz-checkbox formControlName="permiteIntentos">Admite intentos</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="studio-form__fila">
+        <div class="studio-campo">
+          <label class="studio-campo__etiqueta" for="exp-modo">Regla de completitud</label>
+          <div class="studio-campo__control">
+            <nz-select id="exp-modo" formControlName="modo" nzAllowClear>
+              @for (modo of catalogo()?.completionModes ?? []; track modo) {
+                <nz-option [nzValue]="modo" [nzLabel]="etiquetaModo(modo)" />
+              }
+            </nz-select>
+          </div>
+        </div>
+
+        <div class="studio-campo">
+          <label class="studio-campo__etiqueta" for="exp-max">Intentos máximos</label>
+          <div class="studio-campo__control">
+            <input id="exp-max" nz-input type="number" formControlName="maxIntentos" min="1" max="100" />
+          </div>
+        </div>
+      </div>
+
+      <div class="studio-campo">
+        <label class="studio-campo__etiqueta" for="exp-revision">Revisión humana</label>
+        <div class="studio-campo__control">
+          <nz-select id="exp-revision" formControlName="revisionHumana" nzAllowClear>
+            <nz-option [nzValue]="true" nzLabel="Exigir revisión docente" />
+            <nz-option [nzValue]="false" nzLabel="No exigir revisión docente" />
+          </nz-select>
+            <p class="studio-campo__ayuda">Sin valor explícito, el Learning Core la deriva del tipo de experiencia.</p>
+        </div>
+      </div>
+
+      <div class="studio-campo">
+        <label class="studio-campo__etiqueta" for="exp-objetivos">Objetivos de aprendizaje</label>
+        <div class="studio-campo__control">
+          <nz-select id="exp-objetivos" nzMode="multiple" formControlName="objetivos">
+            @for (objetivo of detalle()?.objectives ?? []; track objetivo.id) {
+              <nz-option
+                [nzValue]="objetivo.id"
+                [nzLabel]="(objetivo.code ?? ('#' + objetivo.id)) + ' · ' + objetivo.description"
+              />
+            }
+          </nz-select>
+        </div>
+      </div>
+
+      <fieldset class="studio-fieldset">
+        <legend>Evidencia esperada</legend>
+
+        <div class="studio-campo">
+          <label class="studio-campo__etiqueta" for="exp-modalidades">Modalidades aceptadas</label>
+          <div class="studio-campo__control">
+            <nz-select id="exp-modalidades" nzMode="multiple" formControlName="modalidades">
+              @for (modalidad of catalogo()?.evidenceModalities ?? []; track modalidad) {
+                <nz-option [nzValue]="modalidad" [nzLabel]="etiquetaModalidad(modalidad)" />
+              }
+            </nz-select>
+          </div>
+        </div>
+
+        <div class="studio-form__fila">
+          <div class="studio-campo">
+            <div class="studio-campo__control">
+              <label nz-checkbox formControlName="evidenciaObligatoria">Evidencia obligatoria</label>
+            </div>
+          </div>
+
+          <div class="studio-campo">
+            <label class="studio-campo__etiqueta" for="exp-minimo">Artefactos mínimos</label>
+            <div class="studio-campo__control">
+              <input id="exp-minimo" nz-input type="number" formControlName="minimoArtefactos" min="0" max="10" />
+            </div>
+          </div>
+        </div>
+
+        <div class="studio-campo">
+          <label class="studio-campo__etiqueta" for="exp-notas">Notas para el estudiante</label>
+          <div class="studio-campo__control">
+            <textarea id="exp-notas" nz-input formControlName="notasEvidencia" rows="2"></textarea>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="studio-fieldset">
+        <legend>Rúbrica formativa</legend>
+        <p class="studio-fieldset__nota">
+          Guía cualitativa para la revisión humana. No calcula notas ni Mastery.
+        </p>
+
+        <div class="studio-campo">
+          <label class="studio-campo__etiqueta" for="exp-rubrica">Título de la rúbrica</label>
+          <div class="studio-campo__control">
+            <input id="exp-rubrica" nz-input formControlName="rubricaTitulo" maxlength="150" />
+          </div>
+        </div>
+
+        @for (criterio of criterios(); track $index) {
+          <div class="studio-fila-editable">
+            <input
+              nz-input
+              class="studio-fila-editable__codigo"
+              [value]="criterio.codigo"
+              aria-label="Código del criterio"
+              (input)="actualizarCriterio($index, 'codigo', $any($event.target).value)"
+            />
+            <input
+              nz-input
+              [value]="criterio.titulo"
+              aria-label="Título del criterio"
+              placeholder="Criterio"
+              (input)="actualizarCriterio($index, 'titulo', $any($event.target).value)"
+            />
+            <button nz-button nzSize="small" nzDanger type="button" (click)="quitarCriterio($index)">
+              Quitar
+            </button>
+          </div>
+        }
+
+        <button nz-button nzSize="small" type="button" (click)="agregarCriterio()">Añadir criterio</button>
+      </fieldset>
+
+      <fieldset class="studio-fieldset">
+        <legend>Contenido pedagógico</legend>
+
+        <div class="studio-campo">
+          <label class="studio-campo__etiqueta" for="exp-resumen">Resumen</label>
+          <div class="studio-campo__control">
+            <textarea id="exp-resumen" nz-input formControlName="resumenContenido" rows="2"></textarea>
+          </div>
+        </div>
+
+        @for (bloque of bloques(); track $index) {
+          <div class="studio-bloque-editable">
+            <div class="studio-bloque-editable__encabezado">
+              <select
+                class="studio-bloque-editable__tipo"
+                [value]="bloque.type"
+                aria-label="Tipo de bloque"
+                (change)="actualizarBloque($index, 'type', $any($event.target).value)"
+              >
+                @for (tipo of catalogo()?.contentBlockTypes ?? []; track tipo) {
+                  <option [value]="tipo">{{ etiquetaBloque(tipo) }}</option>
+                }
+                @if (!(catalogo()?.contentBlockTypes ?? []).includes(bloque.type)) {
+                  <option [value]="bloque.type">{{ etiquetaBloque(bloque.type) }}</option>
+                }
+              </select>
+              <button nz-button nzSize="small" nzDanger type="button" (click)="quitarBloque($index)">
+                Quitar
+              </button>
+            </div>
+
+            <input
+              nz-input
+              [value]="bloque.title"
+              aria-label="Título del bloque"
+              placeholder="Título (opcional)"
+              (input)="actualizarBloque($index, 'title', $any($event.target).value)"
+            />
+            <textarea
+              nz-input
+              rows="3"
+              [value]="bloque.text"
+              aria-label="Texto del bloque"
+              placeholder="Texto"
+              (input)="actualizarBloque($index, 'text', $any($event.target).value)"
+            ></textarea>
+            <textarea
+              nz-input
+              rows="3"
+              [value]="bloque.itemsTexto"
+              aria-label="Elementos del bloque, uno por línea"
+              placeholder="Elementos, uno por línea"
+              (input)="actualizarBloque($index, 'itemsTexto', $any($event.target).value)"
+            ></textarea>
+          </div>
+        }
+
+        <button nz-button nzSize="small" type="button" (click)="agregarBloque()">Añadir bloque</button>
+      </fieldset>
+
+      <div class="studio-form__acciones">
+        <button nz-button type="button" (click)="cerrarExperiencia()">Cancelar</button>
+        <button nz-button nzType="primary" type="submit" [nzLoading]="guardando()">
+          Guardar experiencia
+        </button>
+      </div>
+    </form>
+  </ng-container>
+</nz-drawer>
