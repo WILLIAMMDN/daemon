@@ -149,6 +149,58 @@ export interface ObjetivoAprendizajeCoreDto {
   description: string;
 }
 
+export type EstadoIntentoAprendizaje = 'started' | 'submitted' | 'evaluated';
+export type EstadoCicloIntentos =
+  | 'notStarted'
+  | 'inProgress'
+  | 'awaitingFeedback'
+  | 'feedbackReceived'
+  | 'revisionAvailable'
+  | 'revisionInProgress'
+  | 'resubmitted'
+  | 'reviewedAgain'
+  | 'completed';
+export type AccionCicloIntentos = 'start' | 'resume' | 'wait' | 'improve' | 'continue' | 'none';
+
+export interface FeedbackAprendizajeDto {
+  comment?: string | null;
+  criteria?: Record<string, unknown> | unknown[] | null;
+  registeredAt?: string | null;
+}
+
+export interface EvidenciaAprendizajeDto {
+  id: number;
+  type: string;
+  reference?: string | null;
+  metadata?: Record<string, unknown> | null;
+  registeredAt?: string | null;
+}
+
+export interface IntentoAprendizajeDto {
+  id: number;
+  number: number;
+  state: EstadoIntentoAprendizaje;
+  score?: number | null;
+  approved?: boolean | null;
+  startedAt?: string | null;
+  submittedAt?: string | null;
+  evaluatedAt?: string | null;
+  metadata?: Record<string, unknown> | null;
+  evidence: EvidenciaAprendizajeDto[];
+  feedback: FeedbackAprendizajeDto[];
+}
+
+export interface CicloIntentosDto {
+  state: EstadoCicloIntentos;
+  action: AccionCicloIntentos;
+  canStartAttempt: boolean;
+  canRevise: boolean;
+  revisionAvailable?: boolean;
+  revisionExplanationRequired: boolean;
+  activeAttemptId?: number | null;
+  activeAttemptNumber?: number | null;
+}
+
 export interface ExperienciaAprendizajeDto {
   id: number;
   type: TipoExperiencia;
@@ -168,9 +220,13 @@ export interface ExperienciaAprendizajeDto {
   objectives: ObjetivoAprendizajeCoreDto[];
   latestFeedback?: {
     comment?: string | null;
-    criteria?: unknown;
+    criteria?: Record<string, unknown> | unknown[] | null;
     registeredAt?: string | null;
+    attemptId?: number | null;
+    attemptNumber?: number | null;
   } | null;
+  attemptLifecycle?: CicloIntentosDto;
+  attempts?: IntentoAprendizajeDto[];
 }
 
 export interface HitoAprendizajeDto {

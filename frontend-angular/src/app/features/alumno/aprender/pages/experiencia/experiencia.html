@@ -259,24 +259,162 @@
         }
 
         @if (exp.latestFeedback; as fb) {
-          <div class="exp-feedback-docente">
+          <section class="exp-feedback-docente" aria-labelledby="feedback-docente-titulo">
             <div class="exp-feedback-docente__cabecera">
-              <span class="exp-feedback-docente__badge">Docente</span>
-              <span class="exp-feedback-docente__titulo">Retroalimentación formativa</span>
+              <span class="exp-feedback-docente__badge">Intento {{ fb.attemptNumber || 'revisado' }}</span>
+              <h3 id="feedback-docente-titulo" class="exp-feedback-docente__titulo">RETROALIMENTACIÓN DEL DOCENTE</h3>
             </div>
             @if (fb.comment) {
               <p class="exp-feedback-docente__comentario">{{ fb.comment }}</p>
             }
-          </div>
+            @if (criterioFeedback('strength', 'fortaleza'); as fortaleza) {
+              <div class="exp-feedback-docente__criterio">
+                <strong>FORTALEZA</strong>
+                <p>{{ fortaleza }}</p>
+              </div>
+            }
+            @if (criterioFeedback('improvement', 'mejora'); as mejora) {
+              <div class="exp-feedback-docente__criterio">
+                <strong>MEJORA</strong>
+                <p>{{ mejora }}</p>
+              </div>
+            }
+            @if (criterioFeedback('nextStep', 'next_step', 'siguientePaso', 'siguiente_paso'); as siguientePaso) {
+              <div class="exp-feedback-docente__criterio">
+                <strong>SIGUIENTE PASO</strong>
+                <p>{{ siguientePaso }}</p>
+              </div>
+            }
+          </section>
+        }
+
+        @if (intentos().length > 0) {
+          <section class="exp-intentos" aria-labelledby="historial-intentos-titulo">
+            <div class="exp-intentos__cabecera">
+              <h3 id="historial-intentos-titulo">Historial de intentos</h3>
+              <span>{{ intentos().length }} {{ intentos().length === 1 ? 'entrega' : 'entregas' }}</span>
+            </div>
+            <ol class="exp-intentos__lista">
+              @for (intento of intentos(); track intento.id) {
+                <li class="exp-intentos__item" [class.exp-intentos__item--actual]="$last">
+                  <span class="exp-intentos__marcador" aria-hidden="true"></span>
+                  <div class="exp-intentos__contenido">
+                    <div class="exp-intentos__resumen">
+                      <strong>Intento {{ intento.number }}</strong>
+                      <span>{{ etiquetaEstadoIntento(intento.state) }}{{ $last ? ' · Actual' : '' }}</span>
+                    </div>
+                    @if (intento.evaluatedAt || intento.submittedAt || intento.startedAt; as fechaIntento) {
+                      <time [attr.datetime]="fechaIntento">{{ fechaIntento | date:'medium' }}</time>
+                    }
+                    @if (evidenciaPrincipal(intento); as evidencia) {
+                      <p class="exp-intentos__evidencia">{{ evidencia.reference || 'Evidencia estructurada registrada.' }}</p>
+                    }
+                    @if (intento.feedback.length > 0) {
+                      <span class="exp-intentos__feedback">Retroalimentación recibida</span>
+                    }
+                  </div>
+                </li>
+              }
+            </ol>
+          </section>
         }
       </div>
 
       <div class="exp-acciones">
-        @if (exp.state === 'completed') {
-          <div class="exp-acciones__completado">
-            <span>✓ Experiencia completada con éxito.</span>
-          </div>
-        } @else if (tipoCanonico() === 'lesson') {
+        <div class="exp-acciones__cabecera">
+          <span class="exp-acciones__eyebrow">QUÉ SIGUE</span>
+          @switch (cicloIntentos().state) {
+            @case ('awaitingFeedback') {
+              <p>Tu entrega está registrada. El siguiente cambio académico llegará desde la revisión docente.</p>
+            }
+            @case ('resubmitted') {
+              <p>Tu versión mejorada fue enviada y está lista para una nueva revisión.</p>
+            }
+            @case ('reviewedAgain') {
+              <p>La nueva versión ya fue revisada. Puedes continuar o mejorarla otra vez si el backend lo permite.</p>
+            }
+            @case ('feedbackReceived') {
+              <p>Revisa la retroalimentación y decide qué cambiar antes de volver a enviar.</p>
+            }
+            @default {
+              <p>Completa la acción disponible para avanzar con esta experiencia.</p>
+            }
+          }
+        </div>
+
+        @if (intentoActivoId()) {
+          <section class="exp-revision" aria-labelledby="revision-titulo">
+            <div class="exp-revision__cabecera">
+              <span>{{ esRevision() ? 'Revisión académica' : 'Entrega académica' }}</span>
+              <h3 id="revision-titulo">{{ esRevision() ? 'Mejora tu entrega' : 'Entrega de evidencia' }}</h3>
+            </div>
+
+            @if (esRevision() && intentoAnterior(); as anterior) {
+              <div class="exp-revision__comparacion">
+                <section class="exp-revision__anterior" aria-labelledby="version-anterior-titulo">
+                  <h4 id="version-anterior-titulo">VERSIÓN ANTERIOR</h4>
+                  @if (evidenciaPrincipal(anterior); as evidenciaAnterior) {
+                    <p>{{ evidenciaAnterior.reference || 'Evidencia estructurada registrada.' }}</p>
+                    @if (versionesMetadata(evidenciaAnterior).length > 0) {
+                      <dl>
+                        @for (version of versionesMetadata(evidenciaAnterior); track version.label) {
+                          <div>
+                            <dt>{{ version.label }}</dt>
+                            <dd>{{ version.value }}</dd>
+                          </div>
+                        }
+                      </dl>
+                    }
+                  } @else {
+                    <p>No hay una referencia textual en el intento anterior.</p>
+                  }
+                </section>
+                <section class="exp-revision__feedback" aria-labelledby="feedback-aplicado-titulo">
+                  <h4 id="feedback-aplicado-titulo">FEEDBACK RECIBIDO</h4>
+                  <p>{{ exp.latestFeedback?.comment || 'La evaluación docente habilitó esta revisión.' }}</p>
+                </section>
+              </div>
+            }
+
+            <div class="exp-revision__nueva">
+              <label for="evidencia-nueva">VERSIÓN NUEVA</label>
+              <p>Describe tu solución, enlace o evidencia sin reemplazar la versión anterior.</p>
+              <textarea
+                id="evidencia-nueva"
+                nz-input
+                rows="6"
+                placeholder="Escribe aquí la nueva versión de tu evidencia..."
+                [(ngModel)]="evidenciaTexto"
+              ></textarea>
+            </div>
+
+            @if (esRevision()) {
+              <fieldset class="exp-revision__explicacion">
+                <legend>CAMBIO EXPLICADO</legend>
+                <p>
+                  Explica tu decisión de revisión.
+                  @if (cicloIntentos().revisionExplanationRequired) { Estos tres campos son obligatorios para esta experiencia. }
+                </p>
+                <label for="revision-que-cambio">¿Qué cambiaste?</label>
+                <textarea id="revision-que-cambio" nz-input rows="2" [(ngModel)]="queCambio"></textarea>
+                <label for="revision-por-que">¿Por qué lo cambiaste?</label>
+                <textarea id="revision-por-que" nz-input rows="2" [(ngModel)]="porQueCambio"></textarea>
+                <label for="revision-feedback">¿Qué parte del feedback utilizaste?</label>
+                <textarea id="revision-feedback" nz-input rows="2" [(ngModel)]="feedbackUtilizado"></textarea>
+              </fieldset>
+            }
+
+            <button
+              nz-button
+              nzType="primary"
+              nzSize="large"
+              [disabled]="!puedeEnviarEvidencia()"
+              (click)="entregarEvidencia()"
+            >
+              {{ procesando() ? 'Enviando…' : esRevision() ? 'REENVIAR VERSIÓN MEJORADA' : 'ENTREGAR EVIDENCIA' }}
+            </button>
+          </section>
+        } @else if (tipoCanonico() === 'lesson' && exp.state !== 'completed') {
           <button
             nz-button
             nzType="primary"
@@ -286,36 +424,22 @@
           >
             {{ procesando() ? 'Guardando avance…' : 'Marcar lección como completada' }}
           </button>
-        } @else if (exp.attemptable) {
-          @if (!intentoIniciado()) {
-            <button
-              nz-button
-              nzType="primary"
-              nzSize="large"
-              [disabled]="procesando()"
-              (click)="iniciarIntento()"
-            >
-              {{ procesando() ? 'Iniciando…' : 'Iniciar intento' }}
-            </button>
-          } @else {
-            <div class="exp-entrega">
-              <h4>Entrega de evidencia</h4>
-              <p>Describe tu solución, enlace o evidencia de cumplimiento para esta experiencia:</p>
-              <textarea
-                nz-input
-                rows="4"
-                placeholder="Escribe aquí tu evidencia, explicación o enlace de entrega..."
-                [(ngModel)]="evidenciaTexto"
-              ></textarea>
-              <button
-                nz-button
-                nzType="primary"
-                [disabled]="!evidenciaTexto().trim() || procesando()"
-                (click)="entregarEvidencia()"
-              >
-                {{ procesando() ? 'Enviando…' : 'Entregar evidencia' }}
-              </button>
-            </div>
+        } @else if (cicloIntentos().action === 'start') {
+          <button nz-button nzType="primary" nzSize="large" [disabled]="procesando()" (click)="iniciarIntento()">
+            {{ procesando() ? 'Iniciando…' : 'Iniciar intento' }}
+          </button>
+        } @else if (cicloIntentos().action === 'improve') {
+          <button nz-button nzType="primary" nzSize="large" [disabled]="procesando()" (click)="iniciarIntento()">
+            {{ procesando() ? 'Preparando revisión…' : 'MEJORAR ENTREGA' }}
+          </button>
+        } @else if (cicloIntentos().action === 'wait') {
+          <div class="exp-acciones__estado" role="status">Entrega enviada. Espera la retroalimentación del docente.</div>
+        } @else if (exp.state === 'completed') {
+          <div class="exp-acciones__completado">Experiencia completada.</div>
+          @if (siguiente(); as proxima) {
+            @if (proxima.state !== 'locked') {
+              <a nz-button nzType="primary" [routerLink]="['/alumno/aprender/curso', cursoId(), 'experiencia', proxima.id]">Continuar</a>
+            }
           }
         } @else {
           <button

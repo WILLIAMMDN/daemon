@@ -3,11 +3,14 @@
 namespace Tests\Feature;
 
 use App\Models\Aula;
+use App\Models\ExperienciaAprendizaje;
 use App\Models\Institucion;
 use App\Models\MatriculaAula;
+use App\Models\ProgresoExperiencia;
 use App\Models\Usuario;
 use Database\Seeders\IaOrigenTeensReferenceCourseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Tests\TestCase;
 
@@ -26,9 +29,13 @@ class ArcAiOrigenTeensReferenceCourseTest extends TestCase
     }
 
     private array $datosCurso;
+
     private Institucion $institucion;
+
     private Aula $aula;
+
     private Usuario $alumno;
+
     private MatriculaAula $matricula;
 
     protected function setUp(): void
@@ -198,6 +205,16 @@ class ArcAiOrigenTeensReferenceCourseTest extends TestCase
 
     public function test_end_to_end_progression_unlocks_milestone_two_and_emits_domain_events(): void
     {
+        $docente = Usuario::create([
+            'nombre_completo' => 'Docente de progresión IA',
+            'usuario' => 'docente-progresion-ia',
+            'email' => 'docente-progresion-ia@daemon.test',
+            'password_hash' => bcrypt('password123'),
+            'rol' => 'docente',
+            'nivel' => 'TEENS',
+            'id_institucion' => $this->institucion->id,
+            'id_aula' => $this->aula->id,
+        ]);
         // 1. Estado Inicial: M1 desbloqueado, M1-E1 es actual, M2 a M6 bloqueados
         $mapaInicial = $this->actingAs($this->alumno)->getJson('/api/v1/alumno/aprender/mapa')
             ->assertOk()
@@ -243,6 +260,10 @@ class ArcAiOrigenTeensReferenceCourseTest extends TestCase
                 'metadatos' => ['herramienta' => 'teachable_machine', 'clases' => 2],
             ],
         )->assertOk();
+        $this->actingAs($docente)->postJson(
+            "/api/v1/academico/intentos/{$intentoE2['id']}/evaluar",
+            ['aprobado' => true, 'comentario' => 'Laboratorio aprobado.'],
+        )->assertOk()->assertJsonPath('aprobado', true);
 
         // Verificar avance a M1-E3
         $mapaTrasE2 = $this->actingAs($this->alumno)->getJson('/api/v1/alumno/aprender/mapa')->json();
@@ -265,6 +286,10 @@ class ArcAiOrigenTeensReferenceCourseTest extends TestCase
                 'referencia' => 'Analicé el autocorrector del móvil: entrada (teclas), modelo (n-gramas probabilísticos), salida (sugerencia de palabra).',
             ],
         )->assertOk();
+        $this->actingAs($docente)->postJson(
+            "/api/v1/academico/intentos/{$intentoE3['id']}/evaluar",
+            ['aprobado' => true, 'comentario' => 'Misión aprobada.'],
+        )->assertOk()->assertJsonPath('aprobado', true);
 
         // 5. ¡Hito 1 completado! Verificar que Hito 2 se desbloquea a través del Learning Core
         $mapaTrasM1 = $this->actingAs($this->alumno)->getJson('/api/v1/alumno/aprender/mapa')->json();
@@ -281,12 +306,183 @@ class ArcAiOrigenTeensReferenceCourseTest extends TestCase
         $this->assertSame('locked', $mapaTrasM1['milestones'][5]['state']);
 
         // 6. Verificar que se emitieron los eventos de dominio correspondientes en outbox
-        $eventos = \Illuminate\Support\Facades\DB::table('eventos_dominio')->where('id_alumno', $this->alumno->id)->pluck('tipo')->all();
+        $eventos = DB::table('eventos_dominio')->where('id_alumno', $this->alumno->id)->pluck('tipo')->all();
 
         $this->assertContains('learning.lesson.completed', $eventos);
         $this->assertContains('learning.experience.submitted', $eventos);
         $this->assertContains('learning.experience.completed', $eventos);
         $this->assertContains('learning.milestone.completed', $eventos);
         $this->assertContains('learning.path.progressed', $eventos);
+    }
+
+    public function test_reference_revision_scenarios_preserve_each_version_and_require_student_reflection(): void
+    {
+        $docente = Usuario::create([
+            'nombre_completo' => 'Docente IA Origen',
+            'usuario' => 'docente-ia-origen',
+            'email' => 'docente-ia-origen@daemon.test',
+            'password_hash' => bcrypt('password123'),
+            'rol' => 'docente',
+            'nivel' => 'TEENS',
+            'id_institucion' => $this->institucion->id,
+            'id_aula' => $this->aula->id,
+        ]);
+        $escenarios = [
+            'Tres intentos, una mejor decisión',
+            'Verifica antes de repetir',
+            'Capstone 1 — Define el problema',
+            'Capstone 2 — Prueba antes de confiar',
+            'Construye, prueba y mejora',
+        ];
+
+        foreach ($escenarios as $indice => $titulo) {
+            $experiencia = ExperienciaAprendizaje::query()
+                ->where('titulo', $titulo)
+                ->whereHas('hito.ruta', fn ($query) => $query->whereKey($this->datosCurso['ruta']->id))
+                ->with('hito')
+                ->firstOrFail();
+            $this->assertTrue($experiencia->permite_intentos, $titulo);
+            $this->assertNull($experiencia->max_intentos, $titulo);
+            $this->assertSame('submission', $experiencia->regla_completitud['modo'] ?? null, $titulo);
+            $this->completarExperienciasAnteriores($experiencia);
+
+            $intentoUno = $this->actingAs($this->alumno)->postJson(
+                "/api/v1/alumno/aprender/experiencias/{$experiencia->id}/intentos",
+                ['idempotency_key' => "ia-origen-{$indice}-attempt-1"],
+            )->assertCreated()->assertJsonPath('numero', 1)->json();
+            $this->actingAs($this->alumno)->postJson(
+                "/api/v1/alumno/aprender/intentos/{$intentoUno['id']}/evidencias",
+                ['tipo' => $this->tipoEvidencia($experiencia), 'referencia' => "{$titulo}: versión anterior"],
+            )->assertOk();
+            $colaV1 = $this->actingAs($docente)->getJson('/api/v1/academico/revisiones?estado=pending')
+                ->assertOk()
+                ->json('data');
+            $this->assertNotNull(collect($colaV1)->firstWhere('id', $intentoUno['id']), "{$titulo}: V1 no apareció en la cola docente");
+            $this->actingAs($docente)->postJson(
+                "/api/v1/academico/intentos/{$intentoUno['id']}/evaluar",
+                [
+                    'aprobado' => false,
+                    'puntaje' => 60,
+                    'comentario' => 'Conserva la fortaleza y explica cómo aplicarás el siguiente paso.',
+                    'criterios' => [
+                        'strength' => 'La intención académica es clara.',
+                        'improvement' => 'Falta demostrar el cambio con evidencia.',
+                        'nextStep' => 'Revisa, justifica y vuelve a enviar.',
+                    ],
+                ],
+            )->assertOk();
+            $this->assertDatabaseMissing('progresos_experiencia', [
+                'id_matricula' => $this->matricula->id,
+                'id_experiencia' => $experiencia->id,
+                'estado' => 'completed',
+            ]);
+            $this->assertDatabaseHas('feedback_aprendizaje', [
+                'id_intento' => $intentoUno['id'],
+                'id_autor' => $docente->id,
+            ]);
+
+            $this->actingAs($this->alumno)->getJson('/api/v1/alumno/aprender/mapa')
+                ->assertOk()
+                ->assertJsonPath($this->rutaJsonExperiencia($experiencia, 'attemptLifecycle.action'), 'improve')
+                ->assertJsonPath($this->rutaJsonExperiencia($experiencia, 'attemptLifecycle.revisionExplanationRequired'), true);
+
+            $intentoDos = $this->actingAs($this->alumno)->postJson(
+                "/api/v1/alumno/aprender/experiencias/{$experiencia->id}/intentos",
+                ['idempotency_key' => "ia-origen-{$indice}-attempt-2"],
+            )->assertCreated()->assertJsonPath('numero', 2)->json();
+            $this->actingAs($this->alumno)->postJson(
+                "/api/v1/alumno/aprender/intentos/{$intentoDos['id']}/evidencias",
+                [
+                    'tipo' => $this->tipoEvidencia($experiencia),
+                    'referencia' => "{$titulo}: versión nueva",
+                    'metadatos' => ['revision' => [
+                        'whatChanged' => 'Apliqué el cambio solicitado y añadí evidencia verificable.',
+                        'whyChanged' => 'La primera versión no demostraba suficientemente la decisión.',
+                        'feedbackUsed' => 'Usé el siguiente paso indicado por el docente.',
+                    ]],
+                ],
+            )->assertOk();
+            $colaV2 = $this->actingAs($docente)->getJson('/api/v1/academico/revisiones?estado=pending')
+                ->assertOk()
+                ->json('data');
+            $revisionEnCola = collect($colaV2)->firstWhere('id', $intentoDos['id']);
+            $this->assertNotNull($revisionEnCola, "{$titulo}: V2 no apareció en la cola docente");
+            $this->assertSame("{$titulo}: versión nueva", $revisionEnCola['evidences'][0]['reference']);
+            $this->actingAs($docente)->postJson(
+                "/api/v1/academico/intentos/{$intentoDos['id']}/evaluar",
+                [
+                    'aprobado' => true,
+                    'puntaje' => 90,
+                    'comentario' => 'La versión revisada aplica el feedback y queda aprobada.',
+                ],
+            )->assertOk()->assertJsonPath('aprobado', true);
+
+            $this->assertDatabaseHas('evidencias_aprendizaje', [
+                'id_intento' => $intentoUno['id'],
+                'referencia' => "{$titulo}: versión anterior",
+            ]);
+            $this->assertDatabaseHas('evidencias_aprendizaje', [
+                'id_intento' => $intentoDos['id'],
+                'referencia' => "{$titulo}: versión nueva",
+            ]);
+            $this->assertDatabaseHas('progresos_experiencia', [
+                'id_matricula' => $this->matricula->id,
+                'id_experiencia' => $experiencia->id,
+                'estado' => 'completed',
+                'id_intento_completado' => $intentoDos['id'],
+            ]);
+            $this->actingAs($this->alumno)->getJson('/api/v1/alumno/aprender/mapa')
+                ->assertOk()
+                ->assertJsonPath($this->rutaJsonExperiencia($experiencia, 'attemptLifecycle.action'), 'continue')
+                ->assertJsonPath($this->rutaJsonExperiencia($experiencia, 'attemptLifecycle.canRevise'), false)
+                ->assertJsonPath($this->rutaJsonExperiencia($experiencia, 'attempts.0.evidence.0.reference'), "{$titulo}: versión anterior")
+                ->assertJsonPath($this->rutaJsonExperiencia($experiencia, 'attempts.1.evidence.0.reference'), "{$titulo}: versión nueva");
+            $this->assertSame(2, DB::table('intentos_aprendizaje')
+                ->where('id_matricula', $this->matricula->id)
+                ->where('id_experiencia', $experiencia->id)
+                ->count());
+        }
+    }
+
+    private function completarExperienciasAnteriores(ExperienciaAprendizaje $objetivo): void
+    {
+        $anteriores = ExperienciaAprendizaje::query()
+            ->select('experiencias_aprendizaje.*')
+            ->join('hitos_aprendizaje', 'hitos_aprendizaje.id', '=', 'experiencias_aprendizaje.id_hito')
+            ->where('hitos_aprendizaje.id_ruta', $this->datosCurso['ruta']->id)
+            ->where(function ($query) use ($objetivo): void {
+                $query->where('hitos_aprendizaje.orden', '<', $objetivo->hito->orden)
+                    ->orWhere(function ($query) use ($objetivo): void {
+                        $query->where('hitos_aprendizaje.orden', $objetivo->hito->orden)
+                            ->where('experiencias_aprendizaje.orden', '<', $objetivo->orden);
+                    });
+            })
+            ->get();
+        foreach ($anteriores as $experiencia) {
+            ProgresoExperiencia::firstOrCreate(
+                ['id_matricula' => $this->matricula->id, 'id_experiencia' => $experiencia->id],
+                [
+                    'id_alumno' => $this->alumno->id,
+                    'estado' => 'completed',
+                    'porcentaje' => 100,
+                    'completado_at' => now(),
+                ],
+            );
+        }
+    }
+
+    private function tipoEvidencia(ExperienciaAprendizaje $experiencia): string
+    {
+        return match ($experiencia->tipo->value) {
+            'mision' => 'mission_delivery',
+            'evaluacion' => 'assessment_result',
+            'proyecto' => 'artifact',
+            default => 'submission',
+        };
+    }
+
+    private function rutaJsonExperiencia(ExperienciaAprendizaje $experiencia, string $campo): string
+    {
+        return 'milestones.'.($experiencia->hito->orden - 1).'.experiences.'.($experiencia->orden - 1).'.'.$campo;
     }
 }
