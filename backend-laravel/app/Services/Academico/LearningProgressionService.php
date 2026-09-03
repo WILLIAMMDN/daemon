@@ -325,6 +325,143 @@ class LearningProgressionService
         });
     }
 
+    public function listarRevisiones(Usuario $actor, array $filtros = []): array
+    {
+        abort_unless(in_array($actor->rol, ['docente', 'admin'], true), 403);
+
+        $query = IntentoAprendizaje::query()
+            ->with([
+                'alumno:id,nombre_completo,usuario,email,nivel,avatar',
+                'matricula.aula:id,nombre,codigo,id_institucion',
+                'matricula.aula.curso:id,titulo',
+                'experiencia.hito.ruta.versionCurso.curso:id,titulo',
+                'experiencia.objetivos:id,codigo,descripcion',
+                'evidencias',
+                'feedback.autor:id,nombre_completo',
+            ])
+            ->whereIn('estado', ['submitted', 'evaluated']);
+
+        if ($actor->rol !== 'admin') {
+            $query->whereHas('matricula.aula', function (Builder $q) use ($actor) {
+                if (filled($actor->id_institucion)) {
+                    $q->where('id_institucion', $actor->id_institucion);
+                }
+                if (filled($actor->id_aula)) {
+                    $q->where('id', $actor->id_aula);
+                }
+            });
+        }
+
+        if (! empty($filtros['estado'])) {
+            $estado = match ($filtros['estado']) {
+                'pending', 'submitted' => 'submitted',
+                'reviewed', 'evaluated' => 'evaluated',
+                default => null,
+            };
+            if ($estado) {
+                $query->where('estado', $estado);
+            }
+        }
+
+        if (! empty($filtros['id_curso'])) {
+            $idCurso = (int) $filtros['id_curso'];
+            $query->whereHas('experiencia.hito.ruta.versionCurso', fn (Builder $q) => $q->where('id_curso', $idCurso));
+        }
+
+        if (! empty($filtros['id_aula'])) {
+            $query->whereHas('matricula', fn (Builder $q) => $q->where('id_aula', (int) $filtros['id_aula']));
+        }
+
+        $intentos = $query->orderByRaw("CASE WHEN estado = 'submitted' THEN 0 ELSE 1 END")
+            ->orderBy('enviado_at', 'asc')
+            ->orderBy('id', 'desc')
+            ->get();
+
+        return $intentos->map(fn (IntentoAprendizaje $intento): array => $this->serializarIntentoRevision($intento))->values()->all();
+    }
+
+    public function detalleRevision(Usuario $actor, IntentoAprendizaje $intento): array
+    {
+        $intento->loadMissing(['matricula.aula', 'experiencia.hito.ruta.versionCurso']);
+        $this->autorizarEvaluacion($actor, $intento);
+
+        return $this->serializarIntentoRevision($intento);
+    }
+
+    public function serializarIntentoRevision(IntentoAprendizaje $intento): array
+    {
+        $intento->loadMissing([
+            'alumno:id,nombre_completo,usuario,email,nivel,avatar',
+            'matricula.aula:id,nombre,codigo,id_institucion',
+            'matricula.aula.curso:id,titulo',
+            'experiencia.hito.ruta.versionCurso.curso:id,titulo',
+            'experiencia.objetivos:id,codigo,descripcion',
+            'evidencias',
+            'feedback.autor:id,nombre_completo',
+        ]);
+
+        return [
+            'id' => $intento->id,
+            'uuid' => $intento->uuid,
+            'attemptNumber' => $intento->numero,
+            'status' => $intento->estado,
+            'score' => $intento->puntaje !== null ? (float) $intento->puntaje : null,
+            'approved' => $intento->aprobado,
+            'submittedAt' => $intento->enviado_at?->toIso8601String(),
+            'evaluatedAt' => $intento->evaluado_at?->toIso8601String(),
+            'student' => [
+                'id' => $intento->alumno?->id,
+                'name' => $intento->alumno?->nombre_completo ?? $intento->alumno?->usuario ?? 'Estudiante',
+                'username' => $intento->alumno?->usuario ?? '',
+                'level' => $intento->alumno?->nivel ?? 'TEENS',
+                'avatar' => $intento->alumno?->avatar,
+            ],
+            'cohort' => [
+                'id' => $intento->matricula?->aula?->id,
+                'name' => $intento->matricula?->aula?->nombre ?? 'Aula',
+                'code' => $intento->matricula?->aula?->codigo,
+            ],
+            'course' => [
+                'id' => $intento->experiencia?->hito?->ruta?->versionCurso?->curso?->id ?? $intento->matricula?->aula?->curso?->id,
+                'title' => $intento->experiencia?->hito?->ruta?->versionCurso?->curso?->titulo ?? $intento->matricula?->aula?->curso?->titulo ?? 'Curso',
+                'version' => $intento->experiencia?->hito?->ruta?->versionCurso?->version ?? null,
+            ],
+            'milestone' => [
+                'id' => $intento->experiencia?->hito?->id,
+                'title' => $intento->experiencia?->hito?->titulo,
+                'order' => $intento->experiencia?->hito?->orden,
+            ],
+            'experience' => [
+                'id' => $intento->experiencia?->id,
+                'title' => $intento->experiencia?->titulo,
+                'type' => $intento->experiencia?->tipo?->value ?? 'mission',
+                'order' => $intento->experiencia?->orden,
+                'summary' => $intento->experiencia?->descripcion,
+                'content' => $intento->experiencia?->contenido,
+                'instructions' => $intento->experiencia?->guia_entrega,
+                'objectives' => $intento->experiencia?->objetivos->map(fn ($obj): array => [
+                    'id' => $obj->id,
+                    'code' => $obj->codigo,
+                    'description' => $obj->descripcion,
+                ])->values()->all() ?? [],
+            ],
+            'evidences' => $intento->evidencias->map(fn ($ev): array => [
+                'id' => $ev->id,
+                'type' => $ev->tipo,
+                'reference' => $ev->referencia,
+                'metadata' => $ev->metadatos,
+                'registeredAt' => $ev->registrado_at?->toIso8601String(),
+            ])->values()->all(),
+            'feedback' => $intento->feedback->map(fn ($fb): array => [
+                'id' => $fb->id,
+                'comment' => $fb->comentario,
+                'criteria' => $fb->criterios,
+                'authorName' => $fb->autor?->nombre_completo ?? 'Docente',
+                'registeredAt' => $fb->registrado_at?->toIso8601String(),
+            ])->values()->all(),
+        ];
+    }
+
     public function completarLeccion(Usuario $alumno, int $leccionId, MatriculaAula $matricula): void
     {
         $versionId = $this->versionIdMatricula($matricula);
@@ -674,7 +811,12 @@ class LearningProgressionService
     {
         abort_unless(in_array($actor->rol, ['docente', 'admin'], true), 403);
         if ($actor->rol !== 'admin') {
-            abort_unless((int) $actor->id_institucion === (int) $intento->matricula->aula->id_institucion, 403, 'No puedes evaluar otra institución.');
+            if (filled($actor->id_institucion) && filled($intento->matricula?->aula?->id_institucion)) {
+                abort_unless((int) $actor->id_institucion === (int) $intento->matricula->aula->id_institucion, 403, 'No puedes evaluar otra institución.');
+            }
+            if (filled($actor->id_aula) && filled($intento->matricula?->id_aula)) {
+                abort_unless((int) $actor->id_aula === (int) $intento->matricula->id_aula, 403, 'No puedes evaluar otra aula.');
+            }
         }
     }
 

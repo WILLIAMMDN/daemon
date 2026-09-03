@@ -35,4 +35,17 @@ export class Docente {
   }
   eliminarInsignia(id: number) { return this.api.delete(`/docente/insignias/${id}`); }
   asignarInsignia(datos: unknown) { return this.api.post('/docente/insignias/asignar', datos); }
+  revisiones(filtros?: { estado?: string; id_curso?: number; id_aula?: number }) {
+    const params: Record<string, string | number> = {};
+    if (filtros?.estado) params['estado'] = filtros.estado;
+    if (filtros?.id_curso) params['id_curso'] = filtros.id_curso;
+    if (filtros?.id_aula) params['id_aula'] = filtros.id_aula;
+    return this.api.get<{ data: any[] }>('/academico/revisiones', params);
+  }
+  detalleRevision(intentoId: number) {
+    return this.api.get<{ data: any }>(`/academico/revisiones/${intentoId}`);
+  }
+  evaluarIntento(intentoId: number, datos: { aprobado: boolean; puntaje?: number | null; comentario?: string | null; criterios?: Record<string, string> | null }) {
+    return this.api.post<{ data: any }>(`/academico/intentos/${intentoId}/evaluar`, datos);
+  }
 }

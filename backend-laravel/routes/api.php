@@ -178,6 +178,8 @@ Route::prefix('v1')->group(function (): void {
                 Route::post('/hitos/{hito}/experiencias', [LearningCoreAuthoringController::class, 'crearExperiencia']);
                 Route::post('/rutas/{ruta}/publicar', [LearningCoreAuthoringController::class, 'publicarRuta']);
                 Route::post('/rutas/{ruta}/archivar', [LearningCoreAuthoringController::class, 'archivarRuta']);
+                Route::get('/revisiones', [LearningCoreStudentController::class, 'revisiones']);
+                Route::get('/revisiones/{intento}', [LearningCoreStudentController::class, 'detalleRevision']);
                 Route::post('/intentos/{intento}/evaluar', [LearningCoreStudentController::class, 'evaluar']);
             });
             Route::get('/docente/panel', [DocenteController::class, 'panel']);

@@ -1,0 +1,437 @@
+.revisiones-pagina {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  background: var(--daemon-neutral-surface);
+  min-height: 100%;
+}
+
+.revisiones-cabecera {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  border-bottom: 1px solid var(--daemon-border);
+  padding-bottom: 1.25rem;
+
+  &__titulo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--daemon-ink-strong);
+    margin: 0 0 0.35rem;
+  }
+
+  &__descripcion {
+    font-size: 0.925rem;
+    color: var(--daemon-ink-soft);
+    margin: 0;
+    max-width: 680px;
+  }
+
+  &__acciones {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+}
+
+.alerta-feedback,
+.alerta-error {
+  margin-bottom: 0.5rem;
+}
+
+.revisiones-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  background: var(--daemon-surface);
+  border: 1px solid var(--daemon-border);
+  border-radius: var(--daemon-radius-md);
+  padding: 1rem 1.25rem;
+
+  .filtro-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+
+    label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--daemon-ink-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .filtro-select {
+      width: 240px;
+    }
+  }
+}
+
+.tabla-contenedor {
+  background: var(--daemon-surface);
+  border: 1px solid var(--daemon-border);
+  border-radius: var(--daemon-radius-md);
+  overflow: hidden;
+}
+
+.celda-estudiante {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+
+  &__nombre {
+    color: var(--daemon-ink-strong);
+    font-size: 0.9rem;
+  }
+
+  &__usuario {
+    color: var(--daemon-ink-muted);
+    font-size: 0.775rem;
+  }
+}
+
+.celda-curso {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+
+  &__version {
+    font-size: 0.75rem;
+    color: var(--daemon-ink-muted);
+  }
+}
+
+.celda-exp {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+
+  &__hito {
+    font-size: 0.75rem;
+    color: var(--daemon-ink-muted);
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  &__titulo-linea {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--daemon-ink-strong);
+  }
+}
+
+.revisiones-vacio {
+  padding: 3rem 1rem;
+  background: var(--daemon-surface);
+  border: 1px solid var(--daemon-border);
+  border-radius: var(--daemon-radius-md);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Modal de Revisión */
+.modal-revision {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-height: 72vh;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+.revision-cabecera-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.75rem;
+  background: var(--daemon-surface-muted);
+  border: 1px solid var(--daemon-border);
+  border-radius: var(--daemon-radius-sm);
+  padding: 0.875rem 1rem;
+
+  .meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .meta-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--daemon-ink-muted);
+    text-transform: uppercase;
+  }
+
+  .meta-valor {
+    font-size: 0.875rem;
+    color: var(--daemon-ink-strong);
+  }
+}
+
+.alerta-error-modal {
+  margin-top: 0.25rem;
+}
+
+.seccion-revision {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  border-top: 1px solid var(--daemon-border);
+  padding-top: 1rem;
+
+  &__titulo {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--daemon-ink-strong);
+    margin: 0;
+  }
+
+  &__resumen {
+    font-size: 0.875rem;
+    color: var(--daemon-ink-soft);
+    margin: 0;
+    line-height: 1.45;
+  }
+
+  &--formulario {
+    background: var(--daemon-surface-muted);
+    border: 1px solid var(--daemon-border);
+    border-radius: var(--daemon-radius-md);
+    padding: 1.25rem;
+  }
+}
+
+.instrucciones-caja {
+  background: var(--daemon-surface);
+  border: 1px solid var(--daemon-border);
+  border-radius: var(--daemon-radius-sm);
+  padding: 0.875rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+
+  .instruccion-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    font-size: 0.85rem;
+    color: var(--daemon-ink-strong);
+
+    ul {
+      margin: 0.25rem 0 0 1.25rem;
+      padding: 0;
+      color: var(--daemon-ink-soft);
+      line-height: 1.4;
+    }
+  }
+
+  .instruccion-tag {
+    font-weight: 600;
+    color: var(--daemon-ink-muted);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+  }
+}
+
+.objetivos-lista {
+  font-size: 0.825rem;
+  color: var(--daemon-ink-soft);
+
+  &__label {
+    font-weight: 600;
+    color: var(--daemon-ink-strong);
+    display: block;
+    margin-bottom: 0.25rem;
+  }
+
+  ul {
+    margin: 0 0 0 1.25rem;
+    padding: 0;
+    line-height: 1.4;
+
+    li {
+      margin-bottom: 0.2rem;
+    }
+  }
+}
+
+.rubrica-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+
+  .rubrica-criterio-tag {
+    background: var(--daemon-surface);
+    border: 1px solid var(--daemon-border);
+    border-radius: var(--daemon-radius-xs);
+    padding: 0.35rem 0.65rem;
+    font-size: 0.8rem;
+    color: var(--daemon-ink-strong);
+    font-weight: 500;
+  }
+}
+
+.evidencias-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+.evidencia-tarjeta {
+  background: var(--daemon-surface);
+  border: 1px solid var(--daemon-border);
+  border-radius: var(--daemon-radius-sm);
+  overflow: hidden;
+
+  &__cabecera {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.65rem 1rem;
+    background: var(--daemon-surface-muted);
+    border-bottom: 1px solid var(--daemon-border);
+  }
+
+  &__fecha {
+    font-size: 0.75rem;
+    color: var(--daemon-ink-muted);
+  }
+
+  &__cuerpo {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+  }
+}
+
+.evidencia-texto {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+
+  label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--daemon-ink-muted);
+    text-transform: uppercase;
+  }
+
+  .evidencia-parrafo {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--daemon-ink-strong);
+    white-space: pre-wrap;
+    background: var(--daemon-surface-muted);
+    padding: 0.75rem;
+    border-radius: var(--daemon-radius-xs);
+    border: 1px solid var(--daemon-border);
+  }
+}
+
+.evidencia-metadatos {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+
+  label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--daemon-ink-muted);
+    text-transform: uppercase;
+  }
+
+  .metadatos-grid {
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0.5rem;
+  }
+
+  .metadato-fila {
+    background: var(--daemon-surface-muted);
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--daemon-radius-xs);
+    border: 1px solid var(--daemon-border);
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+
+    dt {
+      font-size: 0.725rem;
+      font-weight: 600;
+      color: var(--daemon-ink-muted);
+    }
+
+    dd {
+      margin: 0;
+      font-size: 0.85rem;
+      color: var(--daemon-ink-strong);
+      font-weight: 500;
+    }
+  }
+}
+
+.evidencia-vacia {
+  font-size: 0.875rem;
+  color: var(--daemon-ink-muted);
+  font-style: italic;
+  margin: 0;
+}
+
+.historial-fb {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+
+  .fb-item {
+    background: var(--daemon-surface);
+    border: 1px solid var(--daemon-border);
+    border-radius: var(--daemon-radius-xs);
+    padding: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+
+    &__cabecera {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: var(--daemon-ink-strong);
+    }
+
+    &__fecha {
+      font-size: 0.725rem;
+      color: var(--daemon-ink-muted);
+    }
+
+    &__comentario {
+      margin: 0;
+      font-size: 0.85rem;
+      line-height: 1.45;
+      color: var(--daemon-ink-soft);
+      white-space: pre-wrap;
+    }
+  }
+}
+
+.form-grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+
+  .form-label {
+    font-size: 0.825rem;
+    font-weight: 600;
+    color: var(--daemon-ink-strong);
+  }
+
+  .form-input-puntaje {
+    max-width: 180px;
+  }
+}

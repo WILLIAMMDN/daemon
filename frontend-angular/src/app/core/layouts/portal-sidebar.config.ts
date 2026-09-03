@@ -80,6 +80,7 @@ export const docenteSidebarSections: PortalSidebarSection[] = [
     tono: 'orange',
     items: [
       { id: 'docente-curriculo', etiqueta: 'Currículo', ruta: '/docente/curriculo', detalle: 'Cursos y lecciones', icono: faBookOpenReader },
+      { id: 'docente-revisiones', etiqueta: 'Revisiones', ruta: '/docente/revisiones', detalle: 'Evidencias y retroalimentación', icono: faClipboardCheck },
       {
         id: 'docente-misiones',
         etiqueta: 'Misiones',

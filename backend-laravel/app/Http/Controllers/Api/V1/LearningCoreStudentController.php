@@ -53,4 +53,18 @@ class LearningCoreStudentController extends Controller
     {
         return $this->progresion->evaluarIntento($request->user(), $intento, $request->validated());
     }
+
+    public function revisiones(Request $request): array
+    {
+        return [
+            'data' => $this->progresion->listarRevisiones($request->user(), $request->only(['estado', 'id_curso', 'id_aula'])),
+        ];
+    }
+
+    public function detalleRevision(Request $request, IntentoAprendizaje $intento): array
+    {
+        return [
+            'data' => $this->progresion->detalleRevision($request->user(), $intento),
+        ];
+    }
 }
