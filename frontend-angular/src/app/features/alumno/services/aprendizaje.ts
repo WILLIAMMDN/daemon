@@ -1,6 +1,6 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
-import { finalize } from 'rxjs';
+import { finalize, tap } from 'rxjs';
 import { Api, ApiError } from '../../../core/servicios/api';
 import {
   AprendizajeResponse,
@@ -98,10 +98,16 @@ export class Aprendizaje {
       error: () => this.homeContext.set(null),
     });
 
-    this.api.get<LearningMapResponse>('/alumno/aprender/mapa', { fresh }).subscribe({
-      next: (mapa) => this.mapa.set(mapa),
+    this.cargarMapa(fresh).subscribe({
+      next: () => undefined,
       error: () => this.mapa.set(null),
     });
+  }
+
+  cargarMapa(fresh = false) {
+    return this.api
+      .get<LearningMapResponse>('/alumno/aprender/mapa', { fresh })
+      .pipe(tap((mapa) => this.mapa.set(mapa)));
   }
 
   /** Marca una lección como completada y refleja el nuevo progreso en memoria. */

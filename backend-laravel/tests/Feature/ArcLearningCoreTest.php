@@ -362,6 +362,161 @@ class ArcLearningCoreTest extends TestCase
         )->assertUnprocessable();
     }
 
+    public function test_teacher_feedback_enables_an_idempotent_revision_without_overwriting_attempt_history(): void
+    {
+        $escenario = $this->escenarioConRuta('feedback-revision', true, true);
+        $experiencia = $escenario['leccionExperiencia'];
+
+        $intentoUno = $this->actingAs($escenario['alumno'])->postJson(
+            "/api/v1/alumno/aprender/experiencias/{$experiencia->id}/intentos",
+            ['idempotency_key' => 'feedback-revision-attempt-1'],
+        )->assertCreated()->json();
+        $this->actingAs($escenario['alumno'])->postJson(
+            "/api/v1/alumno/aprender/intentos/{$intentoUno['id']}/evidencias",
+            ['tipo' => 'assessment_result', 'referencia' => 'Versión original sin fuentes independientes.'],
+        )->assertOk()->assertJsonPath('estado', 'submitted');
+        $this->actingAs($escenario['alumno'])->getJson('/api/v1/alumno/aprender/siguiente')
+            ->assertOk()
+            ->assertJsonPath('nextItem.id', $experiencia->id);
+
+        $evaluacionUno = [
+            'aprobado' => false,
+            'puntaje' => 55,
+            'comentario' => 'La estructura es clara; contrasta cada afirmación con una fuente independiente.',
+            'criterios' => [
+                'strength' => 'La respuesta identifica las afirmaciones principales.',
+                'improvement' => 'Faltan fuentes independientes.',
+                'nextStep' => 'Añade las fuentes y explica el nivel de certeza.',
+            ],
+        ];
+        $this->actingAs($escenario['admin'])->postJson(
+            "/api/v1/academico/intentos/{$intentoUno['id']}/evaluar",
+            $evaluacionUno,
+        )->assertOk()->assertJsonPath('aprobado', false);
+        $this->actingAs($escenario['admin'])->postJson(
+            "/api/v1/academico/intentos/{$intentoUno['id']}/evaluar",
+            $evaluacionUno,
+        )->assertOk();
+        $this->assertSame(1, DB::table('feedback_aprendizaje')->where('id_intento', $intentoUno['id'])->count());
+
+        $mapaConFeedback = $this->actingAs($escenario['alumno'])
+            ->getJson('/api/v1/alumno/aprender/mapa')
+            ->assertOk()
+            ->assertJsonPath('milestones.0.experiences.0.attemptLifecycle.state', 'feedbackReceived')
+            ->assertJsonPath('milestones.0.experiences.0.attemptLifecycle.action', 'improve')
+            ->assertJsonPath('milestones.0.experiences.0.attemptLifecycle.canRevise', true)
+            ->assertJsonPath('milestones.0.experiences.0.attemptLifecycle.revisionAvailable', true)
+            ->assertJsonPath('milestones.0.experiences.0.latestFeedback.attemptNumber', 1)
+            ->assertJsonPath('milestones.0.experiences.0.attempts.0.evidence.0.reference', 'Versión original sin fuentes independientes.')
+            ->json();
+        $this->assertSame($experiencia->id, $mapaConFeedback['nextItem']['id']);
+        $this->actingAs($escenario['alumno'])->getJson('/api/v1/alumno/aprender/siguiente')
+            ->assertOk()
+            ->assertJsonPath('nextItem.id', $experiencia->id);
+
+        $intentoDos = $this->actingAs($escenario['alumno'])->postJson(
+            "/api/v1/alumno/aprender/experiencias/{$experiencia->id}/intentos",
+            ['idempotency_key' => 'feedback-revision-attempt-2'],
+        )->assertCreated()->assertJsonPath('numero', 2)->json();
+        $this->actingAs($escenario['alumno'])->postJson(
+            "/api/v1/alumno/aprender/experiencias/{$experiencia->id}/intentos",
+            ['idempotency_key' => 'feedback-revision-attempt-2'],
+        )->assertCreated()->assertJsonPath('id', $intentoDos['id']);
+        $this->actingAs($escenario['alumno'])->postJson(
+            "/api/v1/alumno/aprender/experiencias/{$experiencia->id}/intentos",
+            ['idempotency_key' => 'feedback-revision-parallel-attempt'],
+        )->assertUnprocessable();
+
+        $this->actingAs($escenario['alumno'])->postJson(
+            "/api/v1/alumno/aprender/intentos/{$intentoDos['id']}/evidencias",
+            ['tipo' => 'assessment_result', 'referencia' => 'Versión revisada con fuentes.'],
+        )->assertUnprocessable()->assertJsonValidationErrors([
+            'metadatos.revision.whatChanged',
+            'metadatos.revision.whyChanged',
+            'metadatos.revision.feedbackUsed',
+        ]);
+
+        $revision = [
+            'tipo' => 'assessment_result',
+            'referencia' => 'Versión revisada con dos fuentes independientes y notas de certeza.',
+            'metadatos' => [
+                'revision' => [
+                    'whatChanged' => 'Agregué dos fuentes y corregí una afirmación.',
+                    'whyChanged' => 'La versión anterior no permitía verificar los datos.',
+                    'feedbackUsed' => 'Usé el siguiente paso sobre fuentes y nivel de certeza.',
+                ],
+            ],
+        ];
+        $this->actingAs($escenario['alumno'])->postJson(
+            "/api/v1/alumno/aprender/intentos/{$intentoDos['id']}/evidencias",
+            $revision,
+        )->assertOk()->assertJsonPath('estado', 'submitted');
+        $this->actingAs($escenario['alumno'])->postJson(
+            "/api/v1/alumno/aprender/intentos/{$intentoDos['id']}/evidencias",
+            $revision,
+        )->assertOk()->assertJsonPath('estado', 'submitted');
+
+        $this->assertSame(1, DB::table('evidencias_aprendizaje')->where('id_intento', $intentoUno['id'])->count());
+        $this->assertSame(1, DB::table('evidencias_aprendizaje')->where('id_intento', $intentoDos['id'])->count());
+        $this->assertDatabaseHas('evidencias_aprendizaje', [
+            'id_intento' => $intentoUno['id'],
+            'referencia' => 'Versión original sin fuentes independientes.',
+        ]);
+        $metadatosRevision = json_decode((string) DB::table('evidencias_aprendizaje')
+            ->where('id_intento', $intentoDos['id'])->value('metadatos'), true, 512, JSON_THROW_ON_ERROR);
+        $this->assertSame($intentoUno['id'], $metadatosRevision['revisionContext']['previousAttemptId']);
+        $this->assertSame('Agregué dos fuentes y corregí una afirmación.', $metadatosRevision['revision']['whatChanged']);
+
+        $this->actingAs($escenario['alumno'])->getJson('/api/v1/alumno/aprender/mapa')
+            ->assertOk()
+            ->assertJsonPath('milestones.0.experiences.0.attemptLifecycle.state', 'resubmitted')
+            ->assertJsonCount(2, 'milestones.0.experiences.0.attempts');
+        $this->actingAs($escenario['alumno'])->getJson('/api/v1/alumno/aprender/siguiente')
+            ->assertOk()
+            ->assertJsonPath('nextItem.id', $experiencia->id);
+
+        $evaluacionDos = [
+            'aprobado' => true,
+            'puntaje' => 92,
+            'comentario' => 'La revisión incorpora el feedback y deja trazabilidad suficiente.',
+        ];
+        $this->actingAs($escenario['admin'])->postJson(
+            "/api/v1/academico/intentos/{$intentoDos['id']}/evaluar",
+            $evaluacionDos,
+        )->assertOk()->assertJsonPath('aprobado', true);
+        $this->actingAs($escenario['admin'])->postJson(
+            "/api/v1/academico/intentos/{$intentoDos['id']}/evaluar",
+            $evaluacionDos,
+        )->assertOk();
+        $this->assertSame(1, DB::table('feedback_aprendizaje')->where('id_intento', $intentoDos['id'])->count());
+
+        $this->actingAs($escenario['alumno'])->getJson('/api/v1/alumno/aprender/mapa')
+            ->assertOk()
+            ->assertJsonPath('milestones.0.experiences.0.attemptLifecycle.state', 'reviewedAgain')
+            ->assertJsonPath('milestones.0.experiences.0.attempts.0.approved', false)
+            ->assertJsonPath('milestones.0.experiences.0.attempts.1.approved', true)
+            ->assertJsonPath('nextItem.id', $escenario['evaluacionExperiencia']->id);
+        $this->actingAs($escenario['alumno'])->getJson('/api/v1/alumno/aprender/siguiente')
+            ->assertOk()
+            ->assertJsonPath('nextItem.id', $escenario['evaluacionExperiencia']->id);
+    }
+
+    public function test_student_cannot_submit_a_revision_for_another_students_attempt(): void
+    {
+        $escenario = $this->escenarioConRuta('revision-ownership', false, true);
+        $otro = $this->crearAlumno($escenario['institucion'], $escenario['aula'], 'otro-revision-owner');
+        $intento = $this->actingAs($escenario['alumno'])->postJson(
+            "/api/v1/alumno/aprender/experiencias/{$escenario['leccionExperiencia']->id}/intentos",
+            ['idempotency_key' => 'revision-owner-attempt'],
+        )->assertCreated()->json();
+
+        $this->actingAs($otro)->postJson(
+            "/api/v1/alumno/aprender/intentos/{$intento['id']}/evidencias",
+            ['tipo' => 'assessment_result', 'referencia' => 'Intento ajeno.'],
+        )->assertForbidden();
+        $this->assertDatabaseCount('evidencias_aprendizaje', 0);
+    }
+
     public function test_locked_experience_cannot_be_attempted_and_student_cannot_author_evaluate_or_forge_events(): void
     {
         $escenario = $this->escenarioConRuta('security');

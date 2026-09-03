@@ -14,7 +14,9 @@ use App\Models\RutaAprendizaje;
 use App\Models\Usuario;
 use App\Services\Eventos\OutboxService;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
 class LearningProgressionService
@@ -45,6 +47,10 @@ class LearningProgressionService
             'hitos.prerrequisitos:id',
             'hitos.experiencias.objetivos:id,codigo,descripcion',
             'hitos.experiencias.progresos' => fn ($query) => $query->where('id_matricula', $matricula->id)->with('intentoCompletado.feedback'),
+            'hitos.experiencias.intentos' => fn ($query) => $query
+                ->where('id_matricula', $matricula->id)
+                ->with(['evidencias', 'feedback'])
+                ->orderBy('numero'),
         ]);
         $completitudHitos = $ruta->hitos->mapWithKeys(fn (HitoAprendizaje $hito): array => [
             $hito->id => $this->hitoCompletado($hito),
@@ -64,6 +70,7 @@ class LearningProgressionService
                 &$requeridas,
             ): array {
                 $progreso = $experiencia->progresos->first();
+                $intentos = $experiencia->intentos->sortBy('numero')->values();
                 $completada = $progreso?->estado === 'completed';
                 $accesible = $desbloqueado && $anterioresObligatoriasCompletas;
                 $esActual = ! $actualEncontrado && $accesible && ! $completada && $experiencia->obligatoria;
@@ -92,11 +99,9 @@ class LearningProgressionService
                     'summary' => $experiencia->descripcion,
                     'content' => $experiencia->contenido,
                     'instructions' => $experiencia->guia_entrega,
-                    'latestFeedback' => ($ultimoFeedback = $progreso?->intentoCompletado?->feedback?->last()) ? [
-                        'comment' => $ultimoFeedback->comentario,
-                        'criteria' => $ultimoFeedback->criterios,
-                        'registeredAt' => $ultimoFeedback->registrado_at?->toIso8601String(),
-                    ] : null,
+                    'latestFeedback' => $this->ultimoFeedbackResumen($intentos),
+                    'attemptLifecycle' => $this->estadoIntentos($experiencia, $intentos),
+                    'attempts' => $intentos->map(fn (IntentoAprendizaje $intento): array => $this->intentoResumen($intento))->values(),
                     'objectives' => $experiencia->objetivos->map(fn ($objetivo): array => [
                         'id' => $objetivo->id,
                         'code' => $objetivo->codigo,
@@ -225,6 +230,7 @@ class LearningProgressionService
             $existente = IntentoAprendizaje::where('clave_idempotencia', $clave)->lockForUpdate()->first();
             if ($existente) {
                 abort_unless((int) $existente->id_alumno === (int) $alumno->id, 409, 'La clave de idempotencia ya está en uso.');
+                abort_unless((int) $existente->id_experiencia === (int) $experiencia->id, 409, 'La clave de idempotencia pertenece a otra experiencia.');
 
                 return $existente;
             }
@@ -232,11 +238,26 @@ class LearningProgressionService
             $matricula = MatriculaAula::whereKey($matricula->id)->lockForUpdate()->firstOrFail();
             abort_unless($experiencia->permite_intentos, 422, 'Esta experiencia no admite intentos.');
             abort_unless($this->experienciaAccesible($alumno, $experiencia), 403, 'La experiencia todavía está bloqueada.');
-            $ultimoNumero = (int) IntentoAprendizaje::where('id_matricula', $matricula->id)
+            $intentos = IntentoAprendizaje::where('id_matricula', $matricula->id)
                 ->where('id_experiencia', $experiencia->id)
                 ->lockForUpdate()
-                ->max('numero');
+                ->with('feedback')
+                ->orderBy('numero')
+                ->get();
+            /** @var IntentoAprendizaje|null $ultimoIntento */
+            $ultimoIntento = $intentos->last();
+            $ultimoNumero = (int) ($ultimoIntento?->numero ?? 0);
             abort_if($experiencia->max_intentos && $ultimoNumero >= $experiencia->max_intentos, 422, 'Se alcanzó el máximo de intentos.');
+            if ($ultimoIntento) {
+                abort_if($ultimoIntento->estado === 'started', 422, 'Ya existe un intento en progreso para esta experiencia.');
+                abort_if($ultimoIntento->estado === 'submitted', 422, 'La entrega actual todavía está pendiente de revisión.');
+                abort_unless(
+                    $ultimoIntento->estado === 'evaluated'
+                        && ($ultimoIntento->aprobado === false || $ultimoIntento->feedback->isNotEmpty()),
+                    422,
+                    'La evaluación actual no habilita una nueva revisión.',
+                );
+            }
 
             return IntentoAprendizaje::create([
                 'uuid' => (string) Str::uuid(),
@@ -247,6 +268,12 @@ class LearningProgressionService
                 'numero' => $ultimoNumero + 1,
                 'estado' => 'started',
                 'iniciado_at' => now(),
+                'metadatos' => $ultimoIntento ? [
+                    'revisionContext' => [
+                        'previousAttemptId' => $ultimoIntento->id,
+                        'previousAttemptNumber' => $ultimoIntento->numero,
+                    ],
+                ] : null,
             ]);
         });
     }
@@ -254,6 +281,18 @@ class LearningProgressionService
     public function entregarEvidencia(Usuario $alumno, IntentoAprendizaje $intento, array $datos): IntentoAprendizaje
     {
         abort_unless((int) $intento->id_alumno === (int) $alumno->id, 403, 'El intento no pertenece al estudiante autenticado.');
+        $intento->loadMissing('experiencia');
+        if ($intento->numero > 1 && in_array($intento->experiencia->tipo, [
+            TipoExperienciaAprendizaje::MISION,
+            TipoExperienciaAprendizaje::EVALUACION,
+            TipoExperienciaAprendizaje::PROYECTO,
+        ], true)) {
+            Validator::make($datos, [
+                'metadatos.revision.whatChanged' => ['required', 'string', 'max:1000'],
+                'metadatos.revision.whyChanged' => ['required', 'string', 'max:1000'],
+                'metadatos.revision.feedbackUsed' => ['required', 'string', 'max:1000'],
+            ])->validate();
+        }
         if (! empty($datos['id_objetivo'])) {
             abort_unless(
                 $intento->experiencia()->whereHas('objetivos', fn (Builder $query) => $query->whereKey($datos['id_objetivo']))->exists(),
@@ -267,12 +306,26 @@ class LearningProgressionService
             if ($intento->estado !== 'started') {
                 return $intento->load(['evidencias', 'feedback']);
             }
+            $metadatos = $datos['metadatos'] ?? [];
+            if ($intento->numero > 1) {
+                $intentoAnterior = IntentoAprendizaje::query()
+                    ->where('id_matricula', $intento->id_matricula)
+                    ->where('id_experiencia', $intento->id_experiencia)
+                    ->where('numero', '<', $intento->numero)
+                    ->orderByDesc('numero')
+                    ->first();
+                abort_unless($intentoAnterior, 409, 'No se encontró el intento anterior de esta revisión.');
+                $metadatos['revisionContext'] = [
+                    'previousAttemptId' => $intentoAnterior->id,
+                    'previousAttemptNumber' => $intentoAnterior->numero,
+                ];
+            }
             $intento->evidencias()->create([
                 'uuid' => (string) Str::uuid(),
                 'id_objetivo' => $datos['id_objetivo'] ?? null,
                 'tipo' => $datos['tipo'],
                 'referencia' => $datos['referencia'] ?? null,
-                'metadatos' => $datos['metadatos'] ?? null,
+                'metadatos' => $metadatos ?: null,
                 'registrado_at' => now(),
             ]);
             $intento->update(['estado' => 'submitted', 'enviado_at' => now()]);
@@ -297,6 +350,20 @@ class LearningProgressionService
         return DB::transaction(function () use ($actor, $intento, $datos): IntentoAprendizaje {
             $intento = IntentoAprendizaje::whereKey($intento->id)->lockForUpdate()->firstOrFail();
             abort_unless(in_array($intento->estado, ['submitted', 'evaluated'], true), 422, 'El intento todavía no fue enviado.');
+            $ultimoFeedback = $intento->feedback()->latest('id')->first();
+            $puntajeSolicitado = array_key_exists('puntaje', $datos) && $datos['puntaje'] !== null
+                ? (float) $datos['puntaje']
+                : null;
+            $mismoResultado = $intento->estado === 'evaluated'
+                && $intento->aprobado === (bool) $datos['aprobado']
+                && $puntajeSolicitado === ($intento->puntaje !== null ? (float) $intento->puntaje : null);
+            $mismoFeedback = (! array_key_exists('comentario', $datos) && ! array_key_exists('criterios', $datos))
+                || ($ultimoFeedback
+                    && $ultimoFeedback->comentario === ($datos['comentario'] ?? null)
+                    && $ultimoFeedback->criterios === ($datos['criterios'] ?? null));
+            if ($mismoResultado && $mismoFeedback) {
+                return $intento->load(['evidencias', 'feedback']);
+            }
             $intento->update([
                 'estado' => 'evaluated',
                 'puntaje' => $datos['puntaje'] ?? null,
@@ -482,6 +549,100 @@ class LearningProgressionService
         $this->evaluarTransicionesSuperiores($matricula, $experiencia->hito->ruta);
 
         return $progreso;
+    }
+
+    /** @param Collection<int, IntentoAprendizaje> $intentos */
+    private function ultimoFeedbackResumen(Collection $intentos): ?array
+    {
+        foreach ($intentos->reverse() as $intento) {
+            $feedback = $intento->feedback->sortBy('registrado_at')->last();
+            if ($feedback) {
+                return [
+                    'comment' => $feedback->comentario,
+                    'criteria' => $feedback->criterios,
+                    'registeredAt' => $feedback->registrado_at?->toIso8601String(),
+                    'attemptId' => $intento->id,
+                    'attemptNumber' => $intento->numero,
+                ];
+            }
+        }
+
+        return null;
+    }
+
+    private function intentoResumen(IntentoAprendizaje $intento): array
+    {
+        return [
+            'id' => $intento->id,
+            'number' => $intento->numero,
+            'state' => $intento->estado,
+            'score' => $intento->puntaje !== null ? (float) $intento->puntaje : null,
+            'approved' => $intento->aprobado,
+            'startedAt' => $intento->iniciado_at?->toIso8601String(),
+            'submittedAt' => $intento->enviado_at?->toIso8601String(),
+            'evaluatedAt' => $intento->evaluado_at?->toIso8601String(),
+            'metadata' => $intento->metadatos,
+            'evidence' => $intento->evidencias->sortBy('registrado_at')->map(fn ($evidencia): array => [
+                'id' => $evidencia->id,
+                'type' => $evidencia->tipo,
+                'reference' => $evidencia->referencia,
+                'metadata' => $evidencia->metadatos,
+                'registeredAt' => $evidencia->registrado_at?->toIso8601String(),
+            ])->values(),
+            'feedback' => $intento->feedback->sortBy('registrado_at')->map(fn ($feedback): array => [
+                'comment' => $feedback->comentario,
+                'criteria' => $feedback->criterios,
+                'registeredAt' => $feedback->registrado_at?->toIso8601String(),
+            ])->values(),
+        ];
+    }
+
+    /** @param Collection<int, IntentoAprendizaje> $intentos */
+    private function estadoIntentos(ExperienciaAprendizaje $experiencia, Collection $intentos): array
+    {
+        /** @var IntentoAprendizaje|null $ultimo */
+        $ultimo = $intentos->last();
+        $dentroDelLimite = ! $experiencia->max_intentos || $intentos->count() < $experiencia->max_intentos;
+        $tieneFeedback = $ultimo?->feedback?->isNotEmpty() ?? false;
+        $puedeRevisar = (bool) ($ultimo
+            && $experiencia->permite_intentos
+            && $dentroDelLimite
+            && $ultimo->estado === 'evaluated'
+            && ($ultimo->aprobado === false || $tieneFeedback));
+
+        $estado = match (true) {
+            ! $ultimo => 'notStarted',
+            $ultimo->estado === 'started' && $ultimo->numero > 1 => 'revisionInProgress',
+            $ultimo->estado === 'started' => 'inProgress',
+            $ultimo->estado === 'submitted' && $ultimo->numero > 1 => 'resubmitted',
+            $ultimo->estado === 'submitted' => 'awaitingFeedback',
+            $ultimo->estado === 'evaluated' && $ultimo->numero > 1 => 'reviewedAgain',
+            $ultimo->estado === 'evaluated' && $ultimo->aprobado === true => 'completed',
+            default => 'feedbackReceived',
+        };
+        $accion = match (true) {
+            ! $ultimo && $experiencia->permite_intentos => 'start',
+            $ultimo?->estado === 'started' => 'resume',
+            $ultimo?->estado === 'submitted' => 'wait',
+            $puedeRevisar => 'improve',
+            $ultimo?->aprobado === true => 'continue',
+            default => 'none',
+        };
+
+        return [
+            'state' => $estado,
+            'action' => $accion,
+            'canStartAttempt' => ! $ultimo && $experiencia->permite_intentos,
+            'canRevise' => $puedeRevisar,
+            'revisionAvailable' => $puedeRevisar,
+            'revisionExplanationRequired' => $puedeRevisar && in_array($experiencia->tipo, [
+                TipoExperienciaAprendizaje::MISION,
+                TipoExperienciaAprendizaje::EVALUACION,
+                TipoExperienciaAprendizaje::PROYECTO,
+            ], true),
+            'activeAttemptId' => $ultimo?->estado === 'started' ? $ultimo->id : null,
+            'activeAttemptNumber' => $ultimo?->estado === 'started' ? $ultimo->numero : null,
+        ];
     }
 
     private function evaluarTransicionesSuperiores(MatriculaAula $matricula, RutaAprendizaje $ruta): void
