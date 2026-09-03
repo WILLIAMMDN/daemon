@@ -14,9 +14,9 @@ class ExperienciaAprendizaje extends ModeloBase
     public $timestamps = true;
 
     protected $fillable = [
-        'uuid', 'id_hito', 'id_unidad', 'tipo', 'variante', 'titulo', 'origen_tipo',
-        'origen_id', 'orden', 'obligatoria', 'permite_intentos', 'max_intentos',
-        'regla_completitud', 'estado',
+        'uuid', 'id_hito', 'id_unidad', 'tipo', 'variante', 'titulo', 'descripcion',
+        'contenido', 'origen_tipo', 'origen_id', 'orden', 'obligatoria', 'permite_intentos',
+        'max_intentos', 'regla_completitud', 'guia_entrega', 'estado',
     ];
 
     protected function casts(): array
@@ -27,7 +27,9 @@ class ExperienciaAprendizaje extends ModeloBase
             'obligatoria' => 'boolean',
             'permite_intentos' => 'boolean',
             'max_intentos' => 'integer',
+            'contenido' => 'array',
             'regla_completitud' => 'array',
+            'guia_entrega' => 'array',
         ];
     }
 

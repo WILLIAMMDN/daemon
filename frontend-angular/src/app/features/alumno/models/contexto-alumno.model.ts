@@ -154,6 +154,9 @@ export interface ExperienciaAprendizajeDto {
   type: TipoExperiencia;
   variant?: string | null;
   title: string;
+  summary?: string | null;
+  content?: unknown;
+  instructions?: unknown;
   order: number;
   required: boolean;
   attemptable?: boolean;
@@ -163,6 +166,11 @@ export interface ExperienciaAprendizajeDto {
   state: EstadoProgresoExperiencia;
   progressPercent: number;
   objectives: ObjetivoAprendizajeCoreDto[];
+  latestFeedback?: {
+    comment?: string | null;
+    criteria?: unknown;
+    registeredAt?: string | null;
+  } | null;
 }
 
 export interface HitoAprendizajeDto {

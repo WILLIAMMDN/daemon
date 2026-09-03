@@ -148,6 +148,72 @@
       margin: 0;
     }
   }
+
+  &__politica-ia {
+    margin-top: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+
+    h3 {
+      font-size: 1rem;
+      font-weight: 650;
+      color: var(--daemon-neutral-text-primary);
+      margin: 0;
+    }
+  }
+
+  &__politica-intro {
+    font-size: 0.875rem;
+    color: var(--daemon-neutral-text-secondary);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  &__politica-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0.75rem;
+  }
+}
+
+.politica-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
+  background: var(--daemon-neutral-surface);
+  border: 1px solid var(--daemon-neutral-border);
+  border-radius: var(--daemon-radius-md);
+
+  h4 {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 700;
+  }
+
+  ul {
+    margin: 0;
+    padding-left: 1.125rem;
+    font-size: 0.8125rem;
+    color: var(--daemon-neutral-text-primary);
+    line-height: 1.45;
+  }
+
+  &--permitido {
+    border-top: 3px solid var(--daemon-semantic-success);
+    h4 { color: var(--daemon-semantic-success); }
+  }
+
+  &--requerido {
+    border-top: 3px solid var(--daemon-semantic-info);
+    h4 { color: var(--daemon-semantic-info); }
+  }
+
+  &--inaceptable {
+    border-top: 3px solid var(--daemon-semantic-danger);
+    h4 { color: var(--daemon-semantic-danger); }
+  }
 }
 
 .lista-objetivos {
