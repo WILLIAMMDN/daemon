@@ -119,7 +119,10 @@
             <div class="resumen__sesion">
               <div>
                 <span class="resumen__sesion-label">Próxima sesión en vivo</span>
-                <strong class="resumen__sesion-titulo">{{ sesion.titulo }}</strong>
+                <strong class="resumen__sesion-titulo">{{ sesion.title }}</strong>
+                <time class="resumen__sesion-fecha" [attr.datetime]="sesion.startsAt">
+                  {{ sesion.startsAt | date: 'EEEE d MMM, HH:mm' }}
+                </time>
               </div>
               <a nz-button nzType="default" nzSize="small" routerLink="/alumno/agenda">
                 Ver en Agenda

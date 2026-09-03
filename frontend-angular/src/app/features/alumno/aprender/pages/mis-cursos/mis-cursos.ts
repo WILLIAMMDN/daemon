@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -35,6 +36,7 @@ export interface SiguientePasoVista {
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-mis-cursos',
   imports: [
+    DatePipe,
     RouterLink,
     NzButtonModule,
     NzProgressModule,

@@ -62,19 +62,35 @@ export interface MatriculaRespuestaDto {
   progress?: ProgresoContextoDto | null;
 }
 
+export type EstadoSesionAprendizaje = 'scheduled' | 'cancelled' | 'completed';
+
+/**
+ * Contrato canónico de sesión en vivo del Alumno.
+ *
+ * Es exactamente lo que devuelven `/alumno/agenda`, `/alumno/home-context`
+ * (`nextLiveSession`, `upcomingAgendaSummary.items`) y `nextAction.session`.
+ * El backend nunca expone aquí la descripción/instrucciones internas del
+ * docente: si hace falta añadir contenido para el Alumno, se amplía el
+ * contrato del backend, no este modelo.
+ */
+export interface SesionCursoResumenDto {
+  id: number;
+  title: string;
+  code?: string | null;
+  version?: number | null;
+}
+
 export interface SesionAprendizajeDto {
   id: number;
-  titulo: string;
-  descripcion?: string | null;
-  tipo: 'live' | 'taller' | 'asesoria' | string;
-  estado: 'programada' | 'en_vivo' | 'finalizada' | 'cancelada' | string;
-  fecha_inicio: string;
-  fecha_fin: string;
-  enlace_sesion?: string | null;
-  reunion_id?: string | null;
-  sala_id?: string | null;
-  grabacion_url?: string | null;
-  aula_id: number;
+  type: 'live_session' | string;
+  title: string;
+  course: SesionCursoResumenDto | null;
+  cohort: { id: number; name: string; code?: string | null } | null;
+  startsAt: string;
+  endsAt: string | null;
+  durationMinutes: number | null;
+  status: EstadoSesionAprendizaje | string;
+  access: { joinUrl: string } | null;
 }
 
 export type TipoExperiencia =
