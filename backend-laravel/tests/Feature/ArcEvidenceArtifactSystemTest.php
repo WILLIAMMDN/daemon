@@ -377,6 +377,20 @@ class ArcEvidenceArtifactSystemTest extends TestCase
             'id_intento' => $intento2Id,
             'nombre_original' => 'brief_v2_revisado.pdf',
         ]);
+
+        // Docente aprueba Intento 2
+        $this->actingAs($this->docenteA)
+            ->postJson("/api/v1/academico/intentos/{$intento2Id}/evaluar", [
+                'aprobado' => true,
+                'puntaje' => 95,
+                'comentario' => '• FORTALEZA: Excelente incorporación de límites éticos. ¡Aprobado!',
+            ])->assertStatus(200);
+
+        // Learning Core marca la experiencia como completada
+        $mapaRes = $this->actingAs($this->alumnoA)->getJson('/api/v1/alumno/aprender/mapa')->assertOk();
+        $h1Updated = collect($mapaRes->json('milestones'))->firstWhere('order', 1);
+        $expLabUpdated = collect($h1Updated['experiences'])->firstWhere('order', 2);
+        $this->assertEquals('completed', $expLabUpdated['state']);
     }
 
     public function test_download_authorization_and_privacy_boundaries(): void
