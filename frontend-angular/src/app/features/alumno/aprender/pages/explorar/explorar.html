@@ -1,0 +1,57 @@
+@if (cargando()) {
+  <nz-skeleton [nzActive]="true" [nzParagraph]="{ rows: 6 }" />
+} @else if (error(); as mensajeError) {
+  <nz-alert
+    nzType="warning"
+    nzShowIcon
+    [nzMessage]="mensajeError"
+    [nzAction]="reintentarAccion"
+  />
+  <ng-template #reintentarAccion>
+    <button nz-button nzSize="small" type="button" (click)="cargar()">Reintentar</button>
+  </ng-template>
+} @else if (sinRutas()) {
+  <app-estado-vacio
+    titulo="No hay nuevas rutas de aprendizaje disponibles"
+    descripcion="Actualmente estás cursando todos los contenidos y rutas académicas asignadas para tu aula. Las nuevas materias y cohortes son asignadas directamente por tus docentes."
+  >
+    <a nz-button nzType="primary" routerLink="../mis-cursos">Ir a Mis cursos</a>
+  </app-estado-vacio>
+} @else {
+  <app-arc-section
+    titulo="Oportunidades de aprendizaje"
+    descripcion="Rutas y módulos publicados y elegibles según tu aula y nivel académico."
+  >
+    <div class="rejilla-oportunidades">
+      @for (ruta of rutas(); track ruta.id) {
+        <article class="tarjeta-oportunidad">
+          <header class="tarjeta-oportunidad__header">
+            <div class="tarjeta-oportunidad__tags">
+              <nz-tag nzColor="default">{{ ruta.audience }}</nz-tag>
+              <nz-tag nzColor="blue">{{ etiquetaDificultad(ruta.difficulty) }}</nz-tag>
+            </div>
+            <h3 class="tarjeta-oportunidad__titulo">{{ ruta.title }}</h3>
+          </header>
+
+          @if (ruta.description) {
+            <p class="tarjeta-oportunidad__descripcion">{{ ruta.description }}</p>
+          }
+
+          <footer class="tarjeta-oportunidad__footer">
+            <span class="tarjeta-oportunidad__meta">
+              {{ ruta.milestoneCount ?? 0 }} {{ (ruta.milestoneCount ?? 0) === 1 ? 'hito' : 'hitos' }} de aprendizaje
+            </span>
+            <a
+              nz-button
+              nzType="default"
+              nzSize="small"
+              routerLink="../mis-cursos"
+            >
+              Ver en Mis cursos
+            </a>
+          </footer>
+        </article>
+      }
+    </div>
+  </app-arc-section>
+}

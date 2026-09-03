@@ -237,7 +237,9 @@ export class PanelAlumno {
           tipoEtiqueta = 'SESIÓN EN VIVO';
           break;
         case 'lesson':
-          ruta = cursoId ? ['/alumno/aprender/curso', cursoId] : '/alumno/aprender';
+          ruta = cursoId && expId
+            ? ['/alumno/aprender/curso', cursoId, 'experiencia', expId]
+            : (cursoId ? ['/alumno/aprender/curso', cursoId] : '/alumno/aprender');
           ctaTexto = 'Continuar lección';
           tipoEtiqueta = 'LECCIÓN';
           break;
@@ -263,7 +265,9 @@ export class PanelAlumno {
           tipoEtiqueta = 'PROYECTO';
           break;
         case 'challenge':
-          ruta = cursoId ? ['/alumno/aprender/curso', cursoId, 'ruta'] : '/alumno/aprender';
+          ruta = cursoId && expId
+            ? ['/alumno/aprender/curso', cursoId, 'experiencia', expId]
+            : (cursoId ? ['/alumno/aprender/curso', cursoId, 'ruta'] : '/alumno/aprender');
           ctaTexto = 'Aceptar reto';
           tipoEtiqueta = 'DESAFÍO';
           break;

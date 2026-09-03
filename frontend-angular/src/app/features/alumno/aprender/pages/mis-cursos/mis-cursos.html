@@ -1,40 +1,112 @@
-@if (aprendizaje.cargando()) {
-  <nz-skeleton [nzActive]="true" [nzParagraph]="{ rows: 6 }" />
+@if (aprendizaje.cargando() && !aprendizaje.cargado()) {
+  <nz-skeleton [nzActive]="true" [nzParagraph]="{ rows: 8 }" />
 } @else if (sinCursos()) {
   <app-estado-vacio
     titulo="Todavía no tienes cursos asignados"
     descripcion="Cuando tu docente publique un curso para tu aula aparecerá aquí con sus unidades y lecciones."
   >
-    <a nz-button nzType="primary" routerLink="../explorar">Ver el catálogo</a>
+    <a nz-button nzType="primary" routerLink="../explorar">Explorar catálogo</a>
   </app-estado-vacio>
 } @else {
-  @if (aprendizaje.enProgreso().length) {
+  @if (cursoPrincipal(); as curso) {
+    <section class="curso-hero">
+      <div class="curso-hero__header">
+        <div class="curso-hero__meta-sup">
+          <nz-tag [nzColor]="curso.estado === 'completed' ? 'success' : curso.estado === 'inProgress' ? 'processing' : 'default'">
+            {{ curso.estadoLabel }}
+          </nz-tag>
+          @if (curso.nivel) {
+            <nz-tag nzColor="blue">{{ curso.nivel }}</nz-tag>
+          }
+          @if (aulaInfo(); as aula) {
+            <span class="curso-hero__cohorte">Aula: {{ aula.nombre }}</span>
+          }
+        </div>
+        <h2 class="curso-hero__titulo">
+          <a [routerLink]="['/alumno/aprender/curso', curso.id]">{{ curso.titulo }}</a>
+        </h2>
+        @if (curso.descripcion) {
+          <p class="curso-hero__descripcion">{{ curso.descripcion }}</p>
+        }
+      </div>
+
+      <div class="curso-hero__progreso">
+        <div class="curso-hero__progreso-meta">
+          <span class="curso-hero__progreso-label">Progreso del curso</span>
+          <span class="curso-hero__progreso-valor">{{ curso.leccionesCompletadas }} de {{ curso.totalLecciones }} lecciones ({{ curso.porcentaje }}%)</span>
+        </div>
+        <nz-progress
+          [nzPercent]="curso.porcentaje"
+          nzStrokeColor="var(--arc-green)"
+          [nzStrokeWidth]="8"
+        />
+      </div>
+
+      @if (siguientePaso(); as paso) {
+        <div class="curso-hero__siguiente">
+          <div class="curso-hero__siguiente-info">
+            <span class="curso-hero__siguiente-eyebrow">{{ paso.tipoLabel }} siguiente</span>
+            <strong class="curso-hero__siguiente-titulo">{{ paso.titulo }}</strong>
+          </div>
+          <a
+            nz-button
+            nzType="primary"
+            nzSize="large"
+            class="curso-hero__siguiente-cta"
+            [routerLink]="paso.ruta"
+          >
+            {{ paso.ctaTexto }}
+          </a>
+        </div>
+      }
+
+      @if (proximaSesion(); as sesion) {
+        <div class="curso-hero__sesion">
+          <div class="curso-hero__sesion-info">
+            <span class="curso-hero__sesion-etiqueta">Próxima sesión en vivo</span>
+            <span class="curso-hero__sesion-titulo">{{ sesion.titulo }}</span>
+          </div>
+          <a nz-button nzType="default" nzSize="small" routerLink="/alumno/agenda">
+            Ver en Agenda
+          </a>
+        </div>
+      }
+    </section>
+  }
+
+  @if (otrosEnProgreso().length > 0) {
     <app-arc-section
-      titulo="Continuar"
-      descripcion="Cursos en los que ya empezaste a avanzar."
+      titulo="Otros cursos en progreso"
+      descripcion="Cursos activos en los que continúas aprendiendo."
     >
       <div class="rejilla-cursos">
-        @for (curso of aprendizaje.enProgreso(); track curso.id) {
+        @for (curso of otrosEnProgreso(); track curso.id) {
           <app-tarjeta-curso [curso]="curso" />
         }
       </div>
     </app-arc-section>
   }
 
-  @if (aprendizaje.porIniciar().length) {
-    <app-arc-section titulo="Por iniciar" descripcion="Cursos asignados que aún no comenzaste.">
+  @if (porIniciar().length > 0) {
+    <app-arc-section
+      titulo="Cursos por iniciar"
+      descripcion="Cursos asignados listos para comenzar."
+    >
       <div class="rejilla-cursos">
-        @for (curso of aprendizaje.porIniciar(); track curso.id) {
+        @for (curso of porIniciar(); track curso.id) {
           <app-tarjeta-curso [curso]="curso" />
         }
       </div>
     </app-arc-section>
   }
 
-  @if (aprendizaje.completados().length) {
-    <app-arc-section titulo="Completados" descripcion="Historial de cursos que terminaste.">
+  @if (completados().length > 0) {
+    <app-arc-section
+      titulo="Cursos completados"
+      descripcion="Historial de cursos y contenidos finalizados."
+    >
       <div class="rejilla-cursos">
-        @for (curso of aprendizaje.completados(); track curso.id) {
+        @for (curso of completados(); track curso.id) {
           <app-tarjeta-curso [curso]="curso" />
         }
       </div>
@@ -43,11 +115,9 @@
 }
 
 <app-arc-section
-  titulo="Actividades"
-  descripcion="Misiones y evaluaciones que convierten el curso en trabajo entregable."
+  titulo="Actividades de aprendizaje"
+  descripcion="Misiones y evaluaciones que convierten el aprendizaje en evidencia entregable."
 >
-  <a acciones nz-button nzType="default" nzSize="small" routerLink="../misiones">Ver misiones</a>
-
   @if (actividades.cargando() && !actividades.cargado()) {
     <nz-skeleton [nzActive]="true" [nzParagraph]="{ rows: 3 }" [nzTitle]="false" />
   } @else if (pendientes().length) {
@@ -56,7 +126,7 @@
     <app-estado-vacio
       tamano="compact"
       titulo="No tienes actividades pendientes"
-      descripcion="Cuando tu docente publique una misión o una evaluación para tu nivel, la verás aquí."
+      descripcion="Cuando tu docente publique una misión o evaluación para tu cohorte, la verás aquí."
     />
   }
 </app-arc-section>

@@ -9,8 +9,11 @@ import {
   construirCursoVista,
 } from '../models/aprendizaje.model';
 import {
+  ExperienciaAprendizajeDto,
+  HomeContextResponse,
   LearningContextResponse,
   LearningMapResponse,
+  RutasAlumnoResponse,
 } from '../models/contexto-alumno.model';
 
 export type MotivoErrorAprendizaje = 'offline' | 'timeout' | 'permission' | 'generic';
@@ -28,6 +31,7 @@ export class Aprendizaje {
 
   private readonly datos = signal<AprendizajeResponse | null>(null);
   readonly learningContext = signal<LearningContextResponse | null>(null);
+  readonly homeContext = signal<HomeContextResponse | null>(null);
   readonly mapa = signal<LearningMapResponse | null>(null);
 
   readonly cargando = signal(false);
@@ -89,6 +93,11 @@ export class Aprendizaje {
       error: () => this.learningContext.set(null),
     });
 
+    this.api.get<HomeContextResponse>('/alumno/home-context', { fresh }).subscribe({
+      next: (ctx) => this.homeContext.set(ctx),
+      error: () => this.homeContext.set(null),
+    });
+
     this.api.get<LearningMapResponse>('/alumno/aprender/mapa', { fresh }).subscribe({
       next: (mapa) => this.mapa.set(mapa),
       error: () => this.mapa.set(null),
@@ -128,6 +137,38 @@ export class Aprendizaje {
         porcentaje: lecciones.length ? Math.round((completadas * 100) / lecciones.length) : 0,
       },
     });
+  }
+
+  rutasDisponibles() {
+    return this.api.get<RutasAlumnoResponse>('/alumno/rutas');
+  }
+
+  siguienteItem() {
+    return this.api.get<{ nextItem: ExperienciaAprendizajeDto | null }>('/alumno/aprender/siguiente');
+  }
+
+  iniciarIntento(experienciaId: number, idempotencyKey: string) {
+    return this.api.post<{ id: number; uuid: string; numero: number; estado: string }>(
+      `/alumno/aprender/experiencias/${experienciaId}/intentos`,
+      { idempotency_key: idempotencyKey },
+    );
+  }
+
+  entregarEvidencia(intentoId: number, datos: { tipo: string; id_objetivo?: number | null; referencia?: string; metadatos?: Record<string, unknown> }) {
+    return this.api.post<{ id: number; estado: string; evidencias: unknown[] }>(
+      `/alumno/aprender/intentos/${intentoId}/evidencias`,
+      datos,
+    );
+  }
+
+  experiencia(id: number): ExperienciaAprendizajeDto | null {
+    const mapa = this.mapa();
+    if (!mapa) return null;
+    for (const hito of mapa.milestones) {
+      const exp = hito.experiences.find((e) => e.id === id);
+      if (exp) return exp;
+    }
+    return null;
   }
 
   private clasificar(problema: unknown): MotivoErrorAprendizaje {

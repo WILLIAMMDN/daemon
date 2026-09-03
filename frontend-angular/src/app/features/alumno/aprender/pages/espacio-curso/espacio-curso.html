@@ -7,16 +7,40 @@
     nzSubTitle="Este curso no está publicado para tu aula o ya no forma parte de tu matrícula."
   >
     <div nz-result-extra>
-      <a nz-button nzType="primary" routerLink="/alumno/aprender">Volver a mis cursos</a>
+      <a nz-button nzType="primary" routerLink="/alumno/aprender/mis-cursos">Volver a mis cursos</a>
     </div>
   </nz-result>
 } @else if (curso(); as curso) {
   <app-arc-page [titulo]="curso.titulo" [descripcion]="curso.descripcion" [migas]="migas()">
     <nav class="curso-nav" aria-label="Navegación contextual del curso">
-      <a class="curso-nav-item" [routerLink]="['/alumno/aprender/curso', curso.id]" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Resumen</a>
-      <a class="curso-nav-item" [routerLink]="['/alumno/aprender/curso', curso.id, 'ruta']" routerLinkActive="active">Ruta</a>
-      <a class="curso-nav-item" [routerLink]="['/alumno/aprender/curso', curso.id, 'contenido']" routerLinkActive="active">Contenido</a>
-      <a class="curso-nav-item" [routerLink]="['/alumno/aprender/curso', curso.id, 'progreso']" routerLinkActive="active">Progreso</a>
+      <a
+        class="curso-nav-item"
+        [routerLink]="['/alumno/aprender/curso', curso.id]"
+        [class.active]="subvista() === 'resumen'"
+      >
+        Resumen
+      </a>
+      <a
+        class="curso-nav-item"
+        [routerLink]="['/alumno/aprender/curso', curso.id, 'ruta']"
+        [class.active]="subvista() === 'ruta'"
+      >
+        Ruta
+      </a>
+      <a
+        class="curso-nav-item"
+        [routerLink]="['/alumno/aprender/curso', curso.id, 'contenido']"
+        [class.active]="subvista() === 'contenido'"
+      >
+        Contenido
+      </a>
+      <a
+        class="curso-nav-item"
+        [routerLink]="['/alumno/aprender/curso', curso.id, 'progreso']"
+        [class.active]="subvista() === 'progreso'"
+      >
+        Progreso
+      </a>
     </nav>
 
     @if (errorAccion(); as mensaje) {
@@ -26,118 +50,330 @@
       <nz-alert nzType="success" nzShowIcon [nzMessage]="mensaje" />
     }
 
-    <app-arc-section titulo="Resumen">
-      <dl class="resumen">
-        <div>
-          <dt>Estado</dt>
-          <dd>
-            <nz-tag
-              [nzColor]="curso.estado === 'completed' ? 'success' : curso.estado === 'inProgress' ? 'processing' : 'default'"
-            >{{ curso.estadoLabel }}</nz-tag>
-          </dd>
-        </div>
-        <div>
-          <dt>Lecciones completadas</dt>
-          <dd>{{ curso.leccionesCompletadas }} de {{ curso.totalLecciones }}</dd>
-        </div>
-        <div>
-          <dt>Unidades</dt>
-          <dd>{{ curso.unidades.length }}</dd>
-        </div>
-        @if (curso.duracionMinutos > 0) {
-          <div>
-            <dt>Duración estimada</dt>
-            <dd>{{ curso.duracionMinutos }} min</dd>
+    @switch (subvista()) {
+      @case ('resumen') {
+        <app-arc-section titulo="Resumen del curso">
+          <dl class="resumen">
+            <div>
+              <dt>Estado</dt>
+              <dd>
+                <nz-tag
+                  [nzColor]="curso.estado === 'completed' ? 'success' : curso.estado === 'inProgress' ? 'processing' : 'default'"
+                >
+                  {{ curso.estadoLabel }}
+                </nz-tag>
+              </dd>
+            </div>
+            <div>
+              <dt>Progreso</dt>
+              <dd>{{ curso.leccionesCompletadas }} de {{ curso.totalLecciones }} lecciones ({{ curso.porcentaje }}%)</dd>
+            </div>
+            <div>
+              <dt>Unidades</dt>
+              <dd>{{ curso.unidades.length }}</dd>
+            </div>
+            @if (curso.duracionMinutos > 0) {
+              <div>
+                <dt>Duración estimada</dt>
+                <dd>{{ curso.duracionMinutos }} min</dd>
+              </div>
+            }
+            @if (curso.nivel) {
+              <div>
+                <dt>Nivel</dt>
+                <dd>{{ curso.nivel }}</dd>
+              </div>
+            }
+            @if (aula(); as aula) {
+              <div>
+                <dt>Aula</dt>
+                <dd>{{ aula.nombre }}</dd>
+              </div>
+              @if (aula.periodo; as periodo) {
+                <div>
+                  <dt>Período</dt>
+                  <dd>{{ periodo.nombre }}</dd>
+                </div>
+              }
+            }
+          </dl>
+
+          <div class="resumen__progreso">
+            <span class="resumen__progreso-label">Avance general de lecciones</span>
+            <nz-progress [nzPercent]="curso.porcentaje" nzStrokeColor="var(--arc-green)" [nzStrokeWidth]="8" />
           </div>
-        }
-        @if (curso.nivel) {
-          <div>
-            <dt>Nivel</dt>
-            <dd>{{ curso.nivel }}</dd>
-          </div>
-        }
-      </dl>
 
-      @if (curso.siguienteLeccion; as siguiente) {
-        <p class="siguiente">Continúa por <strong>{{ siguiente.titulo }}</strong>.</p>
-      }
-    </app-arc-section>
-
-    <app-arc-section
-      titulo="Contenido"
-      descripcion="Unidades y lecciones publicadas por tu docente, en orden."
-    >
-      @for (unidad of curso.unidades; track unidad.id) {
-        <section class="unidad">
-          <header class="unidad__header">
-            <h3>{{ unidad.orden }}. {{ unidad.titulo }}</h3>
-            <span class="unidad__conteo">{{ unidad.leccionesCompletadas }} / {{ unidad.totalLecciones }}</span>
-          </header>
-
-          @if (unidad.descripcion) {
-            <p class="unidad__descripcion">{{ unidad.descripcion }}</p>
+          @if (siguienteAccion(); as accion) {
+            <div class="resumen__siguiente">
+              <div class="resumen__siguiente-info">
+                <span class="resumen__siguiente-eyebrow">{{ accion.tipoLabel }} siguiente</span>
+                <strong class="resumen__siguiente-titulo">{{ accion.titulo }}</strong>
+              </div>
+              <a nz-button nzType="primary" nzSize="large" [routerLink]="accion.ruta">
+                {{ accion.ctaTexto }}
+              </a>
+            </div>
           }
 
-          <ul class="lecciones">
-            @for (leccion of unidad.lecciones; track leccion.id) {
-              <li
-                class="leccion"
-                [id]="'leccion-' + leccion.id"
-                [class.leccion--completada]="leccion.progresoActual.estado === 'completed'"
-              >
-                <div class="leccion__texto">
-                  <strong>{{ leccion.titulo }}</strong>
-                  @if (leccion.resumen) {
-                    <p>{{ leccion.resumen }}</p>
-                  }
-                  <small>{{ leccion.duracion_minutos ? leccion.duracion_minutos + ' min' : 'Duración flexible' }}</small>
-                </div>
+          @if (proximaSesion(); as sesion) {
+            <div class="resumen__sesion">
+              <div>
+                <span class="resumen__sesion-label">Próxima sesión en vivo</span>
+                <strong class="resumen__sesion-titulo">{{ sesion.titulo }}</strong>
+              </div>
+              <a nz-button nzType="default" nzSize="small" routerLink="/alumno/agenda">
+                Ver en Agenda
+              </a>
+            </div>
+          }
 
-                <button
-                  nz-button
-                  type="button"
-                  [nzType]="leccion.progresoActual.estado === 'completed' ? 'default' : 'primary'"
-                  [disabled]="leccion.progresoActual.estado === 'completed' || guardando() !== null"
-                  (click)="completar(leccion)"
-                >
-                  @if (leccion.progresoActual.estado === 'completed') {
-                    Completada
-                  } @else if (guardando() === leccion.id) {
-                    Guardando…
-                  } @else {
-                    Marcar completada
-                  }
-                </button>
-              </li>
-            } @empty {
-              <li class="lecciones__vacio">Esta unidad todavía no tiene lecciones publicadas.</li>
-            }
-          </ul>
-        </section>
-      } @empty {
-        <p class="vacio">Este curso todavía no tiene unidades publicadas.</p>
+          @if (objetivosAcademicos().length > 0) {
+            <div class="resumen__objetivos">
+              <h3>Objetivos de aprendizaje del curso</h3>
+              <ul class="lista-objetivos">
+                @for (obj of objetivosAcademicos(); track obj.id) {
+                  <li class="item-objetivo" [class.item-objetivo--logrado]="obj.logrado">
+                    <span class="item-objetivo__estado">{{ obj.logrado ? '✓ Cubierto' : '○ Pendiente' }}</span>
+                    <span class="item-objetivo__texto">
+                      @if (obj.codigo) {
+                        <strong>[{{ obj.codigo }}]</strong>
+                      }
+                      {{ obj.descripcion }}
+                    </span>
+                  </li>
+                }
+              </ul>
+            </div>
+          }
+        </app-arc-section>
       }
-    </app-arc-section>
 
-    <app-arc-section
-      titulo="Progreso"
-      descripcion="Avance de lecciones y objetivos de aprendizaje con evidencia registrada."
-    >
-      <div class="progreso">
-        <div class="progreso__bloque">
-          <span class="progreso__etiqueta">Lecciones completadas</span>
-          <nz-progress [nzPercent]="curso.porcentaje" nzStrokeColor="var(--arc-green)" [nzStrokeWidth]="8" />
-          <small>{{ curso.leccionesCompletadas }} de {{ curso.totalLecciones }} lecciones</small>
-        </div>
+      @case ('ruta') {
+        <app-arc-section
+          titulo="Ruta de aprendizaje"
+          descripcion="Secuencia estructurada de hitos y experiencias de aprendizaje."
+        >
+          @if (hitos().length > 0) {
+            <div class="mapa-hitos">
+              @for (hito of hitos(); track hito.id) {
+                <article
+                  class="hito"
+                  [class.hito--completado]="hito.state === 'completed'"
+                  [class.hito--desbloqueado]="hito.state === 'unlocked'"
+                  [class.hito--bloqueado]="hito.state === 'locked'"
+                >
+                  <header class="hito__header">
+                    <div class="hito__orden">Hito {{ hito.order }}</div>
+                    <div class="hito__info">
+                      <h3 class="hito__titulo">{{ hito.title }}</h3>
+                      @if (hito.description) {
+                        <p class="hito__descripcion">{{ hito.description }}</p>
+                      }
+                    </div>
+                    <nz-tag
+                      [nzColor]="hito.state === 'completed' ? 'success' : hito.state === 'unlocked' ? 'processing' : 'default'"
+                    >
+                      {{ hito.state === 'completed' ? 'Completado' : hito.state === 'unlocked' ? 'Disponible' : 'Bloqueado' }}
+                    </nz-tag>
+                  </header>
 
-        @if (curso.objetivosTotales > 0) {
-          <div class="progreso__bloque">
-            <span class="progreso__etiqueta">Objetivos de aprendizaje cubiertos</span>
-            <nz-progress [nzPercent]="objetivosPorcentaje()" nzStrokeColor="var(--arc-blue)" [nzStrokeWidth]="8" />
-            <small>{{ curso.objetivosLogrados }} de {{ curso.objetivosTotales }} objetivos con evidencia</small>
+                  <div class="hito__experiencias">
+                    @for (exp of hito.experiences; track exp.id) {
+                      <div
+                        class="experiencia-item"
+                        [class.experiencia-item--completada]="exp.state === 'completed'"
+                        [class.experiencia-item--actual]="exp.state === 'current'"
+                        [class.experiencia-item--desbloqueada]="exp.state === 'unlocked'"
+                        [class.experiencia-item--bloqueada]="exp.state === 'locked'"
+                      >
+                        <div class="experiencia-item__tipo">
+                          <nz-tag nzColor="blue">{{ tipoEtiqueta(exp.type) }}</nz-tag>
+                          @if (exp.required) {
+                            <nz-tag nzColor="default">Obligatoria</nz-tag>
+                          }
+                        </div>
+
+                        <div class="experiencia-item__titulo">
+                          <strong>{{ exp.title }}</strong>
+                          @if (exp.objectives.length > 0) {
+                            <small class="experiencia-item__meta">{{ exp.objectives.length }} objetivo(s)</small>
+                          }
+                        </div>
+
+                        <div class="experiencia-item__estado">
+                          @if (exp.state === 'locked') {
+                            <nz-tag nzColor="default">Bloqueada</nz-tag>
+                          } @else if (exp.state === 'completed') {
+                            <nz-tag nzColor="success">Completada</nz-tag>
+                            <a
+                              nz-button
+                              nzType="default"
+                              nzSize="small"
+                              [routerLink]="['/alumno/aprender/curso', curso.id, 'experiencia', exp.id]"
+                            >
+                              Revisar
+                            </a>
+                          } @else if (exp.state === 'current') {
+                            <nz-tag nzColor="processing">En curso</nz-tag>
+                            <a
+                              nz-button
+                              nzType="primary"
+                              nzSize="small"
+                              [routerLink]="['/alumno/aprender/curso', curso.id, 'experiencia', exp.id]"
+                            >
+                              Continuar
+                            </a>
+                          } @else {
+                            <nz-tag nzColor="default">Disponible</nz-tag>
+                            <a
+                              nz-button
+                              nzType="default"
+                              nzSize="small"
+                              [routerLink]="['/alumno/aprender/curso', curso.id, 'experiencia', exp.id]"
+                            >
+                              Iniciar
+                            </a>
+                          }
+                        </div>
+                      </div>
+                    }
+                  </div>
+                </article>
+              }
+            </div>
+          } @else {
+            <app-estado-vacio
+              titulo="Ruta en preparación"
+              descripcion="Este curso se presenta a través de la lista estructurada de unidades y lecciones."
+            >
+              <a nz-button nzType="primary" [routerLink]="['/alumno/aprender/curso', curso.id, 'contenido']">
+                Ver contenido
+              </a>
+            </app-estado-vacio>
+          }
+        </app-arc-section>
+      }
+
+      @case ('contenido') {
+        <app-arc-section
+          titulo="Contenido del curso"
+          descripcion="Unidades y lecciones en orden curricular."
+        >
+          @for (unidad of curso.unidades; track unidad.id) {
+            <section class="unidad">
+              <header class="unidad__header">
+                <h3>{{ unidad.orden }}. {{ unidad.titulo }}</h3>
+                <span class="unidad__conteo">{{ unidad.leccionesCompletadas }} / {{ unidad.totalLecciones }} lecciones</span>
+              </header>
+
+              @if (unidad.descripcion) {
+                <p class="unidad__descripcion">{{ unidad.descripcion }}</p>
+              }
+
+              <ul class="lecciones">
+                @for (leccion of unidad.lecciones; track leccion.id) {
+                  <li
+                    class="leccion"
+                    [id]="'leccion-' + leccion.id"
+                    [class.leccion--completada]="leccion.progresoActual.estado === 'completed'"
+                  >
+                    <div class="leccion__texto">
+                      <div class="leccion__encabezado">
+                        <nz-tag nzColor="blue">Lección</nz-tag>
+                        <strong>{{ leccion.titulo }}</strong>
+                      </div>
+                      @if (leccion.resumen) {
+                        <p>{{ leccion.resumen }}</p>
+                      }
+                      <small>{{ leccion.duracion_minutos ? leccion.duracion_minutos + ' min' : 'Duración flexible' }}</small>
+                    </div>
+
+                    <div class="leccion__acciones">
+                      <button
+                        nz-button
+                        type="button"
+                        [nzType]="leccion.progresoActual.estado === 'completed' ? 'default' : 'primary'"
+                        [disabled]="leccion.progresoActual.estado === 'completed' || guardando() !== null"
+                        (click)="completar(leccion)"
+                      >
+                        @if (leccion.progresoActual.estado === 'completed') {
+                          Completada
+                        } @else if (guardando() === leccion.id) {
+                          Guardando…
+                        } @else {
+                          Marcar completada
+                        }
+                      </button>
+                    </div>
+                  </li>
+                } @empty {
+                  <li class="lecciones__vacio">Esta unidad todavía no tiene lecciones publicadas.</li>
+                }
+              </ul>
+            </section>
+          } @empty {
+            <p class="vacio">Este curso todavía no tiene unidades publicadas.</p>
+          }
+        </app-arc-section>
+      }
+
+      @case ('progreso') {
+        <app-arc-section
+          titulo="Progreso académico"
+          descripcion="Avance verificable de lecciones, hitos y objetivos académicos logrados."
+        >
+          <div class="progreso-academico">
+            <div class="progreso-metricas">
+              <div class="metrica-bloque">
+                <span class="metrica-bloque__label">Avance del curso</span>
+                <nz-progress [nzPercent]="curso.porcentaje" nzStrokeColor="var(--arc-green)" [nzStrokeWidth]="8" />
+                <span class="metrica-bloque__valor">{{ curso.porcentaje }}% completado</span>
+              </div>
+
+              <div class="metrica-bloque">
+                <span class="metrica-bloque__label">Lecciones completadas</span>
+                <span class="metrica-bloque__cifra">{{ curso.leccionesCompletadas }} / {{ curso.totalLecciones }}</span>
+                <span class="metrica-bloque__detalle">Lecciones con evidencia de avance</span>
+              </div>
+
+              @if (hitos().length > 0) {
+                <div class="metrica-bloque">
+                  <span class="metrica-bloque__label">Hitos superados</span>
+                  <span class="metrica-bloque__cifra">{{ hitosCompletadosConteo() }} / {{ hitos().length }}</span>
+                  <span class="metrica-bloque__detalle">Hitos académicos del mapa</span>
+                </div>
+              }
+
+              @if (objetivosAcademicos().length > 0) {
+                <div class="metrica-bloque">
+                  <span class="metrica-bloque__label">Objetivos cubiertos</span>
+                  <span class="metrica-bloque__cifra">{{ objetivosLogradosConteo() }} / {{ objetivosAcademicos().length }}</span>
+                  <span class="metrica-bloque__detalle">{{ objetivosPorcentaje() }}% de objetivos cubiertos</span>
+                </div>
+              }
+            </div>
+
+            @if (objetivosAcademicos().length > 0) {
+              <div class="progreso-objetivos">
+                <h3>Detalle de objetivos académicos trabajados</h3>
+                <ul class="lista-objetivos">
+                  @for (obj of objetivosAcademicos(); track obj.id) {
+                    <li class="item-objetivo" [class.item-objetivo--logrado]="obj.logrado">
+                      <span class="item-objetivo__estado">{{ obj.logrado ? '✓ Cubierto' : '○ En desarrollo' }}</span>
+                      <span class="item-objetivo__texto">
+                        @if (obj.codigo) {
+                          <strong>[{{ obj.codigo }}]</strong>
+                        }
+                        {{ obj.descripcion }}
+                      </span>
+                    </li>
+                  }
+                </ul>
+              </div>
+            }
           </div>
-        }
-      </div>
-    </app-arc-section>
+        </app-arc-section>
+      }
+    }
   </app-arc-page>
 }
