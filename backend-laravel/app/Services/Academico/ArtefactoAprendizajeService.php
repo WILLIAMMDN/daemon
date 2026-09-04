@@ -7,9 +7,10 @@ use App\Models\EvidenciaAprendizaje;
 use App\Models\IntentoAprendizaje;
 use App\Models\Usuario;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Symfony\Component\HttpFoundation\StreamedResponse;
+use Throwable;
 
 class ArtefactoAprendizajeService
 {
@@ -90,9 +91,19 @@ class ArtefactoAprendizajeService
 
         // Guardar archivo en disco privado
         $stream = fopen($archivo->getRealPath(), 'r');
-        Storage::disk($disk)->put($storagePath, $stream);
-        if (is_resource($stream)) {
-            fclose($stream);
+        try {
+            $guardado = is_resource($stream) && Storage::disk($disk)->put($storagePath, $stream);
+        } catch (Throwable) {
+            // No registrar la excepción del proveedor: puede contener URLs firmadas.
+            $guardado = false;
+        } finally {
+            if (is_resource($stream)) {
+                fclose($stream);
+            }
+        }
+
+        if (! $guardado) {
+            $this->almacenamientoNoDisponible('write_failed');
         }
 
         return ArtefactoAprendizaje::create([
@@ -166,6 +177,7 @@ class ArtefactoAprendizajeService
 
         // 3. Docente con alcance al aula/institución del intento
         if ($actor->rol === 'docente') {
+            abort_unless(filled($actor->id_aula), 403, 'El docente no tiene un aula asignada.');
             $intento = $artefacto->intento()->with('matricula.aula')->first();
             abort_unless($intento && $intento->matricula && $intento->matricula->aula, 403, 'No tienes acceso a este artefacto.');
 
@@ -285,14 +297,43 @@ class ArtefactoAprendizajeService
     private function diskParaArtefactos(): string
     {
         $diskConfig = (string) config('daemon.private_uploads_disk', 'supabase_private');
-        if (config()->has("filesystems.disks.{$diskConfig}")) {
-            if ($diskConfig === 'supabase_private' && blank(config('filesystems.disks.supabase_private.key'))) {
-                return 'local';
-            }
+        $produccion = app()->isProduction()
+            || config('environment-safety.environment_name') === 'production';
 
-            return $diskConfig;
+        // El disco local solo es una elección explícita de desarrollo/pruebas.
+        if ($diskConfig === 'local' && app()->environment(['local', 'testing'])
+            && ! $produccion && ! config('environment-safety.render_runtime', false)
+            && config('filesystems.disks.local.driver') === 'local'
+            && config('filesystems.disks.local.visibility') !== 'public') {
+            return 'local';
         }
 
-        return 'local';
+        if ($diskConfig !== 'supabase_private'
+            || config('filesystems.disks.supabase_private.driver') !== 's3'
+            || config('filesystems.disks.supabase_private.visibility') === 'public') {
+            $this->almacenamientoNoDisponible('invalid_private_disk');
+        }
+
+        foreach (['key', 'secret', 'endpoint', 'bucket'] as $campo) {
+            if (blank(config("filesystems.disks.supabase_private.{$campo}"))) {
+                $this->almacenamientoNoDisponible('incomplete_private_config');
+            }
+        }
+
+        if ($produccion && config('filesystems.disks.supabase_private.bucket') !== 'daemon-private') {
+            $this->almacenamientoNoDisponible('invalid_private_bucket');
+        }
+
+        if ($produccion && parse_url((string) config('filesystems.disks.supabase_private.endpoint'), PHP_URL_SCHEME) !== 'https') {
+            $this->almacenamientoNoDisponible('invalid_private_endpoint');
+        }
+
+        return 'supabase_private';
+    }
+
+    private function almacenamientoNoDisponible(string $motivo): never
+    {
+        Log::error('artifact_private_storage_unavailable', ['reason' => $motivo]);
+        abort(503, 'El almacenamiento privado de evidencias no está disponible. Inténtalo más tarde.');
     }
 }

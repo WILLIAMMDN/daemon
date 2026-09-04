@@ -2,13 +2,16 @@
 
 namespace Tests\Feature;
 
+use App\Models\ArtefactoAprendizaje;
 use App\Models\Aula;
 use App\Models\Institucion;
 use App\Models\MatriculaAula;
 use App\Models\Usuario;
 use Database\Seeders\IaOrigenTeensReferenceCourseSeeder;
+use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Tests\TestCase;
@@ -28,15 +31,25 @@ class ArcEvidenceArtifactSystemTest extends TestCase
     }
 
     private array $datosCurso;
+
     private Institucion $institucionA;
+
     private Institucion $institucionB;
+
     private Aula $aulaA;
+
     private Aula $aulaB;
+
     private Usuario $docenteA;
+
     private Usuario $docenteB;
+
     private Usuario $alumnoA;
+
     private Usuario $alumnoB;
+
     private MatriculaAula $matriculaA;
+
     private MatriculaAula $matriculaB;
 
     protected function setUp(): void
@@ -440,6 +453,144 @@ class ArcEvidenceArtifactSystemTest extends TestCase
         app('auth')->forgetGuards();
         $resAnon = $this->getJson("/api/v1/academico/artefactos/{$artId}/contenido");
         $resAnon->assertStatus(401);
+    }
+
+    public function test_production_rejects_incomplete_or_public_storage_without_writing_artifacts(): void
+    {
+        $intentoId = $this->iniciarIntentoArtefacto('storage-config');
+        $this->app->instance('env', 'production');
+        Log::spy();
+
+        $privado = [
+            'driver' => 's3', 'key' => 'synthetic-key', 'secret' => 'synthetic-secret',
+            'endpoint' => 'https://storage.example.test', 'bucket' => 'daemon-private',
+        ];
+        $casos = [
+            ['supabase_private', ['key' => '']],
+            ['supabase_private', ['secret' => '']],
+            ['supabase_private', ['endpoint' => '']],
+            ['supabase_private', ['bucket' => '']],
+            ['supabase_private', ['bucket' => 'daemon-assets']],
+            ['supabase_private', ['endpoint' => 'http://storage.example.test']],
+            ['supabase_private', ['driver' => 'local']],
+            ['supabase_private', ['visibility' => 'public']],
+            ['local', []], ['public', []], ['missing-disk', []],
+        ];
+
+        foreach ($casos as [$disk, $override]) {
+            config()->set('daemon.private_uploads_disk', $disk);
+            config()->set('filesystems.disks.supabase_private', array_replace($privado, $override));
+            $this->actingAs($this->alumnoA)
+                ->postJson("/api/v1/alumno/aprender/intentos/{$intentoId}/artefactos", [
+                    'archivo' => $this->crearPdfFake('synthetic.pdf'),
+                ])->assertStatus(503)
+                ->assertJsonPath('message', 'El almacenamiento privado de evidencias no está disponible. Inténtalo más tarde.');
+            $this->assertDatabaseCount('artefactos_aprendizaje', 0);
+            $this->assertSame([], Storage::disk('local')->allFiles());
+        }
+
+        Log::shouldHaveReceived('error')->withArgs(fn ($message, $context) => $message === 'artifact_private_storage_unavailable'
+            && array_keys($context) === ['reason']
+            && in_array($context['reason'], ['invalid_private_disk', 'incomplete_private_config', 'invalid_private_bucket', 'invalid_private_endpoint'], true)
+        )->times(count($casos));
+    }
+
+    public function test_private_storage_persists_metadata_and_controls_pdf_access(): void
+    {
+        $intentoId = $this->iniciarIntentoArtefacto('private-storage');
+        Storage::fake('supabase_private');
+        config()->set('daemon.private_uploads_disk', 'supabase_private');
+        config()->set('filesystems.disks.supabase_private', [
+            'driver' => 's3', 'key' => 'synthetic-key', 'secret' => 'synthetic-secret',
+            'endpoint' => 'https://storage.example.test', 'bucket' => 'daemon-private',
+        ]);
+        $this->app->instance('env', 'production');
+
+        $id = $this->actingAs($this->alumnoA)
+            ->postJson("/api/v1/alumno/aprender/intentos/{$intentoId}/artefactos", [
+                'archivo' => $this->crearPdfFake('synthetic.pdf'),
+            ])->assertSuccessful()->json('id');
+        $artefacto = ArtefactoAprendizaje::findOrFail($id);
+        $this->assertSame('supabase_private', $artefacto->disk);
+        $this->assertSame($this->alumnoA->id, $artefacto->id_usuario);
+        Storage::disk('supabase_private')->assertExists($artefacto->storage_path);
+        $this->assertSame([], Storage::disk('local')->allFiles());
+        $this->assertSame(hash('sha256', Storage::disk('supabase_private')->get($artefacto->storage_path)), $artefacto->checksum_sha256);
+
+        foreach ([[$this->alumnoA, 200], [$this->alumnoB, 403], [$this->docenteA, 200], [$this->docenteB, 403]] as [$actor, $status]) {
+            $res = $this->actingAs($actor)->getJson("/api/v1/academico/artefactos/{$id}/contenido")->assertStatus($status);
+            if ($status === 200) {
+                $res->assertHeader('Content-Type', 'application/pdf');
+            }
+        }
+        // Ni la misma institución ni la ausencia de aula otorgan acceso global.
+        $this->docenteB->forceFill(['id_institucion' => $this->institucionA->id])->save();
+        $this->actingAs($this->docenteB)->getJson("/api/v1/academico/artefactos/{$id}/contenido")->assertForbidden();
+        $this->docenteB->forceFill(['id_aula' => null])->save();
+        $this->actingAs($this->docenteB)->getJson("/api/v1/academico/artefactos/{$id}/contenido")->assertForbidden();
+        app('auth')->forgetGuards();
+        $this->getJson("/api/v1/academico/artefactos/{$id}/contenido")->assertUnauthorized();
+    }
+
+    public function test_failed_private_write_returns_controlled_error_without_metadata_or_local_fallback(): void
+    {
+        $intentoId = $this->iniciarIntentoArtefacto('storage-outage');
+        config()->set('daemon.private_uploads_disk', 'supabase_private');
+        config()->set('filesystems.disks.supabase_private', [
+            'driver' => 's3', 'key' => 'synthetic-key', 'secret' => 'synthetic-secret',
+            'endpoint' => 'https://storage.example.test', 'bucket' => 'daemon-private',
+        ]);
+        $this->app->instance('env', 'production');
+        Log::spy();
+        $adapter = \Mockery::mock(Filesystem::class);
+        $adapter->shouldReceive('put')->once()->andReturnFalse();
+        $adapter->shouldReceive('put')->once()->andThrow(new \RuntimeException('provider-url-with-synthetic-secret'));
+        Storage::set('supabase_private', $adapter);
+
+        for ($i = 0; $i < 2; $i++) {
+            $this->actingAs($this->alumnoA)
+                ->postJson("/api/v1/alumno/aprender/intentos/{$intentoId}/artefactos", [
+                    'archivo' => $this->crearPdfFake('synthetic.pdf'),
+                ])->assertStatus(503)->assertDontSee('provider-url-with-synthetic-secret');
+            $this->assertDatabaseCount('artefactos_aprendizaje', 0);
+            $this->assertSame([], Storage::disk('local')->allFiles());
+        }
+        Log::shouldHaveReceived('error')->with('artifact_private_storage_unavailable', ['reason' => 'write_failed'])->twice();
+    }
+
+    public function test_explicit_local_storage_remains_valid_only_in_local_and_testing(): void
+    {
+        $intentoId = $this->iniciarIntentoArtefacto('explicit-local');
+        config()->set('daemon.private_uploads_disk', 'local');
+        foreach (['local', 'testing'] as $environment) {
+            $this->app->instance('env', $environment);
+            $id = $this->actingAs($this->alumnoA)
+                ->postJson("/api/v1/alumno/aprender/intentos/{$intentoId}/artefactos", [
+                    'archivo' => $this->crearPdfFake('synthetic.pdf'),
+                ])->assertSuccessful()->json('id');
+            $artefacto = ArtefactoAprendizaje::findOrFail($id);
+            $this->assertSame('local', $artefacto->disk);
+            Storage::disk('local')->assertExists($artefacto->storage_path);
+        }
+        $this->app->instance('env', 'testing');
+        config()->set('environment-safety.render_runtime', true);
+        $this->actingAs($this->alumnoA)
+            ->postJson("/api/v1/alumno/aprender/intentos/{$intentoId}/artefactos", [
+                'archivo' => $this->crearPdfFake('synthetic.pdf'),
+            ])->assertStatus(503);
+        $this->assertDatabaseCount('artefactos_aprendizaje', 2);
+    }
+
+    private function iniciarIntentoArtefacto(string $clave): int
+    {
+        $this->completarE1();
+        $ruta = $this->datosCurso['ruta']->fresh(['hitos.experiencias.objetivos']);
+        $experiencia = $ruta->hitos->firstWhere('orden', 1)->experiencias->firstWhere('orden', 2);
+
+        return $this->actingAs($this->alumnoA)
+            ->postJson("/api/v1/alumno/aprender/experiencias/{$experiencia->id}/intentos", [
+                'idempotency_key' => $clave,
+            ])->assertSuccessful()->json('id');
     }
 
     public function test_teacher_review_queue_and_detail_renders_multimodal_artifacts(): void
