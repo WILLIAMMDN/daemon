@@ -52,9 +52,21 @@ fi
 
 php artisan daemon:check-environment-safety --operation=deploy --no-interaction
 
-if [ "${RUN_MIGRATIONS:-true}" = "true" ]; then
+# Autoridad de migracion: fail-closed. Si RUN_MIGRATIONS no esta declarada
+# explicitamente, el contenedor NO migra. Antes el valor por defecto era
+# `true`, asi que cualquier arranque de contenedor (incluido el despertar
+# tras el spin-down del plan free) podia mutar el esquema productivo sin
+# que nadie lo hubiera decidido.
+#
+# Con `autoDeployTrigger: off` en render.yaml, un commit nuevo solo llega a
+# este contenedor a traves de .github/workflows/deploy-production.yml, que
+# es aprobado por una persona y exige un punto de recuperacion verificado
+# antes de disparar el deploy. Esa es la unica autoridad de migracion.
+if [ "${RUN_MIGRATIONS:-false}" = "true" ]; then
     echo "[entrypoint] Ejecutando migraciones controladas..."
     php artisan migrate --force --no-interaction
+else
+    echo "[entrypoint] RUN_MIGRATIONS no es 'true': no se ejecutan migraciones."
 fi
 
 # Apache, la cola y el scheduler quedan bajo un unico PID 1 que propaga

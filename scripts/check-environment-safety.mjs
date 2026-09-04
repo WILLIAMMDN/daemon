@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { readFile } from "node:fs/promises";
+import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
@@ -348,14 +348,119 @@ export function inspectStaticDocuments(documents, options = {}) {
       "El workflow de PR intenta un deploy productivo (no preview channel) sobre Firebase.",
     );
   }
-  const productionWorkflow = documents.productionWorkflow ?? "";
-  if (
-    !productionWorkflow.includes("environment: production") ||
-    !productionWorkflow.includes("--project daemon-a41f8") ||
-    !productionWorkflow.includes("check-environment-safety.mjs --ci")
-  ) {
+  if (!prWorkflow.includes("--expires")) {
     issues.push(
-      "El deploy productivo no fija entorno, proyecto y precheck esperados.",
+      "El preview de PR no declara expiracion: los canales viejos agotan la cuota de Firebase.",
+    );
+  }
+
+  issues.push(...inspectDeploymentControl(documents));
+
+  return [...new Set(issues)];
+}
+
+/**
+ * Un merge y un despliegue productivo son dos operaciones distintas.
+ * Estas comprobaciones fallan si el repositorio vuelve a acoplarlas.
+ *
+ * @param {{
+ *   workflows?: Record<string, string>,
+ *   render?: string,
+ *   backendEntrypoint?: string,
+ * }} documents
+ * @returns {string[]}
+ */
+export function inspectDeploymentControl(documents) {
+  const issues = [];
+  const workflows = documents.workflows ?? {};
+
+  const despliegaProduccion = (source) =>
+    (source.includes("--project daemon-a41f8") &&
+      !source.includes("hosting:channel:deploy")) ||
+    source.includes("RENDER_DEPLOY_HOOK_URL");
+
+  // Solo interesa el bloque `on:` inicial: un `branches:` dentro de un paso
+  // posterior no es un disparador.
+  const cabecera = (source) => source.split(/^jobs:/m)[0];
+  const disparadoPorMerge = (source) => /^\s*push:/m.test(cabecera(source));
+
+  for (const [name, source] of Object.entries(workflows)) {
+    if (disparadoPorMerge(source) && despliegaProduccion(source)) {
+      issues.push(
+        `${name} despliega produccion en un push a main: un merge no puede desplegar.`,
+      );
+    }
+    // Verificar que las URLs retiradas siguen muertas es lectura; declarar
+    // daemonestudiante como destino de despliegue es una regresion.
+    if (/hosting:estudiante/.test(source)) {
+      issues.push(`${name} vuelve a declarar un destino daemonestudiante.`);
+    }
+  }
+
+  const produccion = workflows["deploy-production.yml"];
+  if (produccion === undefined) {
+    issues.push(
+      "Falta .github/workflows/deploy-production.yml: no hay despliegue productivo explicito.",
+    );
+    return [...new Set(issues)];
+  }
+
+  const encabezado = cabecera(produccion);
+  const requisitos = [
+    [
+      /^\s*workflow_dispatch:/m.test(encabezado),
+      "debe invocarse explicitamente (workflow_dispatch)",
+    ],
+    [!/^\s*push:/m.test(encabezado), "no puede dispararse por push"],
+    [
+      /group:\s*production-daemon/.test(produccion),
+      "debe serializarse con un grupo de concurrencia productivo",
+    ],
+    [
+      /cancel-in-progress:\s*false/.test(produccion),
+      "no puede cancelarse un despliegue productivo a mitad",
+    ],
+    [
+      /name:\s*production/.test(produccion),
+      "debe correr en el environment production",
+    ],
+    [
+      produccion.includes("--project daemon-a41f8"),
+      "debe fijar el proyecto Firebase productivo",
+    ],
+    [
+      produccion.includes("hosting:${HOSTING_TARGET}") ||
+        produccion.includes("hosting:arc"),
+      "debe publicar unicamente el target arc",
+    ],
+    [
+      produccion.includes("check-environment-safety.mjs --ci"),
+      "debe revalidar el contrato de entornos",
+    ],
+    [
+      produccion.includes("merge-base --is-ancestor"),
+      "debe validar que el SHA es alcanzable desde main",
+    ],
+    [
+      produccion.includes("supabase-backup.yml"),
+      "debe exigir un punto de recuperacion verificado antes de mutar",
+    ],
+  ];
+  for (const [cumple, mensaje] of requisitos) {
+    if (!cumple) issues.push(`deploy-production.yml ${mensaje}.`);
+  }
+
+  const render = documents.render ?? "";
+  if (render && !/autoDeployTrigger:\s*['"]?off['"]?/.test(render)) {
+    issues.push(
+      "render.yaml no apaga el auto-deploy productivo: un merge desplegaria el backend.",
+    );
+  }
+
+  const entrypoint = documents.backendEntrypoint ?? "";
+  if (entrypoint && !entrypoint.includes("${RUN_MIGRATIONS:-false}")) {
+    issues.push(
+      "El entrypoint migra por defecto: un arranque de contenedor no puede mutar el esquema productivo.",
     );
   }
 
@@ -384,8 +489,9 @@ async function readRepositoryDocuments() {
     composer: "backend-laravel/composer.json",
     firebaseRc: ".firebaserc",
     renderStaging: "render.staging.yaml",
+    render: "render.yaml",
+    backendEntrypoint: "backend-laravel/docker/entrypoint.sh",
     prWorkflow: ".github/workflows/firebase-hosting-pull-request.yml",
-    productionWorkflow: ".github/workflows/firebase-hosting-merge.yml",
   };
   const documents = {};
   for (const [name, relativePath] of Object.entries(files)) {
@@ -394,6 +500,20 @@ async function readRepositoryDocuments() {
       "utf8",
     );
   }
+
+  // El control de despliegue se evalua sobre TODOS los workflows: la
+  // garantia "un merge no despliega produccion" no puede depender de
+  // inspeccionar una lista de archivos escrita a mano.
+  const workflowsDir = path.join(repositoryRoot, ".github", "workflows");
+  documents.workflows = {};
+  for (const entry of await readdir(workflowsDir)) {
+    if (!entry.endsWith(".yml") && !entry.endsWith(".yaml")) continue;
+    documents.workflows[entry] = await readFile(
+      path.join(workflowsDir, entry),
+      "utf8",
+    );
+  }
+
   return documents;
 }
 

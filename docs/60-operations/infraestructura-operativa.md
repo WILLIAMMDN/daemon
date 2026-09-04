@@ -32,9 +32,14 @@ Firebase Hosting -> Angular -> Render/Laravel -> Supabase PostgreSQL
 
 ## Puertas de despliegue
 
-- Los PR ejecutan auditoria npm/composer, Jest con cobertura, PHPUnit con cobertura, build Angular, E2E publico y CodeQL.
-- Render queda declarado con `autoDeployTrigger: checksPass`.
-- Firebase publica `main` y ejecuta smoke despues del deploy.
+Un merge y un despliegue productivo son operaciones distintas. El
+procedimiento completo esta en
+[`despliegue-produccion.md`](despliegue-produccion.md).
+
+- Los PR ejecutan auditoria npm/composer, Jest con cobertura, PHPUnit con cobertura, build Angular, E2E publico y CodeQL, y publican un preview channel de Firebase que expira a los 7 dias.
+- Render queda declarado con `autoDeployTrigger: 'off'`: mergear a `main` no despliega el backend.
+- Un push a `main` solo ejecuta *Main is deployable*, que construye y valida el commit **sin publicar nada**.
+- La unica via de mutacion productiva es el workflow *Deploy production*, invocado explicitamente sobre un SHA exacto y aprobado en el environment `production`.
 - El workflow de staging es manual y falla si detecta identificadores de produccion.
 - Firebase admite OIDC/WIF con `GCP_WIF_PROVIDER` y `GCP_DEPLOY_SERVICE_ACCOUNT`. Mientras no se provisionen, conserva el secreto JSON como fallback para no interrumpir produccion.
 
@@ -42,8 +47,9 @@ Firebase Hosting -> Angular -> Render/Laravel -> Supabase PostgreSQL
 
 El entrypoint invalida caches cuando cambian variables, ejecuta
 `daemon:check-environment-safety --operation=deploy` y solo después ejecuta la
-migración incremental configurada. Luego entrega PID 1 a Supervisor. Supervisor
-mantiene:
+migración incremental **si `RUN_MIGRATIONS` vale explícitamente `true`**. El
+valor por defecto es `false`: un arranque de contenedor no declarado no muta el
+esquema. Luego entrega PID 1 a Supervisor. Supervisor mantiene:
 
 - Apache;
 - `queue:work` con reciclaje cada hora;
@@ -53,8 +59,9 @@ No existe una ruta HTTP para ejecutar migraciones.
 
 ## Deploy Hook de Render
 
-Ademas del auto-deploy por `checksPass`, el servicio `daemon` tiene un
-**Deploy Hook** que permite disparar un deploy manual sin entrar al dashboard.
+Con el auto-deploy apagado, el **Deploy Hook** del servicio `daemon` es el
+mecanismo canonico de despliegue: el workflow *Deploy production* lo invoca
+con `?ref=<SHA>` para publicar un commit exacto.
 
 - **Helper reutilizable:** `scripts/render-deploy-hook.sh`
   - `bash scripts/render-deploy-hook.sh` — dispara deploy del ultimo commit de main.
@@ -62,12 +69,12 @@ Ademas del auto-deploy por `checksPass`, el servicio `daemon` tiene un
 - **Credencial local (gitignored):** `scripts/render-deploy-hook.url` contiene la
   URL completa del hook. **Nunca committear ese archivo**: es una credencial que
   permite disparar deploys. Ya esta excluida en `.gitignore`.
-- **CI/entorno:** el script tambien lee la variable `RENDER_DEPLOY_HOOK_URL`
-  (o el secret de GitHub del mismo nombre) si el archivo local no existe.
+- **CI/entorno:** el script tambien lee la variable `RENDER_DEPLOY_HOOK_URL`.
+  En GitHub ese valor vive como **environment secret de `production`**, no
+  como secret de repositorio: solo el despliegue aprobado puede usarlo.
 - **Respuesta esperada:** `200` con `{"deploy":{"id":"dep-..."}}`.
 
-Si el auto-deploy de Render se desconecta de GitHub, este hook es la via de
-escape para actualizar el backend a `main` sin esperar a la integracion.
+El helper local es la via de escape si GitHub Actions no esta disponible.
 
 ## Backups
 
@@ -109,13 +116,16 @@ Ejecutar primero la simulacion. La eliminacion del origen publico se hace solo d
 
 ## Rollback
 
-1. Suspender nuevos despliegues.
-2. Restaurar la version anterior de Firebase Hosting desde su historial.
-3. Hacer rollback del deploy Render o desplegar el commit anterior.
-4. Si una migracion no es compatible hacia atras, restaurar el backup verificado en una base aislada y validar antes de cambiar el destino de la API.
-5. Ejecutar `scripts/smoke-produccion.ps1` y comprobar `/api/v1/salud`.
+Procedimiento detallado en
+[`despliegue-produccion.md`](despliegue-produccion.md#rollback). Resumen:
 
-No ejecutar `migrate:rollback` automaticamente en produccion: algunas migraciones transforman o cifran datos.
+1. Suspender nuevos despliegues (el grupo de concurrencia `production-daemon` ya los serializa).
+2. Restaurar la version anterior de Firebase Hosting desde su historial.
+3. Volver a ejecutar *Deploy production* con el SHA anterior conocido como bueno.
+4. Si una migracion no es compatible hacia atras, restaurar el backup verificado en una base aislada y validar antes de cambiar el destino de la API.
+5. Ejecutar `scripts/smoke-produccion.ps1 -ExpectedRelease <SHA>` y comprobar `/api/v1/salud`.
+
+No ejecutar `migrate:rollback` automaticamente en produccion: algunas migraciones transforman o cifran datos. `AppServiceProvider::boot()` ya prohibe `migrate:rollback`, `migrate:fresh`, `migrate:refresh`, `migrate:reset` y `db:wipe` cuando la conexion apunta a Supabase. La ventana de rollback se cierra en cuanto se crean datos nuevos sobre el esquema nuevo.
 
 ## Staging aislado
 

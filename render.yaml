@@ -4,7 +4,10 @@ services:
     runtime: docker
     plan: free
     branch: main
-    autoDeployTrigger: checksPass
+    # Un merge a main NO despliega produccion. El despliegue productivo
+    # es una decision explicita y aprobada: .github/workflows/deploy-production.yml
+    # dispara el deploy hook de Render fijando el SHA exacto.
+    autoDeployTrigger: 'off'
     dockerfilePath: ./backend-laravel/Dockerfile
     dockerContext: ./backend-laravel
     healthCheckPath: /api/v1/salud
