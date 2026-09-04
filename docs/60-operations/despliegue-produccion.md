@@ -236,9 +236,12 @@ deben completarse **antes** de mergear el PR que introduce este control:
    `daemon` (la misma que vive en `scripts/render-deploy-hook.url`). Es una
    credencial: no se commitea y solo debe existir en el environment
    `production`, no a nivel de repositorio.
-5. **GitHub -> Settings -> Branches -> `main` -> required status checks.**
-   El check `build_and_deploy` desaparece con el workflow de merge. Sustituirlo
-   por `deployable` si se quiere exigir en los PR.
+5. **Nada que cambiar en branch protection.** Los checks requeridos de `main`
+   (`backend`, `frontend`, `dependencies`, `codeql`) siguen intactos.
+   `build_and_deploy` desaparece con el workflow de merge, pero nunca fue un
+   check requerido. El nuevo check `deployable` corre sobre commits **ya en
+   `main`**, no sobre PRs: no sirve como puerta de merge, sirve como puerta de
+   despliegue (el preflight lo exige en verde).
 
 Ninguna de estas acciones se ha ejecutado desde este PR: modificar Render o
 las reglas del environment es una decision del owner.
