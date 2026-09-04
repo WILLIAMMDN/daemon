@@ -5,7 +5,10 @@ param(
     [int] $TimeoutSec = 60,
     [int] $RetryCount = 3,
     [int] $RetryDelaySec = 5,
-    [switch] $SkipBundleScan
+    [switch] $SkipBundleScan,
+    # SHA exacto que debe estar sirviendo produccion. Cuando se indica, el
+    # smoke deja de ser "responde algo" y pasa a ser "sirve ESTE commit".
+    [string] $ExpectedRelease = ''
 )
 
 $ErrorActionPreference = 'Stop'
@@ -96,6 +99,9 @@ if ($releaseStamp -eq '__DAEMON_RELEASE_SHA__') {
     throw "Frontend daemon-release is the unresolved build placeholder. The prebuild script (inject-release-stamp.mjs) did not run. Build is invalid."
 }
 Assert-Ok ($releaseStamp -match '^[0-9a-f]{40}$') ("Frontend daemon-release is a 40-char hex SHA-1 (got: '$releaseStamp').")
+if ($ExpectedRelease) {
+    Assert-Ok ($releaseStamp -eq $ExpectedRelease) "Frontend daemon-release matches the deployed SHA ($ExpectedRelease)."
+}
 Assert-Ok ((Get-HeaderValue $login.Headers 'X-Content-Type-Options') -eq 'nosniff') 'Frontend sends X-Content-Type-Options nosniff.'
 
 $contentSecurityPolicy = Get-HeaderValue $login.Headers 'Content-Security-Policy'
@@ -123,6 +129,10 @@ Assert-Ok ($healthJson.database.ok -eq $true) 'Backend health reports database o
 Assert-Ok ($healthJson.assets.public_url_configured -eq $true) 'Backend asset public URL is configured.'
 Assert-Ok ($healthJson.assets.cloud_url_configured -eq $true) 'Backend asset cloud URL is configured.'
 Assert-Ok ($healthJson.assets.uploads_disk -eq 'supabase') 'Backend uploads disk is Supabase.'
+Assert-Ok ($healthJson.assets.private_uploads_disk -eq 'supabase_private') 'Backend private uploads disk is the private Supabase bucket.'
+if ($ExpectedRelease) {
+    Assert-Ok ($healthJson.commit -eq $ExpectedRelease) "Backend commit matches the deployed SHA ($ExpectedRelease)."
+}
 
 $worker = Invoke-CheckedGet -Uri (Join-WebUrl $frontend '/ngsw-worker.js')
 Assert-Ok ($worker.StatusCode -eq 200) 'Angular service worker responds with HTTP 200.'

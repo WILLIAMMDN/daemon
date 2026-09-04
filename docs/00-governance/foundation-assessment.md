@@ -79,7 +79,7 @@ Riesgos P1 relevantes (fuera de la lista P0): contradicciones documentales hered
 | Realtime | Pusher + `laravel-echo` (Broadcast) | `composer.json`, `package.json`, `routes/channels.php` |
 | IA | OpenRouter (chatbot, `OpenRouterProvider`) y Ollama (legacy), asistente IA de cuentos vía Laravel | `app/Services/Chatbot/`, `CuentoV2` |
 | Deploy | Firebase Hosting (`daemonarc`, target `arc`) + Render Docker (`daemon-5vo1.onrender.com`) | `firebase.json`, `.firebaserc`, `render.yaml`, Dockerfile |
-| CI/CD | 9 workflows GitHub Actions (backend-tests, frontend-ci, firebase-hosting-merge, firebase-hosting-pull-request, staging-deploy, supabase-backup, production-monitor, keep-alive, security-audit) | `.github/workflows/` |
+| CI/CD | 9 workflows GitHub Actions (backend-tests, frontend-ci, deploy-production, firebase-hosting-pull-request, staging-deploy, supabase-backup, production-monitor, keep-alive, security-audit) | `.github/workflows/` |
 
 ## 4. Evaluación por dominio
 

@@ -1,0 +1,808 @@
+name: Deploy production
+
+# Despliegue productivo AUTOMATICO.
+#
+# Un commit en `main` protegida (PR obligatorio + checks requeridos en verde)
+# llega a produccion sin que nadie tenga que hacer clic: Render construye el
+# backend por su auto-deploy y este workflow comprueba que produccion sirve
+# realmente ese commit, publica `hosting:arc` y prueba el resultado.
+#
+# El invariante que se protege es "codigo sin probar no llega a main", no
+# "todo despliegue exige un clic humano". El owner interviene solo cuando algo
+# falla: CI en rojo, despliegue que no converge, migracion fallida o smoke en
+# rojo. Ninguna etapa de este workflow espera una aprobacion.
+#
+# `workflow_dispatch` no es la via normal: existe para redesplegar o hacer
+# rollback a un SHA exacto que ya esta en el historial de main.
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      commit_sha:
+        description: 'SHA completo (40 hex) alcanzable desde main. Vacio = HEAD de main. Usar para rollback.'
+        required: false
+        type: string
+      max_backup_age_hours:
+        description: 'Antiguedad maxima del punto de recuperacion verificado exigido antes de migrar.'
+        required: false
+        default: '48'
+        type: string
+
+# Los despliegues productivos se serializan: una migracion, un arranque de
+# Render, un deploy de Firebase y un smoke nunca deben cruzarse con otros.
+# `cancel-in-progress: false` para no abandonar produccion a medias.
+concurrency:
+  group: production-daemon
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  actions: read
+  checks: read
+
+env:
+  BACKEND_HEALTH_URL: https://daemon-5vo1.onrender.com/api/v1/salud
+  FRONTEND_URL: https://daemonarc.web.app
+
+jobs:
+  # ---------------------------------------------------------------------
+  # Resolucion del release: que SHA exacto se esta publicando, y si este run
+  # ya quedo obsoleto porque main avanzo mientras tanto.
+  # ---------------------------------------------------------------------
+  guard:
+    name: Resolve release
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      target_sha: ${{ steps.resolve.outputs.target_sha }}
+      superseded: ${{ steps.resolve.outputs.superseded }}
+    steps:
+      - name: Checkout main history
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Resolve target SHA
+        id: resolve
+        env:
+          REQUESTED: ${{ inputs.commit_sha }}
+          PUSH_SHA: ${{ github.sha }}
+          EVENT: ${{ github.event_name }}
+        run: |
+          set -euo pipefail
+          requested="$(printf '%s' "${REQUESTED:-}" | tr -d '[:space:]')"
+          if [ -z "$requested" ]; then
+            if [ "$EVENT" = "push" ]; then
+              target="$PUSH_SHA"
+            else
+              # Sin SHA explicito, main se congela a un valor inmutable AHORA:
+              # el resto del workflow trabaja sobre ese commit, no sobre "lo
+              # que main sea" media hora despues.
+              target="$(git rev-parse refs/remotes/origin/main)"
+            fi
+          else
+            case "$requested" in
+              [0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]) ;;
+              *) echo "::error::commit_sha debe ser un SHA de 40 caracteres hexadecimales en minuscula."; exit 1 ;;
+            esac
+            target="$requested"
+          fi
+
+          git cat-file -e "${target}^{commit}" 2>/dev/null \
+            || { echo "::error::El commit $target no existe en el repositorio."; exit 1; }
+
+          # Un commit de PR sin mergear no es ancestro de main. Esta puerta
+          # excluye SHAs arbitrarios, no revisados o de otra rama: solo se
+          # despliega historia que paso por la proteccion de main.
+          git merge-base --is-ancestor "$target" refs/remotes/origin/main \
+            || { echo "::error::El commit $target no es alcanzable desde main: no ha pasado por la proteccion de rama."; exit 1; }
+
+          head="$(git rev-parse refs/remotes/origin/main)"
+          superseded=false
+          if [ "$EVENT" = "push" ] && [ "$target" != "$head" ]; then
+            # Otro merge ya aterrizo en main. Publicar este commit ahora
+            # significaria retroceder produccion. El run del commit mas nuevo
+            # (encolado detras en el grupo de concurrencia) es el que manda.
+            superseded=true
+          fi
+
+          echo "target_sha=$target" >> "$GITHUB_OUTPUT"
+          echo "superseded=$superseded" >> "$GITHUB_OUTPUT"
+          {
+            echo "## Release"
+            echo
+            echo "| Campo | Valor |"
+            echo "| --- | --- |"
+            echo "| TARGET SHA | \`$target\` |"
+            echo "| HEAD de main | \`$head\` |"
+            echo "| Alcanzable desde main | PASS |"
+            echo "| Superado por un merge posterior | $superseded |"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          if [ "$superseded" = true ]; then
+            echo "::notice::main ya avanzo a ${head}; este run no publica nada."
+          fi
+
+  # ---------------------------------------------------------------------
+  # Preflight: solo lectura. Puertas automaticas, sin aprobacion humana.
+  # ---------------------------------------------------------------------
+  preflight:
+    name: Preflight
+    needs: guard
+    if: needs.guard.outputs.superseded != 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    outputs:
+      backend_sha_before: ${{ steps.state.outputs.backend_sha }}
+      frontend_sha_before: ${{ steps.state.outputs.frontend_sha }}
+      pending_migrations: ${{ steps.migrations.outputs.count }}
+    env:
+      TARGET_SHA: ${{ needs.guard.outputs.target_sha }}
+    steps:
+      - name: Checkout main history
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Require green CI for the target SHA
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT: ${{ github.event_name }}
+        run: |
+          set -euo pipefail
+          # La garantia "codigo sin probar no llega a main" la da la proteccion
+          # de rama: PR obligatorio y checks requeridos en verde. Sobre el
+          # commit ya en main vuelve a correr `backend` (backend-tests.yml), y
+          # este paso lo espera: es la puerta automatica que impide publicar un
+          # commit cuya suite de backend acaba de romperse en main.
+          deadline=$(( $(date -u +%s) + 1500 ))
+          while :; do
+            gh api "repos/${GITHUB_REPOSITORY}/commits/${TARGET_SHA}/check-runs?per_page=100" \
+              --jq '.check_runs[] | "\(.name)\t\(.status)\t\(.conclusion // "pendiente")"' > runs.tsv || true
+
+            # Ningun check puede estar en rojo. Se excluyen los check runs de
+            # este propio workflow: un reintento tras un deploy fallido no
+            # puede quedar bloqueado por su propio intento anterior.
+            failed="$(awk -F'\t' '
+              $1 == "Resolve release" || $1 == "Preflight" || $1 == "Deploy production" { next }
+              $1 == "Production smoke" || $1 == "Deployment record" { next }
+              $3 == "failure" || $3 == "timed_out" || $3 == "action_required" {
+                if (!seen[$1]++) out = out (out ? ", " : "") $1
+              }
+              END { print out }' runs.tsv)"
+            if [ -n "$failed" ]; then
+              echo "::error::Checks en rojo para ${TARGET_SHA}: ${failed}. No se publica."
+              exit 1
+            fi
+
+            if awk -F'\t' '$1 == "backend" && $3 == "success" { found = 1 } END { exit !found }' runs.tsv; then
+              echo "El check requerido 'backend' esta en verde para ${TARGET_SHA}."
+              echo "| CI verde (backend) | PASS |" >> "$GITHUB_STEP_SUMMARY"
+              break
+            fi
+
+            if [ ! -s runs.tsv ] && [ "$EVENT" != "push" ]; then
+              # Rollback a un commit antiguo: GitHub ya purgo sus check runs.
+              # El commit es ancestro de main, asi que paso la proteccion de
+              # rama cuando se mergeo; poder volver a el pesa mas.
+              echo "::warning::Sin check runs para ${TARGET_SHA} (historicos purgados). Se continua: el commit es alcanzable desde main."
+              echo "| CI verde (backend) | HISTORICO NO DISPONIBLE |" >> "$GITHUB_STEP_SUMMARY"
+              break
+            fi
+
+            if [ "$(date -u +%s)" -ge "$deadline" ]; then
+              echo "::error::El check requerido 'backend' no concluyo en verde para ${TARGET_SHA} en 25 min."
+              sed 's/^/- /' runs.tsv || true
+              exit 1
+            fi
+            sleep 20
+          done
+
+      - name: Verify production configuration contract at the target SHA
+        run: |
+          set -euo pipefail
+          render="$(git show "${TARGET_SHA}:render.yaml")"
+          firebaserc="$(git show "${TARGET_SHA}:.firebaserc")"
+          firebase="$(git show "${TARGET_SHA}:firebase.json")"
+
+          fail=0
+          require() {
+            if printf '%s' "$2" | grep -q "$1"; then
+              echo "PASS  $3"
+            else
+              echo "::error::$3"
+              fail=1
+            fi
+          }
+          reject() {
+            if printf '%s' "$2" | grep -qi "$1"; then
+              echo "::error::$3"
+              fail=1
+            else
+              echo "PASS  $3"
+            fi
+          }
+
+          require 'UPLOADS_DISK'      "$render"     'render.yaml declara UPLOADS_DISK.'
+          require 'supabase_private'  "$render"     'render.yaml declara PRIVATE_UPLOADS_DISK=supabase_private.'
+          require 'daemon-private'    "$render"     'render.yaml declara el bucket privado daemon-private.'
+          require 'daemonarc'         "$firebaserc" '.firebaserc mapea el target arc al sitio daemonarc.'
+          require '"target": "arc"'   "$firebase"   'firebase.json define el target de hosting arc.'
+          reject  'estudiante'        "$firebaserc" '.firebaserc no contiene ningun target estudiante.'
+          reject  'estudiante'        "$firebase"   'firebase.json no contiene ningun target estudiante.'
+
+          [ "$fail" -eq 0 ] || exit 1
+          echo "| Contrato de configuracion productiva | PASS |" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Validate environment contract at the target SHA
+        run: |
+          set -euo pipefail
+          git checkout --detach "${TARGET_SHA}"
+          node scripts/check-environment-safety.mjs --ci
+          echo "| Contrato de entornos | PASS |" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Read current production state
+        id: state
+        run: |
+          set -euo pipefail
+          health="$(curl -sS --max-time 60 --retry 3 --retry-delay 10 "$BACKEND_HEALTH_URL")"
+
+          db_ok="$(printf '%s' "$health" | jq -r '.database.ok')"
+          if [ "$db_ok" != "true" ]; then
+            echo "::error::La base de datos productiva no responde; se detiene antes de publicar nada."
+            exit 1
+          fi
+
+          backend_sha="$(printf '%s' "$health" | jq -r '.commit')"
+          frontend_sha="$(curl -sS --max-time 60 "${FRONTEND_URL}/login" \
+            | grep -o '<meta name="daemon-release" content="[^"]*"' \
+            | head -1 | sed -E 's/.*content="([^"]*)".*/\1/' || true)"
+          [ -n "$frontend_sha" ] || frontend_sha=desconocido
+
+          echo "backend_sha=$backend_sha" >> "$GITHUB_OUTPUT"
+          echo "frontend_sha=$frontend_sha" >> "$GITHUB_OUTPUT"
+          {
+            echo "| Conectividad de base de datos | PASS |"
+            echo "| Backend desplegado (antes) | \`$backend_sha\` |"
+            echo "| Frontend desplegado (antes) | \`$frontend_sha\` |"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Report migrations this release will apply
+        id: migrations
+        env:
+          BACKEND_SHA: ${{ steps.state.outputs.backend_sha }}
+        run: |
+          set -euo pipefail
+          dir=backend-laravel/database/migrations
+
+          # Las migraciones se aplican una vez por release en el arranque del
+          # contenedor (backend-laravel/docker/entrypoint.sh). Comparar el
+          # arbol desplegado con el objetivo da los nombres exactos sin usar
+          # ninguna credencial productiva.
+          if ! git cat-file -e "${BACKEND_SHA}^{commit}" 2>/dev/null; then
+            echo "::warning::El commit desplegado ${BACKEND_SHA} no esta en el historial local; no se puede calcular el delta de migraciones."
+            echo "count=unknown" >> "$GITHUB_OUTPUT"
+            echo "| Migraciones de este release | DESCONOCIDO (commit desplegado ausente) |" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+
+          git diff --name-only --diff-filter=A "${BACKEND_SHA}" "${TARGET_SHA}" -- "$dir" \
+            | xargs -r -n1 basename | sed -E 's/\.php$//' | sort > pending.txt
+          count="$(wc -l < pending.txt | tr -d ' ')"
+
+          echo "count=$count" >> "$GITHUB_OUTPUT"
+          echo "Migraciones que este release aplicara: $count"
+          cat pending.txt
+          {
+            echo "| Migraciones de este release | $count |"
+            if [ "$count" -gt 0 ]; then
+              echo
+              echo "<details><summary>Migraciones a aplicar</summary>"
+              echo
+              sed 's/^/- /' pending.txt
+              echo
+              echo "</details>"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Require a verified recovery point before mutating the schema
+        env:
+          GH_TOKEN: ${{ github.token }}
+          MAX_AGE_HOURS: ${{ inputs.max_backup_age_hours || '48' }}
+          PENDING: ${{ steps.migrations.outputs.count }}
+        run: |
+          set -euo pipefail
+          # El drill no solo hace pg_dump: restaura el dump en un PostgreSQL
+          # aislado y falla si la restauracion no funciona. Un run verde es,
+          # por tanto, un punto de recuperacion VERIFICADO.
+          #
+          # Es puerta bloqueante solo cuando este release muta el esquema (o
+          # cuando no se pudo calcular el delta). Un release sin migraciones
+          # se revierte redesplegando el commit anterior, asi que un drill
+          # atrasado no debe frenar un despliegue rutinario ni un hotfix.
+          if [ "$PENDING" = "0" ]; then
+            blocking=false
+          else
+            blocking=true
+          fi
+
+          fallo() {
+            if [ "$blocking" = true ]; then
+              echo "::error::$1"
+              echo "| Punto de recuperacion verificado | FAIL |" >> "$GITHUB_STEP_SUMMARY"
+              exit 1
+            fi
+            echo "::warning::$1"
+            echo "| Punto de recuperacion verificado | AVISO (release sin migraciones) |" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          }
+
+          run_json="$(gh api \
+            "repos/${GITHUB_REPOSITORY}/actions/workflows/supabase-backup.yml/runs?status=success&per_page=1" \
+            --jq '.workflow_runs[0] // empty')"
+          [ -n "$run_json" ] || fallo "No existe ningun run exitoso del drill de backup/restauracion."
+
+          run_id="$(printf '%s' "$run_json" | jq -r '.id')"
+          finished="$(printf '%s' "$run_json" | jq -r '.updated_at')"
+          age_h=$(( ( $(date -u +%s) - $(date -u -d "$finished" +%s) ) / 3600 ))
+          echo "Ultimo drill verificado: run ${run_id} (${finished}, hace ${age_h} h)"
+
+          [ "$age_h" -le "$MAX_AGE_HOURS" ] \
+            || fallo "El punto de recuperacion tiene ${age_h} h (maximo ${MAX_AGE_HOURS} h) y este release aplica ${PENDING} migracion(es). Ejecuta 'Supabase Backup and Restore Drill' y reintenta."
+
+          # Un run verde cuyo artefacto ya expiro no es un punto de
+          # recuperacion utilizable.
+          artifact="$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${run_id}/artifacts" \
+            --jq '[.artifacts[] | select(.name | startswith("daemon-postgres-")) | select(.expired == false)] | length')"
+          [ "$artifact" -ge 1 ] \
+            || fallo "El run ${run_id} no conserva un artefacto de base de datos vigente."
+
+          echo "| Punto de recuperacion verificado | PASS (run ${run_id}, ${age_h} h) |" >> "$GITHUB_STEP_SUMMARY"
+
+  # ---------------------------------------------------------------------
+  # Deploy: verifica el backend que Render ya desplego y publica hosting:arc.
+  # Sin required reviewers: el environment `production` aporta el registro de
+  # despliegue y el alcance de los secrets, no una aprobacion.
+  # ---------------------------------------------------------------------
+  deploy:
+    name: Deploy production
+    needs: [guard, preflight]
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    environment:
+      name: production
+      url: https://daemonarc.web.app
+    permissions:
+      contents: read
+      id-token: write
+    outputs:
+      superseded: ${{ steps.backend_health.outputs.superseded }}
+    env:
+      TARGET_SHA: ${{ needs.guard.outputs.target_sha }}
+    steps:
+      - name: Checkout target SHA
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v4
+        with:
+          ref: ${{ needs.guard.outputs.target_sha }}
+          fetch-depth: 0
+
+      # ---- Frontend build: antes de tocar produccion ------------------
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: frontend-angular/package-lock.json
+
+      - name: Pin npm version
+        run: npm install --global npm@11.16.0 --no-audit --no-fund
+
+      - name: Install frontend dependencies
+        run: npm ci --ignore-scripts --no-audit --no-fund --legacy-peer-deps
+        working-directory: frontend-angular
+
+      - name: Audit frontend dependencies
+        run: npm audit --omit=dev --audit-level=high
+        working-directory: frontend-angular
+
+      - name: Validate production environment contract
+        run: node scripts/check-environment-safety.mjs --ci
+
+      - name: Verify no user uploads leak into the public build
+        run: npm run check:public-assets
+        working-directory: frontend-angular
+
+      - name: Stamp app shell release with the target SHA
+        working-directory: frontend-angular
+        env:
+          DAEMON_RELEASE_SHA: ${{ needs.guard.outputs.target_sha }}
+        run: |
+          node -e '
+            const fs = require("fs");
+            const path = "src/index.html";
+            const html = fs.readFileSync(path, "utf8");
+            const sha = process.env.DAEMON_RELEASE_SHA;
+            if (!/^[0-9a-f]{40}$/.test(sha || "")) {
+              throw new Error("DAEMON_RELEASE_SHA is not a 40-char SHA; cannot stamp release");
+            }
+            const stamped = html.replace(
+              /(<meta name="daemon-release" content=")[^"]+("[^>]*>)/,
+              `$1${sha}$2`
+            );
+            if (stamped === html) {
+              throw new Error("daemon-release meta tag not found in src/index.html");
+            }
+            fs.writeFileSync(path, stamped);
+            console.log("Stamped daemon-release with " + sha);
+          '
+
+      - name: Build frontend
+        run: npm run build
+        working-directory: frontend-angular
+
+      # ---- Backend: verificar el despliegue automatico de Render -------
+      - name: Wait until production serves the target SHA
+        id: backend_health
+        env:
+          EVENT: ${{ github.event_name }}
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
+          set -euo pipefail
+          # Render despliega este commit por su cuenta (auto-deploy sobre main).
+          # Aqui NO se ordena el despliegue: se comprueba que ocurrio. Que
+          # Render acepte un commit no es un despliegue; la aceptacion es que
+          # /salud reporte el SHA pedido con la base viva, lo que implica que
+          # el entrypoint arranco y sus migraciones salieron bien.
+          #
+          # El deploy hook es OPCIONAL y solo se usa en dos casos:
+          #   - workflow_dispatch (redeploy o rollback a un SHA que no es HEAD
+          #     de main): el auto-deploy nunca lo desplegaria;
+          #   - el backend no converge en ~8 min: si el auto-deploy estuviera
+          #     apagado en el dashboard, el hook lo desatasca sin intervencion.
+          # Sin el secret el workflow sigue esperando igual.
+          nudged=false
+          nudge() {
+            if [ "$nudged" = true ]; then return 0; fi
+            nudged=true
+            if [ -z "${RENDER_DEPLOY_HOOK_URL:-}" ]; then
+              echo "::warning::$1, y no hay RENDER_DEPLOY_HOOK_URL configurado. Se sigue esperando al auto-deploy de Render."
+              return 0
+            fi
+            # La URL es una credencial: nunca se imprime.
+            case "$RENDER_DEPLOY_HOOK_URL" in
+              *\?*) url="${RENDER_DEPLOY_HOOK_URL}&ref=${TARGET_SHA}" ;;
+              *)    url="${RENDER_DEPLOY_HOOK_URL}?ref=${TARGET_SHA}" ;;
+            esac
+            code="$(curl -sS -o /dev/null -w '%{http_code}' -X POST "$url" || echo 000)"
+            echo "$1: deploy hook de Render fijando ?ref=${TARGET_SHA} -> HTTP ${code}"
+            case "$code" in
+              200|201|202) ;;
+              *) echo "::warning::El deploy hook respondio ${code}; se sigue esperando al auto-deploy." ;;
+            esac
+          }
+
+          if [ "$EVENT" = "workflow_dispatch" ]; then
+            nudge "Despliegue solicitado explicitamente"
+          fi
+
+          for attempt in $(seq 1 90); do
+            body="$(curl -sS --max-time 30 "$BACKEND_HEALTH_URL" || true)"
+            commit="$(printf '%s' "$body" | jq -r '.commit // ""' 2>/dev/null || echo '')"
+            ok="$(printf '%s' "$body" | jq -r '.ok // false' 2>/dev/null || echo false)"
+            db="$(printf '%s' "$body" | jq -r '.database.ok // false' 2>/dev/null || echo false)"
+            echo "[$attempt/90] commit=${commit:-sin-respuesta} ok=$ok database=$db"
+
+            if [ "$commit" = "$TARGET_SHA" ] && [ "$ok" = "true" ] && [ "$db" = "true" ]; then
+              printf '%s' "$body" > health.json
+              echo "superseded=false" >> "$GITHUB_OUTPUT"
+              echo "Backend sirviendo $TARGET_SHA."
+              exit 0
+            fi
+
+            # Si main avanzo mientras esperabamos, publicar este commit seria
+            # retroceder produccion. El run del commit nuevo, encolado detras
+            # en el grupo de concurrencia, es el que debe publicar.
+            if [ "$EVENT" = "push" ]; then
+              git fetch --quiet origin main || true
+              # Si la referencia no esta disponible se asume "no superado" y se
+              # sigue esperando: nunca se salta un despliegue por una duda.
+              head="$(git rev-parse --verify --quiet refs/remotes/origin/main || echo "$TARGET_SHA")"
+              if [ "$head" != "$TARGET_SHA" ]; then
+                echo "superseded=true" >> "$GITHUB_OUTPUT"
+                echo "::notice::main avanzo a ${head} durante la espera; este run no publica nada."
+                {
+                  echo "## Release superado"
+                  echo
+                  echo "main avanzo a \`${head}\` mientras se esperaba a \`${TARGET_SHA}\`."
+                  echo "Este run no publica nada; lo hace el run del commit mas reciente."
+                } >> "$GITHUB_STEP_SUMMARY"
+                exit 0
+              fi
+            fi
+
+            if [ "$attempt" -eq 24 ]; then
+              nudge "El backend no ha llegado a ${TARGET_SHA} en ~8 min"
+            fi
+            sleep 20
+          done
+
+          echo "::error::El backend no alcanzo ${TARGET_SHA} con salud correcta en ~30 min. Revisa el log de Render (build o migracion fallida) y el runbook de despliegue."
+          exit 1
+
+      - name: Assert backend health contract
+        if: steps.backend_health.outputs.superseded != 'true'
+        run: |
+          set -euo pipefail
+          fail=0
+          assert() {
+            actual="$(jq -r "$2" health.json)"
+            if [ "$actual" = "$3" ]; then
+              echo "PASS  $1 = $actual"
+            else
+              echo "::error::$1 = '$actual' (esperado '$3')"
+              fail=1
+            fi
+          }
+          assert 'ok'                            '.ok'                             'true'
+          assert 'database.ok'                   '.database.ok'                    'true'
+          assert 'commit'                        '.commit'                         "$TARGET_SHA"
+          assert 'assets.public_url_configured'  '.assets.public_url_configured'   'true'
+          assert 'assets.cloud_url_configured'   '.assets.cloud_url_configured'    'true'
+          assert 'assets.uploads_disk'           '.assets.uploads_disk'            'supabase'
+          assert 'assets.private_uploads_disk'   '.assets.private_uploads_disk'    'supabase_private'
+          [ "$fail" -eq 0 ] || exit 1
+
+      # ---- Frontend: publicar hosting:arc -----------------------------
+      - name: Authenticate to Google Cloud with OIDC
+        if: ${{ steps.backend_health.outputs.superseded != 'true' && vars.GCP_WIF_PROVIDER != '' && vars.GCP_DEPLOY_SERVICE_ACCOUNT != '' }}
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3
+        with:
+          workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER }}
+          service_account: ${{ vars.GCP_DEPLOY_SERVICE_ACCOUNT }}
+
+      - name: Configure Firebase JSON credentials fallback
+        if: ${{ steps.backend_health.outputs.superseded != 'true' && (vars.GCP_WIF_PROVIDER == '' || vars.GCP_DEPLOY_SERVICE_ACCOUNT == '') }}
+        env:
+          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_DAEMON_A41F8 }}
+        run: |
+          test -n "$FIREBASE_SERVICE_ACCOUNT_JSON" || { echo 'Missing Firebase credentials'; exit 1; }
+          printf '%s' "$FIREBASE_SERVICE_ACCOUNT_JSON" > "$RUNNER_TEMP/firebase-service-account.json"
+          echo "GOOGLE_APPLICATION_CREDENTIALS=$RUNNER_TEMP/firebase-service-account.json" >> "$GITHUB_ENV"
+
+      - name: Deploy to Firebase Hosting
+        if: steps.backend_health.outputs.superseded != 'true'
+        shell: bash
+        run: |
+          set +e
+          # `arc` es el unico destino productivo: daemonestudiante esta
+          # retirado y no vuelve. Proyecto y target literales son la
+          # superficie que audita scripts/check-environment-safety.mjs.
+          npx firebase-tools@15.22.3 deploy --only hosting:arc --project daemon-a41f8 --non-interactive 2>&1 | tee firebase-deploy.log
+          status=${PIPESTATUS[0]}
+
+          if [ "$status" -ne 0 ]; then
+            if grep -q 'is the current active version' firebase-deploy.log; then
+              echo "Firebase Hosting already serves this exact version; treating no-op deploy as success."
+              exit 0
+            fi
+
+            grep -v '^npm warn' firebase-deploy.log \
+              | tail -n 120 \
+              | perl -pe 's/\e\[[0-9;]*[mK]//g' \
+              | sed -E 's/[A-Za-z0-9_\/+=-]{120,}/[redacted]/g' \
+              > firebase-deploy-tail.log
+
+            {
+              echo "Firebase deploy failed. Last sanitized lines:"
+              echo '```'
+              cat firebase-deploy-tail.log
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+
+            message=$(tr '\n' ' ' < firebase-deploy-tail.log | cut -c1-6000)
+            echo "::error title=Firebase deploy failed::$message"
+            exit "$status"
+          fi
+
+      - name: Verify the live release matches the target SHA
+        if: steps.backend_health.outputs.superseded != 'true'
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 20); do
+            code="$(curl -sS -o page.html -w '%{http_code}' --max-time 30 "${FRONTEND_URL}/login" || echo 000)"
+            release="$(grep -o '<meta name="daemon-release" content="[^"]*"' page.html \
+              | head -1 | sed -E 's/.*content="([^"]*)".*/\1/' || true)"
+            echo "[$attempt/20] http=$code release=${release:-ninguno}"
+            if [ "$code" = "200" ] && [ "$release" = "$TARGET_SHA" ]; then
+              echo "daemonarc.web.app sirviendo $TARGET_SHA."
+              exit 0
+            fi
+            sleep 15
+          done
+          echo "::error::daemonarc.web.app no expone daemon-release=${TARGET_SHA}."
+          exit 1
+
+  # ---------------------------------------------------------------------
+  # Smoke productivo: solo lectura, sin datos academicos sinteticos.
+  # ---------------------------------------------------------------------
+  smoke:
+    name: Production smoke
+    needs: [guard, preflight, deploy]
+    if: needs.deploy.outputs.superseded != 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      TARGET_SHA: ${{ needs.guard.outputs.target_sha }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v4
+        with:
+          ref: ${{ needs.guard.outputs.target_sha }}
+
+      - name: Frontend and backend smoke
+        shell: pwsh
+        run: ./scripts/smoke-produccion.ps1 -ExpectedRelease $env:TARGET_SHA
+
+      - name: Authentication surface contracts
+        run: |
+          set -euo pipefail
+          api="https://daemon-5vo1.onrender.com/api/v1"
+          fail=0
+
+          # Guardia de sesion viva: sin token debe responder 401, no 500.
+          code="$(curl -sS -o /dev/null -w '%{http_code}' --max-time 30 "${api}/auth/yo")"
+          if [ "$code" = "401" ]; then echo "PASS  GET /auth/yo sin token = 401"; else
+            echo "::error::GET /auth/yo devolvio $code (esperado 401)"; fail=1; fi
+
+          # El intercambio de identidad Firebase debe seguir alcanzable y con
+          # CORS correcto. Preflight OPTIONS no muta nada.
+          origin="https://daemonarc.web.app"
+          allow="$(curl -sS -o /dev/null -D - --max-time 30 -X OPTIONS "${api}/auth/firebase" \
+            -H "Origin: ${origin}" \
+            -H 'Access-Control-Request-Method: POST' \
+            -H 'Access-Control-Request-Headers: content-type' \
+            | tr -d '\r' | awk -F': ' 'tolower($1)=="access-control-allow-origin"{print $2}')"
+          if [ "$allow" = "$origin" ]; then echo "PASS  CORS de /auth/firebase permite $origin"; else
+            echo "::error::CORS de /auth/firebase devolvio '$allow' (esperado $origin)"; fail=1; fi
+
+          [ "$fail" -eq 0 ] || exit 1
+
+      - name: Canonical portal routes load
+        run: |
+          set -euo pipefail
+          fail=0
+          # El SPA reescribe todas las rutas a index.html: se verifica que la
+          # aplicacion carga y expone el release correcto en cada portal.
+          for route in "/" "/login" "/alumno" "/docente" "/docente/cursos"; do
+            body="$(curl -sS --max-time 30 "https://daemonarc.web.app${route}")"
+            release="$(printf '%s' "$body" \
+              | grep -o '<meta name="daemon-release" content="[^"]*"' \
+              | head -1 | sed -E 's/.*content="([^"]*)".*/\1/' || true)"
+            if [ "$release" = "$TARGET_SHA" ]; then
+              echo "PASS  ${route}"
+            else
+              echo "::error::${route} expone release '${release}' (esperado ${TARGET_SHA})"
+              fail=1
+            fi
+          done
+          [ "$fail" -eq 0 ] || exit 1
+
+      - name: Verify retired student asset URLs stay unavailable
+        run: node scripts/verify-retired-public-assets.mjs
+
+  # ---------------------------------------------------------------------
+  # Registro: estado real del sistema, tambien (y sobre todo) si algo fallo.
+  # ---------------------------------------------------------------------
+  record:
+    name: Deployment record
+    needs: [guard, preflight, deploy, smoke]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Capture live system state
+        id: live
+        run: |
+          set -euo pipefail
+          backend="$(curl -sS --max-time 60 https://daemon-5vo1.onrender.com/api/v1/salud \
+            | jq -r '.commit // "desconocido"' || echo desconocido)"
+          frontend="$(curl -sS --max-time 60 https://daemonarc.web.app/login \
+            | grep -o '<meta name="daemon-release" content="[^"]*"' \
+            | head -1 | sed -E 's/.*content="([^"]*)".*/\1/' || true)"
+          [ -n "$backend" ] || backend=desconocido
+          [ -n "$frontend" ] || frontend=desconocido
+          echo "backend=$backend" >> "$GITHUB_OUTPUT"
+          echo "frontend=$frontend" >> "$GITHUB_OUTPUT"
+
+      - name: Write deployment record
+        env:
+          TARGET_SHA: ${{ needs.guard.outputs.target_sha }}
+          SUPERSEDED: ${{ needs.guard.outputs.superseded == 'true' || needs.deploy.outputs.superseded == 'true' }}
+          PENDING: ${{ needs.preflight.outputs.pending_migrations }}
+          GUARD: ${{ needs.guard.result }}
+          PREFLIGHT: ${{ needs.preflight.result }}
+          DEPLOY: ${{ needs.deploy.result }}
+          SMOKE: ${{ needs.smoke.result }}
+          BACKEND_NOW: ${{ steps.live.outputs.backend }}
+          FRONTEND_NOW: ${{ steps.live.outputs.frontend }}
+        run: |
+          set -euo pipefail
+          backend_ok=false; [ "$BACKEND_NOW" = "$TARGET_SHA" ] && backend_ok=true
+          frontend_ok=false; [ "$FRONTEND_NOW" = "$TARGET_SHA" ] && frontend_ok=true
+
+          if [ "$SUPERSEDED" = "true" ]; then
+            rollback='NO (release superado por un merge posterior)'
+          elif [ "$backend_ok" = true ] && [ "$frontend_ok" = true ]; then
+            rollback='NO'
+            if [ "$SMOKE" != "success" ]; then rollback='DECISION HUMANA (smoke no verde)'; fi
+          elif [ "$backend_ok" = false ] && [ "$frontend_ok" = false ]; then
+            rollback='NO (produccion sin cambios)'
+          else
+            rollback='DECISION HUMANA (despliegue parcial)'
+          fi
+
+          # Si el backend avanzo, las migraciones del delta ya se aplicaron en
+          # el arranque del contenedor; si no, no se aplico ninguna.
+          if [ "$SUPERSEDED" = "true" ]; then
+            migration_state='NO EVALUADO (release superado)'
+          elif [ "$backend_ok" = true ] && [ "$PENDING" = "0" ]; then
+            migration_state='SIN MIGRACIONES EN ESTE RELEASE'
+          elif [ "$backend_ok" = true ]; then
+            migration_state="APLICADAS (${PENDING} migraciones del delta)"
+          elif [ "$BACKEND_NOW" = "desconocido" ]; then
+            migration_state='DESCONOCIDO (backend no responde)'
+          else
+            migration_state='SIN CAMBIOS (el backend sigue en el commit anterior)'
+          fi
+
+          {
+            echo "## Registro de despliegue"
+            echo
+            echo "| Campo | Valor |"
+            echo "| --- | --- |"
+            echo "| TARGET SHA | \`${TARGET_SHA}\` |"
+            echo "| Disparador | ${GITHUB_EVENT_NAME} |"
+            echo "| Actor | @${GITHUB_ACTOR} |"
+            echo "| Timestamp UTC | $(date -u +%Y-%m-%dT%H:%M:%SZ) |"
+            echo "| Resolucion | ${GUARD} |"
+            echo "| Preflight | ${PREFLIGHT} |"
+            echo "| Despliegue | ${DEPLOY} |"
+            echo "| Smoke | ${SMOKE} |"
+            echo
+            echo "### Estado real del sistema"
+            echo
+            echo "| Campo | Valor |"
+            echo "| --- | --- |"
+            echo "| CURRENT BACKEND SHA | \`${BACKEND_NOW}\` |"
+            echo "| CURRENT FRONTEND SHA | \`${FRONTEND_NOW}\` |"
+            echo "| DATABASE MIGRATION STATE | ${migration_state} |"
+            echo "| ROLLBACK REQUIRED | ${rollback} |"
+            echo
+            echo "Procedimiento: [runbook de despliegue productivo](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/blob/main/docs/60-operations/despliegue-produccion.md)."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Fail when any production stage failed
+        env:
+          SUPERSEDED: ${{ needs.guard.outputs.superseded == 'true' || needs.deploy.outputs.superseded == 'true' }}
+          GUARD: ${{ needs.guard.result }}
+          PREFLIGHT: ${{ needs.preflight.result }}
+          DEPLOY: ${{ needs.deploy.result }}
+          SMOKE: ${{ needs.smoke.result }}
+        run: |
+          set -euo pipefail
+          # Un release superado por un merge posterior no es un fallo: sus
+          # etapas quedan saltadas a proposito.
+          if [ "$SUPERSEDED" = "true" ]; then
+            echo "Release superado por un merge posterior; nada que publicar."
+            exit 0
+          fi
+          for stage in "$GUARD" "$PREFLIGHT" "$DEPLOY" "$SMOKE"; do
+            if [ "$stage" != "success" ]; then
+              echo "::error::El despliegue productivo no completo todas sus etapas. Revisa el registro de despliegue."
+              exit 1
+            fi
+          done
+          echo "Despliegue productivo completo y verificado."
