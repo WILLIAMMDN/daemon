@@ -1,0 +1,30 @@
+{
+  "name": "@daemon/course-mcp",
+  "version": "1.0.0",
+  "private": true,
+  "description": "DAEMON Course MCP — canonical course authoring over the DAEMON Authoring API.",
+  "license": "MIT",
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "bin": { "daemon-course-mcp": "dist/index.js" },
+  "main": "dist/index.js",
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "acceptance": "node scripts/run-acceptance.mjs",
+    "acceptance:direct": "node scripts/acceptance.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}

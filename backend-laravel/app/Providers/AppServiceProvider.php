@@ -6,6 +6,7 @@ use App\Contracts\Cuento\CuentoDocumentoGateway;
 use App\Contracts\Cuento\GeneradorTextoCuento;
 use App\Services\Cuento\FirestoreRestCuentoGateway;
 use App\Services\Cuento\ProveedorChatCuentoAdapter;
+use App\Support\Autoria\AlcanceAutoria;
 use App\Support\EnvironmentSafety;
 use Illuminate\Database\Console\Migrations\FreshCommand;
 use Illuminate\Database\Console\Migrations\RefreshCommand;
@@ -15,6 +16,7 @@ use Illuminate\Database\Console\WipeCommand;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Sanctum\Sanctum;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -46,6 +48,15 @@ class AppServiceProvider extends ServiceProvider
         ]);
 
         Model::preventLazyLoading(! app()->isProduction());
+
+        // `sanctum.expiration` es una ventana deslizante pensada para la sesion
+        // de navegador. Un token de servicio headless (MCP) no tiene sesion: se
+        // rige por su propio `expires_at`, que el comando de emision siempre
+        // fija. Sigue siendo finito, hasheado y revocable; los tokens
+        // interactivos conservan exactamente la regla anterior.
+        Sanctum::authenticateAccessTokensUsing(
+            static fn ($token, bool $esValido): bool => AlcanceAutoria::esTokenDeServicioValido($token) ?: $esValido,
+        );
 
         // Una etiqueta APP_ENV incorrecta nunca debe habilitar comandos que
         // destruyen una base Supabase. Las migraciones incrementales siguen
