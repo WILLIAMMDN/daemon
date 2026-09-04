@@ -96,6 +96,12 @@ or licensing record; the Getty-named image did not show a clearly visible waterm
 the reviewed rendering. The 21 unused files were removed without asserting a full
 copyright determination or adding replacement art.
 
+### Hash-duplicate classification
+
+Nineteen files remaining in the production build shared SHA-256 hashes with removed uploads/gallery content. Comprehensive database and repository reference scans classified all 19:
+- 1 file (`img/insignias/insignia.png`) is a canonical product asset (the "Arquitecto/Arquitecta" course badge) actively referenced in the database (`usuarios.insignia` for student 41) and Playwright auth fixtures; it is intentionally public and kept.
+- 18 files were historical test artifacts, bot/avatar duplicates whose canonical versions already reside in Supabase Storage (`daemon-assets`), or unused prototype graphics (`img/hombre.gif`, `img/mujer.gif`, etc.). All 18 were removed from public assets, reducing static build size by 7.6 MB.
+
 ## Application and build changes
 
 `ArtefactoAprendizajeService` now requires a complete S3 private-disk configuration;
@@ -115,10 +121,11 @@ guard, not a general image-content classifier.
 
 | Measurement | Before | After |
 | --- | ---: | ---: |
-| Production browser directory | 297,485,188 bytes (297.5 MB / 283.7 MiB) | 126,403,954 bytes (126.4 MB / 120.5 MiB) |
-| Production browser files | 668 | 494 |
+| Production browser directory | 297,485,188 bytes (297.5 MB / 283.7 MiB) | 118,761,524 bytes (118.8 MB / 113.3 MiB) |
+| Production browser files | 668 | 476 |
 | Initial JS/CSS bundle | 1.49 MB | 1.49 MB |
 | Identified homework bytes in public source/build | Present | None |
+| Unintentional user duplicates in public build | Present | 18 removed; 1 canonical kept (`img/insignias/insignia.png`) |
 
 The baseline build was measured in this checkout before removing assets. Existing
 warnings (initial budget, panel stylesheet budget, Sass imports and Angular template
