@@ -84,7 +84,7 @@ Estado actual:
 - El retorno configurado es:
 
 ```text
-https://daemonestudiante.web.app/alumno?verificacion=firebase
+https://daemonarc.web.app/alumno?verificacion=firebase
 ```
 
 Cuando el usuario vuelve a DAEMON con esa URL:
@@ -106,7 +106,7 @@ Estado actual:
 - La URL de retorno configurada es:
 
 ```text
-https://daemonestudiante.web.app/login?reset=firebase
+https://daemonarc.web.app/login?reset=firebase
 ```
 
 `/restablecer-clave` aun soporta tokens antiguos de DAEMON y `oobCode` de
@@ -137,7 +137,7 @@ ni aceptar invitaciones de menores hasta que Firebase confirme
 `email_verified=true`. El correo de verificación regresa a:
 
 ```text
-https://daemonestudiante.web.app/familias?verificacion=firebase
+https://daemonarc.web.app/familias?verificacion=firebase
 ```
 
 Aceptar una invitación es una acción separada y explícita. Recién entonces el
@@ -176,7 +176,8 @@ Debe estar habilitado:
 - Authentication > Settings > Authorized domains:
   - `localhost`
   - `127.0.0.1`
-  - `daemonestudiante.web.app`
+  - `daemonarc.web.app`
+  - `daemonarc.firebaseapp.com`
   - dominio final, cuando exista
 
 Si se intenta personalizar profundamente las plantillas de Firebase, la consola
@@ -202,8 +203,8 @@ Laravel necesita:
 ```env
 FIREBASE_PROJECT_ID=daemon-a41f8
 FIREBASE_SERVICE_ACCOUNT_BASE64=...
-FRONTEND_URL=https://daemonestudiante.web.app
-FRONTEND_PRODUCTION_URL=https://daemonestudiante.web.app
+FRONTEND_URL=https://daemonarc.web.app
+FRONTEND_PRODUCTION_URL=https://daemonarc.web.app
 ```
 
 `FIREBASE_SERVICE_ACCOUNT_BASE64` se usa para operaciones administrativas como

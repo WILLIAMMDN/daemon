@@ -11,9 +11,9 @@ class CookieOriginMiddlewareTest extends TestCase
 {
     public function test_allows_mutation_from_configured_origin(): void
     {
-        config(['cors.allowed_origins' => ['https://daemonestudiante.web.app']]);
+        config(['cors.allowed_origins' => ['https://daemonarc.web.app']]);
         $request = Request::create('/api/v1/auth/logout', 'POST', server: [
-            'HTTP_ORIGIN' => 'https://daemonestudiante.web.app',
+            'HTTP_ORIGIN' => 'https://daemonarc.web.app',
         ]);
         $request->attributes->set('daemon_auth_via_cookie', true);
 
@@ -27,7 +27,7 @@ class CookieOriginMiddlewareTest extends TestCase
 
     public function test_rejects_cookie_mutation_from_unknown_origin(): void
     {
-        config(['cors.allowed_origins' => ['https://daemonestudiante.web.app']]);
+        config(['cors.allowed_origins' => ['https://daemonarc.web.app']]);
         $request = Request::create('/api/v1/auth/logout', 'POST', server: [
             'HTTP_ORIGIN' => 'https://attacker.example',
         ]);
@@ -43,7 +43,7 @@ class CookieOriginMiddlewareTest extends TestCase
 
     public function test_explicit_bearer_clients_are_not_subject_to_browser_origin_check(): void
     {
-        config(['cors.allowed_origins' => ['https://daemonestudiante.web.app']]);
+        config(['cors.allowed_origins' => ['https://daemonarc.web.app']]);
         $request = Request::create('/api/v1/auth/logout', 'POST');
 
         $response = (new EnsureCookieRequestIsFromAllowedOrigin)->handle(

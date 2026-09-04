@@ -49,12 +49,12 @@ class EmailVerificationTokenServiceTest extends TestCase
         // El env var FRONTEND_EMAIL_VERIFICATION_URL es la primera opcion
         // que mira el servicio, asi lo usamos para evitar el fallback
         // http://localhost:4200 que viene por defecto en testing.
-        $this->app['config']->set('app.url', 'https://daemonestudiante.web.app');
-        putenv('FRONTEND_EMAIL_VERIFICATION_URL=https://daemonestudiante.web.app/verificar-correo');
+        $this->app['config']->set('app.url', 'https://daemonarc.web.app');
+        putenv('FRONTEND_EMAIL_VERIFICATION_URL=https://daemonarc.web.app/verificar-correo');
 
         $url = (new EmailVerificationTokenService())->crear($usuario);
 
-        $this->assertStringStartsWith('https://daemonestudiante.web.app/verificar-correo?', $url);
+        $this->assertStringStartsWith('https://daemonarc.web.app/verificar-correo?', $url);
         $this->assertMatchesRegularExpression('/token=[A-Za-z0-9._-]+/', $url);
     }
 

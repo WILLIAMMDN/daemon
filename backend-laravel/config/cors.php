@@ -12,11 +12,9 @@ return [
     'allowed_methods' => ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     'allowed_origins' => array_values(array_unique([
         ...$frontendUrls,
-        // Produccion: Firebase Hosting del proyecto DAEMON ARC y estudiante
+        // Produccion: Firebase Hosting del proyecto DAEMON ARC
         'https://daemonarc.web.app',
         'https://daemonarc.firebaseapp.com',
-        'https://daemonestudiante.web.app',
-        'https://daemonestudiante.firebaseapp.com',
         'https://daemon-a41f8.web.app',
         'https://daemon-a41f8.firebaseapp.com',
         // Desarrollo local

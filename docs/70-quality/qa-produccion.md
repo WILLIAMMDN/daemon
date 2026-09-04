@@ -147,7 +147,7 @@ git diff --name-only -- `
 
 ## Flujo alumno
 
-- Abrir `https://daemonestudiante.web.app/login`.
+- Abrir `https://daemonarc.web.app/login`.
 - Iniciar sesion con una cuenta de alumno de prueba.
 - Confirmar que redirige a `/alumno` o `/bienvenida` si el perfil esta incompleto.
 - Revisar que carguen panel, perfil, misiones, tienda, evaluaciones, chatbot, cuentos, ranking, comunidad y certificado.
@@ -156,7 +156,7 @@ git diff --name-only -- `
 
 ## Flujo docente
 
-- Abrir `https://daemonestudiante.web.app/login-docente`.
+- Abrir `https://daemonarc.web.app/login-docente`.
 - Iniciar sesion con una cuenta docente o admin de prueba.
 - Confirmar acceso a `/docente`.
 - Revisar panel, alumnos, aulas, misiones, entregas, insignias, tienda, evaluaciones, competencia, rondas y tokens.
@@ -197,7 +197,7 @@ git diff --name-only -- `
 
 ## Seguridad rapida
 
-- Confirmar `Access-Control-Allow-Origin: https://daemonestudiante.web.app`.
+- Confirmar `Access-Control-Allow-Origin: https://daemonarc.web.app`.
 - Confirmar `Access-Control-Allow-Credentials: true`.
 - Confirmar cabeceras `X-Content-Type-Options: nosniff` y `X-Frame-Options: DENY`.
 - Revisar que no haya `.env`, service accounts, tokens privados ni dumps sensibles en Git.
@@ -221,7 +221,7 @@ Después del workflow, comparar el bundle local con el publicado:
 ```powershell
 cd C:\laragon\www\daemon
 $html = (Invoke-WebRequest `
-  -Uri 'https://daemonestudiante.web.app' `
+  -Uri 'https://daemonarc.web.app' `
   -UseBasicParsing `
   -TimeoutSec 30).Content
 $deployed = [regex]::Match($html, 'main-[A-Z0-9]+\.js').Value
@@ -275,7 +275,7 @@ canjear ni borrar datos, y anotar todo en la tabla de resultados.
 
 #### 1. Login local (usuario/contraseña de Laravel)
 
-1. Abrir `https://daemonestudiante.web.app/login` en ventana de incógnito.
+1. Abrir `https://daemonarc.web.app/login` en ventana de incógnito.
 2. Entrar con usuario + contraseña de prueba (sin `@`).
 3. Confirmar que redirige a `/alumno`.
 4. Abrir `/alumno/proyectos/cuentos`.
@@ -437,7 +437,7 @@ APP_URL=https://daemon-5vo1.onrender.com
 APP_VERSION=2026.07
 DAEMON_ENVIRONMENT=production
 APP_DEBUG=false
-FRONTEND_URL=https://daemonestudiante.web.app
+FRONTEND_URL=https://daemonarc.web.app
 FIREBASE_PROJECT_ID=daemon-a41f8
 ```
 
@@ -493,7 +493,7 @@ APP_URL=https://daemon-5vo1.onrender.com
 APP_VERSION=2026.07
 DAEMON_ENVIRONMENT=production
 APP_DEBUG=false
-FRONTEND_URL=https://daemonestudiante.web.app
+FRONTEND_URL=https://daemonarc.web.app
 FIREBASE_PROJECT_ID=daemon-a41f8
 ```
 

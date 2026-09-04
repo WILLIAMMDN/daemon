@@ -30,7 +30,7 @@ API must persist real data in PostgreSQL/Supabase.
 
 ```text
 User browser
-  -> Firebase Hosting: https://daemonestudiante.web.app
+  -> Firebase Hosting: https://daemonarc.web.app
   -> Angular 21 SPA
   -> Render Laravel API: https://daemon-5vo1.onrender.com/api/v1
   -> Supabase PostgreSQL: business data
@@ -39,7 +39,7 @@ User browser
 ```
 
 The app uses the Firebase project `daemon-a41f8` and Firebase Hosting site
-`daemonestudiante`. Supabase project id in current URLs is
+`daemonarc`. Supabase project id in current URLs is
 `lbxdcvsrmkkynttgwblc`.
 
 ## 3. Important project roots
@@ -350,8 +350,8 @@ Firebase Hosting:
 
 ```text
 Project: daemon-a41f8
-Target: estudiante
-Site: daemonestudiante
+Target: arc
+Site: daemonarc
 Public dir: frontend-angular/dist/frontend-angular/browser
 ```
 

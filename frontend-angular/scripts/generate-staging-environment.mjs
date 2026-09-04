@@ -52,7 +52,7 @@ const candidate = JSON.stringify({
 const productionMarkers = [
   'daemon-5vo1.onrender.com',
   'daemon-a41f8',
-  'daemonestudiante.web.app',
+  'daemonarc.web.app',
   'lbxdcvsrmkkynttgwblc',
   '921d28612ceab3864425',
 ];

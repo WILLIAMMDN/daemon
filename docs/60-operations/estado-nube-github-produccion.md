@@ -16,8 +16,8 @@ Este documento resume el estado operativo de DAEMON en nube.
 
 - GitHub remoto configurado en `WILLIAMMDN/daemon`.
 - Frontend Angular desplegado en Firebase Hosting.
-- Hosting publico: `https://daemonestudiante.web.app`.
-- Firebase Hosting target: `estudiante`.
+- Hosting publico: `https://daemonarc.web.app`.
+- Firebase Hosting target: `arc`.
 - Firebase project: `daemon-a41f8`.
 - Backend Laravel desplegado en Render.
 - Backend publico: `https://daemon-5vo1.onrender.com/api/v1`.
@@ -99,7 +99,7 @@ Comando manual:
 
 ```powershell
 cd C:\laragon\www\daemon
-firebase deploy --only hosting:estudiante --project daemon-a41f8
+firebase deploy --only hosting:arc --project daemon-a41f8
 ```
 
 `firebase.json` publica:
@@ -131,7 +131,7 @@ Pasos relevantes:
 2. ejecutar `npm test -- --runInBand`;
 3. ejecutar `npm run build`;
 4. configurar credenciales desde el secret;
-5. desplegar el target `hosting:estudiante`;
+5. desplegar el target `hosting:arc`;
 6. ejecutar `scripts/smoke-produccion.ps1`.
 
 Si Firebase informa que la versión ya es la activa, el workflow trata el
@@ -152,14 +152,14 @@ Variables importantes de produccion:
 
 ```env
 APP_URL=https://daemon-5vo1.onrender.com
-FRONTEND_URL=https://daemonestudiante.web.app
-FRONTEND_PRODUCTION_URL=https://daemonestudiante.web.app
+FRONTEND_URL=https://daemonarc.web.app
+FRONTEND_PRODUCTION_URL=https://daemonarc.web.app
 CORS_SUPPORTS_CREDENTIALS=true
 AUTH_COOKIE_SAME_SITE=none
 AUTH_COOKIE_SECURE=true
 DB_CONNECTION=pgsql
 DB_SSLMODE=require
-ASSET_PUBLIC_URL=https://daemonestudiante.web.app
+ASSET_PUBLIC_URL=https://daemonarc.web.app
 ASSET_CLOUD_URL=https://lbxdcvsrmkkynttgwblc.supabase.co/storage/v1/object/public/daemon-assets
 UPLOADS_DISK=supabase
 FIREBASE_PROJECT_ID=daemon-a41f8

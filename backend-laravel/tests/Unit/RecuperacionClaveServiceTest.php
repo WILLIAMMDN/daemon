@@ -24,7 +24,7 @@ class RecuperacionClaveServiceTest extends TestCase
         parent::setUp();
 
         config([
-            'services.firebase.password_reset_url' => 'https://daemonestudiante.web.app/restablecer-clave',
+            'services.firebase.password_reset_url' => 'https://daemonarc.web.app/restablecer-clave',
             'app.key' => 'base64:'.base64_encode(str_repeat('a', 32)),
         ]);
 
@@ -59,7 +59,7 @@ class RecuperacionClaveServiceTest extends TestCase
         $tokens = Mockery::mock(PasswordResetTokenService::class);
         $tokens->shouldReceive('crear')
             ->once()
-            ->andReturn('https://daemonestudiante.web.app/restablecer-clave?token=FAKE');
+            ->andReturn('https://daemonarc.web.app/restablecer-clave?token=FAKE');
 
         $admin = Mockery::mock(FirebaseAdminService::class);
 
@@ -67,7 +67,7 @@ class RecuperacionClaveServiceTest extends TestCase
 
         Mail::assertSent(RecuperarClaveMail::class, function (RecuperarClaveMail $mail): bool {
             return $mail->hasTo('alumno@example.com')
-                && $mail->link === 'https://daemonestudiante.web.app/restablecer-clave?token=FAKE';
+                && $mail->link === 'https://daemonarc.web.app/restablecer-clave?token=FAKE';
         });
     }
 
