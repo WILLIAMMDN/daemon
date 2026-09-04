@@ -116,7 +116,6 @@ firebaseEmulators: { enabled: false }
     composer: "",
     renderStaging: "",
     prWorkflow: "",
-    productionWorkflow: "",
   });
 
   const developmentIssues = issues.filter((issue) =>
@@ -144,48 +143,100 @@ enabled: true
     composer: "",
     renderStaging: "",
     prWorkflow: "",
-    productionWorkflow: "",
   });
 
   assert.ok(issues.some((issue) => issue.startsWith("Frontend development")));
 });
 
 // --- Control de despliegue productivo -------------------------------------
-// Un merge y un despliegue productivo deben seguir siendo dos operaciones
-// distintas. Estas pruebas fallan si el repositorio vuelve a acoplarlas.
+// El despliegue productivo es automatico: un commit en main protegida llega a
+// produccion sin intervencion. Estas pruebas fallan si el repositorio pierde
+// esa automatizacion, o si la pierde la verificacion que la hace segura.
 
 const DEPLOY_PRODUCTION = `
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
 concurrency:
   group: production-daemon
   cancel-in-progress: false
 jobs:
+  guard:
+    steps:
+      - run: git merge-base --is-ancestor "$target" refs/remotes/origin/main
+  preflight:
+    steps:
+      - run: gh api repos/x/actions/workflows/supabase-backup.yml/runs
+      - run: node scripts/check-environment-safety.mjs --ci
   deploy:
     environment:
       name: production
     steps:
-      - run: git merge-base --is-ancestor "$target" refs/remotes/origin/main
-      - run: gh api repos/x/actions/workflows/supabase-backup.yml/runs
-      - run: node scripts/check-environment-safety.mjs --ci
+      - run: curl "$BACKEND_HEALTH_URL" | jq -r '.commit'
       - run: npx firebase-tools deploy --only hosting:arc --project daemon-a41f8
+      - run: grep -o 'daemon-release' page.html
+  smoke:
+    steps:
+      - run: ./scripts/smoke-produccion.ps1 -ExpectedRelease $env:TARGET_SHA
+  record:
+    if: always()
+    steps:
+      - run: echo "no completo todas sus etapas"
 `;
 
 const CONTROL_SANO = {
-  workflows: {
-    "deploy-production.yml": DEPLOY_PRODUCTION,
-    "main-deployable.yml":
-      "on:\n  push:\n    branches: [main]\njobs:\n  deployable:\n    steps:\n      - run: npm run build\n",
-  },
-  render: "    autoDeployTrigger: 'off'\n",
-  backendEntrypoint: 'if [ "${RUN_MIGRATIONS:-false}" = "true" ]; then\n',
+  workflows: { "deploy-production.yml": DEPLOY_PRODUCTION },
+  render: "    autoDeployTrigger: checksPass\n",
+  backendEntrypoint:
+    "MIGRATED_MARKER=bootstrap/cache/.migrated\n" +
+    "if ! php artisan migrate --force --no-interaction; then\n" +
+    "    exit 1\n" +
+    "fi\n",
 };
 
-test("acepta un control de despliegue productivo explicito", () => {
+test("acepta un despliegue productivo automatico y verificado", () => {
   assert.deepEqual(inspectDeploymentControl(CONTROL_SANO), []);
 });
 
-test("bloquea un workflow que despliega Firebase al mergear main", () => {
+test("bloquea la ausencia del workflow de despliegue productivo", () => {
+  const issues = inspectDeploymentControl({ ...CONTROL_SANO, workflows: {} });
+
+  assert.ok(issues.some((issue) => issue.includes("deploy-production.yml")));
+});
+
+test("bloquea que el merge a main deje de desplegar produccion", () => {
+  const issues = inspectDeploymentControl({
+    ...CONTROL_SANO,
+    workflows: {
+      "deploy-production.yml": DEPLOY_PRODUCTION.replace(
+        "  push:\n    branches:\n      - main\n",
+        "",
+      ),
+    },
+  });
+
+  assert.ok(
+    issues.some((issue) => issue.includes("aterrizar un commit en main")),
+  );
+});
+
+test("bloquea la perdida del disparo manual para rollback", () => {
+  const issues = inspectDeploymentControl({
+    ...CONTROL_SANO,
+    workflows: {
+      "deploy-production.yml": DEPLOY_PRODUCTION.replace(
+        "  workflow_dispatch:\n",
+        "",
+      ),
+    },
+  });
+
+  assert.ok(issues.some((issue) => issue.includes("rollback")));
+});
+
+test("bloquea otro workflow que publique produccion por su cuenta", () => {
   const issues = inspectDeploymentControl({
     ...CONTROL_SANO,
     workflows: {
@@ -196,11 +247,11 @@ test("bloquea un workflow que despliega Firebase al mergear main", () => {
   });
 
   assert.ok(
-    issues.some((issue) => issue.includes("un merge no puede desplegar")),
+    issues.some((issue) => issue.includes("fuera de deploy-production.yml")),
   );
 });
 
-test("bloquea un push a main que dispara el deploy hook de Render", () => {
+test("bloquea un deploy hook de Render disparado desde otro workflow", () => {
   const issues = inspectDeploymentControl({
     ...CONTROL_SANO,
     workflows: {
@@ -211,30 +262,7 @@ test("bloquea un push a main que dispara el deploy hook de Render", () => {
   });
 
   assert.ok(
-    issues.some((issue) => issue.includes("un merge no puede desplegar")),
-  );
-});
-
-test("bloquea la ausencia del workflow de despliegue productivo", () => {
-  const issues = inspectDeploymentControl({ ...CONTROL_SANO, workflows: {} });
-
-  assert.ok(issues.some((issue) => issue.includes("deploy-production.yml")));
-});
-
-test("bloquea un despliegue productivo disparado por push", () => {
-  const issues = inspectDeploymentControl({
-    ...CONTROL_SANO,
-    workflows: {
-      "deploy-production.yml": DEPLOY_PRODUCTION.replace(
-        "on:\n  workflow_dispatch:",
-        "on:\n  push:\n    branches: [main]",
-      ),
-    },
-  });
-
-  assert.ok(issues.some((issue) => issue.includes("workflow_dispatch")));
-  assert.ok(
-    issues.some((issue) => issue.includes("no puede dispararse por push")),
+    issues.some((issue) => issue.includes("fuera de deploy-production.yml")),
   );
 });
 
@@ -269,7 +297,7 @@ test("bloquea un despliegue sin SHA exacto ni punto de recuperacion", () => {
   );
 });
 
-test("bloquea un despliegue productivo sin environment ni aprobacion", () => {
+test("bloquea un despliegue productivo sin environment ni registro", () => {
   const issues = inspectDeploymentControl({
     ...CONTROL_SANO,
     workflows: {
@@ -281,6 +309,37 @@ test("bloquea un despliegue productivo sin environment ni aprobacion", () => {
   });
 
   assert.ok(issues.some((issue) => issue.includes("environment production")));
+});
+
+test("bloquea un despliegue que no verifica el release ni ejecuta el smoke", () => {
+  const issues = inspectDeploymentControl({
+    ...CONTROL_SANO,
+    workflows: {
+      "deploy-production.yml": DEPLOY_PRODUCTION.replace(
+        /^.*(daemon-release|smoke-produccion).*$/gm,
+        "",
+      ),
+    },
+  });
+
+  assert.ok(issues.some((issue) => issue.includes("SHA exacto")));
+  assert.ok(issues.some((issue) => issue.includes("smoke productivo")));
+});
+
+test("bloquea un despliegue que no propaga el fallo de sus etapas", () => {
+  const issues = inspectDeploymentControl({
+    ...CONTROL_SANO,
+    workflows: {
+      "deploy-production.yml": DEPLOY_PRODUCTION.replace(
+        /^.*(if: always\(\)|no completo todas sus etapas).*$/gm,
+        "",
+      ),
+    },
+  });
+
+  assert.ok(
+    issues.some((issue) => issue.includes("fallar de forma visible")),
+  );
 });
 
 test("bloquea cualquier destino daemonestudiante", () => {
@@ -296,20 +355,44 @@ test("bloquea cualquier destino daemonestudiante", () => {
   assert.ok(issues.some((issue) => issue.includes("daemonestudiante")));
 });
 
-test("bloquea el auto-deploy de Render declarado en el blueprint", () => {
+test("bloquea apagar el auto-deploy de Render en el blueprint", () => {
   const issues = inspectDeploymentControl({
     ...CONTROL_SANO,
-    render: "    autoDeployTrigger: checksPass\n",
+    render: "    autoDeployTrigger: 'off'\n",
   });
 
-  assert.ok(issues.some((issue) => issue.includes("auto-deploy productivo")));
+  assert.ok(issues.some((issue) => issue.includes("apaga el auto-deploy")));
 });
 
-test("bloquea un entrypoint que migra por defecto", () => {
+test("bloquea un blueprint sin disparador de auto-deploy", () => {
   const issues = inspectDeploymentControl({
     ...CONTROL_SANO,
-    backendEntrypoint: 'if [ "${RUN_MIGRATIONS:-true}" = "true" ]; then\n',
+    render: "    plan: free\n",
   });
 
-  assert.ok(issues.some((issue) => issue.includes("migra por defecto")));
+  assert.ok(
+    issues.some((issue) => issue.includes("no declara un disparador")),
+  );
+});
+
+test("bloquea un entrypoint que migra en cada arranque", () => {
+  const issues = inspectDeploymentControl({
+    ...CONTROL_SANO,
+    backendEntrypoint:
+      'if [ "${RUN_MIGRATIONS:-true}" = "true" ]; then\n' +
+      "    if ! php artisan migrate --force; then\n        exit 1\n    fi\nfi\n",
+  });
+
+  assert.ok(issues.some((issue) => issue.includes("acota las migraciones")));
+});
+
+test("bloquea un entrypoint que silencia el fallo de migracion", () => {
+  const issues = inspectDeploymentControl({
+    ...CONTROL_SANO,
+    backendEntrypoint:
+      "MIGRATED_MARKER=bootstrap/cache/.migrated\n" +
+      "php artisan migrate --force --no-interaction || true\n",
+  });
+
+  assert.ok(issues.some((issue) => issue.includes("propaga el fallo")));
 });

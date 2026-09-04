@@ -4,10 +4,16 @@ services:
     runtime: docker
     plan: free
     branch: main
-    # Un merge a main NO despliega produccion. El despliegue productivo
-    # es una decision explicita y aprobada: .github/workflows/deploy-production.yml
-    # dispara el deploy hook de Render fijando el SHA exacto.
-    autoDeployTrigger: 'off'
+    # El despliegue productivo del backend es AUTOMATICO: un commit en main
+    # protegida (PR + checks requeridos en verde) despliega Render sin que
+    # nadie tenga que hacer clic.
+    #
+    # `checksPass` es el disparador correcto para este modelo: Render espera a
+    # que los check runs de GitHub para ese commit esten en verde antes de
+    # construir, asi que codigo con CI en rojo no llega al contenedor aunque
+    # haya llegado a main. El ajuste del dashboard manda sobre este archivo
+    # (ver docs/60-operations/despliegue-produccion.md).
+    autoDeployTrigger: checksPass
     dockerfilePath: ./backend-laravel/Dockerfile
     dockerContext: ./backend-laravel
     healthCheckPath: /api/v1/salud

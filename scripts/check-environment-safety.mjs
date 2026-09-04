@@ -360,8 +360,16 @@ export function inspectStaticDocuments(documents, options = {}) {
 }
 
 /**
- * Un merge y un despliegue productivo son dos operaciones distintas.
- * Estas comprobaciones fallan si el repositorio vuelve a acoplarlas.
+ * El despliegue productivo es AUTOMATICO: un commit que aterriza en `main`
+ * protegida se publica sin intervencion. El invariante que se protege aqui no
+ * es "un merge no despliega", sino:
+ *
+ *   1. solo `deploy-production.yml` puede mutar produccion;
+ *   2. ese workflow se dispara al aterrizar en main (y a mano para redeploy o
+ *      rollback), siempre sobre un SHA alcanzable desde main;
+ *   3. publica un release exacto, lo verifica y falla de forma visible;
+ *   4. el auto-deploy de Render sigue encendido y el entrypoint migra una vez
+ *      por release propagando el fallo.
  *
  * @param {{
  *   workflows?: Record<string, string>,
@@ -374,6 +382,8 @@ export function inspectDeploymentControl(documents) {
   const issues = [];
   const workflows = documents.workflows ?? {};
 
+  // Publicar en el proyecto Firebase productivo, o disparar el deploy hook de
+  // Render, es mutar produccion. Un preview channel de PR no lo es.
   const despliegaProduccion = (source) =>
     (source.includes("--project daemon-a41f8") &&
       !source.includes("hosting:channel:deploy")) ||
@@ -382,12 +392,11 @@ export function inspectDeploymentControl(documents) {
   // Solo interesa el bloque `on:` inicial: un `branches:` dentro de un paso
   // posterior no es un disparador.
   const cabecera = (source) => source.split(/^jobs:/m)[0];
-  const disparadoPorMerge = (source) => /^\s*push:/m.test(cabecera(source));
 
   for (const [name, source] of Object.entries(workflows)) {
-    if (disparadoPorMerge(source) && despliegaProduccion(source)) {
+    if (name !== "deploy-production.yml" && despliegaProduccion(source)) {
       issues.push(
-        `${name} despliega produccion en un push a main: un merge no puede desplegar.`,
+        `${name} muta produccion fuera de deploy-production.yml: el despliegue productivo tiene una sola via.`,
       );
     }
     // Verificar que las URLs retiradas siguen muertas es lectura; declarar
@@ -400,7 +409,7 @@ export function inspectDeploymentControl(documents) {
   const produccion = workflows["deploy-production.yml"];
   if (produccion === undefined) {
     issues.push(
-      "Falta .github/workflows/deploy-production.yml: no hay despliegue productivo explicito.",
+      "Falta .github/workflows/deploy-production.yml: no hay despliegue productivo verificado.",
     );
     return [...new Set(issues)];
   }
@@ -408,10 +417,13 @@ export function inspectDeploymentControl(documents) {
   const encabezado = cabecera(produccion);
   const requisitos = [
     [
-      /^\s*workflow_dispatch:/m.test(encabezado),
-      "debe invocarse explicitamente (workflow_dispatch)",
+      /^\s*push:/m.test(encabezado) && /^\s*-\s*main\s*$/m.test(encabezado),
+      "debe desplegar automaticamente al aterrizar un commit en main (on.push.branches: main)",
     ],
-    [!/^\s*push:/m.test(encabezado), "no puede dispararse por push"],
+    [
+      /^\s*workflow_dispatch:/m.test(encabezado),
+      "debe conservar workflow_dispatch para redesplegar o hacer rollback a un SHA exacto",
+    ],
     [
       /group:\s*production-daemon/.test(produccion),
       "debe serializarse con un grupo de concurrencia productivo",
@@ -422,7 +434,7 @@ export function inspectDeploymentControl(documents) {
     ],
     [
       /name:\s*production/.test(produccion),
-      "debe correr en el environment production",
+      "debe correr en el environment production para dejar registro de despliegue",
     ],
     [
       produccion.includes("--project daemon-a41f8"),
@@ -443,25 +455,56 @@ export function inspectDeploymentControl(documents) {
     ],
     [
       produccion.includes("supabase-backup.yml"),
-      "debe exigir un punto de recuperacion verificado antes de mutar",
+      "debe exigir un punto de recuperacion verificado antes de mutar el esquema",
+    ],
+    [
+      produccion.includes("daemon-release") && produccion.includes(".commit"),
+      "debe verificar que produccion sirve el SHA exacto (health.commit y daemon-release)",
+    ],
+    [
+      produccion.includes("smoke-produccion.ps1"),
+      "debe ejecutar el smoke productivo despues de publicar",
+    ],
+    [
+      /if:\s*always\(\)/.test(produccion) &&
+        produccion.includes("no completo todas sus etapas"),
+      "debe registrar el estado real y fallar de forma visible si una etapa falla",
     ],
   ];
   for (const [cumple, mensaje] of requisitos) {
     if (!cumple) issues.push(`deploy-production.yml ${mensaje}.`);
   }
 
+  // El backend se despliega solo. Apagar el auto-deploy convertiria cada
+  // release en una tarea manual, que es justo lo que no se quiere.
   const render = documents.render ?? "";
-  if (render && !/autoDeployTrigger:\s*['"]?off['"]?/.test(render)) {
+  if (render && /autoDeployTrigger:\s*['"]?off['"]?/i.test(render)) {
     issues.push(
-      "render.yaml no apaga el auto-deploy productivo: un merge desplegaria el backend.",
+      "render.yaml apaga el auto-deploy: un merge a main debe desplegar el backend sin intervencion.",
+    );
+  } else if (
+    render &&
+    !/autoDeployTrigger:\s*(checksPass|commit)/.test(render)
+  ) {
+    issues.push(
+      "render.yaml no declara un disparador de auto-deploy productivo (checksPass o commit).",
     );
   }
 
+  // Migrar es la unica operacion irreversible del despliegue: se aplica una
+  // vez por release y su fallo tiene que hundir el arranque, no silenciarse.
   const entrypoint = documents.backendEntrypoint ?? "";
-  if (entrypoint && !entrypoint.includes("${RUN_MIGRATIONS:-false}")) {
-    issues.push(
-      "El entrypoint migra por defecto: un arranque de contenedor no puede mutar el esquema productivo.",
-    );
+  if (entrypoint) {
+    if (!entrypoint.includes("MIGRATED_MARKER")) {
+      issues.push(
+        "El entrypoint no acota las migraciones a un release: cada arranque del contenedor mutaria el esquema.",
+      );
+    }
+    if (!/if\s+!\s+php artisan migrate[\s\S]{0,600}?exit 1/.test(entrypoint)) {
+      issues.push(
+        "El entrypoint no propaga el fallo de migracion: un error de esquema quedaria silenciado.",
+      );
+    }
   }
 
   return [...new Set(issues)];

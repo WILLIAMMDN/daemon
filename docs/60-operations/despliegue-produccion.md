@@ -10,92 +10,153 @@ related: infraestructura-operativa.md
 
 # Despliegue productivo DAEMON
 
-Un **merge** y un **despliegue productivo** son dos operaciones distintas.
-Mergear a `main` no publica nada: deja el commit desplegable. Publicarlo es
-una decision explicita, aprobada y registrada.
+El despliegue productivo es **automatico**. Un commit que aterriza en `main`
+llega a produccion sin que nadie tenga que abrir GitHub ni Render.
+
+El invariante que protege este sistema es:
+
+> **Codigo sin probar no llega a `main`.**
+
+No es "todo despliegue exige un clic humano". Una vez que un commit paso la
+proteccion de `main`, publicarlo es mecanico; lo que no es mecanico es
+*verificar* que produccion quedo realmente en ese commit, y eso lo hace el
+workflow.
 
 ```text
 PR
- -> CI + preview de Firebase (automatico)
- -> merge a main
- -> "Main is deployable" verifica el commit (NO despliega)
- -> main queda desplegable, no desplegado
- -> alguien ejecuta "Deploy production" con un SHA exacto
- -> preflight (SHA, CI, punto de recuperacion, contrato, migraciones)
- -> aprobacion humana del environment production
- -> deploy del backend en Render + migraciones controladas
- -> health check con verificacion de commit
- -> deploy de Firebase hosting:arc
+ -> CI requerida en verde + preview de Firebase (7 dias)
+ -> merge a main protegida
+ -> Render construye y despliega el backend (auto-deploy)
+ -> el entrypoint aplica las migraciones del release
+ -> "Deploy production" verifica /api/v1/salud commit = SHA
+ -> publica Firebase hosting:arc con ese SHA estampado
+ -> verifica daemon-release = SHA
  -> smoke productivo
  -> registro del despliegue
 ```
 
-## Como desplegar
+El owner interviene **solo cuando algo falla**: CI en rojo, despliegue que no
+converge, migracion fallida, smoke en rojo o rollback.
 
-1. Abre **Actions -> Deploy production -> Run workflow**.
-2. `commit_sha`: el SHA completo (40 hex) que quieres publicar. Si lo dejas
-   vacio, el workflow resuelve `main` a un SHA inmutable en ese instante y
-   trabaja sobre ese SHA, no sobre "lo que `main` sea" diez minutos despues.
-3. `max_backup_age_hours`: antiguedad maxima aceptada del punto de
-   recuperacion verificado. Por defecto 48 h (el drill corre a diario).
-4. El job **Preflight** corre primero y es de solo lectura. Revisa su resumen
-   antes de aprobar: ahi estan el SHA objetivo, el estado de CI, la edad del
-   backup verificado y **los nombres de las migraciones que se aplicaran**.
-5. Aprueba el environment `production`. Esa aprobacion es la unica
-   autorizacion para mutar produccion.
+## Operacion normal
 
-Los despliegues se serializan con el grupo de concurrencia `production-daemon`:
-un segundo despliegue espera, nunca corre en paralelo con una migracion, un
-arranque de Render o un smoke.
+No hay ninguna. Se mergea el PR y se espera. El workflow *Deploy production*
+arranca solo con el push a `main`.
 
-## Puertas del preflight
+Si algo va mal, el run queda en rojo y el job **Deployment record** dice en
+que estado quedo produccion de verdad.
+
+## Disparo manual (redeploy y rollback)
+
+*Actions -> Deploy production -> Run workflow* existe para dos casos que el
+auto-deploy no cubre:
+
+| Caso | Como |
+| --- | --- |
+| Rollback a un commit anterior | `commit_sha` = SHA de 40 hex conocido como bueno |
+| Redesplegar el HEAD actual de `main` | `commit_sha` vacio |
+
+`max_backup_age_hours` (48 h por defecto) es la antiguedad maxima aceptada del
+punto de recuperacion verificado cuando el release aplica migraciones.
+
+En un disparo manual el workflow usa el **deploy hook** de Render con
+`?ref=<SHA>`: el auto-deploy nunca desplegaria un commit que no es el HEAD de
+`main`. El hook es opcional (ver
+[Deploy hook](#deploy-hook-de-render-opcional)).
+
+## Serializacion y releases superados
+
+Los despliegues se serializan con el grupo de concurrencia `production-daemon`
+y `cancel-in-progress: false`: un despliegue nunca se abandona a medias ni
+corre en paralelo con una migracion, un arranque de Render o un smoke.
+
+Si un segundo merge aterriza mientras el primero se despliega, el run del
+commit viejo se marca **superado** y no publica nada: publicar seria hacer
+retroceder produccion. El run del commit nuevo, encolado detras, es el que
+manda. Un release superado **no** es un fallo y no deja el run en rojo.
+
+## Puertas automaticas del preflight
+
+Ninguna pide aprobacion. Todas fallan solas si no se cumplen.
 
 | Puerta | Regla |
 | --- | --- |
 | SHA objetivo | 40 hex, existe y es **alcanzable desde `main`** (un commit de PR sin mergear no lo es) |
-| CI | los checks `backend` y `deployable` estan en verde para ese SHA y ningun otro check esta en rojo |
-| Punto de recuperacion | el ultimo run verde de *Supabase Backup and Restore Drill* es mas reciente que `max_backup_age_hours` y su artefacto sigue vigente |
-| Contrato productivo | `render.yaml` declara storage privado y auto-deploy apagado; `firebase.json`/`.firebaserc` declaran `arc` y ningun target `estudiante` |
+| CI | espera a que el check `backend` concluya en verde para ese SHA, y aborta si cualquier otro check esta en rojo |
+| Contrato productivo | `render.yaml` declara storage privado; `firebase.json` / `.firebaserc` declaran `arc` y ningun target `estudiante` |
+| Contrato de entornos | `scripts/check-environment-safety.mjs --ci` sobre el arbol del SHA objetivo |
 | Base de datos | `/api/v1/salud` responde con `database.ok = true` |
 | Migraciones | se listan por nombre las migraciones nuevas entre el commit desplegado y el objetivo |
+| Punto de recuperacion | **bloqueante solo si el release migra**: el ultimo run verde de *Supabase Backup and Restore Drill* es mas reciente que `max_backup_age_hours` y su artefacto sigue vigente |
 
 El drill de backup no solo hace `pg_dump`: **restaura el dump en un PostgreSQL
 aislado y falla si la restauracion no funciona**. Por eso un run verde cuenta
 como punto de recuperacion verificado y un run verde con artefacto expirado no.
 
-Si el punto de recuperacion es demasiado viejo, ejecuta manualmente
-*Supabase Backup and Restore Drill* y vuelve a lanzar el despliegue.
+La puerta del punto de recuperacion es bloqueante unicamente cuando el release
+muta el esquema, porque es la unica parte irreversible del despliegue. Un
+release sin migraciones se revierte redesplegando el commit anterior, asi que
+un drill atrasado no frena un despliegue rutinario ni un hotfix: solo deja un
+aviso. Si bloquea, ejecuta *Supabase Backup and Restore Drill* y reintenta.
+
+## La proteccion de `main` es la puerta real
+
+Este workflow no sustituye a la proteccion de rama: la asume.
+
+| Regla | Estado |
+| --- | --- |
+| Pull request obligatorio | si |
+| Checks requeridos | `backend`, `frontend`, `dependencies`, `codeql` |
+| Rama actualizada antes de mergear | si (`strict`) |
+| Push directo a `main` | bloqueado para usuarios sin permiso de administracion |
+| Force push / borrado de `main` | bloqueados |
+| Historial lineal | obligatorio |
+| Conversaciones resueltas | obligatorio |
+| **Administradores exentos** (`enforce_admins`) | **si: un administrador puede empujar directo a `main`** |
+
+La exencion de administradores es la **unica** via por la que codigo sin CI
+puede entrar en `main` y, por tanto, desplegarse. Cerrarla es *Settings ->
+Branches -> main -> Do not allow bypassing the above settings*. Es un ajuste
+del owner, no del repositorio.
+
+Aun con esa exencion abierta, un push directo no se publica en silencio: el
+workflow espera a que el check `backend` termine en verde sobre ese commit
+antes de publicar `hosting:arc`, y falla en rojo si no lo hace.
 
 ## Autoridad de migracion
 
 Las migraciones se aplican en el arranque del contenedor
-(`backend-laravel/docker/entrypoint.sh`), y solo si `RUN_MIGRATIONS=true`.
-
-Antes ese valor tenia **`true` por defecto**: cualquier arranque de
-contenedor, incluido el despertar tras el spin-down del plan free de Render,
-podia ejecutar `php artisan migrate --force` sin que nadie lo hubiera
-decidido. Ahora el valor por defecto es `false`: sin declaracion explicita,
-el contenedor no migra.
-
-Con `autoDeployTrigger: 'off'`, un commit nuevo solo llega a ese contenedor
-a traves de *Deploy production*. La cadena queda:
+(`backend-laravel/docker/entrypoint.sh`), **una vez por release**:
 
 ```text
-aprobacion humana -> deploy hook con ?ref=<SHA> -> arranque del contenedor -> migraciones
+merge a main -> Render construye -> arranca el contenedor
+             -> marca != RENDER_GIT_COMMIT -> php artisan migrate --force
+             -> marca := RENDER_GIT_COMMIT
 ```
 
-Hay una sola autoridad de migracion y esta detras de la aprobacion.
+- **Release nuevo** (sin marca, o marca de otro commit): migra.
+- **Despertar tras el spin-down del plan free** (misma marca): no migra. Antes
+  cualquier arranque reejecutaba `migrate --force` sin que hubiera ningun
+  release detras.
+- **Fallo**: la marca **no** se escribe, el entrypoint termina en error, el
+  contenedor no arranca, el health check de Render deja el deploy en rojo y el
+  workflow falla al no ver nunca el SHA objetivo en `/api/v1/salud`. Un fallo
+  de migracion nunca se ignora en silencio, y el siguiente arranque lo
+  reintenta.
+- `RUN_MIGRATIONS=false` en Render congela el esquema explicitamente (por
+  ejemplo durante una restauracion) sin tocar el codigo. No hace falta
+  declararla para operar: el valor por defecto es `true`.
 
-**Limite conocido:** la ejecucion de las migraciones sigue viviendo en el
-contenedor, no en el workflow. Moverla al runner exigiria copiar en GitHub la
-`DATABASE_URL` productiva y la `APP_KEY` productiva (varias migraciones
-cifran datos y con otra `APP_KEY` los corromperian). Se decidio no ampliar esa
-superficie de credenciales. El workflow *reporta* las migraciones antes de
-autorizar y falla si el contenedor no arranca sano despues de aplicarlas.
+**Limite conocido:** la ejecucion de las migraciones vive en el contenedor, no
+en el workflow. Moverla al runner exigiria copiar en GitHub la `DATABASE_URL`
+productiva y la `APP_KEY` productiva (varias migraciones cifran datos y con
+otra `APP_KEY` los corromperian). Se decidio no ampliar esa superficie de
+credenciales. El workflow *reporta* las migraciones antes de publicar el
+frontend y falla si el contenedor no arranca sano despues de aplicarlas.
 
 ## Aceptacion del backend
 
-Que Render acepte la peticion no es un despliegue. El workflow consulta
+Que Render acepte un commit no es un despliegue. El workflow consulta
 `/api/v1/salud` hasta ~30 min y exige:
 
 ```text
@@ -108,10 +169,15 @@ assets.uploads_disk          = supabase
 assets.private_uploads_disk  = supabase_private
 ```
 
+Si a los ~8 min el backend no ha llegado al SHA objetivo y existe el secret
+`RENDER_DEPLOY_HOOK_URL`, el workflow dispara el hook una vez con `?ref=<SHA>`
+para desatascar el despliegue. Sigue esperando igual si el secret no existe.
+
 ## Aceptacion del frontend
 
-Solo despues de que el backend sirve el SHA objetivo se construye y publica
-`hosting:arc` en el proyecto `daemon-a41f8`. La aceptacion es que
+Solo despues de que el backend sirve el SHA objetivo se publica `hosting:arc`
+en el proyecto `daemon-a41f8` (el build ya se hizo antes, para que un build
+roto falle sin tocar produccion). La aceptacion es que
 `https://daemonarc.web.app/login` responda 200 y exponga
 `<meta name="daemon-release" content="TARGET_SHA">`.
 
@@ -150,8 +216,11 @@ El emulador de Auth nunca se activa en produccion.
 
 Cada ejecucion queda en el historial del environment `production`
 (*Settings -> Environments -> production*, o la pestana **Deployments** del
-repositorio) con actor, timestamp y SHA. El job **Deployment record** escribe
-ademas un resumen con el estado real del sistema, tambien cuando algo falla.
+repositorio) con actor, timestamp y SHA. El environment no exige aprobacion:
+aporta el registro y el alcance de los secrets, no una puerta humana.
+
+El job **Deployment record** escribe ademas un resumen con el estado real del
+sistema, tambien cuando algo falla.
 
 No hay base de datos de despliegues propia. Las etiquetas canonicas del
 repositorio siguen siendo checkpoints de codigo fuente, no de despliegue.
@@ -176,9 +245,10 @@ cuenta.
 
 ### Backend
 
-Vuelve a ejecutar *Deploy production* con el SHA anterior conocido como bueno
-(el que aparece como `CURRENT BACKEND SHA` antes del intento fallido). El
-health check verifica que el backend regresa a ese commit.
+*Actions -> Deploy production -> Run workflow* con `commit_sha` = el SHA
+anterior conocido como bueno (el que aparece como `CURRENT BACKEND SHA` antes
+del intento fallido). El health check verifica que el backend regresa a ese
+commit.
 
 Si Actions no esta disponible, el deploy hook manual sigue existiendo:
 
@@ -213,35 +283,42 @@ sobre el esquema nuevo, restaurar el backup pierde ese trabajo. Cuanto mas
 tarde la decision, mas caro es el rollback: decidir rapido es parte del
 procedimiento.
 
-## Configuracion de plataforma requerida
+## Configuracion de plataforma
 
-El repositorio no puede cambiar por si solo la configuracion de Render ni las
-reglas de proteccion del environment de GitHub. Estas acciones son manuales y
-deben completarse **antes** de mergear el PR que introduce este control:
+Nada de esto es obligatorio para operar. El despliegue automatico funciona con
+la configuracion actual.
+
+### Recomendado
 
 1. **Render -> servicio `daemon` -> Settings -> Build & Deploy -> Auto-Deploy:
-   `No`.** `render.yaml` declara `autoDeployTrigger: 'off'`, pero el
-   comportamiento observado en produccion fue *On Commit*: manda el ajuste del
-   dashboard. Mientras siga en *On Commit*, mergear a `main` desplegara el
-   backend automaticamente y el control de este PR quedara anulado.
-2. **Render -> servicio `daemon` -> Environment -> `RUN_MIGRATIONS`.**
-   Debe seguir existiendo con valor `true` para que el despliegue autorizado
-   aplique migraciones. Si la variable se borra, el contenedor ya no migra
-   (fail-closed) y las migraciones quedarian pendientes en silencio.
-3. **GitHub -> Settings -> Environments -> `production` -> Required
-   reviewers.** Anadir al menos un revisor. Sin eso, el environment registra
-   el despliegue pero no exige aprobacion humana.
-4. **GitHub -> Settings -> Environments -> `production` -> Environment
-   secrets -> `RENDER_DEPLOY_HOOK_URL`.** La URL del deploy hook del servicio
-   `daemon` (la misma que vive en `scripts/render-deploy-hook.url`). Es una
-   credencial: no se commitea y solo debe existir en el environment
-   `production`, no a nivel de repositorio.
-5. **Nada que cambiar en branch protection.** Los checks requeridos de `main`
-   (`backend`, `frontend`, `dependencies`, `codeql`) siguen intactos.
-   `build_and_deploy` desaparece con el workflow de merge, pero nunca fue un
-   check requerido. El nuevo check `deployable` corre sobre commits **ya en
-   `main`**, no sobre PRs: no sirve como puerta de merge, sirve como puerta de
-   despliegue (el preflight lo exige en verde).
+   `After CI Checks Pass`.** `render.yaml` declara `autoDeployTrigger:
+   checksPass`, pero manda el ajuste del dashboard, y el comportamiento
+   observado fue *On Commit*. Las dos opciones despliegan automaticamente; con
+   *Checks Pass* Render espera ademas a que los check runs del commit esten en
+   verde, asi que codigo con CI en rojo no llega ni a construirse. **No hay que
+   apagar el Auto-Deploy.**
+2. **GitHub -> Settings -> Branches -> `main` -> Do not allow bypassing the
+   above settings.** Hoy `enforce_admins` esta desactivado: un administrador
+   puede empujar directo a `main` sin PR ni CI. Es el unico hueco real del
+   invariante "codigo sin probar no llega a `main`".
 
-Ninguna de estas acciones se ha ejecutado desde este PR: modificar Render o
-las reglas del environment es una decision del owner.
+### Opcional
+
+3. **GitHub -> Settings -> Environments -> `production` -> Environment secrets
+   -> `RENDER_DEPLOY_HOOK_URL`.** La URL del deploy hook del servicio `daemon`
+   (la misma que vive en `scripts/render-deploy-hook.url`). Sin ella el
+   despliegue rutinario funciona igual; con ella el workflow puede desatascar
+   un backend que no converge y hacer rollback a un SHA arbitrario sin salir de
+   Actions. Es una credencial: no se commitea y debe vivir en el environment
+   `production`, no a nivel de repositorio.
+
+### Nada que cambiar
+
+- **Branch protection.** Los checks requeridos de `main` (`backend`,
+  `frontend`, `dependencies`, `codeql`) siguen intactos. El antiguo
+  `build_and_deploy` desaparece con el workflow de merge, pero nunca fue un
+  check requerido.
+- **`production` environment.** No necesita *required reviewers*: el modelo no
+  pide aprobacion por despliegue.
+- **`RUN_MIGRATIONS` en Render.** Puede seguir en `true` o no existir: el valor
+  por defecto ya es `true` y el entrypoint acota la migracion a un release.

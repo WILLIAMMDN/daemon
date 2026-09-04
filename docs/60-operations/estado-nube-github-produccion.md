@@ -91,7 +91,7 @@ Archivos:
 ```text
 .firebaserc
 firebase.json
-.github/workflows/firebase-hosting-merge.yml
+.github/workflows/deploy-production.yml
 .github/workflows/firebase-hosting-pull-request.yml
 ```
 
@@ -119,20 +119,25 @@ FIREBASE_SERVICE_ACCOUNT_DAEMON_A41F8
 Debe contener el JSON de la service account con permisos de Firebase Hosting.
 No guardar ese JSON en el repositorio.
 
-El workflow de merge está en:
+El workflow de despliegue productivo está en:
 
 ```text
-.github/workflows/firebase-hosting-merge.yml
+.github/workflows/deploy-production.yml
 ```
 
-Pasos relevantes:
+Se dispara solo con cada push a `main` (y a mano para rollback). Pasos
+relevantes:
 
-1. instalar dependencias con `npm ci`;
-2. ejecutar `npm test -- --runInBand`;
-3. ejecutar `npm run build`;
-4. configurar credenciales desde el secret;
-5. desplegar el target `hosting:arc`;
-6. ejecutar `scripts/smoke-produccion.ps1`.
+1. resolver el SHA objetivo y comprobar que es alcanzable desde `main`;
+2. esperar el check `backend` en verde y validar los contratos de entorno;
+3. instalar dependencias con `npm ci`, auditar y construir con `npm run build`;
+4. esperar a que `/api/v1/salud` reporte ese commit (Render despliega solo);
+5. configurar credenciales desde OIDC o el secret;
+6. desplegar el target `hosting:arc` y verificar `daemon-release`;
+7. ejecutar `scripts/smoke-produccion.ps1 -ExpectedRelease <SHA>`.
+
+Procedimiento completo en
+[`despliegue-produccion.md`](despliegue-produccion.md).
 
 Si Firebase informa que la versión ya es la activa, el workflow trata el
 deploy como no-op correcto y continúa con el smoke.

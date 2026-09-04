@@ -32,14 +32,15 @@ Firebase Hosting -> Angular -> Render/Laravel -> Supabase PostgreSQL
 
 ## Puertas de despliegue
 
-Un merge y un despliegue productivo son operaciones distintas. El
-procedimiento completo esta en
+El despliegue productivo es automatico: un commit en `main` protegida llega a
+produccion sin intervencion. El procedimiento completo esta en
 [`despliegue-produccion.md`](despliegue-produccion.md).
 
 - Los PR ejecutan auditoria npm/composer, Jest con cobertura, PHPUnit con cobertura, build Angular, E2E publico y CodeQL, y publican un preview channel de Firebase que expira a los 7 dias.
-- Render queda declarado con `autoDeployTrigger: 'off'`: mergear a `main` no despliega el backend.
-- Un push a `main` solo ejecuta *Main is deployable*, que construye y valida el commit **sin publicar nada**.
-- La unica via de mutacion productiva es el workflow *Deploy production*, invocado explicitamente sobre un SHA exacto y aprobado en el environment `production`.
+- La puerta real es la proteccion de `main`: PR obligatorio y `backend`, `frontend`, `dependencies` y `codeql` en verde. Codigo sin probar no llega a `main`.
+- Render queda declarado con `autoDeployTrigger: checksPass`: un commit en `main` despliega el backend por si solo, tras los checks.
+- Un push a `main` ejecuta *Deploy production*, que verifica que produccion sirve ese SHA, publica `hosting:arc` y ejecuta el smoke. La unica via de publicacion productiva es ese workflow.
+- *Deploy production* tambien se puede invocar a mano sobre un SHA exacto: es el camino de rollback, no la operacion normal.
 - El workflow de staging es manual y falla si detecta identificadores de produccion.
 - Firebase admite OIDC/WIF con `GCP_WIF_PROVIDER` y `GCP_DEPLOY_SERVICE_ACCOUNT`. Mientras no se provisionen, conserva el secreto JSON como fallback para no interrumpir produccion.
 
@@ -47,9 +48,12 @@ procedimiento completo esta en
 
 El entrypoint invalida caches cuando cambian variables, ejecuta
 `daemon:check-environment-safety --operation=deploy` y solo después ejecuta la
-migración incremental **si `RUN_MIGRATIONS` vale explícitamente `true`**. El
-valor por defecto es `false`: un arranque de contenedor no declarado no muta el
-esquema. Luego entrega PID 1 a Supervisor. Supervisor mantiene:
+migración incremental **una vez por release**: una marca en
+`bootstrap/cache/.migrated` guarda el commit ya migrado, así que el despertar
+tras el spin-down del plan free no vuelve a migrar. Si la migración falla, la
+marca no se escribe y el contenedor no arranca. `RUN_MIGRATIONS=false` congela
+el esquema explícitamente. Luego entrega PID 1 a Supervisor. Supervisor
+mantiene:
 
 - Apache;
 - `queue:work` con reciclaje cada hora;
@@ -59,9 +63,11 @@ No existe una ruta HTTP para ejecutar migraciones.
 
 ## Deploy Hook de Render
 
-Con el auto-deploy apagado, el **Deploy Hook** del servicio `daemon` es el
-mecanismo canonico de despliegue: el workflow *Deploy production* lo invoca
-con `?ref=<SHA>` para publicar un commit exacto.
+El despliegue rutinario **no** usa el hook: lo hace el auto-deploy de Render.
+El **Deploy Hook** del servicio `daemon` es un complemento opcional que
+*Deploy production* invoca con `?ref=<SHA>` en dos casos: un rollback a un SHA
+que no es el HEAD de `main`, y un backend que no converge al SHA objetivo en
+~8 min.
 
 - **Helper reutilizable:** `scripts/render-deploy-hook.sh`
   - `bash scripts/render-deploy-hook.sh` — dispara deploy del ultimo commit de main.
@@ -71,7 +77,8 @@ con `?ref=<SHA>` para publicar un commit exacto.
   permite disparar deploys. Ya esta excluida en `.gitignore`.
 - **CI/entorno:** el script tambien lee la variable `RENDER_DEPLOY_HOOK_URL`.
   En GitHub ese valor vive como **environment secret de `production`**, no
-  como secret de repositorio: solo el despliegue aprobado puede usarlo.
+  como secret de repositorio. Es opcional: sin el, el despliegue automatico
+  funciona igual y solo se pierde el rollback desde Actions.
 - **Respuesta esperada:** `200` con `{"deploy":{"id":"dep-..."}}`.
 
 El helper local es la via de escape si GitHub Actions no esta disponible.
@@ -119,9 +126,9 @@ Ejecutar primero la simulacion. La eliminacion del origen publico se hace solo d
 Procedimiento detallado en
 [`despliegue-produccion.md`](despliegue-produccion.md#rollback). Resumen:
 
-1. Suspender nuevos despliegues (el grupo de concurrencia `production-daemon` ya los serializa).
+1. Dejar de mergear a `main` (el grupo de concurrencia `production-daemon` ya serializa los despliegues en curso).
 2. Restaurar la version anterior de Firebase Hosting desde su historial.
-3. Volver a ejecutar *Deploy production* con el SHA anterior conocido como bueno.
+3. Ejecutar *Deploy production* a mano con el SHA anterior conocido como bueno.
 4. Si una migracion no es compatible hacia atras, restaurar el backup verificado en una base aislada y validar antes de cambiar el destino de la API.
 5. Ejecutar `scripts/smoke-produccion.ps1 -ExpectedRelease <SHA>` y comprobar `/api/v1/salud`.
 
