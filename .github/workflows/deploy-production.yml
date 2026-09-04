@@ -231,7 +231,8 @@ jobs:
           backend_sha="$(printf '%s' "$health" | jq -r '.commit')"
           frontend_sha="$(curl -sS --max-time 60 "${FRONTEND_URL}/login" \
             | grep -o '<meta name="daemon-release" content="[^"]*"' \
-            | head -1 | sed -E 's/.*content="([^"]*)".*/\1/')"
+            | head -1 | sed -E 's/.*content="([^"]*)".*/\1/' || true)"
+          [ -n "$frontend_sha" ] || frontend_sha=desconocido
 
           echo "backend_sha=$backend_sha" >> "$GITHUB_OUTPUT"
           echo "frontend_sha=$frontend_sha" >> "$GITHUB_OUTPUT"
@@ -578,7 +579,9 @@ jobs:
             | jq -r '.commit // "desconocido"' || echo desconocido)"
           frontend="$(curl -sS --max-time 60 https://daemonarc.web.app/login \
             | grep -o '<meta name="daemon-release" content="[^"]*"' \
-            | head -1 | sed -E 's/.*content="([^"]*)".*/\1/' || echo desconocido)"
+            | head -1 | sed -E 's/.*content="([^"]*)".*/\1/' || true)"
+          [ -n "$backend" ] || backend=desconocido
+          [ -n "$frontend" ] || frontend=desconocido
           echo "backend=$backend" >> "$GITHUB_OUTPUT"
           echo "frontend=$frontend" >> "$GITHUB_OUTPUT"
 
