@@ -3,6 +3,7 @@
 use App\Http\Middleware\EnsureCookieRequestIsFromAllowedOrigin;
 use App\Http\Middleware\EnsureOneRosterToken;
 use App\Http\Middleware\EnsureRole;
+use App\Http\Middleware\EnsureTokenAbility;
 use App\Http\Middleware\RequestCorrelationId;
 use App\Http\Middleware\SecurityHeaders;
 use App\Http\Middleware\UseSanctumCookieToken;
@@ -32,6 +33,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'role' => EnsureRole::class,
+            'ability' => EnsureTokenAbility::class,
             'oneroster' => EnsureOneRosterToken::class,
         ]);
 

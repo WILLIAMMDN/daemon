@@ -17,6 +17,7 @@ use App\Models\Usuario;
 use App\Models\VersionCurso;
 use App\Support\Academico\ContenidoEstructurado;
 use App\Support\Academico\GuiaEntrega;
+use App\Support\Autoria\AlcanceAutoria;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
@@ -53,6 +54,49 @@ class ArcCourseStudioService
             'artifactModalities' => ModalidadEvidencia::modalidadesDeArtefacto(),
             'completionModes' => ['manual_review', 'passing_score', 'submission', 'lesson_completion'],
             'contentBlockTypes' => ContenidoEstructurado::tiposDeBloque(),
+            'experienceVariants' => ['boss'],
+            'sourceTypes' => ['leccion', 'mision', 'evaluacion', 'proyecto', 'laboratorio', 'practica', 'desafio'],
+            'objectiveLevels' => AudienciaAprendizaje::values(),
+            'statuses' => ['draft', 'published', 'archived'],
+            // Limites reales que aplica la validacion del servidor. Un cliente
+            // de autoria (Studio o un adaptador MCP) los lee en vez de
+            // adivinarlos, y un rechazo 422 deja de ser una sorpresa.
+            'authoringConstraints' => [
+                'titleMaxLength' => 150,
+                'descriptionMaxLength' => 5000,
+                'objectiveDescriptionMaxLength' => 2000,
+                'orderMin' => 1,
+                'orderMax' => 999,
+                'maxAttemptsMax' => 100,
+                'passingScoreMax' => 100,
+                'maxObjectivesPerExperience' => 50,
+                'maxPrerequisitesPerMilestone' => 100,
+                'maxRubricCriteria' => 20,
+                'maxContentBlocks' => 60,
+                'maxEvidenceArtifacts' => 10,
+                'evidenceNotesMaxLength' => 2000,
+            ],
+            // Modelo de capacidades del token. La publicacion es un alcance
+            // aparte y deliberadamente humano: ningun cliente automatizado la
+            // recibe, y la comprobacion vive en el servidor.
+            'authoringScopes' => [
+                'read' => AlcanceAutoria::LECTURA,
+                'write' => AlcanceAutoria::ESCRITURA,
+                'publish' => AlcanceAutoria::PUBLICACION,
+                'serviceDefaults' => AlcanceAutoria::porDefectoMcp(),
+            ],
+            'publication' => [
+                'requiredScope' => AlcanceAutoria::PUBLICACION,
+                'humanReviewRequired' => true,
+            ],
+            // Identidad del actor autenticado. Un cliente headless no tiene
+            // pantalla donde elegir institucion: la lee de aqui en vez de
+            // adivinar un id.
+            'actor' => [
+                'id' => (int) $actor->id,
+                'role' => $actor->rol,
+                'institutionId' => $actor->id_institucion === null ? null : (int) $actor->id_institucion,
+            ],
             'objectives' => $this->objetivos($actor)
                 ->map(fn (ObjetivoAprendizaje $objetivo): array => $this->objetivoResumen($objetivo))
                 ->values()

@@ -157,53 +157,59 @@ Route::prefix('v1')->group(function (): void {
 
         Route::middleware('role:docente,admin')->group(function (): void {
             Route::prefix('academico')->group(function (): void {
-                Route::get('/', [AcademicoController::class, 'catalogo']);
+                Route::get('/', [AcademicoController::class, 'catalogo'])->middleware('ability:course:read');
                 Route::post('/periodos', [AcademicoController::class, 'crearPeriodo']);
-                Route::post('/cursos', [AcademicoController::class, 'crearCurso']);
-                Route::put('/cursos/{curso}', [AcademicoController::class, 'actualizarCurso']);
+                Route::post('/cursos', [AcademicoController::class, 'crearCurso'])->middleware('ability:course:write');
+                Route::put('/cursos/{curso}', [AcademicoController::class, 'actualizarCurso'])->middleware('ability:course:write');
                 Route::post('/cursos/{curso}/unidades', [AcademicoController::class, 'crearUnidad']);
-                Route::put('/unidades/{unidad}', [AcademicoController::class, 'actualizarUnidad']);
-                Route::post('/unidades/{unidad}/lecciones', [AcademicoController::class, 'crearLeccion']);
-                Route::put('/lecciones/{leccion}', [AcademicoController::class, 'actualizarLeccion']);
-                Route::post('/objetivos', [AcademicoController::class, 'crearObjetivo']);
+                Route::put('/unidades/{unidad}', [AcademicoController::class, 'actualizarUnidad'])->middleware('ability:course:write');
+                Route::post('/unidades/{unidad}/lecciones', [AcademicoController::class, 'crearLeccion'])->middleware('ability:course:write');
+                Route::put('/lecciones/{leccion}', [AcademicoController::class, 'actualizarLeccion'])->middleware('ability:course:write');
+                Route::post('/objetivos', [AcademicoController::class, 'crearObjetivo'])->middleware('ability:course:write');
                 Route::put('/aulas/{aula}/curso', [AcademicoController::class, 'vincularAula']);
                 Route::post('/aulas/{aula}/usuarios/{usuario}', [AcademicoController::class, 'matricular']);
                 Route::get('/cohortes', [ArcCohortSessionOpsController::class, 'cohortes']);
                 Route::get('/aulas/{aula}/sesiones', [ArcCohortSessionOpsController::class, 'sesiones']);
                 Route::post('/aulas/{aula}/sesiones', [AcademicoController::class, 'crearSesion']);
                 Route::put('/sesiones/{sesion}', [AcademicoController::class, 'actualizarSesion']);
-                Route::post('/cursos/{curso}/versiones', [LearningCoreAuthoringController::class, 'crearVersion']);
-                Route::put('/versiones/{version}', [LearningCoreAuthoringController::class, 'actualizarVersion']);
-                Route::post('/versiones/{version}/unidades', [LearningCoreAuthoringController::class, 'crearUnidad']);
-                Route::post('/versiones/{version}/publicar', [LearningCoreAuthoringController::class, 'publicarVersion']);
-                Route::post('/versiones/{version}/archivar', [LearningCoreAuthoringController::class, 'archivarVersion']);
-                Route::put('/aulas/{aula}/version', [LearningCoreAuthoringController::class, 'vincularAula']);
-                Route::post('/versiones/{version}/rutas', [LearningCoreAuthoringController::class, 'crearRuta']);
-                Route::put('/rutas/{ruta}', [LearningCoreAuthoringController::class, 'actualizarRuta']);
-                Route::post('/rutas/{ruta}/hitos', [LearningCoreAuthoringController::class, 'crearHito']);
-                Route::put('/hitos/{hito}', [LearningCoreAuthoringController::class, 'actualizarHito']);
-                Route::delete('/hitos/{hito}', [LearningCoreAuthoringController::class, 'eliminarHito']);
-                Route::put('/hitos/{hito}/prerrequisitos', [LearningCoreAuthoringController::class, 'prerrequisitos']);
-                Route::post('/hitos/{hito}/experiencias', [LearningCoreAuthoringController::class, 'crearExperiencia']);
-                Route::put('/experiencias/{experiencia}', [LearningCoreAuthoringController::class, 'actualizarExperiencia']);
-                Route::delete('/experiencias/{experiencia}', [LearningCoreAuthoringController::class, 'eliminarExperiencia']);
-                Route::put('/experiencias/{experiencia}/objetivos', [LearningCoreAuthoringController::class, 'objetivosExperiencia']);
-                Route::post('/rutas/{ruta}/publicar', [LearningCoreAuthoringController::class, 'publicarRuta']);
-                Route::post('/rutas/{ruta}/archivar', [LearningCoreAuthoringController::class, 'archivarRuta']);
+                Route::post('/cursos/{curso}/versiones', [LearningCoreAuthoringController::class, 'crearVersion'])->middleware('ability:course:write');
+                Route::put('/versiones/{version}', [LearningCoreAuthoringController::class, 'actualizarVersion'])->middleware('ability:course:write');
+                Route::post('/versiones/{version}/unidades', [LearningCoreAuthoringController::class, 'crearUnidad'])->middleware('ability:course:write');
+                Route::post('/versiones/{version}/publicar', [LearningCoreAuthoringController::class, 'publicarVersion'])->middleware('ability:course:publish');
+                Route::post('/versiones/{version}/archivar', [LearningCoreAuthoringController::class, 'archivarVersion'])->middleware('ability:course:publish');
+                Route::put('/aulas/{aula}/version', [LearningCoreAuthoringController::class, 'vincularAula'])->middleware('ability:course:publish');
+                Route::post('/versiones/{version}/rutas', [LearningCoreAuthoringController::class, 'crearRuta'])->middleware('ability:course:write');
+                Route::put('/rutas/{ruta}', [LearningCoreAuthoringController::class, 'actualizarRuta'])->middleware('ability:course:write');
+                Route::post('/rutas/{ruta}/hitos', [LearningCoreAuthoringController::class, 'crearHito'])->middleware('ability:course:write');
+                Route::put('/hitos/{hito}', [LearningCoreAuthoringController::class, 'actualizarHito'])->middleware('ability:course:write');
+                Route::delete('/hitos/{hito}', [LearningCoreAuthoringController::class, 'eliminarHito'])->middleware('ability:course:write');
+                Route::put('/hitos/{hito}/prerrequisitos', [LearningCoreAuthoringController::class, 'prerrequisitos'])->middleware('ability:course:write');
+                Route::post('/hitos/{hito}/experiencias', [LearningCoreAuthoringController::class, 'crearExperiencia'])->middleware('ability:course:write');
+                Route::put('/experiencias/{experiencia}', [LearningCoreAuthoringController::class, 'actualizarExperiencia'])->middleware('ability:course:write');
+                Route::delete('/experiencias/{experiencia}', [LearningCoreAuthoringController::class, 'eliminarExperiencia'])->middleware('ability:course:write');
+                Route::put('/experiencias/{experiencia}/objetivos', [LearningCoreAuthoringController::class, 'objetivosExperiencia'])->middleware('ability:course:write');
+                Route::post('/rutas/{ruta}/publicar', [LearningCoreAuthoringController::class, 'publicarRuta'])->middleware('ability:course:publish');
+                Route::post('/rutas/{ruta}/archivar', [LearningCoreAuthoringController::class, 'archivarRuta'])->middleware('ability:course:publish');
 
                 // Course Operations / Studio: superficie canónica de autoría.
                 // Studio y un futuro adaptador MCP consumen exactamente esto.
                 Route::prefix('studio')->group(function (): void {
-                    Route::get('/catalogo', [ArcCourseStudioController::class, 'catalogo']);
-                    Route::get('/cursos', [ArcCourseStudioController::class, 'cursos']);
-                    Route::get('/cursos/{curso}', [ArcCourseStudioController::class, 'curso']);
-                    Route::get('/versiones/{version}', [ArcCourseStudioController::class, 'version']);
-                    Route::post('/versiones/{version}/borrador', [ArcCourseStudioController::class, 'crearBorrador']);
-                    Route::get('/versiones/{version}/validacion', [ArcCourseStudioController::class, 'validar']);
-                    Route::post('/versiones/{version}/publicacion', [ArcCourseStudioController::class, 'publicar']);
+                    Route::middleware('ability:course:read')->group(function (): void {
+                        Route::get('/catalogo', [ArcCourseStudioController::class, 'catalogo']);
+                        Route::get('/cursos', [ArcCourseStudioController::class, 'cursos']);
+                        Route::get('/cursos/{curso}', [ArcCourseStudioController::class, 'curso']);
+                        Route::get('/versiones/{version}', [ArcCourseStudioController::class, 'version']);
+                        Route::get('/versiones/{version}/validacion', [ArcCourseStudioController::class, 'validar']);
+                    });
+                    Route::post('/versiones/{version}/borrador', [ArcCourseStudioController::class, 'crearBorrador'])
+                        ->middleware('ability:course:write');
+                    // La publicacion exige su propio alcance. Un token de
+                    // servicio headless nunca lo recibe: publicar es humano.
+                    Route::post('/versiones/{version}/publicacion', [ArcCourseStudioController::class, 'publicar'])
+                        ->middleware('ability:course:publish');
                 });
-                Route::get('/objetivos', [AcademicoController::class, 'objetivos']);
-                Route::put('/objetivos/{objetivo}', [AcademicoController::class, 'actualizarObjetivo']);
+                Route::get('/objetivos', [AcademicoController::class, 'objetivos'])->middleware('ability:course:read');
+                Route::put('/objetivos/{objetivo}', [AcademicoController::class, 'actualizarObjetivo'])->middleware('ability:course:write');
                 Route::get('/revisiones', [LearningCoreStudentController::class, 'revisiones']);
                 Route::get('/revisiones/{intento}', [LearningCoreStudentController::class, 'detalleRevision']);
                 Route::post('/intentos/{intento}/evaluar', [LearningCoreStudentController::class, 'evaluar']);
