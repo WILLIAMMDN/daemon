@@ -17,7 +17,7 @@
         "laravel/sanctum": "^4.0",
         "laravel/socialite": "^5.28",
         "laravel/tinker": "^3.0.2",
-        "league/flysystem-aws-s3-v3": "3.35.2",
+        "league/flysystem-aws-s3-v3": "3.35.3",
         "php": "^8.2",
         "pusher/pusher-php-server": "*",
         "resend/resend-laravel": "^1.4",
